@@ -1,0 +1,298 @@
+﻿@model AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+
+    var maxQuantity = Model.TopSellingProducts.Any()
+        ? Model.TopSellingProducts.Max(p => p.TotalQuantity)
+        : 1;
+}
+
+<div class="mb-4">
+    <h2 class="fw-bold mb-1">Dashboard</h2>
+    <p class="text-muted mb-0">
+        Tổng quan tình hình kinh doanh FashionStore.
+    </p>
+</div>
+
+<!-- Thống kê tổng quan -->
+<div class="row g-3 mb-4">
+
+    <div class="col-xl-3 col-md-6">
+        <div class="admin-card">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <div class="text-muted small">Tổng sản phẩm</div>
+                    <h3 class="fw-bold mt-2 mb-0">
+                        @Model.TotalProducts
+                    </h3>
+                </div>
+
+                <div class="admin-stat-icon bg-primary-subtle text-primary">
+                    <i class="bi bi-box-seam"></i>
+                </div>
+            </div>
+
+            <a asp-controller="AdminProducts"
+               asp-action="Index"
+               class="small text-decoration-none mt-3 d-inline-block">
+                Quản lý sản phẩm →
+            </a>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="admin-card">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <div class="text-muted small">Tổng danh mục</div>
+                    <h3 class="fw-bold mt-2 mb-0">
+                        @Model.TotalCategories
+                    </h3>
+                </div>
+
+                <div class="admin-stat-icon bg-success-subtle text-success">
+                    <i class="bi bi-tags"></i>
+                </div>
+            </div>
+
+            <a asp-controller="AdminCategories"
+               asp-action="Index"
+               class="small text-decoration-none mt-3 d-inline-block">
+                Quản lý danh mục →
+            </a>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="admin-card">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <div class="text-muted small">Tổng đơn hàng</div>
+                    <h3 class="fw-bold mt-2 mb-0">
+                        @Model.TotalOrders
+                    </h3>
+                </div>
+
+                <div class="admin-stat-icon bg-warning-subtle text-warning">
+                    <i class="bi bi-receipt"></i>
+                </div>
+            </div>
+
+            <a asp-controller="AdminOrders"
+               asp-action="Index"
+               class="small text-decoration-none mt-3 d-inline-block">
+                Quản lý đơn hàng →
+            </a>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="admin-card">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <div class="text-muted small">Chờ xác nhận</div>
+                    <h3 class="fw-bold mt-2 mb-0">
+                        @Model.PendingOrders
+                    </h3>
+                </div>
+
+                <div class="admin-stat-icon bg-danger-subtle text-danger">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+            </div>
+
+            <a asp-controller="AdminOrders"
+               asp-action="Index"
+               class="small text-decoration-none mt-3 d-inline-block">
+                Kiểm tra đơn hàng →
+            </a>
+        </div>
+    </div>
+
+</div>
+
+<!-- Doanh thu -->
+<div class="row g-3 mb-4">
+    <div class="col-12">
+        <div class="admin-card">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <div class="text-muted small">
+                        Tổng doanh thu đơn hàng đã giao
+                    </div>
+
+                    <h2 class="fw-bold mt-2 mb-0">
+                        @Model.TotalRevenue.ToString("N0") đ
+                    </h2>
+
+                    <div class="text-muted small mt-2">
+                        Chỉ tính các đơn hàng có trạng thái Đã giao.
+                    </div>
+                </div>
+
+                <div class="admin-stat-icon bg-success-subtle text-success"
+                     style="width:60px;height:60px;font-size:27px;">
+                    <i class="bi bi-currency-dollar"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+
+    <!-- Đơn hàng mới nhất -->
+    <div class="col-xl-7">
+        <div class="admin-card">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold mb-0">Đơn hàng mới nhất</h5>
+
+                <a asp-controller="AdminOrders"
+                   asp-action="Index"
+                   class="small text-decoration-none">
+                    Xem tất cả
+                </a>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table admin-table">
+                    <thead>
+                        <tr>
+                            <th>Mã đơn</th>
+                            <th>Người nhận</th>
+                            <th>Ngày đặt</th>
+                            <th>Trạng thái</th>
+                            <th class="text-end">Tổng tiền</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @if (!Model.RecentOrders.Any())
+                        {
+                            <tr>
+                                <td colspan="5"
+                                    class="text-center text-muted py-4">
+                                    Chưa có đơn hàng nào.
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var order in Model.RecentOrders)
+                            {
+                                <tr>
+                                    <td class="fw-semibold">
+                                        @order.OrderCode
+                                    </td>
+
+                                    <td>@order.ReceiverName</td>
+
+                                    <td>
+                                        @order.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")
+                                    </td>
+
+                                    <td>
+                                        @switch (order.Status)
+                                        {
+                                            case FashionStore.Models.Enums.OrderStatus.PendingConfirmation:
+                                                <span class="badge bg-warning text-dark">Chờ xác nhận</span>
+                                                break;
+
+                                            case FashionStore.Models.Enums.OrderStatus.Confirmed:
+                                                <span class="badge bg-info text-dark">Đã xác nhận</span>
+                                                break;
+
+                                            case FashionStore.Models.Enums.OrderStatus.Processing:
+                                                <span class="badge bg-primary">Đang xử lý</span>
+                                                break;
+
+                                            case FashionStore.Models.Enums.OrderStatus.Shipping:
+                                                <span class="badge bg-info">Đang giao</span>
+                                                break;
+
+                                            case FashionStore.Models.Enums.OrderStatus.Delivered:
+                                                <span class="badge bg-success">Đã giao</span>
+                                                break;
+
+                                            case FashionStore.Models.Enums.OrderStatus.Cancelled:
+                                                <span class="badge bg-danger">Đã hủy</span>
+                                                break;
+
+                                            case FashionStore.Models.Enums.OrderStatus.DeliveryFailed:
+                                                <span class="badge bg-danger">Giao thất bại</span>
+                                                break;
+
+                                            case FashionStore.Models.Enums.OrderStatus.Returned:
+                                                <span class="badge bg-secondary">Đã hoàn trả</span>
+                                                break;
+                                        }
+                                    </td>
+
+                                    <td class="text-end fw-semibold">
+                                        @order.TotalAmount.ToString("N0") đ
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Top sản phẩm bán chạy -->
+    <div class="col-xl-5">
+        <div class="admin-card">
+
+            <h5 class="fw-bold mb-4">Top sản phẩm bán chạy</h5>
+
+            @if (!Model.TopSellingProducts.Any())
+            {
+                <div class="text-center text-muted py-4">
+                    Chưa có dữ liệu bán hàng.
+                </div>
+            }
+            else
+            {
+                @for (int i = 0; i < Model.TopSellingProducts.Count; i++)
+                {
+                    var product = Model.TopSellingProducts[i];
+
+                    var percentage = (double)product.TotalQuantity
+                        / maxQuantity * 100;
+
+                    <div class="mb-4">
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <div class="fw-semibold">
+                                @(i + 1). @product.ProductName
+                            </div>
+
+                            <div class="text-muted small">
+                                @product.TotalQuantity sản phẩm
+                            </div>
+                        </div>
+
+                        <div class="progress" style="height:8px;">
+                            <div class="progress-bar bg-dark"
+                                 role="progressbar"
+                                 style="width:@percentage.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)%">
+                            </div>
+                        </div>
+
+                        <div class="text-muted small mt-2">
+                            Doanh thu:
+                            @product.TotalRevenue.ToString("N0") đ
+                        </div>
+
+                    </div>
+                }
+            }
+
+        </div>
+    </div>
+
+</div>

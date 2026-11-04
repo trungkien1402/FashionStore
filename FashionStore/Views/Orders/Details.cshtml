@@ -1,0 +1,294 @@
+﻿```cshtml
+@model FashionStore.Models.Entities.Order
+@using FashionStore.Models.Entities
+@using FashionStore.Models.Enums
+
+@{
+    ViewData["Title"] = "Chi tiết đơn hàng";
+
+    var paymentMethodText = Model.PaymentMethod switch
+    {
+        PaymentMethod.COD => "Thanh toán khi nhận hàng (COD)",
+        PaymentMethod.VietQR => "Chuyển khoản VietQR",
+        _ => "Không xác định"
+    };
+
+    var statusText = Model.Status switch
+    {
+        OrderStatus.PendingConfirmation => "Chờ xác nhận",
+        OrderStatus.Confirmed => "Đã xác nhận",
+        OrderStatus.Processing => "Đang xử lý",
+        OrderStatus.Shipping => "Đang giao hàng",
+        OrderStatus.Delivered => "Đã giao hàng",
+        OrderStatus.Cancelled => "Đã hủy",
+        OrderStatus.DeliveryFailed => "Giao hàng thất bại",
+        OrderStatus.Returned => "Đã trả hàng",
+        _ => "Không xác định"
+    };
+
+    var paymentText = Model.PaymentStatus switch
+    {
+        PaymentStatus.Pending => "Chưa thanh toán",
+        PaymentStatus.Paid => "Đã thanh toán",
+        PaymentStatus.Failed => "Thanh toán thất bại",
+        PaymentStatus.Refunded => "Đã hoàn tiền",
+        _ => "Không xác định"
+    };
+
+    var histories = ViewBag.StatusHistories as List<OrderStatusHistory>
+                    ?? new List<OrderStatusHistory>();
+
+    string GetStatusName(OrderStatus status) => status switch
+    {
+        OrderStatus.PendingConfirmation => "Chờ xác nhận",
+        OrderStatus.Confirmed => "Đã xác nhận",
+        OrderStatus.Processing => "Đang xử lý",
+        OrderStatus.Shipping => "Đang giao hàng",
+        OrderStatus.Delivered => "Đã giao hàng",
+        OrderStatus.Cancelled => "Đã hủy",
+        OrderStatus.DeliveryFailed => "Giao hàng thất bại",
+        OrderStatus.Returned => "Đã trả hàng",
+        _ => "Không xác định"
+    };
+
+    bool isExceptionalStatus =
+        Model.Status == OrderStatus.Cancelled ||
+        Model.Status == OrderStatus.DeliveryFailed ||
+        Model.Status == OrderStatus.Returned;
+}
+
+<section class="container py-5">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+        <div>
+            <div class="text-muted small text-uppercase mb-2">Đơn hàng của tôi</div>
+            <h1 class="h2" style="font-family:'Playfair Display',serif;">
+                Chi tiết đơn hàng
+            </h1>
+            <p class="text-muted mb-0">Mã đơn: @Model.OrderCode</p>
+        </div>
+
+        <a asp-action="Index" class="btn btn-outline-dark">
+            Quay lại đơn hàng
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+
+            <!-- LỊCH SỬ ĐƠN HÀNG -->
+            <div class="border p-4 mb-4">
+                <h5 class="mb-4">Lịch sử đơn hàng</h5>
+
+                @if (histories.Any())
+                {
+                    <div class="order-timeline">
+                        @foreach (var history in histories)
+                        {
+                            var isCurrent = history.NewStatus == Model.Status;
+
+                            <div class="order-timeline-item">
+                                <div class="order-timeline-marker @(isCurrent ? "current" : "")">
+                                    @if (history.NewStatus == OrderStatus.Delivered)
+                                    {
+                                        <i class="bi bi-check-lg"></i>
+                                    }
+                                    else if (history.NewStatus == OrderStatus.Cancelled)
+                                    {
+                                        <i class="bi bi-x-lg"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-circle-fill"></i>
+                                    }
+                                </div>
+
+                                <div class="order-timeline-content">
+                                    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                                        <strong class="@(isCurrent ? "text-dark" : "text-secondary")">
+                                            @GetStatusName(history.NewStatus)
+                                        </strong>
+
+                                        <span class="small text-muted">
+                                            @history.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                                        </span>
+                                    </div>
+
+                                    @if (!string.IsNullOrWhiteSpace(history.Note))
+                                    {
+                                        <p class="text-muted small mt-2 mb-0">
+                                            @history.Note
+                                        </p>
+                                    }
+
+                                    @if (isCurrent)
+                                    {
+                                        <span class="badge bg-dark mt-2">
+                                            Trạng thái hiện tại
+                                        </span>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-muted small">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Đơn hàng chưa có dữ liệu lịch sử trạng thái.
+                    </div>
+                }
+            </div>
+
+            <!-- THÔNG TIN SẢN PHẨM -->
+            <div class="border p-4 mb-4">
+                <h5 class="mb-3">Thông tin sản phẩm</h5>
+
+                @foreach (var item in Model.Items)
+                {
+                    <div class="d-flex justify-content-between gap-3 py-3 border-bottom">
+                        <div>
+                            <div class="fw-semibold">@item.ProductName</div>
+                            <div class="small text-muted">
+                                SKU: @item.SKU
+                            </div>
+                            <div class="small text-muted">
+                                Kích thước: @item.Size · Màu: @item.Color
+                            </div>
+                            <div class="small text-muted">
+                                Số lượng: @item.Quantity
+                            </div>
+                        </div>
+
+                        <div class="text-end fw-semibold">
+                            @((item.UnitPrice * item.Quantity).ToString("N0")) đ
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- THÔNG TIN NHẬN HÀNG -->
+            <div class="border p-4">
+                <h5 class="mb-3">Thông tin nhận hàng</h5>
+
+                <p class="mb-2">
+                    <strong>Người nhận:</strong> @Model.ReceiverName
+                </p>
+                <p class="mb-2">
+                    <strong>Số điện thoại:</strong> @Model.Phone
+                </p>
+                <p class="mb-0">
+                    <strong>Địa chỉ:</strong> @Model.Address
+                </p>
+            </div>
+        </div>
+
+        <!-- TÓM TẮT ĐƠN HÀNG -->
+        <div class="col-lg-4">
+            <div class="border p-4">
+                <h5 class="mb-4">Tóm tắt đơn hàng</h5>
+
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="text-muted">Ngày đặt</span>
+                    <span>@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span>
+                </div>
+
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="text-muted">Trạng thái đơn</span>
+                    <strong>@statusText</strong>
+                </div>
+
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="text-muted">Thanh toán</span>
+                    <strong>@paymentText</strong>
+                </div>
+
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="text-muted">Phương thức</span>
+                    <strong>@paymentMethodText</strong>
+                </div>
+
+                <hr />
+
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Tạm tính</span>
+                    <span>@Model.SubTotal.ToString("N0") đ</span>
+                </div>
+
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Phí vận chuyển</span>
+                    <span>@Model.ShippingFee.ToString("N0") đ</span>
+                </div>
+
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Giảm giá</span>
+                    <span>-@Model.DiscountAmount.ToString("N0") đ</span>
+                </div>
+
+                <hr />
+
+                <div class="d-flex justify-content-between fw-bold fs-5">
+                    <span>Tổng cộng</span>
+                    <span>@Model.TotalAmount.ToString("N0") đ</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .order-timeline {
+        position: relative;
+        padding-left: 8px;
+    }
+
+    .order-timeline-item {
+        position: relative;
+        display: flex;
+        gap: 16px;
+        padding-bottom: 28px;
+    }
+
+        .order-timeline-item:not(:last-child)::before {
+            content: "";
+            position: absolute;
+            left: 11px;
+            top: 25px;
+            bottom: 0;
+            width: 2px;
+            background: #e5e5e5;
+        }
+
+    .order-timeline-marker {
+        position: relative;
+        z-index: 1;
+        width: 24px;
+        height: 24px;
+        flex-shrink: 0;
+        border: 2px solid #c9c9c9;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #999;
+        background: white;
+        font-size: 9px;
+    }
+
+        .order-timeline-marker.current {
+            border-color: #171717;
+            background: #171717;
+            color: white;
+        }
+
+    .order-timeline-content {
+        flex: 1;
+        min-width: 0;
+        padding-top: 2px;
+    }
+
+    .order-timeline-item:last-child {
+        padding-bottom: 0;
+    }
+</style>
+```

@@ -1,0 +1,132 @@
+﻿@model CheckoutViewModel
+
+@{
+    ViewData["Title"] = "Thanh toán";
+}
+
+<div class="container py-5">
+    <div class="mb-5">
+        <p class="text-muted text-uppercase small">FashionStore</p>
+        <h1>Thông tin đặt hàng</h1>
+        <p class="text-muted">Vui lòng kiểm tra thông tin giao hàng của bạn.</p>
+    </div>
+
+    <form asp-controller="Orders" asp-action="Checkout" method="post">
+        @Html.AntiForgeryToken()
+
+        <div asp-validation-summary="ModelOnly"
+             class="alert alert-danger"></div>
+
+        <div class="row g-5">
+            <div class="col-lg-7">
+                <h4 class="mb-4">Thông tin người nhận</h4>
+
+                <div class="mb-3">
+                    <label asp-for="ReceiverName" class="form-label">
+                        Họ và tên người nhận
+                    </label>
+                    <input asp-for="ReceiverName" class="form-control" />
+                    <span asp-validation-for="ReceiverName"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Phone" class="form-label">
+                        Số điện thoại
+                    </label>
+                    <input asp-for="Phone" class="form-control" />
+                    <span asp-validation-for="Phone"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Address" class="form-label">
+                        Địa chỉ giao hàng
+                    </label>
+                    <textarea asp-for="Address"
+                              class="form-control"
+                              rows="3"
+                              placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố"></textarea>
+                    <span asp-validation-for="Address"
+                          class="text-danger"></span>
+                </div>
+
+                <h4 class="mb-3">Phương thức thanh toán</h4>
+
+                <div class="border p-3 mb-4">
+                    <label class="d-flex align-items-center gap-3">
+                        <input type="radio"
+                               asp-for="PaymentMethod"
+                               value="COD"
+                               checked />
+                        <span>
+                            <strong>Thanh toán khi nhận hàng (COD)</strong>
+                            <br />
+                            <small class="text-muted">
+                                Thanh toán trực tiếp cho nhân viên giao hàng.
+                            </small>
+                        </span>
+                    </label>
+                </div>
+
+                <button type="submit" class="fs-btn fs-btn-dark w-100">
+                    XÁC NHẬN ĐẶT HÀNG
+                </button>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="border p-4">
+                    <h4 class="mb-4">Đơn hàng của bạn</h4>
+
+                    @foreach (var item in Model.CartItems)
+                    {
+                        <div class="d-flex gap-3 mb-3">
+                            <img src="@item.ImageUrl"
+                                 alt="@item.ProductName"
+                                 style="width:75px;height:90px;object-fit:cover;"
+                                 onerror="this.src='https://placehold.co/75x90?text=Product'" />
+
+                            <div class="flex-grow-1">
+                                <strong>@item.ProductName</strong>
+                                <div class="small text-muted">
+                                    Size @item.Size - @item.Color
+                                </div>
+                                <div class="small text-muted">
+                                    Số lượng: @item.Quantity
+                                </div>
+                                <div>
+                                    @item.TotalPrice.ToString("N0") ₫
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <hr />
+
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Tạm tính</span>
+                        <span>@Model.SubTotal.ToString("N0") ₫</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Phí vận chuyển</span>
+                        <span>@Model.ShippingFee.ToString("N0") ₫</span>
+                    </div>
+
+                    <hr />
+
+                    <div class="d-flex justify-content-between">
+                        <strong>Tổng thanh toán</strong>
+                        <strong class="fs-5">
+                            @Model.TotalAmount.ToString("N0") ₫
+                        </strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
