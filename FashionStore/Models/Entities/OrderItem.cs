@@ -11,6 +11,7 @@ public class OrderItem
     public Order Order { get; set; } = null!;
 
     public int ProductVariantId { get; set; }
+    public ProductVariant ProductVariant { get; set; } = null!;
 
     public string ProductName { get; set; } = string.Empty;
 

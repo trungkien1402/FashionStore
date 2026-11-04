@@ -244,3 +244,4 @@ D:\Stu\C#\On_Tap\FashionStore\FashionStore\obj\Debug\net10.0\FashionStore.genrun
 D:\Stu\C#\On_Tap\FashionStore\FashionStore\obj\Debug\net10.0\ref\FashionStore.dll
 D:\Stu\C#\On_Tap\FashionStore\FashionStore\obj\Debug\net10.0\compressed\kplpq21hlb-{0}-khqoqxzbv7-khqoqxzbv7.gz
 D:\Stu\C#\On_Tap\FashionStore\FashionStore\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt
+D:\Stu\C#\On_Tap\FashionStore\FashionStore\obj\Debug\net10.0\FashionStore.sourcelink.json
