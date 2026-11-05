@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using System.Text.Json;
 using FashionStore.Data;
 using FashionStore.Models.Entities;
@@ -352,4 +352,74 @@ public class OrdersController : Controller
         return View(order);
     }
 
+    // POST: /Orders/CancelOrder
+    // Khách hàng tự hủy đơn khi đơn còn ở trạng thái Chờ xác nhận
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CancelOrder(int id)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (string.IsNullOrEmpty(userId))
+            return Challenge();
+
+        await using var transaction =
+            await _context.Database.BeginTransactionAsync();
+
+        try
+        {
+            var order = await _context.Orders
+                .Include(o => o.Items)
+                .FirstOrDefaultAsync(o => o.Id == id && o.UserId == userId);
+
+            if (order == null)
+                return NotFound();
+
+            if (order.Status != OrderStatus.PendingConfirmation)
+            {
+                TempData["Error"] = "Chỉ có thể hủy đơn hàng đang ở trạng thái Chờ xác nhận.";
+                return RedirectToAction(nameof(Details), new { id });
+            }
+
+            if (!order.InventoryRestored)
+            {
+                // Hoàn lại số lượng tồn kho
+                foreach (var item in order.Items)
+                {
+                    var variant = await _context.ProductVariants
+                        .FirstOrDefaultAsync(v => v.Id == item.ProductVariantId);
+
+                    if (variant != null)
+                        variant.StockQuantity += item.Quantity;
+                }
+
+                order.InventoryRestored = true;
+            }
+
+            var oldStatus = order.Status;
+            order.Status = OrderStatus.Cancelled;
+
+            _context.OrderStatusHistories.Add(new OrderStatusHistory
+            {
+                OrderId = order.Id,
+                OldStatus = oldStatus,
+                NewStatus = OrderStatus.Cancelled,
+                ChangedByUserId = userId,
+                Note = "Khách hàng tự hủy đơn hàng.",
+                CreatedAt = DateTime.UtcNow
+            });
+
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            TempData["Success"] = "Đơn hàng đã được hủy thành công.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+        catch
+        {
+            try { await transaction.RollbackAsync(); } catch { }
+            TempData["Error"] = "Có lỗi xảy ra khi hủy đơn hàng. Vui lòng thử lại.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+    }
 }

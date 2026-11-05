@@ -1,7 +1,6 @@
-﻿using FashionStore.Models.Entities;
+using FashionStore.Models.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
 
 namespace FashionStore.Data;
 
@@ -26,6 +25,10 @@ public class ApplicationDbContext
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
 
     public DbSet<OrderStatusHistory> OrderStatusHistories { get; set; }
+
+    public DbSet<Shipment> Shipments => Set<Shipment>();
+
+    public DbSet<ShipmentHistory> ShipmentHistories => Set<ShipmentHistory>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -74,7 +77,6 @@ public class ApplicationDbContext
             .WithMany(x => x.Items)
             .HasForeignKey(x => x.OrderId);
 
-
         builder.Entity<OrderStatusHistory>(entity =>
         {
             entity.HasKey(h => h.Id);
@@ -82,7 +84,7 @@ public class ApplicationDbContext
             entity.HasOne(h => h.Order)
                 .WithMany()
                 .HasForeignKey(h => h.OrderId)
-                .OnDelete(DeleteBehavior.Restrict); // Sửa Cascade thành Restrict ở đây
+                .OnDelete(DeleteBehavior.Restrict);
 
             entity.HasOne(h => h.ChangedByUser)
                 .WithMany()
@@ -91,6 +93,46 @@ public class ApplicationDbContext
 
             entity.Property(h => h.Note)
                 .HasMaxLength(500);
+        });
+
+        // --- Shipment ---
+        builder.Entity<Shipment>(entity =>
+        {
+            entity.HasKey(s => s.Id);
+
+            entity.HasIndex(s => s.TrackingCode).IsUnique();
+
+            entity.Property(s => s.CODAmount).HasPrecision(18, 2);
+
+            entity.HasOne(s => s.Order)
+                .WithMany(o => o.Shipments)
+                .HasForeignKey(s => s.OrderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(s => s.Shipper)
+                .WithMany()
+                .HasForeignKey(s => s.ShipperId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.Property(s => s.Note).HasMaxLength(500);
+        });
+
+        // --- ShipmentHistory ---
+        builder.Entity<ShipmentHistory>(entity =>
+        {
+            entity.HasKey(h => h.Id);
+
+            entity.HasOne(h => h.Shipment)
+                .WithMany(s => s.Histories)
+                .HasForeignKey(h => h.ShipmentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(h => h.ChangedByUser)
+                .WithMany()
+                .HasForeignKey(h => h.ChangedByUserId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            entity.Property(h => h.Note).HasMaxLength(500);
         });
     }
 }
