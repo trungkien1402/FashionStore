@@ -1,0 +1,252 @@
+﻿@model FashionStore.Models.ViewModels.ProductListViewModel
+
+@{
+    ViewData["Title"] = "Sản phẩm";
+
+    string FormatPrice(decimal? price)
+    {
+        return price.HasValue
+            ? price.Value.ToString("N0") + " đ"
+            : "";
+    }
+}
+
+<!-- PAGE BANNER -->
+<section class="fs-shop-banner">
+    <div>
+        <p class="fs-eyebrow">FASHIONSTORE / COLLECTION</p>
+        <h1>Our Products</h1>
+        <p>Khám phá những thiết kế dành riêng cho phong cách của bạn.</p>
+    </div>
+</section>
+
+<div class="fs-shop-container">
+
+    <!-- BREADCRUMB -->
+    <div class="fs-breadcrumb">
+        <a asp-controller="Home" asp-action="Index">Trang chủ</a>
+        <span>/</span>
+        <span>Sản phẩm</span>
+    </div>
+
+    <div class="fs-shop-heading">
+        <div>
+            <p class="fs-eyebrow">EXPLORE OUR COLLECTION</p>
+            <h2>Tất cả sản phẩm</h2>
+            <p class="fs-shop-count">
+                Tìm thấy <strong>@Model.TotalItems</strong> sản phẩm
+            </p>
+        </div>
+    </div>
+
+    <div class="fs-shop-layout">
+
+        <!-- FILTER SIDEBAR -->
+        <aside class="fs-filter-sidebar">
+            <form asp-controller="Products"
+                  asp-action="Index"
+                  method="get">
+
+                <div class="fs-filter-heading">
+                    <h3>Bộ lọc</h3>
+                    <a asp-controller="Products"
+                       asp-action="Index">Xóa tất cả</a>
+                </div>
+
+                <div class="fs-filter-group">
+                    <label for="keyword">Tìm kiếm</label>
+                    <input id="keyword"
+                           name="keyword"
+                           value="@Model.Keyword"
+                           class="fs-form-control"
+                           placeholder="Tên sản phẩm..." />
+                </div>
+
+                <div class="fs-filter-group">
+                    <label for="categoryId">Danh mục</label>
+                    <select id="categoryId"
+                            name="categoryId"
+                            class="fs-form-control">
+                        <option value="">Tất cả danh mục</option>
+
+                        @foreach (var category in Model.Categories)
+                        {
+                            if (Model.CategoryId == category.Id)
+                            {
+                                <option value="@category.Id" selected>
+                                    @category.Name
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@category.Id">
+                                    @category.Name
+                                </option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="fs-filter-group">
+                    <label>Khoảng giá (VNĐ)</label>
+
+                    <div class="fs-price-inputs">
+                        <input type="number"
+                               name="minPrice"
+                               value="@Model.MinPrice"
+                               min="0"
+                               placeholder="Từ"
+                               class="fs-form-control" />
+
+                        <input type="number"
+                               name="maxPrice"
+                               value="@Model.MaxPrice"
+                               min="0"
+                               placeholder="Đến"
+                               class="fs-form-control" />
+                    </div>
+                </div>
+
+                <div class="fs-filter-group">
+                    <label for="sortOrder">Sắp xếp</label>
+                    <select id="sortOrder"
+                            name="sortOrder"
+                            class="fs-form-control">
+                        <option value="newest"
+                                selected="@(Model.SortOrder == "newest")">
+                            Mới nhất
+                        </option>
+                        <option value="price-asc"
+                                selected="@(Model.SortOrder == "price-asc")">
+                            Giá thấp đến cao
+                        </option>
+                        <option value="price-desc"
+                                selected="@(Model.SortOrder == "price-desc")">
+                            Giá cao đến thấp
+                        </option>
+                        <option value="name-asc"
+                                selected="@(Model.SortOrder == "name-asc")">
+                            Tên A - Z
+                        </option>
+                    </select>
+                </div>
+
+                <button type="submit" class="fs-btn w-100">
+                    Áp dụng bộ lọc
+                </button>
+            </form>
+        </aside>
+
+        <!-- PRODUCT LIST -->
+        <div class="fs-shop-products">
+
+            @if (Model.Products.Any())
+            {
+                <div class="fs-product-grid">
+                    @foreach (var product in Model.Products)
+                    {
+                        <a asp-controller="Products"
+                           asp-action="Details"
+                           asp-route-id="@product.Id"
+                           class="fs-product-card">
+
+                            <div class="fs-product-image">
+                                @if (!string.IsNullOrWhiteSpace(product.ImageUrl))
+                                {
+                                    <img src="@product.ImageUrl"
+                                         alt="@product.Name"
+                                         loading="lazy" />
+                                }
+                                else
+                                {
+                                    <div class="fs-product-placeholder">
+                                        FASHIONSTORE
+                                    </div>
+                                }
+
+                                <span class="fs-product-tag">FASHION</span>
+                            </div>
+
+                            <div class="fs-product-info">
+                                <p class="fs-product-category">
+                                    @(product.Category?.Name ?? "Fashion")
+                                </p>
+
+                                <h3>@product.Name</h3>
+
+                                <div class="fs-product-bottom">
+                                    <span class="fs-product-price">
+                                        @product.Price.ToString("N0") đ
+                                    </span>
+                                    <span class="fs-product-arrow">→</span>
+                                </div>
+                            </div>
+                        </a>
+                    }
+                </div>
+
+                <!-- PAGINATION -->
+                @if (Model.TotalPages > 1)
+                {
+                    <nav class="fs-pagination" aria-label="Phân trang">
+                        @if (Model.CurrentPage > 1)
+                        {
+                            <a asp-action="Index"
+                               asp-route-keyword="@Model.Keyword"
+                               asp-route-categoryId="@Model.CategoryId"
+                               asp-route-minPrice="@Model.MinPrice"
+                               asp-route-maxPrice="@Model.MaxPrice"
+                               asp-route-sortOrder="@Model.SortOrder"
+                               asp-route-page="@(Model.CurrentPage - 1)">
+                                ←
+                            </a>
+                        }
+
+                        @for (int i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <a asp-action="Index"
+                               asp-route-keyword="@Model.Keyword"
+                               asp-route-categoryId="@Model.CategoryId"
+                               asp-route-minPrice="@Model.MinPrice"
+                               asp-route-maxPrice="@Model.MaxPrice"
+                               asp-route-sortOrder="@Model.SortOrder"
+                               asp-route-page="@i"
+                               class="@(i == Model.CurrentPage ? "active" : "")">
+                                @i
+                            </a>
+                        }
+
+                        @if (Model.CurrentPage < Model.TotalPages)
+                        {
+                            <a asp-action="Index"
+                               asp-route-keyword="@Model.Keyword"
+                               asp-route-categoryId="@Model.CategoryId"
+                               asp-route-minPrice="@Model.MinPrice"
+                               asp-route-maxPrice="@Model.MaxPrice"
+                               asp-route-sortOrder="@Model.SortOrder"
+                               asp-route-page="@(Model.CurrentPage + 1)">
+                                →
+                            </a>
+                        }
+                    </nav>
+                }
+            }
+            else
+            {
+                <div class="fs-no-products">
+                    <div class="fs-no-products-icon">⌕</div>
+                    <h3>Không tìm thấy sản phẩm</h3>
+                    <p>
+                        Không có sản phẩm phù hợp với điều kiện tìm kiếm.
+                        Hãy thử thay đổi bộ lọc của bạn.
+                    </p>
+                    <a asp-controller="Products"
+                       asp-action="Index"
+                       class="fs-btn">
+                        Xem tất cả sản phẩm
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

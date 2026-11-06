@@ -1,0 +1,168 @@
+@model List<FashionStore.Models.Entities.Shipment>
+@using FashionStore.Models.Enums
+
+@{
+    ViewData["Title"] = "Quản lý vận chuyển & giao hàng";
+    var selectedStatus = ViewBag.SelectedStatus as ShipmentStatus?;
+    var search = ViewBag.Search as string;
+
+    string GetShipmentStatusName(ShipmentStatus status) => status switch
+    {
+        ShipmentStatus.Assigned => "Đã phân công",
+        ShipmentStatus.PickedUp => "Đã lấy hàng",
+        ShipmentStatus.InTransit => "Đang giao hàng",
+        ShipmentStatus.Delivered => "Giao thành công",
+        ShipmentStatus.Failed => "Giao thất bại",
+        ShipmentStatus.Returned => "Đã hoàn kho",
+        _ => status.ToString()
+    };
+
+    string GetStatusBadgeClass(ShipmentStatus status) => status switch
+    {
+        ShipmentStatus.Assigned => "bg-secondary",
+        ShipmentStatus.PickedUp => "bg-info text-dark",
+        ShipmentStatus.InTransit => "bg-primary",
+        ShipmentStatus.Delivered => "bg-success",
+        ShipmentStatus.Failed => "bg-danger",
+        ShipmentStatus.Returned => "bg-dark",
+        _ => "bg-light text-dark"
+    };
+}
+
+<div class="container-fluid px-0">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+        <div>
+            <div class="text-muted small text-uppercase">Vận chuyển</div>
+            <h2 class="fw-bold mb-0">Quản lý giao hàng</h2>
+            <p class="text-muted mb-0">Theo dõi các lượt giao hàng, phân công và kiểm soát shipper.</p>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- BỘ LỌC VÀ TÌM KIẾM -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form asp-action="Index" method="get" class="row g-3">
+                <div class="col-md-4">
+                    <input type="text" name="search" value="@search" class="form-control"
+                           placeholder="Mã vận đơn, mã đơn, khách, shipper..." />
+                </div>
+
+                <div class="col-md-4">
+                    <select name="status" class="form-select">
+                        <option value="">Tất cả trạng thái vận chuyển</option>
+                        @foreach (ShipmentStatus st in Enum.GetValues(typeof(ShipmentStatus)))
+                        {
+                            if (selectedStatus == st)
+                            {
+                                <option value="@((int)st)" selected>@GetShipmentStatusName(st)</option>
+                            }
+                            else
+                            {
+                                <option value="@((int)st)">@GetShipmentStatusName(st)</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-dark">
+                        <i class="bi bi-search me-1"></i> Tìm kiếm
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary">Đặt lại</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- DANH SÁCH VẬN ĐƠN -->
+    @if (!Model.Any())
+    {
+        <div class="card border-0 shadow-sm text-center py-5">
+            <div class="py-4">
+                <i class="bi bi-truck text-muted" style="font-size: 3rem;"></i>
+                <h5 class="mt-3">Chưa có lượt giao hàng nào</h5>
+                <p class="text-muted">Các lượt giao sẽ hiển thị ở đây khi bạn phân công Shipper từ trang Chi tiết đơn hàng.</p>
+                <a asp-controller="AdminOrders" asp-action="Index" class="btn btn-outline-dark">
+                    Xem danh sách đơn hàng
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card border-0 shadow-sm">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3">Mã vận đơn</th>
+                            <th>Mã đơn hàng</th>
+                            <th>Shipper</th>
+                            <th>Người nhận & Địa chỉ</th>
+                            <th>Tiền COD</th>
+                            <th>Trạng thái</th>
+                            <th>Ngày tạo</th>
+                            <th class="text-end pe-3">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-3 fw-bold text-primary">@item.TrackingCode</td>
+                                <td>
+                                    <a asp-controller="AdminOrders" asp-action="Details" asp-route-id="@item.OrderId" class="text-decoration-none fw-semibold">
+                                        @item.Order?.OrderCode
+                                    </a>
+                                </td>
+                                <td>
+                                    <div class="fw-semibold">@(item.Shipper?.FullName ?? "Chưa chỉ định")</div>
+                                    <small class="text-muted">@(item.Shipper?.PhoneNumber ?? "")</small>
+                                </td>
+                                <td>
+                                    <div class="fw-semibold">@item.Order?.ReceiverName</div>
+                                    <div class="small text-muted text-truncate" style="max-width: 200px;" title="@item.Order?.Address">
+                                        @item.Order?.Address
+                                    </div>
+                                    <small class="text-muted">ĐT: @item.Order?.Phone</small>
+                                </td>
+                                <td class="fw-semibold text-danger">
+                                    @(item.CODAmount > 0 ? item.CODAmount.ToString("N0") + " đ" : "0 đ (Đã thanh toán)")
+                                </td>
+                                <td>
+                                    <span class="badge @GetStatusBadgeClass(item.Status)">
+                                        @GetShipmentStatusName(item.Status)
+                                    </span>
+                                </td>
+                                <td class="small text-muted">
+                                    @item.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                                </td>
+                                <td class="text-end pe-3">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-dark">
+                                        Chi tiết
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
