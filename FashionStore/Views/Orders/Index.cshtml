@@ -1,4 +1,4 @@
-﻿@model List<FashionStore.Models.Entities.Order>
+@model List<FashionStore.Models.Entities.Order>
 
 @{
     ViewData["Title"] = "Đơn hàng của tôi";
@@ -12,6 +12,22 @@
         </h1>
         <p class="text-muted">Theo dõi và xem lại các đơn hàng bạn đã đặt.</p>
     </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
 
     @if (Model == null || !Model.Any())
     {
@@ -80,6 +96,16 @@
                                    class="btn btn-outline-dark btn-sm">
                                     Chi tiết
                                 </a>
+                                @if (order.Status == FashionStore.Models.Enums.OrderStatus.PendingConfirmation)
+                                {
+                                    <form asp-action="CancelOrder" asp-route-id="@order.Id" method="post" class="d-inline"
+                                          onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-outline-danger btn-sm ms-1">
+                                            Hủy đơn
+                                        </button>
+                                    </form>
+                                }
                             </td>
                         </tr>
                     }

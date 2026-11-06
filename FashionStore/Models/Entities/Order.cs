@@ -1,4 +1,4 @@
-﻿using FashionStore.Models.Enums;
+using FashionStore.Models.Enums;
 
 namespace FashionStore.Models.Entities;
 
@@ -28,6 +28,7 @@ public class Order
 
     public OrderStatus Status { get; set; }
         = OrderStatus.PendingConfirmation;
+
     public PaymentMethod PaymentMethod { get; set; } = PaymentMethod.COD;
 
     public PaymentStatus PaymentStatus { get; set; }
@@ -37,4 +38,11 @@ public class Order
 
     public ICollection<OrderItem> Items { get; set; }
         = new List<OrderItem>();
+
+    /// <summary>
+    /// Cờ bảo vệ chống hoàn kho nhiều lần (Cancelled / DeliveryFailed / Returned).
+    /// </summary>
+    public bool InventoryRestored { get; set; } = false;
+
+    public ICollection<Shipment> Shipments { get; set; } = new List<Shipment>();
 }

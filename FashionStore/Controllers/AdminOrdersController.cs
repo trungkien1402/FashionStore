@@ -1,4 +1,4 @@
-﻿
+
 using FashionStore.Data;
 using FashionStore.Models.Entities;
 using FashionStore.Models.Enums;
@@ -60,6 +60,16 @@ public class AdminOrdersController : Controller
 
         ViewBag.StatusHistories = histories;
 
+        // Lấy lô giao hàng (shipments) của đơn
+        var shipments = await _context.Shipments
+            .Include(s => s.Shipper)
+            .Where(s => s.OrderId == id)
+            .OrderByDescending(s => s.CreatedAt)
+            .AsNoTracking()
+            .ToListAsync();
+
+        ViewBag.Shipments = shipments;
+
         return View(order);
     }
 
@@ -104,8 +114,14 @@ public class AdminOrdersController : Controller
 
             var oldStatus = order.Status;
 
-            // Nếu hủy đơn, hoàn lại số lượng hàng đã trừ lúc checkout
-            if (newStatus == OrderStatus.Cancelled)
+            // Hoàn kho nếu chuyển sang Cancelled, DeliveryFailed, hoặc Returned
+            // Dùng cờ InventoryRestored để tránh hoàn kho nhiều lần.
+            bool needsInventoryRestore =
+                newStatus == OrderStatus.Cancelled ||
+                newStatus == OrderStatus.DeliveryFailed ||
+                newStatus == OrderStatus.Returned;
+
+            if (needsInventoryRestore && !order.InventoryRestored)
             {
                 foreach (var item in order.Items)
                 {
@@ -120,6 +136,8 @@ public class AdminOrdersController : Controller
 
                     variant.StockQuantity += item.Quantity;
                 }
+
+                order.InventoryRestored = true;
             }
 
             // Cập nhật trạng thái đơn hàng
@@ -132,7 +150,7 @@ public class AdminOrdersController : Controller
                 OldStatus = oldStatus,
                 NewStatus = newStatus,
                 ChangedByUserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
-                Note = $"Cập nhật trạng thái: {oldStatus} → {newStatus}",
+                Note = $"Cập nhật trạng thái: {GetStatusName(oldStatus)} → {GetStatusName(newStatus)}",
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -195,6 +213,19 @@ public class AdminOrdersController : Controller
             _ => false
         };
     }
+
+    private static string GetStatusName(OrderStatus status) => status switch
+    {
+        OrderStatus.PendingConfirmation => "Chờ xác nhận",
+        OrderStatus.Confirmed => "Đã xác nhận",
+        OrderStatus.Processing => "Đang xử lý",
+        OrderStatus.Shipping => "Đang giao hàng",
+        OrderStatus.Delivered => "Đã giao thành công",
+        OrderStatus.Cancelled => "Đã hủy",
+        OrderStatus.DeliveryFailed => "Giao hàng thất bại",
+        OrderStatus.Returned => "Đã hoàn hàng",
+        _ => status.ToString()
+    };
 
     [HttpPost]
     [ValidateAntiForgeryToken]
