@@ -56,6 +56,8 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 // Services
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.Configure<VietQrOptions>(builder.Configuration.GetSection("VietQR"));
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 
 var app = builder.Build();
 

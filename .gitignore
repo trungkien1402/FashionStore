@@ -1,0 +1,15 @@
+# Local IDE state and build output
+.vs/
+.idea/
+**/bin/
+**/obj/
+*.user
+*.suo
+
+# Local tools, preview helpers, and private configuration
+.tools/
+.env
+.env.*
+!.env.example
+**/appsettings.Local.json
+**/appsettings.*.local.json

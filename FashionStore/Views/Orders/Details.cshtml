@@ -1,10 +1,9 @@
-﻿```cshtml
 @model FashionStore.Models.Entities.Order
 @using FashionStore.Models.Entities
 @using FashionStore.Models.Enums
 
 @{
-    ViewData["Title"] = "Chi tiết đơn hàng";
+    ViewData["Title"] = "Chi tiết đơn hàng - " + Model.OrderCode;
 
     var paymentMethodText = Model.PaymentMethod switch
     {
@@ -37,6 +36,7 @@
 
     var histories = ViewBag.StatusHistories as List<OrderStatusHistory>
                     ?? new List<OrderStatusHistory>();
+    histories = histories.OrderBy(h => h.CreatedAt).ThenBy(h => h.Id).ToList();
 
     string GetStatusName(OrderStatus status) => status switch
     {
@@ -48,13 +48,28 @@
         OrderStatus.Cancelled => "Đã hủy",
         OrderStatus.DeliveryFailed => "Giao hàng thất bại",
         OrderStatus.Returned => "Đã trả hàng",
-        _ => "Không xác định"
+        _ => status.ToString()
     };
 
     bool isExceptionalStatus =
         Model.Status == OrderStatus.Cancelled ||
         Model.Status == OrderStatus.DeliveryFailed ||
         Model.Status == OrderStatus.Returned;
+
+    string? GetHistoryNote(OrderStatusHistory history)
+    {
+        if (string.IsNullOrWhiteSpace(history.Note)) return null;
+
+        var note = history.Note;
+        if (note.StartsWith("Cập nhật trạng thái:", StringComparison.OrdinalIgnoreCase))
+        {
+            foreach (OrderStatus s in Enum.GetValues<OrderStatus>())
+            {
+                note = note.Replace(s.ToString(), GetStatusName(s));
+            }
+        }
+        return note;
+    }
 }
 
 <section class="container py-5">
@@ -84,21 +99,22 @@
                     <div class="order-timeline">
                         @foreach (var history in histories)
                         {
-                            var isCurrent = history.NewStatus == Model.Status;
+                            var isCurrent = history == histories.Last() && history.NewStatus == Model.Status;
+                            var note = GetHistoryNote(history);
 
                             <div class="order-timeline-item">
-                                <div class="order-timeline-marker @(isCurrent ? "current" : "")">
+                                <div class="order-timeline-marker @(isCurrent ? "current" : "")" aria-hidden="true">
                                     @if (history.NewStatus == OrderStatus.Delivered)
                                     {
-                                        <i class="bi bi-check-lg"></i>
+                                        <span>✓</span>
                                     }
                                     else if (history.NewStatus == OrderStatus.Cancelled)
                                     {
-                                        <i class="bi bi-x-lg"></i>
+                                        <span>×</span>
                                     }
                                     else
                                     {
-                                        <i class="bi bi-circle-fill"></i>
+                                        <span>•</span>
                                     }
                                 </div>
 
@@ -113,10 +129,10 @@
                                         </span>
                                     </div>
 
-                                    @if (!string.IsNullOrWhiteSpace(history.Note))
+                                    @if (!string.IsNullOrWhiteSpace(note))
                                     {
                                         <p class="text-muted small mt-2 mb-0">
-                                            @history.Note
+                                            @note
                                         </p>
                                     }
 
@@ -208,6 +224,22 @@
                     <strong>@paymentMethodText</strong>
                 </div>
 
+                @if (Model.PaymentMethod == PaymentMethod.VietQR &&
+                    Model.PaymentStatus == PaymentStatus.Pending && !isExceptionalStatus)
+                {
+                    <a asp-action="PaymentQR" asp-route-id="@Model.Id" class="btn btn-dark w-100 mb-2">
+                        @(Model.TransferReportedAt.HasValue ? "Xem thông tin thanh toán" : "Thanh toán qua mã QR")
+                    </a>
+                    @if (Model.TransferReportedAt.HasValue)
+                    {
+                        <p class="small text-muted mb-3">Bạn đã gửi thông báo chuyển khoản. Vui lòng chờ cửa hàng xác nhận và không chuyển tiền lần nữa.</p>
+                    }
+                    else
+                    {
+                        <p class="small text-muted mb-3">Vui lòng quét mã QR để hoàn tất thanh toán cho đơn hàng này.</p>
+                    }
+                }
+
                 <hr />
 
                 <div class="d-flex justify-content-between mb-2">
@@ -273,6 +305,7 @@
         color: #999;
         background: white;
         font-size: 9px;
+        line-height: 1;
     }
 
         .order-timeline-marker.current {
@@ -285,10 +318,10 @@
         flex: 1;
         min-width: 0;
         padding-top: 2px;
+        overflow-wrap: anywhere;
     }
 
     .order-timeline-item:last-child {
         padding-bottom: 0;
     }
 </style>
-```

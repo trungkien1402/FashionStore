@@ -1,0 +1,50 @@
+@model FashionStore.Models.Entities.Order
+@using FashionStore.Models.ViewModels
+@using System.Globalization
+@{
+    Layout = "_PaymentLayout";
+    ViewData["Title"] = "Thanh toán đơn hàng";
+    var info = ViewBag.PaymentInfo as PaymentInfoViewModel;
+    var canPay = info?.CanPay == true && !string.IsNullOrWhiteSpace(info.QrImageUrl);
+    var reported = info?.TransferReported ?? Model.TransferReportedAt.HasValue;
+    string Money(decimal amount) => amount.ToString("N0", CultureInfo.GetCultureInfo("vi-VN")) + " ₫";
+}
+<section class="payment-page" id="paymentPage" data-can-pay="@(canPay ? "true" : "false")" data-reported="@(reported ? "true" : "false")"
+         data-status-url="@Url.Action("CheckPaymentStatus", "Orders", new { orderId = Model.Id })"
+         data-details-url="@Url.Action("Details", "Orders", new { id = Model.Id })"
+         data-success-url="@Url.Action("Success", "Orders", new { id = Model.Id })">
+    <nav class="pay-steps" aria-label="Tiến trình đặt hàng"><span class="is-done">01 <span>Thông tin</span> <b aria-hidden="true">✓</b></span><i></i><span class="is-current" aria-current="step">02 <span>Thanh toán</span></span><i></i><span>03 <span>Hoàn tất</span></span></nav>
+    <div class="pay-intro"><p class="pay-eyebrow">CHỈ CÒN MỘT BƯỚC NỮA</p><h1>Một lựa chọn đẹp.<br /><em>Sắp thuộc về bạn.</em></h1><p>Quét mã để thanh toán. Phần còn lại, để FashionStore chăm chút.</p></div>
+    <div class="pay-grid">
+        <article class="pay-panel pay-qr-panel">
+            <div class="pay-panel-top"><span class="pay-eyebrow">THANH TOÁN VIETQR</span><span class="pay-pill">Chuyển khoản ngân hàng</span></div>
+            <div id="paymentClosed" class="pay-closed @(canPay ? "d-none" : "")" role="alert"><span class="pay-state-icon" aria-hidden="true">!</span><h2>Thông tin thanh toán đã thay đổi</h2><p id="paymentClosedText">Đơn hàng hiện không nhận thanh toán QR. Vui lòng xem trạng thái mới nhất.</p><a asp-action="Details" asp-route-id="@Model.Id" class="pay-button">Xem chi tiết đơn hàng</a></div>
+            @if (canPay && info != null)
+            {
+                <div id="paymentControlsContainer">
+                    <div class="pay-amount"><span>Tổng thanh toán</span><strong>@Money(info.Amount)</strong><small>Đã bao gồm phí vận chuyển</small></div>
+                    <div class="pay-qr-frame"><div class="pay-qr-corners"><img id="qrImageElement" src="@info.QrImageUrl" alt="Mã QR thanh toán @Money(info.Amount) cho đơn @Model.OrderCode" width="270" height="320" /></div></div>
+                    <div id="qrLoadError" class="pay-notice d-none" role="alert">Không tải được mã QR. Bạn có thể chuyển khoản thủ công theo thông tin bên dưới. <button id="retryQr" type="button" class="pay-text-button">Thử tải lại</button></div>
+                    <p class="pay-qr-caption">Mở ứng dụng ngân hàng và chọn <strong>Quét mã QR</strong></p>
+                    <div class="pay-bank"><span class="pay-bank-mark" aria-hidden="true">↗</span><div><strong>@info.BankName</strong><span>@info.AccountName</span></div></div>
+                    <div class="pay-transfer-row"><div><span>Số tài khoản</span><strong>@info.AccountNo</strong></div><button type="button" class="pay-copy" data-copy="@info.AccountNo" aria-label="Sao chép số tài khoản">Sao chép <span aria-hidden="true">⧉</span></button></div>
+                    <div class="pay-transfer-row pay-reference"><div><span>Nội dung chuyển khoản</span><strong>@info.TransferContent</strong></div><button type="button" class="pay-copy" data-copy="@info.TransferContent" aria-label="Sao chép nội dung chuyển khoản">Sao chép <span aria-hidden="true">⧉</span></button></div>
+                    <p class="pay-help">Giữ đúng số tiền và nội dung trên để cửa hàng đối chiếu đơn của bạn.</p>
+                    <form id="reportTransferForm" method="post" asp-controller="Orders" asp-action="ReportTransfer" hidden>@Html.AntiForgeryToken()<input type="hidden" name="orderId" value="@Model.Id" /></form>
+                    <div id="reportFeedback" class="d-none" role="status" aria-live="polite"></div>
+                    <button id="btnReportTransfer" class="pay-button" type="button" disabled="@reported">@(reported ? "Đã gửi thông báo chuyển khoản" : "Tôi đã chuyển khoản")</button>
+                    <div class="pay-status" id="pollingAlert"><span class="pay-status-dot" aria-hidden="true"></span><span id="pollingStatusText" aria-live="polite">@(reported ? "Đã thông báo. Chờ cửa hàng xác nhận; không chuyển tiền lần nữa." : "Cửa hàng sẽ xác nhận sau khi kiểm tra chuyển khoản.")</span></div>
+                </div>
+            }
+        </article>
+        <aside class="pay-sidebar">
+            <div class="pay-summary"><p class="pay-eyebrow">ĐƠN HÀNG CỦA BẠN</p><h2>Những điều bạn chọn.</h2><span class="pay-order-code">@Model.OrderCode</span><div class="pay-rule"></div>
+                <dl class="pay-totals"><div><dt>Tạm tính</dt><dd>@Money(Model.SubTotal)</dd></div><div><dt>Phí vận chuyển</dt><dd>@Money(Model.ShippingFee)</dd></div>@if (Model.DiscountAmount > 0) { <div><dt>Giảm giá</dt><dd>−@Money(Model.DiscountAmount)</dd></div> }<div class="pay-total"><dt>Tổng cộng</dt><dd>@Money(Model.TotalAmount)</dd></div></dl>
+                <a class="pay-detail-link" asp-action="Details" asp-route-id="@Model.Id">Xem chi tiết đơn hàng <span aria-hidden="true">↗</span></a>
+            </div>
+            <div class="pay-guide"><p class="pay-eyebrow">THANH TOÁN THẬT DỄ</p><ol><li><span>01</span><div><strong>Quét mã & chuyển khoản</strong><p>QR đã điền sẵn số tiền và nội dung cho bạn.</p></div></li><li><span>02</span><div><strong>Báo cho FashionStore</strong><p>Bấm “Tôi đã chuyển khoản” sau khi giao dịch hoàn tất.</p></div></li><li><span>03</span><div><strong>Chờ cửa hàng xác nhận</strong><p>Bạn có thể rời trang và theo dõi trong đơn hàng.</p></div></li></ol></div>
+            <p class="pay-sidebar-note">Một chút lưu ý: hãy giữ biên lai chuyển khoản cho đến khi đơn hàng được xác nhận.</p>
+        </aside>
+    </div>
+</section>
+@section Scripts { <script src="~/js/payment.js" asp-append-version="true"></script> }

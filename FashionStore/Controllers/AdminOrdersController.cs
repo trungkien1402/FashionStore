@@ -1,5 +1,6 @@
-﻿
+
 using FashionStore.Data;
+using FashionStore.Services.Interfaces;
 using FashionStore.Models.Entities;
 using FashionStore.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
@@ -13,10 +14,12 @@ namespace FashionStore.Controllers;
 public class AdminOrdersController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly IPaymentService _payments;
 
-    public AdminOrdersController(ApplicationDbContext context)
+    public AdminOrdersController(ApplicationDbContext context, IPaymentService payments)
     {
         _context = context;
+        _payments = payments;
     }
 
     // GET: /AdminOrders
@@ -200,75 +203,28 @@ public class AdminOrdersController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdatePaymentStatus(int id, PaymentStatus newStatus)
     {
-        if (!Enum.IsDefined(typeof(PaymentStatus), newStatus))
+        if (!ModelState.IsValid || !Enum.IsDefined(newStatus))
         {
             TempData["Error"] = "Trạng thái thanh toán không hợp lệ.";
             return RedirectToAction(nameof(Details), new { id });
         }
-
-        var order = await _context.Orders
-            .FirstOrDefaultAsync(o => o.Id == id);
-
-        if (order == null)
-            return NotFound();
-
-        var currentStatus = order.PaymentStatus;
-
-        // Không cho phép cập nhật lại đơn đã hoàn tiền.
-        if (currentStatus == PaymentStatus.Refunded)
-        {
-            TempData["Error"] = "Đơn hàng đã hoàn tiền, không thể cập nhật tiếp.";
-            return RedirectToAction(nameof(Details), new { id });
-        }
-
-        // Chỉ cho phép chuyển sang Paid từ Pending hoặc Failed.
-        if (newStatus == PaymentStatus.Paid)
-        {
-            if (currentStatus != PaymentStatus.Pending &&
-                currentStatus != PaymentStatus.Failed)
-            {
-                TempData["Error"] = "Không thể cập nhật trạng thái thanh toán này.";
-                return RedirectToAction(nameof(Details), new { id });
-            }
-        }
-        // Chỉ được đánh dấu Failed khi chưa thanh toán.
-        else if (newStatus == PaymentStatus.Failed)
-        {
-            if (currentStatus != PaymentStatus.Pending)
-            {
-                TempData["Error"] = "Không thể chuyển trạng thái thanh toán hiện tại sang thất bại.";
-                return RedirectToAction(nameof(Details), new { id });
-            }
-        }
-        // Chỉ hoàn tiền khi đã thanh toán và đơn đã hủy, giao thất bại hoặc hoàn hàng.
-        else if (newStatus == PaymentStatus.Refunded)
-        {
-            if (currentStatus != PaymentStatus.Paid)
-            {
-                TempData["Error"] = "Chỉ có thể hoàn tiền cho đơn hàng đã thanh toán.";
-                return RedirectToAction(nameof(Details), new { id });
-            }
-
-            if (order.Status != OrderStatus.Cancelled &&
-                order.Status != OrderStatus.DeliveryFailed &&
-                order.Status != OrderStatus.Returned)
-            {
-                TempData["Error"] = "Đơn hàng chưa đủ điều kiện ghi nhận hoàn tiền.";
-                return RedirectToAction(nameof(Details), new { id });
-            }
-        }
-        else
-        {
-            TempData["Error"] = "Trạng thái thanh toán không được hỗ trợ.";
-            return RedirectToAction(nameof(Details), new { id });
-        }
-
-        order.PaymentStatus = newStatus;
-
-        await _context.SaveChangesAsync();
-
-        TempData["Success"] = "Cập nhật trạng thái thanh toán thành công.";
-
+        var actor = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(actor)) return Challenge();
+        var result = await _payments.UpdateStatusAsync(id, newStatus, actor);
+        TempData[result.Success ? "Success" : "Error"] = result.Message;
         return RedirectToAction(nameof(Details), new { id });
+    }
+
+    [HttpGet]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+    public async Task<IActionResult> PaymentHistory(int id)
+    {
+        if (!await _context.Orders.AnyAsync(o => o.Id == id)) return NotFound();
+        var histories = await _context.PaymentHistories.AsNoTracking()
+            .Where(h => h.OrderId == id).OrderBy(h => h.CreatedAt).ThenBy(h => h.Id)
+            .Select(h => new { h.Id, h.Event, oldStatus = h.OldStatus.ToString(),
+                newStatus = h.NewStatus.ToString(), h.Amount, h.ActorUserId, h.CreatedAt })
+            .ToListAsync();
+        return Json(histories);
     }
 }
