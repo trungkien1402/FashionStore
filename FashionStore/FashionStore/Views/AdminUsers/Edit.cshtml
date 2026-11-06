@@ -1,0 +1,114 @@
+@model FashionStore.Models.ViewModels.AdminUserEditViewModel
+
+@{
+    ViewData["Title"] = $"Chỉnh sửa tài khoản - {Model.FullName}";
+}
+
+<div class="container-fluid px-0">
+    <div class="mb-3">
+        <a asp-action="Details" asp-route-id="@Model.Id" class="text-decoration-none text-muted small">
+            <i class="bi bi-arrow-left me-1"></i> Quay lại chi tiết tài khoản
+        </a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3 border-0">
+                    <h4 class="fw-bold mb-0">Chỉnh sửa thông tin & phân quyền</h4>
+                    <p class="text-muted small mb-0">Cập nhật thông tin cá nhân, thay đổi vai trò hoặc trạng thái tài khoản.</p>
+                </div>
+
+                <div class="card-body p-4">
+                    @if (Model.IsCurrentAdmin)
+                    {
+                        <div class="alert alert-info d-flex align-items-center mb-4" role="alert">
+                            <i class="bi bi-info-circle-fill me-2 fs-5"></i>
+                            <div>
+                                Đây là tài khoản của bạn đang đăng nhập. Vì lý do bảo mật, bạn không thể tự khóa tài khoản hoặc tự hạ quyền Admin của chính mình.
+                            </div>
+                        </div>
+                    }
+
+                    <form asp-action="Edit" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="Email" />
+                        <input type="hidden" asp-for="CreatedAt" />
+
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4" role="alert"></div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label text-muted">Email / Tên đăng nhập</label>
+                                <input type="text" class="form-control bg-light" value="@Model.Email" readonly disabled />
+                                <div class="form-text small">Email dùng làm tên đăng nhập cố định của hệ thống.</div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label text-muted">Ngày đăng ký</label>
+                                <input type="text" class="form-control bg-light" value="@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")" readonly disabled />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="FullName" class="form-label fw-semibold">Họ và tên <span class="text-danger">*</span></label>
+                                <input asp-for="FullName" class="form-control" />
+                                <span asp-validation-for="FullName" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="PhoneNumber" class="form-label fw-semibold">Số điện thoại</label>
+                                <input asp-for="PhoneNumber" class="form-control" placeholder="0912345678" />
+                                <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Role" class="form-label fw-semibold">Vai trò / Quyền hạn <span class="text-danger">*</span></label>
+                                <select asp-for="Role" asp-items="Model.AvailableRoles" class="form-select"></select>
+                                <span asp-validation-for="Role" class="text-danger small"></span>
+                                @if (Model.IsCurrentAdmin)
+                                {
+                                    <div class="form-text small text-muted">
+                                        Quyền Admin của tài khoản hiện tại được giữ nguyên để đảm bảo quyền quản trị.
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="col-12 mt-4">
+                                <div class="card p-3 bg-light border-0 rounded-3">
+                                    <div class="form-check form-switch">
+                                        <input asp-for="IsActive" class="form-check-input" type="checkbox" role="switch" id="activeToggle" />
+                                        <label class="form-check-label fw-semibold" for="activeToggle">
+                                            Kích hoạt tài khoản (Cho phép người dùng này đăng nhập)
+                                        </label>
+                                    </div>
+                                    <div class="form-text text-muted small mt-1">
+                                        Khi tắt trạng thái hoạt động, người dùng sẽ bị đăng xuất khỏi tất cả phiên đăng nhập và không thể đăng nhập lại.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a asp-action="ResetPassword" asp-route-id="@Model.Id" class="btn btn-outline-warning text-dark">
+                                <i class="bi bi-key me-1"></i> Đặt lại mật khẩu
+                            </a>
+                            <div class="d-flex gap-2">
+                                <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary">Hủy bỏ</a>
+                                <button type="submit" class="btn btn-dark px-4">
+                                    <i class="bi bi-check2 me-1"></i> Lưu thay đổi
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

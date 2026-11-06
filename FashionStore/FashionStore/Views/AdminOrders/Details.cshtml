@@ -1,0 +1,560 @@
+@model FashionStore.Models.Entities.Order
+@using FashionStore.Models.Entities
+@using FashionStore.Models.Enums
+
+@{
+    ViewData["Title"] = "Chi tiết đơn hàng";
+
+    var nextStatuses = new List<OrderStatus>();
+
+    switch (Model.Status)
+    {
+        case OrderStatus.PendingConfirmation:
+            nextStatuses.Add(OrderStatus.Confirmed);
+            nextStatuses.Add(OrderStatus.Cancelled);
+            break;
+
+        case OrderStatus.Confirmed:
+            nextStatuses.Add(OrderStatus.Processing);
+            nextStatuses.Add(OrderStatus.Cancelled);
+            break;
+
+        case OrderStatus.Processing:
+            nextStatuses.Add(OrderStatus.Shipping);
+            nextStatuses.Add(OrderStatus.Cancelled);
+            break;
+
+        case OrderStatus.Shipping:
+            nextStatuses.Add(OrderStatus.Delivered);
+            nextStatuses.Add(OrderStatus.DeliveryFailed);
+            break;
+
+        case OrderStatus.DeliveryFailed:
+            nextStatuses.Add(OrderStatus.Shipping);
+            nextStatuses.Add(OrderStatus.Returned);
+            break;
+    }
+
+    string GetStatusName(OrderStatus status) => status switch
+    {
+        OrderStatus.PendingConfirmation => "Chờ xác nhận",
+        OrderStatus.Confirmed => "Đã xác nhận",
+        OrderStatus.Processing => "Đang xử lý",
+        OrderStatus.Shipping => "Đang giao hàng",
+        OrderStatus.Delivered => "Đã giao thành công",
+        OrderStatus.Cancelled => "Đã hủy",
+        OrderStatus.DeliveryFailed => "Giao hàng thất bại",
+        OrderStatus.Returned => "Đã hoàn hàng",
+        _ => status.ToString()
+    };
+
+    string GetPaymentStatusName(PaymentStatus status) => status switch
+    {
+        PaymentStatus.Pending => "Chưa thanh toán",
+        PaymentStatus.Paid => "Đã thanh toán",
+        PaymentStatus.Failed => "Thanh toán thất bại",
+        PaymentStatus.Refunded => "Đã hoàn tiền",
+        _ => status.ToString()
+    };
+
+    string GetShipmentStatusName(ShipmentStatus status) => status switch
+    {
+        ShipmentStatus.Assigned => "Đã phân công",
+        ShipmentStatus.PickedUp => "Đã lấy hàng",
+        ShipmentStatus.InTransit => "Đang giao hàng",
+        ShipmentStatus.Delivered => "Giao thành công",
+        ShipmentStatus.Failed => "Giao thất bại",
+        ShipmentStatus.Returned => "Đã hoàn kho",
+        _ => status.ToString()
+    };
+
+    var shipments = ViewBag.Shipments as List<Shipment> ?? new List<Shipment>();
+}
+
+<div class="container-fluid px-0">
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Chi tiết đơn hàng</h2>
+            <p class="text-muted mb-0">
+                Mã đơn hàng: <strong>@Model.OrderCode</strong>
+            </p>
+        </div>
+
+        <div class="d-flex gap-2">
+            @if (Model.Status == OrderStatus.Confirmed || Model.Status == OrderStatus.Processing || Model.Status == OrderStatus.Shipping)
+            {
+                <a asp-controller="AdminShipments"
+                   asp-action="Create"
+                   asp-route-orderId="@Model.Id"
+                   class="btn btn-primary">
+                    <i class="bi bi-truck me-1"></i> Tạo lượt giao hàng
+                </a>
+            }
+
+            <a asp-controller="AdminOrders"
+               asp-action="Index"
+               class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Quay lại danh sách
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+
+        <!-- Thông tin đơn hàng -->
+        <div class="col-lg-8">
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="fw-bold mb-0">
+                        <i class="bi bi-receipt me-2"></i>
+                        Thông tin đơn hàng
+                    </h5>
+                </div>
+
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <small class="text-muted">Mã đơn hàng</small>
+                            <div class="fw-semibold">@Model.OrderCode</div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <small class="text-muted">Ngày đặt hàng</small>
+                            <div class="fw-semibold">
+                                @Model.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <small class="text-muted">Trạng thái đơn hàng</small>
+                            <div class="fw-semibold">@GetStatusName(Model.Status)</div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <small class="text-muted">Trạng thái thanh toán</small>
+                            <div class="fw-semibold">
+                                @GetPaymentStatusName(Model.PaymentStatus)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quản lí thanh toán -->
+            @{
+                var paymentMethodText = Model.PaymentMethod switch
+                {
+                    PaymentMethod.COD => "Thanh toán khi nhận hàng (COD)",
+                    PaymentMethod.VietQR => "Chuyển khoản VietQR",
+                    _ => "Không xác định"
+                };
+
+                var paymentStatusText = Model.PaymentStatus switch
+                {
+                    PaymentStatus.Pending => "Chưa thanh toán",
+                    PaymentStatus.Paid => "Đã thanh toán",
+                    PaymentStatus.Failed => "Thanh toán thất bại",
+                    PaymentStatus.Refunded => "Đã hoàn tiền",
+                    _ => "Không xác định"
+                };
+            }
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">
+                        <i class="bi bi-credit-card me-2"></i>Quản lý thanh toán
+                    </h5>
+                </div>
+
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="text-muted small">Phương thức thanh toán</div>
+                            <strong>@paymentMethodText</strong>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="text-muted small">Trạng thái thanh toán</div>
+                            <strong>@paymentStatusText</strong>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    @if (Model.PaymentStatus == PaymentStatus.Pending)
+                    {
+                        <div class="alert alert-warning">
+                            Đơn hàng chưa được xác nhận đã thanh toán.
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2">
+                            <form asp-action="UpdatePaymentStatus"
+                                  asp-route-id="@Model.Id"
+                                  method="post"
+                                  onsubmit="return confirm('Bạn đã kiểm tra và xác nhận đã nhận được tiền?');">
+
+                                @Html.AntiForgeryToken()
+
+                                <input type="hidden"
+                                       name="newStatus"
+                                       value="@((int)PaymentStatus.Paid)" />
+
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check-circle me-1"></i>
+                                    Xác nhận đã thanh toán
+                                </button>
+                            </form>
+
+                            <form asp-action="UpdatePaymentStatus"
+                                  asp-route-id="@Model.Id"
+                                  method="post"
+                                  onsubmit="return confirm('Bạn có chắc muốn ghi nhận thanh toán thất bại?');">
+
+                                @Html.AntiForgeryToken()
+
+                                <input type="hidden"
+                                       name="newStatus"
+                                       value="@((int)PaymentStatus.Failed)" />
+
+                                <button type="submit" class="btn btn-outline-danger">
+                                    Ghi nhận thất bại
+                                </button>
+                            </form>
+                        </div>
+                    }
+                    else if (Model.PaymentStatus == PaymentStatus.Failed)
+                    {
+                        <div class="alert alert-danger">
+                            Thanh toán đang được ghi nhận là thất bại.
+                            Nếu đã nhận được tiền sau khi kiểm tra lại, bạn có thể cập nhật.
+                        </div>
+
+                        <form asp-action="UpdatePaymentStatus"
+                              asp-route-id="@Model.Id"
+                              method="post"
+                              onsubmit="return confirm('Xác nhận đã nhận được tiền?');">
+
+                            @Html.AntiForgeryToken()
+
+                            <input type="hidden"
+                                   name="newStatus"
+                                   value="@((int)PaymentStatus.Paid)" />
+
+                            <button type="submit" class="btn btn-success">
+                                Xác nhận đã thanh toán
+                            </button>
+                        </form>
+                    }
+                    else if (Model.PaymentStatus == PaymentStatus.Paid)
+                    {
+                        <div class="alert alert-success">
+                            <i class="bi bi-check-circle me-1"></i>
+                            Đơn hàng đã được xác nhận thanh toán.
+                        </div>
+
+                        @if (Model.Status == OrderStatus.Cancelled ||
+                             Model.Status == OrderStatus.DeliveryFailed ||
+                             Model.Status == OrderStatus.Returned)
+                        {
+                            <form asp-action="UpdatePaymentStatus"
+                                  asp-route-id="@Model.Id"
+                                  method="post"
+                                  onsubmit="return confirm('Bạn đã thực hiện hoàn tiền thực tế cho khách hàng chưa?');">
+
+                                @Html.AntiForgeryToken()
+
+                                <input type="hidden"
+                                       name="newStatus"
+                                       value="@((int)PaymentStatus.Refunded)" />
+
+                                <button type="submit" class="btn btn-warning">
+                                    <i class="bi bi-arrow-counterclockwise me-1"></i>
+                                    Xác nhận đã hoàn tiền
+                                </button>
+                            </form>
+                        }
+                    }
+                    else if (Model.PaymentStatus == PaymentStatus.Refunded)
+                    {
+                        <div class="alert alert-info mb-0">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Khoản thanh toán đã được ghi nhận hoàn tiền.
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- VẬN CHUYỂN & GIAO HÀNG -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">
+                        <i class="bi bi-truck me-2"></i>Lượt giao hàng (Vận chuyển)
+                    </h5>
+                    @if (Model.Status == OrderStatus.Confirmed || Model.Status == OrderStatus.Processing || Model.Status == OrderStatus.Shipping)
+                    {
+                        <a asp-controller="AdminShipments" asp-action="Create" asp-route-orderId="@Model.Id" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-plus-circle me-1"></i> Phân công Shipper
+                        </a>
+                    }
+                </div>
+                <div class="card-body">
+                    @if (shipments.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Mã vận đơn</th>
+                                        <th>Shipper</th>
+                                        <th>Tiền COD</th>
+                                        <th>Trạng thái</th>
+                                        <th>Ngày tạo</th>
+                                        <th class="text-end"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var sh in shipments)
+                                    {
+                                        <tr>
+                                            <td class="fw-bold text-primary">@sh.TrackingCode</td>
+                                            <td>
+                                                <div class="fw-semibold">@(sh.Shipper?.FullName ?? "Chưa rõ")</div>
+                                                <small class="text-muted">@(sh.Shipper?.PhoneNumber ?? "")</small>
+                                            </td>
+                                            <td class="fw-semibold text-danger">
+                                                @(sh.CODAmount > 0 ? sh.CODAmount.ToString("N0") + " đ" : "0 đ")
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-secondary">@GetShipmentStatusName(sh.Status)</span>
+                                            </td>
+                                            <td class="small text-muted">
+                                                @sh.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                                            </td>
+                                            <td class="text-end">
+                                                <a asp-controller="AdminShipments" asp-action="Details" asp-route-id="@sh.Id" class="btn btn-sm btn-outline-dark">
+                                                    Chi tiết
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-muted small py-2">
+                            <i class="bi bi-info-circle me-1"></i> Chưa có lượt giao hàng nào được tạo cho đơn hàng này.
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Thông tin người nhận -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="fw-bold mb-0">
+                        <i class="bi bi-person me-2"></i>
+                        Thông tin người nhận
+                    </h5>
+                </div>
+
+                <div class="card-body">
+                    <div class="mb-3">
+                        <small class="text-muted">Họ và tên</small>
+                        <div class="fw-semibold">@Model.ReceiverName</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <small class="text-muted">Số điện thoại</small>
+                        <div class="fw-semibold">@Model.Phone</div>
+                    </div>
+
+                    <div>
+                        <small class="text-muted">Địa chỉ giao hàng</small>
+                        <div class="fw-semibold">@Model.Address</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Danh sách sản phẩm -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="fw-bold mb-0">
+                        <i class="bi bi-bag me-2"></i>
+                        Sản phẩm đã đặt
+                    </h5>
+                </div>
+
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-3">Sản phẩm</th>
+                                    <th>SKU</th>
+                                    <th>Phân loại</th>
+                                    <th>Đơn giá</th>
+                                    <th>Số lượng</th>
+                                    <th class="text-end pe-3">Thành tiền</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @foreach (var item in Model.Items)
+                                {
+                                    <tr>
+                                        <td class="ps-3">
+                                            <div class="fw-semibold">
+                                                @item.ProductName
+                                            </div>
+                                        </td>
+
+                                        <td>@item.SKU</td>
+
+                                        <td>
+                                            <div>Size: @item.Size</div>
+                                            <div class="text-muted small">
+                                                Màu: @item.Color
+                                            </div>
+                                        </td>
+
+                                        <td>
+                                            @item.UnitPrice.ToString("N0") đ
+                                        </td>
+
+                                        <td>@item.Quantity</td>
+
+                                        <td class="text-end pe-3 fw-semibold">
+                                            @((item.UnitPrice * item.Quantity).ToString("N0")) đ
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Cập nhật trạng thái và tổng tiền -->
+        <div class="col-lg-4">
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="fw-bold mb-0">
+                        <i class="bi bi-arrow-repeat me-2"></i>
+                        Cập nhật trạng thái
+                    </h5>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="mb-3">
+                        <small class="text-muted">Trạng thái hiện tại</small>
+                        <div class="fw-bold mt-1">
+                            @GetStatusName(Model.Status)
+                        </div>
+                    </div>
+
+                    @if (nextStatuses.Any())
+                    {
+                        <form asp-controller="AdminOrders"
+                              asp-action="UpdateStatus"
+                              method="post"
+                              onsubmit="return confirm('Bạn có chắc chắn muốn cập nhật trạng thái đơn hàng này?');">
+
+                            @Html.AntiForgeryToken()
+
+                            <input type="hidden" name="id" value="@Model.Id" />
+
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">
+                                    Chọn trạng thái mới
+                                </label>
+
+                                <select name="newStatus" class="form-select" required>
+                                    @foreach (var status in nextStatuses)
+                                    {
+                                        <option value="@((int)status)">
+                                            @GetStatusName(status)
+                                        </option>
+                                    }
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn btn-dark w-100">
+                                <i class="bi bi-check-circle me-1"></i>
+                                Cập nhật trạng thái
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="alert alert-secondary mb-0">
+                            Đơn hàng đã ở trạng thái kết thúc, không thể cập nhật tiếp.
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Tổng thanh toán -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h5 class="fw-bold mb-0">
+                        <i class="bi bi-calculator me-2"></i>
+                        Tổng thanh toán
+                    </h5>
+                </div>
+
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted">Tạm tính</span>
+                        <span>@Model.SubTotal.ToString("N0") đ</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted">Phí vận chuyển</span>
+                        <span>@Model.ShippingFee.ToString("N0") đ</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted">Giảm giá</span>
+                        <span class="text-danger">
+                            -@Model.DiscountAmount.ToString("N0") đ
+                        </span>
+                    </div>
+
+                    <hr />
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="fw-bold">Tổng cộng</span>
+                        <span class="fs-4 fw-bold text-danger">
+                            @Model.TotalAmount.ToString("N0") đ
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
