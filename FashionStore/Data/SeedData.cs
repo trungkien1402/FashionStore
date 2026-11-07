@@ -1,4 +1,3 @@
-﻿
 using FashionStore.Models.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +12,9 @@ public static class SeedData
 
         var db = scope.ServiceProvider
             .GetRequiredService<ApplicationDbContext>();
+
+        // Tự động chạy migrations khi ứng dụng khởi chạy
+        await db.Database.MigrateAsync();
 
         var userManager = scope.ServiceProvider
             .GetRequiredService<UserManager<ApplicationUser>>();
@@ -61,6 +63,32 @@ public static class SeedData
         else if (!await userManager.IsInRoleAsync(admin, "Admin"))
         {
             await userManager.AddToRoleAsync(admin, "Admin");
+        }
+
+        // 2b. Tạo tài khoản Shipper mẫu để phục vụ Module 5
+        const string shipperEmail = "shipper@fashionstore.local";
+        var shipper = await userManager.FindByEmailAsync(shipperEmail);
+        if (shipper == null)
+        {
+            shipper = new ApplicationUser
+            {
+                UserName = shipperEmail,
+                Email = shipperEmail,
+                FullName = "Nguyễn Văn Giao (Shipper)",
+                PhoneNumber = "0988776655",
+                EmailConfirmed = true,
+                IsActive = true
+            };
+
+            var result = await userManager.CreateAsync(shipper, "Shipper@123456");
+            if (result.Succeeded)
+            {
+                await userManager.AddToRoleAsync(shipper, "Shipper");
+            }
+        }
+        else if (!await userManager.IsInRoleAsync(shipper, "Shipper"))
+        {
+            await userManager.AddToRoleAsync(shipper, "Shipper");
         }
 
         // 3. Tạo danh mục

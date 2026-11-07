@@ -1,0 +1,98 @@
+﻿@model FashionStore.Models.ViewModels.ProductVariantViewModel
+
+@{
+    ViewData["Title"] = "Chỉnh sửa biến thể";
+}
+
+<section class="container py-5">
+    <div class="mb-4">
+        <a asp-action="Index" asp-route-productId="@Model.ProductId"
+           class="text-muted text-decoration-none">← Quay lại</a>
+
+        <h1 class="mt-3" style="font-family:'Playfair Display',serif;">
+            Chỉnh sửa biến thể
+        </h1>
+    </div>
+
+    <div class="border p-4">
+        <form asp-action="Edit" method="post">
+            @Html.AntiForgeryToken()
+
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="ProductId" />
+
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="SKU" class="form-label">Mã SKU</label>
+                    <input asp-for="SKU" class="form-control" />
+                    <span asp-validation-for="SKU" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="Size" class="form-label">Kích thước</label>
+                    <select asp-for="Size" class="form-select">
+                        <option value="S">S</option>
+                        <option value="M">M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
+                        <option value="XXL">XXL</option>
+                        <option value="Free Size">Free Size</option>
+                    </select>
+                    <span asp-validation-for="Size" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="Color" class="form-label">Màu sắc</label>
+                    <select asp-for="Color" class="form-select">
+                        <option value="Đen">Đen</option>
+                        <option value="Trắng">Trắng</option>
+                        <option value="Đỏ">Đỏ</option>
+                        <option value="Xanh">Xanh</option>
+                        <option value="Be">Be</option>
+                        <option value="Nâu">Nâu</option>
+                        <option value="Hồng">Hồng</option>
+                    </select>
+                    <span asp-validation-for="Color" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="Price" class="form-label">Giá bán (VNĐ)</label>
+                    <input asp-for="Price" type="number" min="1" step="1000"
+                           class="form-control" />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="StockQuantity" class="form-label">Tồn kho</label>
+                    <input asp-for="StockQuantity" type="number" min="0"
+                           class="form-control" />
+                    <span asp-validation-for="StockQuantity" class="text-danger"></span>
+                </div>
+
+                <div class="col-12">
+                    <div class="form-check">
+                        <input asp-for="IsActive" class="form-check-input" />
+                        <label asp-for="IsActive" class="form-check-label">
+                            Kích hoạt biến thể
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <hr />
+
+            <button type="submit" class="btn btn-dark px-4">
+                Lưu thay đổi
+            </button>
+
+            <a asp-action="Index" asp-route-productId="@Model.ProductId"
+               class="btn btn-outline-secondary">Hủy</a>
+        </form>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
