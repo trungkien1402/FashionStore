@@ -422,4 +422,34 @@ public class OrdersController : Controller
             return RedirectToAction(nameof(Details), new { id });
         }
     }
+
+    // GET: /Orders/Track?orderCode=...
+    [HttpGet]
+    [AllowAnonymous]
+    public async Task<IActionResult> Track(string? orderCode)
+    {
+        if (string.IsNullOrWhiteSpace(orderCode))
+        {
+            TempData["Error"] = "Vui lòng nhập mã đơn hàng cần tra cứu.";
+            return RedirectToAction("Index", "Home");
+        }
+
+        var cleanCode = orderCode.Trim().Replace("#", "").Replace("FS", "", StringComparison.OrdinalIgnoreCase);
+        if (int.TryParse(cleanCode, out int orderId))
+        {
+            var exists = await _context.Orders.AnyAsync(o => o.Id == orderId);
+            if (exists)
+            {
+                if (User.Identity?.IsAuthenticated == true)
+                {
+                    return RedirectToAction(nameof(Details), new { id = orderId });
+                }
+                TempData["Success"] = $"Đơn hàng #{orderId} tồn tại trong hệ thống. Vui lòng đăng nhập để xem chi tiết đầy đủ.";
+                return RedirectToAction("Login", "Account");
+            }
+        }
+
+        TempData["Error"] = $"Không tìm thấy đơn hàng với mã '{orderCode}'.";
+        return RedirectToAction("Index", "Home");
+    }
 }

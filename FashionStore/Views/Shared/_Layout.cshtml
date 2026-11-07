@@ -1,243 +1,227 @@
-﻿
+@using Microsoft.AspNetCore.Http
+@using System.Text.Json
+@using FashionStore.Models.ViewModels
+
+@{
+    int cartCount = 0;
+    var cartJson = Context.Session.GetString("FashionStore_Cart");
+    if (!string.IsNullOrEmpty(cartJson))
+    {
+        try
+        {
+            var items = JsonSerializer.Deserialize<List<CartItemViewModel>>(cartJson);
+            cartCount = items?.Sum(x => x.Quantity) ?? 0;
+        }
+        catch { }
+    }
+}
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <title>@ViewData["Title"] - FashionStore</title>
+    <title>@ViewData["Title"]</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/fashionstore.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/atelier.css" asp-append-version="true" />
 
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
-
-    <link rel="stylesheet"
-          href="~/css/fashionstore.css"
-          asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 
 <body>
 
-    <!-- Announcement -->
-    <div class="fs-announcement">
-        Free shipping for orders from 500.000 VND
-    </div>
+@{
+    var isHome = string.Equals(ViewContext.RouteData.Values["controller"]?.ToString(), "Home", StringComparison.OrdinalIgnoreCase) &&
+                 string.Equals(ViewContext.RouteData.Values["action"]?.ToString(), "Index", StringComparison.OrdinalIgnoreCase);
+}
 
-    <!-- Navbar -->
-    <header class="fs-navbar">
-        <div class="fs-navbar-inner">
+    <!-- ============================================================== -->
+    <!-- NAVBAR (URBNMIND EXACT: LOGO, CENTER LINKS, ICONS, BUY NOW)    -->
+    <!-- ============================================================== -->
+    <header class="urbn-header @(isHome ? "urbn-header-hidden" : "")">
+        <div class="urbn-container">
+            <nav class="urbn-nav">
 
-            <!-- Logo -->
-            <a asp-controller="Home"
-               asp-action="Index"
-               class="fs-logo">
-                FASHION<span>STORE.</span>
-            </a>
+                <!-- Logo -->
+                <a class="urbn-logo" asp-controller="Home" asp-action="Index">
+                    HNMTSHOP
+                </a>
 
-            <!-- Main navigation -->
-            <ul class="fs-nav-links">
+                <!-- Nav Links -->
+                <ul class="urbn-nav-links">
+                    <li><a asp-controller="Home" asp-action="Index">TRANG CHỦ</a></li>
+                    <li><a href="/Home/Index#categories">BẢNG GIÁ</a></li>
+                    <li><a asp-controller="Products" asp-action="Index">CỬA HÀNG</a></li>
+                    <li><a asp-controller="Products" asp-action="Details" asp-route-id="17">THỬ ĐỒ AI</a></li>
+                    <li><a href="#contact">LIÊN HỆ</a></li>
+                </ul>
 
-                <li>
-                    <a asp-controller="Home"
-                       asp-action="Index">
-                        Trang chủ
+                <!-- Nav Actions -->
+                <div class="urbn-nav-actions">
+                    <!-- Search Icon -->
+                    <button type="button" class="urbn-nav-icon" title="Tìm kiếm" onclick="document.getElementById('keywordInput')?.focus();">
+                        <i class="bi bi-search"></i>
+                    </button>
+
+                    <!-- Wishlist Heart Icon -->
+                    <a href="/Products" class="urbn-nav-icon" title="Yêu thích">
+                        <i class="bi bi-heart"></i>
                     </a>
-                </li>
 
-                <li>
-                    <a asp-controller="Products"
-                       asp-action="Index">
-                        Sản phẩm
-                    </a>
-                </li>
+                    <!-- Cart Trigger -->
+                    <button type="button" id="fsCartDrawerTrigger" class="urbn-nav-icon position-relative" title="Giỏ hàng">
+                        <i class="bi bi-cart"></i>
+                        <span class="fs-cart-count" style="position: absolute; top: -6px; right: -8px; background: #000; color: #fff; font-size: 10px; font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            @cartCount
+                        </span>
+                    </button>
 
-                <!-- Chỉ khách hàng mới có giỏ hàng và đơn hàng cá nhân -->
-                @if (User.Identity?.IsAuthenticated == true &&
-                    !User.IsInRole("Admin") &&
-                    !User.IsInRole("Manager") &&
-                    !User.IsInRole("Staff") &&
-                    !User.IsInRole("Shipper"))
-                {
-                    <li>
-                        <a asp-controller="Cart"
-                           asp-action="Index">
-                            Giỏ hàng
-                        </a>
-                    </li>
-
-                    <li>
-                        <a asp-controller="Orders"
-                           asp-action="Index">
-                            Đơn hàng
-                        </a>
-                    </li>
-                }
-
-                <li>
-                    <a href="/Home/Index#about">
-                        Về chúng tôi
-                    </a>
-                </li>
-
-                <li>
-                    <a href="/Home/Index#contact">
-                        Liên hệ
-                    </a>
-                </li>
-
-            </ul>
-
-            <!-- User actions -->
-            <div class="fs-nav-actions">
-
-                @if (User.Identity?.IsAuthenticated == true)
-                {
-                    <span class="fs-user-name">
-                        Xin chào, @User.Identity.Name
-                    </span>
-
-                    <!-- Khu vực quản trị -->
-                    @if (User.IsInRole("Admin") ||
-                         User.IsInRole("Manager") ||
-                         User.IsInRole("Staff"))
+                    <!-- User Account Dropdown -->
+                    @if (User.Identity?.IsAuthenticated == true)
                     {
-                        <a asp-controller="Admin"
-                           asp-action="Index"
-                           title="Trang quản trị">
-                            Quản trị
+                        <a asp-controller="Orders" asp-action="Index" class="urbn-nav-icon" title="@User.Identity.Name">
+                            <i class="bi bi-person"></i>
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Account" asp-action="Login" class="urbn-nav-icon" title="Tài khoản">
+                            <i class="bi bi-person"></i>
                         </a>
                     }
 
-                    <!-- Đăng xuất -->
-                    <form asp-controller="Account"
-                          asp-action="Logout"
-                          method="post"
-                          class="m-0">
-
-                        @Html.AntiForgeryToken()
-
-                        <button type="submit">
-                            Đăng xuất
-                        </button>
-                    </form>
-                }
-                else
-                {
-                    <a asp-controller="Account"
-                       asp-action="Login">
-                        Đăng nhập
+                    <!-- Buy Now Pill Button -->
+                    <a asp-controller="Products" asp-action="Index" class="urbn-nav-pill-btn">
+                        Mua Ngay
                     </a>
+                </div>
 
-                    <a asp-controller="Account"
-                       asp-action="Register">
-                        Đăng ký
-                    </a>
-                }
-
-            </div>
+            </nav>
         </div>
     </header>
 
-    <!-- Main content -->
-    <main>
-
-        @if (TempData["Success"] != null)
-        {
-            <div class="container mt-3">
-                <div class="alert alert-success alert-dismissible fade show"
-                     role="alert">
-
-                    @TempData["Success"]
-
-                    <button type="button"
-                            class="btn-close"
-                            data-bs-dismiss="alert"
-                            aria-label="Close">
-                    </button>
-                </div>
-            </div>
-        }
-
+    <!-- Main Content -->
+    <main role="main">
         @RenderBody()
-
     </main>
 
-    <!-- Footer -->
-    <footer class="fs-footer" id="contact">
+    <!-- Slide-Over Mini-Cart Drawer -->
+    <div id="fsCartBackdrop" class="fs-drawer-backdrop"></div>
+    <aside id="fsCartDrawer" class="fs-cart-drawer" aria-hidden="true">
+        <div class="fs-drawer-header">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <h5 style="margin: 0; font-weight: 800; font-size: 18px; letter-spacing: -0.5px;">GIỎ HÀNG CỦA BẠN</h5>
+                <span class="fs-cart-count" style="background: #000; color: #fff; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px;">@cartCount</span>
+            </div>
+            <button type="button" id="fsCloseCartDrawer" class="fs-drawer-close">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
 
-        <div class="fs-footer-inner">
+        <!-- Freeship Progress Indicator -->
+        <div style="padding: 14px 24px; background: #F9FAFB; border-bottom: 1px solid #E5E7EB;">
+            <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin-bottom: 8px;">
+                <span id="fsFreeshipText"><i class="bi bi-truck me-1"></i> Miễn phí vận chuyển cho đơn từ 500k</span>
+                <span id="fsFreeshipPercent" style="color: #F59E0B; font-weight: 800;">0%</span>
+            </div>
+            <div style="background: #E5E7EB; border-radius: 999px; height: 6px; overflow: hidden;">
+                <div id="fsFreeshipBar" style="background: #000000; height: 100%; width: 0%; transition: width 0.3s;"></div>
+            </div>
+        </div>
 
-            <div>
-                <a asp-controller="Home"
-                   asp-action="Index"
-                   class="fs-logo">
-                    FASHION<span>STORE.</span>
+        <!-- Cart Items List (Dynamic AJAX) -->
+        <div id="fsCartItemsContainer" class="fs-drawer-body" style="padding: 20px 24px;">
+            <div style="text-align: center; padding: 40px 0; color: #6B7280;">
+                Đang tải giỏ hàng...
+            </div>
+        </div>
+
+        <!-- Cart Drawer Footer -->
+        <div style="padding: 20px 24px; border-top: 1px solid #E5E7EB; background: #FFFFFF;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <span style="color: #6B7280; font-weight: 600; font-size: 14px;">Tạm tính:</span>
+                <span id="fsDrawerSubtotal" style="font-size: 20px; font-weight: 800; color: #000000;">0 ₫</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <a asp-controller="Orders" asp-action="Checkout" class="urbn-btn-drop" style="text-align: center; border-radius: 999px; padding: 14px;">
+                    Thanh Toán Ngay
                 </a>
-
-                <p class="mt-3">
-                    Khám phá phong cách của riêng bạn.
-                    Thời trang tối giản, hiện đại và đầy cá tính.
-                </p>
+                <a asp-controller="Cart" asp-action="Index" class="urbn-btn-styles" style="text-align: center; border-radius: 999px; padding: 12px; font-size: 13.5px;">
+                    Xem Chi Tiết Giỏ Hàng &rarr;
+                </a>
             </div>
-
-            <div>
-                <h6>Khám phá</h6>
-
-                <div class="fs-footer-links">
-                    <a asp-controller="Home"
-                       asp-action="Index">
-                        Trang chủ
-                    </a>
-
-                    <a asp-controller="Products"
-                       asp-action="Index">
-                        Sản phẩm
-                    </a>
-
-                    <a href="/Home/Index#about">
-                        Về chúng tôi
-                    </a>
-                </div>
-            </div>
-
-            <div>
-                <h6>Hỗ trợ khách hàng</h6>
-
-                <div class="fs-footer-links">
-                    <a href="/Home/Index#contact">
-                        Liên hệ
-                    </a>
-
-                    <a href="#">
-                        Chính sách giao hàng
-                    </a>
-
-                    <a href="#">
-                        Chính sách đổi trả
-                    </a>
-                </div>
-            </div>
-
         </div>
+    </aside>
 
-        <div class="fs-footer-bottom">
-            © @DateTime.Now.Year FASHIONSTORE. ALL RIGHTS RESERVED.
+    <!-- ============================================================== -->
+    <!-- FOOTER (EXACT VIDEO: BLACK 4-COLUMNS + NEWSLETTER JOIN NOW)   -->
+    <!-- ============================================================== -->
+    <footer class="urbn-footer-section" id="contact">
+        <div class="urbn-container">
+            <div class="urbn-footer-grid">
+
+                <!-- Col 1: Brand & Newsletter -->
+                <div>
+                    <span class="urbn-footer-logo">HNMTSHOP</span>
+                    <p class="urbn-footer-sub">Kết Nối Phong Cách. Dẫn Đầu Xu Hướng.</p>
+                    <p class="urbn-footer-desc">
+                        Gia nhập cộng đồng HNMTSHOP để không bao giờ bỏ lỡ các đợt phát hành mới, ưu đãi độc quyền và cảm hứng thời trang đường phố mỗi ngày.
+                    </p>
+                    <form class="urbn-newsletter-form" onsubmit="event.preventDefault(); showFsToast('Cảm ơn bạn đã gia nhập cộng đồng HNMTSHOP!', 'success'); this.reset();">
+                        <input type="email" class="urbn-newsletter-input" placeholder="Nhập email của bạn..." required />
+                        <button type="submit" class="urbn-btn-join">Tham Gia</button>
+                    </form>
+                </div>
+
+                <!-- Col 2: Information -->
+                <div class="urbn-footer-col">
+                    <h5>Thông Tin</h5>
+                    <ul>
+                        <li><a href="#">Về HNMTSHOP</a></li>
+                        <li><a href="#">Hệ Thống Cửa Hàng</a></li>
+                        <li><a href="#">Nhà Đầu Tư</a></li>
+                        <li><a href="/Products">Sản Phẩm Mới</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 3: Help Center -->
+                <div class="urbn-footer-col">
+                    <h5>Trung Tâm Trợ Giúp</h5>
+                    <ul>
+                        <li><a href="#">Câu Hỏi Thường Gặp</a></li>
+                        <li><a href="#">Điều Khoản Dịch Vụ</a></li>
+                        <li><a href="#">Chính Sách Bảo Mật</a></li>
+                        <li><a href="#">Chính Sách Đổi Trả</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 4: Contact Us -->
+                <div class="urbn-footer-col urbn-footer-contact">
+                    <h5>Liên Hệ</h5>
+                    <p>hotro@hnmtshop.vn</p>
+                    <p>+84 988 776 655</p>
+                    <p style="font-size: 13px; color: #9CA3AF; margin-top: 8px;">Hà Nội & TP. Hồ Chí Minh, Việt Nam</p>
+                </div>
+
+            </div>
+
+            <!-- Bottom Copyright -->
+            <div class="urbn-footer-bottom">
+                &copy; 2026 HNMTSHOP. Tất cả các quyền được bảo lưu. Thiết kế dành riêng cho giới trẻ.
+            </div>
         </div>
-
     </footer>
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/jquery.validate.min.js"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="~/js/atelier.js" asp-append-version="true"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
-
 </body>
 </html>

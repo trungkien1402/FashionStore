@@ -1,4 +1,4 @@
-﻿@model Product
+@model Product
 
 @{
     ViewData["Title"] = Model.Name;
@@ -7,6 +7,8 @@
         .OrderBy(v => v.Size)
         .ToList() ?? new List<ProductVariant>();
 }
+
+<link rel="stylesheet" href="~/css/virtual-tryon.css" asp-append-version="true" />
 
 <div class="container py-5">
     <div class="row g-5">
@@ -17,7 +19,7 @@
                 <img src="@Model.ImageUrl"
                      alt="@Model.Name"
                      class="img-fluid w-100"
-                     onerror="this.src='https://placehold.co/700x850?text=FashionStore'" />
+                     onerror="this.src='https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800'" />
             </div>
         </div>
 
@@ -38,6 +40,28 @@
                 <div class="product-description mb-4">
                     @Model.Description
                 </div>
+
+                <!-- NÚT PHÒNG THỬ ĐỒ ẢO AI (ANYWEAR STUDIO) -->
+                <div class="mb-4 p-3 rounded-3" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(15, 23, 42, 0.03)); border: 1px dashed rgba(245, 158, 11, 0.4);">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span class="badge bg-warning text-dark fw-bold px-2 py-1">
+                            <i class="bi bi-stars me-1"></i> AI POWERED
+                        </span>
+                        <small class="text-muted">Công nghệ AnyWear Live Studio</small>
+                    </div>
+                    <button type="button"
+                            class="fs-btn-tryon w-100 py-3"
+                            data-bs-toggle="modal"
+                            data-bs-target="#tryOnModal">
+                        <i class="bi bi-magic sparkle fs-5"></i>
+                        <span class="fs-6">PHÒNG THỬ ĐỒ ẢO (VIRTUAL TRY-ON)</span>
+                    </button>
+                    <div class="d-flex align-items-center justify-content-between text-muted small mt-2 px-1">
+                        <span><i class="bi bi-camera-video me-1 text-warning"></i> Thử trực tiếp qua Camera</span>
+                        <span><i class="bi bi-rulers me-1 text-warning"></i> Gợi ý Size AI chuẩn xác</span>
+                    </div>
+                </div>
+
 
                 @if (TempData["CartError"] != null)
                 {
@@ -130,7 +154,299 @@
     </div>
 </div>
 
+
+<!-- ========================================== -->
+<!-- MODAL PHÒNG THỬ ĐỒ ẢO AI (ANYWEAR STUDIO)   -->
+<!-- ========================================== -->
+<div class="modal fade tryon-modal"
+     id="tryOnModal"
+     tabindex="-1"
+     aria-labelledby="tryOnModalLabel"
+     aria-hidden="true"
+     data-bs-backdrop="static">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <div class="modal-title" id="tryOnModalLabel">
+                    <i class="bi bi-magic text-warning fs-5"></i>
+                    <span>FashionStore AI Virtual Try-On</span>
+                    <span class="badge">ANYWEAR LIVE</span>
+                </div>
+                <button type="button"
+                        class="btn-close btn-close-white"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+
+            <!-- Modal Navigation Tabs -->
+            <ul class="nav tryon-nav-tabs" id="tryonTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active"
+                            id="tab-live-camera"
+                            data-bs-toggle="tab"
+                            data-bs-target="#tab-live-pane"
+                            type="button"
+                            role="tab">
+                        <i class="bi bi-camera-video-fill"></i>
+                        1. Camera Trực tiếp
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link"
+                            id="tab-photo-mode"
+                            data-bs-toggle="tab"
+                            data-bs-target="#tab-photo-pane"
+                            type="button"
+                            role="tab">
+                        <i class="bi bi-image"></i>
+                        2. Tải ảnh của bạn / Chọn người mẫu
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link"
+                            id="tab-size-advisor"
+                            data-bs-toggle="tab"
+                            data-bs-target="#tab-size-pane"
+                            type="button"
+                            role="tab">
+                        <i class="bi bi-rulers"></i>
+                        3. AI Tư vấn Size chuẩn
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Modal Body -->
+            <div class="modal-body p-4">
+                <div class="row g-4">
+
+                    <!-- CỘT TRÁI: KHUNG THỬ ĐỒ (STAGE) -->
+                    <div class="col-lg-8">
+                        <div id="tryonCameraNotice" style="display:none;"></div>
+
+                        <div class="tryon-stage" id="tryonStage">
+
+                            <!-- Laser quét cơ thể AI -->
+                            <div class="tryon-laser-scanner" id="tryonLaserScanner"></div>
+
+                            <!-- Live Camera Video -->
+                            <video id="tryonVideoFeed"
+                                   class="tryon-video-feed"
+                                   autoplay
+                                   playsinline
+                                   muted></video>
+
+                            <!-- Photo Feed (Dùng khi chọn người mẫu hoặc tải ảnh) -->
+                            <img id="tryonPhotoFeed"
+                                 class="tryon-photo-feed"
+                                 src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80"
+                                 alt="Model Fit"
+                                 style="display: none;" />
+
+                            <!-- Khung căn chỉnh tư thế -->
+                            <div class="tryon-body-guide">
+                                <div class="guide-text">
+                                    <i class="bi bi-person-bounding-box me-1"></i>
+                                    Đứng thẳng cách camera 1.5m - 2m
+                                </div>
+                            </div>
+
+                            <!-- Layer trang phục ướm thử (Kéo thả, phóng to thu nhỏ) -->
+                            <div class="tryon-garment-layer"
+                                 id="tryonGarmentLayer"
+                                 style="width: 290px; height: 350px;">
+                                <img id="tryonGarmentImg"
+                                     src="@Model.ImageUrl"
+                                     alt="@Model.Name"
+                                     onerror="this.src='https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800'" />
+                            </div>
+
+                            <!-- HUD Thanh điều khiển nhanh góc dưới màn hình -->
+                            <div class="tryon-hud-controls">
+                                <button type="button"
+                                        class="tryon-hud-btn"
+                                        id="tryonResetBtn"
+                                        title="Đặt lại vị trí ban đầu">
+                                    <i class="bi bi-arrow-counterclockwise"></i>
+                                </button>
+                                <button type="button"
+                                        class="tryon-hud-btn"
+                                        id="tryonScanBtn"
+                                        title="AI Quét dáng tự động căn chỉnh">
+                                    <i class="bi bi-magic"></i>
+                                </button>
+                                <button type="button"
+                                        class="tryon-hud-btn text-warning"
+                                        id="tryonSnapshotBtn"
+                                        title="Chụp ảnh lưu lại dáng">
+                                    <i class="bi bi-camera-fill"></i>
+                                </button>
+                            </div>
+
+                        </div>
+
+                        <!-- Gallery ảnh đã chụp -->
+                        <div class="mt-3">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <small class="text-muted">
+                                    <i class="bi bi-collection-play me-1"></i>
+                                    Ảnh thử đồ đã chụp (Bấm để tải về):
+                                </small>
+                            </div>
+                            <div class="tryon-snapshots" id="tryonSnapshotsGallery"></div>
+                        </div>
+
+                    </div>
+
+                    <!-- CỘT PHẢI: BẢNG ĐIỀU KHIỂN & CÔNG CỤ -->
+                    <div class="col-lg-4">
+                        <div class="tab-content h-100">
+
+                            <!-- Tab Pane 1: Điều khiển Camera & Căn chỉnh trang phục -->
+                            <div class="tab-pane fade show active h-100" id="tab-live-pane" role="tabpanel">
+                                <div class="tryon-sidebar">
+                                    <div>
+                                        <div class="tryon-tool-title">ĐANG THỬ SẢN PHẨM</div>
+                                        <h6 class="text-white mb-1">@Model.Name</h6>
+                                        <p class="text-warning fw-bold mb-3">@Model.Price.ToString("N0") ₫</p>
+                                    </div>
+
+                                    <hr class="border-secondary my-1" />
+
+                                    <div class="tryon-tool-title">ĐIỀU CHỈNH KÍCH CỠ & VỊ TRÍ</div>
+                                    <p class="small text-muted mb-2">
+                                        💡 <em>Mẹo: Bạn có thể rê chuột hoặc chạm tay trực tiếp lên áo để di chuyển!</em>
+                                    </p>
+
+                                    <!-- Sliders -->
+                                    <div class="tryon-slider-group mb-2">
+                                        <div class="tryon-slider-label">
+                                            <span>Thu phóng (Size)</span>
+                                            <span class="text-warning">Kéo để vừa người</span>
+                                        </div>
+                                        <input type="range" class="tryon-range" id="tryonScaleRange" min="0.6" max="1.8" step="0.05" value="1" />
+                                    </div>
+
+                                    <div class="tryon-slider-group mb-2">
+                                        <div class="tryon-slider-label">
+                                            <span>Độ rõ nét / Trong suốt</span>
+                                        </div>
+                                        <input type="range" class="tryon-range" id="tryonOpacityRange" min="0.5" max="1" step="0.05" value="0.95" />
+                                    </div>
+
+                                    <div class="tryon-slider-group mb-3">
+                                        <div class="tryon-slider-label">
+                                            <span>Góc xoay</span>
+                                        </div>
+                                        <input type="range" class="tryon-range" id="tryonRotateRange" min="-30" max="30" step="2" value="0" />
+                                    </div>
+
+                                    <button type="button"
+                                            class="btn btn-warning w-100 fw-bold py-2 mt-auto"
+                                            data-bs-dismiss="modal">
+                                        <i class="bi bi-cart-check me-2"></i>
+                                        Ưng Ý! Chốt Mua Sản Phẩm
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Tab Pane 2: Tải ảnh hoặc chọn Người mẫu -->
+                            <div class="tab-pane fade h-100" id="tab-photo-pane" role="tabpanel">
+                                <div class="tryon-sidebar">
+                                    <div class="tryon-tool-title">TẢI ẢNH CỦA BẠN</div>
+                                    <label class="btn btn-outline-warning w-100 mb-3 text-start py-2">
+                                        <i class="bi bi-cloud-arrow-up me-2"></i> Tải ảnh toàn thân lên...
+                                        <input type="file" id="tryonPhotoUpload" accept="image/*" style="display:none;" />
+                                    </label>
+
+                                    <div class="tryon-tool-title">HOẶC CHỌN NGƯỜI MẪU DÁNG CHUẨN</div>
+                                    <div class="sample-models-grid mb-3">
+                                        <div class="sample-model-thumb active"
+                                             data-model-img="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80">
+                                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80" alt="Nữ 1m65" />
+                                        </div>
+                                        <div class="sample-model-thumb"
+                                             data-model-img="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80">
+                                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80" alt="Nam 1m75" />
+                                        </div>
+                                        <div class="sample-model-thumb"
+                                             data-model-img="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=800&q=80">
+                                            <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=300&q=80" alt="Nữ 1m60" />
+                                        </div>
+                                        <div class="sample-model-thumb"
+                                             data-model-img="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=80">
+                                            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80" alt="Nam 1m80" />
+                                        </div>
+                                    </div>
+
+                                    <div class="small text-muted mt-auto">
+                                        <em>Tip: Sau khi chọn ảnh, bạn có thể bấm nút <strong class="text-warning">"AI Tự động căn dáng"</strong> ở góc dưới để áo khớp ngay vào mẫu!</em>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tab Pane 3: AI Tư vấn Size -->
+                            <div class="tab-pane fade h-100" id="tab-size-pane" role="tabpanel">
+                                <div class="tryon-sidebar">
+                                    <div class="tryon-tool-title">AI TƯ VẤN SIZE THEO VÓC DÁNG</div>
+
+                                    <div class="mb-2">
+                                        <label class="form-label small text-muted mb-1">Chiều cao của bạn (cm)</label>
+                                        <input type="number" class="form-control form-control-sm bg-dark text-white border-secondary" id="advisorHeight" placeholder="Ví dụ: 170" value="168" />
+                                    </div>
+
+                                    <div class="mb-2">
+                                        <label class="form-label small text-muted mb-1">Cân nặng của bạn (kg)</label>
+                                        <input type="number" class="form-control form-control-sm bg-dark text-white border-secondary" id="advisorWeight" placeholder="Ví dụ: 62" value="60" />
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label small text-muted mb-1">Gu mặc đồ mong muốn</label>
+                                        <select class="form-select form-select-sm bg-dark text-white border-secondary" id="advisorFit">
+                                            <option value="regular">Vừa vặn tiêu chuẩn (Regular)</option>
+                                            <option value="loose">Rộng rãi thoải mái (Oversize)</option>
+                                            <option value="slim">Ôm sát tôn dáng (Slimfit)</option>
+                                        </select>
+                                    </div>
+
+                                    <button type="button" class="btn btn-warning btn-sm w-100 fw-bold py-2 mb-3" id="advisorCalcBtn">
+                                        <i class="bi bi-cpu me-1"></i> Tính Toán Size Phù Hợp
+                                    </button>
+
+                                    <!-- Kết quả tư vấn -->
+                                    <div class="tryon-size-advisor-card" id="advisorResultCard" style="display:none;">
+                                        <div class="small text-muted">KẾT QUẢ PHÂN TÍCH AI:</div>
+                                        <div class="d-flex align-items-center justify-content-between my-2">
+                                            <span class="tryon-size-badge" id="recommendedSize">Size M</span>
+                                            <span class="badge bg-success" id="recommendAccuracy">Độ chuẩn 98%</span>
+                                        </div>
+                                        <p class="small text-muted mb-3">
+                                            Form dáng tối ưu cho chiều cao & cân nặng của bạn.
+                                        </p>
+                                        <button type="button"
+                                                class="btn btn-outline-warning btn-sm w-100"
+                                                id="applyRecommendedSizeBtn">
+                                            <i class="bi bi-check2-circle me-1"></i>
+                                            Áp Dụng Size Này & Đóng
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 @section Scripts {
+    <script src="~/js/virtual-tryon.js" asp-append-version="true"></script>
+
     <script>
         const variantSelect = document.getElementById("variantSelect");
         const priceElement = document.getElementById("selectedPrice");

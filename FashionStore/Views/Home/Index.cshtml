@@ -1,203 +1,499 @@
-﻿@model List<FashionStore.Models.Entities.Product>
+@model List<FashionStore.Models.Entities.Product>
 
 @{
-    ViewData["Title"] = "Trang chủ";
+    ViewData["Title"] = "HNMTSHOP – Khẳng Định Phong Cách | Thời Trang Giới Trẻ";
 }
 
-<!-- HERO BANNER -->
-<section class="fs-hero">
-    <div class="fs-hero-image"></div>
+<!-- ============================================================== -->
+<!-- 1:1 REPLICA: HNMTSHOP ATELIER — THE ANATOMY OF STYLE           -->
+<!-- ============================================================== -->
+<div class="at-loader" id="atLoader" aria-hidden="true">
+    <div class="at-loader__mark">HNMTSHOP</div>
+    <div class="at-loader__bar"><span id="atLoaderFill"></span></div>
+    <div class="at-loader__pct"><span id="atLoaderPct">0</span><i>%</i></div>
+    <div class="at-loader__label">Khởi tạo không gian thời trang đương đại</div>
+</div>
 
-    <div class="fs-hero-content">
-        <p class="fs-eyebrow">NEW SEASON / 2026</p>
-        <h1>Wear Your<br />Own Story.</h1>
-        <p class="fs-hero-description">
-            Không chỉ là trang phục. Đó là cách bạn thể hiện cá tính
-            và phong cách của chính mình.
-        </p>
+<header class="at-site-header" id="atHeader">
+    <a class="at-brand" href="#atTop">
+        <span class="at-brand__mark">&#9670;</span>
+        <span class="at-brand__word">HNMTSHOP</span>
+    </a>
+    <nav class="at-nav">
+        <a class="at-nav__cta" href="#mainContent">Vào Shop &darr;</a>
+    </nav>
+</header>
 
-        <a asp-controller="Products"
-           asp-action="Index"
-           class="fs-btn">
-            Khám phá bộ sưu tập
-            <span class="ms-2">→</span>
-        </a>
-    </div>
+<div id="atTop"></div>
 
-    <div class="fs-hero-caption">
-        <span>FASHIONSTORE COLLECTION</span>
-        <span>01 — 03</span>
-    </div>
-</section>
+<section class="at-scene" id="atScene" aria-label="The Anatomy of Style">
+    <div class="at-sticky" id="atSticky">
 
-<!-- INTRO -->
-<section class="fs-intro-section" id="about">
-    <p class="fs-eyebrow">ABOUT FASHIONSTORE</p>
-    <h2>
-        Đơn giản trong thiết kế.<br />
-        Khác biệt trong phong cách.
-    </h2>
-    <p>
-        FashionStore mang đến những lựa chọn thời trang hiện đại,
-        dễ ứng dụng và phù hợp với phong cách riêng của bạn.
-    </p>
-</section>
+        <canvas id="atFrames" class="at-frames-canvas"></canvas>
 
-<!-- CATEGORY -->
-<section class="fs-section">
-    <div class="fs-section-heading">
-        <div>
-            <p class="fs-eyebrow">FIND YOUR STYLE</p>
-            <h2>Khám phá danh mục</h2>
+        <!-- Cinematic Overlays -->
+        <div class="at-grade at-grade--vignette"></div>
+        <div class="at-grade at-grade--top"></div>
+        <div class="at-grade at-grade--bottom"></div>
+        <div class="at-grain"></div>
+
+        <!-- Movement 00: Hero Title -->
+        <div class="at-panel at-panel--hero" data-panel="hero">
+            <p class="at-eyebrow at-eyebrow--center">HNMTSHOP · STREETWEAR & FASHION STORE</p>
+            <h1 class="at-hero-title">Phong Cách Giới Trẻ<br><em>Khẳng Định Bản Thân</em></h1>
+            <div class="at-scroll-cue"><span></span>Cuộn để xem BST</div>
         </div>
 
-        <a asp-controller="Products" asp-action="Index"
-           class="fs-text-link">
-            Tất cả sản phẩm <span>→</span>
-        </a>
-    </div>
+        <!-- Movement 01: The Foundation -->
+        <article class="at-panel at-panel--left" data-panel="1">
+            <span class="at-panel__index">01</span>
+            <p class="at-panel__kicker">Chất Liệu Tuyển Chọn</p>
+            <h2 class="at-panel__title">Cotton 100%<br>Thoáng Mát & Dày Dặn</h2>
+            <p class="at-panel__body">Tất cả các dòng áo thun, hoodie, sweater tại HNMTSHOP đều dệt từ sợi cotton cao cấp định lượng chuẩn. Thấm hút mồ hôi tối đa, mềm mịn trên da và giặt máy không lo xù lông.</p>
+            <p class="at-panel__spec"><i>Chất Liệu</i> 100% Cotton 280-320 GSM</p>
+        </article>
 
-    <div class="fs-category-grid">
-        <a asp-controller="Products" asp-action="Index"
-           class="fs-category-card">
-            <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=900&q=85"
-                 alt="Thời trang nữ" />
-            <div class="fs-category-overlay">
-                <span>01 / COLLECTION</span>
-                <h3>Thời trang nữ</h3>
-                <span class="fs-category-link">Khám phá →</span>
-            </div>
-        </a>
+        <!-- Movement 02: The Waistcoat -->
+        <article class="at-panel at-panel--right" data-panel="2">
+            <span class="at-panel__index">02</span>
+            <p class="at-panel__kicker">Phom Dáng Thời Thượng</p>
+            <h2 class="at-panel__title">Oversize & Boxy<br>Tôn Dáng Cực Đỉnh</h2>
+            <p class="at-panel__body">Thiết kế phom rộng rãi phóng khoáng, che khuyết điểm hoàn hảo cho cả nam và nữ. Dễ dàng mix cùng quần jean baggy, cargo hay short để tạo nên outfit xuống phố cực chất.</p>
+            <p class="at-panel__spec"><i>Kiểu Dáng</i> Boxy Fit / Oversized Chuẩn Form</p>
+        </article>
 
-        <a asp-controller="Products" asp-action="Index"
-           class="fs-category-card">
-            <img src="https://images.unsplash.com/photo-1516257984-b1b4d707412e?auto=format&fit=crop&w=900&q=85"
-                 alt="Thời trang nam" />
-            <div class="fs-category-overlay">
-                <span>02 / COLLECTION</span>
-                <h3>Thời trang nam</h3>
-                <span class="fs-category-link">Khám phá →</span>
-            </div>
-        </a>
+        <!-- Movement 03: The Canvas (3D Exploded View) -->
+        <article class="at-panel at-panel--left" data-panel="3">
+            <span class="at-panel__index">03</span>
+            <p class="at-panel__kicker">Bộ Sưu Tập Có Sẵn</p>
+            <h2 class="at-panel__title">Đủ Size S Đến XL<br>Sẵn Hàng Giao Ngay</h2>
+            <p class="at-panel__body">Kho đồ luôn đầy ắp các mẫu mới nhất: từ Tee basic, Sơ mi họa tiết đến Áo khoác dù, Bomber và Hoodie nỉ bông. Không cần chờ đợi, đặt là ship ngay tận tay.</p>
+            <p class="at-panel__spec"><i>Bảng Size</i> S · M · L · XL (Nam & Nữ Đều Mặc Đẹp)</p>
+        </article>
 
-        <a asp-controller="Products" asp-action="Index"
-           class="fs-category-card">
-            <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=900&q=85"
-                 alt="Phong cách thường ngày" />
-            <div class="fs-category-overlay">
-                <span>03 / COLLECTION</span>
-                <h3>Everyday Style</h3>
-                <span class="fs-category-link">Khám phá →</span>
-            </div>
-        </a>
+        <!-- Movement 04: The Cut -->
+        <article class="at-panel at-panel--right" data-panel="4">
+            <span class="at-panel__index">04</span>
+            <p class="at-panel__kicker">Họa Tiết Độc Quyền</p>
+            <h2 class="at-panel__title">Graphic Bắt Trend<br>In Sắc Nét Không Bong</h2>
+            <p class="at-panel__body">Mỗi mẫu in đều mang đậm hơi thở văn hóa đường phố Gen Z. Ứng dụng công nghệ in lụa và kỹ thuật số tiên tiến giúp hình in sắc nét, bền bỉ qua hàng trăm lần giặt.</p>
+            <p class="at-panel__spec"><i>Công Nghệ In</i> In Lụa Cao Cấp Chống Nứt</p>
+        </article>
+
+        <!-- Movement 05: The Man -->
+        <article class="at-panel at-panel--left" data-panel="5">
+            <span class="at-panel__index">05</span>
+            <p class="at-panel__kicker">Phối Đồ Chuẩn Gu</p>
+            <h2 class="at-panel__title">Biến Hóa Outfit<br>Tự Tin Tỏa Sáng</h2>
+            <p class="at-panel__body">Chỉ cần một chiếc áo HNMTSHOP, bạn có thể biến tấu đa dạng từ phong cách bụi bặm dạo phố đến cá tính khi đi học, đi chơi hay cà phê cùng bạn bè.</p>
+            <p class="at-panel__spec"><i>Phong Cách</i> Streetwear · Casual · Tối Giản</p>
+        </article>
+
+        <!-- Movement 06: The Procession -->
+        <article class="at-panel at-panel--right" data-panel="6">
+            <span class="at-panel__index">06</span>
+            <p class="at-panel__kicker">Bảng Màu Xu Hướng</p>
+            <h2 class="at-panel__title">Tone Màu Hiện Đại<br>Dễ Phối & Tôn Da</h2>
+            <p class="at-panel__body">Sự kết hợp giữa gam màu kinh điển (Đen huyền bí, Trắng kem, Xám khói) cùng các sắc màu xu hướng đô thị. Dễ phối đồ, không kén da và luôn giữ được vẻ thời thượng.</p>
+            <p class="at-panel__spec"><i>Bảng Màu</i> Đen Tuyền · Be Sữa · Xám Tiêu · Rêu Đậm</p>
+        </article>
+
+        <!-- Movement 07: The Detail -->
+        <article class="at-panel at-panel--left" data-panel="7">
+            <span class="at-panel__index">07</span>
+            <p class="at-panel__kicker">Mua Sắm Tiện Lợi</p>
+            <h2 class="at-panel__title">Đổi Trả 30 Ngày<br>Kiểm Tra Tận Nơi</h2>
+            <p class="at-panel__body">Trải nghiệm mua sắm an tâm 100% tại HNMTSHOP: Miễn phí ship đơn từ 500k, đồng kiểm hàng trước khi thanh toán và hỗ trợ đổi size siêu tốc nếu mặc chưa vừa vặn.</p>
+            <p class="at-panel__spec"><i>Cam Kết</i> Giao Nhanh Toàn Quốc · Đổi Size Tận Nhà</p>
+        </article>
+
+        <!-- Progress Bar & Movement Counter -->
+        <div class="at-progress"><span id="atProgressFill"></span></div>
+        <div class="at-scene-count"><span id="atMovementNo">00</span><i>/ 07</i></div>
+
     </div>
 </section>
 
-<!-- LATEST PRODUCTS -->
-<section class="fs-section fs-products-section">
-    <div class="fs-section-heading">
-        <div>
-            <p class="fs-eyebrow">JUST ARRIVED</p>
-            <h2>Sản phẩm mới nhất</h2>
-            <p class="fs-section-description">
-                Những thiết kế mới nhất dành cho phong cách của bạn.
-            </p>
+<!-- CỬA NGÕ DẪN VÀO TRANG CHỦ CHÍNH (LƯỚT HẾT LÀ VÀO SHOP NGAY) -->
+<div id="mainContent"></div>
+
+<!-- ============================================================== -->
+<!-- SECTION 1: HERO SECTION (KHẲNG ĐỊNH PHONG CÁCH + KHUNG VÒM 3 MẪU)-->
+<!-- ============================================================== -->
+<section class="urbn-hero-section">
+    <div class="urbn-container">
+        <div class="urbn-hero-grid">
+
+            <!-- Bên trái: Tiêu đề & Nút bấm -->
+            <div>
+                <h1 class="urbn-hero-title">
+                    Khẳng Định<br />Phong Cách
+                </h1>
+                <p class="urbn-hero-subtitle">
+                    Thời trang đường phố thời thượng bắt nguồn từ văn hóa trẻ – Thiết kế cho sự thoải mái, tự do vận động và tự tin mỗi ngày.
+                </p>
+
+                <div class="urbn-hero-btn-row">
+                    <a asp-controller="Products" asp-action="Index" class="urbn-btn-drop">
+                        Khám Phá Drop Mới
+                    </a>
+                    <a href="#categories" class="urbn-btn-styles">
+                        Xem Tất Cả Mẫu
+                    </a>
+                </div>
+
+                <!-- 3 Chỉ số uy tín chân Hero -->
+                <div class="urbn-hero-metrics-row">
+                    <div class="urbn-metric-box">
+                        <i class="bi bi-arrow-repeat"></i>
+                        <span>Đổi Trả Dễ Dàng</span>
+                        <small>Trong 30 ngày</small>
+                    </div>
+
+                    <div class="urbn-metric-box">
+                        <i class="bi bi-hand-thumbs-up"></i>
+                        <span>100% Cotton</span>
+                        <small>Sản Xuất Tại VN</small>
+                    </div>
+
+                    <div class="urbn-metric-box">
+                        <i class="bi bi-truck"></i>
+                        <span>Miễn Phí</span>
+                        <small>Vận Chuyển 500k</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bên phải: Khung vòm nghệ thuật 3 người mẫu + Huy hiệu bay -->
+            <div>
+                <div class="urbn-collage-container">
+
+                    <!-- Vòm 1: Trái (Tone be / Nón lưỡi trai) -->
+                    <div class="urbn-arch-item urbn-arch-left">
+                        <img src="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?auto=format&fit=crop&w=600&q=80"
+                             alt="Người mẫu HNMTSHOP" />
+                    </div>
+
+                    <!-- Vòm 2: Giữa đè lên (Mũ len vàng & Áo nỉ Casablanca) -->
+                    <div class="urbn-arch-item urbn-arch-center">
+                        <img src="https://images.unsplash.com/photo-1509967419530-da38b4704bc6?auto=format&fit=crop&w=600&q=80"
+                             alt="Streetwear HNMTSHOP" />
+                    </div>
+
+                    <!-- Vòm 3: Phải (Tone hồng / Nón xanh) -->
+                    <div class="urbn-arch-item urbn-arch-right">
+                        <img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=600&q=80"
+                             alt="Người mẫu HNMTSHOP" />
+                    </div>
+
+                    <!-- Huy hiệu bay 1: Góc trên phải -->
+                    <div class="urbn-float-pill urbn-float-top-right">
+                        <span>100% Đảm Bảo Hài Lòng</span>
+                    </div>
+
+                    <!-- Huy hiệu bay 2: Góc dưới trái -->
+                    <div class="urbn-float-pill urbn-float-bottom-left">
+                        <span>&ldquo; Phiên Bản Giới Hạn</span>
+                    </div>
+
+                    <!-- Huy hiệu bay 3: Góc dưới phải -->
+                    <div class="urbn-float-pill urbn-float-bottom-right">
+                        <span>&ldquo; Tự Do Thể Hiện Bản Thân</span>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================== -->
+<!-- SECTION 2: 4 CAM KẾT THƯƠNG HIỆU (NỀN XÁM NHẠT)               -->
+<!-- ============================================================== -->
+<section class="urbn-feature-strip">
+    <div class="urbn-container">
+        <div class="urbn-feature-grid">
+
+            <div class="urbn-feature-col">
+                <i class="bi bi-shield-check"></i>
+                <h4>Thanh Toán An Toàn</h4>
+                <p>Yên tâm mua sắm — giao dịch và thông tin được bảo vệ tuyệt đối.</p>
+            </div>
+
+            <div class="urbn-feature-col">
+                <i class="bi bi-truck"></i>
+                <h4>Giao Hàng Siêu Tốc</h4>
+                <p>Nhận đồ streetwear yêu thích tận tay nhanh chóng, đúng hẹn.</p>
+            </div>
+
+            <div class="urbn-feature-col">
+                <i class="bi bi-headphones"></i>
+                <h4>Hỗ Trợ 24/7</h4>
+                <p>Có thắc mắc? Đội ngũ HNMTSHOP luôn sẵn sàng hỗ trợ 24/7.</p>
+            </div>
+
+            <div class="urbn-feature-col">
+                <i class="bi bi-arrow-counterclockwise"></i>
+                <h4>Đổi Trả Dễ Dàng</h4>
+                <p>Nếu mặc không vừa vặn, đổi trả siêu tốc chỉ trong vài bước.</p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================== -->
+<!-- SECTION 3: DANH MỤC (4 MẪU ĐỨNG + NÚT VIÊN THUỐC TRẮNG)       -->
+<!-- ============================================================== -->
+<section class="urbn-cat-section" id="categories">
+    <div class="urbn-container">
+
+        <div class="urbn-center-heading">
+            <h2>Danh Mục Nổi Bật</h2>
+            <p>Từ trang phục thiết yếu hằng ngày đến những món đồ tạo điểm nhấn — Tìm phong cách của bạn.</p>
         </div>
 
-        <a asp-controller="Products" asp-action="Index"
-           class="fs-text-link">
-            Xem tất cả <span>→</span>
-        </a>
+        <div class="urbn-cat-grid">
+
+            <!-- Card 1: BẠN NỮ -->
+            <a asp-controller="Products" asp-action="Index" asp-route-categoryId="5" class="urbn-cat-card">
+                <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80"
+                     alt="Bạn Nữ" />
+                <div class="urbn-cat-pill-wrap">
+                    <span class="urbn-cat-pill">BẠN NỮ</span>
+                </div>
+            </a>
+
+            <!-- Card 2: BẠN NAM -->
+            <a asp-controller="Products" asp-action="Index" asp-route-categoryId="1" class="urbn-cat-card">
+                <img src="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?auto=format&fit=crop&w=800&q=80"
+                     alt="Bạn Nam" />
+                <div class="urbn-cat-pill-wrap">
+                    <span class="urbn-cat-pill">BẠN NAM</span>
+                </div>
+            </a>
+
+            <!-- Card 3: PHÁI ĐẸP -->
+            <a asp-controller="Products" asp-action="Index" asp-route-categoryId="6" class="urbn-cat-card">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80"
+                     alt="Phái Đẹp" />
+                <div class="urbn-cat-pill-wrap">
+                    <span class="urbn-cat-pill">PHÁI ĐẸP</span>
+                </div>
+            </a>
+
+            <!-- Card 4: UNISEX & PHỤ KIỆN -->
+            <a asp-controller="Products" asp-action="Index" asp-route-categoryId="3" class="urbn-cat-card">
+                <img src="https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&w=800&q=80"
+                     alt="Unisex & Phụ Kiện" />
+                <div class="urbn-cat-pill-wrap">
+                    <span class="urbn-cat-pill">UNISEX</span>
+                </div>
+            </a>
+
+        </div>
+
     </div>
+</section>
 
-    @if (Model != null && Model.Any())
-    {
-        <div class="fs-product-grid">
-            @foreach (var product in Model)
-            {
-                <a asp-controller="Products"
-                   asp-action="Details"
-                   asp-route-id="@product.Id"
-                   class="fs-product-card">
+<!-- ============================================================== -->
+<!-- SECTION 4: ĐỢT DROP ĐẶC BIỆT & ĐỒNG HỒ ĐẾM NGƯỢC               -->
+<!-- ============================================================== -->
+<section class="urbn-offer-section">
+    <div class="urbn-container">
+        <div class="urbn-offer-grid">
 
-                    <div class="fs-product-image">
-                        @if (!string.IsNullOrWhiteSpace(product.ImageUrl))
-                        {
-                            <img src="@product.ImageUrl"
-                                 alt="@product.Name"
-                                 loading="lazy" />
-                        }
-                        else
-                        {
-                            <div class="fs-product-placeholder">
-                                FASHIONSTORE
-                            </div>
-                        }
+            <!-- Bên trái: Nội dung & Bộ đếm -->
+            <div>
+                <h2 class="urbn-offer-title">
+                    Nhanh Tay! Ưu Đãi<br />Sắp Kết Thúc
+                </h2>
+                <p class="urbn-offer-sub">
+                    Thời gian có hạn cho đợt ưu đãi độc quyền này. Hành động ngay để nhận những đặc quyền tốt nhất từ HNMTSHOP.
+                </p>
 
-                        <span class="fs-product-tag">NEW</span>
+                <!-- Bộ 4 ô đếm ngược -->
+                <div class="urbn-countdown-bar">
+                    <div class="urbn-countdown-cell">
+                        <span id="cdDays">190</span>
+                        <small>Ngày</small>
                     </div>
-
-                    <div class="fs-product-info">
-                        <p class="fs-product-category">
-                            @(product.Category?.Name ?? "Fashion")
-                        </p>
-
-                        <h3>@product.Name</h3>
-
-                        <div class="fs-product-bottom">
-                            <span class="fs-product-price">
-                                @product.Price.ToString("N0") đ
-                            </span>
-                            <span class="fs-product-arrow">→</span>
-                        </div>
+                    <div class="urbn-countdown-cell">
+                        <span id="cdHours">04</span>
+                        <small>Giờ</small>
                     </div>
+                    <div class="urbn-countdown-cell">
+                        <span id="cdMins">38</span>
+                        <small>Phút</small>
+                    </div>
+                    <div class="urbn-countdown-cell">
+                        <span id="cdSecs">13</span>
+                        <small>Giây</small>
+                    </div>
+                </div>
+
+                <p class="urbn-offer-notice">
+                    Ưu đãi giới hạn có hiệu lực đến hết tháng 12, 2026. <strong>MUA NGAY KẺO HẾT!</strong>
+                </p>
+
+                <a asp-controller="Products" asp-action="Index" class="urbn-btn-view-col">
+                    XEM BỘ SƯU TẬP
                 </a>
-            }
-        </div>
-    }
-    else
-    {
-        <div class="fs-empty-products">
-            <h3>Sản phẩm đang được cập nhật</h3>
-            <p>FashionStore sẽ sớm mang đến những bộ sưu tập mới nhất.</p>
-        </div>
-    }
-</section>
+            </div>
 
-<!-- COLLECTION BANNER -->
-<section class="fs-collection-banner">
-    <div class="fs-collection-content">
-        <p class="fs-eyebrow">THE ART OF EVERYDAY STYLE</p>
-        <h2>Less, But<br />Better.</h2>
-        <p>
-            Tìm kiếm vẻ đẹp trong những điều đơn giản.
-            Chọn phong cách phù hợp với chính bạn.
-        </p>
-        <a asp-controller="Products"
-           asp-action="Index"
-           class="fs-btn fs-btn-outline">
-            Mua sắm ngay
-        </a>
+            <!-- Bên phải: Ảnh người mẫu full-body -->
+            <div>
+                <div class="urbn-model-photo">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1000&q=85"
+                         alt="Bộ sưu tập nam hiện đại HNMTSHOP" />
+                </div>
+            </div>
+
+        </div>
     </div>
 </section>
 
-<!-- BENEFITS -->
-<section class="fs-benefits">
-    <div>
-        <span class="fs-benefit-icon">01</span>
-        <h4>Chất lượng chọn lọc</h4>
-        <p>Chú trọng chất liệu và trải nghiệm sử dụng.</p>
+<!-- ============================================================== -->
+<!-- SECTION 5: DẢI BĂNG CHỮ CHẠY VÔ TẬN (MARQUEE)                  -->
+<!-- ============================================================== -->
+<div class="urbn-ticker-band">
+    <div class="urbn-ticker-inner">
+        <div class="urbn-ticker-item">
+            <span class="urbn-ticker-badge"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100" /></span>
+            THIẾT KẾ CHO PHONG CÁCH HIỆN ĐẠI
+        </div>
+        <div class="urbn-ticker-item">
+            <span class="urbn-ticker-badge"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100" /></span>
+            HNMTSHOP STREETWEAR
+        </div>
+        <div class="urbn-ticker-item">
+            <span class="urbn-ticker-badge"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100" /></span>
+            PHIÊN BẢN GIỚI HẠN DROP 2026
+        </div>
+        <div class="urbn-ticker-item">
+            <span class="urbn-ticker-badge"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100" /></span>
+            THIẾT KẾ CHO PHONG CÁCH HIỆN ĐẠI
+        </div>
     </div>
+</div>
 
-    <div>
-        <span class="fs-benefit-icon">02</span>
-        <h4>Phong cách hiện đại</h4>
-        <p>Thiết kế dễ phối, phù hợp nhiều hoàn cảnh.</p>
+<!-- ============================================================== -->
+<!-- SECTION 6: BỘ SƯU TẬP THEO MÙA (2 SÀO QUẦN ÁO)                -->
+<!-- ============================================================== -->
+<section class="urbn-seasonal-section">
+    <div class="urbn-container">
+
+        <div class="urbn-center-heading">
+            <h2>Bộ Sưu Tập Theo Mùa</h2>
+            <p>Mỗi mùa mang đến một đợt Drop mới — Thiết kế táo bạo, phom dáng chuẩn mực, sinh ra cho đường phố</p>
+        </div>
+
+        <div class="urbn-racks-grid">
+
+            <!-- Sào 1: TỐI GIẢN & CÔNG SỞ -->
+            <a asp-controller="Products" asp-action="Index" class="urbn-rack-card">
+                <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1000&q=80"
+                     alt="Tối Giản & Công Sở" />
+                <div class="urbn-cat-pill-wrap">
+                    <span class="urbn-cat-pill">TỐI GIẢN & CÔNG SỞ</span>
+                </div>
+            </a>
+
+            <!-- Sào 2: PHONG CÁCH ĐƯỜNG PHỐ -->
+            <a asp-controller="Products" asp-action="Index" class="urbn-rack-card">
+                <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=1000&q=80"
+                     alt="Phong Cách Đường Phố" />
+                <div class="urbn-cat-pill-wrap">
+                    <span class="urbn-cat-pill">STREETWEAR</span>
+                </div>
+            </a>
+
+        </div>
+
     </div>
+</section>
 
-    <div>
-        <span class="fs-benefit-icon">03</span>
-        <h4>Hỗ trợ tận tâm</h4>
-        <p>Đồng hành cùng bạn trong quá trình mua sắm.</p>
+<!-- MARQUEE 2: MẶC ĐẸP HƠN, TỰ TIN HƠN -->
+<div class="urbn-ticker-band" style="padding: 14px 0; font-size: 14px;">
+    <div class="urbn-ticker-inner" style="animation-duration: 18s;">
+        <div class="urbn-ticker-item" style="font-size: 14px;">
+            MẶC ĐẸP HƠN, THOẢI MÁI HƠN, TỰ TIN TRONG MỌI CHUYỂN ĐỘNG &nbsp;&bull;&nbsp; MẶC ĐẸP HƠN, THOẢI MÁI HƠN, TỰ TIN TRONG MỌI CHUYỂN ĐỘNG &nbsp;&bull;&nbsp; HNMTSHOP 2026
+        </div>
+        <div class="urbn-ticker-item" style="font-size: 14px;">
+            MẶC ĐẸP HƠN, THOẢI MÁI HƠN, TỰ TIN TRONG MỌI CHUYỂN ĐỘNG &nbsp;&bull;&nbsp; MẶC ĐẸP HƠN, THOẢI MÁI HƠN, TỰ TIN TRONG MỌI CHUYỂN ĐỘNG &nbsp;&bull;&nbsp; HNMTSHOP 2026
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================== -->
+<!-- SECTION 7: ĐÁNH GIÁ (THỜI TRANG TỰ NÓI LÊN TẤT CẢ)             -->
+<!-- ============================================================== -->
+<section class="urbn-reviews-section">
+    <div class="urbn-container">
+
+        <div class="urbn-reviews-top">
+            <div>
+                <h2 style="font-size: 38px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px;">
+                    Thời Trang Tự Nói Lên Tất Cả
+                </h2>
+                <p style="font-size: 14.5px; color: #4B5563; max-width: 600px;">
+                    Khám phá phong cách vượt lên trên mọi xu hướng — Những thiết kế giúp bạn bộc lộ cá tính, nâng tầm phong cách và tạo dấu ấn ở mọi nơi bạn đến.
+                </p>
+            </div>
+            <a asp-controller="Products" asp-action="Index" class="urbn-btn-see-all">
+                Xem Tất Cả &#x2197;
+            </a>
+        </div>
+
+        <div class="urbn-reviews-grid">
+
+            <!-- Đánh giá 1: Hoàng Minh -->
+            <div class="urbn-review-box">
+                <div class="urbn-stars-row">
+                    &#x2605;&#x2605;&#x2605;&#x2605;&#x2605;
+                </div>
+                <p class="urbn-review-quote">
+                    Mình cực kỳ thích đồ của HNMTSHOP! Thiết kế độc lạ, bắt trend mà chất vải dày dặn cao cấp xịn xò. Mặc ra đường ai cũng khen. Chắc chắn là brand ruột của mình!
+                </p>
+                <div class="urbn-author-row">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80"
+                         alt="Hoàng Minh" />
+                    <strong>Hoàng Minh (Hà Nội)</strong>
+                </div>
+            </div>
+
+            <!-- Đánh giá 2: Quốc Bảo -->
+            <div class="urbn-review-box">
+                <div class="urbn-stars-row">
+                    &#x2605;&#x2605;&#x2605;&#x2605;&#x2605;
+                </div>
+                <p class="urbn-review-quote">
+                    Một trong những thương hiệu thời trang streetwear ưng ý nhất mình từng mua. Form dáng mặc lên cực kỳ tôn dáng, chất liệu thoáng mát. Mọi chi tiết may đo đều rất chỉn chu.
+                </p>
+                <div class="urbn-author-row">
+                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80"
+                         alt="Quốc Bảo" />
+                    <strong>Quốc Bảo (TP.HCM)</strong>
+                </div>
+            </div>
+
+            <!-- Đánh giá 3: Thùy Trang -->
+            <div class="urbn-review-box">
+                <div class="urbn-stars-row">
+                    &#x2605;&#x2605;&#x2605;&#x2605;&#x2605;
+                </div>
+                <p class="urbn-review-quote">
+                    Mê mẩn từ màu sắc đến từng đường nét! HNMTSHOP cân bằng hoàn hảo giữa thời trang và sự thoải mái khi mặc. Mình đã giới thiệu cho tất cả bạn bè cùng mua!
+                </p>
+                <div class="urbn-author-row">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
+                         alt="Thùy Trang" />
+                    <strong>Thùy Trang (Đà Nẵng)</strong>
+                </div>
+            </div>
+
+        </div>
+
     </div>
 </section>

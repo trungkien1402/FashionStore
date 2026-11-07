@@ -103,6 +103,7 @@ public class ProductsController : Controller
         var model = new ProductListViewModel
         {
             Products = products,
+            AllCatalogProducts = allProducts.Where(p => p.IsActive).ToList(),
             Categories = categories,
             Keyword = keyword,
             CategoryId = categoryId,

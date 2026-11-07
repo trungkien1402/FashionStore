@@ -1,4 +1,3 @@
-﻿
 using FashionStore.Models.Entities;
 
 namespace FashionStore.Models.ViewModels;
@@ -6,6 +5,8 @@ namespace FashionStore.Models.ViewModels;
 public class ProductListViewModel
 {
     public List<Product> Products { get; set; } = new();
+
+    public List<Product> AllCatalogProducts { get; set; } = new();
 
     public string? Keyword { get; set; }
 
