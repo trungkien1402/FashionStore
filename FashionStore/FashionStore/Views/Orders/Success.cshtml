@@ -1,0 +1,67 @@
+﻿@model Order
+
+@{
+    ViewData["Title"] = "Đặt hàng thành công";
+}
+
+<div class="container py-5">
+    <div class="text-center mx-auto" style="max-width:650px">
+
+        <div class="mb-4">
+            <div class="rounded-circle border border-success d-inline-flex
+                align-items-center justify-content-center"
+                 style="width:85px;height:85px">
+                <span class="text-success fs-1">✓</span>
+            </div>
+        </div>
+
+        <h1>Đặt hàng thành công!</h1>
+
+        <p class="text-muted mt-3">
+            Cảm ơn bạn đã mua sắm tại FashionStore.
+            Đơn hàng của bạn đã được ghi nhận.
+        </p>
+
+        <div class="border p-4 text-start mt-4">
+            <div class="d-flex justify-content-between mb-3">
+                <span>Mã đơn hàng</span>
+                <strong>@Model.OrderCode</strong>
+            </div>
+
+            <div class="d-flex justify-content-between mb-3">
+                <span>Người nhận</span>
+                <strong>@Model.ReceiverName</strong>
+            </div>
+
+            <div class="d-flex justify-content-between mb-3">
+                <span>Số điện thoại</span>
+                <strong>@Model.Phone</strong>
+            </div>
+
+            <div class="mb-3">
+                <span>Địa chỉ giao hàng</span>
+                <p class="fw-semibold mb-0">@Model.Address</p>
+            </div>
+
+            <hr />
+
+            <div class="d-flex justify-content-between">
+                <strong>Tổng tiền</strong>
+                <strong class="fs-5">
+                    @Model.TotalAmount.ToString("N0") ₫
+                </strong>
+            </div>
+
+            <div class="d-flex justify-content-between mt-2">
+                <span>Thanh toán</span>
+                <span>Thanh toán khi nhận hàng (COD)</span>
+            </div>
+        </div>
+
+        <a asp-controller="Products"
+           asp-action="Index"
+           class="fs-btn fs-btn-dark mt-4">
+            TIẾP TỤC MUA SẮM
+        </a>
+    </div>
+</div>

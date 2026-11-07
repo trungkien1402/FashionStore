@@ -1,0 +1,327 @@
+@model List<FashionStore.Models.ViewModels.AdminUserListItemViewModel>
+
+@{
+    ViewData["Title"] = "Quản lý tài khoản & phân quyền";
+    var keyword = ViewBag.Keyword as string;
+    var selectedRole = ViewBag.SelectedRole as string;
+    var selectedStatus = ViewBag.SelectedStatus as string;
+    var currentPage = (int)(ViewBag.CurrentPage ?? 1);
+    var totalPages = (int)(ViewBag.TotalPages ?? 1);
+    var totalUsers = (int)(ViewBag.TotalUsers ?? 0);
+    var availableRoles = ViewBag.AvailableRoles as string[] ?? Array.Empty<string>();
+
+    string GetRoleBadgeClass(string role) => role switch
+    {
+        "Admin" => "bg-danger",
+        "Manager" => "bg-warning text-dark",
+        "Staff" => "bg-info text-dark",
+        "Shipper" => "bg-primary",
+        "Customer" => "bg-secondary",
+        _ => "bg-light text-dark"
+    };
+
+    string GetRoleDisplayName(string role) => role switch
+    {
+        "Admin" => "Admin",
+        "Manager" => "Quản lý",
+        "Staff" => "Nhân viên",
+        "Shipper" => "Shipper",
+        "Customer" => "Khách hàng",
+        _ => role
+    };
+}
+
+<div class="container-fluid px-0">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+        <div>
+            <div class="text-muted small text-uppercase">Hệ thống</div>
+            <h2 class="fw-bold mb-0">Quản lý tài khoản</h2>
+            <p class="text-muted mb-0">Danh sách tài khoản, phân quyền vai trò và quản trị trạng thái người dùng.</p>
+        </div>
+        <div>
+            <a asp-action="Create" class="btn btn-dark">
+                <i class="bi bi-person-plus me-1"></i> Tạo tài khoản mới
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- BỘ LỌC TÌM KIẾM -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form asp-action="Index" method="get" class="row g-3">
+                <div class="col-md-5">
+                    <label class="form-label small text-muted">Tìm kiếm</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                        <input type="text"
+                               name="keyword"
+                               value="@keyword"
+                               class="form-control"
+                               placeholder="Tìm theo tên, email hoặc số điện thoại..." />
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label small text-muted">Vai trò</label>
+                    <select name="role" class="form-select">
+                        <option value="">-- Tất cả vai trò --</option>
+                        @foreach (var r in availableRoles)
+                        {
+                            <option value="@r" selected="@(selectedRole == r)">@GetRoleDisplayName(r)</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label small text-muted">Trạng thái</label>
+                    <select name="status" class="form-select">
+                        <option value="">-- Tất cả --</option>
+                        <option value="active" selected="@(selectedStatus == "active")">Đang hoạt động</option>
+                        <option value="locked" selected="@(selectedStatus == "locked")">Đã khóa</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2 d-flex align-items-end gap-2">
+                    <button type="submit" class="btn btn-dark w-100">
+                        <i class="bi bi-funnel me-1"></i> Lọc
+                    </button>
+                    @if (!string.IsNullOrWhiteSpace(keyword) || !string.IsNullOrWhiteSpace(selectedRole) || !string.IsNullOrWhiteSpace(selectedStatus))
+                    {
+                        <a asp-action="Index" class="btn btn-outline-secondary" title="Xóa bộ lọc">
+                            <i class="bi bi-x-lg"></i>
+                        </a>
+                    }
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- DANH SÁCH TÀI KHOẢN -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+            <span class="fw-semibold">
+                Tổng cộng: <span class="badge bg-dark rounded-pill">@totalUsers</span> tài khoản
+            </span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="min-width: 220px;">Họ tên & Email</th>
+                        <th>Số điện thoại</th>
+                        <th>Vai trò</th>
+                        <th>Trạng thái</th>
+                        <th>Hoạt động</th>
+                        <th>Ngày tạo</th>
+                        <th class="text-end" style="min-width: 180px;">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center py-5 text-muted">
+                                <i class="bi bi-people fs-1 d-block mb-2 text-secondary"></i>
+                                Không tìm thấy tài khoản nào phù hợp với điều kiện tìm kiếm.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var user in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-circle me-3 bg-light text-dark fw-bold border d-flex align-items-center justify-content-center"
+                                             style="width: 40px; height: 40px; border-radius: 50%;">
+                                            @(string.IsNullOrEmpty(user.FullName) ? "U" : user.FullName.Substring(0, 1).ToUpper())
+                                        </div>
+                                        <div>
+                                            <a asp-action="Details" asp-route-id="@user.Id" class="fw-bold text-dark text-decoration-none">
+                                                @user.FullName
+                                            </a>
+                                            @if (user.IsCurrentAdmin)
+                                            {
+                                                <span class="badge bg-danger ms-1" style="font-size: 10px;">Bạn</span>
+                                            }
+                                            <div class="text-muted small">@user.Email</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    @(string.IsNullOrEmpty(user.PhoneNumber) ? "-" : user.PhoneNumber)
+                                </td>
+                                <td>
+                                    @if (user.Roles.Any())
+                                    {
+                                        @foreach (var r in user.Roles)
+                                        {
+                                            <span class="badge @GetRoleBadgeClass(r) me-1">
+                                                @GetRoleDisplayName(r)
+                                            </span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Không có</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (user.IsActive)
+                                    {
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">
+                                            <i class="bi bi-check-circle-fill me-1"></i> Hoạt động
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1">
+                                            <i class="bi bi-lock-fill me-1"></i> Đã khóa
+                                        </span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (user.Roles.Contains("Customer") || user.OrderCount > 0)
+                                    {
+                                        <div class="small">
+                                            <i class="bi bi-bag me-1 text-muted"></i>@user.OrderCount đơn hàng
+                                        </div>
+                                    }
+                                    @if (user.Roles.Contains("Shipper") || user.ShipmentCount > 0)
+                                    {
+                                        <div class="small text-primary">
+                                            <i class="bi bi-truck me-1"></i>@user.ShipmentCount lượt giao
+                                        </div>
+                                    }
+                                </td>
+                                <td class="text-muted small">
+                                    @user.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                                </td>
+                                <td class="text-end">
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-action="Details"
+                                           asp-route-id="@user.Id"
+                                           class="btn btn-outline-secondary"
+                                           title="Xem chi tiết">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+
+                                        <a asp-action="Edit"
+                                           asp-route-id="@user.Id"
+                                           class="btn btn-outline-primary"
+                                           title="Chỉnh sửa thông tin & vai trò">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+
+                                        <a asp-action="ResetPassword"
+                                           asp-route-id="@user.Id"
+                                           class="btn btn-outline-warning text-dark"
+                                           title="Đặt lại mật khẩu">
+                                            <i class="bi bi-key"></i>
+                                        </a>
+
+                                        @if (!user.IsCurrentAdmin)
+                                        {
+                                            <form asp-action="ToggleStatus"
+                                                  asp-route-id="@user.Id"
+                                                  method="post"
+                                                  class="d-inline"
+                                                  onsubmit="return confirm('@(user.IsActive ? $"Bạn có chắc chắn muốn KHÓA tài khoản {user.Email}?" : $"Bạn có chắc muốn MỞ KHÓA tài khoản {user.Email}?")');">
+                                                @Html.AntiForgeryToken()
+                                                @if (user.IsActive)
+                                                {
+                                                    <button type="submit" class="btn btn-outline-danger" title="Khóa tài khoản">
+                                                        <i class="bi bi-lock"></i>
+                                                    </button>
+                                                }
+                                                else
+                                                {
+                                                    <button type="submit" class="btn btn-outline-success" title="Mở khóa tài khoản">
+                                                        <i class="bi bi-unlock"></i>
+                                                    </button>
+                                                }
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <button type="button" class="btn btn-outline-secondary disabled" title="Không thể khóa chính mình">
+                                                <i class="bi bi-shield-check"></i>
+                                            </button>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- PHÂN TRANG -->
+        @if (totalPages > 1)
+        {
+            <div class="card-footer bg-white border-0 py-3 d-flex justify-content-between align-items-center flex-wrap">
+                <div class="small text-muted">
+                    Trang @currentPage / @totalPages
+                </div>
+                <nav>
+                    <ul class="pagination pagination-sm mb-0">
+                        <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                            <a class="page-link"
+                               asp-action="Index"
+                               asp-route-keyword="@keyword"
+                               asp-route-role="@selectedRole"
+                               asp-route-status="@selectedStatus"
+                               asp-route-page="@(currentPage - 1)">
+                                Trước
+                            </a>
+                        </li>
+
+                        @for (int p = 1; p <= totalPages; p++)
+                        {
+                            <li class="page-item @(p == currentPage ? "active" : "")">
+                                <a class="page-link"
+                                   asp-action="Index"
+                                   asp-route-keyword="@keyword"
+                                   asp-route-role="@selectedRole"
+                                   asp-route-status="@selectedStatus"
+                                   asp-route-page="@p">
+                                    @p
+                                </a>
+                            </li>
+                        }
+
+                        <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                            <a class="page-link"
+                               asp-action="Index"
+                               asp-route-keyword="@keyword"
+                               asp-route-role="@selectedRole"
+                               asp-route-status="@selectedStatus"
+                               asp-route-page="@(currentPage + 1)">
+                                Sau
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        }
+    </div>
+</div>

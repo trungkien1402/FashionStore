@@ -1,0 +1,186 @@
+﻿@model Product
+
+@{
+    ViewData["Title"] = Model.Name;
+    var variants = Model.Variants?
+        .Where(v => v.IsActive)
+        .OrderBy(v => v.Size)
+        .ToList() ?? new List<ProductVariant>();
+}
+
+<div class="container py-5">
+    <div class="row g-5">
+
+        <!-- Hình ảnh -->
+        <div class="col-lg-6">
+            <div class="product-detail-image">
+                <img src="@Model.ImageUrl"
+                     alt="@Model.Name"
+                     class="img-fluid w-100"
+                     onerror="this.src='https://placehold.co/700x850?text=FashionStore'" />
+            </div>
+        </div>
+
+        <!-- Thông tin sản phẩm -->
+        <div class="col-lg-6">
+            <div class="product-detail-info">
+
+                <p class="text-muted text-uppercase small mb-2">
+                    @(Model.Category?.Name ?? "Thời trang")
+                </p>
+
+                <h1 class="mb-3">@Model.Name</h1>
+
+                <h3 class="mb-4">
+                    @Model.Price.ToString("N0") ₫
+                </h3>
+
+                <div class="product-description mb-4">
+                    @Model.Description
+                </div>
+
+                @if (TempData["CartError"] != null)
+                {
+                    <div class="alert alert-danger">
+                        @TempData["CartError"]
+                    </div>
+                }
+
+                @if (variants.Any())
+                {
+                    <form asp-controller="Cart"
+                          asp-action="Add"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="productId"
+                               value="@Model.Id" />
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                Chọn phân loại
+                            </label>
+
+                            <select name="variantId"
+                                    id="variantSelect"
+                                    class="form-select"
+                                    required>
+                                @foreach (var variant in variants)
+                                {
+                                    <option value="@variant.Id"
+                                            data-price="@variant.Price"
+                                            data-stock="@variant.StockQuantity"
+                                            data-size="@variant.Size"
+                                            data-color="@variant.Color"
+                                            disabled="@(variant.StockQuantity <= 0)">
+                                        Size @variant.Size - @variant.Color
+                                        @(variant.StockQuantity <= 0 ? "(Hết hàng)" : "")
+                                    </option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <p class="mb-1">
+                                Giá:
+                                <strong id="selectedPrice">
+                                    @Model.Price.ToString("N0") ₫
+                                </strong>
+                            </p>
+
+                            <p class="text-muted">
+                                Tồn kho:
+                                <span id="selectedStock">--</span>
+                            </p>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                Số lượng
+                            </label>
+
+                            <input type="number"
+                                   name="quantity"
+                                   id="quantityInput"
+                                   class="form-control"
+                                   value="1"
+                                   min="1"
+                                   max="20"
+                                   required />
+                        </div>
+
+                        <button type="submit"
+                                id="addToCartButton"
+                                class="fs-btn fs-btn-dark w-100">
+                            THÊM VÀO GIỎ HÀNG
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <div class="alert alert-warning">
+                        Sản phẩm hiện chưa có phân loại để đặt hàng.
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const variantSelect = document.getElementById("variantSelect");
+        const priceElement = document.getElementById("selectedPrice");
+        const stockElement = document.getElementById("selectedStock");
+        const quantityInput = document.getElementById("quantityInput");
+        const addButton = document.getElementById("addToCartButton");
+
+        function updateVariantInfo() {
+            if (!variantSelect) return;
+
+            const option = variantSelect.options[variantSelect.selectedIndex];
+
+            if (!option || !option.value) return;
+
+            const price = Number(option.dataset.price);
+            const stock = Number(option.dataset.stock);
+
+            priceElement.textContent =
+                price.toLocaleString("vi-VN") + " ₫";
+
+            stockElement.textContent = stock;
+
+            quantityInput.max = Math.min(stock, 20);
+
+            if (stock <= 0) {
+                quantityInput.value = 0;
+                addButton.disabled = true;
+                addButton.textContent = "HẾT HÀNG";
+            } else {
+                quantityInput.value = 1;
+                addButton.disabled = false;
+                addButton.textContent = "THÊM VÀO GIỎ HÀNG";
+            }
+        }
+
+        if (variantSelect) {
+            variantSelect.addEventListener("change", updateVariantInfo);
+            updateVariantInfo();
+        }
+
+        if (quantityInput) {
+            quantityInput.addEventListener("change", function() {
+                const max = Number(this.max);
+                let value = Number(this.value);
+
+                if (value < 1) value = 1;
+                if (value > max) value = max;
+
+                this.value = value;
+            });
+        }
+    </script>
+}

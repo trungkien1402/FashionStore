@@ -36,6 +36,10 @@ public class Order
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+    public DateTime? TransferReportedAt { get; set; }
+
+    public byte[] RowVersion { get; set; } = [];
+
     public ICollection<OrderItem> Items { get; set; }
         = new List<OrderItem>();
 

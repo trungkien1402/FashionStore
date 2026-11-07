@@ -1,0 +1,380 @@
+@model FashionStore.Models.ViewModels.AdminUserDetailsViewModel
+@using FashionStore.Models.Enums
+
+@{
+    ViewData["Title"] = $"Chi tiết tài khoản - {Model.User.FullName}";
+
+    string GetRoleBadgeClass(string role) => role switch
+    {
+        "Admin" => "bg-danger",
+        "Manager" => "bg-warning text-dark",
+        "Staff" => "bg-info text-dark",
+        "Shipper" => "bg-primary",
+        "Customer" => "bg-secondary",
+        _ => "bg-light text-dark"
+    };
+
+    string GetRoleDisplayName(string role) => role switch
+    {
+        "Admin" => "Quản trị viên (Admin)",
+        "Manager" => "Quản lý (Manager)",
+        "Staff" => "Nhân viên (Staff)",
+        "Shipper" => "Giao hàng (Shipper)",
+        "Customer" => "Khách hàng (Customer)",
+        _ => role
+    };
+
+    string GetOrderStatusName(OrderStatus status) => status switch
+    {
+        OrderStatus.PendingConfirmation => "Chờ xác nhận",
+        OrderStatus.Confirmed => "Đã xác nhận",
+        OrderStatus.Processing => "Đang xử lý",
+        OrderStatus.Shipping => "Đang giao",
+        OrderStatus.Delivered => "Đã giao",
+        OrderStatus.Cancelled => "Đã hủy",
+        OrderStatus.DeliveryFailed => "Giao thất bại",
+        OrderStatus.Returned => "Đã hoàn trả",
+        _ => status.ToString()
+    };
+
+    string GetOrderStatusBadge(OrderStatus status) => status switch
+    {
+        OrderStatus.PendingConfirmation => "bg-warning text-dark",
+        OrderStatus.Confirmed => "bg-info text-dark",
+        OrderStatus.Processing => "bg-primary",
+        OrderStatus.Shipping => "bg-primary",
+        OrderStatus.Delivered => "bg-success",
+        OrderStatus.Cancelled => "bg-secondary",
+        OrderStatus.DeliveryFailed => "bg-danger",
+        OrderStatus.Returned => "bg-dark",
+        _ => "bg-light text-dark"
+    };
+
+    string GetShipmentStatusName(ShipmentStatus status) => status switch
+    {
+        ShipmentStatus.Assigned => "Đã phân công",
+        ShipmentStatus.PickedUp => "Đã lấy hàng",
+        ShipmentStatus.InTransit => "Đang giao hàng",
+        ShipmentStatus.Delivered => "Giao thành công",
+        ShipmentStatus.Failed => "Giao thất bại",
+        ShipmentStatus.Returned => "Đã hoàn kho",
+        _ => status.ToString()
+    };
+}
+
+<div class="container-fluid px-0">
+    <div class="mb-3">
+        <a asp-action="Index" class="text-decoration-none text-muted small">
+            <i class="bi bi-arrow-left me-1"></i> Quay lại danh sách tài khoản
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- PROFILE HEADER CARD -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="avatar-circle bg-dark text-white fw-bold d-flex align-items-center justify-content-center fs-2"
+                         style="width: 70px; height: 70px; border-radius: 50%;">
+                        @(string.IsNullOrEmpty(Model.User.FullName) ? "U" : Model.User.FullName.Substring(0, 1).ToUpper())
+                    </div>
+                    <div>
+                        <div class="d-flex align-items-center gap-2">
+                            <h3 class="fw-bold mb-0">@Model.User.FullName</h3>
+                            @if (Model.IsCurrentAdmin)
+                            {
+                                <span class="badge bg-danger">Tài khoản của bạn</span>
+                            }
+                        </div>
+                        <div class="text-muted">@Model.User.Email</div>
+                        <div class="mt-2 d-flex gap-2 flex-wrap align-items-center">
+                            @foreach (var r in Model.Roles)
+                            {
+                                <span class="badge @GetRoleBadgeClass(r)">
+                                    @GetRoleDisplayName(r)
+                                </span>
+                            }
+                            @if (Model.User.IsActive)
+                            {
+                                <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                    <i class="bi bi-check-circle-fill me-1"></i> Hoạt động
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle">
+                                    <i class="bi bi-lock-fill me-1"></i> Đã bị khóa
+                                </span>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 flex-wrap">
+                    <a asp-action="Edit" asp-route-id="@Model.User.Id" class="btn btn-outline-primary">
+                        <i class="bi bi-pencil me-1"></i> Chỉnh sửa & Phân quyền
+                    </a>
+
+                    <a asp-action="ResetPassword" asp-route-id="@Model.User.Id" class="btn btn-outline-warning text-dark">
+                        <i class="bi bi-key me-1"></i> Đặt lại mật khẩu
+                    </a>
+
+                    @if (!Model.IsCurrentAdmin)
+                    {
+                        <form asp-action="ToggleStatus"
+                              asp-route-id="@Model.User.Id"
+                              method="post"
+                              class="d-inline"
+                              onsubmit="return confirm('@(Model.User.IsActive ? $"Bạn có chắc muốn KHÓA tài khoản {Model.User.Email}?" : $"Bạn có chắc muốn MỞ KHÓA tài khoản {Model.User.Email}?")');">
+                            @Html.AntiForgeryToken()
+                            @if (Model.User.IsActive)
+                            {
+                                <button type="submit" class="btn btn-outline-danger">
+                                    <i class="bi bi-lock me-1"></i> Khóa tài khoản
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="submit" class="btn btn-outline-success">
+                                    <i class="bi bi-unlock me-1"></i> Mở khóa tài khoản
+                                </button>
+                            }
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- THÔNG TIN CHI TIẾT -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3 border-0">
+                    <h5 class="fw-bold mb-0"><i class="bi bi-person-lines-fill me-2"></i>Thông tin tài khoản</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item px-0 d-flex justify-content-between">
+                            <span class="text-muted">User ID</span>
+                            <span class="font-monospace small text-truncate" style="max-width: 180px;" title="@Model.User.Id">@Model.User.Id</span>
+                        </li>
+                        <li class="list-group-item px-0 d-flex justify-content-between">
+                            <span class="text-muted">Tên đăng nhập</span>
+                            <span class="fw-semibold">@Model.User.UserName</span>
+                        </li>
+                        <li class="list-group-item px-0 d-flex justify-content-between">
+                            <span class="text-muted">Email</span>
+                            <span>@Model.User.Email</span>
+                        </li>
+                        <li class="list-group-item px-0 d-flex justify-content-between">
+                            <span class="text-muted">Số điện thoại</span>
+                            <span>@(string.IsNullOrEmpty(Model.User.PhoneNumber) ? "Chưa cập nhật" : Model.User.PhoneNumber)</span>
+                        </li>
+                        <li class="list-group-item px-0 d-flex justify-content-between">
+                            <span class="text-muted">Ngày đăng ký</span>
+                            <span>@Model.User.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span>
+                        </li>
+                        <li class="list-group-item px-0 d-flex justify-content-between">
+                            <span class="text-muted">Email xác thực</span>
+                            <span>
+                                @if (Model.User.EmailConfirmed)
+                                {
+                                    <span class="text-success"><i class="bi bi-check-circle me-1"></i>Đã xác thực</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Chưa xác thực</span>
+                                }
+                            </span>
+                        </li>
+                        <li class="list-group-item px-0 d-flex justify-content-between">
+                            <span class="text-muted">Trạng thái</span>
+                            <span>
+                                @if (Model.User.IsActive)
+                                {
+                                    <span class="text-success fw-semibold"><i class="bi bi-check-circle me-1"></i>Cho phép đăng nhập</span>
+                                }
+                                else
+                                {
+                                    <span class="text-danger fw-semibold"><i class="bi bi-x-circle me-1"></i>Bị khóa đăng nhập</span>
+                                }
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- THỐNG KÊ HOẠT ĐỘNG -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3 border-0">
+                    <h5 class="fw-bold mb-0"><i class="bi bi-graph-up me-2"></i>Thống kê tổng quan</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3 text-center">
+                        <div class="col-6">
+                            <div class="p-3 bg-light rounded-3">
+                                <div class="text-muted small">Tổng số đơn</div>
+                                <div class="fs-4 fw-bold text-dark">@Model.TotalOrders</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 bg-light rounded-3">
+                                <div class="text-muted small">Tổng chi tiêu</div>
+                                <div class="fs-4 fw-bold text-success">@Model.TotalSpent.ToString("N0") đ</div>
+                            </div>
+                        </div>
+                        @if (Model.Roles.Contains("Shipper") || Model.TotalShipments > 0)
+                        {
+                            <div class="col-6">
+                                <div class="p-3 bg-light rounded-3">
+                                    <div class="text-muted small">Lượt giao hàng</div>
+                                    <div class="fs-4 fw-bold text-primary">@Model.TotalShipments</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-3 bg-light rounded-3">
+                                    <div class="text-muted small">Giao thành công</div>
+                                    <div class="fs-4 fw-bold text-success">@Model.DeliveredShipments</div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LỊCH SỬ ĐƠN HÀNG VÀ VẬN ĐƠN -->
+        <div class="col-lg-8">
+            <!-- ĐƠN HÀNG CỦA KHÁCH -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0"><i class="bi bi-bag-check me-2"></i>Lịch sử mua hàng (@Model.TotalOrders đơn)</h5>
+                </div>
+                <div class="card-body p-0">
+                    @if (!Model.RecentOrders.Any())
+                    {
+                        <div class="p-4 text-center text-muted">
+                            <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+                            Tài khoản này chưa phát sinh đơn hàng nào.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Mã đơn</th>
+                                        <th>Ngày đặt</th>
+                                        <th>Người nhận</th>
+                                        <th>Tổng tiền</th>
+                                        <th>Trạng thái</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var o in Model.RecentOrders)
+                                    {
+                                        <tr>
+                                            <td class="fw-bold font-monospace">@o.OrderCode</td>
+                                            <td class="small text-muted">@o.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+                                            <td>
+                                                <div>@o.ReceiverName</div>
+                                                <div class="small text-muted">@o.Phone</div>
+                                            </td>
+                                            <td class="fw-semibold text-danger">@o.TotalAmount.ToString("N0") đ</td>
+                                            <td>
+                                                <span class="badge @GetOrderStatusBadge(o.Status)">
+                                                    @GetOrderStatusName(o.Status)
+                                                </span>
+                                            </td>
+                                            <td class="text-end">
+                                                <a asp-controller="AdminOrders" asp-action="Details" asp-route-id="@o.Id" class="btn btn-sm btn-outline-dark">
+                                                    Chi tiết
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- VẬN ĐƠN GIAO HÀNG (NẾU LÀ SHIPPER) -->
+            @if (Model.Roles.Contains("Shipper") || Model.RecentShipments.Any())
+            {
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold mb-0"><i class="bi bi-truck me-2"></i>Lịch sử giao hàng (Shipper)</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        @if (!Model.RecentShipments.Any())
+                        {
+                            <div class="p-4 text-center text-muted">
+                                <i class="bi bi-truck fs-2 d-block mb-2"></i>
+                                Shipper này chưa được phân công đơn giao hàng nào.
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Mã vận đơn</th>
+                                            <th>Mã đơn hàng</th>
+                                            <th>Thời gian tạo</th>
+                                            <th>Thu COD</th>
+                                            <th>Tiến trình</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var s in Model.RecentShipments)
+                                        {
+                                            <tr>
+                                                <td class="fw-bold font-monospace">@s.TrackingCode</td>
+                                                <td>@s.Order?.OrderCode</td>
+                                                <td class="small text-muted">@s.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+                                                <td>@s.CODAmount.ToString("N0") đ</td>
+                                                <td>
+                                                    <span class="badge bg-secondary">
+                                                        @GetShipmentStatusName(s.Status)
+                                                    </span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <a asp-controller="AdminShipments" asp-action="Details" asp-route-id="@s.Id" class="btn btn-sm btn-outline-dark">
+                                                        Xem
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
