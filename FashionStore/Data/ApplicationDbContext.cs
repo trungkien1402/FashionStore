@@ -24,6 +24,8 @@ public class ApplicationDbContext
 
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
 
+    public DbSet<PaymentHistory> PaymentHistories => Set<PaymentHistory>();
+
     public DbSet<OrderStatusHistory> OrderStatusHistories { get; set; }
 
     public DbSet<Shipment> Shipments => Set<Shipment>();
@@ -33,6 +35,18 @@ public class ApplicationDbContext
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        builder.Entity<Order>().Property(o => o.RowVersion).IsRowVersion();
+        builder.Entity<PaymentHistory>(entity =>
+        {
+            entity.Property(h => h.Event).HasMaxLength(40);
+            entity.Property(h => h.Amount).HasPrecision(18, 2);
+            entity.HasOne(h => h.Order).WithMany().HasForeignKey(h => h.OrderId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(h => h.ActorUser).WithMany().HasForeignKey(h => h.ActorUserId)
+                .OnDelete(DeleteBehavior.SetNull);
+            entity.HasIndex(h => new { h.OrderId, h.CreatedAt });
+        });
 
         builder.Entity<Product>()
             .Property(x => x.Price)

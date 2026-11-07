@@ -4,6 +4,8 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!-- The nested project is an archived copy, not part of this application. -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);FashionStore/**</DefaultItemExcludes>
   </PropertyGroup>
 
   <ItemGroup>
