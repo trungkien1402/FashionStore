@@ -1,1215 +1,284 @@
-/* ===================================================================
-   HNMTSHOP STORE 3D EXPERIENCES (1:1 DUAL MODE)
-   1. Interactive Clothing Rack (Fraxbit Style)
-   2. 3D Sneaker Exhibition Showroom (Last Dept / Movento Style)
-   =================================================================== */
+/* ==========================================================================
+   HNMTSHOP - 3D DARK WATER SHOWROOM (CHILE 20 EDITION)
+   Chuẩn 1:1 theo video 1107.mp4 & ảnh nền nước đọng Đen - Đỏ - Trắng
+   ========================================================================== */
 
 :root {
-  --rack-bg: #f5f4f0;
-  --rack-ink: #111111;
-  --rack-dim: #767676;
-  --rack-border: rgba(0,0,0,0.08);
-
-  --shoe-bg: #0b0c0e;
-  --shoe-surface: #14161a;
-  --shoe-ink: #ffffff;
-  --shoe-dim: #8e94a0;
-  --shoe-neon: #ff6b00;
-  --shoe-neon-glow: rgba(255, 107, 0, 0.45);
-  --shoe-cyan: #00d2ff;
-  --shoe-cyan-glow: rgba(0, 210, 255, 0.4);
+    --hnmt-bg-dark: #030305;
+    --hnmt-white: #ffffff;
+    --hnmt-red: #e61922;
+    --hnmt-font-main: 'Jost', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-/* -------------------------------------------------------------------
-   ATELIER HIGH-FASHION FILTER & NAVIGATION BAR (HOMEPAGE 1:1 HARMONY)
-   ------------------------------------------------------------------- */
-.hnmt-atelier-filter-bar {
-  background: rgba(10, 10, 11, 0.94);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-bottom: 1px solid rgba(198, 163, 92, 0.22);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65);
-  position: sticky;
-  top: 70px;
-  z-index: 100;
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-  font-family: var(--at-sans, 'Jost', sans-serif);
+/* 1. CONTAINER CHÍNH TOÀN MÀN HÌNH */
+.hnmt-chile-portal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 99999;
+    background-color: var(--hnmt-bg-dark);
+    color: var(--hnmt-white);
+    font-family: var(--hnmt-font-main);
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+                visibility 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.hnmt-filter-main-row {
-  max-width: 1540px;
-  margin: 0 auto;
-  padding: 12px 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
+.hnmt-chile-portal.is-active {
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
 }
 
-/* 1. Mode Switcher Capsule */
-.hnmt-mode-switcher {
-  display: inline-flex;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(198, 163, 92, 0.25);
-  border-radius: 999px;
-  padding: 4px;
-  gap: 4px;
-}
-
-.hnmt-mode-btn {
-  border: none;
-  background: transparent;
-  padding: 8px 18px;
-  font-size: 11.5px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: #a39e93;
-  border-radius: 999px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.hnmt-mode-btn:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.06);
-}
-
-.hnmt-mode-btn.active {
-  background: linear-gradient(135deg, #c6a35c 0%, #a6843c 100%);
-  color: #0a0a0b;
-  font-weight: 800;
-  box-shadow: 0 4px 14px rgba(198, 163, 92, 0.35);
-}
-
-.hnmt-mode-btn.active i {
-  color: #0a0a0b;
-}
-
-/* 2. Search Pill */
-.hnmt-filter-search-wrap {
-  position: relative;
-  flex: 1;
-  max-width: 380px;
-  min-width: 220px;
-}
-
-.hnmt-filter-search-wrap i {
-  position: absolute;
-  left: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--at-gold, #c6a35c);
-  font-size: 13px;
-  pointer-events: none;
-}
-
-.hnmt-filter-search-input {
-  width: 100%;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #f3efe6;
-  font-size: 12.5px;
-  letter-spacing: 0.5px;
-  padding: 8px 14px 8px 36px;
-  border-radius: 999px;
-  outline: none;
-  transition: all 0.25s ease;
-}
-
-.hnmt-filter-search-input:focus {
-  border-color: var(--at-gold, #c6a35c);
-  background: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 0 16px rgba(198, 163, 92, 0.25);
-}
-
-.hnmt-filter-search-input::placeholder {
-  color: #7a756b;
-  font-size: 11.5px;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-}
-
-/* 3. Action Toggles (Filter Drawer Button + Catalog Counter) */
-.hnmt-filter-actions {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.hnmt-btn-toggle-drawer {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(198, 163, 92, 0.25);
-  color: #f3efe6;
-  padding: 8px 16px;
-  font-size: 11.5px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  border-radius: 999px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.25s ease;
-}
-
-.hnmt-btn-toggle-drawer:hover,
-.hnmt-btn-toggle-drawer.active {
-  background: rgba(198, 163, 92, 0.15);
-  border-color: var(--at-gold, #c6a35c);
-  color: var(--at-gold, #c6a35c);
-}
-
-.hnmt-catalog-badge {
-  font-family: var(--at-serif, 'Cormorant Garamond', Georgia, serif);
-  font-size: 14px;
-  font-style: italic;
-  color: var(--at-gold, #c6a35c);
-  border: 1px solid rgba(198, 163, 92, 0.2);
-  padding: 6px 14px;
-  border-radius: 999px;
-  letter-spacing: 1px;
-  white-space: nowrap;
-}
-
-/* 4. Sub-Row: Category Filter Chips */
-.hnmt-filter-cats-row {
-  max-width: 1540px;
-  margin: 0 auto;
-  padding: 6px 24px 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.hnmt-filter-cats-row::-webkit-scrollbar { display: none; }
-
-.hnmt-cat-chip {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #9c9689;
-  padding: 6px 14px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1.8px;
-  text-transform: uppercase;
-  border-radius: 999px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.hnmt-cat-chip:hover {
-  color: #f3efe6;
-  border-color: rgba(198, 163, 92, 0.4);
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.hnmt-cat-chip.active {
-  background: rgba(198, 163, 92, 0.16);
-  border-color: var(--at-gold, #c6a35c);
-  color: #ffffff;
-  box-shadow: 0 0 14px rgba(198, 163, 92, 0.22);
-}
-
-.hnmt-cat-chip--sneaker {
-  border-color: rgba(255, 107, 0, 0.3);
-  color: #ff9142;
-}
-.hnmt-cat-chip--sneaker.active,
-.hnmt-cat-chip--sneaker:hover {
-  background: rgba(255, 107, 0, 0.15);
-  border-color: #ff6b00;
-  color: #ffaa66;
-  box-shadow: 0 0 16px rgba(255, 107, 0, 0.3);
-}
-
-/* 5. Expandable Luxury Filter Drawer */
-.hnmt-filter-drawer {
-  max-height: 0;
-  overflow: hidden;
-  opacity: 0;
-  background: rgba(14, 15, 18, 0.98);
-  border-top: 1px solid rgba(198, 163, 92, 0.12);
-  transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, padding 0.3s ease;
-  padding: 0 24px;
-}
-
-.hnmt-filter-drawer.open {
-  max-height: 520px;
-  opacity: 1;
-  padding: 24px 24px 28px;
-}
-
-.hnmt-drawer-inner {
-  max-width: 1540px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 32px;
-}
-
-.hnmt-drawer-col h4 {
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 2.2px;
-  text-transform: uppercase;
-  color: var(--at-gold, #c6a35c);
-  margin-bottom: 14px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* Price presets & range */
-.hnmt-price-presets {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 12px;
-}
-
-.hnmt-price-btn {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #b8b2a6;
-  font-size: 11px;
-  padding: 5px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.hnmt-price-btn:hover,
-.hnmt-price-btn.active {
-  background: var(--at-gold, #c6a35c);
-  color: #000;
-  font-weight: 700;
-}
-
-.hnmt-price-inputs-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.hnmt-drawer-input {
-  width: 100%;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #fff;
-  font-size: 12px;
-  padding: 7px 10px;
-  border-radius: 6px;
-  outline: none;
-}
-.hnmt-drawer-input:focus {
-  border-color: var(--at-gold, #c6a35c);
-}
-
-/* Sizes grid */
-.hnmt-size-chips-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.hnmt-size-chip {
-  min-width: 36px;
-  height: 32px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #d1ccbf;
-  font-size: 11px;
-  font-weight: 700;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.hnmt-size-chip:hover,
-.hnmt-size-chip.active {
-  background: #ffffff;
-  color: #000;
-}
-
-/* Sort Select */
-.hnmt-drawer-select {
-  width: 100%;
-  background: #15161a;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  color: #f3efe6;
-  font-size: 12.5px;
-  padding: 8px 12px;
-  border-radius: 6px;
-  outline: none;
-  cursor: pointer;
-}
-.hnmt-drawer-select:focus {
-  border-color: var(--at-gold, #c6a35c);
-}
-
-/* Actions Col */
-.hnmt-drawer-actions {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  gap: 10px;
-}
-
-.hnmt-btn-apply-filters {
-  background: linear-gradient(135deg, #c6a35c 0%, #a6843c 100%);
-  border: none;
-  color: #0a0a0b;
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  padding: 10px 18px;
-  border-radius: 8px;
-  cursor: pointer;
-  box-shadow: 0 4px 16px rgba(198, 163, 92, 0.3);
-  transition: all 0.25s;
-}
-.hnmt-btn-apply-filters:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(198, 163, 92, 0.45);
-}
-
-.hnmt-btn-reset-filters {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #a39e93;
-  font-size: 11.5px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  padding: 8px 18px;
-  border-radius: 8px;
-  cursor: pointer;
-  text-align: center;
-  text-decoration: none;
-  transition: all 0.2s;
-}
-.hnmt-btn-reset-filters:hover {
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.35);
-}
-
-@media (max-width: 992px) {
-  .hnmt-drawer-inner {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-@media (max-width: 640px) {
-  .hnmt-drawer-inner {
-    grid-template-columns: 1fr;
-  }
-  .hnmt-filter-main-row {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .hnmt-mode-switcher {
+/* 2. THREE.JS 3D CANVAS RENDER TOÀN BỘ KHÔNG GIAN 3D & MẶT NƯỚC GỢN SÓNG */
+.hnmt-3d-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
+    height: 100%;
+    display: block;
+    cursor: grab;
+    z-index: 1;
+}
+
+.hnmt-3d-canvas:active {
+    cursor: grabbing;
+}
+
+/* 3. THANH HEADER TỐI GIẢN CHUẨN VIDEO */
+.hnmt-portal-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 26px 42px;
+    display: flex;
     justify-content: space-between;
-  }
-  .hnmt-mode-btn {
-    flex: 1;
-    justify-content: center;
-    padding: 8px 10px;
+    align-items: center;
+    z-index: 100;
+    pointer-events: none;
+}
+
+.hnmt-portal-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    pointer-events: auto;
+}
+
+.hnmt-brand-icon {
+    font-size: 20px;
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+}
+
+.hnmt-brand-title {
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    color: #ffffff;
+    text-transform: uppercase;
+}
+
+.hnmt-brand-box {
+    background: #ffffff;
+    color: #050507;
     font-size: 10px;
-  }
-}
-
-/* ===================================================================
-   MODE 1: INTERACTIVE CLOTHING RACK (FRAXBIT 1:1)
-   =================================================================== */
-.hnmt-rack-container {
-  background: var(--rack-bg);
-  min-height: 82vh;
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 24px 0 32px;
-  user-select: none;
-}
-
-.hnmt-rack-header {
-  text-align: center;
-  padding: 0 20px;
-  z-index: 10;
-}
-
-.hnmt-rack-tag {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  color: var(--rack-dim);
-  display: block;
-  margin-bottom: 4px;
-}
-
-.hnmt-rack-subnav {
-  display: inline-flex;
-  align-items: center;
-  gap: 20px;
-  margin-top: 6px;
-}
-
-.hnmt-rack-subnav a {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: #9ca3af;
-  text-decoration: none;
-  transition: color 0.2s;
-  padding-bottom: 2px;
-}
-
-.hnmt-rack-tip-badge {
-  display: inline-flex;
-  align-items: center;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.5px;
-  color: #78716c;
-  background: rgba(0, 0, 0, 0.04);
-  padding: 4px 14px;
-  border-radius: 999px;
-  margin-top: 6px;
-}
-
-/* Metal Rail Structure */
-.hnmt-rail-structure {
-  position: relative;
-  width: 100%;
-  height: 480px;
-  margin: 10px 0;
-  perspective: 1400px;
-  perspective-origin: 50% 30%;
-}
-
-.hnmt-rail-bar {
-  position: absolute;
-  top: 40px;
-  left: 0;
-  right: 0;
-  height: 7px;
-  background: linear-gradient(180deg, #e5e5e5 0%, #b8b8b8 40%, #888888 70%, #dcdcdc 100%);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.12), inset 0 1px 1px #fff;
-  z-index: 5;
-}
-
-.hnmt-rail-bar::before,
-.hnmt-rail-bar::after {
-  content: "";
-  position: absolute;
-  top: -8px;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #ffffff, #7a7a7a);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.25);
-}
-.hnmt-rail-bar::before { left: 40px; }
-.hnmt-rail-bar::after { right: 40px; }
-
-/* The Sliding Clothes Track */
-.hnmt-clothes-track {
-  position: absolute;
-  top: 40px;
-  left: 50%;
-  height: 420px;
-  display: flex;
-  align-items: flex-start;
-  transform-style: preserve-3d;
-  cursor: grab;
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.hnmt-clothes-track:active {
-  cursor: grabbing;
-}
-
-/* Each Garment on Hanger */
-.hnmt-garment-item {
-  position: absolute;
-  top: 0;
-  width: 240px;
-  height: 380px;
-  transform-style: preserve-3d;
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s;
-  cursor: pointer;
-}
-
-/* Metallic Hook */
-.hnmt-hanger-hook {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 26px;
-  height: 32px;
-  transform: translateX(-50%);
-  z-index: 4;
-}
-.hnmt-hanger-hook::before {
-  content: "";
-  position: absolute;
-  top: -6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 14px;
-  height: 18px;
-  border: 2.5px solid #666;
-  border-bottom: none;
-  border-radius: 12px 12px 0 0;
-}
-
-/* Wooden / Black Shoulder Hanger */
-.hnmt-hanger-shoulders {
-  position: absolute;
-  top: 14px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 180px;
-  height: 24px;
-  background: linear-gradient(180deg, #2b2b2b 0%, #151515 100%);
-  border-radius: 999px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.3);
-  z-index: 3;
-}
-
-/* Garment Cutout / Visual */
-.hnmt-garment-body {
-  position: absolute;
-  top: 28px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 230px;
-  height: 330px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.hnmt-garment-body img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 14px 22px rgba(0,0,0,0.18));
-  transition: transform 0.3s, filter 0.3s;
-}
-
-/* Drop shadow underneath each clothing item */
-.hnmt-garment-shadow {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 140px;
-  height: 14px;
-  background: radial-gradient(ellipse at center, rgba(0,0,0,0.22) 0%, transparent 70%);
-  border-radius: 50%;
-}
-
-/* Active State Styles */
-.hnmt-garment-item.is-active .hnmt-garment-body img {
-  filter: drop-shadow(0 22px 34px rgba(0,0,0,0.28));
-}
-
-/* Rack Controller Buttons */
-.hnmt-rack-arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  background: #ffffff;
-  border: 1px solid rgba(0,0,0,0.1);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 20;
-  transition: all 0.25s ease;
-}
-.hnmt-rack-arrow:hover {
-  background: #000000;
-  color: #ffffff;
-  transform: translateY(-50%) scale(1.08);
-}
-.hnmt-rack-arrow--prev { left: 24px; }
-.hnmt-rack-arrow--next { right: 24px; }
-
-/* Active Garment Product Card Panel (Below Rack) */
-.hnmt-rack-details-dock {
-  text-align: center;
-  max-width: 540px;
-  margin: 0 auto;
-  padding: 0 20px;
-  z-index: 10;
-}
-
-.hnmt-rack-title {
-  font-family: var(--at-sans, 'Jost', sans-serif);
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -0.3px;
-  color: #111111;
-  margin: 0 0 6px;
-  text-transform: uppercase;
-}
-
-.hnmt-rack-price-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  margin-bottom: 14px;
-}
-
-.hnmt-rack-price {
-  font-size: 19px;
-  font-weight: 800;
-  color: #000000;
-}
-
-.hnmt-rack-category-badge {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-  background: #e5e7eb;
-  padding: 3px 9px;
-  border-radius: 999px;
-  color: #374151;
-}
-
-/* Quick Size Buttons */
-.hnmt-rack-sizes {
-  display: inline-flex;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.hnmt-rack-size-btn {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  border: 1px solid #d1d5db;
-  background: #ffffff;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.hnmt-rack-size-btn:hover,
-.hnmt-rack-size-btn.is-selected {
-  background: #000000;
-  color: #ffffff;
-  border-color: #000000;
-}
-
-/* Action Buttons */
-.hnmt-rack-actions {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-}
-
-.hnmt-btn-rack-cart {
-  background: #000000;
-  color: #ffffff;
-  padding: 12px 28px;
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  border-radius: 999px;
-  border: none;
-  cursor: pointer;
-  transition: all 0.25s ease;
-}
-
-.hnmt-btn-rack-cart:hover {
-  background: #2563eb;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(37,99,235,0.3);
-}
-
-.hnmt-btn-rack-detail {
-  background: transparent;
-  color: #111111;
-  padding: 11px 22px;
-  font-size: 13px;
-  font-weight: 700;
-  border-radius: 999px;
-  border: 1px solid rgba(0,0,0,0.25);
-  text-decoration: none;
-  transition: all 0.25s ease;
-}
-
-.hnmt-btn-rack-detail:hover {
-  background: #ffffff;
-  border-color: #000000;
-}
-
-
-/* ===================================================================
-   MODE 2: 3D SNEAKER SHOWROOM (LAST DEPT / MOVENTO 1:1)
-   =================================================================== */
-.hnmt-showroom-container {
-  background: radial-gradient(120% 90% at 50% 20%, #17191f 0%, var(--shoe-bg) 75%);
-  min-height: 86vh;
-  position: relative;
-  overflow: hidden;
-  color: var(--shoe-ink);
-  padding: 30px 40px;
-}
-
-/* Top bar with Series Code & Status */
-.hnmt-showroom-topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 24px;
-  position: relative;
-  z-index: 10;
-}
-
-.hnmt-hangar-code {
-  font-family: var(--at-sans, 'Jost', sans-serif);
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--shoe-dim);
-}
-
-.hnmt-hangar-title {
-  font-family: var(--at-sans, 'Jost', sans-serif);
-  font-size: 26px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: #ffffff;
-  margin: 2px 0 0;
-}
-
-.hnmt-showroom-view-toggle {
-  display: inline-flex;
-  gap: 10px;
-}
-
-.hnmt-btn-view-mode {
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.12);
-  color: #fff;
-  padding: 8px 16px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.hnmt-btn-view-mode:hover,
-.hnmt-btn-view-mode.active {
-  background: #ffffff;
-  color: #000000;
-}
-
-/* 1. TƯỜNG KỆ KÍNH PHÁT SÁNG (WALL VIEW) */
-.hnmt-shelves-wall {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 36px 28px;
-  padding: 30px 0 50px;
-  transition: opacity 0.4s ease, transform 0.4s ease;
-  perspective: 1200px;
-}
-
-.hnmt-shelf-card {
-  position: relative;
-  cursor: pointer;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  padding: 20px 16px 12px;
-}
-
-.hnmt-shelf-card:hover {
-  transform: translateY(-8px) scale(1.03);
-}
-
-.hnmt-shelf-shoe-wrap {
-  position: relative;
-  height: 180px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 3;
-}
-
-.hnmt-shelf-shoe-wrap img {
-  max-width: 88%;
-  max-height: 150px;
-  object-fit: contain;
-  filter: drop-shadow(0 14px 20px rgba(0,0,0,0.5));
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s;
-}
-
-.hnmt-shelf-card:hover .hnmt-shelf-shoe-wrap img {
-  transform: translateY(-6px) scale(1.06);
-  filter: drop-shadow(0 20px 28px rgba(0,0,0,0.65));
-}
-
-/* Glowing Glass Shelf Underneath */
-.hnmt-glass-shelf {
-  position: relative;
-  height: 12px;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(8px);
-  border-radius: 4px;
-  border-top: 1px solid rgba(255,255,255,0.4);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-  overflow: visible;
-  margin-top: -12px;
-}
-
-/* Neon Glow Strip */
-.hnmt-shelf-led {
-  position: absolute;
-  bottom: 0;
-  left: 10%;
-  right: 10%;
-  height: 3px;
-  background: var(--shoe-neon);
-  box-shadow: 0 0 16px 3px var(--shoe-neon);
-  border-radius: 999px;
-  transition: background 0.3s, box-shadow 0.3s;
-}
-
-.hnmt-shelf-card:nth-child(even) .hnmt-shelf-led {
-  background: var(--shoe-cyan);
-  box-shadow: 0 0 16px 3px var(--shoe-cyan);
-}
-
-.hnmt-shelf-info {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  margin-top: 14px;
-}
-
-.hnmt-shelf-name {
-  font-size: 13.5px;
-  font-weight: 700;
-  color: #f3efe6;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 65%;
-}
-
-.hnmt-shelf-price {
-  font-size: 13.5px;
-  font-weight: 800;
-  color: #f59e0b;
-}
-
-
-/* 2. TIÊU ĐIỂM BỤC TRƯNG BÀY (PEDESTAL STAGE VIEW) */
-.hnmt-pedestal-stage {
-  display: none;
-  grid-template-columns: 1.4fr 1fr;
-  align-items: center;
-  min-height: 68vh;
-  gap: 40px;
-  position: relative;
-  z-index: 10;
-  animation: hnmtFadeIn 0.4s ease forwards;
-}
-
-@keyframes hnmtFadeIn {
-  from { opacity: 0; transform: scale(0.97); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-.hnmt-pedestal-stage.active {
-  display: grid;
-}
-
-.hnmt-stage-left {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 440px;
-}
-
-.hnmt-pedestal-series-badge {
-  position: absolute;
-  top: 10px;
-  left: 20px;
-  font-size: 12px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--shoe-neon);
-  font-weight: 700;
-}
-
-/* Big Central Shoe Focus */
-.hnmt-stage-shoe-center {
-  position: relative;
-  z-index: 5;
-  width: 100%;
-  max-width: 520px;
-  text-align: center;
-}
-
-.hnmt-stage-shoe-center img {
-  max-width: 100%;
-  max-height: 320px;
-  object-fit: contain;
-  filter: drop-shadow(0 28px 40px rgba(0,0,0,0.7));
-  -webkit-box-reflect: below 3px linear-gradient(transparent 62%, rgba(255, 255, 255, 0.28));
-  transform-origin: center bottom;
-  transition: transform 0.15s ease-out;
-}
-
-@keyframes atShoeHover {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-/* Illuminated Glass Pedestal Slab */
-.hnmt-stage-glass-slab {
-  position: relative;
-  width: 82%;
-  max-width: 440px;
-  height: 18px;
-  background: rgba(255, 255, 255, 0.18);
-  backdrop-filter: blur(12px);
-  border-radius: 6px;
-  border: 1px solid rgba(255,255,255,0.45);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.6);
-  margin-top: -24px;
-  z-index: 3;
-}
-
-.hnmt-stage-neon-beam {
-  position: absolute;
-  bottom: 0;
-  left: 6%;
-  right: 6%;
-  height: 4px;
-  background: var(--shoe-neon);
-  box-shadow: 0 0 35px 8px var(--shoe-neon);
-  border-radius: 999px;
-}
-
-/* Stage Right Purchase Panel (1:1 Video 2 Panel) */
-.hnmt-stage-right-panel {
-  background: rgba(20, 22, 26, 0.85);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 20px;
-  padding: 36px 32px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-}
-
-.hnmt-stage-back-btn {
-  background: transparent;
-  border: none;
-  color: var(--shoe-dim);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 18px;
-  transition: color 0.2s;
-}
-.hnmt-stage-back-btn:hover {
-  color: #fff;
-}
-
-.hnmt-stage-shoe-title {
-  font-family: var(--at-sans, 'Jost', sans-serif);
-  font-size: 28px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  color: #ffffff;
-  margin: 0 0 8px;
-}
-
-.hnmt-stage-shoe-desc {
-  font-size: 13.5px;
-  color: var(--shoe-dim);
-  line-height: 1.6;
-  margin-bottom: 20px;
-}
-
-.hnmt-stage-price-tag {
-  font-size: 26px;
-  font-weight: 800;
-  color: #ff6b00;
-  margin-bottom: 22px;
-}
-
-/* Color Swatches */
-.hnmt-stage-option-label {
-  font-size: 11.5px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: #9ca3af;
-  margin-bottom: 8px;
-  display: block;
-}
-
-.hnmt-stage-colors {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.hnmt-stage-color-pill {
-  padding: 6px 14px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
-  border: 1px solid rgba(255,255,255,0.2);
-  background: rgba(255,255,255,0.06);
-  color: #e5e7eb;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.hnmt-stage-color-pill.is-active,
-.hnmt-stage-color-pill:hover {
-  background: #ffffff;
-  color: #000000;
-  border-color: #ffffff;
-}
-
-/* Shoe Size Selector (38-44) */
-.hnmt-stage-sizes {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 26px;
-}
-
-.hnmt-stage-size-btn {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.18);
-  background: rgba(255,255,255,0.05);
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.hnmt-stage-size-btn.is-selected,
-.hnmt-stage-size-btn:hover {
-  background: #ff6b00;
-  border-color: #ff6b00;
-  color: #ffffff;
-  box-shadow: 0 4px 14px rgba(255,107,0,0.4);
-}
-
-/* Add to Bag CTA */
-.hnmt-btn-stage-add {
-  width: 100%;
-  background: #ffffff;
-  color: #000000;
-  padding: 16px;
-  border-radius: 999px;
-  font-size: 14px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: all 0.25s ease;
-}
-
-.hnmt-btn-stage-add:hover {
-  background: #ff6b00;
-  color: #ffffff;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(255,107,0,0.4);
-}
-
-
-/* ===================================================================
-   RESPONSIVE DESIGN (TABLET & MOBILE)
-   =================================================================== */
-@media (max-width: 1024px) {
-  .hnmt-shelves-wall {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .hnmt-pedestal-stage {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 768px) {
-  .hnmt-store-modes-bar {
-    flex-direction: column;
-    align-items: stretch;
-    top: 60px;
-    padding: 10px 16px;
-  }
-  .hnmt-mode-pills {
+    font-weight: 900;
+    letter-spacing: 1.8px;
+    padding: 4px 9px;
+    text-transform: uppercase;
+    border-radius: 1px;
+}
+
+/* GÓC PHẢI: NÚT BỘ SƯU TẬP + VN + NÚT THOÁT TRONG SUỐT */
+.hnmt-portal-actions {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    pointer-events: auto;
+}
+
+.hnmt-collection-btn {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.65);
+    padding: 8px 18px;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(8px);
+    transition: all 0.25s ease;
+}
+
+.hnmt-collection-btn:hover {
+    background: #ffffff;
+    color: #050507;
+    border-color: #ffffff;
+}
+
+.hnmt-lang-tag {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.hnmt-exit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: 1.5px solid rgba(255, 255, 255, 0.85);
+    border-radius: 999px;
+    padding: 7px 22px;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hnmt-exit-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: #ffffff;
+    transform: translateX(-4px);
+    box-shadow: 0 0 16px rgba(255, 255, 255, 0.25);
+}
+
+.hnmt-exit-btn i {
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    transition: transform 0.25s ease;
+}
+
+.hnmt-exit-btn:hover i {
+    transform: translateX(-2px);
+}
+
+/* 4. DÒNG CHỮ HƯỚNG DẪN DƯỚI ĐÁY */
+.hnmt-portal-footer {
+    position: absolute;
+    bottom: 22px;
+    left: 0;
     width: 100%;
-    justify-content: space-between;
-  }
-  .hnmt-mode-btn {
-    padding: 7px 12px;
-    font-size: 11.5px;
-  }
-  .hnmt-shelves-wall {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-  .hnmt-stage-shoe-center img {
-    max-height: 240px;
-  }
-  .hnmt-stage-right-panel {
-    padding: 24px 20px;
-  }
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    pointer-events: none;
+}
+
+.hnmt-badge-prompt {
+    color: rgba(255, 255, 255, 0.90);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2.8px;
+    text-transform: uppercase;
+    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.95);
+    animation: hnmtPromptPulse 2.5s infinite ease-in-out;
+}
+
+@keyframes hnmtPromptPulse {
+    0%, 100% { opacity: 0.68; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.03); }
+}
+
+/* 5. FLOATING HOVER TAG (HIỆN KHI RÊ CHUỘT VÀO MÓN ĐỒ) */
+.hnmt-hover-tag {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -100%);
+    pointer-events: none;
+    z-index: 90;
+    opacity: 0;
+    transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    background: rgba(8, 8, 12, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 3px;
+    padding: 10px 18px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85);
+    white-space: nowrap;
+}
+
+.hnmt-hover-tag.is-visible {
+    opacity: 1;
+}
+
+.hnmt-hover-cat {
+    display: block;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: #ff2a32;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+}
+
+.hnmt-hover-name {
+    margin: 0 0 5px 0;
+    font-size: 14px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 0.4px;
+}
+
+.hnmt-hover-cta {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: rgba(255, 255, 255, 0.78);
+    text-transform: uppercase;
+}
+
+/* 6. HIỆU ỨNG CHUYỂN CẢNH FLASH */
+.hnmt-portal-flash {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: #ffffff;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 10000;
+    transition: opacity 0.35s ease;
+}
+
+.hnmt-portal-flash.is-flashing {
+    opacity: 0.9;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .hnmt-portal-header {
+        padding: 18px 20px;
+    }
+    .hnmt-collection-btn,
+    .hnmt-footer-legal {
+        display: none;
+    }
+    .hnmt-portal-footer {
+        bottom: 20px;
+    }
 }

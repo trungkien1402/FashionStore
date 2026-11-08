@@ -1,0 +1,39 @@
+@* 
+    ======================================================================
+    HNMTSHOP - 3D SHOWROOM PORTAL (BẢN SAO 1:1 CHIẾN DỊCH ADIDAS CHILE 20)
+    Không gian 3D chân thực: Nền đen tuyền · Mặt nước đọng gợn sóng phản chiếu
+    Cột Đen-Đỏ-Trắng · 3 Sản phẩm 3D (Trái: Quần | Giữa: Áo | Phải: Giày)
+    ======================================================================
+*@
+
+<div id="hnmtChilePortal" class="hnmt-chile-portal" aria-hidden="true">
+
+    <!-- 1. THREE.JS 3D WEBGL CANVAS (RENDER TOÀN BỘ KHÔNG GIAN 3D & MẶT NƯỚC GỢN SÓNG) -->
+    <canvas id="hnmt3dCanvas" class="hnmt-3d-canvas"></canvas>
+
+    <!-- 2. THANH HEADER TỐI GIẢN -->
+    <header class="hnmt-portal-header">
+        <!-- Góc trên bên trái: Logo HNMTSHOP -->
+        <div class="hnmt-portal-brand">
+            <span class="hnmt-brand-icon"><i class="bi bi-triangle-half"></i></span>
+            <span class="hnmt-brand-title">HNMTSHOP</span>
+        </div>
+
+        <!-- Góc trên bên phải: Nút THOÁT bo góc nền trong suốt chỉ có viền -->
+        <div class="hnmt-portal-actions">
+            <button type="button" class="hnmt-exit-btn" id="hnmtPortalExitBtn" title="Thoát không gian 3D">
+                <i class="bi bi-arrow-left"></i>
+                <span>Thoát</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- 3. DÒNG CHỮ HƯỚNG DẪN DƯỚI ĐÁY -->
+    <footer class="hnmt-portal-footer">
+        <div class="hnmt-badge-prompt">CHỌN 1 MÓN ĐỒ ĐỂ BẮT ĐẦU</div>
+    </footer>
+
+    <!-- 4. HIỆU ỨNG CHUYỂN CẢNH KHI NHẤP CHỌN MÓN ĐỒ -->
+    <div class="hnmt-portal-flash" id="hnmtPortalFlash"></div>
+
+</div>
