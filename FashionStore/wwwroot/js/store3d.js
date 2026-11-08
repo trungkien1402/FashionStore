@@ -55,7 +55,7 @@
             category: '01 // QUẦN CARGO JEANS 3D',
             name: 'Quần Baggy Cargo Jeans Acid-Wash Đen Xám',
             target: '/Products?search=quan',
-            modelUrl: '/models/clothes/cargo-jeans-video-3d.glb?v=solid3d2',
+            modelUrl: '/models/clothes/cargo-jeans-video-3d.glb?v=crisp_sides_fixed_v11',
             targetHeight: 1.36,
             posX: -1.24,
             posY: -0.28,
@@ -63,9 +63,9 @@
             baseRotX: 0.06,
             baseRotY: 0.28,
             baseRotZ: 0.0,
-            roughness: 0.76,
+            roughness: 0.82,
             metalness: 0.0,
-            normalScale: 1.35,
+            normalScale: 1.65,
             aoStrength: 1.0,
             shadowW: 0.88,
             shadowD: 0.46,
@@ -76,7 +76,7 @@
             category: '02 // ÁO THUN 3D',
             name: 'Áo Thun Cotton Trắng Heavyweight',
             target: '/Products?search=ao',
-            modelUrl: '/models/clothes/tshirt-white-3d.glb?v=photoreal_white_tee2',
+            modelUrl: '/models/clothes/tshirt-white-3d.glb?v=flawless_hem_v6',
             targetHeight: 0.98,
             posX: 0.0,
             posY: -0.32,
@@ -151,6 +151,11 @@
 
         // 6. Nạp 3 Model 3D Thực Thụ (Trái: Quần | Giữa: Áo | Phải: Giày)
         loadAll3DModels();
+
+        // 7. Sào Treo Đồ 3D Tương Tác (Chính xác như video Fraxbit)
+        if (!rackStageGroup) {
+            initClothesRackStage();
+        }
     }
 
     function setupPhotorealisticLighting() {
@@ -198,6 +203,7 @@
     let reflRT = null;
     let reflCam = null;
     let floorMesh = null;
+    let pillarGroup = null;
     let reflTexMatrix = null;
 
     const _rPos = new THREE.Vector3();
@@ -271,6 +277,7 @@
 
     function buildPillar() {
         const g = new THREE.Group();
+        pillarGroup = g;
         g.position.set(0, FLOOR_Y, PILLAR_Z);
         const R = PILLAR_R;
 
@@ -1091,12 +1098,6 @@
         }
 
         // 1. Chuyển động lơ lửng & XOAY 3D NHẸ theo chuột cho Quần (Trái), Áo (Giữa), Giày (Phải)
-        if (isInspectingShirt && itemWrappers[1]) {
-            if (isAutoRotatingShirt) {
-                itemWrappers[1].rotation.y += 0.0075;
-            }
-        }
-
         itemWrappers.forEach((wrapper, idx) => {
             if (!wrapper) return;
             const cfg = wrapper.userData.config;
@@ -1203,10 +1204,9 @@
             gsap.to(stageUniforms.uLeftMood, { value: cfg.hoverMood === 'left' ? 1.0 : 0.0, duration: 0.45, ease: 'power2.out' });
         }
 
-        if (hoverTagEl && hoverCatEl && hoverNameEl) {
-            hoverCatEl.textContent = cfg.category;
-            hoverNameEl.textContent = cfg.name;
-            hoverTagEl.classList.add('is-visible');
+        // Không hiển thị hover tag theo yêu cầu
+        if (hoverTagEl) {
+            hoverTagEl.classList.remove('is-visible');
         }
 
         canvasEl.style.cursor = 'pointer';
@@ -1262,25 +1262,8 @@
             return;
         }
 
-        if (flashEl) {
-            flashEl.classList.add('is-flashing');
-            setTimeout(() => flashEl.classList.remove('is-flashing'), 400);
-        }
-
-        if (window.gsap) {
-            gsap.to(camera.position, {
-                x: cfg.posX,
-                y: cfg.posY + 0.08,
-                z: cfg.posZ + 1.95,
-                duration: 0.55,
-                ease: 'power3.in',
-                onComplete: () => {
-                    window.location.href = cfg.target;
-                }
-            });
-        } else {
-            window.location.href = cfg.target;
-        }
+        // Quần và Giày chưa làm không gian 3D chi tiết -> hiển thị thông báo hướng dẫn chọn Áo
+        showCategoryNotice(cfg);
     }
 
     // --- Sự kiện chuột ---
@@ -1300,16 +1283,11 @@
                 return;
             }
 
-            if (isInspectingShirt && itemWrappers[1]) {
-                // Xoay tự do áo theo cử chỉ kéo rê chuột
-                itemWrappers[1].rotation.y += deltaX * 0.012;
-            } else {
-                camera.position.x -= deltaX * 0.0045;
-                camera.position.y += deltaY * 0.0045;
-                camera.position.x = Math.max(-2.0, Math.min(2.0, camera.position.x));
-                camera.position.y = Math.max(-0.25, Math.min(1.0, camera.position.y));
-                camera.lookAt(0, -0.05, 0.0);
-            }
+            camera.position.x -= deltaX * 0.0045;
+            camera.position.y += deltaY * 0.0045;
+            camera.position.x = Math.max(-2.0, Math.min(2.0, camera.position.x));
+            camera.position.y = Math.max(-0.25, Math.min(1.0, camera.position.y));
+            camera.lookAt(0, -0.05, 0.0);
 
             previousMousePosition = { x: e.clientX, y: e.clientY };
         }
@@ -1322,8 +1300,38 @@
     }
 
     function onMouseUp(e) {
+        const wasDragging = isDragging;
         isDragging = false;
         if (isRackModeActive) return;
+
+        const deltaX = Math.abs(e.clientX - previousMousePosition.x);
+        const deltaY = Math.abs(e.clientY - previousMousePosition.y);
+
+        // Click chuột chuẩn xác vào món đồ
+        if (deltaX < 12 && deltaY < 12 && raycaster && camera) {
+            raycaster.setFromCamera(mouseNormalized, camera);
+            const hitMeshes = [];
+            itemWrappers.forEach((w) => {
+                if (w) w.traverse((c) => { if (c.isMesh) hitMeshes.push(c); });
+            });
+            const intersects = raycaster.intersectObjects(hitMeshes);
+            if (intersects.length > 0) {
+                let hitWrapper = intersects[0].object;
+                while (hitWrapper.parent && !hitWrapper.userData?.config) {
+                    hitWrapper = hitWrapper.parent;
+                }
+                if (hitWrapper?.userData?.config) {
+                    const cfg = hitWrapper.userData.config;
+                    if (cfg.id === 'ao') {
+                        open3DClothesRack();
+                        return;
+                    }
+                    showCategoryNotice(cfg);
+                    return;
+                }
+            }
+        }
+
         if (e.target === canvasEl && activeHoveredIndex !== -1) {
             onItemClick();
         }
@@ -1380,6 +1388,9 @@
 
     function closePortal() {
         if (!portalEl) return;
+        if (isRackModeActive) {
+            close3DClothesRack();
+        }
 
         if (window.gsap) {
             gsap.to(portalEl, {
@@ -1394,9 +1405,8 @@
                     document.body.style.overflow = '';
                     cancelAnimationFrame(animId);
 
-                    if (window.location.pathname.toLowerCase().startsWith('/products') && !window.location.search) {
-                        window.location.href = '/';
-                    }
+                    // Giữ nguyên trang /Products khi đóng 3D portal
+                    // Người dùng có thể xem lại bộ sưu tập 4 khối editorial
                 }
             });
         } else {
@@ -1408,34 +1418,35 @@
         }
     }
 
-    // --- Bắt sự kiện click vào bất kỳ Danh Mục hoặc Cửa Hàng ---
+    function showCategoryNotice(cfg) {
+        if (flashEl) {
+            flashEl.classList.add('is-flashing');
+            setTimeout(() => flashEl.classList.remove('is-flashing'), 350);
+        }
+        const toastEl = document.getElementById('hnmtRackToast');
+        const msgEl = document.getElementById('hnmtRackToastMsg');
+        if (toastEl && msgEl) {
+            msgEl.textContent = (cfg.name || "Món đồ") + ": Không gian 3D đang được phát triển. Bạn hãy nhấp vào Áo (chính giữa) để trải nghiệm Sào Treo Đồ 3D!";
+            toastEl.classList.add('is-active');
+            clearTimeout(window.__categoryNoticeTimer);
+            window.__categoryNoticeTimer = setTimeout(() => {
+                toastEl.classList.remove('is-active');
+            }, 3200);
+        }
+    }
+
+    // --- Bắt sự kiện click vào bất kỳ Danh Mục hoặc Khối Chọn 3D ---
     function bindTriggers() {
         document.addEventListener('click', (e) => {
-            const link = e.target.closest('a, .cat-card, [data-open-chile-portal]');
-            if (!link) return;
+            const block = e.target.closest('[data-open-chile-portal], .hnmt-cat-block');
+            if (!block) return;
 
-            if (link.closest('#hnmtChilePortal')) return;
+            if (block.closest('#hnmtChilePortal')) return;
 
-            const href = (link.getAttribute('href') || '').trim();
-            const isCategoryCard = link.classList.contains('cat-card') || link.closest('#categories') !== null;
-            const isStoreNav =
-                href === '/Products' ||
-                href === '/Products/Index' ||
-                href.startsWith('/Products#') ||
-                link.hasAttribute('data-open-chile-portal');
-
-            if (isCategoryCard || isStoreNav) {
-                e.preventDefault();
-                e.stopPropagation();
-                openPortal();
-            }
+            e.preventDefault();
+            e.stopPropagation();
+            openPortal();
         }, true);
-
-        const path = window.location.pathname.toLowerCase();
-        const search = window.location.search.toLowerCase();
-        if ((path === '/products' || path === '/products/index') && !search.includes('search=') && !search.includes('category=') && !search.includes('view=')) {
-            setTimeout(openPortal, 60);
-        }
     }
     // ==============================================================================
     // 6b. SÀO TREO ĐỒ 3D TƯƠNG TÁC (3D CLOTHES RACK - BẢN SAO 1:1 FRAXBIT NHƯ VIDEO)
@@ -1716,10 +1727,13 @@
         if (itemWrappers[1]) itemWrappers[1].visible = false;
         if (itemWrappers[2]) itemWrappers[2].visible = false;
 
-        if (rackStageGroup) rackStageGroup.visible = true;
+        if (rackStageGroup) rackStageGroup.visible = false;
         if (rackOverlayEl) {
             rackOverlayEl.classList.add('is-active');
             rackOverlayEl.setAttribute('aria-hidden', 'false');
+        }
+        if (window.ClothingRail && typeof window.ClothingRail.initRail === 'function') {
+            window.ClothingRail.initRail();
         }
 
         if (window.gsap) {
@@ -1838,6 +1852,8 @@
 
     function initRackEventBindings() {
         const backBtn = document.getElementById('hnmtRackBackToLobbyBtn');
+        const exitBtn = document.getElementById('hnmtRackExitBtn');
+        if (exitBtn) exitBtn.addEventListener('click', closePortal);
         const cartBtn = document.getElementById('rackAddToCartBtn');
         const buyBtn = document.getElementById('rackBuyNowBtn');
         const dropBtn = document.getElementById('hnmtRackGetDropBtn');
@@ -1940,7 +1956,6 @@
         flashEl = document.getElementById('hnmtPortalFlash');
 
         if (!portalEl || !canvasEl) return;
-        initClothesRackStage();
         initRackEventBindings();
 
         window.addEventListener('mousemove', onMouseMove, { passive: true });

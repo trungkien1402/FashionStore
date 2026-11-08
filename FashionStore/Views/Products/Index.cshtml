@@ -1,18 +1,61 @@
 @model FashionStore.Models.ViewModels.ProductListViewModel
 
 @{
-    ViewData["Title"] = "Cửa Hàng HNMTSHOP – Không Gian Trải Nghiệm Mới";
+    ViewData["Title"] = "Cửa Hàng HNMTSHOP – Danh Mục Thời Trang Nổi Bật";
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/css/store3d.css" asp-append-version="true" />
 }
 
-<!-- KHÔNG GIAN CỬA HÀNG SẴN SÀNG ĐỂ XÂY DỰNG MỚI THEO Ý TƯỞNG CỦA BẠN -->
-<div id="hnmtStoreApp" class="hnmt-store-clean-canvas">
-    @await Html.PartialAsync("_ChilePortal")
-</div>
+<!-- KHÔNG GIAN BỘ SƯU TẬP 4 KHỐI EDITORIAL TRÊN NỀN TRẮNG CHUẨN TRANG CHỦ -->
+<div class="hnmt-editorial-catalog">
+    <div class="hnmt-editorial-container">
+        
+        <!-- Phần tiêu đề sang trọng, nội dung hợp lý chuẩn thương hiệu HNMTSHOP -->
+        <header class="hnmt-editorial-header">
+            <h1 class="hnmt-editorial-title">Danh Mục Nổi Bật</h1>
+            <p class="hnmt-editorial-desc">
+                Từ trang phục thiết yếu hằng ngày đến những món đồ tạo điểm nhấn — Chọn danh mục của bạn để tiếp tục.
+            </p>
+        </header>
 
-@section Scripts {
-    <script src="~/js/store3d.js" asp-append-version="true"></script>
-}
+        <!-- Bố cục 4 khối riêng biệt độc lập: 1 ảnh trọn vẹn cho mỗi đối tượng -->
+        <div class="hnmt-editorial-grid">
+            
+            <!-- Khối 1: WOMEN (Khối riêng biệt độc lập) -->
+            <div class="hnmt-cat-card hnmt-card-women" data-open-chile-portal data-category="women" title="Khám phá Bộ Sưu Tập Nữ 3D">
+                <img src="/images/categories/cat-women.jpg?v=sep_v4" alt="WOMEN" class="hnmt-card-img" />
+                <div class="hnmt-card-pill">
+                    <span>Women</span>
+                </div>
+            </div>
+
+            <!-- Khối 2: GIRLS (Khối riêng biệt độc lập) -->
+            <div class="hnmt-cat-card hnmt-card-girls" data-open-chile-portal data-category="girls" title="Khám phá Bộ Sưu Tập Bé Gái 3D">
+                <img src="/images/categories/cat-girls.jpg?v=sep_v4" alt="GIRLS" class="hnmt-card-img" />
+                <div class="hnmt-card-pill">
+                    <span>Girls</span>
+                </div>
+            </div>
+
+            <!-- Khối 3: MEN (Khối riêng biệt độc lập) -->
+            <div class="hnmt-cat-card hnmt-card-men" data-open-chile-portal data-category="men" title="Khám phá Bộ Sưu Tập Nam 3D">
+                <img src="/images/categories/cat-men.jpg?v=sep_v4" alt="MEN" class="hnmt-card-img" />
+                <div class="hnmt-card-pill">
+                    <span>Men</span>
+                </div>
+            </div>
+
+            <!-- Khối 4: BOY (Khối riêng biệt độc lập) -->
+            <div class="hnmt-cat-card hnmt-card-boy" data-open-chile-portal data-category="boy" title="Khám phá Bộ Sưu Tập Bé Trai 3D">
+                <img src="/images/categories/cat-boy.jpg?v=sep_v4" alt="BOY" class="hnmt-card-img" />
+                <div class="hnmt-card-pill">
+                    <span>Boy</span>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>

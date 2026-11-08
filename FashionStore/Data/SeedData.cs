@@ -75,6 +75,12 @@ public static class SeedData
             await userManager.AddToRoleAsync(shipper, "Shipper");
         }
 
+        // Nếu đã có dữ liệu sản phẩm trong DB, bỏ qua bước khởi tạo lại
+        if (await db.Products.AnyAsync())
+        {
+            return;
+        }
+
         // ==============================================================
         // 3. CLEAN RESET: XÓA SẠCH DỮ LIỆU CŨ THEO YÊU CẦU NGƯỜI DÙNG
         // ==============================================================

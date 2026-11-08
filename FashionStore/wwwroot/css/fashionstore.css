@@ -56,7 +56,7 @@ img {
 }
 
 /* ==========================================================================
-   NAVBAR (EXACT VIDEO: LEFT LOGO, CENTER LINKS, RIGHT ICONS + BUY NOW)
+   NAVBAR (EXACT VIDEO: LEFT LOGO, PERFECT CENTER LINKS, RIGHT ICONS + BUY NOW)
    ========================================================================== */
 .urbn-header {
     background: #FFFFFF;
@@ -67,13 +67,14 @@ img {
 }
 
 .urbn-nav {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    justify-content: space-between;
     height: 76px;
 }
 
 .urbn-logo {
+    justify-self: start;
     font-size: 22px;
     font-weight: 800;
     letter-spacing: -0.5px;
@@ -82,10 +83,13 @@ img {
 }
 
 .urbn-nav-links {
+    justify-self: center;
     display: flex;
     align-items: center;
     gap: 36px;
     list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
 .urbn-nav-links a {
@@ -101,6 +105,7 @@ img {
 }
 
 .urbn-nav-actions {
+    justify-self: end;
     display: flex;
     align-items: center;
     gap: 20px;
@@ -931,6 +936,10 @@ img {
     .urbn-reviews-grid,
     .urbn-footer-grid {
         grid-template-columns: 1fr;
+    }
+    .urbn-nav {
+        display: flex;
+        justify-content: space-between;
     }
     .urbn-nav-links {
         display: none;

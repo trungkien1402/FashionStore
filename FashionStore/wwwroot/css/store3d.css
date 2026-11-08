@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Alex+Brush&family=Dancing+Script:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
 /* ==========================================================================
    HNMTSHOP - 3D DARK WATER SHOWROOM (CHILE 20 EDITION)
    Chuẩn 1:1 theo video 1107.mp4 & ảnh nền nước đọng Đen - Đỏ - Trắng
@@ -82,11 +84,15 @@
 }
 
 .hnmt-brand-title {
-    font-size: 16px;
-    font-weight: 900;
-    letter-spacing: 3px;
+    font-family: 'Dancing Script', 'Alex Brush', cursive, sans-serif;
+    font-size: 38px;
+    font-weight: 700;
+    letter-spacing: 1px;
     color: #ffffff;
-    text-transform: uppercase;
+    text-transform: none;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+    line-height: 1;
+    display: inline-block;
 }
 
 .hnmt-brand-box {
@@ -203,23 +209,10 @@
 
 /* 5. FLOATING HOVER TAG (HIỆN KHI RÊ CHUỘT VÀO MÓN ĐỒ) */
 .hnmt-hover-tag {
-    position: absolute;
-    top: 0;
-    left: 0;
-    transform: translate(-50%, -100%);
-    pointer-events: none;
-    z-index: 90;
-    opacity: 0;
-    transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-    background: rgba(8, 8, 12, 0.88);
-    border: 1px solid rgba(255, 255, 255, 0.28);
-    border-radius: 3px;
-    padding: 10px 18px;
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85);
-    white-space: nowrap;
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
 }
 
 .hnmt-hover-tag.is-visible {
@@ -693,5 +686,180 @@
     .hnmt-rack-tab {
         font-size: 10px;
         padding: 6px 12px;
+    }
+}
+
+
+/* ==========================================================================
+   HNMTSHOP - EDITORIAL LOOKBOOK CATALOG (NỀN TRẮNG TINH KHIẾT CHUẨN TRANG CHỦ)
+   Bố cục Bento 4 khối chuẩn tạp chí thời trang cao cấp:
+   - Cụm Trái: Khối lớn WOMEN + Khối lọt lòng GIRLS góc dưới bên phải
+   - Cụm Phải: 2 cột chân dung đứng đối xứng trọn vẹn MEN & BOY
+   - Nhãn dán Pill Badge tối giản: WOMEN, GIRLS, MEN, BOY
+   ========================================================================== */
+
+.hnmt-editorial-catalog {
+    background-color: #FFFFFF !important;
+    min-height: calc(100vh - 80px);
+    padding: 36px 24px 70px;
+    box-sizing: border-box;
+    font-family: 'Jost', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #111111;
+}
+
+.hnmt-editorial-container {
+    max-width: 1240px;
+    margin: 0 auto;
+}
+
+/* Header Typography - Cùng kiểu chữ 100% với bên Trang Chủ (Plus Jakarta Sans) */
+.hnmt-editorial-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.hnmt-editorial-title {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 40px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    text-transform: none;
+    color: #000000;
+    margin: 0 0 10px 0;
+    line-height: 1.2;
+}
+
+.hnmt-editorial-desc {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+    color: #4B5563;
+    letter-spacing: normal;
+    margin: 0;
+    max-width: 100%;
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .hnmt-editorial-desc {
+        white-space: normal;
+        max-width: 90%;
+        margin: 0 auto;
+    }
+}
+
+/* 4 Khối Danh Mục Độc Lập - Hoàn Toàn Riêng Biệt, Không Chồng Đè */
+.hnmt-editorial-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    height: 610px;
+    width: 100%;
+}
+
+/* Base Card Block Styling */
+.hnmt-cat-card {
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+    background-color: #F8F8F8;
+    border-radius: 16px;
+    height: 100%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+}
+
+.hnmt-cat-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12);
+}
+
+.hnmt-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hnmt-cat-card:hover .hnmt-card-img {
+    transform: scale(1.05);
+}
+
+/* Canh chỉnh vị trí chân dung cho từng khối độc lập */
+.hnmt-card-women .hnmt-card-img {
+    object-position: center 20%;
+}
+
+.hnmt-card-girls .hnmt-card-img {
+    object-position: center 20%;
+}
+
+.hnmt-card-men .hnmt-card-img {
+    object-position: center 20%;
+}
+
+.hnmt-card-boy .hnmt-card-img {
+    object-position: center 15%;
+}
+
+/* Nhãn chữ ký Calligraphy Nghệ Thuật - Đặt chính giữa đáy mỗi khối riêng biệt */
+.hnmt-card-pill {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 6;
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    font-family: 'Dancing Script', 'Alex Brush', cursive, sans-serif;
+    font-size: 38px;
+    font-weight: 700;
+    color: #FFFFFF;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8), 0 1px 3px rgba(0, 0, 0, 0.95);
+    letter-spacing: 1px;
+    text-transform: none;
+    pointer-events: none;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), text-shadow 0.35s ease;
+    white-space: nowrap;
+}
+
+.hnmt-cat-card:hover .hnmt-card-pill {
+    transform: translateX(-50%) scale(1.1);
+    text-shadow: 0 4px 16px rgba(0, 0, 0, 0.95), 0 0 14px rgba(255, 255, 255, 0.6);
+    color: #FFFFFF;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .hnmt-editorial-grid {
+        grid-template-columns: repeat(2, 1fr);
+        height: auto;
+        gap: 16px;
+    }
+    .hnmt-cat-card {
+        height: 480px;
+    }
+    .hnmt-editorial-title {
+        font-size: 32px;
+        letter-spacing: -0.5px;
+    }
+}
+
+@media (max-width: 576px) {
+    .hnmt-editorial-catalog {
+        padding: 24px 16px 50px;
+    }
+    .hnmt-editorial-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    .hnmt-cat-card {
+        height: 440px;
     }
 }

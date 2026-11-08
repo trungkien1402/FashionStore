@@ -212,4 +212,13 @@ public class ProductsController : Controller
             variants
         });
     }
+
+    // GET: /Products/Rail hoặc /Catalog (Sào treo đồ thời trang độc bản 3D từ GitHub)
+    [HttpGet]
+    [Route("Products/Rail")]
+    [Route("Catalog")]
+    public IActionResult Rail()
+    {
+        return View();
+    }
 }

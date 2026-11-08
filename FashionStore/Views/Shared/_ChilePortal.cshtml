@@ -1,8 +1,9 @@
 @* 
     ======================================================================
-    HNMTSHOP - 3D SHOWROOM PORTAL (BẢN SAO 1:1 CHIẾN DỊCH ADIDAS CHILE 20)
-    Không gian 3D chân thực: Nền đen tuyền · Mặt nước đọng gợn sóng phản chiếu
-    Cột Đen-Đỏ-Trắng · 3 Sản phẩm 3D (Trái: Quần | Giữa: Áo | Phải: Giày)
+    HNMTSHOP - 3D SHOWROOM PORTAL + CLOTHING RAIL CATALOG
+    1. Khi mở Showroom: Hiển thị không gian 3D Adidas Chile 20 (Mặt nước gợn sóng, 3 cột, Quần - Áo - Giày)
+    2. Khi bấm vào Áo: Mở Sào Treo Đồ Thời Trang Độc Bản (clothing-rail-catalog từ GitHub)
+    3. Khi bấm "Quay lại": Trở về không gian 3D Showroom
     ======================================================================
 *@
 
@@ -11,15 +12,12 @@
     <!-- 1. THREE.JS 3D WEBGL CANVAS (RENDER TOÀN BỘ KHÔNG GIAN 3D & MẶT NƯỚC GỢN SÓNG) -->
     <canvas id="hnmt3dCanvas" class="hnmt-3d-canvas"></canvas>
 
-    <!-- 2. THANH HEADER TỐI GIẢN -->
+    <!-- 2. THANH HEADER TỐI GIẢN CỦA SHOWROOM -->
     <header class="hnmt-portal-header">
-        <!-- Góc trên bên trái: Logo HNMTSHOP -->
         <div class="hnmt-portal-brand">
-            <span class="hnmt-brand-icon"><i class="bi bi-triangle-half"></i></span>
-            <span class="hnmt-brand-title">HNMTSHOP</span>
+            <span class="hnmt-brand-title">HnmtShop</span>
         </div>
 
-        <!-- Góc trên bên phải: Nút THOÁT bo góc nền trong suốt chỉ có viền -->
         <div class="hnmt-portal-actions">
             <button type="button" class="hnmt-exit-btn" id="hnmtPortalExitBtn" title="Thoát không gian 3D">
                 <i class="bi bi-arrow-left"></i>
@@ -33,83 +31,105 @@
         <div class="hnmt-badge-prompt">CHỌN 1 MÓN ĐỒ ĐỂ BẮT ĐẦU</div>
     </footer>
 
-    <!-- 4. GIAO DIỆN SÀO TREO ĐỒ 3D (CHÍNH XÁC NHƯ VIDEO FRAXBIT KHI BẤM CHỌN ÁO) -->
-    <div id="hnmtRackOverlay" class="hnmt-rack-overlay" aria-hidden="true">
-        <!-- Top Bar: Logo + Timeline Tabs [RACK | STORY | LOOKBOOK | PROCESS | SHOP] + Subtitle + Action Buttons -->
-        <div class="hnmt-rack-top-bar">
-            <div class="hnmt-rack-brand">
-                <span class="hnmt-rack-brand-mark"><i class="bi bi-triangle-half"></i></span>
-                <span class="hnmt-rack-brand-text">HNMTSHOP</span>
-            </div>
+    <!-- HOVER TAG KHI RÊ CHUỘT LÊN ĐỒ VẬT 3D -->
+    <div class="hnmt-hover-tag" id="hnmtHoverTag" style="display: none !important;">
+        <span class="hnmt-hover-cat" id="hnmtHoverCat">02 // TOPS</span>
+        <span class="hnmt-hover-name" id="hnmtHoverName">ÁO THUN HNMTSHOP</span>
+    </div>
 
-            <div class="hnmt-rack-center-nav">
-                <div class="hnmt-rack-timeline">
-                    <button type="button" class="hnmt-rack-tab is-active" data-tab="rack">RACK</button>
-                    <button type="button" class="hnmt-rack-tab" data-tab="story">STORY</button>
-                    <button type="button" class="hnmt-rack-tab" data-tab="lookbook">LOOKBOOK</button>
-                    <button type="button" class="hnmt-rack-tab" data-tab="process">PROCESS</button>
-                    <button type="button" class="hnmt-rack-tab" data-tab="shop">SHOP</button>
+    <!-- 4. GIAO DIỆN SÀO TREO ĐỒ (CLOTHING-RAIL-CATALOG TỪ GITHUB - MỞ RA KHI BẤM VÀO ÁO) -->
+    <div id="hnmtRackOverlay" class="hnmt-clothing-rail-wrap" aria-hidden="true">
+        <div class="rail-app">
+            <!-- Header của Sào đồ -->
+            <header class="rail-header" id="header">
+                <a href="/" class="rail-brand-signature" id="railBrandSignature" title="Về trang chủ">HnmtShop</a>
+                <div class="rail-brand" aria-label="Sào Đồ Thời Trang">
+                    <span>Sào Đồ</span>
+                    <span>Thời Trang</span>
                 </div>
-                <div class="hnmt-rack-subline">NEW COLLECTION &nbsp;//&nbsp; PREMIUM STREETWEAR</div>
-            </div>
-
-            <div class="hnmt-rack-top-actions">
-                <button type="button" class="hnmt-rack-drop-btn" id="hnmtRackGetDropBtn">GET THE DROP</button>
-                <button type="button" class="hnmt-rack-back-btn" id="hnmtRackBackToLobbyBtn" title="Quay lại showroom 3 món">
-                    <i class="bi bi-arrow-left"></i>
-                    <span>Quay lại Showroom</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Hướng dẫn lướt sào đồ -->
-        <div class="hnmt-rack-drag-hint" id="hnmtRackDragHint">
-            <i class="bi bi-arrows-expand"></i>
-            <span>KÉO HOẶC LĂN CHUỘT ĐỂ LƯỚT SÀO TREO ĐỒ</span>
-        </div>
-
-        <!-- Bottom Panel: Thông tin sản phẩm của chiếc áo tiêu điểm (Title, Price, Sizes, Add to Cart) -->
-        <div class="hnmt-rack-bottom-panel" id="hnmtRackBottomPanel">
-            <div class="hnmt-rack-info-col">
-                <div class="hnmt-rack-cat-badge" id="rackItemCategory">02 // TOPS & HOODIES</div>
-                <h2 class="hnmt-rack-title" id="rackItemTitle">FRAXBIT Heavyweight Boxy Hoodie Forest Green</h2>
-                <div class="hnmt-rack-price-row">
-                    <span class="hnmt-rack-price" id="rackItemPrice">550.000 ₫</span>
-                    <span class="hnmt-rack-stock" id="rackItemStock"><i class="bi bi-check-circle-fill"></i> Còn hàng (S, M, L, XL)</span>
+                <div class="rail-head-right">
+                    <button type="button" class="rail-bag-btn" id="bagBtn" aria-label="Giỏ hàng">
+                        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                            <path d="M4 8h16l-1 13H5L4 8Z"/>
+                            <path d="M9 9V6a3 3 0 0 1 6 0v3"/>
+                        </svg>
+                        <span class="rail-bag-count" id="bagCount">0</span>
+                    </button>
+                    <!-- Nút Quay lại Showroom 3D -->
+                    <button type="button" class="rail-portal-exit-btn" id="hnmtRackBackToLobbyBtn" title="Quay lại">
+                        <i class="bi bi-arrow-left"></i>
+                        <span>Quay lại</span>
+                    </button>
                 </div>
-            </div>
+            </header>
 
-            <div class="hnmt-rack-controls-col">
-                <div class="hnmt-rack-sizes-group">
-                    <span class="hnmt-rack-size-label">KÍCH CỠ:</span>
-                    <div class="hnmt-rack-size-pills" id="rackSizePills">
-                        <button type="button" class="rack-size-pill">S</button>
-                        <button type="button" class="rack-size-pill is-active">M</button>
-                        <button type="button" class="rack-size-pill">L</button>
-                        <button type="button" class="rack-size-pill">XL</button>
+            <!-- Main Rail Scene -->
+            <main class="rail-main">
+                <div class="rail-intro">
+                    <p class="rail-eyebrow">BỘ SƯU TẬP 01</p>
+                    <div class="rail-title-row">
+                        <button type="button" class="rail-rack-nav-btn prev" id="rackPrevBtn" title="Sào trước" aria-label="Sào trước">
+                            <i class="bi bi-chevron-left"></i>
+                        </button>
+                        <h1 class="rail-hero-title">Thời Trang Độc Bản · Nâng Tầm Phong Cách</h1>
+                        <button type="button" class="rail-rack-nav-btn next" id="rackNextBtn" title="Sào tiếp theo" aria-label="Sào tiếp theo">
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
                     </div>
                 </div>
 
-                <div class="hnmt-rack-buttons-row">
-                    <button type="button" class="hnmt-rack-btn-cart" id="rackAddToCartBtn">
-                        <i class="bi bi-bag-plus"></i>
-                        <span>THÊM VÀO GIỎ</span>
-                    </button>
-                    <button type="button" class="hnmt-rack-btn-buy" id="rackBuyNowBtn">
-                        <span>MUA NGAY (GET THE DROP)</span>
-                    </button>
+                <section class="rail-scene" aria-label="Sào treo đồ thời trang">
+                    <div class="rail-scroll" id="railScroll">
+                        <div class="rail-stage" id="railStage">
+                            <div class="chrome-rail" aria-hidden="true"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="rail-caption-panel">
+                    <div class="rail-caption-heading" id="captionTitle">Bộ sưu tập độc bản HNMTSHOP.</div>
+                    <div class="rail-caption-detail" id="captionDetail">10 thiết kế giới hạn — Lướt sào hoặc chọn để xem chi tiết.</div>
+                    <button type="button" class="rail-outline-pill" id="availabilityBtn">XEM CHI TIẾT ↗</button>
+                </section>
+            </main>
+        </div>
+
+        <!-- Product Detail Modal Overlay -->
+        <section class="rail-product-overlay" id="productOverlay" role="dialog" aria-modal="true" aria-label="Chi tiết sản phẩm">
+            <button type="button" class="rail-product-close" id="closeBtn">ĐÓNG <span>×</span></button>
+            <div class="rail-detail-content">
+                <div class="rail-detail-image-row">
+                    <button type="button" class="rail-arrow-btn" id="prevBtn" aria-label="Sản phẩm trước">←</button>
+                    <img class="rail-detail-img" id="detailImage" alt="">
+                    <button type="button" class="rail-arrow-btn" id="nextBtn" aria-label="Sản phẩm sau">→</button>
                 </div>
+                <p class="rail-counter" id="counter"></p>
+                <h2 class="rail-detail-name" id="detailName"></h2>
+                <p class="rail-description" id="description"></p>
+                <div class="rail-price-line">
+                    <span id="detailPrice"></span>
+                    <span class="rail-stock" id="stock"></span>
+                </div>
+                <span class="rail-options-label">MÀU SẮC</span>
+                <div class="rail-color-options" id="colors"></div>
+                <span class="rail-options-label">KÍCH CỠ</span>
+                <div class="rail-size-options" id="sizes"></div>
+                <p class="rail-size-hint" id="sizeHint"></p>
+                <button type="button" class="rail-cart-cta" id="cartCta">CHỌN KÍCH CỠ</button>
+                <p class="rail-delivery">Miễn phí giao hàng toàn quốc từ 500.000 ₫. Đổi trả trong 30 ngày.</p>
+            </div>
+        </section>
+
+        <!-- Informational Modal -->
+        <div class="rail-nav-modal" id="modal" role="dialog" aria-modal="true">
+            <div class="rail-modal-body">
+                <h2 id="modalTitle">Về HNMTSHOP</h2>
+                <p id="modalText"></p>
+                <button type="button" class="rail-modal-exit" id="modalExit">ĐÓNG [ESC]</button>
             </div>
         </div>
 
-        <!-- Toast thông báo thêm giỏ hàng thành công -->
-        <div class="hnmt-rack-toast" id="hnmtRackToast">
-            <i class="bi bi-bag-check-fill"></i>
-            <span id="hnmtRackToastMsg">Đã thêm vào giỏ hàng thành công!</span>
-        </div>
+        <!-- Toast Notification -->
+        <aside class="rail-toast" id="toast" role="status" aria-live="polite"></aside>
     </div>
-
-    <!-- 5. HIỆU ỨNG CHUYỂN CẢNH KHI NHẤP CHỌN MÓN ĐỒ -->
-    <div class="hnmt-portal-flash" id="hnmtPortalFlash"></div>
-
 </div>
