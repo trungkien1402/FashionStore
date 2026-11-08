@@ -36,4 +36,119 @@
     <!-- 4. HIỆU ỨNG CHUYỂN CẢNH KHI NHẤP CHỌN MÓN ĐỒ -->
     <div class="hnmt-portal-flash" id="hnmtPortalFlash"></div>
 
+    <!-- 5. BẢNG CHI TIẾT SẢN PHẨM ÁO THUN 3D KHI SELECT (TỰ ĐỘNG KẾT NỐI DATABASE) -->
+    <aside id="shirtInspectionDrawer" class="hnmt-shirt-drawer" aria-hidden="true">
+        <div class="hnmt-drawer-top">
+            <button type="button" class="hnmt-drawer-back-btn" id="shirtBackToStageBtn" title="Quay lại showroom 3 món">
+                <i class="bi bi-arrow-left"></i>
+                <span>Quay lại Showroom</span>
+            </button>
+            <span class="hnmt-drawer-cat-tag" id="shirtCategoryTag">02 // ÁO THUN STREETWEAR 3D</span>
+        </div>
+
+        <div class="hnmt-drawer-scroll">
+            <!-- Tên & Giá từ Database -->
+            <div class="hnmt-drawer-heading">
+                <h1 class="hnmt-drawer-title" id="shirtTitle">Oversize Streetwear Tee Clean White</h1>
+                <div class="hnmt-drawer-price-row">
+                    <span class="hnmt-drawer-price" id="shirtPrice">290.000 ₫</span>
+                    <span class="hnmt-drawer-badge" id="shirtStockBadge">✓ CÒN HÀNG (S, M, L, XL)</span>
+                </div>
+            </div>
+
+            <!-- Mô tả chất liệu -->
+            <p class="hnmt-drawer-desc" id="shirtDescription">
+                Áo phông basic dệt sợi 100% Combed Cotton 2 chiều cao cấp 280 GSM. Form Boxy Drop-Shoulder thời thượng, bo cổ dệt 2 lớp chống giãn. Cấu trúc 3D treo móc thật mô phỏng độ rủ tự nhiên.
+            </p>
+
+            <!-- Bộ Chọn Màu Sắc 3D (Đổi màu 3D tức thì) -->
+            <div class="hnmt-drawer-field">
+                <div class="hnmt-field-header">
+                    <span class="hnmt-field-label">MÀU SẮC 3D</span>
+                    <span class="hnmt-field-val" id="shirtSelectedColorName">Trắng Tinh Khôi</span>
+                </div>
+                <div class="hnmt-color-swatches" id="shirtColorSwatches">
+                    <!-- Dynamic swatches generated from DB -->
+                </div>
+            </div>
+
+            <!-- Bộ Chọn Kích Thước (Size) -->
+            <div class="hnmt-drawer-field">
+                <div class="hnmt-field-header">
+                    <span class="hnmt-field-label">KÍCH THƯỚC (SIZE)</span>
+                    <span class="hnmt-field-val" id="shirtSelectedStock">Còn 30 sản phẩm</span>
+                </div>
+                <div class="hnmt-size-pills" id="shirtSizePills">
+                    <!-- Dynamic size pills generated from DB -->
+                </div>
+            </div>
+
+            <!-- Danh Sách Áo Treo Móc 3D Khác (Chỉ những áo chuẩn phom 3D) -->
+            <div class="hnmt-drawer-field">
+                <div class="hnmt-field-header">
+                    <span class="hnmt-field-label">MẪU ÁO 3D TRÊN SÀO TREO</span>
+                </div>
+                <div class="hnmt-other-shirts" id="shirtModelSwitcher">
+                    <!-- Switch between 3D shirts -->
+                </div>
+            </div>
+
+            <!-- Nút Hành Động Mua Hàng -->
+            <div class="hnmt-drawer-actions">
+                <button type="button" class="hnmt-btn-add-cart" id="shirtAddToCartBtn">
+                    <i class="bi bi-bag-plus"></i>
+                    <span>THÊM VÀO GIỎ HÀNG</span>
+                </button>
+                <button type="button" class="hnmt-btn-buy-now" id="shirtBuyNowBtn">
+                    <span>MUA NGAY (GET THE DROP)</span>
+                    <i class="bi bi-arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- Cam kết chất lượng -->
+            <div class="hnmt-drawer-perks">
+                <div class="hnmt-perk-item">
+                    <i class="bi bi-shield-check"></i>
+                    <span>100% Cotton chải kỹ 280 GSM dày dặn</span>
+                </div>
+                <div class="hnmt-perk-item">
+                    <i class="bi bi-arrow-repeat"></i>
+                    <span>Đổi size miễn phí trong 7 ngày</span>
+                </div>
+                <div class="hnmt-perk-item">
+                    <i class="bi bi-truck"></i>
+                    <span>Giao hàng hỏa tốc toàn quốc</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- 6. THANH CÔNG CỤ TƯƠNG TÁC 3D (DƯỚI CHÂN ÁO) -->
+    <div id="shirtControlsBar" class="hnmt-shirt-controls-bar" aria-hidden="true">
+        <button type="button" class="hnmt-ctrl-btn" id="ctrlBtnRotate360" title="Tự động xoay 360 độ">
+            <i class="bi bi-arrow-repeat"></i>
+            <span>Xoay 360°</span>
+        </button>
+        <button type="button" class="hnmt-ctrl-btn" id="ctrlBtnFront" title="Xem mặt trước">
+            <span>Mặt Trước</span>
+        </button>
+        <button type="button" class="hnmt-ctrl-btn" id="ctrlBtnBack" title="Xem mặt sau">
+            <span>Mặt Sau</span>
+        </button>
+        <button type="button" class="hnmt-ctrl-btn" id="ctrlBtnZoomFabric" title="Soi chi tiết vải 2K">
+            <i class="bi bi-zoom-in"></i>
+            <span>Soi Vải 2K</span>
+        </button>
+    </div>
+
+    <!-- 7. TOAST THÔNG BÁO GIỎ HÀNG THÀNH CÔNG -->
+    <div id="shirtToast" class="hnmt-shirt-toast" aria-hidden="true">
+        <i class="bi bi-check-circle-fill"></i>
+        <div class="hnmt-toast-content">
+            <strong id="shirtToastTitle">Đã thêm vào giỏ hàng!</strong>
+            <span id="shirtToastDesc">Áo Thun Cotton Trắng (Size M)</span>
+        </div>
+        <a href="/Cart" class="hnmt-toast-link">Xem giỏ</a>
+    </div>
+
 </div>

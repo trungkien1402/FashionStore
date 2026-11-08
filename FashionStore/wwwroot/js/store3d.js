@@ -1084,6 +1084,12 @@
         }
 
         // 1. Chuyển động lơ lửng & XOAY 3D NHẸ theo chuột cho Quần (Trái), Áo (Giữa), Giày (Phải)
+        if (isInspectingShirt && itemWrappers[1]) {
+            if (isAutoRotatingShirt) {
+                itemWrappers[1].rotation.y += 0.0075;
+            }
+        }
+
         itemWrappers.forEach((wrapper, idx) => {
             if (!wrapper) return;
             const cfg = wrapper.userData.config;
@@ -1243,6 +1249,12 @@
 
         const cfg = wrapper.userData.config;
 
+        // Bật chế độ soi chi tiết Áo thun treo móc thực tế (như video FraxBIT)
+        if (cfg.id === 'ao') {
+            openShirtInspectionStage(wrapper, cfg);
+            return;
+        }
+
         if (flashEl) {
             flashEl.classList.add('is-flashing');
             setTimeout(() => flashEl.classList.remove('is-flashing'), 400);
@@ -1276,11 +1288,16 @@
             const deltaX = e.clientX - previousMousePosition.x;
             const deltaY = e.clientY - previousMousePosition.y;
 
-            camera.position.x -= deltaX * 0.0045;
-            camera.position.y += deltaY * 0.0045;
-            camera.position.x = Math.max(-2.0, Math.min(2.0, camera.position.x));
-            camera.position.y = Math.max(-0.25, Math.min(1.0, camera.position.y));
-            camera.lookAt(0, -0.05, 0.0);
+            if (isInspectingShirt && itemWrappers[1]) {
+                // Xoay tự do áo theo cử chỉ kéo rê chuột
+                itemWrappers[1].rotation.y += deltaX * 0.012;
+            } else {
+                camera.position.x -= deltaX * 0.0045;
+                camera.position.y += deltaY * 0.0045;
+                camera.position.x = Math.max(-2.0, Math.min(2.0, camera.position.x));
+                camera.position.y = Math.max(-0.25, Math.min(1.0, camera.position.y));
+                camera.lookAt(0, -0.05, 0.0);
+            }
 
             previousMousePosition = { x: e.clientX, y: e.clientY };
         }
@@ -1407,6 +1424,372 @@
             setTimeout(openPortal, 60);
         }
     }
+    // ==============================================================================
+    // 6b. CHẾ ĐỘ SOI ÁO THUN TREO MÓC 3D & BẢNG ĐIỀU KHIỂN SẢN PHẨM (KẾT NỐI DATABASE)
+    // ==============================================================================
+    let isInspectingShirt = false;
+    let isAutoRotatingShirt = true;
+    let currentShirtData = null;
+    let selectedColorName = 'Trắng';
+    let selectedSizeName = 'M';
+    let selectedVariantId = null;
+
+    let shirtDrawerEl = null;
+    let shirtControlsBarEl = null;
+    let shirtToastEl = null;
+    let shirtBackBtnEl = null;
+    let shirtTitleEl = null;
+    let shirtPriceEl = null;
+    let shirtDescEl = null;
+    let shirtCatTagEl = null;
+    let shirtStockBadgeEl = null;
+    let shirtSelectedColorNameEl = null;
+    let shirtSelectedStockEl = null;
+    let shirtColorSwatchesEl = null;
+    let shirtSizePillsEl = null;
+    let shirtModelSwitcherEl = null;
+    let shirtAddToCartBtnEl = null;
+    let shirtBuyNowBtnEl = null;
+
+    const INSPECT_CAM_POS = { x: -0.42, y: -0.16, z: 2.25 };
+
+    function initShirtInspectionDOM() {
+        shirtDrawerEl = document.getElementById('shirtInspectionDrawer');
+        shirtControlsBarEl = document.getElementById('shirtControlsBar');
+        shirtToastEl = document.getElementById('shirtToast');
+        shirtBackBtnEl = document.getElementById('shirtBackToStageBtn');
+        shirtTitleEl = document.getElementById('shirtTitle');
+        shirtPriceEl = document.getElementById('shirtPrice');
+        shirtDescEl = document.getElementById('shirtDescription');
+        shirtCatTagEl = document.getElementById('shirtCategoryTag');
+        shirtStockBadgeEl = document.getElementById('shirtStockBadge');
+        shirtSelectedColorNameEl = document.getElementById('shirtSelectedColorName');
+        shirtSelectedStockEl = document.getElementById('shirtSelectedStock');
+        shirtColorSwatchesEl = document.getElementById('shirtColorSwatches');
+        shirtSizePillsEl = document.getElementById('shirtSizePills');
+        shirtModelSwitcherEl = document.getElementById('shirtModelSwitcher');
+        shirtAddToCartBtnEl = document.getElementById('shirtAddToCartBtn');
+        shirtBuyNowBtnEl = document.getElementById('shirtBuyNowBtn');
+
+        if (shirtBackBtnEl) {
+            shirtBackBtnEl.addEventListener('click', closeShirtInspectionStage);
+        }
+
+        if (shirtAddToCartBtnEl) {
+            shirtAddToCartBtnEl.addEventListener('click', () => addShirtToCart(false));
+        }
+
+        if (shirtBuyNowBtnEl) {
+            shirtBuyNowBtnEl.addEventListener('click', () => addShirtToCart(true));
+        }
+
+        // Bắt sự kiện thanh công cụ góc nhìn 3D
+        const btnRotate = document.getElementById('ctrlBtnRotate360');
+        const btnFront = document.getElementById('ctrlBtnFront');
+        const btnBack = document.getElementById('ctrlBtnBack');
+        const btnZoom = document.getElementById('ctrlBtnZoomFabric');
+
+        if (btnRotate) {
+            btnRotate.addEventListener('click', () => {
+                isAutoRotatingShirt = !isAutoRotatingShirt;
+                btnRotate.classList.toggle('is-active', isAutoRotatingShirt);
+            });
+            btnRotate.classList.add('is-active');
+        }
+
+        if (btnFront) {
+            btnFront.addEventListener('click', () => {
+                isAutoRotatingShirt = false;
+                if (btnRotate) btnRotate.classList.remove('is-active');
+                if (itemWrappers[1]) {
+                    if (window.gsap) gsap.to(itemWrappers[1].rotation, { y: 0.0, duration: 0.6, ease: 'power2.out' });
+                    else itemWrappers[1].rotation.y = 0.0;
+                }
+            });
+        }
+
+        if (btnBack) {
+            btnBack.addEventListener('click', () => {
+                isAutoRotatingShirt = false;
+                if (btnRotate) btnRotate.classList.remove('is-active');
+                if (itemWrappers[1]) {
+                    if (window.gsap) gsap.to(itemWrappers[1].rotation, { y: Math.PI, duration: 0.6, ease: 'power2.out' });
+                    else itemWrappers[1].rotation.y = Math.PI;
+                }
+            });
+        }
+
+        if (btnZoom) {
+            let isZoomed = false;
+            btnZoom.addEventListener('click', () => {
+                isZoomed = !isZoomed;
+                btnZoom.classList.toggle('is-active', isZoomed);
+                const targetZ = isZoomed ? 1.48 : INSPECT_CAM_POS.z;
+                const targetY = isZoomed ? -0.22 : INSPECT_CAM_POS.y;
+                if (window.gsap) {
+                    gsap.to(camera.position, { z: targetZ, y: targetY, duration: 0.7, ease: 'power2.out' });
+                } else {
+                    camera.position.z = targetZ;
+                    camera.position.y = targetY;
+                }
+            });
+        }
+    }
+
+    function openShirtInspectionStage(wrapper, cfg) {
+        isInspectingShirt = true;
+        isAutoRotatingShirt = true;
+
+        const promptEl = document.querySelector('.hnmt-portal-footer');
+        if (promptEl) promptEl.style.opacity = '0';
+
+        if (window.gsap) {
+            gsap.to(camera.position, {
+                x: INSPECT_CAM_POS.x,
+                y: INSPECT_CAM_POS.y,
+                z: INSPECT_CAM_POS.z,
+                duration: 0.95,
+                ease: 'power3.out'
+            });
+
+            if (itemWrappers[0]) gsap.to(itemWrappers[0].position, { x: -3.6, duration: 0.8, ease: 'power3.inOut' });
+            if (itemWrappers[2]) gsap.to(itemWrappers[2].position, { x: 3.6, duration: 0.8, ease: 'power3.inOut' });
+
+            gsap.to(wrapper.position, {
+                x: -0.42,
+                y: -0.25,
+                z: 0.90,
+                duration: 0.9,
+                ease: 'power3.out'
+            });
+        } else {
+            camera.position.set(INSPECT_CAM_POS.x, INSPECT_CAM_POS.y, INSPECT_CAM_POS.z);
+            if (itemWrappers[0]) itemWrappers[0].position.x = -3.6;
+            if (itemWrappers[2]) itemWrappers[2].position.x = 3.6;
+            wrapper.position.set(-0.42, -0.25, 0.90);
+        }
+
+        if (shirtDrawerEl) {
+            shirtDrawerEl.classList.add('is-active');
+            shirtDrawerEl.setAttribute('aria-hidden', 'false');
+        }
+        if (shirtControlsBarEl) {
+            shirtControlsBarEl.classList.add('is-active');
+            shirtControlsBarEl.setAttribute('aria-hidden', 'false');
+        }
+
+        fetchShirtProductData('oversize-streetwear-tee-clean-white');
+    }
+
+    function closeShirtInspectionStage() {
+        isInspectingShirt = false;
+
+        const promptEl = document.querySelector('.hnmt-portal-footer');
+        if (promptEl) promptEl.style.opacity = '1';
+
+        if (shirtDrawerEl) {
+            shirtDrawerEl.classList.remove('is-active');
+            shirtDrawerEl.setAttribute('aria-hidden', 'true');
+        }
+        if (shirtControlsBarEl) {
+            shirtControlsBarEl.classList.remove('is-active');
+            shirtControlsBarEl.setAttribute('aria-hidden', 'true');
+        }
+
+        if (window.gsap) {
+            gsap.to(camera.position, {
+                x: 0,
+                y: 0.10,
+                z: 4.65,
+                duration: 0.85,
+                ease: 'power3.out'
+            });
+
+            if (itemWrappers[0]) gsap.to(itemWrappers[0].position, { x: MODEL_CONFIGS[0].posX, duration: 0.85, ease: 'power3.out' });
+            if (itemWrappers[1]) gsap.to(itemWrappers[1].position, { x: MODEL_CONFIGS[1].posX, y: MODEL_CONFIGS[1].posY, z: MODEL_CONFIGS[1].posZ, duration: 0.85, ease: 'power3.out' });
+            if (itemWrappers[2]) gsap.to(itemWrappers[2].position, { x: MODEL_CONFIGS[2].posX, duration: 0.85, ease: 'power3.out' });
+        } else {
+            camera.position.set(0, 0.10, 4.65);
+            if (itemWrappers[0]) itemWrappers[0].position.x = MODEL_CONFIGS[0].posX;
+            if (itemWrappers[1]) itemWrappers[1].position.set(MODEL_CONFIGS[1].posX, MODEL_CONFIGS[1].posY, MODEL_CONFIGS[1].posZ);
+            if (itemWrappers[2]) itemWrappers[2].position.x = MODEL_CONFIGS[2].posX;
+        }
+    }
+
+    async function fetchShirtProductData(slug, id) {
+        try {
+            const url = slug ? `/Products/GetProduct3DData?slug=${encodeURIComponent(slug)}` : `/Products/GetProduct3DData?id=${id}`;
+            const res = await fetch(url);
+            if (!res.ok) throw new Error('Failed to fetch 3D product');
+            const data = await res.json();
+            if (!data.success) return;
+
+            currentShirtData = data;
+            renderShirtProductUI(data);
+        } catch (err) {
+            console.warn('[3D Shirt Atelier Data Fetch Warning]:', err);
+        }
+    }
+
+    function renderShirtProductUI(data) {
+        if (shirtTitleEl) shirtTitleEl.textContent = data.name;
+        if (shirtPriceEl) shirtPriceEl.textContent = data.priceFormatted;
+        if (shirtDescEl) shirtDescEl.textContent = data.description;
+        if (shirtCatTagEl) shirtCatTagEl.textContent = '02 // ' + data.categoryName.toUpperCase();
+
+        if (shirtColorSwatchesEl && data.colors) {
+            shirtColorSwatchesEl.innerHTML = '';
+            data.colors.forEach((c, idx) => {
+                const sw = document.createElement('div');
+                sw.className = `hnmt-color-swatch ${c.name === selectedColorName || idx === 0 ? 'is-selected' : ''}`;
+                sw.style.backgroundColor = c.code;
+                sw.title = c.name;
+                sw.addEventListener('click', () => {
+                    document.querySelectorAll('.hnmt-color-swatch').forEach(el => el.classList.remove('is-selected'));
+                    sw.classList.add('is-selected');
+                    selectedColorName = c.name;
+                    if (shirtSelectedColorNameEl) shirtSelectedColorNameEl.textContent = c.name;
+                    applyShirtColorTint(c.tint);
+                    updateSelectedVariant();
+                });
+                shirtColorSwatchesEl.appendChild(sw);
+            });
+            if (data.colors.length > 0 && shirtSelectedColorNameEl) {
+                shirtSelectedColorNameEl.textContent = data.colors[0].name;
+            }
+        }
+
+        if (shirtSizePillsEl && data.sizes) {
+            shirtSizePillsEl.innerHTML = '';
+            data.sizes.forEach((s, idx) => {
+                const pill = document.createElement('button');
+                pill.type = 'button';
+                pill.className = `hnmt-size-pill ${s === selectedSizeName || idx === 0 ? 'is-selected' : ''}`;
+                pill.textContent = s;
+                pill.addEventListener('click', () => {
+                    document.querySelectorAll('.hnmt-size-pill').forEach(el => el.classList.remove('is-selected'));
+                    pill.classList.add('is-selected');
+                    selectedSizeName = s;
+                    updateSelectedVariant();
+                });
+                shirtSizePillsEl.appendChild(pill);
+            });
+            if (data.sizes.length > 0) selectedSizeName = data.sizes[0];
+        }
+
+        if (shirtModelSwitcherEl) {
+            shirtModelSwitcherEl.innerHTML = '';
+            const models = [
+                { id: 259, name: 'Oversize Clean White', slug: 'oversize-streetwear-tee-clean-white', price: '290.000 ₫' },
+                { id: 258, name: 'Vintage Boxy Charcoal', slug: 'vintage-washed-boxy-tee-charcoal', price: '320.000 ₫' },
+                { id: 257, name: 'Heavyweight Hoodie Grey', slug: 'heavyweight-boxy-hoodie-ash-grey', price: '550.000 ₫' }
+            ];
+
+            models.forEach(m => {
+                const card = document.createElement('div');
+                card.className = `hnmt-other-shirt-card ${m.slug === data.slug ? 'is-active' : ''}`;
+                card.innerHTML = `
+                    <span class="hnmt-other-shirt-title">${m.name}</span>
+                    <span class="hnmt-other-shirt-price">${m.price}</span>
+                `;
+                card.addEventListener('click', () => {
+                    fetchShirtProductData(m.slug);
+                });
+                shirtModelSwitcherEl.appendChild(card);
+            });
+        }
+
+        updateSelectedVariant();
+    }
+
+    function updateSelectedVariant() {
+        if (!currentShirtData || !currentShirtData.variants) return;
+        const v = currentShirtData.variants.find(item => 
+            item.size.toLowerCase() === selectedSizeName.toLowerCase() &&
+            item.color.toLowerCase() === selectedColorName.toLowerCase()
+        ) || currentShirtData.variants.find(item => item.size.toLowerCase() === selectedSizeName.toLowerCase()) || currentShirtData.variants[0];
+
+        if (v) {
+            selectedVariantId = v.id;
+            if (shirtSelectedStockEl) {
+                shirtSelectedStockEl.textContent = v.stock > 0 ? `Còn ${v.stock} sản phẩm` : 'Tạm hết hàng';
+                shirtSelectedStockEl.style.color = v.stock > 0 ? '#2ed573' : '#ff4757';
+            }
+        }
+    }
+
+    function applyShirtColorTint(tint) {
+        if (!itemWrappers[1]) return;
+        itemWrappers[1].traverse(child => {
+            if (child.isMesh && child.material && child.geometry?.attributes?.position?.count > 5000) {
+                if (window.gsap) {
+                    gsap.to(child.material.color, {
+                        r: tint[0],
+                        g: tint[1],
+                        b: tint[2],
+                        duration: 0.35,
+                        ease: 'power2.out'
+                    });
+                } else {
+                    child.material.color.setRGB(tint[0], tint[1], tint[2]);
+                }
+            }
+        });
+    }
+
+    async function addShirtToCart(buyNow = false) {
+        if (!currentShirtData || !selectedVariantId) return;
+
+        try {
+            const payload = {
+                productId: currentShirtData.id,
+                variantId: selectedVariantId,
+                quantity: 1
+            };
+
+            const res = await fetch('/Cart/AddAjax', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                const resData = await res.json();
+                showShirtToast(`Đã thêm ${currentShirtData.name}`, `Size ${selectedSizeName} · Màu ${selectedColorName}`);
+                
+                const cartBadges = document.querySelectorAll('.cart-count, #cartCountBadge, .badge-cart');
+                cartBadges.forEach(badge => {
+                    badge.textContent = resData.cartCount || (parseInt(badge.textContent || '0', 10) + 1);
+                });
+
+                if (buyNow) {
+                    setTimeout(() => {
+                        window.location.href = '/Cart';
+                    }, 400);
+                }
+            }
+        } catch (e) {
+            console.error('Cart add error:', e);
+        }
+    }
+
+    function showShirtToast(title, desc) {
+        if (!shirtToastEl) return;
+        const tTitle = document.getElementById('shirtToastTitle');
+        const tDesc = document.getElementById('shirtToastDesc');
+        if (tTitle) tTitle.textContent = title;
+        if (tDesc) tDesc.textContent = desc;
+
+        shirtToastEl.classList.add('is-visible');
+        shirtToastEl.setAttribute('aria-hidden', 'false');
+        setTimeout(() => {
+            shirtToastEl.classList.remove('is-visible');
+            shirtToastEl.setAttribute('aria-hidden', 'true');
+        }, 3200);
+    }
+
 
     function init() {
         portalEl = document.getElementById('hnmtChilePortal');
@@ -1418,6 +1801,7 @@
         flashEl = document.getElementById('hnmtPortalFlash');
 
         if (!portalEl || !canvasEl) return;
+        initShirtInspectionDOM();
 
         window.addEventListener('mousemove', onMouseMove, { passive: true });
         window.addEventListener('mousedown', onMouseDown);

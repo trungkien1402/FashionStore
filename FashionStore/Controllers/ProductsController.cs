@@ -130,4 +130,86 @@ public class ProductsController : Controller
 
         return View(product);
     }
+
+    // GET: /Products/GetProduct3DData?slug=...
+    [HttpGet]
+    public async Task<IActionResult> GetProduct3DData(string? slug, int? id)
+    {
+        var allProducts = await _productService.GetAllProductsAsync();
+        var product = (id.HasValue && id > 0)
+            ? allProducts.FirstOrDefault(p => p.Id == id.Value && p.IsActive)
+            : (!string.IsNullOrWhiteSpace(slug)
+                ? allProducts.FirstOrDefault(p => p.Slug.Equals(slug.Trim(), StringComparison.OrdinalIgnoreCase) && p.IsActive)
+                : allProducts.FirstOrDefault(p => p.Slug.Contains("oversize-streetwear-tee") && p.IsActive));
+
+        if (product == null)
+        {
+            product = allProducts.FirstOrDefault(p => p.IsActive && p.Variants != null && p.Variants.Any());
+        }
+
+        if (product == null)
+        {
+            return NotFound(new { success = false, message = "Không tìm thấy sản phẩm 3D." });
+        }
+
+        var variants = product.Variants
+            .Where(v => v.IsActive)
+            .Select(v => new
+            {
+                id = v.Id,
+                sku = v.SKU,
+                size = v.Size,
+                color = v.Color,
+                price = v.Price,
+                priceFormatted = v.Price.ToString("N0") + " ₫",
+                stock = v.StockQuantity
+            })
+            .ToList();
+
+        var colors = variants
+            .GroupBy(v => v.color)
+            .Select(g => new
+            {
+                name = g.Key,
+                code = g.Key.ToLower() switch
+                {
+                    "trắng" or "white" => "#F5F5F0",
+                    "đen" or "black" => "#1C1C1E",
+                    "xám" or "grey" or "gray" => "#4B4E54",
+                    "be" or "beige" or "sand" => "#D9D0BE",
+                    _ => "#E0E0E0"
+                },
+                tint = g.Key.ToLower() switch
+                {
+                    "trắng" or "white" => new[] { 1.0, 1.0, 1.0 },
+                    "đen" or "black" => new[] { 0.18, 0.18, 0.19 },
+                    "xám" or "grey" or "gray" => new[] { 0.45, 0.46, 0.48 },
+                    "be" or "beige" or "sand" => new[] { 0.88, 0.83, 0.74 },
+                    _ => new[] { 1.0, 1.0, 1.0 }
+                }
+            })
+            .ToList();
+
+        var sizes = variants
+            .Select(v => v.size)
+            .Distinct()
+            .ToList();
+
+        return Json(new
+        {
+            success = true,
+            id = product.Id,
+            name = product.Name,
+            slug = product.Slug,
+            price = product.Price,
+            priceFormatted = product.Price.ToString("N0") + " ₫",
+            description = product.Description,
+            categoryName = product.Category?.Name ?? "Áo Thun Streetwear",
+            imageUrl = product.ImageUrl,
+            modelUrl = "/models/clothes/tshirt-white-3d.glb?v=hanger_v2",
+            colors,
+            sizes,
+            variants
+        });
+    }
 }
