@@ -269,478 +269,429 @@
     opacity: 0.9;
 }
 
-/* ==============================================================================
-   7. BẢNG CHI TIẾT SẢN PHẨM ÁO THUN 3D KHI SELECT (LUXURY 3D ATELIER DRAWER)
-   ============================================================================== */
-.hnmt-shirt-drawer {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 480px;
-    max-width: 90vw;
-    background: rgba(10, 10, 14, 0.88);
-    backdrop-filter: blur(32px) saturate(180%);
-    -webkit-backdrop-filter: blur(32px) saturate(180%);
-    border-left: 1px solid rgba(255, 255, 255, 0.08);
-    z-index: 100;
-    display: flex;
-    flex-direction: column;
-    transform: translateX(100%);
-    opacity: 0;
-    pointer-events: none;
-    transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
-    box-shadow: -16px 0 48px rgba(0, 0, 0, 0.65);
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .hnmt-portal-header {
+        padding: 18px 20px;
+    }
+    .hnmt-collection-btn,
+    .hnmt-footer-legal {
+        display: none;
+    }
+    .hnmt-portal-footer {
+        bottom: 20px;
+    }
 }
 
-.hnmt-shirt-drawer.is-active {
-    transform: translateX(0);
+/* ==============================================================================
+   7. GIAO DIỆN SÀO TREO ĐỒ 3D (3D CLOTHES RACK - BẢN SAO FRAXBIT LUXURY STREETWEAR)
+   ============================================================================== */
+.hnmt-rack-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.6s;
+    z-index: 25;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 24px 36px 32px;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #FFFFFF;
+}
+
+.hnmt-rack-overlay.is-active {
     opacity: 1;
+    visibility: visible;
     pointer-events: auto;
 }
 
-.hnmt-drawer-top {
+/* --- Top Bar: Brand, Center Tabs, Actions --- */
+.hnmt-rack-top-bar {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
-    padding: 24px 28px 18px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    width: 100%;
+    z-index: 10;
 }
 
-.hnmt-drawer-back-btn {
+.hnmt-rack-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #FFFFFF;
+    padding-top: 6px;
+}
+
+.hnmt-rack-brand-mark {
+    font-size: 16px;
+    color: #d90429;
+}
+
+.hnmt-rack-center-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Timeline Tab Bar: RACK | STORY | LOOKBOOK | PROCESS | SHOP */
+.hnmt-rack-timeline {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(18, 18, 22, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    padding: 4px 6px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.hnmt-rack-tab {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 7px 18px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.hnmt-rack-tab:hover {
+    color: #FFFFFF;
+}
+
+.hnmt-rack-tab.is-active {
+    background: #FFFFFF;
+    color: #000000;
+    font-weight: 800;
+    box-shadow: 0 4px 14px rgba(255, 255, 255, 0.2);
+}
+
+.hnmt-rack-subline {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2.8px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.hnmt-rack-top-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.hnmt-rack-drop-btn {
+    background: #d90429;
+    color: #FFFFFF;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 9px 20px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 18px rgba(217, 4, 41, 0.35);
+}
+
+.hnmt-rack-drop-btn:hover {
+    background: #ef233c;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(217, 4, 41, 0.5);
+}
+
+.hnmt-rack-back-btn {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    border-radius: 999px;
-    color: #ffffff;
+    background: rgba(18, 18, 22, 0.5);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #FFFFFF;
     font-size: 11.5px;
     font-weight: 700;
     letter-spacing: 0.8px;
-    padding: 7px 16px;
+    padding: 8px 18px;
+    border-radius: 999px;
     cursor: pointer;
     transition: all 0.25s ease;
 }
 
-.hnmt-drawer-back-btn:hover {
-    background: #ffffff;
-    color: #000000;
-    border-color: #ffffff;
-    transform: translateX(-2px);
-}
-
-.hnmt-drawer-cat-tag {
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 1.4px;
-    color: #ff2a3b;
-    text-transform: uppercase;
-}
-
-.hnmt-drawer-scroll {
-    flex: 1;
-    overflow-y: auto;
-    padding: 28px;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-}
-
-.hnmt-drawer-scroll::-webkit-scrollbar {
-    width: 4px;
-}
-.hnmt-drawer-scroll::-webkit-scrollbar-thumb {
+.hnmt-rack-back-btn:hover {
     background: rgba(255, 255, 255, 0.15);
-    border-radius: 4px;
+    border-color: rgba(255, 255, 255, 0.45);
+    transform: translateY(-2px);
 }
 
-.hnmt-drawer-heading {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.hnmt-drawer-title {
-    font-size: 24px;
-    font-weight: 900;
-    color: #ffffff;
-    letter-spacing: 0.3px;
-    line-height: 1.25;
-    margin: 0;
-    text-transform: uppercase;
-}
-
-.hnmt-drawer-price-row {
-    display: flex;
+/* --- Drag Hint (Centered Pill) --- */
+.hnmt-rack-drag-hint {
+    align-self: center;
+    display: inline-flex;
     align-items: center;
-    gap: 14px;
-}
-
-.hnmt-drawer-price {
-    font-size: 22px;
-    font-weight: 800;
-    color: #ffffff;
-    letter-spacing: 0.5px;
-}
-
-.hnmt-drawer-badge {
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 0.8px;
-    padding: 4px 10px;
-    background: rgba(46, 213, 115, 0.12);
-    border: 1px solid rgba(46, 213, 115, 0.35);
-    color: #2ed573;
-    border-radius: 4px;
-    text-transform: uppercase;
-}
-
-.hnmt-drawer-desc {
-    font-size: 13.5px;
+    gap: 10px;
+    background: rgba(14, 14, 18, 0.55);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    padding: 7px 20px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 1.8px;
     color: rgba(255, 255, 255, 0.65);
-    line-height: 1.6;
-    margin: 0;
-    border-left: 2px solid rgba(255, 42, 59, 0.6);
-    padding-left: 14px;
+    margin-bottom: 8px;
+    pointer-events: none;
+    animation: rackHintPulse 2.8s ease-in-out infinite;
 }
 
-.hnmt-drawer-field {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+@keyframes rackHintPulse {
+    0%, 100% { opacity: 0.65; transform: scale(1); }
+    50% { opacity: 0.95; transform: scale(1.02); }
 }
 
-.hnmt-field-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-}
-
-.hnmt-field-label {
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 1.2px;
-    color: rgba(255, 255, 255, 0.45);
-    text-transform: uppercase;
-}
-
-.hnmt-field-val {
-    font-size: 12px;
-    font-weight: 600;
-    color: #ffffff;
-}
-
-/* Color swatches */
-.hnmt-color-swatches {
-    display: flex;
-    gap: 12px;
-}
-
-.hnmt-color-swatch {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    cursor: pointer;
-    border: 2px solid transparent;
-    padding: 2px;
-    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    background-clip: content-box;
-}
-
-.hnmt-color-swatch:hover {
-    transform: scale(1.12);
-}
-
-.hnmt-color-swatch.is-selected {
-    border-color: #ffffff;
-    box-shadow: 0 0 16px rgba(255, 255, 255, 0.4);
-    transform: scale(1.12);
-}
-
-/* Size pills */
-.hnmt-size-pills {
-    display: flex;
-    gap: 10px;
-}
-
-.hnmt-size-pill {
-    flex: 1;
-    height: 42px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 8px;
-    color: #ffffff;
-    font-size: 12.5px;
-    font-weight: 800;
-    cursor: pointer;
+/* --- Bottom Panel: Item Details & Shopping Actions --- */
+.hnmt-rack-bottom-panel {
+    align-self: center;
     display: flex;
     align-items: center;
-    justify-content: center;
-    transition: all 0.25s ease;
+    justify-content: space-between;
+    gap: 36px;
+    width: 100%;
+    max-width: 980px;
+    background: rgba(14, 14, 18, 0.75);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 24px;
+    padding: 20px 32px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55);
 }
 
-.hnmt-size-pill:hover {
-    background: rgba(255, 255, 255, 0.12);
-    border-color: rgba(255, 255, 255, 0.35);
-}
-
-.hnmt-size-pill.is-selected {
-    background: #ffffff;
-    color: #000000;
-    border-color: #ffffff;
-    box-shadow: 0 4px 16px rgba(255, 255, 255, 0.25);
-}
-
-/* Other 3D shirts on rack */
-.hnmt-other-shirts {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-}
-
-.hnmt-other-shirt-card {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 8px;
-    padding: 10px;
-    cursor: pointer;
-    transition: all 0.25s ease;
+.hnmt-rack-info-col {
     display: flex;
     flex-direction: column;
     gap: 4px;
+    min-width: 320px;
 }
 
-.hnmt-other-shirt-card:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.25);
-    transform: translateY(-2px);
-}
-
-.hnmt-other-shirt-card.is-active {
-    border-color: #ff2a3b;
-    background: rgba(255, 42, 59, 0.08);
-}
-
-.hnmt-other-shirt-title {
-    font-size: 11px;
-    font-weight: 700;
-    color: #ffffff;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.hnmt-other-shirt-price {
+.hnmt-rack-cat-badge {
     font-size: 10px;
-    color: rgba(255, 255, 255, 0.5);
-}
-
-/* Action Buttons */
-.hnmt-drawer-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-top: 8px;
-}
-
-.hnmt-btn-add-cart {
-    height: 52px;
-    background: #ffffff;
-    border: none;
-    border-radius: 999px;
-    color: #000000;
-    font-size: 13px;
-    font-weight: 900;
-    letter-spacing: 1.2px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 8px 24px rgba(255, 255, 255, 0.15);
-}
-
-.hnmt-btn-add-cart:hover {
-    background: #ff2a3b;
-    color: #ffffff;
-    box-shadow: 0 10px 32px rgba(255, 42, 59, 0.45);
-    transform: translateY(-2px);
-}
-
-.hnmt-btn-buy-now {
-    height: 48px;
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    border-radius: 999px;
-    color: #ffffff;
-    font-size: 12px;
     font-weight: 800;
-    letter-spacing: 1.2px;
-    cursor: pointer;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #d90429;
+}
+
+.hnmt-rack-title {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: #FFFFFF;
+    line-height: 1.3;
+}
+
+.hnmt-rack-price-row {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: all 0.25s ease;
+    gap: 16px;
+    margin-top: 2px;
 }
 
-.hnmt-btn-buy-now:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: #ffffff;
+.hnmt-rack-price {
+    font-size: 18px;
+    font-weight: 900;
+    color: #FFFFFF;
+    letter-spacing: 0.5px;
 }
 
-.hnmt-drawer-perks {
+.hnmt-rack-stock {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #2ed573;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.hnmt-rack-controls-col {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding-top: 14px;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    align-items: center;
+    gap: 24px;
 }
 
-.hnmt-perk-item {
+.hnmt-rack-sizes-group {
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 12px;
+}
+
+.hnmt-rack-size-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
     color: rgba(255, 255, 255, 0.5);
 }
 
-.hnmt-perk-item i {
-    color: #ff2a3b;
-    font-size: 14px;
-}
-
-/* ==============================================================================
-   8. THANH CÔNG CỤ TƯƠNG TÁC 3D (DƯỚI CHÂN ÁO)
-   ============================================================================== */
-.hnmt-shirt-controls-bar {
-    position: absolute;
-    bottom: 34px;
-    left: calc(32% - 150px);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(14, 14, 18, 0.75);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 999px;
-    padding: 6px 10px;
-    z-index: 90;
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(20px);
-    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.hnmt-shirt-controls-bar.is-active {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateY(0);
-}
-
-.hnmt-ctrl-btn {
-    background: transparent;
-    border: none;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.6px;
-    padding: 6px 12px;
-    border-radius: 999px;
-    cursor: pointer;
+.hnmt-rack-size-pills {
     display: inline-flex;
     align-items: center;
     gap: 6px;
+}
+
+.rack-size-pill {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: #FFFFFF;
+    font-size: 11px;
+    font-weight: 700;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    cursor: pointer;
     transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.hnmt-ctrl-btn:hover,
-.hnmt-ctrl-btn.is-active {
-    background: rgba(255, 255, 255, 0.15);
-    color: #ffffff;
+.rack-size-pill:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.35);
 }
 
-/* ==============================================================================
-   9. TOAST THÔNG BÁO GIỎ HÀNG
-   ============================================================================== */
-.hnmt-shirt-toast {
-    position: absolute;
-    top: 28px;
+.rack-size-pill.is-active {
+    background: #FFFFFF;
+    color: #000000;
+    border-color: #FFFFFF;
+    font-weight: 800;
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.25);
+}
+
+.hnmt-rack-buttons-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.hnmt-rack-btn-cart {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    color: #FFFFFF;
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 11px 22px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hnmt-rack-btn-cart:hover {
+    background: #FFFFFF;
+    color: #000000;
+    border-color: #FFFFFF;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.25);
+}
+
+.hnmt-rack-btn-buy {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #FFFFFF;
+    border: 1px solid #FFFFFF;
+    color: #000000;
+    font-size: 11.5px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 11px 24px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 6px 22px rgba(255, 255, 255, 0.28);
+}
+
+.hnmt-rack-btn-buy:hover {
+    background: #d90429;
+    border-color: #d90429;
+    color: #FFFFFF;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(217, 4, 41, 0.45);
+}
+
+/* Toast Message */
+.hnmt-rack-toast {
+    position: fixed;
+    top: 30px;
     left: 50%;
     transform: translateX(-50%) translateY(-30px);
-    background: rgba(18, 18, 22, 0.94);
-    backdrop-filter: blur(24px);
-    border: 1px solid rgba(46, 213, 115, 0.4);
-    border-radius: 999px;
-    padding: 10px 22px;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 12px;
-    z-index: 1000;
-    opacity: 0;
-    pointer-events: none;
-    transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    background: #111116;
+    border: 1px solid rgba(46, 213, 115, 0.4);
+    color: #FFFFFF;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 12px 28px;
+    border-radius: 999px;
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 100;
+    pointer-events: none;
 }
 
-.hnmt-shirt-toast.is-visible {
-    transform: translateX(-50%) translateY(0);
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.hnmt-shirt-toast i {
+.hnmt-rack-toast i {
     color: #2ed573;
-    font-size: 18px;
+    font-size: 16px;
 }
 
-.hnmt-toast-content {
-    display: flex;
-    flex-direction: column;
+.hnmt-rack-toast.is-active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
 }
 
-.hnmt-toast-content strong {
-    font-size: 12px;
-    color: #ffffff;
-    font-weight: 800;
-}
-
-.hnmt-toast-content span {
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.65);
-}
-
-.hnmt-toast-link {
-    font-size: 11px;
-    font-weight: 800;
-    color: #ff2a3b;
-    text-decoration: underline;
-    margin-left: 6px;
-}
-
-/* RESPONSIVE */
-@media (max-width: 992px) {
-    .hnmt-shirt-drawer {
-        width: 100%;
-        max-width: 100vw;
-        border-left: none;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        height: 60vh;
-        top: auto;
-        bottom: 0;
-        transform: translateY(100%);
+/* Responsive */
+@media (max-width: 960px) {
+    .hnmt-rack-bottom-panel {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 18px;
+        padding: 18px 22px;
     }
-    .hnmt-shirt-drawer.is-active {
-        transform: translateY(0);
+    .hnmt-rack-controls-col {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 14px;
     }
-    .hnmt-shirt-controls-bar {
-        left: 50%;
-        transform: translateX(-50%) translateY(20px);
-        bottom: 62vh;
+    .hnmt-rack-timeline {
+        padding: 3px 4px;
     }
-    .hnmt-shirt-controls-bar.is-active {
-        transform: translateX(-50%) translateY(0);
+    .hnmt-rack-tab {
+        font-size: 10px;
+        padding: 6px 12px;
     }
 }
