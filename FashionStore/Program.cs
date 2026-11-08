@@ -71,7 +71,17 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+// Cấu hình MIME type hỗ trợ file 3D (.glb, .gltf, .bin) và ảnh webp
+var contentTypeProvider = new Microsoft.AspNetCore.StaticFiles.FileExtensionContentTypeProvider();
+contentTypeProvider.Mappings[".glb"] = "model/gltf-binary";
+contentTypeProvider.Mappings[".gltf"] = "model/gltf+json";
+contentTypeProvider.Mappings[".bin"] = "application/octet-stream";
+contentTypeProvider.Mappings[".webp"] = "image/webp";
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    ContentTypeProvider = contentTypeProvider
+});
 
 app.UseRouting();
 

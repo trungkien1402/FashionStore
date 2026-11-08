@@ -29,6 +29,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/css/fashionstore.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/atelier.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/store3d.css" asp-append-version="true" />
 
     @await RenderSectionAsync("Styles", required: false)
 </head>
@@ -104,6 +105,9 @@
             </nav>
         </div>
     </header>
+
+    <!-- 3D SHOWROOM PORTAL (CHILE 20 CAMPAIGN REPLICA) -->
+    @await Html.PartialAsync("_ChilePortal")
 
     <!-- Main Content -->
     <main role="main">
@@ -217,11 +221,22 @@
         </div>
     </footer>
 
-    <!-- Scripts -->
+    <!-- 3D, WebGL & Motion Libraries (Three.js, GLTF, GSAP Draggable, Vanilla-Tilt, Lenis, Spline) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Draggable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
+    <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+    <script type="module" src="https://unpkg.com/@@splinetool/viewer@1.9.72/build/spline-viewer.js"></script>
+
+    <!-- HNMTSHOP Core Scripts -->
+    <script src="~/js/hnmt3d-engine.js" asp-append-version="true"></script>
     <script src="~/js/atelier.js" asp-append-version="true"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/store3d.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
