@@ -402,6 +402,10 @@
             overlay.classList.remove('is-active');
             closeSliderView();
         }
+        const promptEl = document.querySelector('.hnmt-portal-footer');
+        const portalHeaderEl = document.querySelector('.hnmt-portal-header');
+        if (promptEl) promptEl.style.display = '';
+        if (portalHeaderEl) portalHeaderEl.style.display = '';
     };
 
     // Tự khởi chạy an toàn

@@ -1264,10 +1264,8 @@
 
         // Bật chế độ SNEAKER VAULT 3D (Chính xác như video Sneaker Figma)
         if (cfg.id === 'giay') {
-            if (typeof window.openSneakerShowcase === 'function') {
-                window.openSneakerShowcase();
-                return;
-            }
+            openSneakerVaultFrom3D();
+            return;
         }
 
         // Quần và Giày chưa làm không gian 3D chi tiết -> hiển thị thông báo hướng dẫn chọn Áo
@@ -1332,6 +1330,10 @@
                     const cfg = hitWrapper.userData.config;
                     if (cfg.id === 'ao') {
                         open3DClothesRack();
+                        return;
+                    }
+                    if (cfg.id === 'giay') {
+                        openSneakerVaultFrom3D();
                         return;
                     }
                     showCategoryNotice(cfg);
@@ -1990,6 +1992,37 @@
     } else {
         init();
     }
+
+        // --- MỞ VÀ ĐÓNG SNEAKER VAULT TỪ SHOWROOM 3D ---
+    function openSneakerVaultFrom3D() {
+        const promptEl = document.querySelector('.hnmt-portal-footer');
+        const portalHeaderEl = document.querySelector('.hnmt-portal-header');
+        if (promptEl) promptEl.style.display = 'none';
+        if (portalHeaderEl) portalHeaderEl.style.display = 'none';
+
+        if (typeof window.openSneakerShowcase === 'function') {
+            window.openSneakerShowcase();
+        } else {
+            const overlay = document.getElementById('hnmtSneakerOverlay');
+            if (overlay) overlay.classList.add('is-active');
+        }
+    }
+
+    function closeSneakerVaultFrom3D() {
+        const promptEl = document.querySelector('.hnmt-portal-footer');
+        const portalHeaderEl = document.querySelector('.hnmt-portal-header');
+        if (promptEl) promptEl.style.display = '';
+        if (portalHeaderEl) portalHeaderEl.style.display = '';
+
+        if (typeof window.closeSneakerShowcase === 'function') {
+            window.closeSneakerShowcase();
+        } else {
+            const overlay = document.getElementById('hnmtSneakerOverlay');
+            if (overlay) overlay.classList.remove('is-active');
+        }
+    }
+    window.openSneakerVaultFrom3D = openSneakerVaultFrom3D;
+    window.closeSneakerVaultFrom3D = closeSneakerVaultFrom3D;
 
     window.HNMTChilePortal = { open: openPortal, close: closePortal };
 })();
