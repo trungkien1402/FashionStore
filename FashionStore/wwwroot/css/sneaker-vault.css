@@ -5,13 +5,13 @@
     --sv-card-bg: rgba(255, 255, 255, 0.04);
     --sv-border: rgba(255, 255, 255, 0.12);
     --sv-text: #FFFFFF;
-    --sv-muted: rgba(255, 255, 255, 0.65);
+    --sv-muted: rgba(255, 255, 255, 0.70);
     --sv-ease: cubic-bezier(0.16, 1, 0.3, 1);
     --sv-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* ==========================================================================
-   CONTAINER & OVERLAY (Standalone & Showroom Integration)
+   CONTAINER & OVERLAY (Showroom & Standalone)
    ========================================================================== */
 #hnmtSneakerOverlay {
     position: absolute;
@@ -58,7 +58,7 @@
     display: flex;
     flex-direction: column;
     position: relative;
-    transition: background-color 0.85s var(--sv-ease);
+    transition: background-color 0.75s var(--sv-ease);
     background-color: var(--sv-dark-bg);
     overflow: hidden;
 }
@@ -122,7 +122,7 @@
 .sv-icon-btn,
 .sv-exit-btn {
     background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.22);
     border-radius: 999px;
     color: #ffffff;
     padding: 8px 18px;
@@ -141,7 +141,7 @@
 
 .sv-icon-btn:hover,
 .sv-exit-btn:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.18);
     border-color: #ffffff;
     color: #ffffff;
 }
@@ -176,7 +176,7 @@
 }
 
 /* ==========================================================================
-   VIEW 1: GRID OVERVIEW (3x2 Floating Sneaker Grid)
+   VIEW 1: GRID OVERVIEW (3x2 FLOATING SNEAKER GRID)
    ========================================================================== */
 .sv-grid-container {
     flex: 1;
@@ -185,19 +185,18 @@
     justify-content: center;
     align-items: center;
     padding: 20px clamp(20px, 5vw, 90px) 40px;
-    transition: opacity 0.5s var(--sv-ease), transform 0.5s var(--sv-ease);
+    transition: opacity 0.4s var(--sv-ease), transform 0.4s var(--sv-ease);
     opacity: 1;
     transform: scale(1);
     position: relative;
-    z-index: 10;
+    z-index: 15;
 }
 
 .sv-grid-container.is-hidden {
-    opacity: 0;
-    transform: scale(0.92);
-    pointer-events: none;
-    position: absolute;
-    inset: 0;
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
 }
 
 .sv-grid {
@@ -212,38 +211,43 @@
 .sv-grid-item {
     background: radial-gradient(circle at 50% 60%, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 70%);
     border-radius: 20px;
-    padding: 30px 20px 24px;
+    padding: 26px 20px 22px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     position: relative;
-    transition: transform 0.4s var(--sv-bounce), background 0.4s ease;
+    z-index: 10;
+    pointer-events: auto;
+    transition: transform 0.35s var(--sv-bounce), background 0.3s ease;
     user-select: none;
 }
 
 .sv-grid-item:hover {
-    transform: translateY(-14px) scale(1.04);
+    transform: translateY(-12px) scale(1.04);
     background: radial-gradient(circle at 50% 60%, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.01) 75%);
 }
 
 .sv-item-image-wrap {
     position: relative;
     width: 100%;
-    height: 190px;
+    height: 180px;
     display: flex;
     align-items: center;
     justify-content: center;
+    pointer-events: none;
 }
 
 .sv-item-img {
-    max-width: 90%;
-    max-height: 160px;
+    width: 100%;
+    max-width: 270px;
+    height: 150px;
     object-fit: contain;
-    filter: drop-shadow(0 20px 25px rgba(0, 0, 0, 0.65));
-    transition: transform 0.4s var(--sv-bounce);
+    filter: drop-shadow(0 18px 22px rgba(0, 0, 0, 0.65));
+    transition: transform 0.35s var(--sv-bounce);
     animation: svLevitate 4.5s ease-in-out infinite alternate;
+    pointer-events: none;
 }
 
 .sv-grid-item:nth-child(2) .sv-item-img { animation-delay: -1.2s; }
@@ -253,18 +257,18 @@
 .sv-grid-item:nth-child(6) .sv-item-img { animation-delay: -3.1s; }
 
 .sv-grid-item:hover .sv-item-img {
-    transform: scale(1.14) rotate(-3deg);
+    transform: scale(1.10) rotate(-2deg);
 }
 
 .sv-item-shadow {
     position: absolute;
-    bottom: 12px;
-    width: 70%;
-    height: 14px;
-    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0) 70%);
+    bottom: 10px;
+    width: 65%;
+    height: 12px;
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 70%);
     border-radius: 50%;
     pointer-events: none;
-    transition: transform 0.4s ease, opacity 0.4s ease;
+    transition: transform 0.35s ease, opacity 0.35s ease;
 }
 
 .sv-grid-item:hover .sv-item-shadow {
@@ -274,7 +278,8 @@
 
 .sv-item-meta {
     text-align: center;
-    margin-top: 14px;
+    margin-top: 12px;
+    pointer-events: none;
 }
 
 .sv-item-title {
@@ -293,7 +298,7 @@
 }
 
 /* ==========================================================================
-   VIEW 2: CINEMATIC SLIDER (Full Screen Single Sneaker Focus)
+   VIEW 2: CINEMATIC SLIDER (FULL SCREEN 1:1 THEO VIDEO FIGMA)
    ========================================================================== */
 .sv-slider-container {
     position: absolute;
@@ -305,22 +310,28 @@
     justify-content: space-between;
     opacity: 0;
     pointer-events: none;
-    transform: scale(1.08);
-    transition: opacity 0.65s var(--sv-ease), transform 0.65s var(--sv-ease);
+    transition: opacity 0.5s var(--sv-ease);
     z-index: 20;
     overflow: hidden;
 }
 
-.sv-slider-container.is-active {
-    opacity: 1;
-    pointer-events: auto;
-    transform: scale(1);
+.sv-slider-container:not(.is-active) {
+    display: none !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
 }
 
-/* GIANT BACKGROUND TYPOGRAPHY (Layer behind sneaker) */
+.sv-slider-container.is-active {
+    display: flex !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    visibility: visible !important;
+}
+
+/* GIANT BACKGROUND TYPOGRAPHY (Nằm ngay sau thân giày) */
 .sv-giant-title-track {
     position: absolute;
-    top: 50%;
+    top: 48%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 100vw;
@@ -333,7 +344,7 @@
 
 .sv-giant-title {
     font-family: 'Montserrat', sans-serif;
-    font-size: clamp(65px, 12.8vw, 190px);
+    font-size: clamp(80px, 15.5vw, 220px);
     font-weight: 900;
     line-height: 0.85;
     letter-spacing: -0.04em;
@@ -342,10 +353,10 @@
     text-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
     white-space: nowrap;
     display: inline-block;
-    transition: transform 0.75s var(--sv-ease), opacity 0.6s var(--sv-ease);
+    transition: transform 0.65s var(--sv-ease), opacity 0.5s var(--sv-ease);
 }
 
-/* CENTER FLOATING SNEAKER STAGE (Layer in front of giant typography) */
+/* SNEAKER STAGE (Giày to, nổi bật ngay giữa màn hình, đè lên Typography) */
 .sv-stage {
     flex: 1;
     position: relative;
@@ -353,7 +364,7 @@
     align-items: center;
     justify-content: center;
     z-index: 5;
-    perspective: 1200px;
+    pointer-events: none;
 }
 
 .sv-hero-wrap {
@@ -361,36 +372,30 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transform-style: preserve-3d;
-    transition: transform 0.15s ease-out;
+    pointer-events: none;
 }
 
 .sv-hero-img {
-    height: clamp(260px, 46vh, 480px);
+    height: clamp(360px, 56vh, 600px);
     width: auto;
-    max-width: 88vw;
+    max-width: 90vw;
     object-fit: contain;
-    filter: drop-shadow(0 35px 40px rgba(0, 0, 0, 0.45));
-    transition: transform 0.8s var(--sv-bounce), filter 0.8s ease;
+    filter: drop-shadow(0 35px 45px rgba(0, 0, 0, 0.55));
+    transition: transform 0.65s var(--sv-ease), opacity 0.5s var(--sv-ease);
     user-select: none;
-    pointer-events: auto;
-    cursor: grab;
-}
-
-.sv-hero-img:active {
-    cursor: grabbing;
+    pointer-events: none;
+    animation: svHeroFloat 5s ease-in-out infinite alternate;
 }
 
 .sv-hero-shadow {
     position: absolute;
-    bottom: -35px;
-    width: 75%;
-    height: 30px;
+    bottom: -22px;
+    width: 68%;
+    height: 24px;
     background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0) 72%);
     border-radius: 50%;
     pointer-events: none;
-    transform: rotateX(65deg);
-    transition: transform 0.25s ease, opacity 0.25s ease;
+    transition: transform 0.65s var(--sv-ease), opacity 0.5s ease;
 }
 
 /* BOTTOM PANELS */
@@ -409,6 +414,7 @@
     display: flex;
     flex-direction: column;
     gap: 6px;
+    transition: transform 0.5s var(--sv-ease), opacity 0.4s ease;
 }
 
 .sv-colorway-name {
@@ -429,11 +435,11 @@
     letter-spacing: 0.08em;
     text-transform: uppercase;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.75);
+    color: rgba(255, 255, 255, 0.78);
 }
 
 .sv-spec-grid dt {
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.55);
 }
 
 .sv-spec-grid dd {
@@ -454,7 +460,7 @@
 .sv-dash {
     width: 28px;
     height: 3px;
-    background: rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.28);
     border-radius: 2px;
     transition: all 0.35s ease;
     cursor: pointer;
@@ -516,7 +522,7 @@
     font-weight: 700;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.75);
     margin-right: 4px;
 }
 
@@ -538,65 +544,86 @@
 .sv-add-bag-btn {
     background: #ffffff;
     color: #000000;
-    border: 0;
+    border: none;
     border-radius: 999px;
     padding: 12px 28px;
     font-size: 12px;
     font-weight: 800;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     cursor: pointer;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
-    transition: transform 0.25s var(--sv-bounce), box-shadow 0.25s;
-    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.25s var(--sv-bounce);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
 }
 
 .sv-add-bag-btn:hover {
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45);
+    background: #f0f0f0;
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
 }
 
 .sv-add-bag-btn:active {
-    transform: translateY(1px) scale(0.97);
+    transform: translateY(0) scale(0.98);
 }
 
 /* ==========================================================================
-   ANIMATIONS
+   ANIMATIONS & KEYFRAMES (Floating Levitation)
    ========================================================================== */
 @keyframes svLevitate {
-    0% { transform: translateY(0) rotate(0deg); }
-    100% { transform: translateY(-10px) rotate(-1.5deg); }
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(-8px);
+    }
 }
 
-/* ==========================================================================
-   MOBILE & RESPONSIVE
-   ========================================================================== */
-@media (max-width: 900px) {
+@keyframes svHeroFloat {
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(-12px);
+    }
+}
+
+/* RESPONSIVE */
+@media (max-width: 992px) {
     .sv-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 20px;
+    }
+    .sv-hero-img {
+        height: clamp(280px, 46vh, 420px);
     }
     .sv-bottom-bar {
         grid-template-columns: 1fr;
         gap: 16px;
         align-items: center;
         text-align: center;
-        padding-bottom: 24px;
     }
-    .sv-specs-panel {
-        align-items: center;
-    }
+    .sv-specs-panel,
     .sv-controls-panel {
-        justify-self: center;
         align-items: center;
+        justify-self: center;
     }
     .sv-dashes {
+        order: -1;
+    }
+}
+
+@media (max-width: 576px) {
+    .sv-header {
+        height: 65px;
+        padding: 0 16px;
+    }
+    .sv-header-title {
         display: none;
     }
-    .sv-giant-title {
-        font-size: clamp(48px, 14vw, 90px);
-    }
-    .sv-hero-img {
-        height: min(34vh, 320px);
+    .sv-grid {
+        grid-template-columns: 1fr;
     }
 }
