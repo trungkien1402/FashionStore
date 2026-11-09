@@ -29,11 +29,13 @@
     opacity: 0;
     pointer-events: none;
     visibility: hidden;
+    display: none;
     transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
                 visibility 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hnmt-chile-portal.is-active {
+    display: block !important;
     opacity: 1;
     pointer-events: auto;
     visibility: visible;
