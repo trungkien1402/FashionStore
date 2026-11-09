@@ -221,4 +221,14 @@ public class ProductsController : Controller
     {
         return View();
     }
+
+
+    [HttpGet]
+    [Route("Products/Sneakers")]
+    [Route("Sneakers")]
+    public IActionResult Sneakers()
+    {
+        return View();
+    }
 }
+

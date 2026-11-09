@@ -132,4 +132,117 @@
         <!-- Toast Notification -->
         <aside class="rail-toast" id="toast" role="status" aria-live="polite"></aside>
     </div>
+
+    <!-- 5. GIAO DIỆN SNEAKER VAULT (1:1 THEO VIDEO FIGMA - MỞ RA KHI BẤM VÀO GIÀY TRONG SHOWROOM) -->
+    <div id="hnmtSneakerOverlay" class="hnmt-sneaker-vault-wrap" aria-hidden="true">
+        <div class="sv-app" id="svApp">
+
+            <!-- HEADER CỦA SNEAKER VAULT TRONG SHOWROOM -->
+            <header class="sv-header">
+                <div class="sv-header-left">
+                    <button type="button" class="sv-icon-btn" id="svToggleViewBtn" title="Chuyển chế độ xem">
+                        <i class="bi bi-grid-3x3-gap"></i>
+                        <span>TẤT CẢ GIÀY</span>
+                    </button>
+                    <span class="sv-header-title">FUTURIST SNEAKER VAULT</span>
+                </div>
+
+                <a href="/" class="sv-brand-signature" title="Về trang chủ HnmtShop">HnmtShop</a>
+
+                <div class="sv-head-right">
+                    <button type="button" class="sv-bag-btn" id="svBagBtn" aria-label="Giỏ hàng">
+                        <svg fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+                            <path d="M4 8h16l-1 13H5L4 8Z" />
+                            <path d="M9 9V6a3 3 0 0 1 6 0v3" />
+                        </svg>
+                        <span class="sv-bag-badge" id="svBagBadge">0</span>
+                    </button>
+                    <!-- Nút Quay lại không gian 3D Showroom -->
+                    <button type="button" class="sv-exit-btn" id="svExitShowroomBtn" onclick="window.closeSneakerShowcase()" title="Quay lại Showroom">
+                        <i class="bi bi-arrow-left"></i>
+                        <span>SHOWROOM</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- VIEW 1: GRID OVERVIEW (3x2 FLOATING SNEAKER GRID) -->
+            <section class="sv-grid-container is-hidden" id="svGridContainer" aria-label="Bộ sưu tập sneaker dạng lưới">
+                <div class="sv-grid" id="svGrid">
+                    <!-- Render tự động bởi sneaker-vault.js -->
+                </div>
+            </section>
+
+            <!-- VIEW 2: CINEMATIC SLIDER VIEW (FULLSCREEN 1:1 THEO VIDEO FIGMA) -->
+            <section class="sv-slider-container is-active" id="svSliderContainer" aria-label="Chi tiết Sneaker nổi khối 3D">
+
+                <!-- CHỮ TYPOGRAPHY KHỔNG LỒ NẰM SAU CHIẾC GIÀY -->
+                <div class="sv-giant-title-track" aria-hidden="true">
+                    <h2 class="sv-giant-title" id="svGiantTitle">AIR FUTURE IV</h2>
+                </div>
+
+                <!-- KHÔNG GIAN GIÀY BAY LƠ LỬNG NỔI KHỐI 3D PARALLAX THEO CHUỘT -->
+                <div class="sv-stage" id="svStage">
+                    <div class="sv-hero-wrap" id="svHeroWrap">
+                        <img src="/images/sneakers/air-future-iv.webp" alt="AIR FUTURE IV" class="sv-hero-img" id="svHeroImg" />
+                        <div class="sv-hero-shadow" id="svHeroShadow"></div>
+                    </div>
+                </div>
+
+                <!-- THANH THÔNG SỐ VÀ ĐIỀU KHIỂN DƯỚI ĐÁY -->
+                <footer class="sv-bottom-bar">
+
+                    <!-- GÓC DƯỚI TRÁI: TECH SPECS -->
+                    <div class="sv-specs-panel">
+                        <h3 class="sv-colorway-name" id="svColorwayName">INFRARAY STORM</h3>
+                        <dl class="sv-spec-grid">
+                            <dt>STYLE CODE:</dt>
+                            <dd id="svStyleCode">HFS-04-STORM</dd>
+
+                            <dt>COLORWAY:</dt>
+                            <dd id="svColorName">STORM GREY / INFRARED</dd>
+
+                            <dt>DESIGNED BY:</dt>
+                            <dd id="svDesigner">HNMTSHOP × FUTURE LAB</dd>
+
+                            <dt>PRICE:</dt>
+                            <dd id="svPrice">5.200.000 ₫</dd>
+                        </dl>
+                    </div>
+
+                    <!-- CHÍNH GIỮA: DASH SLIDE INDICATORS -->
+                    <div class="sv-dashes" id="svDashes">
+                        <!-- Tự sinh 6 vạch chuyển -->
+                    </div>
+
+                    <!-- GÓC DƯỚI PHẢI: MŨI TÊN < > , SELECT COLOR VÀ NÚT ADD TO BAG -->
+                    <div class="sv-controls-panel">
+                        <div class="sv-arrow-group">
+                            <button type="button" class="sv-nav-btn prev" id="svPrevBtn" aria-label="Mẫu trước">
+                                <i class="bi bi-chevron-left"></i>
+                            </button>
+                            <button type="button" class="sv-nav-btn next" id="svNextBtn" aria-label="Mẫu tiếp theo">
+                                <i class="bi bi-chevron-right"></i>
+                            </button>
+                        </div>
+
+                        <div class="sv-color-swatches">
+                            <span class="sv-swatches-label">SELECT COLOR</span>
+                            <div class="sv-swatches-row" id="svSwatches">
+                                <!-- Chấm màu swatches -->
+                            </div>
+                        </div>
+
+                        <button type="button" class="sv-add-bag-btn" id="svAddBagBtn">
+                            <span>THÊM VÀO GIỎ</span>
+                            <i class="bi bi-arrow-right"></i>
+                        </button>
+                    </div>
+
+                </footer>
+
+            </section>
+
+        </div>
+    </div>
+
 </div>

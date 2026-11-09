@@ -1,0 +1,602 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:ital,wght@0,400;0,600;0,700;0,800;0,900;1,800;1,900&family=Pacifico&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
+
+:root {
+    --sv-dark-bg: #0D0E12;
+    --sv-card-bg: rgba(255, 255, 255, 0.04);
+    --sv-border: rgba(255, 255, 255, 0.12);
+    --sv-text: #FFFFFF;
+    --sv-muted: rgba(255, 255, 255, 0.65);
+    --sv-ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --sv-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ==========================================================================
+   CONTAINER & OVERLAY (Standalone & Showroom Integration)
+   ========================================================================== */
+#hnmtSneakerOverlay {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 60;
+    background-color: var(--sv-dark-bg);
+    color: var(--sv-text);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.5s var(--sv-ease), visibility 0.5s var(--sv-ease);
+    overflow-y: auto;
+    overflow-x: hidden;
+    font-family: 'Montserrat', -apple-system, sans-serif;
+}
+
+#hnmtSneakerOverlay.is-active {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+}
+
+.hnmt-sneaker-vault-wrap.is-standalone {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 99999;
+    background-color: var(--sv-dark-bg);
+    color: var(--sv-text);
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    overflow-y: auto;
+    overflow-x: hidden;
+    font-family: 'Montserrat', -apple-system, sans-serif;
+}
+
+.sv-app {
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: background-color 0.85s var(--sv-ease);
+    background-color: var(--sv-dark-bg);
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   HEADER
+   ========================================================================== */
+.sv-header {
+    height: 85px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 0 clamp(20px, 4vw, 60px);
+    position: relative;
+    z-index: 30;
+}
+
+.sv-header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.sv-header-title {
+    font-family: 'Space Grotesk', -apple-system, sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0;
+    white-space: nowrap;
+}
+
+.sv-brand-signature {
+    justify-self: center;
+    font-family: 'Pacifico', 'Dancing Script', cursive, sans-serif;
+    font-size: 30px;
+    font-weight: 700;
+    color: #ffffff;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    transform: rotate(-3deg);
+    transition: transform 0.25s ease, opacity 0.2s ease;
+    user-select: none;
+}
+
+.sv-brand-signature:hover {
+    transform: rotate(-3deg) scale(1.05);
+    color: #ffffff;
+    opacity: 0.9;
+}
+
+.sv-head-right {
+    justify-self: end;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.sv-icon-btn,
+.sv-exit-btn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+    color: #ffffff;
+    padding: 8px 18px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.25s ease;
+    text-decoration: none;
+    font-family: inherit;
+}
+
+.sv-icon-btn:hover,
+.sv-exit-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: #ffffff;
+    color: #ffffff;
+}
+
+.sv-bag-btn {
+    background: transparent;
+    border: 0;
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 6px 10px;
+    transition: opacity 0.2s;
+}
+
+.sv-bag-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+.sv-bag-badge {
+    min-width: 20px;
+    height: 20px;
+    border: 1.5px solid #ffffff;
+    border-radius: 50%;
+    display: inline-grid;
+    place-items: center;
+    font-size: 11px;
+}
+
+/* ==========================================================================
+   VIEW 1: GRID OVERVIEW (3x2 Floating Sneaker Grid)
+   ========================================================================== */
+.sv-grid-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px clamp(20px, 5vw, 90px) 40px;
+    transition: opacity 0.5s var(--sv-ease), transform 0.5s var(--sv-ease);
+    opacity: 1;
+    transform: scale(1);
+    position: relative;
+    z-index: 10;
+}
+
+.sv-grid-container.is-hidden {
+    opacity: 0;
+    transform: scale(0.92);
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+}
+
+.sv-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(24px, 3.5vw, 56px);
+    width: 100%;
+    max-width: 1280px;
+    margin: auto;
+}
+
+.sv-grid-item {
+    background: radial-gradient(circle at 50% 60%, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 70%);
+    border-radius: 20px;
+    padding: 30px 20px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.4s var(--sv-bounce), background 0.4s ease;
+    user-select: none;
+}
+
+.sv-grid-item:hover {
+    transform: translateY(-14px) scale(1.04);
+    background: radial-gradient(circle at 50% 60%, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.01) 75%);
+}
+
+.sv-item-image-wrap {
+    position: relative;
+    width: 100%;
+    height: 190px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sv-item-img {
+    max-width: 90%;
+    max-height: 160px;
+    object-fit: contain;
+    filter: drop-shadow(0 20px 25px rgba(0, 0, 0, 0.65));
+    transition: transform 0.4s var(--sv-bounce);
+    animation: svLevitate 4.5s ease-in-out infinite alternate;
+}
+
+.sv-grid-item:nth-child(2) .sv-item-img { animation-delay: -1.2s; }
+.sv-grid-item:nth-child(3) .sv-item-img { animation-delay: -2.4s; }
+.sv-grid-item:nth-child(4) .sv-item-img { animation-delay: -0.7s; }
+.sv-grid-item:nth-child(5) .sv-item-img { animation-delay: -1.8s; }
+.sv-grid-item:nth-child(6) .sv-item-img { animation-delay: -3.1s; }
+
+.sv-grid-item:hover .sv-item-img {
+    transform: scale(1.14) rotate(-3deg);
+}
+
+.sv-item-shadow {
+    position: absolute;
+    bottom: 12px;
+    width: 70%;
+    height: 14px;
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0) 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.sv-grid-item:hover .sv-item-shadow {
+    transform: scale(0.85);
+    opacity: 0.5;
+}
+
+.sv-item-meta {
+    text-align: center;
+    margin-top: 14px;
+}
+
+.sv-item-title {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #ffffff;
+    margin: 0 0 4px;
+}
+
+.sv-item-price {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--sv-muted);
+}
+
+/* ==========================================================================
+   VIEW 2: CINEMATIC SLIDER (Full Screen Single Sneaker Focus)
+   ========================================================================== */
+.sv-slider-container {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(1.08);
+    transition: opacity 0.65s var(--sv-ease), transform 0.65s var(--sv-ease);
+    z-index: 20;
+    overflow: hidden;
+}
+
+.sv-slider-container.is-active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1);
+}
+
+/* GIANT BACKGROUND TYPOGRAPHY (Layer behind sneaker) */
+.sv-giant-title-track {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100vw;
+    text-align: center;
+    z-index: 1;
+    pointer-events: none;
+    user-select: none;
+    overflow: visible;
+}
+
+.sv-giant-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(65px, 12.8vw, 190px);
+    font-weight: 900;
+    line-height: 0.85;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.94);
+    text-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    white-space: nowrap;
+    display: inline-block;
+    transition: transform 0.75s var(--sv-ease), opacity 0.6s var(--sv-ease);
+}
+
+/* CENTER FLOATING SNEAKER STAGE (Layer in front of giant typography) */
+.sv-stage {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    perspective: 1200px;
+}
+
+.sv-hero-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform-style: preserve-3d;
+    transition: transform 0.15s ease-out;
+}
+
+.sv-hero-img {
+    height: clamp(260px, 46vh, 480px);
+    width: auto;
+    max-width: 88vw;
+    object-fit: contain;
+    filter: drop-shadow(0 35px 40px rgba(0, 0, 0, 0.45));
+    transition: transform 0.8s var(--sv-bounce), filter 0.8s ease;
+    user-select: none;
+    pointer-events: auto;
+    cursor: grab;
+}
+
+.sv-hero-img:active {
+    cursor: grabbing;
+}
+
+.sv-hero-shadow {
+    position: absolute;
+    bottom: -35px;
+    width: 75%;
+    height: 30px;
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0) 72%);
+    border-radius: 50%;
+    pointer-events: none;
+    transform: rotateX(65deg);
+    transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+/* BOTTOM PANELS */
+.sv-bottom-bar {
+    position: relative;
+    z-index: 25;
+    display: grid;
+    grid-template-columns: 1.2fr auto 1.2fr;
+    align-items: flex-end;
+    padding: 0 clamp(20px, 5vw, 70px) 36px;
+    gap: 20px;
+}
+
+/* BOTTOM-LEFT: TECH SPECS */
+.sv-specs-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.sv-colorway-name {
+    font-family: 'Space Grotesk', -apple-system, sans-serif;
+    font-size: clamp(16px, 1.8vw, 22px);
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #ffffff;
+    margin: 0 0 6px;
+}
+
+.sv-spec-grid {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 4px 28px;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.sv-spec-grid dt {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.sv-spec-grid dd {
+    margin: 0;
+    color: #ffffff;
+    font-weight: 700;
+}
+
+/* BOTTOM-CENTER: DASH INDICATORS */
+.sv-dashes {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-self: center;
+    margin-bottom: 8px;
+}
+
+.sv-dash {
+    width: 28px;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 2px;
+    transition: all 0.35s ease;
+    cursor: pointer;
+}
+
+.sv-dash.is-active {
+    width: 52px;
+    background: #ffffff;
+}
+
+/* BOTTOM-RIGHT: CONTROLS & ADD TO BAG */
+.sv-controls-panel {
+    justify-self: end;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 14px;
+}
+
+.sv-arrow-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sv-nav-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    display: inline-grid;
+    place-items: center;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.25s var(--sv-bounce);
+}
+
+.sv-nav-btn:hover {
+    background: #ffffff;
+    color: #000000;
+    transform: scale(1.12);
+}
+
+.sv-nav-btn:active {
+    transform: scale(0.92);
+}
+
+.sv-color-swatches {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sv-swatches-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.7);
+    margin-right: 4px;
+}
+
+.sv-color-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.sv-color-dot:hover,
+.sv-color-dot.is-active {
+    transform: scale(1.3);
+    border-color: #ffffff;
+}
+
+.sv-add-bag-btn {
+    background: #ffffff;
+    color: #000000;
+    border: 0;
+    border-radius: 999px;
+    padding: 12px 28px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+    transition: transform 0.25s var(--sv-bounce), box-shadow 0.25s;
+    font-family: inherit;
+}
+
+.sv-add-bag-btn:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45);
+}
+
+.sv-add-bag-btn:active {
+    transform: translateY(1px) scale(0.97);
+}
+
+/* ==========================================================================
+   ANIMATIONS
+   ========================================================================== */
+@keyframes svLevitate {
+    0% { transform: translateY(0) rotate(0deg); }
+    100% { transform: translateY(-10px) rotate(-1.5deg); }
+}
+
+/* ==========================================================================
+   MOBILE & RESPONSIVE
+   ========================================================================== */
+@media (max-width: 900px) {
+    .sv-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+    .sv-bottom-bar {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        align-items: center;
+        text-align: center;
+        padding-bottom: 24px;
+    }
+    .sv-specs-panel {
+        align-items: center;
+    }
+    .sv-controls-panel {
+        justify-self: center;
+        align-items: center;
+    }
+    .sv-dashes {
+        display: none;
+    }
+    .sv-giant-title {
+        font-size: clamp(48px, 14vw, 90px);
+    }
+    .sv-hero-img {
+        height: min(34vh, 320px);
+    }
+}

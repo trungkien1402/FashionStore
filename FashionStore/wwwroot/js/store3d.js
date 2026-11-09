@@ -1262,6 +1262,14 @@
             return;
         }
 
+        // Bật chế độ SNEAKER VAULT 3D (Chính xác như video Sneaker Figma)
+        if (cfg.id === 'giay') {
+            if (typeof window.openSneakerShowcase === 'function') {
+                window.openSneakerShowcase();
+                return;
+            }
+        }
+
         // Quần và Giày chưa làm không gian 3D chi tiết -> hiển thị thông báo hướng dẫn chọn Áo
         showCategoryNotice(cfg);
     }

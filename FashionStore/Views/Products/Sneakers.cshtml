@@ -1,0 +1,138 @@
+@{
+    Layout = null;
+    ViewData["Title"] = "HnmtShop — Futurist Sneaker Vault";
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HNMTSHOP — FUTURIST SNEAKER VAULT</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:ital,wght@0,400;0,600;0,700;0,800;0,900;1,800;1,900&family=Pacifico&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Futurist Sneaker Vault CSS -->
+    <link rel="stylesheet" href="~/css/sneaker-vault.css" asp-append-version="true" />
+</head>
+<body class="is-sneaker-standalone">
+
+    <div class="hnmt-sneaker-vault-wrap is-standalone" id="hnmtSneakerOverlay">
+        <div class="sv-app" id="svApp">
+
+            <!-- HEADER -->
+            <header class="sv-header">
+                <div class="sv-header-left">
+                    <button type="button" class="sv-icon-btn" id="svToggleViewBtn" title="Chuyển chế độ xem">
+                        <i class="bi bi-grid-3x3-gap"></i>
+                        <span>TẤT CẢ GIÀY</span>
+                    </button>
+                    <span class="sv-header-title">FUTURIST SNEAKER VAULT</span>
+                </div>
+
+                <a href="/" class="sv-brand-signature" title="Về trang chủ HnmtShop">HnmtShop</a>
+
+                <div class="sv-head-right">
+                    <button type="button" class="sv-bag-btn" id="svBagBtn" aria-label="Giỏ hàng">
+                        <svg fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+                            <path d="M4 8h16l-1 13H5L4 8Z" />
+                            <path d="M9 9V6a3 3 0 0 1 6 0v3" />
+                        </svg>
+                        <span class="sv-bag-badge" id="svBagBadge">0</span>
+                    </button>
+                    <a href="/Products" class="sv-exit-btn" id="svExitBtn" title="Quay lại Showroom">
+                        <i class="bi bi-arrow-left"></i>
+                        <span>SHOWROOM</span>
+                    </a>
+                </div>
+            </header>
+
+            <!-- VIEW 1: GRID OVERVIEW (3x2 GRID BAN ĐẦU) -->
+            <section class="sv-grid-container is-hidden" id="svGridContainer" aria-label="Bộ sưu tập sneaker dạng lưới">
+                <div class="sv-grid" id="svGrid">
+                    <!-- Render tự động bởi sneaker-vault.js -->
+                </div>
+            </section>
+
+            <!-- VIEW 2: CINEMATIC SLIDER VIEW (1:1 THEO VIDEO FIGMA) -->
+            <section class="sv-slider-container is-active" id="svSliderContainer" aria-label="Chi tiết Sneaker nổi khối 3D">
+
+                <!-- 1. CHỮ TYPOGRAPHY KHỔNG LỒ NẰM SAU CHIẾC GIÀY -->
+                <div class="sv-giant-title-track" aria-hidden="true">
+                    <h2 class="sv-giant-title" id="svGiantTitle">AIR FUTURE IV</h2>
+                </div>
+
+                <!-- 2. KHÔNG GIAN GIÀY BAY LƠ LỬNG NỔI KHỐI 3D PARALLAX THEO CHUỘT -->
+                <div class="sv-stage" id="svStage">
+                    <div class="sv-hero-wrap" id="svHeroWrap">
+                        <img src="/images/sneakers/air-future-iv.webp" alt="AIR FUTURE IV" class="sv-hero-img" id="svHeroImg" />
+                        <div class="sv-hero-shadow" id="svHeroShadow"></div>
+                    </div>
+                </div>
+
+                <!-- 3. THANH THÔNG SỐ VÀ ĐIỀU KHIỂN DƯỚI ĐÁY CHUẨN VIDEO -->
+                <footer class="sv-bottom-bar">
+
+                    <!-- GÓC DƯỚI TRÁI: THÔNG SỐ KỸ THUẬT TECH SPECS -->
+                    <div class="sv-specs-panel">
+                        <h3 class="sv-colorway-name" id="svColorwayName">INFRARAY STORM</h3>
+                        <dl class="sv-spec-grid">
+                            <dt>STYLE CODE:</dt>
+                            <dd id="svStyleCode">HFS-04-STORM</dd>
+
+                            <dt>COLORWAY:</dt>
+                            <dd id="svColorName">STORM GREY / INFRARED</dd>
+
+                            <dt>DESIGNED BY:</dt>
+                            <dd id="svDesigner">HNMTSHOP × FUTURE LAB</dd>
+
+                            <dt>PRICE:</dt>
+                            <dd id="svPrice">5.200.000 ₫</dd>
+                        </dl>
+                    </div>
+
+                    <!-- CHÍNH GIỮA ĐÁY: DASH SLIDE INDICATORS -->
+                    <div class="sv-dashes" id="svDashes">
+                        <!-- Tự sinh 6 gạch ngang chỉ số -->
+                    </div>
+
+                    <!-- GÓC DƯỚI PHẢI: MŨI TÊN < > , SELECT COLOR VÀ NÚT ADD TO BAG -->
+                    <div class="sv-controls-panel">
+                        <div class="sv-arrow-group">
+                            <button type="button" class="sv-nav-btn prev" id="svPrevBtn" aria-label="Mẫu trước">
+                                <i class="bi bi-chevron-left"></i>
+                            </button>
+                            <button type="button" class="sv-nav-btn next" id="svNextBtn" aria-label="Mẫu tiếp theo">
+                                <i class="bi bi-chevron-right"></i>
+                            </button>
+                        </div>
+
+                        <div class="sv-color-swatches">
+                            <span class="sv-swatches-label">SELECT COLOR</span>
+                            <div class="sv-swatches-row" id="svSwatches">
+                                <!-- Chấm màu swatches -->
+                            </div>
+                        </div>
+
+                        <button type="button" class="sv-add-bag-btn" id="svAddBagBtn">
+                            <span>THÊM VÀO GIỎ</span>
+                            <i class="bi bi-arrow-right"></i>
+                        </button>
+                    </div>
+
+                </footer>
+
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Sneaker Vault Logic -->
+    <script src="~/js/sneaker-vault.js" asp-append-version="true"></script>
+</body>
+</html>
