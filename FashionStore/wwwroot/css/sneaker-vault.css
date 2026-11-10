@@ -133,6 +133,7 @@
     font-size: 13px;
     font-weight: 700;
     letter-spacing: 0.05em;
+    text-transform: none !important;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -191,15 +192,24 @@
 }
 
 .sv-bag-badge {
-    min-width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    max-width: 22px;
+    aspect-ratio: 1 / 1;
+    flex-shrink: 0;
     border: 1.5px solid #ffffff;
     border-radius: 50%;
-    display: inline-grid;
-    place-items: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 11px;
     font-weight: 700;
     line-height: 1;
+    text-align: center;
+    box-sizing: border-box;
+    font-variant-numeric: tabular-nums;
+    padding-top: 1px;
 }
 
 /* ==========================================================================

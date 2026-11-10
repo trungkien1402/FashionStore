@@ -409,6 +409,7 @@
         const overlay = $('#hnmtSneakerOverlay');
         if (overlay) {
             overlay.classList.add('is-active');
+            fixExitButtonText();
             openSliderView(0); // Mở thẳng vào đôi đầu tiên cực kỳ hoành tráng
         }
     };
@@ -425,8 +426,17 @@
         if (portalHeaderEl) portalHeaderEl.style.display = '';
     };
 
+    function fixExitButtonText() {
+        const exitBtns = document.querySelectorAll('.sv-exit-btn');
+        exitBtns.forEach(btn => {
+            const span = btn.querySelector('span');
+            if (span) span.textContent = 'Quay lại';
+        });
+    }
+
     // Tự khởi chạy an toàn
     function init() {
+        fixExitButtonText();
         renderGrid();
         bindEvents();
         renderDashes();
