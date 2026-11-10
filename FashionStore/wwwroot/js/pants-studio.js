@@ -327,6 +327,21 @@
 
     // --- GẮN SỰ KIỆN TƯƠNG TÁC ---
     function bindEvents() {
+        // Nút Giỏ Hàng: Mở Drawer Giỏ Hàng trượt từ cạnh phải giống các trang khác
+        const bagBtn = $('#swBagBtn');
+        if (bagBtn) {
+            bagBtn.onclick = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (typeof window.openFsCartDrawer === 'function') {
+                    window.openFsCartDrawer();
+                } else {
+                    const trigger = document.getElementById('fsCartDrawerTrigger');
+                    if (trigger) trigger.click();
+                }
+            };
+        }
+
         // Bấm vào mẫu phụ ở góc trên phải để trượt đến nó
         const secWrap = $('#swSecondaryWrap');
         if (secWrap) {
@@ -352,6 +367,17 @@
         });
 
         setupAddToCart();
+        syncCartCount();
+    }
+
+    function syncCartCount() {
+        const existingBadge = document.querySelector('.fs-cart-count, #cartCount, #svBagBadge, #bagCount');
+        if (existingBadge) {
+            const val = parseInt(existingBadge.textContent.trim(), 10);
+            if (!isNaN(val)) bagCount = val;
+        }
+        const myBadge = $('#swBagBadge');
+        if (myBadge) myBadge.textContent = bagCount;
     }
 
     // --- TỰ ĐỘNG ĐẢM BẢO HTML CAROUSEL NẰM TRONG DOM ---
