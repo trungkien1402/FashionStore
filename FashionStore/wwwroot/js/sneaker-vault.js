@@ -297,6 +297,82 @@
         return num.toLocaleString('vi-VN') + ' ₫';
     }
 
+    // --- Đảm bảo thanh chuyển đổi bộ sưu tập (Vault Switcher) luôn hiện diện 100% trên DOM ---
+    function ensureVaultSwitcherInDOM() {
+        const headerLefts = document.querySelectorAll('.sv-header-left');
+        headerLefts.forEach(headerLeft => {
+            let switcher = headerLeft.querySelector('.sv-vault-switcher');
+            const titleEl = headerLeft.querySelector('.sv-header-title');
+
+            if (!switcher) {
+                switcher = document.createElement('div');
+                switcher.className = 'sv-vault-switcher';
+                switcher.id = 'svVaultSwitcher';
+
+                const prevBtn = document.createElement('button');
+                prevBtn.type = 'button';
+                prevBtn.className = 'sv-vault-arrow';
+                prevBtn.id = 'svPrevCollectionBtn';
+                prevBtn.setAttribute('aria-label', 'Bộ giày trước');
+                prevBtn.setAttribute('title', 'Bộ sưu tập trước');
+                prevBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>';
+
+                const colTitle = document.createElement('span');
+                colTitle.className = 'sv-header-title';
+                colTitle.id = 'svCollectionTitle';
+                colTitle.textContent = getActiveCollection().title;
+
+                const nextBtn = document.createElement('button');
+                nextBtn.type = 'button';
+                nextBtn.className = 'sv-vault-arrow';
+                nextBtn.id = 'svNextCollectionBtn';
+                nextBtn.setAttribute('aria-label', 'Bộ giày kế tiếp');
+                nextBtn.setAttribute('title', 'Bộ sưu tập kế tiếp');
+                nextBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>';
+
+                switcher.appendChild(prevBtn);
+                switcher.appendChild(colTitle);
+                switcher.appendChild(nextBtn);
+
+                if (titleEl) {
+                    titleEl.replaceWith(switcher);
+                } else {
+                    headerLeft.appendChild(switcher);
+                }
+
+                prevBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    changeCollection(-1);
+                };
+                nextBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    changeCollection(1);
+                };
+            } else {
+                const prevBtn = switcher.querySelector('.sv-vault-arrow:first-child, #svPrevCollectionBtn');
+                const nextBtn = switcher.querySelector('.sv-vault-arrow:last-child, #svNextCollectionBtn');
+                const colTitle = switcher.querySelector('#svCollectionTitle, .sv-header-title');
+
+                if (colTitle) colTitle.textContent = getActiveCollection().title;
+
+                if (prevBtn) {
+                    prevBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>';
+                    prevBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        changeCollection(-1);
+                    };
+                }
+                if (nextBtn) {
+                    nextBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>';
+                    nextBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        changeCollection(1);
+                    };
+                }
+            }
+        });
+    }
+
     // --- Đổi bộ sưu tập giày (Switch Sneaker Collection / Vault) ---
     function changeCollection(direction = 1) {
         if (isTransitioning) return;
@@ -460,22 +536,6 @@
             heroShadow.style.opacity = '0';
             heroShadow.style.transform = 'translateX(-50%) rotate(-10deg) scale(0.35)';
         }
-
-        // Nút chuyển đổi bộ sưu tập giày (Left / Right Arrow)
-        const prevColBtns = document.querySelectorAll('#svPrevCollectionBtn');
-        const nextColBtns = document.querySelectorAll('#svNextCollectionBtn');
-        prevColBtns.forEach(btn => {
-            btn.onclick = (e) => {
-                e.stopPropagation();
-                changeCollection(-1);
-            };
-        });
-        nextColBtns.forEach(btn => {
-            btn.onclick = (e) => {
-                e.stopPropagation();
-                changeCollection(1);
-            };
-        });
 
         if (toggleBtn) {
             toggleBtn.innerHTML = '<i class="bi bi-grid-3x3-gap"></i> <span>TẤT CẢ GIÀY</span>';
@@ -956,6 +1016,7 @@
         const overlay = $('#hnmtSneakerOverlay');
         if (overlay) {
             overlay.classList.add('is-active');
+            ensureVaultSwitcherInDOM();
             localizeAllLabels();
             closeSliderView(true); // Luôn luôn mở ở trang lưới TẤT CẢ GIÀY theo đúng yêu cầu!
         }
@@ -1007,6 +1068,7 @@
 
     // Tự khởi chạy an toàn
     function init() {
+        ensureVaultSwitcherInDOM();
         localizeAllLabels();
         renderGrid();
         bindEvents();
