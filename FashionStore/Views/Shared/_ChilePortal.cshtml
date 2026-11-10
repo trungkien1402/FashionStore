@@ -135,14 +135,14 @@
 
     <!-- 5. GIAO DIỆN SNEAKER VAULT (1:1 THEO VIDEO FIGMA - MỞ RA KHI BẤM VÀO GIÀY TRONG SHOWROOM) -->
     <div id="hnmtSneakerOverlay" class="hnmt-sneaker-vault-wrap" aria-hidden="true">
-        <div class="sv-app" id="svApp">
+        <div class="sv-app is-grid-mode" id="svApp">
 
             <!-- HEADER CỦA SNEAKER VAULT TRONG SHOWROOM -->
             <header class="sv-header">
                 <div class="sv-header-left">
                     <button type="button" class="sv-icon-btn" id="svToggleViewBtn" title="Chuyển chế độ xem">
-                        <i class="bi bi-grid-3x3-gap"></i>
-                        <span>TẤT CẢ GIÀY</span>
+                        <i class="bi bi-view-stacked"></i>
+                        <span>SLIDER 3D</span>
                     </button>
                     <span class="sv-header-title">FUTURIST SNEAKER VAULT</span>
                 </div>
@@ -166,7 +166,7 @@
             </header>
 
             <!-- VIEW 1: GRID OVERVIEW (3x2 FLOATING SNEAKER GRID) -->
-            <section class="sv-grid-container is-hidden" id="svGridContainer" aria-label="Bộ sưu tập sneaker dạng lưới">
+            <section class="sv-grid-container" id="svGridContainer" aria-label="Bộ sưu tập sneaker dạng lưới">
                 <div class="sv-grid" id="svGrid">
                     <!-- Render tự động bởi sneaker-vault.js -->
                 </div>

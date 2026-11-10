@@ -18,19 +18,19 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <!-- Futurist Sneaker Vault CSS -->
-    <link rel="stylesheet" href="~/css/sneaker-vault.css?v=flip_transition_v32" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/sneaker-vault.css?v=flip_cinematic_slow_v33" asp-append-version="true" />
 </head>
 <body class="is-sneaker-standalone">
 
     <div class="hnmt-sneaker-vault-wrap is-standalone" id="hnmtSneakerOverlay">
-        <div class="sv-app" id="svApp">
+        <div class="sv-app is-grid-mode" id="svApp">
 
             <!-- HEADER -->
             <header class="sv-header">
                 <div class="sv-header-left">
                     <button type="button" class="sv-icon-btn" id="svToggleViewBtn" title="Chuyển chế độ xem">
-                        <i class="bi bi-grid-3x3-gap"></i>
-                        <span>TẤT CẢ GIÀY</span>
+                        <i class="bi bi-view-stacked"></i>
+                        <span>SLIDER 3D</span>
                     </button>
                     <span class="sv-header-title">FUTURIST SNEAKER VAULT</span>
                 </div>
@@ -53,14 +53,14 @@
             </header>
 
             <!-- VIEW 1: GRID OVERVIEW (3x2 GRID BAN ĐẦU) -->
-            <section class="sv-grid-container is-hidden" id="svGridContainer" aria-label="Bộ sưu tập sneaker dạng lưới">
+            <section class="sv-grid-container" id="svGridContainer" aria-label="Bộ sưu tập sneaker dạng lưới">
                 <div class="sv-grid" id="svGrid">
                     <!-- Render tự động bởi sneaker-vault.js -->
                 </div>
             </section>
 
             <!-- VIEW 2: CINEMATIC SLIDER VIEW (1:1 THEO VIDEO FIGMA) -->
-            <section class="sv-slider-container is-active" id="svSliderContainer" aria-label="Chi tiết Sneaker nổi khối 3D">
+            <section class="sv-slider-container" id="svSliderContainer" aria-label="Chi tiết Sneaker nổi khối 3D">
 
                 <!-- 1. CHỮ TYPOGRAPHY KHỔNG LỒ NẰM SAU CHIẾC GIÀY -->
                 <div class="sv-giant-title-track" aria-hidden="true">
@@ -128,6 +128,6 @@
     </div>
 
     <!-- Sneaker Vault Logic -->
-    <script src="~/js/sneaker-vault.js?v=flip_transition_v32" asp-append-version="true"></script>
+    <script src="~/js/sneaker-vault.js?v=flip_cinematic_slow_v33" asp-append-version="true"></script>
 </body>
 </html>

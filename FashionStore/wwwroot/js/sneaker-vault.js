@@ -95,7 +95,7 @@
     ];
 
     let currentIndex = 0;
-    let isSliderView = true;
+    let isSliderView = false;
     let bagCount = 0;
     let isAnimating = false;
     let isTransitioning = false;
@@ -201,29 +201,29 @@
             giantTitle.textContent = snk.model;
             giantTitle.style.transition = 'none';
             giantTitle.style.opacity = '0';
-            giantTitle.style.transform = 'scale(0.84)';
+            giantTitle.style.transform = 'scale(0.82)';
         }
         if (specsPanel) {
             specsPanel.style.transition = 'none';
             specsPanel.style.opacity = '0';
-            specsPanel.style.transform = 'translateY(24px)';
+            specsPanel.style.transform = 'translateY(28px)';
         }
         if (controlsPanel) {
             controlsPanel.style.transition = 'none';
             controlsPanel.style.opacity = '0';
-            controlsPanel.style.transform = 'translateY(24px)';
+            controlsPanel.style.transform = 'translateY(28px)';
         }
         if (heroShadow) {
             heroShadow.style.transition = 'none';
             heroShadow.style.opacity = '0';
-            heroShadow.style.transform = 'translateX(-50%) rotate(-10deg) scale(0.4)';
+            heroShadow.style.transform = 'translateX(-50%) rotate(-10deg) scale(0.35)';
         }
 
         if (toggleBtn) {
             toggleBtn.innerHTML = '<i class="bi bi-grid-3x3-gap"></i> <span>TẤT CẢ GIÀY</span>';
         }
 
-        // 5. Tính toán FLIP cho Hero Image
+        // 5. Tính toán FLIP cho Hero Image với chuyển động bay chậm rãi, điện ảnh
         if (heroImg && startRect) {
             heroImg.classList.remove('is-floating');
             heroImg.src = snk.image;
@@ -255,41 +255,41 @@
             // Ép browser reflow để ghi nhận trạng thái Invert
             void heroImg.offsetWidth;
 
-            // PLAY: Kích hoạt transition đưa giày từ vị trí Grid bay vào trung tâm hoành tráng
-            heroImg.style.transition = 'transform 0.55s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease';
+            // PLAY: Kích hoạt transition đưa giày từ vị trí Grid bay vào trung tâm chậm rãi (0.92s) cực mượt mà
+            heroImg.style.transition = 'transform 0.92s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s ease';
             heroImg.style.transform = 'translate(0px, 0px) scale(1) rotate(-15deg)';
 
-            // Cross-fade nền từ texture tối sang theme color của giày
+            // Cross-fade nền từ texture tối sang theme color của giày chậm rãi hòa quyện (0.92s)
             if (app) {
                 app.classList.remove('is-grid-mode');
                 app.style.backgroundColor = snk.themeColor;
             }
 
-            // Stagger các thành phần chữ, specs và controls hiện dần ra
+            // Stagger các thành phần chữ, specs và controls hiện dần ra sau 320ms
             setTimeout(() => {
                 if (giantTitle) {
-                    giantTitle.style.transition = 'transform 0.52s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.42s ease';
+                    giantTitle.style.transition = 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.65s ease';
                     giantTitle.style.opacity = '0.94';
                     giantTitle.style.transform = 'scale(1)';
                 }
                 if (specsPanel) {
-                    specsPanel.style.transition = 'transform 0.46s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.38s ease';
+                    specsPanel.style.transition = 'transform 0.75s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease';
                     specsPanel.style.opacity = '1';
                     specsPanel.style.transform = 'translate(0, 0)';
                 }
                 if (controlsPanel) {
-                    controlsPanel.style.transition = 'transform 0.46s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.38s ease';
+                    controlsPanel.style.transition = 'transform 0.75s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease';
                     controlsPanel.style.opacity = '1';
                     controlsPanel.style.transform = 'translate(0, 0)';
                 }
                 if (heroShadow) {
-                    heroShadow.style.transition = 'transform 0.52s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.42s ease';
+                    heroShadow.style.transition = 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.65s ease';
                     heroShadow.style.opacity = '1';
                     heroShadow.style.transform = 'translateX(-50%) rotate(-10deg) scale(1)';
                 }
-            }, 160);
+            }, 320);
 
-            // Khi hoàn thành chuyến bay (560ms)
+            // Khi hoàn thành chuyến bay (930ms)
             setTimeout(() => {
                 if (gridContainer) gridContainer.classList.add('is-hidden');
                 gridItems.forEach(it => it.classList.remove('is-fading-out'));
@@ -298,7 +298,7 @@
 
                 heroImg.classList.add('is-floating');
                 isTransitioning = false;
-            }, 560);
+            }, 930);
         } else {
             // Fallback an toàn nếu trình duyệt chưa kịp render startRect
             if (gridContainer) gridContainer.classList.add('is-hidden');
@@ -311,10 +311,9 @@
         }
     }
 
-    // --- Chuyển cảnh Reverse FLIP: Thu nhỏ và bay chiếc giày trở về ô trong Grid ---
-    function closeSliderView() {
+    // --- Chuyển cảnh Reverse FLIP: Thu nhỏ và bay chiếc giày trở về ô trong Grid (chậm rãi, êm ái) ---
+    function closeSliderView(immediate = false) {
         if (isTransitioning) return;
-        isTransitioning = true;
         isSliderView = false;
 
         const gridContainer = $('#svGridContainer');
@@ -326,18 +325,42 @@
         const giantTitle = $('#svGiantTitle');
         const specsPanel = $('.sv-specs-panel');
         const controlsPanel = $('.sv-controls-panel');
+        const gridItems = $$('.sv-grid-item');
 
         // 1. Dừng ambient floating
         if (heroImg) {
             heroImg.classList.remove('is-floating');
         }
 
+        // Nếu chuyển đổi ngay lập tức (ví dụ khi mở lần đầu)
+        if (immediate) {
+            if (sliderContainer) sliderContainer.classList.remove('is-active');
+            if (gridContainer) gridContainer.classList.remove('is-hidden');
+            if (app) {
+                app.classList.add('is-grid-mode');
+                app.style.backgroundColor = '#0D0E12';
+            }
+            gridItems.forEach(it => {
+                it.classList.remove('is-fading-out');
+                const img = it.querySelector('.sv-item-img');
+                const shadow = it.querySelector('.sv-item-shadow');
+                if (img) img.style.visibility = '';
+                if (shadow) shadow.style.opacity = '';
+            });
+            if (toggleBtn) {
+                toggleBtn.innerHTML = '<i class="bi bi-view-stacked"></i> <span>SLIDER 3D</span>';
+            }
+            isTransitioning = false;
+            return;
+        }
+
+        isTransitioning = true;
+
         // 2. Mở lại grid container bên dưới để đo vị trí chính xác
         if (gridContainer) {
             gridContainer.classList.remove('is-hidden');
         }
 
-        const gridItems = $$('.sv-grid-item');
         const targetItem = gridItems[currentIndex] || gridItems[0];
         const targetImg = targetItem ? targetItem.querySelector('.sv-item-img') : null;
         const targetShadow = targetItem ? targetItem.querySelector('.sv-item-shadow') : null;
@@ -354,24 +377,24 @@
 
         // 3. Fade out typography, specs, controls
         if (giantTitle) {
-            giantTitle.style.transition = 'transform 0.3s ease, opacity 0.25s ease';
+            giantTitle.style.transition = 'transform 0.45s ease, opacity 0.38s ease';
             giantTitle.style.opacity = '0';
-            giantTitle.style.transform = 'scale(0.88)';
+            giantTitle.style.transform = 'scale(0.86)';
         }
         if (specsPanel) {
-            specsPanel.style.transition = 'transform 0.28s ease, opacity 0.24s ease';
+            specsPanel.style.transition = 'transform 0.42s ease, opacity 0.35s ease';
             specsPanel.style.opacity = '0';
-            specsPanel.style.transform = 'translateY(18px)';
+            specsPanel.style.transform = 'translateY(20px)';
         }
         if (controlsPanel) {
-            controlsPanel.style.transition = 'transform 0.28s ease, opacity 0.24s ease';
+            controlsPanel.style.transition = 'transform 0.42s ease, opacity 0.35s ease';
             controlsPanel.style.opacity = '0';
-            controlsPanel.style.transform = 'translateY(18px)';
+            controlsPanel.style.transform = 'translateY(20px)';
         }
         if (heroShadow) {
-            heroShadow.style.transition = 'opacity 0.24s ease, transform 0.24s ease';
+            heroShadow.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
             heroShadow.style.opacity = '0';
-            heroShadow.style.transform = 'translateX(-50%) rotate(-10deg) scale(0.4)';
+            heroShadow.style.transform = 'translateX(-50%) rotate(-10deg) scale(0.35)';
         }
 
         // 4. Crossfade background về hình nền vân bê tông tối cao cấp
@@ -380,7 +403,7 @@
             app.style.backgroundColor = '#0D0E12';
         }
 
-        // 5. Tính toán FLIP từ heroImg về vị trí của targetImg trong grid
+        // 5. Tính toán FLIP từ heroImg về vị trí của targetImg trong grid (chậm rãi 0.85s)
         if (heroImg && targetImg) {
             const heroRect = heroImg.getBoundingClientRect();
             const targetRect = targetImg.getBoundingClientRect();
@@ -394,15 +417,15 @@
             const deltaY = targetCenterY - heroCenterY;
             const scale = targetRect.width / heroRect.width;
 
-            heroImg.style.transition = 'transform 0.48s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.38s ease';
+            heroImg.style.transition = 'transform 0.85s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease';
             heroImg.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${scale}) rotate(-15deg)`;
 
-            // Fade in lại 5 đôi giày còn lại
+            // Fade in lại 5 đôi giày còn lại sau 280ms
             setTimeout(() => {
                 gridItems.forEach(it => it.classList.remove('is-fading-out'));
-            }, 120);
+            }, 280);
 
-            // Khi đôi giày đã đáp gọn vào ô grid (490ms)
+            // Khi đôi giày đã đáp gọn vào ô grid (860ms)
             setTimeout(() => {
                 if (targetImg) targetImg.style.visibility = '';
                 if (targetShadow) targetShadow.style.opacity = '';
@@ -419,7 +442,7 @@
                 }
 
                 isTransitioning = false;
-            }, 490);
+            }, 860);
         } else {
             if (sliderContainer) sliderContainer.classList.remove('is-active');
             gridItems.forEach(it => it.classList.remove('is-fading-out'));
@@ -676,7 +699,7 @@
         if (overlay) {
             overlay.classList.add('is-active');
             localizeAllLabels();
-            openSliderView(0); // Mở thẳng vào đôi đầu tiên cực kỳ hoành tráng
+            closeSliderView(true); // Luôn luôn mở ở trang lưới TẤT CẢ GIÀY theo đúng yêu cầu!
         }
     };
 
@@ -731,11 +754,15 @@
         bindEvents();
         renderDashes();
 
-        const heroImg = $('#svHeroImg');
-        const sliderContainer = $('#svSliderContainer');
-        if (sliderContainer && sliderContainer.classList.contains('is-active') && heroImg) {
-            heroImg.classList.add('is-floating');
-            updateSliderDataOnly(SNEAKERS[currentIndex]);
+        // Mặc định luôn là trang lưới TẤT CẢ GIÀY (Grid Overview)
+        if (!isSliderView) {
+            closeSliderView(true);
+        } else {
+            const heroImg = $('#svHeroImg');
+            if (heroImg) {
+                heroImg.classList.add('is-floating');
+                updateSliderDataOnly(SNEAKERS[currentIndex]);
+            }
         }
     }
 
