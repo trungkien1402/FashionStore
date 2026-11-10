@@ -2005,6 +2005,7 @@
         });
 
         bindTriggers();
+        ensurePantsStudioAssets();
     }
 
     if (document.readyState === 'loading') {
@@ -2045,7 +2046,25 @@
     window.closeSneakerVaultFrom3D = closeSneakerVaultFrom3D;
 
     // --- MỞ VÀ ĐÓNG PANTS STUDIO TỪ SHOWROOM 3D ---
+    function ensurePantsStudioAssets() {
+        if (!document.getElementById('hnmtPantsStudioCss')) {
+            const link = document.createElement('link');
+            link.id = 'hnmtPantsStudioCss';
+            link.rel = 'stylesheet';
+            link.href = '/css/pants-studio.css?v=' + Date.now();
+            document.head.appendChild(link);
+        }
+        if (!document.getElementById('hnmtPantsStudioScript') && typeof window.openPantsStudio !== 'function') {
+            const script = document.createElement('script');
+            script.id = 'hnmtPantsStudioScript';
+            script.src = '/js/pants-studio.js?v=' + Date.now();
+            document.body.appendChild(script);
+        }
+    }
+
     function openPantsStudioFrom3D() {
+        ensurePantsStudioAssets();
+
         const promptEl = document.querySelector('.hnmt-portal-footer');
         const portalHeaderEl = document.querySelector('.hnmt-portal-header');
         if (promptEl) promptEl.style.display = 'none';
@@ -2054,8 +2073,16 @@
         if (typeof window.openPantsStudio === 'function') {
             window.openPantsStudio();
         } else {
-            const overlay = document.getElementById('hnmtPantsOverlay');
-            if (overlay) overlay.classList.add('is-active');
+            let retry = 0;
+            const timer = setInterval(() => {
+                retry++;
+                if (typeof window.openPantsStudio === 'function') {
+                    clearInterval(timer);
+                    window.openPantsStudio();
+                } else if (retry > 40) {
+                    clearInterval(timer);
+                }
+            }, 50);
         }
     }
 
