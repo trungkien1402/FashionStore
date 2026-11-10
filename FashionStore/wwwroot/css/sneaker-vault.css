@@ -8,7 +8,6 @@
     --sv-muted: rgba(255, 255, 255, 0.70);
     --sv-ease: cubic-bezier(0.16, 1, 0.3, 1);
     --sv-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-    --sv-spring: cubic-bezier(0.2, 0.9, 0.3, 1.15);
 }
 
 /* ==========================================================================
@@ -61,18 +60,27 @@
     display: flex;
     flex-direction: column;
     position: relative;
-    transition: background-color 0.75s var(--sv-ease), background-image 0.5s ease;
+    transition: background-color 0.65s var(--sv-ease);
     background-color: var(--sv-dark-bg);
     overflow: hidden;
 }
 
-.sv-app.is-grid-mode {
-    background-color: #0D0E12 !important;
-    background-image: url('/images/sneakers/sneaker-grid-bg.webp?v=bg_v1') !important;
-    background-repeat: no-repeat !important;
-    background-position: center center !important;
-    background-size: cover !important;
-    background-attachment: fixed !important;
+.sv-app::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url('/images/sneakers/sneaker-grid-bg.webp?v=bg_v1');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1;
+}
+
+.sv-app.is-grid-mode::before {
+    opacity: 1;
 }
 
 /* ==========================================================================
@@ -86,8 +94,6 @@
     padding: 0 clamp(20px, 4vw, 60px);
     position: relative;
     z-index: 30;
-    transition: transform 0.65s var(--sv-ease), opacity 0.5s var(--sv-ease);
-    will-change: transform, opacity;
 }
 
 .sv-header-left {
@@ -271,7 +277,13 @@
     z-index: 10;
     pointer-events: auto;
     user-select: none;
-    transition: none;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+}
+
+.sv-grid-item.is-fading-out {
+    opacity: 0 !important;
+    transform: scale(0.85) translateY(12px) !important;
+    pointer-events: none !important;
 }
 
 .sv-grid-item:hover {
@@ -311,7 +323,8 @@
 
 /* Khi rê chuột vào, chính đôi giày là nút bấm: phóng to và nhấc bổng lên */
 .sv-grid-item:hover .sv-item-img {
-    transform: scale(1.15) translateY(-8px) rotate(-15deg);
+    animation-play-state: paused;
+    transform: scale(1.15) translateY(-8px) rotate(-15deg) !important;
     filter: drop-shadow(0 26px 32px rgba(0, 0, 0, 0.9));
 }
 
@@ -375,10 +388,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     width: 100vw;
-    height: clamp(90px, 13vw, 180px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    text-align: center;
     z-index: 1;
     pointer-events: none;
     user-select: none;
@@ -386,7 +396,6 @@
 }
 
 .sv-giant-title {
-    position: absolute;
     font-family: 'Montserrat', sans-serif;
     font-size: clamp(85px, 12.5vw, 170px);
     font-weight: 900;
@@ -397,44 +406,8 @@
     text-shadow: none !important;
     background: transparent !important;
     white-space: nowrap;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateX(100px);
-    transition: transform 0.62s var(--sv-ease), opacity 0.45s var(--sv-ease), visibility 0.62s;
-    will-change: transform, opacity;
-    margin: 0;
-}
-
-.sv-giant-title.is-active {
-    opacity: 0.94;
-    visibility: visible;
-    transform: translateX(0);
-}
-
-.sv-giant-title.is-exiting-left {
-    transform: translateX(-100px);
-    opacity: 0;
-    visibility: visible;
-}
-
-.sv-giant-title.is-exiting-right {
-    transform: translateX(100px);
-    opacity: 0;
-    visibility: visible;
-}
-
-.sv-giant-title.is-entering-left {
-    transform: translateX(-100px) !important;
-    opacity: 0 !important;
-    visibility: visible !important;
-    transition: none !important;
-}
-
-.sv-giant-title.is-entering-right {
-    transform: translateX(100px) !important;
-    opacity: 0 !important;
-    visibility: visible !important;
-    transition: none !important;
+    display: inline-block;
+    transition: transform 0.65s var(--sv-ease), opacity 0.5s var(--sv-ease);
 }
 
 /* SNEAKER STAGE (Nằm chính giữa khung hình 50% 50%, phóng to đôi giày chuẩn ảnh mẫu) */
@@ -448,60 +421,6 @@
     justify-content: center;
     z-index: 5;
     pointer-events: none;
-    overflow: hidden;
-}
-
-/* Từng slide độc lập của 6 siêu phẩm sneaker */
-.sv-slide {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateX(160px) scale(0.88);
-    transition: transform 0.65s var(--sv-spring), opacity 0.5s var(--sv-ease), visibility 0.65s;
-    will-change: transform, opacity;
-}
-
-.sv-slide.is-active {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    transform: translateX(0) scale(1);
-    z-index: 10;
-}
-
-.sv-slide.is-exiting-left {
-    transform: translateX(-160px) scale(0.88);
-    opacity: 0;
-    visibility: visible;
-    z-index: 5;
-}
-
-.sv-slide.is-exiting-right {
-    transform: translateX(160px) scale(0.88);
-    opacity: 0;
-    visibility: visible;
-    z-index: 5;
-}
-
-.sv-slide.is-entering-left {
-    transform: translateX(-160px) scale(0.88) !important;
-    opacity: 0 !important;
-    visibility: visible !important;
-    transition: none !important;
-}
-
-.sv-slide.is-entering-right {
-    transform: translateX(160px) scale(0.88) !important;
-    opacity: 0 !important;
-    visibility: visible !important;
-    transition: none !important;
 }
 
 .sv-hero-wrap {
@@ -510,8 +429,6 @@
     align-items: center;
     justify-content: center;
     pointer-events: none;
-    transition: transform 0.75s var(--sv-spring), opacity 0.55s var(--sv-ease);
-    will-change: transform, opacity;
 }
 
 .sv-hero-img {
@@ -520,11 +437,16 @@
     max-width: 80vw;
     object-fit: contain;
     filter: drop-shadow(0 28px 38px rgba(0, 0, 0, 0.55));
+    transition: transform 0.65s var(--sv-ease), opacity 0.5s var(--sv-ease);
     user-select: none;
     pointer-events: none;
     transform: rotate(-15deg);
-    animation: svHeroFloat 4.8s ease-in-out infinite alternate;
-    will-change: transform;
+    transform-origin: center center;
+    will-change: transform, opacity;
+}
+
+.sv-hero-img.is-floating {
+    animation: svHeroFloat 5s ease-in-out infinite alternate;
 }
 
 .sv-hero-shadow {
@@ -534,11 +456,11 @@
     transform: translateX(-50%) rotate(-10deg);
     width: 58%;
     height: 22px;
-    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0) 70%);
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 70%);
     border-radius: 50%;
     filter: blur(10px);
     pointer-events: none;
-    animation: svShadowPulse 4.8s ease-in-out infinite alternate;
+    transition: transform 0.65s var(--sv-ease), opacity 0.5s ease;
 }
 
 /* BOTTOM PANELS */
@@ -557,19 +479,7 @@
     display: flex;
     flex-direction: column;
     gap: 6px;
-    transition: transform 0.45s var(--sv-ease), opacity 0.35s ease;
-    will-change: transform, opacity;
-}
-
-.sv-specs-panel.sv-specs-exit {
-    transform: translateY(14px);
-    opacity: 0;
-}
-
-.sv-specs-panel.sv-specs-enter {
-    transform: translateY(14px) !important;
-    opacity: 0 !important;
-    transition: none !important;
+    transition: transform 0.5s var(--sv-ease), opacity 0.4s ease;
 }
 
 .sv-colorway-name {
@@ -616,63 +526,7 @@
     flex-direction: column;
     align-items: flex-end;
     gap: 12px;
-    transition: transform 0.65s var(--sv-ease), opacity 0.5s var(--sv-ease);
-    will-change: transform, opacity;
-}
-
-/* ==========================================================================
-   ENTRY ANIMATION: KHI CHỌN 1 ĐÔI TỪ LƯỚI "TẤT CẢ GIÀY"
-   Đôi giày từ từ phóng to vào giữa (scale: 0.25 -> 1.0)
-   Chữ và nút chạy từ 2 bên và phía trên vào (chuẩn video)
-   ========================================================================== */
-.sv-entry-animating .sv-header {
-    transform: translateY(-60px) !important;
-    opacity: 0 !important;
-}
-
-.sv-entry-animating .sv-giant-title.is-active {
-    transform: translateY(-40px) scale(0.75) !important;
-    opacity: 0 !important;
-}
-
-.sv-entry-animating .sv-slide.is-active .sv-hero-wrap {
-    transform: scale(0.25) translateY(30px) !important;
-    opacity: 0 !important;
-}
-
-.sv-entry-animating .sv-specs-panel {
-    transform: translateX(-140px) !important;
-    opacity: 0 !important;
-}
-
-.sv-entry-animating .sv-controls-panel {
-    transform: translateX(140px) !important;
-    opacity: 0 !important;
-}
-
-.sv-entry-settled .sv-header {
-    transform: translateY(0);
-    opacity: 1;
-}
-
-.sv-entry-settled .sv-giant-title.is-active {
-    transform: translateY(0) scale(1);
-    opacity: 0.94;
-}
-
-.sv-entry-settled .sv-slide.is-active .sv-hero-wrap {
-    transform: scale(1) translateY(0);
-    opacity: 1;
-}
-
-.sv-entry-settled .sv-specs-panel {
-    transform: translateX(0);
-    opacity: 1;
-}
-
-.sv-entry-settled .sv-controls-panel {
-    transform: translateX(0);
-    opacity: 1;
+    transition: transform 0.5s var(--sv-ease), opacity 0.4s ease;
 }
 
 .sv-arrow-group {
@@ -741,19 +595,15 @@
     cursor: pointer;
     flex-shrink: 0;
     box-sizing: border-box;
-    transition: transform 0.35s var(--sv-bounce), box-shadow 0.35s ease, border-color 0.35s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
-.sv-color-dot:hover {
-    transform: scale(1.22);
-    border-color: #ffffff;
-}
-
+.sv-color-dot:hover,
 .sv-color-dot.is-active {
-    transform: scale(1.42);
+    transform: scale(1.25);
     border-color: #ffffff;
-    box-shadow: 0 0 0 2px #ffffff, 0 4px 14px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 0 0 2px #ffffff, 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
 .sv-add-bag-btn {
