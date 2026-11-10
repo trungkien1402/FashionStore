@@ -367,97 +367,8 @@
         }
     }
 
-    function notifyProductAdded(p, size) {
-        clearTimeout(toastTimer);
-        let t = document.getElementById('toast');
-        if (!t) {
-            t = document.createElement('aside');
-            t.className = 'rail-toast';
-            t.id = 'toast';
-            t.setAttribute('role', 'status');
-            t.setAttribute('aria-live', 'polite');
-            document.body.appendChild(t);
-        } else if (t.parentElement !== document.body) {
-            document.body.appendChild(t);
-        }
-
-        const v = p.variant || 0;
-        const thumbSrc = photo(p, v);
-        let colorName = '';
-        if (p.colors && p.colors[v]) {
-            colorName = p.colors[v][0].split('(')[0].trim();
-        }
-        const metaParts = [];
-        if (size) metaParts.push(`Size ${size}`);
-        if (colorName) metaParts.push(colorName);
-        metaParts.push(formatPrice(p.price));
-
-        t.innerHTML = `
-            <div class="atelier-toast-thumb-wrap">
-                <img class="atelier-toast-thumb" src="${thumbSrc}" alt="${p.name}">
-            </div>
-            <div class="atelier-toast-body">
-                <div class="atelier-toast-header">
-                    <span class="atelier-toast-tag">
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
-                        ĐÃ THÊM VÀO TÚI
-                    </span>
-                    <button type="button" class="atelier-toast-close" aria-label="Đóng" onclick="document.getElementById('toast').classList.remove('visible','show')">×</button>
-                </div>
-                <div class="atelier-toast-title">${p.name}</div>
-                <div class="atelier-toast-meta">${metaParts.join(' · ')}</div>
-            </div>
-        `;
-
-        t.classList.remove('visible', 'show');
-        void t.offsetWidth;
-        t.classList.add('visible', 'show');
-
-        toastTimer = setTimeout(() => {
-            t.classList.remove('visible', 'show');
-        }, 3800);
-    }
-
-    function notify(text, type = 'info') {
-        clearTimeout(toastTimer);
-        let t = document.getElementById('toast');
-        if (!t) {
-            t = document.createElement('aside');
-            t.className = 'rail-toast';
-            t.id = 'toast';
-            t.setAttribute('role', 'status');
-            t.setAttribute('aria-live', 'polite');
-            document.body.appendChild(t);
-        } else if (t.parentElement !== document.body) {
-            document.body.appendChild(t);
-        }
-
-        const isWarn = type === 'warn';
-        const tagText = isWarn ? 'NHẮC NHỞ' : 'THÔNG BÁO';
-        const tagColor = isWarn ? '#D97706' : 'var(--rail-ink)';
-        const tagBg = isWarn ? 'rgba(217, 119, 6, 0.1)' : 'rgba(43, 51, 96, 0.08)';
-
-        t.innerHTML = `
-            <div class="atelier-toast-body">
-                <div class="atelier-toast-header">
-                    <span class="atelier-toast-tag" style="color: ${tagColor}; background: ${tagBg};">
-                        ${tagText}
-                    </span>
-                    <button type="button" class="atelier-toast-close" aria-label="Đóng" onclick="document.getElementById('toast').classList.remove('visible','show')">×</button>
-                </div>
-                <div class="atelier-toast-title" style="font-size: 13.5px; font-weight: 500;">${text}</div>
-            </div>
-        `;
-
-        t.classList.remove('visible', 'show');
-        void t.offsetWidth;
-        t.classList.add('visible', 'show');
-
-        toastTimer = setTimeout(() => {
-            t.classList.remove('visible', 'show');
-        }, 3200);
+    function notify(text) {
+        // Tắt hoàn toàn các khung popup nổi để giữ trọn vẹn vẻ đẹp tối giản của trang thời trang
     }
 
     function openModal(title, text) {
@@ -572,13 +483,10 @@
                     setTimeout(() => svBag.style.transform = 'scale(1)', 250);
                 }
 
-                // Thẻ thông báo Atelier kính mờ sang trọng chuẩn Farfetch/Dior
-                notifyProductAdded(p, selectedSize);
-
-                // Phản hồi trực quan tức thì trên chính nút "THÊM VÀO GIỎ"
+                // Biến hình trực tiếp trên nút CTA (Chuẩn Acne Studios / Apple tối giản)
                 cartCta.innerHTML = `
                     <span class="rail-btn-feedback">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="20 6 9 17 4 12"></polyline>
                         </svg>
                         ĐÃ THÊM VÀO GIỎ (${selectedSize}) ✓
@@ -591,7 +499,7 @@
                     cartCta.classList.remove('is-added');
                     cartCta.disabled = false;
                     renderSizes();
-                }, 2200);
+                }, 2400);
             };
         }
 

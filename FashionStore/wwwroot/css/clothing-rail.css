@@ -831,11 +831,12 @@
 }
 
 .rail-cart-cta.is-added {
-    background: #1e2444 !important;
-    border-color: #1e2444 !important;
+    background: #181d33 !important;
+    border-color: #181d33 !important;
     color: #ffffff !important;
-    transform: scale(0.97) !important;
-    box-shadow: 0 10px 25px rgba(30, 36, 68, 0.35) !important;
+    transform: scale(0.98) !important;
+    box-shadow: 0 8px 24px rgba(24, 29, 51, 0.25) !important;
+    cursor: default !important;
 }
 
 .rail-btn-feedback {
@@ -843,7 +844,7 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    font-weight: 800;
+    font-weight: 700;
     letter-spacing: 0.08em;
 }
 
@@ -854,148 +855,10 @@
 }
 
 /* ==========================================================================
-   ATELIER FLOATING CART NOTIFICATION (FARFETCH / DIOR STYLE)
+   MINIMALIST TOAST (TẮT HOÀN TOÀN KHUNG POPUP ĐỂ TRANG LUÔN TINH GỌN SẠCH ĐẸP)
    ========================================================================== */
 .rail-toast {
-    position: fixed;
-    top: 88px;
-    right: clamp(20px, 4vw, 64px);
-    left: auto;
-    transform: translateX(45px) scale(0.95);
-    background: rgba(255, 255, 255, 0.94);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    color: var(--rail-ink);
-    padding: 12px 16px;
-    border-radius: 16px;
-    border: 1px solid rgba(43, 51, 96, 0.12);
-    box-shadow: 0 20px 48px rgba(43, 51, 96, 0.12), 
-                0 4px 14px rgba(43, 51, 96, 0.04),
-                inset 0 1px 0 rgba(255, 255, 255, 0.9);
-    z-index: 999999;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
-                transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    min-width: 320px;
-    max-width: 390px;
-    font-family: var(--rail-font);
-}
-
-.rail-toast.show,
-.rail-toast.visible {
-    opacity: 1;
-    transform: translateX(0) scale(1);
-    pointer-events: auto;
-}
-
-.atelier-toast-thumb-wrap {
-    width: 50px;
-    height: 60px;
-    background: #f0f0ed;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    border: 1px solid rgba(43, 51, 96, 0.08);
-    overflow: hidden;
-    padding: 2px;
-}
-
-.atelier-toast-thumb {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    transform: scale(1.05);
-}
-
-.atelier-toast-body {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.atelier-toast-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    margin-bottom: 2px;
-}
-
-.atelier-toast-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 10.5px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: #059669;
-    background: rgba(5, 150, 105, 0.09);
-    padding: 2.5px 8px;
-    border-radius: 999px;
-}
-
-.atelier-toast-close {
-    background: transparent;
-    border: none;
-    color: var(--rail-muted);
-    font-size: 19px;
-    line-height: 1;
-    cursor: pointer;
-    padding: 0;
-    transition: color 0.2s;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 20px;
-    height: 20px;
-}
-
-.atelier-toast-close:hover {
-    color: var(--rail-ink);
-}
-
-.atelier-toast-title {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--rail-ink);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 1.3;
-}
-
-.atelier-toast-meta {
-    font-size: 12px;
-    color: var(--rail-muted);
-    font-weight: 500;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-@media (max-width: 640px) {
-    .rail-toast {
-        top: 20px;
-        right: 16px;
-        left: 16px;
-        min-width: unset;
-        max-width: unset;
-        width: calc(100% - 32px);
-        transform: translateY(-20px) scale(0.96);
-    }
-    .rail-toast.show,
-    .rail-toast.visible {
-        transform: translateY(0) scale(1);
-    }
+    display: none !important;
 }
 
 .rail-nav-modal {
