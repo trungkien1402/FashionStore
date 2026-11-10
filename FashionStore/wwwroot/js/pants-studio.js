@@ -306,13 +306,130 @@
         setupAddToCart();
     }
 
+    // --- TỰ ĐỘNG ĐẢM BẢO HTML PANTS STUDIO NẰM TRONG DOM (CHỐNG LỖI CACHE SERVER) ---
+    function ensurePantsStudioInDOM() {
+        if ($('#hnmtPantsOverlay')) return;
+
+        const wrap = document.createElement('div');
+        wrap.id = 'hnmtPantsOverlay';
+        wrap.className = 'hnmt-pants-studio-wrap';
+        wrap.setAttribute('aria-hidden', 'true');
+        wrap.innerHTML = `
+        <div class="ps-app" id="psApp">
+            <!-- HEADER -->
+            <header class="ps-header">
+                <nav class="ps-nav-tabs" aria-label="Bộ lọc danh mục quần">
+                    <button type="button" class="ps-tab-btn is-active" data-cat="all">Tất cả</button>
+                    <button type="button" class="ps-tab-btn" data-cat="cargo">Cargo</button>
+                    <button type="button" class="ps-tab-btn" data-cat="denim">Denim Jeans</button>
+                    <button type="button" class="ps-tab-btn" data-cat="trousers">Trousers</button>
+                </nav>
+
+                <a href="/" class="ps-brand-logo" title="HnmtShop">
+                    <span class="ps-brand-sig">HnmtShop</span>
+                </a>
+
+                <div class="ps-header-right">
+                    <button type="button" class="ps-header-btn" id="psCartBtn" aria-label="Giỏ hàng">
+                        <i class="bi bi-bag"></i>
+                        <span class="ps-cart-badge" id="psCartBadge">0</span>
+                    </button>
+                    <button type="button" class="ps-exit-btn" id="psExitBtn" onclick="window.closePantsStudio()" title="Quay lại Showroom">
+                        <i class="bi bi-arrow-left"></i>
+                        <span>Quay lại</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- MAIN STAGE (3 CỘT LOOKBOOK THỜI TRANG) -->
+            <main class="ps-main-stage">
+                <!-- CỘT TRÁI: EDITORIAL COPY & CTA -->
+                <section class="ps-left-col">
+                    <h1 class="ps-headline">
+                        <span id="psHeadline1">Wear Confidence.</span>
+                        <span id="psHeadline2">Define Your Style.</span>
+                    </h1>
+                    <p class="ps-desc" id="psDesc">
+                        Khám phá thiết kế quần Cargo & Denim cao cấp — Phom dáng chuẩn mực, thoải mái vận động và nâng tầm phong thái hàng ngày.
+                    </p>
+                    <div class="ps-cta-wrap">
+                        <button type="button" class="ps-cta-btn" id="psAddToCartBtn">
+                            <span>THÊM VÀO GIỎ</span>
+                            <i class="bi bi-arrow-right"></i>
+                        </button>
+                    </div>
+                    <div class="ps-social-row">
+                        <a href="https://instagram.com" target="_blank" rel="noopener" class="ps-social-link" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                        <a href="https://twitter.com" target="_blank" rel="noopener" class="ps-social-link" aria-label="X / Twitter"><i class="bi bi-twitter-x"></i></a>
+                        <a href="https://facebook.com" target="_blank" rel="noopener" class="ps-social-link" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                        <a href="https://tiktok.com" target="_blank" rel="noopener" class="ps-social-link" aria-label="TikTok"><i class="bi bi-tiktok"></i></a>
+                    </div>
+                </section>
+
+                <!-- CỘT GIỮA: SÂN KHẤU QUẦN NỔI KHỐI 3D & MŨI TÊN ĐIỀU HƯỚNG -->
+                <section class="ps-center-col">
+                    <button type="button" class="ps-nav-arrow prev" id="psPrevBtn" aria-label="Mẫu quần trước" title="Mẫu trước">
+                        <i class="bi bi-chevron-left"></i>
+                    </button>
+
+                    <div class="ps-hero-stage">
+                        <div class="ps-hero-img-wrap">
+                            <img src="/images/pants/cargo-acid-wash.png?v=studio_v1" alt="Quần thời trang" class="ps-hero-img is-floating" id="psHeroImg" />
+                            <div class="ps-hero-shadow" id="psHeroShadow"></div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="ps-nav-arrow next" id="psNextBtn" aria-label="Mẫu quần tiếp theo" title="Mẫu kế tiếp">
+                        <i class="bi bi-chevron-right"></i>
+                    </button>
+
+                    <div class="ps-bottom-slogan">
+                        Dress Better. Feel Better.
+                    </div>
+                </section>
+
+                <!-- CỘT PHẢI: GIÁ BÁN, SIZE PICKER & HÀNG ĐỢI XEM TRƯỚC -->
+                <section class="ps-right-col">
+                    <div class="ps-price-box">
+                        <span class="ps-sale-price" id="psSalePrice">650.000 ₫</span>
+                        <span class="ps-orig-price" id="psOrigPrice">890.000 ₫</span>
+                    </div>
+
+                    <div class="ps-size-box">
+                        <span class="ps-size-label">CHỌN SIZE QUẦN</span>
+                        <div class="ps-size-pills" id="psSizePills">
+                            <!-- Render tự động bởi pants-studio.js -->
+                        </div>
+                    </div>
+
+                    <div class="ps-queue-box">
+                        <div class="ps-queue-list" id="psQueueList">
+                            <!-- Render thumbnail hàng đợi mini bởi pants-studio.js -->
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+        `;
+
+        const portal = document.getElementById('hnmtChilePortal') || document.body;
+        portal.appendChild(wrap);
+        bindEvents();
+    }
+
     // --- MỞ VÀ ĐÓNG PANTS STUDIO TOÀN CỤC CHO 3D SHOWROOM ---
     window.openPantsStudio = function () {
+        ensurePantsStudioInDOM();
         const overlay = $('#hnmtPantsOverlay');
         if (overlay) {
             overlay.classList.add('is-active');
             renderPants(currentIndex);
         }
+        // Ẩn footer và header của Showroom 3D
+        const promptEl = document.querySelector('.hnmt-portal-footer');
+        const portalHeaderEl = document.querySelector('.hnmt-portal-header');
+        if (promptEl) promptEl.style.display = 'none';
+        if (portalHeaderEl) portalHeaderEl.style.display = 'none';
     };
 
     window.closePantsStudio = function () {
@@ -329,6 +446,7 @@
 
     // Khởi tạo ban đầu
     function init() {
+        ensurePantsStudioInDOM();
         bindEvents();
         renderPants(0);
     }
