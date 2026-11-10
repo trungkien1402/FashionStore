@@ -1392,7 +1392,18 @@
                 onUpdate: () => camera.updateProjectionMatrix()
             });
 
+            ensureFooterSubnote();
             gsap.fromTo('.hnmt-portal-header, .hnmt-portal-footer', { opacity: 0 }, { opacity: 1, duration: 0.8, delay: 0.2 });
+        }
+    }
+
+    function ensureFooterSubnote() {
+        const footer = document.querySelector('.hnmt-portal-footer');
+        if (footer && !footer.querySelector('.hnmt-badge-subnote')) {
+            const subnote = document.createElement('div');
+            subnote.className = 'hnmt-badge-subnote';
+            subnote.textContent = '( Lưu ý: Nhấp vào món đồ bất kỳ để mở phòng trưng bày chi tiết )';
+            footer.appendChild(subnote);
         }
     }
 
