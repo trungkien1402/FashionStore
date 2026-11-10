@@ -7,10 +7,53 @@
     'use strict';
 
     document.addEventListener('DOMContentLoaded', function () {
+        syncHomeCategorySignatures();
         initializeCountdown();
         initializeCartDrawer();
         initializeAjaxAddToCart();
     });
+
+    // 0. Đồng bộ nhãn chữ ký Danh Mục Nổi Bật (Title Case: Women, Girls, Men, Boy)
+    function syncHomeCategorySignatures() {
+        const catGrid = document.querySelector('.urbn-cat-grid');
+        if (!catGrid) return;
+
+        const pillMap = {
+            'GIRLS': 'Girls',
+            'MEN': 'Men',
+            'WOMEN': 'Women',
+            'BOY': 'Boy'
+        };
+
+        catGrid.querySelectorAll('.urbn-cat-card').forEach(card => {
+            const pill = card.querySelector('.urbn-cat-pill');
+            if (pill) {
+                const raw = pill.textContent.trim().toUpperCase();
+                if (pillMap[raw]) {
+                    pill.textContent = pillMap[raw];
+                }
+            }
+        });
+
+        // Sắp xếp thứ tự chuẩn: Women, Girls, Men, Boy
+        const cards = Array.from(catGrid.querySelectorAll('.urbn-cat-card'));
+        const map = {};
+        cards.forEach(c => {
+            const title = (c.getAttribute('data-category-title') || c.getAttribute('asp-route-keyword') || c.querySelector('.urbn-cat-pill')?.textContent || '').toLowerCase();
+            if (title.includes('women')) map['women'] = c;
+            else if (title.includes('girls')) map['girls'] = c;
+            else if (title.includes('men')) map['men'] = c;
+            else if (title.includes('boy')) map['boy'] = c;
+        });
+
+        if (map['women'] && map['girls'] && map['men'] && map['boy']) {
+            catGrid.appendChild(map['women']);
+            catGrid.appendChild(map['girls']);
+            catGrid.appendChild(map['men']);
+            catGrid.appendChild(map['boy']);
+        }
+    }
+    syncHomeCategorySignatures();
 
     // 1. Dynamic Countdown Timer (Act Fast! Offer Expires Soon)
     function initializeCountdown() {
