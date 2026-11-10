@@ -951,8 +951,110 @@
         updateSliderDisplay(-1);
     }
 
-    // --- Thêm vào giỏ hàng ---
-    function addToBag() {
+    const SIZES = ['39', '40', '41', '42', '43', '44'];
+    let selectedSize = '42'; // Mặc định size 42
+
+    // --- Đảm bảo Glassmorphism Size Drawer luôn tồn tại trên DOM ---
+    function ensureSizeDrawerInDOM() {
+        let backdrop = $('#svSizeBackdrop');
+        if (!backdrop) {
+            backdrop = document.createElement('div');
+            backdrop.className = 'sv-size-backdrop';
+            backdrop.id = 'svSizeBackdrop';
+            document.body.appendChild(backdrop);
+            backdrop.onclick = closeSizeDrawer;
+        }
+
+        const controlsPanels = document.querySelectorAll('.sv-controls-panel');
+        controlsPanels.forEach(panel => {
+            let drawer = panel.querySelector('.sv-size-drawer');
+            if (!drawer) {
+                drawer = document.createElement('div');
+                drawer.className = 'sv-size-drawer';
+                drawer.id = 'svSizeDrawer';
+                drawer.innerHTML = `
+                    <div class="sv-size-header">
+                        <h4 class="sv-size-title">CHỌN SIZE GIÀY (EU)</h4>
+                        <button type="button" class="sv-size-close-btn" id="svCloseSizeDrawerBtn" title="Đóng">✕</button>
+                    </div>
+                    <div class="sv-size-product-info">
+                        <span class="sv-size-model-name" id="svSizeModelName">AIR FUTURE</span>
+                        <span class="sv-size-price" id="svSizePrice">0 ₫</span>
+                    </div>
+                    <div class="sv-size-grid" id="svSizeGrid">
+                        <!-- Render danh sách size -->
+                    </div>
+                    <div class="sv-size-hint">
+                        <span>Chuẩn size EU • Hỗ trợ đổi size tận nơi trong 7 ngày</span>
+                    </div>
+                    <button type="button" class="sv-size-confirm-btn" id="svConfirmSizeBtn">
+                        <span id="svConfirmSizeText">XÁC NHẬN (SIZE 42)</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    </button>
+                `;
+                panel.appendChild(drawer);
+
+                const closeBtn = drawer.querySelector('#svCloseSizeDrawerBtn');
+                if (closeBtn) closeBtn.onclick = (e) => { e.stopPropagation(); closeSizeDrawer(); };
+
+                const confirmBtn = drawer.querySelector('#svConfirmSizeBtn');
+                if (confirmBtn) confirmBtn.onclick = (e) => { e.stopPropagation(); confirmAddToCart(); };
+            }
+        });
+    }
+
+    function openSizeDrawer() {
+        ensureSizeDrawerInDOM();
+        const snk = getSneakers()[currentIndex];
+        if (!snk) return;
+
+        const backdrop = $('#svSizeBackdrop');
+        const drawer = $('#svSizeDrawer');
+        if (backdrop) backdrop.classList.add('is-open');
+        if (drawer) drawer.classList.add('is-open');
+
+        // Cập nhật thông tin giày vào popup
+        const nameEl = $('#svSizeModelName');
+        const priceEl = $('#svSizePrice');
+        if (nameEl) nameEl.textContent = `${snk.model} — ${snk.colorway}`;
+        if (priceEl) priceEl.textContent = formatPrice(snk.price);
+
+        // Render các ô size
+        const grid = $('#svSizeGrid');
+        if (grid) {
+            grid.innerHTML = '';
+            SIZES.forEach(sz => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = `sv-size-item ${sz === selectedSize ? 'is-selected' : ''}`;
+                btn.textContent = sz;
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    selectedSize = sz;
+                    grid.querySelectorAll('.sv-size-item').forEach(b => b.classList.remove('is-selected'));
+                    btn.classList.add('is-selected');
+                    const confirmText = $('#svConfirmSizeText');
+                    if (confirmText) confirmText.textContent = `XÁC NHẬN (SIZE ${selectedSize})`;
+                };
+                grid.appendChild(btn);
+            });
+        }
+
+        const confirmText = $('#svConfirmSizeText');
+        if (confirmText) confirmText.textContent = `XÁC NHẬN (SIZE ${selectedSize})`;
+    }
+
+    function closeSizeDrawer() {
+        const backdrop = $('#svSizeBackdrop');
+        const drawer = $('#svSizeDrawer');
+        if (backdrop) backdrop.classList.remove('is-open');
+        if (drawer) drawer.classList.remove('is-open');
+    }
+
+    // Xác nhận thêm vào giỏ hàng kèm size đã chọn
+    function confirmAddToCart() {
+        closeSizeDrawer();
+
         bagCount++;
         const badge = $('#svBagBadge');
         if (badge) {
@@ -960,8 +1062,29 @@
             badge.style.transform = 'scale(1.4)';
             setTimeout(() => badge.style.transform = 'scale(1)', 250);
         }
+
         const snk = getSneakers()[currentIndex];
-        showToast(`Đã thêm ${snk.model} (${snk.colorway}) vào giỏ hàng!`);
+        showToast(`Đã thêm ${snk.model} (Size ${selectedSize}) vào giỏ hàng!`);
+
+        // Hiệu ứng phản hồi trên nút Thêm vào giỏ
+        const addBagBtn = $('#svAddBagBtn');
+        if (addBagBtn) {
+            const originalHTML = addBagBtn.innerHTML;
+            addBagBtn.innerHTML = `<span>ĐÃ THÊM (SIZE ${selectedSize}) ✓</span>`;
+            addBagBtn.style.background = '#FFFFFF';
+            addBagBtn.style.color = '#000000';
+            setTimeout(() => {
+                addBagBtn.innerHTML = originalHTML;
+                addBagBtn.style.background = '';
+                addBagBtn.style.color = '';
+            }, 2200);
+        }
+    }
+
+
+    // --- Thêm vào giỏ hàng: Mở Popup chọn Size kính mờ chuẩn Nike SNKRS ---
+    function addToBag() {
+        openSizeDrawer();
     }
 
     function showToast(msg) {
@@ -1002,7 +1125,12 @@
         const toggleBtn = $('#svToggleViewBtn');
         if (toggleBtn) {
             toggleBtn.onclick = () => {
-                if (isSliderView) closeSliderView();
+                const drawer = $('#svSizeDrawer');
+            if (drawer && drawer.classList.contains('is-open')) {
+                closeSizeDrawer();
+                return;
+            }
+            if (isSliderView) closeSliderView();
                 else openSliderView(currentIndex);
             };
         }
@@ -1025,7 +1153,12 @@
             if (e.key === 'ArrowRight') nextSneaker();
             else if (e.key === 'ArrowLeft') prevSneaker();
             else if (e.key === 'Escape') {
-                if (isSliderView) closeSliderView();
+                const drawer = $('#svSizeDrawer');
+            if (drawer && drawer.classList.contains('is-open')) {
+                closeSizeDrawer();
+                return;
+            }
+            if (isSliderView) closeSliderView();
                 else if (typeof window.closeSneakerShowcase === 'function') window.closeSneakerShowcase();
             }
         });
@@ -1089,6 +1222,7 @@
     // Tự khởi chạy an toàn
     function init() {
         ensureVaultSwitcherInDOM();
+        ensureSizeDrawerInDOM();
         localizeAllLabels();
         renderGrid();
         bindEvents();
