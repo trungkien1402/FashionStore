@@ -253,7 +253,7 @@
     <div id="hnmtPantsOverlay" class="hnmt-pants-studio-wrap" aria-hidden="true">
         <div class="ps-app" id="psApp">
 
-            <!-- HEADER -->
+            <!-- 1. HEADER -->
             <header class="ps-header">
                 <nav class="ps-nav-tabs" aria-label="Bộ lọc danh mục quần">
                     <button type="button" class="ps-tab-btn is-active" data-cat="all">Tất cả</button>
@@ -278,24 +278,50 @@
                 </div>
             </header>
 
-            <!-- MAIN STAGE (3 CỘT LOOKBOOK THỜI TRANG) -->
+            <!-- 2. MAIN STAGE (3 CỘT LOOKBOOK THỜI TRANG THỰC TẾ) -->
             <main class="ps-main-stage">
-
-                <!-- CỘT TRÁI: EDITORIAL COPY & CTA -->
+                <!-- CỘT TRÁI: EDITORIAL & GARMENT SPECS -->
                 <section class="ps-left-col">
                     <h1 class="ps-headline">
                         <span id="psHeadline1">Wear Confidence.</span>
                         <span id="psHeadline2">Define Your Style.</span>
                     </h1>
                     <p class="ps-desc" id="psDesc">
-                        Khám phá thiết kế quần Cargo & Denim cao cấp — Phom dáng chuẩn mực, thoải mái vận động và nâng tầm phong thái hàng ngày.
+                        Khám phá thiết kế quần Baggy Cargo xám khói ứng dụng công nghệ Acid-Wash tạo vân loang độc bản. Cấu trúc túi hộp 3D vát góc sắc sảo mang đậm hơi thở streetwear quân đội tân thời.
                     </p>
-                    <div class="ps-cta-wrap">
-                        <button type="button" class="ps-cta-btn" id="psAddToCartBtn">
-                            <span>THÊM VÀO GIỎ</span>
-                            <i class="bi bi-arrow-right"></i>
-                        </button>
+
+                    <!-- BẢNG THÔNG SỐ VẢI KỸ THUẬT (SPECS) -->
+                    <div class="ps-specs-card">
+                        <div class="ps-spec-item">
+                            <i class="bi bi-aspect-ratio ps-spec-icon"></i>
+                            <div class="ps-spec-content">
+                                <span class="ps-spec-label">Phom Dáng</span>
+                                <span class="ps-spec-val" id="psSpecFit">Baggy Relaxed (Ống suông rộng)</span>
+                            </div>
+                        </div>
+                        <div class="ps-spec-item">
+                            <i class="bi bi-layers ps-spec-icon"></i>
+                            <div class="ps-spec-content">
+                                <span class="ps-spec-label">Chất Liệu</span>
+                                <span class="ps-spec-val" id="psSpecFabric">100% Canvas Heavy-Wash (13.5oz)</span>
+                            </div>
+                        </div>
+                        <div class="ps-spec-item">
+                            <i class="bi bi-nut ps-spec-icon"></i>
+                            <div class="ps-spec-content">
+                                <span class="ps-spec-label">Khóa & Phụ Liệu</span>
+                                <span class="ps-spec-val" id="psSpecHdw">Khóa zip YKK đồng đúc, chốt gấu</span>
+                            </div>
+                        </div>
+                        <div class="ps-spec-item">
+                            <i class="bi bi-shield-check ps-spec-icon"></i>
+                            <div class="ps-spec-content">
+                                <span class="ps-spec-label">Đặc Tính</span>
+                                <span class="ps-spec-val" id="psSpecFeat">Đứng form tự nhiên, chống sờn rách</span>
+                            </div>
+                        </div>
                     </div>
+
                     <div class="ps-social-row">
                         <a href="https://instagram.com" target="_blank" rel="noopener" class="ps-social-link" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
                         <a href="https://twitter.com" target="_blank" rel="noopener" class="ps-social-link" aria-label="X / Twitter"><i class="bi bi-twitter-x"></i></a>
@@ -304,15 +330,18 @@
                     </div>
                 </section>
 
-                <!-- CỘT GIỮA: SÂN KHẤU QUẦN NỔI KHỐI 3D & MŨI TÊN ĐIỀU HƯỚNG -->
+                <!-- CỘT GIỮA: SÂN KHẤU QUẦN 3D VỚI SPOTLIGHT GLOW LƯNG QUẦN -->
                 <section class="ps-center-col">
                     <button type="button" class="ps-nav-arrow prev" id="psPrevBtn" aria-label="Mẫu quần trước" title="Mẫu trước">
                         <i class="bi bi-chevron-left"></i>
                     </button>
 
+                    <!-- QUẦNG SÁNG STUDIO TÔN SẢN PHẨM -->
+                    <div class="ps-spotlight-glow" aria-hidden="true"></div>
+
                     <div class="ps-hero-stage">
                         <div class="ps-hero-img-wrap">
-                            <img src="/images/pants/cargo-acid-wash.png?v=studio_v1" alt="Quần thời trang" class="ps-hero-img is-floating" id="psHeroImg" />
+                            <img src="/images/pants/cargo-acid-wash.png?v=studio_v2" alt="Quần thời trang" class="ps-hero-img is-floating" id="psHeroImg" />
                             <div class="ps-hero-shadow" id="psHeroShadow"></div>
                         </div>
                     </div>
@@ -326,29 +355,84 @@
                     </div>
                 </section>
 
-                <!-- CỘT PHẢI: GIÁ BÁN, SIZE PICKER & HÀNG ĐỢI XEM TRƯỚC -->
+                <!-- CỘT PHẢI: KHỐI MUA HÀNG ĐỒNG BỘ 1 CHẠM -->
                 <section class="ps-right-col">
-                    <div class="ps-price-box">
-                        <span class="ps-sale-price" id="psSalePrice">650.000 ₫</span>
-                        <span class="ps-orig-price" id="psOrigPrice">890.000 ₫</span>
-                    </div>
+                    <div class="ps-purchase-card">
+                        <span class="ps-cat-badge" id="psCatBadge">Cargo Streetwear</span>
+                        <h2 class="ps-product-title" id="psProductTitle">Quần Baggy Cargo Acid-Wash Xám Khói</h2>
 
-                    <div class="ps-size-box">
-                        <span class="ps-size-label">CHỌN SIZE QUẦN</span>
-                        <div class="ps-size-pills" id="psSizePills">
-                            <!-- Render tự động bởi pants-studio.js -->
+                        <div class="ps-price-box">
+                            <span class="ps-sale-price" id="psSalePrice">650.000 ₫</span>
+                            <span class="ps-orig-price" id="psOrigPrice">890.000 ₫</span>
+                            <span class="ps-discount-tag" id="psDiscountTag">-27%</span>
                         </div>
-                    </div>
 
-                    <div class="ps-queue-box">
-                        <div class="ps-queue-list" id="psQueueList">
-                            <!-- Render thumbnail hàng đợi mini bởi pants-studio.js -->
+                        <!-- CHỌN SIZE QUẦN -->
+                        <div class="ps-size-box">
+                            <div class="ps-size-header">
+                                <span class="ps-size-label">CHỌN KÍCH CỠ</span>
+                                <button type="button" class="ps-size-guide-btn" id="psSizeGuideBtn">Bảng size</button>
+                            </div>
+                            <div class="ps-size-pills" id="psSizePills">
+                                <!-- Render tự động bởi pants-studio.js -->
+                            </div>
+                        </div>
+
+                        <!-- NÚT THÊM VÀO GIỎ NGAY DƯỚI BẢNG SIZE -->
+                        <div class="ps-cta-wrap">
+                            <button type="button" class="ps-cta-btn" id="psAddToCartBtn">
+                                <span>THÊM VÀO GIỎ HÀNG</span>
+                                <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </div>
+
+                        <!-- CHÍNH SÁCH MUA HÀNG -->
+                        <div class="ps-perks-row">
+                            <span><i class="bi bi-shield-check"></i> Chính hãng 100%</span>
+                            <span><i class="bi bi-truck"></i> Giao 2-3 ngày</span>
+                            <span><i class="bi bi-arrow-repeat"></i> Đổi trả 30 ngày</span>
+                        </div>
+
+                        <!-- HÀNG ĐỢI XEM TRƯỚC -->
+                        <div class="ps-queue-box">
+                            <span class="ps-queue-label">SẮP CHIẾU TIẾP THEO</span>
+                            <div class="ps-queue-list" id="psQueueList">
+                                <!-- Render thumbnail hàng đợi mini bởi pants-studio.js -->
+                            </div>
                         </div>
                     </div>
                 </section>
-
             </main>
 
+            <!-- 3. POPUP MODAL BẢNG SIZE -->
+            <div class="ps-size-modal-backdrop" id="psSizeModalBackdrop" role="dialog" aria-modal="true" aria-label="Bảng quy đổi kích cỡ quần">
+                <div class="ps-size-modal">
+                    <div class="ps-size-modal-header">
+                        <h3 class="ps-size-modal-title">BẢNG QUY ĐỔI KÍCH CỠ QUẦN HNMTSHOP</h3>
+                        <button type="button" class="ps-size-modal-close" id="psSizeModalClose" aria-label="Đóng">&times;</button>
+                    </div>
+                    <table class="ps-size-table">
+                        <thead>
+                            <tr>
+                                <th>Size</th>
+                                <th>Chiều Cao (cm)</th>
+                                <th>Cân Nặng (kg)</th>
+                                <th>Vòng Eo (cm)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>29</strong></td><td>160 - 168</td><td>50 - 58</td><td>73 - 76</td></tr>
+                            <tr><td><strong>30</strong></td><td>165 - 172</td><td>59 - 65</td><td>77 - 80</td></tr>
+                            <tr><td><strong>31</strong></td><td>168 - 176</td><td>66 - 72</td><td>81 - 84</td></tr>
+                            <tr><td><strong>32</strong></td><td>172 - 180</td><td>73 - 78</td><td>85 - 88</td></tr>
+                            <tr><td><strong>34</strong></td><td>175 - 185</td><td>79 - 86</td><td>89 - 94</td></tr>
+                        </tbody>
+                    </table>
+                    <p class="ps-size-hint-text">
+                        * Khuyên dùng: Nếu bạn phân vân giữa 2 size hoặc thích mặc phom rộng phóng khoáng (Baggy/Wide-Leg), hãy chọn tăng 1 size.
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 
