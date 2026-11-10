@@ -386,8 +386,9 @@
     line-height: 0.9;
     letter-spacing: -0.015em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.94);
-    text-shadow: 0 12px 45px rgba(0, 0, 0, 0.22);
+    color: #ffffff;
+    text-shadow: none !important;
+    background: transparent !important;
     white-space: nowrap;
     display: inline-block;
     transition: transform 0.65s var(--sv-ease), opacity 0.5s var(--sv-ease);
@@ -415,9 +416,9 @@
 }
 
 .sv-hero-img {
-    height: clamp(360px, 52vh, 560px);
+    height: clamp(390px, 58vh, 620px);
     width: auto;
-    max-width: 76vw;
+    max-width: 80vw;
     object-fit: contain;
     filter: drop-shadow(0 28px 38px rgba(0, 0, 0, 0.55));
     transition: transform 0.65s var(--sv-ease), opacity 0.5s var(--sv-ease);
@@ -432,9 +433,9 @@
     bottom: -18px;
     left: 50%;
     transform: translateX(-50%) rotate(-10deg);
-    width: 55%;
+    width: 58%;
     height: 22px;
-    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.52) 0%, rgba(0, 0, 0, 0) 70%);
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 70%);
     border-radius: 50%;
     filter: blur(10px);
     pointer-events: none;
