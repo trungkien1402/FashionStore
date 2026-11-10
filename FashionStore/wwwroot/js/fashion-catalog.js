@@ -647,9 +647,22 @@
         }
     };
 
+    // Chuẩn hóa tên luồng (không phân biệt chữ hoa, chữ thường hay biến thể)
+    function normalizeStream(stream) {
+        if (!stream) return 'Men';
+        const s = String(stream).trim().toLowerCase();
+        if (s.includes('women') || s === 'w' || s === 'nu') return 'Women';
+        if (s.includes('girl') || s === 'g' || s === 'be gai') return 'Girls';
+        if (s.includes('boy') || s === 'b' || s === 'be trai') return 'Boy';
+        return 'Men';
+    }
+
+    window.normalizeFashionStream = normalizeStream;
+
     // Hàm lấy danh sách theo Luồng & Danh mục
     window.getFashionStreamItems = function (stream, category) {
-        const streamData = window.HNMT_FASHION_CATALOG[stream] || window.HNMT_FASHION_CATALOG['Men'];
+        const streamKey = normalizeStream(stream || window.HNMT_CURRENT_STREAM);
+        const streamData = window.HNMT_FASHION_CATALOG[streamKey] || window.HNMT_FASHION_CATALOG['Men'];
         if (!category) return streamData;
         return streamData[category] || [];
     };

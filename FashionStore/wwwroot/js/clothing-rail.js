@@ -162,8 +162,9 @@
     let products = racks[0].products;
 
     function syncProductsFromCatalog() {
-        if (window.HNMT_CURRENT_STREAM && window.getFashionStreamItems) {
-            const streamItems = window.getFashionStreamItems(window.HNMT_CURRENT_STREAM, currentCategory);
+        const streamKey = (window.normalizeFashionStream ? window.normalizeFashionStream(window.HNMT_CURRENT_STREAM) : (window.HNMT_CURRENT_STREAM || 'Men'));
+        if (window.getFashionStreamItems) {
+            const streamItems = window.getFashionStreamItems(streamKey, currentCategory);
             if (streamItems && streamItems.length > 0) {
                 products = streamItems.map((item, i) => ({
                     name: item.name,
@@ -274,18 +275,10 @@
         if (stage) stage.classList.add('is-switching');
         
         setTimeout(() => {
-            currentRackIdx = (currentRackIdx + dir + racks.length) % racks.length;
-            const currentRack = racks[currentRackIdx];
-            products = currentRack.products;
-            
-            // Cập nhật Badge Sào & Tiêu đề
-            const eyebrowEl = $('.rail-eyebrow');
-            if (eyebrowEl) eyebrowEl.textContent = currentRack.eyebrow;
-            
-            const heroTitleEl = $('.rail-hero-title');
-            if (heroTitleEl) heroTitleEl.innerHTML = currentRack.heroTitle;
-            
-            // Render lại sào mới
+            // Chuyển đổi qua lại giữa Áo và Quần của Luồng hiện tại
+            currentCategory = (currentCategory === 'ao' ? 'quan' : 'ao');
+            syncProductsFromCatalog();
+            updateRailHeaderTitle();
             makeRail();
             
             const scroll = $('#railScroll');
@@ -424,7 +417,14 @@
         }
     }
 
-    function openClothingRail() {
+    function openClothingRail(category) {
+        if (category) {
+            currentCategory = category;
+        }
+        syncProductsFromCatalog();
+        updateRailHeaderTitle();
+        makeRail();
+
         const rackOverlayEl = document.getElementById('hnmtRackOverlay');
         if (rackOverlayEl) {
             rackOverlayEl.classList.add('is-active');
@@ -446,11 +446,26 @@
 
     function updateRailHeaderTitle() {
         const brand = $('.rail-brand');
-        const stream = (window.HNMT_CURRENT_STREAM || 'Men').toUpperCase();
+        const streamKey = (window.normalizeFashionStream ? window.normalizeFashionStream(window.HNMT_CURRENT_STREAM) : (window.HNMT_CURRENT_STREAM || 'Men'));
+        const stream = streamKey.toUpperCase();
         if (brand) {
             brand.innerHTML = currentCategory === 'quan'
                 ? `<span>Kệ Quần</span><span>${stream}</span>`
                 : `<span>Sào Áo</span><span>${stream}</span>`;
+        }
+        const eyebrow = $('.rail-eyebrow');
+        if (eyebrow) {
+            eyebrow.textContent = `BỘ SƯU TẬP ${stream}`;
+        }
+        const captionHeading = $('#captionTitle');
+        const captionSub = $('#captionDetail');
+        if (captionHeading) {
+            captionHeading.textContent = currentCategory === 'quan'
+                ? `Kệ Quần ${streamKey} Tuyển Chọn`
+                : `Sào Áo ${streamKey} Thiết Kế`;
+        }
+        if (captionSub) {
+            captionSub.textContent = `${products.length} mẫu cao cấp dành riêng cho ${streamKey} — Lướt sào hoặc chọn để xem chi tiết.`;
         }
     }
 

@@ -1367,35 +1367,34 @@
     // --- Thiết lập và chuyển đổi 4 Luồng Thời Trang (Women // Girls // Men // Boy) ---
     function setStream(stream) {
         if (!stream) return;
-        window.HNMT_CURRENT_STREAM = stream;
+        const norm = (window.normalizeFashionStream ? window.normalizeFashionStream(stream) : stream);
+        window.HNMT_CURRENT_STREAM = norm;
         const btns = document.querySelectorAll('.hnmt-stream-btn');
         btns.forEach(b => {
-            b.classList.toggle('is-active', b.getAttribute('data-stream').toLowerCase() === stream.toLowerCase());
+            b.classList.toggle('is-active', (b.getAttribute('data-stream') || '').toLowerCase() === norm.toLowerCase());
         });
 
         const promptEl = document.querySelector('.hnmt-badge-prompt');
         if (promptEl) {
-            promptEl.textContent = `BỘ SƯU TẬP ${stream.toUpperCase()} // CHỌN 1 MÓN ĐỒ`;
+            promptEl.textContent = `BỘ SƯU TẬP ${norm.toUpperCase()} // CHỌN 1 MÓN ĐỒ`;
         }
 
         if (window.ClothingRail && typeof window.ClothingRail.setStream === 'function') {
-            window.ClothingRail.setStream(stream);
+            window.ClothingRail.setStream(norm);
         }
         if (window.SneakerVault && typeof window.SneakerVault.reloadStream === 'function') {
             window.SneakerVault.reloadStream();
         }
     }
+    window.setFashionStream = setStream;
 
     // --- Mở / Đóng Showroom với hiệu ứng Zoom-Out từ cột giữa chuẩn video 1107.mp4 ---
     function openPortal(targetAudience) {
         if (!portalEl) return;
         isPortalOpen = true;
 
-        if (targetAudience) {
-            setStream(targetAudience);
-        } else {
-            setStream(window.HNMT_CURRENT_STREAM || 'Men');
-        }
+        const target = targetAudience || window.HNMT_CURRENT_STREAM || 'Men';
+        setStream(target);
 
         portalEl.classList.add('is-active');
         portalEl.setAttribute('aria-hidden', 'false');
@@ -1408,6 +1407,13 @@
         onResize();
         cancelAnimationFrame(animId);
         render();
+
+        if (window.ClothingRail && typeof window.ClothingRail.setStream === 'function') {
+            window.ClothingRail.setStream(target);
+        }
+        if (window.SneakerVault && typeof window.SneakerVault.reloadStream === 'function') {
+            window.SneakerVault.reloadStream();
+        }
 
         if (window.gsap) {
             camera.position.set(0, 0.12, 3.20);
@@ -1505,14 +1511,17 @@
                 return;
             }
 
-            const block = e.target.closest('[data-open-chile-portal], .hnmt-cat-block');
+            const block = e.target.closest('[data-open-chile-portal], .hnmt-cat-block, .hnmt-cat-card, .urbn-cat-card');
             if (!block) return;
 
             if (block.closest('#hnmtChilePortal')) return;
 
             e.preventDefault();
             e.stopPropagation();
-            const aud = block.getAttribute('data-category-title') || 'Men';
+            const aud = block.getAttribute('data-category-title') || 
+                        block.getAttribute('data-category') || 
+                        block.querySelector('.urbn-cat-pill, .hnmt-card-pill')?.textContent?.trim() || 
+                        'Men';
             openPortal(aud);
         }, true);
     }
