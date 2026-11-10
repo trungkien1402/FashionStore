@@ -216,7 +216,7 @@
                 heroImg.src = snk.image;
                 heroImg.alt = snk.model;
                 heroImg.style.opacity = '1';
-                heroImg.style.transform = 'translate(0, 0) scale(1) rotate(-18deg)';
+                heroImg.style.transform = 'translate(0, 0) scale(1) rotate(-15deg)';
             }
             if (heroShadow) {
                 heroShadow.style.opacity = '1';
@@ -227,7 +227,7 @@
                 specsPanel.style.transform = 'translate(0, 0)';
             }
         } else {
-            // Hiệu ứng Slide-In 2D mượt mà chuẩn Smart Animate (Giữ góc nghiêng -18deg nâng đế)
+            // Hiệu ứng Slide-In 2D mượt mà chuẩn Smart Animate (Giữ góc nghiêng -15deg vừa vặn)
             const slideOffset = direction > 0 ? 80 : -80;
 
             if (giantTitle) {
@@ -236,7 +236,7 @@
             }
             if (heroImg) {
                 heroImg.style.opacity = '0';
-                heroImg.style.transform = `translateX(${slideOffset}px) scale(0.92) rotate(-18deg)`;
+                heroImg.style.transform = `translateX(${slideOffset}px) scale(0.92) rotate(-15deg)`;
             }
             if (heroShadow) {
                 heroShadow.style.opacity = '0';
@@ -257,7 +257,7 @@
                     heroImg.src = snk.image;
                     heroImg.alt = snk.model;
                     heroImg.style.opacity = '1';
-                    heroImg.style.transform = 'translate(0, 0) scale(1) rotate(-18deg)';
+                    heroImg.style.transform = 'translate(0, 0) scale(1) rotate(-15deg)';
                 }
                 if (heroShadow) {
                     heroShadow.style.opacity = '1';

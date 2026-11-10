@@ -345,6 +345,8 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    padding-top: 85px;
+    box-sizing: border-box;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.5s var(--sv-ease);
@@ -365,10 +367,10 @@
     visibility: visible !important;
 }
 
-/* GIANT BACKGROUND TYPOGRAPHY (Thu nhỏ vừa vặn sau thân giày, không bị tràn cắt) */
+/* TYPOGRAPHY NẰM SAU THÂN GIÀY (To đậm sắc nét, cân xứng hoàn hảo ngay tâm sân khấu) */
 .sv-giant-title-track {
     position: absolute;
-    top: 48%;
+    top: calc(50% + 15px);
     left: 50%;
     transform: translate(-50%, -50%);
     width: 100vw;
@@ -376,24 +378,24 @@
     z-index: 1;
     pointer-events: none;
     user-select: none;
-    overflow: visible;
+    overflow: hidden;
 }
 
 .sv-giant-title {
     font-family: 'Montserrat', sans-serif;
-    font-size: clamp(52px, 8.8vw, 125px);
+    font-size: clamp(75px, 11.5vw, 160px);
     font-weight: 900;
-    line-height: 0.95;
-    letter-spacing: -0.02em;
+    line-height: 0.9;
+    letter-spacing: -0.015em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.92);
-    text-shadow: 0 10px 40px rgba(0, 0, 0, 0.22);
+    color: rgba(255, 255, 255, 0.94);
+    text-shadow: 0 12px 45px rgba(0, 0, 0, 0.22);
     white-space: nowrap;
     display: inline-block;
     transition: transform 0.65s var(--sv-ease), opacity 0.5s var(--sv-ease);
 }
 
-/* SNEAKER STAGE (Giày phóng to nổi bật, nghiêng góc ~-18deg nhấc đế lên như hình mẫu) */
+/* SNEAKER STAGE (Giày vừa vặn, cân đối hoàn hảo chính giữa sân khấu, nghiêng góc -15deg) */
 .sv-stage {
     flex: 1;
     position: relative;
@@ -402,6 +404,7 @@
     justify-content: center;
     z-index: 5;
     pointer-events: none;
+    min-height: 0;
 }
 
 .sv-hero-wrap {
@@ -413,28 +416,28 @@
 }
 
 .sv-hero-img {
-    height: clamp(440px, 68vh, 740px);
+    height: clamp(300px, 44vh, 480px);
     width: auto;
-    max-width: 86vw;
+    max-width: 68vw;
     object-fit: contain;
-    filter: drop-shadow(0 32px 42px rgba(0, 0, 0, 0.58));
+    filter: drop-shadow(0 26px 36px rgba(0, 0, 0, 0.55));
     transition: transform 0.65s var(--sv-ease), opacity 0.5s var(--sv-ease);
     user-select: none;
     pointer-events: none;
-    transform: rotate(-18deg);
+    transform: rotate(-15deg);
     animation: svHeroFloat 5s ease-in-out infinite alternate;
 }
 
 .sv-hero-shadow {
     position: absolute;
-    bottom: -12px;
+    bottom: -16px;
     left: 50%;
     transform: translateX(-50%) rotate(-10deg);
-    width: 58%;
-    height: 24px;
-    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0) 70%);
+    width: 55%;
+    height: 20px;
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.52) 0%, rgba(0, 0, 0, 0) 70%);
     border-radius: 50%;
-    filter: blur(8px);
+    filter: blur(10px);
     pointer-events: none;
     transition: transform 0.65s var(--sv-ease), opacity 0.5s ease;
 }
@@ -559,7 +562,7 @@
 .sv-color-swatches {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 }
 
 .sv-swatches-label {
@@ -568,23 +571,36 @@
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: rgba(255, 255, 255, 0.75);
-    margin-right: 4px;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.sv-swatches-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .sv-color-dot {
-    width: 15px;
-    height: 15px;
+    display: block;
+    width: 14px;
+    height: 14px;
+    min-width: 14px;
+    min-height: 14px;
     border-radius: 50%;
-    border: 2px solid transparent;
+    border: 1.5px solid rgba(255, 255, 255, 0.45);
     cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+    flex-shrink: 0;
+    box-sizing: border-box;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
 .sv-color-dot:hover,
 .sv-color-dot.is-active {
     transform: scale(1.25);
-    box-shadow: 0 0 0 2px #ffffff, 0 2px 8px rgba(0, 0, 0, 0.4);
+    border-color: #ffffff;
+    box-shadow: 0 0 0 2px #ffffff, 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
 .sv-add-bag-btn {
@@ -616,7 +632,7 @@
 }
 
 /* ==========================================================================
-   ANIMATIONS & KEYFRAMES (Giữ góc nghiêng -18deg khi bay lơ lửng)
+   ANIMATIONS & KEYFRAMES (Giữ góc nghiêng -15deg khi bay lơ lửng)
    ========================================================================== */
 @keyframes svLevitate {
     0% {
@@ -629,10 +645,10 @@
 
 @keyframes svHeroFloat {
     0% {
-        transform: translateY(0) rotate(-18deg);
+        transform: translateY(0) rotate(-15deg);
     }
     100% {
-        transform: translateY(-12px) rotate(-18deg);
+        transform: translateY(-10px) rotate(-15deg);
     }
 }
 
