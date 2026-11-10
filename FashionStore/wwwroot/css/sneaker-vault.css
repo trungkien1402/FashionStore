@@ -86,6 +86,8 @@
     padding: 0 clamp(20px, 4vw, 60px);
     position: relative;
     z-index: 30;
+    transition: transform 0.65s var(--sv-ease), opacity 0.5s var(--sv-ease);
+    will-change: transform, opacity;
 }
 
 .sv-header-left {
@@ -373,7 +375,10 @@
     left: 50%;
     transform: translate(-50%, -50%);
     width: 100vw;
-    text-align: center;
+    height: clamp(90px, 13vw, 180px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     z-index: 1;
     pointer-events: none;
     user-select: none;
@@ -381,6 +386,7 @@
 }
 
 .sv-giant-title {
+    position: absolute;
     font-family: 'Montserrat', sans-serif;
     font-size: clamp(85px, 12.5vw, 170px);
     font-weight: 900;
@@ -391,36 +397,43 @@
     text-shadow: none !important;
     background: transparent !important;
     white-space: nowrap;
-    display: inline-block;
-    transition: transform 0.55s var(--sv-ease), opacity 0.45s var(--sv-ease);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(100px);
+    transition: transform 0.62s var(--sv-ease), opacity 0.45s var(--sv-ease), visibility 0.62s;
     will-change: transform, opacity;
+    margin: 0;
 }
 
-.sv-giant-title.sv-title-exit-left {
-    transform: translateX(-70px);
+.sv-giant-title.is-active {
+    opacity: 0.94;
+    visibility: visible;
+    transform: translateX(0);
+}
+
+.sv-giant-title.is-exiting-left {
+    transform: translateX(-100px);
     opacity: 0;
+    visibility: visible;
 }
 
-.sv-giant-title.sv-title-exit-right {
-    transform: translateX(70px);
+.sv-giant-title.is-exiting-right {
+    transform: translateX(100px);
     opacity: 0;
+    visibility: visible;
 }
 
-.sv-giant-title.sv-title-enter-right {
-    transform: translateX(70px) !important;
+.sv-giant-title.is-entering-left {
+    transform: translateX(-100px) !important;
     opacity: 0 !important;
+    visibility: visible !important;
     transition: none !important;
 }
 
-.sv-giant-title.sv-title-enter-left {
-    transform: translateX(-70px) !important;
+.sv-giant-title.is-entering-right {
+    transform: translateX(100px) !important;
     opacity: 0 !important;
-    transition: none !important;
-}
-
-.sv-giant-title.sv-title-enter-grid {
-    transform: scale(0.85) !important;
-    opacity: 0 !important;
+    visibility: visible !important;
     transition: none !important;
 }
 
@@ -435,6 +448,60 @@
     justify-content: center;
     z-index: 5;
     pointer-events: none;
+    overflow: hidden;
+}
+
+/* Từng slide độc lập của 6 siêu phẩm sneaker */
+.sv-slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(160px) scale(0.88);
+    transition: transform 0.65s var(--sv-spring), opacity 0.5s var(--sv-ease), visibility 0.65s;
+    will-change: transform, opacity;
+}
+
+.sv-slide.is-active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateX(0) scale(1);
+    z-index: 10;
+}
+
+.sv-slide.is-exiting-left {
+    transform: translateX(-160px) scale(0.88);
+    opacity: 0;
+    visibility: visible;
+    z-index: 5;
+}
+
+.sv-slide.is-exiting-right {
+    transform: translateX(160px) scale(0.88);
+    opacity: 0;
+    visibility: visible;
+    z-index: 5;
+}
+
+.sv-slide.is-entering-left {
+    transform: translateX(-160px) scale(0.88) !important;
+    opacity: 0 !important;
+    visibility: visible !important;
+    transition: none !important;
+}
+
+.sv-slide.is-entering-right {
+    transform: translateX(160px) scale(0.88) !important;
+    opacity: 0 !important;
+    visibility: visible !important;
+    transition: none !important;
 }
 
 .sv-hero-wrap {
@@ -443,37 +510,8 @@
     align-items: center;
     justify-content: center;
     pointer-events: none;
-    transition: transform 0.58s var(--sv-spring), opacity 0.45s var(--sv-ease);
+    transition: transform 0.75s var(--sv-spring), opacity 0.55s var(--sv-ease);
     will-change: transform, opacity;
-}
-
-/* Các trạng thái animation slide 1:1 theo video Figma Smart Animate */
-.sv-hero-wrap.sv-anim-exit-left {
-    transform: translateX(-160px) scale(0.88);
-    opacity: 0;
-}
-
-.sv-hero-wrap.sv-anim-exit-right {
-    transform: translateX(160px) scale(0.88);
-    opacity: 0;
-}
-
-.sv-hero-wrap.sv-anim-enter-right {
-    transform: translateX(160px) scale(0.88) !important;
-    opacity: 0 !important;
-    transition: none !important;
-}
-
-.sv-hero-wrap.sv-anim-enter-left {
-    transform: translateX(-160px) scale(0.88) !important;
-    opacity: 0 !important;
-    transition: none !important;
-}
-
-.sv-hero-wrap.sv-anim-entry-grid {
-    transform: scale(0.72) translateY(36px) !important;
-    opacity: 0 !important;
-    transition: none !important;
 }
 
 .sv-hero-img {
@@ -578,6 +616,63 @@
     flex-direction: column;
     align-items: flex-end;
     gap: 12px;
+    transition: transform 0.65s var(--sv-ease), opacity 0.5s var(--sv-ease);
+    will-change: transform, opacity;
+}
+
+/* ==========================================================================
+   ENTRY ANIMATION: KHI CHỌN 1 ĐÔI TỪ LƯỚI "TẤT CẢ GIÀY"
+   Đôi giày từ từ phóng to vào giữa (scale: 0.25 -> 1.0)
+   Chữ và nút chạy từ 2 bên và phía trên vào (chuẩn video)
+   ========================================================================== */
+.sv-entry-animating .sv-header {
+    transform: translateY(-60px) !important;
+    opacity: 0 !important;
+}
+
+.sv-entry-animating .sv-giant-title.is-active {
+    transform: translateY(-40px) scale(0.75) !important;
+    opacity: 0 !important;
+}
+
+.sv-entry-animating .sv-slide.is-active .sv-hero-wrap {
+    transform: scale(0.25) translateY(30px) !important;
+    opacity: 0 !important;
+}
+
+.sv-entry-animating .sv-specs-panel {
+    transform: translateX(-140px) !important;
+    opacity: 0 !important;
+}
+
+.sv-entry-animating .sv-controls-panel {
+    transform: translateX(140px) !important;
+    opacity: 0 !important;
+}
+
+.sv-entry-settled .sv-header {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.sv-entry-settled .sv-giant-title.is-active {
+    transform: translateY(0) scale(1);
+    opacity: 0.94;
+}
+
+.sv-entry-settled .sv-slide.is-active .sv-hero-wrap {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+
+.sv-entry-settled .sv-specs-panel {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.sv-entry-settled .sv-controls-panel {
+    transform: translateX(0);
+    opacity: 1;
 }
 
 .sv-arrow-group {

@@ -106,6 +106,45 @@
         return num.toLocaleString('vi-VN') + ' ₫';
     }
 
+    // --- Preload tất cả hình ảnh để chuyển cảnh tức thì không giật lag ---
+    function preloadSneakerImages() {
+        SNEAKERS.forEach(snk => {
+            const img = new Image();
+            img.src = snk.image;
+        });
+    }
+
+    // --- Khởi tạo 6 Slide và 6 Title typography độc lập trong Stage ---
+    function renderSlider() {
+        const stage = $('#svStage');
+        const titleTrack = $('#svTitleTrack');
+        if (!stage || !titleTrack) return;
+
+        stage.innerHTML = '';
+        titleTrack.innerHTML = '';
+
+        SNEAKERS.forEach((snk, idx) => {
+            // Title
+            const titleEl = document.createElement('h2');
+            titleEl.className = `sv-giant-title ${idx === currentIndex ? 'is-active' : ''}`;
+            titleEl.setAttribute('data-idx', String(idx));
+            titleEl.textContent = snk.model;
+            titleTrack.appendChild(titleEl);
+
+            // Slide
+            const slideEl = document.createElement('div');
+            slideEl.className = `sv-slide ${idx === currentIndex ? 'is-active' : ''}`;
+            slideEl.setAttribute('data-idx', String(idx));
+            slideEl.innerHTML = `
+                <div class="sv-hero-wrap">
+                    <img src="${snk.image}" alt="${snk.model}" class="sv-hero-img" />
+                    <div class="sv-hero-shadow"></div>
+                </div>
+            `;
+            stage.appendChild(slideEl);
+        });
+    }
+
     // --- Khởi tạo lưới 6 đôi ban đầu (Grid Overview) ---
     function renderGrid() {
         const grid = $('#svGrid');
@@ -125,81 +164,12 @@
                     <div class="sv-item-shadow"></div>
                 </div>
             `;
-            // Click trực tiếp vào đôi giày để mở chi tiết
+            // Click trực tiếp vào đôi giày để mở chi tiết với hiệu ứng phóng to
             item.onclick = function (e) {
                 e.stopPropagation();
                 openSliderView(idx);
             };
             grid.appendChild(item);
-        });
-    }
-
-    // --- Chuyển cảnh: Mở chi tiết Slider ---
-    function openSliderView(idx) {
-        currentIndex = idx;
-        isSliderView = true;
-
-        const gridContainer = $('#svGridContainer');
-        const sliderContainer = $('#svSliderContainer');
-        const toggleBtn = $('#svToggleViewBtn');
-        const app = $('#svApp');
-
-        if (gridContainer) {
-            gridContainer.classList.add('is-hidden');
-        }
-        if (sliderContainer) {
-            sliderContainer.classList.add('is-active');
-        }
-
-        if (toggleBtn) {
-            toggleBtn.innerHTML = '<i class="bi bi-grid-3x3-gap"></i> <span>TẤT CẢ GIÀY</span>';
-        }
-
-        if (app) {
-            app.classList.remove('is-grid-mode');
-            app.style.backgroundImage = 'none';
-        }
-
-        // Mở với hiệu ứng Zoom-in đàn hồi mượt mà từ lưới 3D
-        updateSliderDisplay(0, false, true);
-    }
-
-    // --- Quay lại xem dạng lưới 6 đôi ---
-    function closeSliderView() {
-        isSliderView = false;
-
-        const gridContainer = $('#svGridContainer');
-        const sliderContainer = $('#svSliderContainer');
-        const app = $('#svApp');
-        const toggleBtn = $('#svToggleViewBtn');
-
-        if (sliderContainer) {
-            sliderContainer.classList.remove('is-active');
-        }
-        if (gridContainer) {
-            gridContainer.classList.remove('is-hidden');
-        }
-
-        // Áp dụng hình nền vân tối cao cấp từ bản thiết kế của người dùng
-        if (app) {
-            app.classList.add('is-grid-mode');
-            app.style.backgroundImage = "url('/images/sneakers/sneaker-grid-bg.webp?v=bg_v1')";
-            app.style.backgroundRepeat = 'no-repeat';
-            app.style.backgroundPosition = 'center center';
-            app.style.backgroundSize = 'cover';
-            app.style.backgroundColor = '#0D0E12';
-        }
-
-        if (toggleBtn) {
-            toggleBtn.innerHTML = '<i class="bi bi-view-stacked"></i> <span>SLIDER 3D</span>';
-        }
-    }
-
-    // --- Preload tất cả hình ảnh để chuyển cảnh tức thì không giật lag ---
-    function preloadSneakerImages() {
-        SNEAKERS.forEach(snk => {
-            const img = new Image();
-            img.src = snk.image;
         });
     }
 
@@ -234,8 +204,7 @@
                     e.stopPropagation();
                     if (i !== currentIndex) {
                         const dir = i > currentIndex ? 1 : -1;
-                        currentIndex = i;
-                        updateSliderDisplay(dir);
+                        switchToSneaker(i, dir);
                     }
                 };
                 swatchesContainer.appendChild(dot);
@@ -245,114 +214,159 @@
         renderDashes();
     }
 
-    // --- Cập nhật giao diện Slider với hiệu ứng lướt mượt mà chuẩn Smart Animate (direction: +1 next, -1 prev) ---
-    function updateSliderDisplay(direction = 1, immediate = false, fromGrid = false) {
-        const snk = SNEAKERS[currentIndex];
-        if (!snk) return;
+    // --- Chuyển cảnh: Mở chi tiết Slider từ Lưới "TẤT CẢ GIÀY" ---
+    // Hiệu ứng: Đôi giày từ từ phóng to vào giữa (scale: 0.25 -> 1.0),
+    // chữ và nút từ 2 bên hoặc phía trên chạy vào chuẩn 1:1 theo video
+    function openSliderView(idx) {
+        currentIndex = idx;
+        isSliderView = true;
 
+        const gridContainer = $('#svGridContainer');
+        const sliderContainer = $('#svSliderContainer');
+        const toggleBtn = $('#svToggleViewBtn');
         const app = $('#svApp');
-        const giantTitle = $('#svGiantTitle');
-        const heroWrap = $('#svHeroWrap');
-        const heroImg = $('#svHeroImg');
+        const snk = SNEAKERS[idx];
+
+        updateSpecsContent(snk);
+
+        if (gridContainer) {
+            gridContainer.classList.add('is-hidden');
+        }
+        if (sliderContainer) {
+            sliderContainer.classList.add('is-active');
+        }
+
+        if (toggleBtn) {
+            toggleBtn.innerHTML = '<i class="bi bi-grid-3x3-gap"></i> <span>TẤT CẢ GIÀY</span>';
+        }
+
+        // Đổi màu nền mượt mà sang màu của đôi giày được chọn
+        if (app) {
+            app.classList.remove('is-grid-mode');
+            app.style.backgroundImage = 'none';
+            app.style.backgroundColor = snk.themeColor;
+        }
+
+        // Kích hoạt slide tương ứng
+        const slides = $$('.sv-slide');
+        const titles = $$('.sv-giant-title');
+        slides.forEach((sl, i) => {
+            sl.className = `sv-slide ${i === idx ? 'is-active' : ''}`;
+        });
+        titles.forEach((ti, i) => {
+            ti.className = `sv-giant-title ${i === idx ? 'is-active' : ''}`;
+        });
+
+        // KÍCH HOẠT HIỆU ỨNG PHÓNG TO VÀ CÁC THÀNH PHẦN CHẠY VÀO TỪ 2 BÊN VÀ TRÊN XUỐNG
+        if (app) {
+            app.classList.remove('sv-entry-settled');
+            app.classList.add('sv-entry-animating');
+
+            // Force reflow
+            void app.offsetWidth;
+
+            requestAnimationFrame(() => {
+                app.classList.add('sv-entry-settled');
+                setTimeout(() => {
+                    app.classList.remove('sv-entry-animating');
+                }, 800);
+            });
+        }
+    }
+
+    // --- Quay lại xem dạng lưới 6 đôi ---
+    function closeSliderView() {
+        isSliderView = false;
+
+        const gridContainer = $('#svGridContainer');
+        const sliderContainer = $('#svSliderContainer');
+        const app = $('#svApp');
+        const toggleBtn = $('#svToggleViewBtn');
+
+        if (sliderContainer) {
+            sliderContainer.classList.remove('is-active');
+        }
+        if (gridContainer) {
+            gridContainer.classList.remove('is-hidden');
+        }
+
+        if (app) {
+            app.classList.remove('sv-entry-animating', 'sv-entry-settled');
+            app.classList.add('is-grid-mode');
+            app.style.backgroundImage = "url('/images/sneakers/sneaker-grid-bg.webp?v=bg_v1')";
+            app.style.backgroundRepeat = 'no-repeat';
+            app.style.backgroundPosition = 'center center';
+            app.style.backgroundSize = 'cover';
+            app.style.backgroundColor = '#0D0E12';
+        }
+
+        if (toggleBtn) {
+            toggleBtn.innerHTML = '<i class="bi bi-view-stacked"></i> <span>SLIDER 3D</span>';
+        }
+    }
+
+    // --- Chuyển tiếp giữa các đôi giày: ĐỒNG BỘ 100% NỀN & GIÀY, KHÔNG LỖI "NỀN NÀY GIÀY KIA" ---
+    function switchToSneaker(newIdx, direction = 1) {
+        if (newIdx === currentIndex || isAnimating) return;
+        isAnimating = true;
+
+        const oldIdx = currentIndex;
+        currentIndex = newIdx;
+        const snk = SNEAKERS[newIdx];
+
+        const slides = $$('.sv-slide');
+        const titles = $$('.sv-giant-title');
+        const oldSlide = slides[oldIdx];
+        const newSlide = slides[newIdx];
+        const oldTitle = titles[oldIdx];
+        const newTitle = titles[newIdx];
+        const app = $('#svApp');
         const specsPanel = $('.sv-specs-panel');
 
-        // 1. Đổi màu nền điện ảnh mượt mà
+        // 1. Đổi màu nền ĐỒNG BỘ 100% cùng lúc đôi giày bắt đầu chuyển động
         if (app) {
             app.style.backgroundColor = snk.themeColor;
         }
 
-        if (immediate) {
-            if (giantTitle) {
-                giantTitle.textContent = snk.model;
-                giantTitle.style.opacity = '0.94';
-            }
-            if (heroImg) {
-                heroImg.src = snk.image;
-                heroImg.alt = snk.model;
-            }
-            updateSpecsContent(snk);
-            return;
+        // 2. Chuyển đổi Tech Specs & Swatches (mờ nhẹ và trượt lên tự nhiên)
+        if (specsPanel) {
+            specsPanel.style.opacity = '0';
+            specsPanel.style.transform = 'translateY(10px)';
         }
 
-        if (fromGrid) {
-            // Hiệu ứng bừng sáng & phóng to từ lưới vào chi tiết
-            if (heroWrap) heroWrap.classList.add('sv-anim-entry-grid');
-            if (giantTitle) {
-                giantTitle.textContent = snk.model;
-                giantTitle.classList.add('sv-title-enter-grid');
-            }
-            if (specsPanel) specsPanel.classList.add('sv-specs-enter');
-            if (heroImg) {
-                heroImg.src = snk.image;
-                heroImg.alt = snk.model;
-            }
-            updateSpecsContent(snk);
-
-            // Ép trình duyệt tính toán lại vị trí mới
-            if (heroWrap) void heroWrap.offsetWidth;
-
-            requestAnimationFrame(() => {
-                if (heroWrap) heroWrap.classList.remove('sv-anim-entry-grid');
-                if (giantTitle) giantTitle.classList.remove('sv-title-enter-grid');
-                if (specsPanel) specsPanel.classList.remove('sv-specs-enter');
-            });
-            return;
-        }
-
-        // Hiệu ứng chuyển động lướt ngang mượt mà chuẩn Smart Animate theo video
-        if (isAnimating) return;
-        isAnimating = true;
-
-        const exitWrapClass = direction > 0 ? 'sv-anim-exit-left' : 'sv-anim-exit-right';
-        const enterWrapClass = direction > 0 ? 'sv-anim-enter-right' : 'sv-anim-enter-left';
-
-        const exitTitleClass = direction > 0 ? 'sv-title-exit-left' : 'sv-title-exit-right';
-        const enterTitleClass = direction > 0 ? 'sv-title-enter-right' : 'sv-title-enter-left';
-
-        // 1. Kích hoạt hiệu ứng lướt ra (Exit)
-        if (heroWrap) heroWrap.classList.add(exitWrapClass);
-        if (giantTitle) giantTitle.classList.add(exitTitleClass);
-        if (specsPanel) specsPanel.classList.add('sv-specs-exit');
-
-        // 2. Điểm chuyển tiếp (sau 190ms)
         setTimeout(() => {
-            if (heroImg) {
-                heroImg.src = snk.image;
-                heroImg.alt = snk.model;
-            }
-            if (giantTitle) {
-                giantTitle.textContent = snk.model;
-            }
             updateSpecsContent(snk);
-
-            // Gỡ class exit, chuẩn bị vị trí lướt vào (transition: none)
-            if (heroWrap) {
-                heroWrap.classList.remove(exitWrapClass);
-                heroWrap.classList.add(enterWrapClass);
-            }
-            if (giantTitle) {
-                giantTitle.classList.remove(exitTitleClass);
-                giantTitle.classList.add(enterTitleClass);
-            }
             if (specsPanel) {
-                specsPanel.classList.remove('sv-specs-exit');
-                specsPanel.classList.add('sv-specs-enter');
+                specsPanel.style.opacity = '1';
+                specsPanel.style.transform = 'translateY(0)';
             }
+        }, 160);
 
-            // Ép trình duyệt tính toán lại vị trí mới
-            if (heroWrap) void heroWrap.offsetWidth;
+        // 3. Chuẩn bị vị trí cho slide và title mới (transition: none)
+        const enterClass = direction > 0 ? 'is-entering-right' : 'is-entering-left';
+        const exitClass = direction > 0 ? 'is-exiting-left' : 'is-exiting-right';
 
-            // 3. Lướt mượt mà vào chính giữa với đường cong đàn hồi tự nhiên
-            requestAnimationFrame(() => {
-                if (heroWrap) heroWrap.classList.remove(enterWrapClass);
-                if (giantTitle) giantTitle.classList.remove(enterTitleClass);
-                if (specsPanel) specsPanel.classList.remove('sv-specs-enter');
-            });
+        if (newSlide) newSlide.className = `sv-slide ${enterClass}`;
+        if (newTitle) newTitle.className = `sv-giant-title ${enterClass}`;
 
-            setTimeout(() => {
-                isAnimating = false;
-            }, 550);
-        }, 190);
+        // Ép trình duyệt ghi nhận vị trí
+        if (newSlide) void newSlide.offsetWidth;
+
+        // 4. Bắt đầu chuyển động đồng thời: slide cũ lướt ra, slide mới lướt vào
+        requestAnimationFrame(() => {
+            if (oldSlide) oldSlide.className = `sv-slide ${exitClass}`;
+            if (oldTitle) oldTitle.className = `sv-giant-title ${exitClass}`;
+
+            if (newSlide) newSlide.className = 'sv-slide is-active';
+            if (newTitle) newTitle.className = 'sv-giant-title is-active';
+        });
+
+        // 5. Kết thúc chuyển cảnh sau 650ms
+        setTimeout(() => {
+            if (oldSlide) oldSlide.className = 'sv-slide';
+            if (oldTitle) oldTitle.className = 'sv-giant-title';
+            isAnimating = false;
+        }, 650);
     }
 
     // --- Render các vạch Dash chuyển trang ở đáy ---
@@ -367,8 +381,7 @@
             dash.onclick = () => {
                 if (idx !== currentIndex) {
                     const dir = idx > currentIndex ? 1 : -1;
-                    currentIndex = idx;
-                    updateSliderDisplay(dir);
+                    switchToSneaker(idx, dir);
                 }
             };
             container.appendChild(dash);
@@ -377,13 +390,13 @@
 
     // --- Chuyển chiếc giày kế tiếp / trước đó ---
     function nextSneaker() {
-        currentIndex = (currentIndex + 1) % SNEAKERS.length;
-        updateSliderDisplay(1);
+        const nextIdx = (currentIndex + 1) % SNEAKERS.length;
+        switchToSneaker(nextIdx, 1);
     }
 
     function prevSneaker() {
-        currentIndex = (currentIndex - 1 + SNEAKERS.length) % SNEAKERS.length;
-        updateSliderDisplay(-1);
+        const prevIdx = (currentIndex - 1 + SNEAKERS.length) % SNEAKERS.length;
+        switchToSneaker(prevIdx, -1);
     }
 
     // --- Thêm vào giỏ hàng ---
@@ -432,7 +445,7 @@
         }, 2200);
     }
 
-    // --- Bind sự kiện nút bấm & Bàn phím ---
+    // --- Bind sự kiện nút bấm & Bàn phím & Cảm ứng ---
     function bindEvents() {
         const toggleBtn = $('#svToggleViewBtn');
         if (toggleBtn) {
@@ -545,9 +558,16 @@
     function init() {
         preloadSneakerImages();
         localizeAllLabels();
+        renderSlider();
         renderGrid();
         bindEvents();
-        renderDashes();
+        updateSpecsContent(SNEAKERS[currentIndex]);
+        
+        // Thiết lập màu nền ban đầu
+        const app = $('#svApp');
+        if (app && isSliderView) {
+            app.style.backgroundColor = SNEAKERS[currentIndex].themeColor;
+        }
     }
 
     if (document.readyState === 'loading') {
