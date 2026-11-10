@@ -278,16 +278,21 @@
         if (designer) designer.textContent = snk.designer;
         if (release) release.textContent = snk.release;
 
-        // Chấm màu Swatches
+        // Chấm màu Swatches: Chọn màu trực tiếp chuyển ngay sang đôi giày và màu nền tương ứng
         if (swatchesContainer) {
             swatchesContainer.innerHTML = '';
-            snk.swatches.forEach((color, i) => {
+            SNEAKERS.forEach((snkItem, i) => {
                 const dot = document.createElement('span');
-                dot.className = `sv-color-dot ${i === 0 ? 'is-active' : ''}`;
-                dot.style.backgroundColor = color;
-                dot.onclick = () => {
-                    $$('.sv-color-dot').forEach(d => d.classList.remove('is-active'));
-                    dot.classList.add('is-active');
+                dot.className = `sv-color-dot ${i === currentIndex ? 'is-active' : ''}`;
+                dot.style.backgroundColor = snkItem.themeColor;
+                dot.title = `${snkItem.model} — ${snkItem.colorway}`;
+                dot.onclick = (e) => {
+                    e.stopPropagation();
+                    if (i !== currentIndex) {
+                        const dir = i > currentIndex ? 1 : -1;
+                        currentIndex = i;
+                        updateSliderDisplay(dir);
+                    }
                 };
                 swatchesContainer.appendChild(dot);
             });
