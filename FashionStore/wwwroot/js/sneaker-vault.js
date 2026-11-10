@@ -782,23 +782,13 @@
         }
     }
 
-    // --- Cập nhật tiêu đề khổng lồ phía sau (tự co giãn thông minh nếu tên dài) ---
+    // --- Cập nhật tiêu đề khổng lồ phía sau (kích thước đồng nhất cho tất cả các bộ) ---
     function setGiantTitleText(modelName) {
         const giantEl = $('#svGiantTitle');
         if (!giantEl) return;
-        const text = modelName || '';
-        giantEl.textContent = text;
-        const len = text.length;
-        if (len > 15) {
-            giantEl.style.fontSize = 'clamp(44px, 7.2vw, 100px)';
-            giantEl.style.letterSpacing = '-0.025em';
-        } else if (len > 12) {
-            giantEl.style.fontSize = 'clamp(58px, 9vw, 125px)';
-            giantEl.style.letterSpacing = '-0.02em';
-        } else {
-            giantEl.style.fontSize = '';
-            giantEl.style.letterSpacing = '';
-        }
+        giantEl.textContent = modelName || '';
+        giantEl.style.fontSize = '';
+        giantEl.style.letterSpacing = '';
     }
 
     // --- Cập nhật dữ liệu thông số Tech Specs & Swatches (không làm gián đoạn FLIP) ---

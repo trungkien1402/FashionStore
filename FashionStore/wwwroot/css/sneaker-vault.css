@@ -477,17 +477,16 @@
 
 .sv-giant-title {
     font-family: 'Montserrat', sans-serif;
-    font-size: clamp(72px, 11vw, 155px);
+    font-size: clamp(85px, 12.5vw, 170px);
     font-weight: 900;
     line-height: 0.9;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.015em;
     text-transform: uppercase;
     color: #ffffff;
     text-shadow: none !important;
     background: transparent !important;
     white-space: nowrap;
     display: inline-block;
-    max-width: 96vw;
     transition: transform 0.65s var(--sv-ease), opacity 0.5s var(--sv-ease);
 }
 
