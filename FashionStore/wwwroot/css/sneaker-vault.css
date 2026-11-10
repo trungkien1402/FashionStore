@@ -449,8 +449,8 @@
 .sv-bottom-bar {
     position: relative;
     z-index: 25;
-    display: grid;
-    grid-template-columns: 1.2fr auto 1.2fr;
+    display: flex;
+    justify-content: space-between;
     align-items: flex-end;
     padding: 0 clamp(20px, 5vw, 70px) 36px;
     gap: 20px;
@@ -497,27 +497,8 @@
     font-weight: 800;
 }
 
-/* BOTTOM-CENTER: DASH INDICATORS */
 .sv-dashes {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    justify-self: center;
-    margin-bottom: 8px;
-}
-
-.sv-dash {
-    width: 28px;
-    height: 3px;
-    background: rgba(255, 255, 255, 0.28);
-    border-radius: 2px;
-    transition: all 0.35s ease;
-    cursor: pointer;
-}
-
-.sv-dash.is-active {
-    width: 52px;
-    background: #ffffff;
+    display: none !important;
 }
 
 /* BOTTOM-RIGHT: CONTROLS & ADD TO BAG (Nút tròn đỏ/tối chuẩn hình mẫu) */
