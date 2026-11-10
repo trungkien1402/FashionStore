@@ -11,8 +11,8 @@
     const PANTS_DATA = [
         {
             id: 'pnt-01',
-            badge: 'Cargo Series',
-            headline: 'Defy Norms.<br>Own The Streets.',
+            badge: 'Dòng Cargo Streetwear',
+            headline: 'Phá Vỡ Khuôn Khổ.<br>Khẳng Định Phong Cách.',
             desc: 'Quần Baggy Cargo xám khói Acid-Wash với túi hộp 3D khỏe khoắn. Chất liệu heavy-wash canvas thoáng khí, đứng phom và mang đậm bản sắc streetwear cao cấp.',
             price: 650000,
             originalPrice: 890000,
@@ -27,8 +27,8 @@
         },
         {
             id: 'pnt-02',
-            badge: 'Vintage Archive',
-            headline: 'Timeless Denim.<br>Pure Attitude.',
+            badge: 'Dòng Denim Cổ Điển',
+            headline: 'Denim Vượt Thời Gian.<br>Đậm Chất Bản Lĩnh.',
             desc: 'Quần jeans ống rộng phom suông kinh điển với tông màu chàm wash sờn cổ điển. Đường may kép gia cố cùng khuy đồng dập nổi, tôn dáng tự nhiên và phóng khoáng.',
             price: 590000,
             originalPrice: 850000,
@@ -43,8 +43,8 @@
         },
         {
             id: 'pnt-03',
-            badge: 'Techwear Utility',
-            headline: 'Built To Move.<br>Ready For Action.',
+            badge: 'Dòng Tactical Techwear',
+            headline: 'Tối Ưu Chuyển Động.<br>Sẵn Sàng Mọi Hành Trình.',
             desc: 'Thiết kế quần quân đội Tactical xanh rêu với dây đai khóa bấm công nghệ và chất liệu ripstop chống sờn rách, đáp ứng hoàn hảo giữa tính năng động và thẩm mỹ thời thượng.',
             price: 620000,
             originalPrice: 820000,
@@ -59,8 +59,8 @@
         },
         {
             id: 'pnt-04',
-            badge: 'Quiet Luxury',
-            headline: 'Crafted for Those<br>Who Lead.',
+            badge: 'Dòng Quần Tây Tinh Tuyển',
+            headline: 'May Đo Chuẩn Mực Cho<br>Người Dẫn Đầu.',
             desc: 'Quần tây xếp ly phom suông thư thái mang sắc be cát nhã nhặn. Vải pha wool nhẹ rũ thanh lịch, kết hợp hoàn hảo giữa vẻ đẹp lịch lãm công sở và phong cách thoải mái thường nhật.',
             price: 690000,
             originalPrice: 950000,
@@ -75,8 +75,8 @@
         },
         {
             id: 'pnt-05',
-            badge: 'Raw Selvedge',
-            headline: 'Pure Darkness.<br>Sharp & Clean.',
+            badge: 'Dòng Raw Selvedge Độc Bản',
+            headline: 'Sắc Đen Tối Thượng.<br>Sắc Sảo & Lịch Lãm.',
             desc: 'Quần denim dệt biên Raw Selvedge nhuộm đen tuyền bóng nhẹ. Cấu trúc ống đứng thẳng tắp tôn chiều cao, tạo điểm nhấn bí ẩn, sắc lạnh và đẳng cấp cho mọi outfit.',
             price: 720000,
             originalPrice: 990000,
@@ -428,7 +428,7 @@
             <header class="sw-header">
                 <a href="/" class="sw-brand-logo" title="HnmtShop">
                     <span class="sw-brand-sig">HnmtShop</span>
-                    <span class="sw-brand-sub">PANTS ARCHIVE</span>
+                    <span class="sw-brand-sub">BỘ SƯU TẬP QUẦN</span>
                 </a>
 
                 <nav class="sw-nav-menu">
@@ -439,7 +439,7 @@
 
                 <div class="sw-head-right">
                     <button type="button" class="sw-bag-btn" id="swBagBtn" aria-label="Giỏ hàng">
-                        <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                        <svg fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
                             <path d="M4 8h16l-1 13H5L4 8Z" />
                             <path d="M9 9V6a3 3 0 0 1 6 0v3" />
                         </svg>
@@ -456,10 +456,10 @@
             <main class="sw-main-hero">
                 <!-- CỘT TRÁI: EDITORIAL & CHỌN MUA -->
                 <div class="sw-left-copy">
-                    <div class="sw-badge-pill" id="swBadgePill">Cargo Series</div>
+                    <div class="sw-badge-pill" id="swBadgePill">Dòng Cargo Streetwear</div>
 
                     <h1 class="sw-headline" id="swHeadline">
-                        Defy Norms.<br>Own The Streets.
+                        Phá Vỡ Khuôn Khổ.<br>Khẳng Định Phong Cách.
                     </h1>
 
                     <p class="sw-description" id="swDescription">
@@ -473,7 +473,7 @@
                             <span class="sw-orig-price" id="swOrigPrice">890.000 ₫</span>
                         </div>
                         <div class="sw-size-group">
-                            <span class="sw-size-label">SIZE:</span>
+                            <span class="sw-size-label">KÍCH CỠ:</span>
                             <div class="sw-size-pills" id="swSizePills">
                                 <!-- Render tự động bởi pants-studio.js -->
                             </div>
@@ -508,7 +508,7 @@
             <!-- 3. BOTTOM: EXPLORE MORE & THUMBNAILS CAROUSEL -->
             <footer class="sw-bottom-bar">
                 <div class="sw-explore-line">
-                    <span class="sw-explore-label">EXPLORE MORE</span>
+                    <span class="sw-explore-label">KHÁM PHÁ THÊM</span>
                     <div class="sw-divider"></div>
                 </div>
 
