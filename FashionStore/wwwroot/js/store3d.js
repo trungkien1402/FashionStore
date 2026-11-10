@@ -1256,21 +1256,21 @@
 
         const cfg = wrapper.userData.config;
 
-        // Bật chế độ SÀO TREO ĐỒ 3D TƯƠNG TÁC (Chính xác như video FraxBIT)
+        // Bật chế độ SÀO TREO ÁO 3D TƯƠNG TÁC (Chính xác như video FraxBIT)
         if (cfg.id === 'ao') {
-            open3DClothesRack();
+            open3DClothesRack('ao');
+            return;
+        }
+
+        // Bật chế độ KỆ QUẦN THỜI TRANG 3D TƯƠNG TÁC
+        if (cfg.id === 'quan') {
+            open3DClothesRack('quan');
             return;
         }
 
         // Bật chế độ SNEAKER VAULT 3D (Chính xác như video Sneaker Figma)
         if (cfg.id === 'giay') {
             openSneakerVaultFrom3D();
-            return;
-        }
-
-        // Bật chế độ PANTS STUDIO LOOKBOOK (Chính xác như video Hally)
-        if (cfg.id === 'quan') {
-            openPantsStudioFrom3D();
             return;
         }
 
@@ -1334,15 +1334,15 @@
                 if (hitWrapper?.userData?.config) {
                     const cfg = hitWrapper.userData.config;
                     if (cfg.id === 'ao') {
-                        open3DClothesRack();
+                        open3DClothesRack('ao');
+                        return;
+                    }
+                    if (cfg.id === 'quan') {
+                        open3DClothesRack('quan');
                         return;
                     }
                     if (cfg.id === 'giay') {
                         openSneakerVaultFrom3D();
-                        return;
-                    }
-                    if (cfg.id === 'quan') {
-                        openPantsStudioFrom3D();
                         return;
                     }
                     showCategoryNotice(cfg);
@@ -1364,10 +1364,38 @@
         if (reflRT) reflRT.setSize(Math.floor(window.innerWidth * 0.75), Math.floor(window.innerHeight * 0.75));
     }
 
+    // --- Thiết lập và chuyển đổi 4 Luồng Thời Trang (Women // Girls // Men // Boy) ---
+    function setStream(stream) {
+        if (!stream) return;
+        window.HNMT_CURRENT_STREAM = stream;
+        const btns = document.querySelectorAll('.hnmt-stream-btn');
+        btns.forEach(b => {
+            b.classList.toggle('is-active', b.getAttribute('data-stream').toLowerCase() === stream.toLowerCase());
+        });
+
+        const promptEl = document.querySelector('.hnmt-badge-prompt');
+        if (promptEl) {
+            promptEl.textContent = `BỘ SƯU TẬP ${stream.toUpperCase()} // CHỌN 1 MÓN ĐỒ`;
+        }
+
+        if (window.ClothingRail && typeof window.ClothingRail.setStream === 'function') {
+            window.ClothingRail.setStream(stream);
+        }
+        if (window.SneakerVault && typeof window.SneakerVault.reloadStream === 'function') {
+            window.SneakerVault.reloadStream();
+        }
+    }
+
     // --- Mở / Đóng Showroom với hiệu ứng Zoom-Out từ cột giữa chuẩn video 1107.mp4 ---
-    function openPortal() {
+    function openPortal(targetAudience) {
         if (!portalEl) return;
         isPortalOpen = true;
+
+        if (targetAudience) {
+            setStream(targetAudience);
+        } else {
+            setStream(window.HNMT_CURRENT_STREAM || 'Men');
+        }
 
         portalEl.classList.add('is-active');
         portalEl.setAttribute('aria-hidden', 'false');
@@ -1468,6 +1496,15 @@
     // --- Bắt sự kiện click vào bất kỳ Danh Mục hoặc Khối Chọn 3D ---
     function bindTriggers() {
         document.addEventListener('click', (e) => {
+            const streamBtn = e.target.closest('.hnmt-stream-btn');
+            if (streamBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+                const st = streamBtn.getAttribute('data-stream');
+                setStream(st);
+                return;
+            }
+
             const block = e.target.closest('[data-open-chile-portal], .hnmt-cat-block');
             if (!block) return;
 
@@ -1475,7 +1512,8 @@
 
             e.preventDefault();
             e.stopPropagation();
-            openPortal();
+            const aud = block.getAttribute('data-category-title') || 'Men';
+            openPortal(aud);
         }, true);
     }
     // ==============================================================================
@@ -1742,7 +1780,7 @@
         }
     }
 
-    function open3DClothesRack() {
+    function open3DClothesRack(category = 'ao') {
         isRackModeActive = true;
         const rackOverlayEl = document.getElementById('hnmtRackOverlay');
         const promptEl = document.querySelector('.hnmt-portal-footer');
@@ -1762,8 +1800,10 @@
             rackOverlayEl.classList.add('is-active');
             rackOverlayEl.setAttribute('aria-hidden', 'false');
         }
-        if (window.ClothingRail && typeof window.ClothingRail.initRail === 'function') {
-            window.ClothingRail.initRail();
+        if (window.ClothingRail && typeof window.ClothingRail.setCategory === 'function') {
+            window.ClothingRail.setCategory(category || 'ao');
+        } else if (window.ClothingRail && typeof window.ClothingRail.initRail === 'function') {
+            window.ClothingRail.initRail(category || 'ao');
         }
 
         if (window.gsap) {
@@ -2005,7 +2045,6 @@
         });
 
         bindTriggers();
-        ensurePantsStudioAssets();
     }
 
     if (document.readyState === 'loading') {
@@ -2044,63 +2083,6 @@
     }
     window.openSneakerVaultFrom3D = openSneakerVaultFrom3D;
     window.closeSneakerVaultFrom3D = closeSneakerVaultFrom3D;
-
-    // --- MỞ VÀ ĐÓNG PANTS STUDIO TỪ SHOWROOM 3D ---
-    function ensurePantsStudioAssets() {
-        if (!document.getElementById('hnmtPantsStudioCss')) {
-            const link = document.createElement('link');
-            link.id = 'hnmtPantsStudioCss';
-            link.rel = 'stylesheet';
-            link.href = '/css/pants-studio.css?v=' + Date.now();
-            document.head.appendChild(link);
-        }
-        if (!document.getElementById('hnmtPantsStudioScript') && typeof window.openPantsStudio !== 'function') {
-            const script = document.createElement('script');
-            script.id = 'hnmtPantsStudioScript';
-            script.src = '/js/pants-studio.js?v=' + Date.now();
-            document.body.appendChild(script);
-        }
-    }
-
-    function openPantsStudioFrom3D() {
-        ensurePantsStudioAssets();
-
-        const promptEl = document.querySelector('.hnmt-portal-footer');
-        const portalHeaderEl = document.querySelector('.hnmt-portal-header');
-        if (promptEl) promptEl.style.display = 'none';
-        if (portalHeaderEl) portalHeaderEl.style.display = 'none';
-
-        if (typeof window.openPantsStudio === 'function') {
-            window.openPantsStudio();
-        } else {
-            let retry = 0;
-            const timer = setInterval(() => {
-                retry++;
-                if (typeof window.openPantsStudio === 'function') {
-                    clearInterval(timer);
-                    window.openPantsStudio();
-                } else if (retry > 40) {
-                    clearInterval(timer);
-                }
-            }, 50);
-        }
-    }
-
-    function closePantsStudioFrom3D() {
-        const promptEl = document.querySelector('.hnmt-portal-footer');
-        const portalHeaderEl = document.querySelector('.hnmt-portal-header');
-        if (promptEl) promptEl.style.display = '';
-        if (portalHeaderEl) portalHeaderEl.style.display = '';
-
-        if (typeof window.closePantsStudio === 'function') {
-            window.closePantsStudio();
-        } else {
-            const overlay = document.getElementById('hnmtPantsOverlay');
-            if (overlay) overlay.classList.remove('is-active');
-        }
-    }
-    window.openPantsStudioFrom3D = openPantsStudioFrom3D;
-    window.closePantsStudioFrom3D = closePantsStudioFrom3D;
 
     window.HNMTChilePortal = { open: openPortal, close: closePortal };
 })();

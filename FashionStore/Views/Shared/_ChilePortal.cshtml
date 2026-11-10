@@ -18,6 +18,14 @@
             <span class="hnmt-brand-title">HnmtShop</span>
         </div>
 
+        <!-- BỘ CHUYỂN LUỒNG 4 ĐỐI TƯỢNG (WOMEN // GIRLS // MEN // BOY) TRỰC TIẾP TRONG SHOWROOM -->
+        <nav class="hnmt-portal-stream-nav" id="hnmtStreamNav" aria-label="Chọn luồng thời trang">
+            <button type="button" class="hnmt-stream-btn" data-stream="Women">Women</button>
+            <button type="button" class="hnmt-stream-btn" data-stream="Girls">Girls</button>
+            <button type="button" class="hnmt-stream-btn is-active" data-stream="Men">Men</button>
+            <button type="button" class="hnmt-stream-btn" data-stream="Boy">Boy</button>
+        </nav>
+
         <div class="hnmt-portal-actions">
             <button type="button" class="hnmt-exit-btn" id="hnmtPortalExitBtn" title="Thoát không gian 3D">
                 <i class="bi bi-arrow-left"></i>
@@ -246,123 +254,6 @@
 
             </section>
 
-        </div>
-    </div>
-
-    <!-- 6. GIAO DIỆN PANTS STUDIO (ANIMATION CAROUSEL 1:1 THEO VIDEO MẪU REFERENCE) -->
-    <div id="hnmtPantsOverlay" class="hnmt-pants-studio-wrap" aria-hidden="true">
-        <div class="sw-app" id="swApp">
-            <!-- NỀN QUẦNG SÁNG AMBIENT SPOTLIGHT -->
-            <div class="sw-bg-glow" id="swBgGlow"></div>
-
-            <!-- DẢI SÓNG ÁNH SÁNG NEON (WAVE RIBBONS) NHƯ VIDEO REFERENCE -->
-            <svg class="sw-wave-svg" viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
-                <defs>
-                    <linearGradient id="swGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop id="swGrad1Stop0" offset="0%" stop-color="#00d4ff" />
-                        <stop id="swGrad1Stop1" offset="100%" stop-color="#0055ff" />
-                    </linearGradient>
-                    <linearGradient id="swGrad2" x1="100%" y1="0%" x2="0%" y2="100%">
-                        <stop id="swGrad2Stop0" offset="0%" stop-color="#ff8800" />
-                        <stop id="swGrad2Stop1" offset="100%" stop-color="#ff2200" />
-                    </linearGradient>
-                </defs>
-                <path id="swWave1" class="sw-wave-path sw-wave-1" d="M -100 420 Q 300 200, 750 480 T 1540 280" />
-                <path id="swWave2" class="sw-wave-path sw-wave-2" d="M -80 620 Q 450 680, 880 340 T 1550 560" />
-            </svg>
-
-            <!-- 1. HEADER -->
-            <header class="sw-header">
-                <a href="/" class="sw-brand-logo" title="HnmtShop">
-                    <span class="sw-brand-sig">HnmtShop</span>
-                    <span class="sw-brand-sub">BỘ SƯU TẬP QUẦN</span>
-                </a>
-
-                <nav class="sw-nav-menu">
-                    <span class="sw-nav-link active">Bộ sưu tập Quần</span>
-                    <span class="sw-nav-link">Chất liệu cao cấp</span>
-                    <span class="sw-nav-link">Bảng chọn size</span>
-                </nav>
-
-                <div class="sw-head-right">
-                    <button type="button" class="sw-bag-btn" id="swBagBtn" aria-label="Giỏ hàng">
-                        <svg fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
-                            <path d="M4 8h16l-1 13H5L4 8Z" />
-                            <path d="M9 9V6a3 3 0 0 1 6 0v3" />
-                        </svg>
-                        <span class="sw-bag-badge" id="swBagBadge">0</span>
-                    </button>
-                    <button type="button" class="sw-exit-btn" id="swExitBtn" onclick="window.closePantsStudio()" title="Quay lại Showroom">
-                        <i class="bi bi-arrow-left"></i>
-                        <span>Quay lại</span>
-                    </button>
-                </div>
-            </header>
-
-            <!-- 2. MAIN HERO STAGE (1:1 THEO VIDEO MẪU) -->
-            <main class="sw-main-hero">
-                <!-- CỘT TRÁI: EDITORIAL & CHỌN MUA -->
-                <div class="sw-left-copy">
-                    <div class="sw-badge-pill" id="swBadgePill">Dòng Cargo Streetwear</div>
-
-                    <h1 class="sw-headline" id="swHeadline">
-                        Phá Vỡ Khuôn Khổ.<br>Khẳng Định Phong Cách.
-                    </h1>
-
-                    <p class="sw-description" id="swDescription">
-                        Quần Baggy Cargo xám khói Acid-Wash với túi hộp 3D khỏe khoắn. Chất liệu heavy-wash canvas thoáng khí, đứng phom và mang đậm bản sắc streetwear cao cấp.
-                    </p>
-
-                    <!-- GIÁ & BỘ CHỌN SIZE -->
-                    <div class="sw-product-meta">
-                        <div class="sw-price-box">
-                            <span class="sw-sale-price" id="swSalePrice">650.000 ₫</span>
-                            <span class="sw-orig-price" id="swOrigPrice">890.000 ₫</span>
-                        </div>
-                        <div class="sw-size-group">
-                            <span class="sw-size-label">KÍCH CỠ:</span>
-                            <div class="sw-size-pills" id="swSizePills">
-                                <!-- Render tự động bởi pants-studio.js -->
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- NÚT CTA CHỮ NHẬT BO GÓC NHƯ TRONG VIDEO -->
-                    <div class="sw-cta-row">
-                        <button type="button" class="sw-cta-btn" id="swCtaBtn">
-                            <span>THÊM VÀO GIỎ</span>
-                            <i class="bi bi-arrow-right"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- CỘT PHẢI: 3D ANIMATION CAROUSEL (FOCAL MAIN + UPCOMING SECONDARY) -->
-                <div class="sw-right-stage" id="swRightStage">
-                    <!-- MẪU PHỤ GÓC TRÊN PHẢI (UPCOMING NEXT ITEM) -->
-                    <div class="sw-secondary-wrap" id="swSecondaryWrap" title="Mẫu kế tiếp (Bấm để xem)">
-                        <img src="/images/pants/wide-leg-denim.png?v=carousel_v1" alt="Next Item" class="sw-secondary-img" id="swSecondaryImg" />
-                        <div class="sw-item-shadow-sec"></div>
-                    </div>
-
-                    <!-- MẪU CHÍNH FOCAL HERO NỔI BẬT Ở TRUNG TÂM -->
-                    <div class="sw-hero-wrap" id="swHeroWrap">
-                        <img src="/images/pants/cargo-acid-wash.png?v=carousel_v1" alt="Hero Item" class="sw-hero-img" id="swHeroImg" />
-                        <div class="sw-item-shadow-main"></div>
-                    </div>
-                </div>
-            </main>
-
-            <!-- 3. BOTTOM: EXPLORE MORE & THUMBNAILS CAROUSEL -->
-            <footer class="sw-bottom-bar">
-                <div class="sw-explore-line">
-                    <span class="sw-explore-label">KHÁM PHÁ THÊM</span>
-                    <div class="sw-divider"></div>
-                </div>
-
-                <div class="sw-thumbnail-row" id="swThumbnailRow">
-                    <!-- Render tự động bởi pants-studio.js -->
-                </div>
-            </footer>
         </div>
     </div>
 

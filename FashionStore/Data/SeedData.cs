@@ -75,6 +75,9 @@ public static class SeedData
             await userManager.AddToRoleAsync(shipper, "Shipper");
         }
 
+        // Bổ sung dữ liệu 4 Luồng Thời Trang (Women // Girls // Men // Boy) nếu chưa có
+        await EnsureStreamProductsAsync(db);
+
         // Nếu đã có dữ liệu sản phẩm trong DB, bỏ qua bước khởi tạo lại
         if (await db.Products.AnyAsync())
         {
@@ -335,6 +338,99 @@ public static class SeedData
             }
         }
         await db.SaveChangesAsync();
+    }
+
+    private static async Task EnsureStreamProductsAsync(ApplicationDbContext db)
+    {
+        var streamCategories = new[]
+        {
+            new Category { Name = "Women Collection", Slug = "women-collection", IsActive = true },
+            new Category { Name = "Girls Collection", Slug = "girls-collection", IsActive = true },
+            new Category { Name = "Men Collection", Slug = "men-collection", IsActive = true },
+            new Category { Name = "Boy Collection", Slug = "boy-collection", IsActive = true }
+        };
+
+        foreach (var cat in streamCategories)
+        {
+            if (!await db.Categories.AnyAsync(c => c.Slug == cat.Slug))
+            {
+                db.Categories.Add(cat);
+            }
+        }
+        await db.SaveChangesAsync();
+
+        var streamProducts = new[]
+        {
+            // WOMEN
+            new SeedProduct("Linen Blazer", "women-linen-blazer", "Blazer vải linen pha cotton phom suông nhẹ nhàng, thoáng mát và sang trọng.", 680000, "women-collection", "/images/products/women/women_linen_blazer.jpg"),
+            new SeedProduct("Silk Cami", "women-silk-cami", "Áo hai dây lụa satin mềm mịn, độ rủ tự nhiên phối hoàn hảo cùng blazer.", 360000, "women-collection", "/images/products/women/women_silk_cami.jpg"),
+            new SeedProduct("Wide Trouser", "women-wide-trouser", "Quần tây ống rộng xếp ly eo cao, tạo hiệu ứng kéo dài chân thanh lịch.", 580000, "women-collection", "/images/products/women/women_wide_trouser.jpg"),
+            new SeedProduct("Flared Denim", "women-flared-denim", "Quần jeans loe nhẹ cổ điển chất denim co giãn vừa phải, tôn dáng đỉnh cao.", 520000, "women-collection", "/images/pants/wide-leg-denim.png"),
+            new SeedProduct("Nova Runner", "women-nova-runner", "Sneaker đế platform nữ da mềm viền hồng phấn thanh nhã, êm nhẹ cả ngày.", 4800000, "women-collection", "/images/products/women/women_platform_sneaker.jpg"),
+
+            // GIRLS
+            new SeedProduct("Pastel Knit", "girls-pastel-knit", "Cardigan len dệt mịn màu tím pastel ngọt ngào, chất len mềm không châm chích da bé.", 320000, "girls-collection", "/images/products/girls/girls_pastel_knit.jpg"),
+            new SeedProduct("Floral Tee", "girls-floral-tee", "Áo thun organic cotton in họa tiết hoa nhí tinh tế, co giãn 4 chiều cho bé vận động.", 220000, "girls-collection", "/images/products/girls/girls_floral_tee.jpg"),
+            new SeedProduct("Cargo Jogger", "girls-cargo-jogger", "Quần túi hộp bo gấu năng động cho bé gái, chất thun cotton dày dặn.", 340000, "girls-collection", "/images/products/girls/girls_cargo_jogger.jpg"),
+            new SeedProduct("Soft Denim", "girls-soft-denim", "Quần jeans mềm lưng thun co giãn, wash nhẹ nhàng êm ái cho bé.", 360000, "girls-collection", "/images/pants/wide-leg-denim.png"),
+            new SeedProduct("Star Sneaker", "girls-star-sneaker", "Sneaker cổ thấp phối sao xanh bạc hà xinh xắn, đế cao su chống trượt cho bé.", 1800000, "girls-collection", "/images/sneakers/air-future-iii.webp"),
+
+            // MEN
+            new SeedProduct("Reach Shirt", "reach-shirt", "Sơ mi camp-collar phóng khoáng cùng họa tiết độc bản thoáng mát.", 520000, "men-collection", "/images/clothing-rail/clothes-1.png"),
+            new SeedProduct("Fern Tee", "fern-tee", "Tee in loang Cyanotype dương xỉ hoang dã, cotton 260gsm xử lý enzyme mềm mịn.", 440000, "men-collection", "/images/clothing-rail/clothes-7.png"),
+            new SeedProduct("Acid Cargo", "cargo-acid-wash", "Quần túi hộp hiệu ứng mài loang acid-wash bụi bặm, form rộng thoải mái.", 560000, "men-collection", "/images/pants/cargo-acid-wash.png"),
+            new SeedProduct("Raw Denim", "raw-selvedge-black", "Denim dệt biên Selvedge thô 14oz, giữ dáng đứng phom cực chất.", 620000, "men-collection", "/images/pants/raw-selvedge-black.png"),
+            new SeedProduct("Air Future IV", "air-future-iv-storm", "Sneaker công nghệ tương lai phối màu Infraray Storm rực lửa.", 5200000, "men-collection", "/images/sneakers/air-future-iv.webp"),
+
+            // BOY
+            new SeedProduct("Denim Shirt", "boy-denim-shirt", "Sơ mi khoác ngoài denim năng động, phối 2 túi nắp ngực chuẩn phom nhí sành điệu.", 360000, "boy-collection", "/images/products/boy/boy_denim_overshirt.jpg"),
+            new SeedProduct("Varsity Hoodie", "boy-varsity-hoodie", "Hoodie nỉ bông ấm áp phối thêu chữ thể thao phong cách học đường.", 380000, "boy-collection", "/images/products/boy/boy_college_hoodie.jpg"),
+            new SeedProduct("Relaxed Jeans", "boy-relaxed-jeans", "Quần jeans phom suông rộng thoải mái có chun tăng đơ chỉnh eo linh hoạt.", 380000, "boy-collection", "/images/products/boy/boy_relaxed_jeans.jpg"),
+            new SeedProduct("Double Knee", "boy-double-knee", "Quần túi hộp may táp gối đôi chống mài mòn, bền bỉ cho bé trai.", 360000, "boy-collection", "/images/pants/tactical-olive.png"),
+            new SeedProduct("Skater High", "boy-skater-sneaker", "Sneaker cổ cao trượt ván da lộn đen phối viền trắng cá tính cho bé trai.", 1900000, "boy-collection", "/images/products/boy/boy_skater_sneaker.jpg")
+        };
+
+        foreach (var item in streamProducts)
+        {
+            if (await db.Products.AnyAsync(p => p.Slug == item.Slug)) continue;
+
+            var cat = await db.Categories.FirstOrDefaultAsync(c => c.Slug == item.CategorySlug);
+            if (cat == null) continue;
+
+            var p = new Product
+            {
+                Name = item.Name,
+                Slug = item.Slug,
+                Description = item.Description,
+                Price = item.Price,
+                ImageUrl = item.ImageUrl,
+                CategoryId = cat.Id,
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow
+            };
+            db.Products.Add(p);
+            await db.SaveChangesAsync();
+
+            // Biến thể size cơ bản
+            string[] sizes = item.CategorySlug.Contains("girls") || item.CategorySlug.Contains("boy")
+                ? (item.Slug.Contains("sneaker") ? new[] { "32", "33", "34", "35" } : new[] { "4-5T", "6-7T", "8-9T", "10-12T" })
+                : (item.Slug.Contains("runner") || item.Slug.Contains("future") ? new[] { "39", "40", "41", "42" } : new[] { "S", "M", "L", "XL" });
+
+            foreach (var size in sizes)
+            {
+                db.ProductVariants.Add(new ProductVariant
+                {
+                    ProductId = p.Id,
+                    SKU = $"{p.Slug.ToUpper()}-{size}",
+                    Size = size,
+                    Color = "Tiêu Chuẩn",
+                    Price = p.Price,
+                    StockQuantity = 25,
+                    IsActive = true
+                });
+            }
+            await db.SaveChangesAsync();
+        }
     }
 
     private record SeedProduct(

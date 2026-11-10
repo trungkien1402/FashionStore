@@ -281,8 +281,26 @@
     ];
 
     let currentCollectionIndex = 0;
-    const getSneakers = () => SNEAKER_COLLECTIONS[currentCollectionIndex].items;
-    const getActiveCollection = () => SNEAKER_COLLECTIONS[currentCollectionIndex];
+    const getSneakers = () => {
+        if (window.HNMT_CURRENT_STREAM && window.getFashionStreamItems) {
+            const streamSnks = window.getFashionStreamItems(window.HNMT_CURRENT_STREAM, 'giay');
+            if (streamSnks && streamSnks.length > 0) return streamSnks;
+        }
+        return SNEAKER_COLLECTIONS[currentCollectionIndex].items;
+    };
+
+    const getActiveCollection = () => {
+        if (window.HNMT_CURRENT_STREAM && window.getFashionStreamItems) {
+            const streamData = window.getFashionStreamItems(window.HNMT_CURRENT_STREAM);
+            if (streamData) {
+                return {
+                    id: window.HNMT_CURRENT_STREAM.toLowerCase(),
+                    title: (window.HNMT_CURRENT_STREAM.toUpperCase() + ' SNEAKER VAULT')
+                };
+            }
+        }
+        return SNEAKER_COLLECTIONS[currentCollectionIndex];
+    };
 
     let currentIndex = 0;
     let isSliderView = false;
@@ -1165,6 +1183,19 @@
         const portalHeaderEl = document.querySelector('.hnmt-portal-header');
         if (promptEl) promptEl.style.display = '';
         if (portalHeaderEl) portalHeaderEl.style.display = '';
+    };
+
+    window.SneakerVault = {
+        reloadStream: function () {
+            renderGrid();
+            renderDashes();
+            const colTitle = $('#svCollectionTitle');
+            if (colTitle) colTitle.textContent = getActiveCollection().title;
+            if (isSliderView) {
+                currentIndex = 0;
+                updateSliderDisplay(0, true);
+            }
+        }
     };
 
     function localizeAllLabels() {

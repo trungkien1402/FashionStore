@@ -78,6 +78,48 @@
     pointer-events: auto;
 }
 
+/* BỘ LỌC 4 LUỒNG THỜI TRANG TRÊN HEADER SHOWROOM 3D (WOMEN // GIRLS // MEN // BOY) */
+.hnmt-portal-stream-nav {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(18, 20, 26, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 5px 6px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+    pointer-events: auto;
+}
+
+.hnmt-stream-btn {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: rgba(255, 255, 255, 0.72);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    padding: 7px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hnmt-stream-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.hnmt-stream-btn.is-active {
+    background: #ffffff;
+    color: #12141a;
+    box-shadow: 0 4px 14px rgba(255, 255, 255, 0.28);
+    font-weight: 800;
+}
+
 .hnmt-brand-icon {
     font-size: 20px;
     color: #ffffff;

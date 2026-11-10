@@ -11,25 +11,7 @@
         initializeCountdown();
         initializeCartDrawer();
         initializeAjaxAddToCart();
-        preloadPantsStudioAssets();
     });
-
-    // Tự động nạp tài nguyên Pants Studio độc lập với server Razor cache
-    function preloadPantsStudioAssets() {
-        if (!document.getElementById('hnmtPantsStudioCss')) {
-            const link = document.createElement('link');
-            link.id = 'hnmtPantsStudioCss';
-            link.rel = 'stylesheet';
-            link.href = '/css/pants-studio.css?v=auto_' + Date.now();
-            document.head.appendChild(link);
-        }
-        if (!document.getElementById('hnmtPantsStudioScript') && typeof window.openPantsStudio !== 'function') {
-            const s = document.createElement('script');
-            s.id = 'hnmtPantsStudioScript';
-            s.src = '/js/pants-studio.js?v=auto_' + Date.now();
-            document.body.appendChild(s);
-        }
-    }
 
     // 0. Đồng bộ nhãn chữ ký Danh Mục Nổi Bật (Title Case: Women, Girls, Men, Boy)
     function syncHomeCategorySignatures() {
