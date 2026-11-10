@@ -1,16 +1,18 @@
-/**
- * HNMTSHOP — PANTS STUDIO (EDITORIAL LUXURY LOOKBOOK 1:1)
- * Seamless drop-in animation, background color morphing, spotlight radial backlight,
- * unified purchasing column, technical garment specs, and responsive filtering.
- */
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:ital,wght@0,400;0,600;0,700;0,800;0,900;1,800;1,900&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
 
 :root {
-    --ps-font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-    --ps-font-serif: 'Playfair Display', 'Cinzel', Georgia, serif;
-    --ps-ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --pv-dark-bg: #0D0E12;
+    --pv-card-bg: rgba(255, 255, 255, 0.04);
+    --pv-border: rgba(255, 255, 255, 0.12);
+    --pv-text: #FFFFFF;
+    --pv-muted: rgba(255, 255, 255, 0.70);
+    --pv-ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --pv-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* OVERLAY TOÀN MÀN HÌNH */
+/* ==========================================================================
+   CONTAINER & OVERLAY (Showroom & Standalone)
+   ========================================================================== */
 #hnmtPantsOverlay,
 .hnmt-pants-studio-wrap {
     position: fixed !important;
@@ -18,12 +20,15 @@
     width: 100vw !important;
     height: 100vh !important;
     z-index: 100001 !important;
-    display: none !important;
+    background-color: var(--pv-dark-bg);
+    color: var(--pv-text);
     opacity: 0 !important;
     visibility: hidden !important;
     pointer-events: none !important;
-    transition: opacity 0.45s ease, visibility 0.45s ease;
+    display: none !important;
+    transition: opacity 0.5s var(--pv-ease), visibility 0.5s var(--pv-ease);
     overflow: hidden !important;
+    font-family: 'Montserrat', -apple-system, sans-serif;
 }
 
 #hnmtPantsOverlay.is-active,
@@ -34,359 +39,463 @@
     pointer-events: auto !important;
 }
 
-/* APP SHELL VỚI NỀN ĐỔI MÀU MƯỢT MÀ THEO TỪNG CHIẾC QUẦN */
-.ps-app {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    background-color: #7E1B38;
-    color: #ffffff;
-    font-family: var(--ps-font-sans);
+.pv-app {
+    min-height: 100vh;
+    min-height: 100svh;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    padding: 26px 44px;
-    box-sizing: border-box;
-    transition: background-color 0.85s var(--ps-ease);
-    user-select: none;
+    position: relative;
+    background-color: var(--pv-dark-bg);
     overflow: hidden;
+    user-select: none;
 }
 
-/* --- 1. HEADER --- */
-.ps-header {
-    position: relative;
-    z-index: 20;
+/* Nền tối họa tiết huyền bí đồng bộ với Sneaker Vault */
+.pv-app::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url('/images/sneakers/sneaker-grid-bg.webp?v=bg_v1');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.88s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1;
+}
+
+.pv-app.is-grid-mode::before {
+    opacity: 0.85;
+}
+
+/* ==========================================================================
+   HEADER ĐỒNG BỘ 100% VỚI SNEAKER VAULT
+   ========================================================================== */
+.pv-header {
+    height: 85px;
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    width: 100%;
+    padding: 0 clamp(20px, 4vw, 60px);
+    position: relative;
+    z-index: 30;
 }
 
-.ps-nav-tabs {
+.pv-header-left {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 14px;
 }
 
-.ps-tab-btn {
-    background: transparent;
-    border: none;
-    color: rgba(255, 255, 255, 0.72);
-    font-size: 13.5px;
-    font-weight: 500;
-    padding: 7px 16px;
+.pv-icon-btn {
+    height: 38px;
+    padding: 0 16px;
     border-radius: 999px;
-    cursor: pointer;
-    transition: all 0.25s ease;
-}
-
-.ps-tab-btn:hover {
-    color: #ffffff;
-    background: rgba(255, 255, 255, 0.12);
-}
-
-.ps-tab-btn.is-active {
-    background: #ffffff;
-    color: #111111;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--pv-border);
+    color: var(--pv-text);
+    font-size: 11px;
     font-weight: 700;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+    letter-spacing: 0.08em;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: all 0.3s var(--pv-ease);
+}
+
+.pv-icon-btn:hover {
+    background: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+.pv-vault-switcher {
+    display: inline-flex !important;
+    align-items: center !important;
+    height: 38px !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    border-radius: 999px !important;
+    padding: 0 5px !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    user-select: none !important;
+    flex-shrink: 0 !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+    gap: 2px !important;
+}
+
+.pv-vault-switcher:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.38) !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45) !important;
+}
+
+.pv-vault-arrow {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    border-radius: 50% !important;
+    border: none !important;
+    background: transparent !important;
+    color: rgba(255, 255, 255, 0.55) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: all 0.22s var(--pv-ease) !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    outline: none !important;
+}
+
+.pv-vault-arrow i {
+    font-size: 13px !important;
+}
+
+.pv-vault-arrow:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+    transform: scale(1.1) !important;
+}
+
+.pv-header-title {
+    font-family: 'Space Grotesk', 'Montserrat', sans-serif !important;
+    font-size: 11.5px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.12em !important;
+    text-transform: uppercase !important;
+    color: #ffffff !important;
+    padding: 0 10px !important;
+    white-space: nowrap !important;
 }
 
 /* LOGO CHỮ KÝ TRUNG TÂM */
-.ps-brand-logo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    color: #ffffff;
-}
-
-.ps-brand-sig {
-    font-family: 'Dancing Script', 'Alex Brush', cursive;
+.pv-brand-signature {
+    font-family: 'Dancing Script', cursive;
     font-size: 34px;
     font-weight: 700;
-    letter-spacing: 0.5px;
     color: #ffffff;
+    text-decoration: none;
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    transition: opacity 0.2s ease;
 }
 
-/* CỤM NÚT PHẢI CỦA HEADER */
-.ps-header-right {
+.pv-brand-signature:hover {
+    opacity: 0.85;
+}
+
+/* HEADER RIGHT */
+.pv-head-right {
     display: flex;
     align-items: center;
     justify-content: flex-end;
     gap: 16px;
 }
 
-.ps-header-btn {
+.pv-bag-btn {
     position: relative;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    color: #ffffff;
-    width: 42px;
-    height: 42px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--pv-border);
+    color: var(--pv-text);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 17px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     transition: all 0.25s ease;
 }
 
-.ps-header-btn:hover {
-    background: rgba(255, 255, 255, 0.22);
+.pv-bag-btn svg {
+    width: 17px;
+    height: 17px;
+}
+
+.pv-bag-btn:hover {
+    background: rgba(255, 255, 255, 0.18);
     transform: scale(1.05);
 }
 
-.ps-cart-badge {
+.pv-bag-badge {
     position: absolute;
     top: -2px;
     right: -2px;
     background: #ff3b30;
     color: #ffffff;
-    font-size: 11px;
-    font-weight: 800;
-    width: 18px;
-    height: 18px;
+    width: 17px;
+    height: 17px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    font-size: 10px;
+    font-weight: 800;
 }
 
-.ps-exit-btn {
-    background: rgba(0, 0, 0, 0.28);
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    color: #ffffff;
-    padding: 8px 18px;
+.pv-exit-btn {
+    height: 38px;
+    padding: 0 18px;
     border-radius: 999px;
-    display: flex;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--pv-border);
+    color: var(--pv-text);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    display: inline-flex;
     align-items: center;
     gap: 8px;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.3px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: all 0.3s var(--pv-ease);
 }
 
-.ps-exit-btn:hover {
+.pv-exit-btn:hover {
     background: #ffffff;
     color: #000000;
     border-color: #ffffff;
     transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
 }
 
-/* --- 2. KHU VỰC THÂN TRANG (3 CỘT LOOKBOOK THỰC TẾ) --- */
-.ps-main-stage {
-    position: relative;
+/* ==========================================================================
+   VIEW 1: GRID OVERVIEW (FLOATING PANTS GRID)
+   ========================================================================== */
+.pv-grid-container {
     flex: 1;
-    display: grid;
-    grid-template-columns: 360px 1fr 380px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    width: 100%;
-    max-width: 1680px;
-    margin: 0 auto;
-    padding: 10px 0;
-    box-sizing: border-box;
+    padding: 20px clamp(20px, 5vw, 90px) 40px;
+    transition: opacity 0.4s var(--pv-ease), transform 0.4s var(--pv-ease);
+    opacity: 1;
+    transform: scale(1);
+    position: relative;
+    z-index: 15;
 }
 
-/* CỘT TRÁI: EDITORIAL & THÔNG SỐ VẢI KỸ THUẬT */
-.ps-left-col {
+.pv-grid-container.is-hidden {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+}
+
+.pv-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(24px, 3.5vw, 56px);
+    width: 100%;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.pv-grid-item {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 10px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
     position: relative;
     z-index: 10;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding-right: 24px;
+    pointer-events: auto;
+    user-select: none;
+    transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
 }
 
-.ps-headline {
-    font-family: var(--ps-font-serif);
-    font-size: clamp(34px, 3.4vw, 48px);
-    font-weight: 600;
-    line-height: 1.15;
-    letter-spacing: -0.01em;
-    color: #ffffff;
-    margin: 0 0 14px 0;
-    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+.pv-grid-item:hover {
+    transform: translateY(-6px) !important;
 }
 
-.ps-headline span {
-    display: block;
-}
-
-.ps-desc {
-    font-size: 13.5px;
-    line-height: 1.6;
-    color: rgba(255, 255, 255, 0.85);
-    margin: 0 0 20px 0;
-    max-width: 340px;
-    font-weight: 400;
-}
-
-/* THẺ THÔNG SỐ KỸ THUẬT SẢN PHẨM (SPECS CARD) */
-.ps-specs-card {
-    background: rgba(0, 0, 0, 0.28);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 16px;
-    padding: 16px 18px;
-    margin-bottom: 24px;
-    max-width: 340px;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-}
-
-.ps-spec-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 7px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-}
-
-.ps-spec-item:last-child {
-    border-bottom: none;
-    padding-bottom: 2px;
-}
-
-.ps-spec-icon {
-    font-size: 15px;
-    color: rgba(255, 255, 255, 0.7);
-    margin-top: 1px;
-}
-
-.ps-spec-content {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.ps-spec-label {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
-    color: rgba(255, 255, 255, 0.55);
-    font-weight: 600;
-}
-
-.ps-spec-val {
-    font-size: 12.5px;
-    color: #ffffff;
-    font-weight: 500;
-    line-height: 1.35;
-}
-
-/* MẠNG XÃ HỘI GÓC DƯỚI TRÁI */
-.ps-social-row {
-    display: flex;
-    align-items: center;
-    gap: 18px;
-}
-
-.ps-social-link {
-    color: rgba(255, 255, 255, 0.65);
-    font-size: 16px;
-    text-decoration: none;
-    transition: all 0.25s ease;
-}
-
-.ps-social-link:hover {
-    color: #ffffff;
-    transform: translateY(-2px);
-}
-
-/* --- CỘT GIỮA: SÂN KHẤU QUẦN 3D VỚI QUẦNG SÁNG SPOTLIGHT --- */
-.ps-center-col {
+.pv-item-image-wrap {
     position: relative;
     width: 100%;
+    height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+.pv-item-img {
     height: 100%;
-    min-height: 540px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-/* QUẦNG SÁNG STUDIO (SPOTLIGHT GLOW) SAU LƯNG QUẦN */
-.ps-spotlight-glow {
-    position: absolute;
-    top: 45%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: clamp(420px, 48vw, 680px);
-    height: clamp(420px, 48vw, 680px);
-    border-radius: 50%;
-    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.08) 35%, rgba(255, 255, 255, 0) 70%);
-    pointer-events: none;
-    z-index: 1;
-    filter: blur(28px);
-    transition: background 0.85s ease;
-}
-
-.ps-hero-stage {
-    position: relative;
-    z-index: 5;
-    width: 100%;
-    max-width: 480px;
-    height: clamp(460px, 66vh, 660px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* ẢNH QUẦN TRÊN MÓC GỖ LƠ LỬNG VỚI HIỆU ỨNG THẢ RƠI MƯỢT MÀ */
-.ps-hero-img-wrap {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-}
-
-.ps-hero-img {
-    max-height: 94%;
-    max-width: 100%;
+    max-height: 200px;
     width: auto;
     object-fit: contain;
-    filter: drop-shadow(0 24px 38px rgba(0, 0, 0, 0.45));
-    transition: transform 0.75s var(--ps-ease), opacity 0.5s ease;
+    filter: drop-shadow(0 18px 26px rgba(0, 0, 0, 0.75));
+    transition: transform 0.4s var(--pv-bounce), filter 0.4s ease;
+    animation: pvLevitate 4.5s ease-in-out infinite alternate;
+}
+
+.pv-grid-item:nth-child(2) .pv-item-img { animation-delay: -1.2s; }
+.pv-grid-item:nth-child(3) .pv-item-img { animation-delay: -2.4s; }
+.pv-grid-item:nth-child(4) .pv-item-img { animation-delay: -0.8s; }
+.pv-grid-item:nth-child(5) .pv-item-img { animation-delay: -1.9s; }
+
+.pv-grid-item:hover .pv-item-img {
+    animation-play-state: paused;
+    transform: scale(1.12) translateY(-6px) !important;
+    filter: drop-shadow(0 28px 36px rgba(0, 0, 0, 0.9));
+}
+
+.pv-item-shadow {
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 48%;
+    height: 12px;
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0) 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    transition: transform 0.35s ease, opacity 0.35s ease;
+}
+
+.pv-grid-item:hover .pv-item-shadow {
+    transform: translateX(-50%) scale(0.85);
+    opacity: 0.5;
+}
+
+.pv-item-meta {
+    margin-top: 12px;
+    text-align: center;
+}
+
+.pv-item-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13.5px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #ffffff;
+    margin: 0 0 4px 0;
+}
+
+.pv-item-price {
+    font-size: 12.5px;
+    color: rgba(255, 255, 255, 0.65);
+    font-weight: 600;
+}
+
+@keyframes pvLevitate {
+    0% { transform: translateY(0px); }
+    100% { transform: translateY(-10px); }
+}
+
+/* ==========================================================================
+   VIEW 2: CINEMATIC SLIDER 3D VIEW (1:1 VỚI SNEAKER VAULT)
+   ========================================================================== */
+.pv-slider-container {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s var(--pv-ease);
+    z-index: 20;
+    overflow: hidden;
+}
+
+.pv-slider-container:not(.is-active) {
+    display: none !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+}
+
+.pv-slider-container.is-active {
+    display: flex !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    visibility: visible !important;
+}
+
+/* CHỮ TYPOGRAPHY KHỔNG LỒ NẰM CHÍNH GIỮA KHUNG HÌNH VÀ CHIẾC QUẦN */
+.pv-giant-title-track {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100vw;
+    text-align: center;
+    z-index: 1;
+    pointer-events: none;
+    user-select: none;
+    overflow: hidden;
+}
+
+.pv-giant-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(85px, 12.5vw, 170px);
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: -0.015em;
+    text-transform: uppercase;
+    color: #ffffff;
+    text-shadow: none !important;
+    background: transparent !important;
+    white-space: nowrap;
+    display: inline-block;
+    transition: transform 0.65s var(--pv-ease), opacity 0.5s var(--pv-ease);
+}
+
+/* SÂN KHẤU QUẦN 3D CHÍNH GIỮA KHUNG HÌNH */
+.pv-stage {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.pv-hero-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.pv-hero-img {
+    height: clamp(420px, 62vh, 650px);
+    width: auto;
+    max-width: 80vw;
+    object-fit: contain;
+    filter: drop-shadow(0 28px 42px rgba(0, 0, 0, 0.75));
+    transition: transform 0.92s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.55s ease;
+    user-select: none;
+    pointer-events: none;
     will-change: transform, opacity;
 }
 
-.ps-hero-img.is-animating-in {
-    animation: psDropIn 0.85s var(--ps-ease) forwards;
+.pv-hero-img.is-floating {
+    animation: pvHeroFloat 5s ease-in-out infinite alternate;
 }
 
-.ps-hero-img.is-floating {
-    animation: psHeroFloat 4.8s ease-in-out infinite alternate;
-}
-
-@keyframes psDropIn {
-    0% {
-        transform: translateY(-130px) scale(0.9);
-        opacity: 0;
-    }
-    60% {
-        transform: translateY(14px) scale(1.02);
-        opacity: 1;
-    }
-    100% {
-        transform: translateY(0) scale(1);
-        opacity: 1;
-    }
-}
-
-@keyframes psHeroFloat {
+@keyframes pvHeroFloat {
     0% {
         transform: translateY(0px) rotate(0deg);
     }
@@ -398,494 +507,213 @@
     }
 }
 
-/* BÓNG ĐỔ DƯỚI ĐÁY SÀN */
-.ps-hero-shadow {
+.pv-hero-shadow {
     position: absolute;
-    bottom: 18px;
+    bottom: -16px;
     left: 50%;
     transform: translateX(-50%);
-    width: 46%;
+    width: 48%;
     height: 22px;
-    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0) 70%);
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 70%);
     border-radius: 50%;
-    filter: blur(9px);
-    transition: all 0.6s ease;
+    filter: blur(10px);
     pointer-events: none;
-    animation: psShadowPulse 4.8s ease-in-out infinite alternate;
+    transition: transform 0.92s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.55s ease;
 }
 
-@keyframes psShadowPulse {
-    0% {
-        transform: translateX(-50%) scale(1);
-        opacity: 0.5;
-    }
-    50% {
-        transform: translateX(-50%) scale(0.85);
-        opacity: 0.3;
-    }
-    100% {
-        transform: translateX(-50%) scale(1);
-        opacity: 0.5;
-    }
-}
-
-/* MŨI TÊN ĐIỀU HƯỚNG TRÁI / PHẢI */
-.ps-nav-arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 46px;
-    height: 46px;
-    border-radius: 50%;
-    background: rgba(0, 0, 0, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    color: #ffffff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 20px;
-    z-index: 15;
-    transition: all 0.3s ease;
-}
-
-.ps-nav-arrow:hover {
-    background: rgba(0, 0, 0, 0.7);
-    border-color: rgba(255, 255, 255, 0.45);
-    transform: translateY(-50%) scale(1.12);
-}
-
-.ps-nav-arrow.prev {
-    left: -16px;
-}
-
-.ps-nav-arrow.next {
-    right: -16px;
-}
-
-/* SLOGAN DƯỚI ĐÁY SÂN KHẤU */
-.ps-bottom-slogan {
-    font-family: var(--ps-font-serif);
-    font-size: 20px;
-    font-style: italic;
-    color: rgba(255, 255, 255, 0.88);
-    margin-top: 10px;
-    text-align: center;
-    letter-spacing: 0.3px;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
-    z-index: 5;
-}
-
-/* --- CỘT PHẢI: KHỐI MUA HÀNG LIỀN MẠCH (PURCHASING COLUMN) --- */
-.ps-right-col {
+/* ==========================================================================
+   BOTTOM BAR (SPECS PANEL + CONTROLS PANEL)
+   ========================================================================== */
+.pv-bottom-bar {
     position: relative;
-    z-index: 10;
+    z-index: 25;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     align-items: flex-end;
-    padding-left: 20px;
+    padding: 0 clamp(20px, 5vw, 70px) 36px;
+    gap: 20px;
 }
 
-.ps-purchase-card {
+/* BOTTOM-LEFT: TECH SPECS */
+.pv-specs-panel {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
-    width: 100%;
-    max-width: 360px;
+    gap: 6px;
+    transition: transform 0.75s var(--pv-ease), opacity 0.6s ease;
 }
 
-.ps-cat-badge {
-    display: inline-block;
+.pv-model-name {
+    font-family: 'Space Grotesk', 'Montserrat', sans-serif;
+    font-size: clamp(20px, 2.2vw, 28px);
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #ffffff;
+    margin: 0 0 6px;
+}
+
+.pv-spec-grid {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 4px 32px;
     font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.9);
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    padding: 4px 12px;
-    border-radius: 999px;
-    margin-bottom: 10px;
+    letter-spacing: 0.08em;
+    margin: 0;
 }
 
-.ps-product-title {
-    font-size: 22px;
-    font-weight: 800;
-    line-height: 1.25;
-    letter-spacing: -0.01em;
-    color: #ffffff;
-    text-align: right;
-    margin: 0 0 14px 0;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
-}
-
-.ps-price-box {
-    display: flex;
-    align-items: baseline;
-    justify-content: flex-end;
-    gap: 12px;
-    margin-bottom: 22px;
-}
-
-.ps-sale-price {
-    font-size: 32px;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    color: #ffffff;
-    line-height: 1;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
-}
-
-.ps-orig-price {
-    font-size: 18px;
-    font-weight: 500;
+.pv-spec-grid dt {
     color: rgba(255, 255, 255, 0.45);
-    text-decoration: line-through;
-}
-
-.ps-discount-tag {
-    font-size: 12px;
     font-weight: 700;
-    background: #ff3b30;
-    color: #ffffff;
-    padding: 2px 8px;
-    border-radius: 6px;
-}
-
-/* BỘ CHỌN SIZE QUẦN */
-.ps-size-box {
-    width: 100%;
-    text-align: right;
-    margin-bottom: 20px;
-}
-
-.ps-size-header {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 12px;
-    margin-bottom: 12px;
-}
-
-.ps-size-label {
-    font-size: 12.5px;
-    font-weight: 700;
-    letter-spacing: 0.6px;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.85);
 }
 
-.ps-size-guide-btn {
-    background: transparent;
-    border: none;
-    color: rgba(255, 255, 255, 0.65);
-    font-size: 12px;
-    text-decoration: underline;
-    cursor: pointer;
-    padding: 0;
-    transition: color 0.2s ease;
-}
-
-.ps-size-guide-btn:hover {
+.pv-spec-grid dd {
     color: #ffffff;
+    font-weight: 700;
+    margin: 0;
+    text-transform: uppercase;
 }
 
-.ps-size-pills {
+/* BOTTOM-RIGHT: CONTROLS (ARROWS, SIZES, ADD TO CART) */
+.pv-controls-panel {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    gap: 9px;
+    gap: 24px;
 }
 
-.ps-size-btn {
+.pv-arrow-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pv-nav-btn {
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: rgba(0, 0, 0, 0.55);
-    color: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    font-size: 13.5px;
-    font-weight: 700;
-    cursor: pointer;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--pv-border);
+    color: var(--pv-text);
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     transition: all 0.25s ease;
 }
 
-.ps-size-btn:hover {
-    border-color: rgba(255, 255, 255, 0.5);
+.pv-nav-btn:hover {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.4);
     transform: scale(1.08);
 }
 
-.ps-size-btn.is-active {
+.pv-size-selector {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+.pv-size-label {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.pv-size-pills {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pv-size-pill {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--pv-border);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.22s var(--pv-ease);
+}
+
+.pv-size-pill:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.08);
+}
+
+.pv-size-pill.is-active {
     background: #ffffff;
     color: #000000;
     border-color: #ffffff;
-    transform: scale(1.12);
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
-}
-
-/* NÚT THÊM VÀO GIỎ NGAY BÊN DƯỚI SIZE */
-.ps-cta-wrap {
-    width: 100%;
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 16px;
-}
-
-.ps-cta-btn {
-    width: 100%;
-    background: #ffffff;
-    color: #111111;
-    border: none;
-    padding: 15px 24px;
-    border-radius: 999px;
-    font-size: 14.5px;
     font-weight: 800;
-    letter-spacing: 0.6px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+    transform: scale(1.1);
+}
+
+.pv-add-bag-btn {
+    height: 48px;
+    padding: 0 26px;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #000000;
+    border: none;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    gap: 12px;
+    gap: 10px;
     cursor: pointer;
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
-    transition: all 0.35s var(--ps-ease);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    transition: all 0.35s var(--pv-ease);
 }
 
-.ps-cta-btn:hover {
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
-    background: #f8f9fa;
+.pv-add-bag-btn:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+    background: #f0f0f0;
 }
 
-.ps-cta-btn.is-added {
+.pv-add-bag-btn.is-added {
     background: #181D33 !important;
     color: #ffffff !important;
     transform: scale(0.98);
     pointer-events: none;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
-}
-
-.ps-cta-btn svg {
-    width: 18px;
-    height: 18px;
-}
-
-/* CHÍNH SÁCH MUA HÀNG NHANH */
-.ps-perks-row {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 14px;
-    width: 100%;
-    font-size: 11.5px;
-    color: rgba(255, 255, 255, 0.7);
-    margin-bottom: 24px;
-}
-
-.ps-perks-row span {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.ps-perks-row i {
-    font-size: 12px;
-}
-
-/* HÀNG ĐỢI XEM TRƯỚC (THUMBNAIL QUEUE GÓC DƯỚI PHẢI) */
-.ps-queue-box {
-    position: relative;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-}
-
-.ps-queue-label {
-    font-size: 11px;
-    letter-spacing: 0.6px;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.55);
-    font-weight: 600;
-    margin-bottom: 8px;
-}
-
-.ps-queue-list {
-    display: flex;
-    align-items: flex-end;
-    gap: 14px;
-}
-
-.ps-queue-card {
-    position: relative;
-    width: 72px;
-    height: 98px;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-    background: rgba(0, 0, 0, 0.25);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 12px;
-    padding: 6px;
-    transition: all 0.35s var(--ps-ease);
-}
-
-.ps-queue-card:hover {
-    transform: translateY(-6px) scale(1.06);
-    background: rgba(0, 0, 0, 0.45);
-    border-color: rgba(255, 255, 255, 0.35);
-}
-
-.ps-queue-img {
-    max-height: 80%;
-    max-width: 100%;
-    object-fit: contain;
-    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.35));
-    transition: transform 0.3s ease;
-}
-
-.ps-queue-shadow {
-    width: 60%;
-    height: 8px;
-    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 70%);
-    border-radius: 50%;
-    margin-top: 2px;
-}
-
-/* --- MODAL BẢNG SIZE QUẦN --- */
-.ps-size-modal-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.65);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    z-index: 100005;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-}
-
-.ps-size-modal-backdrop.is-open {
-    opacity: 1;
-    visibility: visible;
-}
-
-.ps-size-modal {
-    background: #15171e;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 20px;
-    padding: 28px 32px;
-    max-width: 480px;
-    width: 90%;
-    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.6);
-    transform: scale(0.92);
-    transition: transform 0.3s var(--ps-ease);
-}
-
-.ps-size-modal-backdrop.is-open .ps-size-modal {
-    transform: scale(1);
-}
-
-.ps-size-modal-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-}
-
-.ps-size-modal-title {
-    font-size: 18px;
-    font-weight: 700;
-    color: #ffffff;
-    margin: 0;
-}
-
-.ps-size-modal-close {
-    background: transparent;
-    border: none;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 24px;
-    cursor: pointer;
-    padding: 0;
-    line-height: 1;
-}
-
-.ps-size-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13.5px;
-    margin-bottom: 16px;
-}
-
-.ps-size-table th,
-.ps-size-table td {
-    padding: 10px 12px;
-    text-align: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.ps-size-table th {
-    color: rgba(255, 255, 255, 0.6);
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 11.5px;
-}
-
-.ps-size-table td {
-    color: #ffffff;
-}
-
-.ps-size-table tr:hover td {
-    background: rgba(255, 255, 255, 0.05);
-}
-
-.ps-size-hint-text {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.6);
-    line-height: 1.5;
-    margin: 0;
 }
 
 /* RESPONSIVE */
-@media (max-width: 1200px) {
-    .ps-app {
-        padding: 20px;
-        overflow-y: auto;
+@media (max-width: 900px) {
+    .pv-header {
+        height: 70px;
+        padding: 0 16px;
     }
-    .ps-main-stage {
-        grid-template-columns: 1fr;
-        gap: 28px;
-        text-align: center;
+    .pv-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
     }
-    .ps-left-col {
+    .pv-bottom-bar {
+        flex-direction: column;
         align-items: center;
-        padding-right: 0;
+        gap: 16px;
+        padding: 0 16px 20px;
     }
-    .ps-desc, .ps-specs-card {
-        max-width: 100%;
-    }
-    .ps-right-col {
-        align-items: center;
-        padding-left: 0;
-    }
-    .ps-purchase-card {
-        align-items: center;
-        max-width: 100%;
-    }
-    .ps-product-title {
-        text-align: center;
-    }
-    .ps-price-box, .ps-size-header, .ps-size-pills, .ps-perks-row, .ps-queue-box {
+    .pv-controls-panel {
+        flex-wrap: wrap;
         justify-content: center;
+    }
+    .pv-specs-panel {
+        text-align: center;
+        align-items: center;
     }
 }

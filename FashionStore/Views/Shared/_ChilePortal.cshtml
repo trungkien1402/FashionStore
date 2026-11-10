@@ -249,190 +249,117 @@
         </div>
     </div>
 
-    <!-- 6. GIAO DIỆN PANTS STUDIO (EDITORIAL LOOKBOOK 1:1 THEO VIDEO MẪU - MỞ RA KHI BẤM VÀO BỤC QUẦN TRONG SHOWROOM) -->
+    <!-- 6. GIAO DIỆN PANTS VAULT (ĐỒNG BỘ 100% VỚI SNEAKER VAULT VỀ NGÔN NGỮ THIẾT KẾ & LUỒNG TRẢI NGHIỆM) -->
     <div id="hnmtPantsOverlay" class="hnmt-pants-studio-wrap" aria-hidden="true">
-        <div class="ps-app" id="psApp">
+        <div class="pv-app is-grid-mode" id="pvApp">
 
-            <!-- 1. HEADER -->
-            <header class="ps-header">
-                <nav class="ps-nav-tabs" aria-label="Bộ lọc danh mục quần">
-                    <button type="button" class="ps-tab-btn is-active" data-cat="all">Tất cả</button>
-                    <button type="button" class="ps-tab-btn" data-cat="cargo">Cargo</button>
-                    <button type="button" class="ps-tab-btn" data-cat="denim">Denim Jeans</button>
-                    <button type="button" class="ps-tab-btn" data-cat="trousers">Trousers</button>
-                </nav>
-
-                <a href="/" class="ps-brand-logo" title="HnmtShop">
-                    <span class="ps-brand-sig">HnmtShop</span>
-                </a>
-
-                <div class="ps-header-right">
-                    <button type="button" class="ps-header-btn" id="psCartBtn" aria-label="Giỏ hàng">
-                        <i class="bi bi-bag"></i>
-                        <span class="ps-cart-badge" id="psCartBadge">0</span>
+            <!-- 1. HEADER (ĐỒNG BỘ 1:1 VỚI SNEAKER VAULT) -->
+            <header class="pv-header">
+                <div class="pv-header-left">
+                    <button type="button" class="pv-icon-btn" id="pvToggleViewBtn" title="Chuyển chế độ xem">
+                        <i class="bi bi-view-stacked" id="pvToggleViewIcon"></i>
+                        <span id="pvToggleViewText">SLIDER 3D</span>
                     </button>
-                    <button type="button" class="ps-exit-btn" id="psExitBtn" onclick="window.closePantsStudio()" title="Quay lại Showroom">
+                    <div class="pv-vault-switcher" id="pvVaultSwitcher">
+                        <button type="button" class="pv-vault-arrow" id="pvPrevCollectionBtn" aria-label="Bộ sưu tập trước" title="Bộ sưu tập trước">
+                            <i class="bi bi-chevron-left"></i>
+                        </button>
+                        <span class="pv-header-title" id="pvCollectionTitle">STREETWEAR PANTS VAULT</span>
+                        <button type="button" class="pv-vault-arrow" id="pvNextCollectionBtn" aria-label="Bộ sưu tập tiếp theo" title="Bộ sưu tập kế tiếp">
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <a href="/" class="pv-brand-signature" title="Về trang chủ HnmtShop">HnmtShop</a>
+
+                <div class="pv-head-right">
+                    <button type="button" class="pv-bag-btn" id="pvBagBtn" aria-label="Giỏ hàng">
+                        <svg fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+                            <path d="M4 8h16l-1 13H5L4 8Z" />
+                            <path d="M9 9V6a3 3 0 0 1 6 0v3" />
+                        </svg>
+                        <span class="pv-bag-badge" id="pvBagBadge">0</span>
+                    </button>
+                    <button type="button" class="pv-exit-btn" id="pvExitBtn" onclick="window.closePantsStudio()" title="Quay lại Showroom">
                         <i class="bi bi-arrow-left"></i>
                         <span>Quay lại</span>
                     </button>
                 </div>
             </header>
 
-            <!-- 2. MAIN STAGE (3 CỘT LOOKBOOK THỜI TRANG THỰC TẾ) -->
-            <main class="ps-main-stage">
-                <!-- CỘT TRÁI: EDITORIAL & GARMENT SPECS -->
-                <section class="ps-left-col">
-                    <h1 class="ps-headline">
-                        <span id="psHeadline1">Wear Confidence.</span>
-                        <span id="psHeadline2">Define Your Style.</span>
-                    </h1>
-                    <p class="ps-desc" id="psDesc">
-                        Khám phá thiết kế quần Baggy Cargo xám khói ứng dụng công nghệ Acid-Wash tạo vân loang độc bản. Cấu trúc túi hộp 3D vát góc sắc sảo mang đậm hơi thở streetwear quân đội tân thời.
-                    </p>
+            <!-- 2. VIEW 1: FLOATING PANTS GRID -->
+            <section class="pv-grid-container" id="pvGridContainer" aria-label="Bộ sưu tập quần dạng lưới">
+                <div class="pv-grid" id="pvGrid">
+                    <!-- Render tự động bởi pants-studio.js -->
+                </div>
+            </section>
 
-                    <!-- BẢNG THÔNG SỐ VẢI KỸ THUẬT (SPECS) -->
-                    <div class="ps-specs-card">
-                        <div class="ps-spec-item">
-                            <i class="bi bi-aspect-ratio ps-spec-icon"></i>
-                            <div class="ps-spec-content">
-                                <span class="ps-spec-label">Phom Dáng</span>
-                                <span class="ps-spec-val" id="psSpecFit">Baggy Relaxed (Ống suông rộng)</span>
-                            </div>
-                        </div>
-                        <div class="ps-spec-item">
-                            <i class="bi bi-layers ps-spec-icon"></i>
-                            <div class="ps-spec-content">
-                                <span class="ps-spec-label">Chất Liệu</span>
-                                <span class="ps-spec-val" id="psSpecFabric">100% Canvas Heavy-Wash (13.5oz)</span>
-                            </div>
-                        </div>
-                        <div class="ps-spec-item">
-                            <i class="bi bi-nut ps-spec-icon"></i>
-                            <div class="ps-spec-content">
-                                <span class="ps-spec-label">Khóa & Phụ Liệu</span>
-                                <span class="ps-spec-val" id="psSpecHdw">Khóa zip YKK đồng đúc, chốt gấu</span>
-                            </div>
-                        </div>
-                        <div class="ps-spec-item">
-                            <i class="bi bi-shield-check ps-spec-icon"></i>
-                            <div class="ps-spec-content">
-                                <span class="ps-spec-label">Đặc Tính</span>
-                                <span class="ps-spec-val" id="psSpecFeat">Đứng form tự nhiên, chống sờn rách</span>
-                            </div>
-                        </div>
+            <!-- 3. VIEW 2: CINEMATIC SLIDER 3D -->
+            <section class="pv-slider-container" id="pvSliderContainer" aria-label="Chi tiết Quần nổi khối 3D">
+
+                <!-- CHỮ TYPOGRAPHY KHỔNG LỒ NẰM CHÌM SAU LƯNG QUẦN -->
+                <div class="pv-giant-title-track" aria-hidden="true">
+                    <h2 class="pv-giant-title" id="pvGiantTitle">CARGO ACID IV</h2>
+                </div>
+
+                <!-- SÂN KHẤU QUẦN 3D VỚI CHUỘT PARALLAX TILT -->
+                <div class="pv-stage" id="pvStage">
+                    <div class="pv-hero-wrap" id="pvHeroWrap">
+                        <img src="/images/pants/cargo-acid-wash.png?v=vault_v1" alt="CARGO ACID IV" class="pv-hero-img is-floating" id="pvHeroImg" />
+                        <div class="pv-hero-shadow" id="pvHeroShadow"></div>
+                    </div>
+                </div>
+
+                <!-- THANH THÔNG SỐ VÀ ĐIỀU KHIỂN DƯỚI ĐÁY -->
+                <footer class="pv-bottom-bar">
+
+                    <!-- GÓC DƯỚI TRÁI: TECH SPECS -->
+                    <div class="pv-specs-panel">
+                        <h3 class="pv-model-name" id="pvModelName">ACID WASH DARK SMOKE</h3>
+                        <dl class="pv-spec-grid">
+                            <dt>MÃ QUẦN:</dt>
+                            <dd id="pvStyleCode">HNP-01-ACID</dd>
+
+                            <dt>PHOM DÁNG:</dt>
+                            <dd id="pvFit">BAGGY RELAXED</dd>
+
+                            <dt>CHẤT LIỆU:</dt>
+                            <dd id="pvFabric">100% HEAVY CANVAS 13.5OZ</dd>
+
+                            <dt>GIÁ BÁN:</dt>
+                            <dd id="pvPrice">650.000 ₫</dd>
+                        </dl>
                     </div>
 
-                    <div class="ps-social-row">
-                        <a href="https://instagram.com" target="_blank" rel="noopener" class="ps-social-link" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-                        <a href="https://twitter.com" target="_blank" rel="noopener" class="ps-social-link" aria-label="X / Twitter"><i class="bi bi-twitter-x"></i></a>
-                        <a href="https://facebook.com" target="_blank" rel="noopener" class="ps-social-link" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
-                        <a href="https://tiktok.com" target="_blank" rel="noopener" class="ps-social-link" aria-label="TikTok"><i class="bi bi-tiktok"></i></a>
-                    </div>
-                </section>
-
-                <!-- CỘT GIỮA: SÂN KHẤU QUẦN 3D VỚI SPOTLIGHT GLOW LƯNG QUẦN -->
-                <section class="ps-center-col">
-                    <button type="button" class="ps-nav-arrow prev" id="psPrevBtn" aria-label="Mẫu quần trước" title="Mẫu trước">
-                        <i class="bi bi-chevron-left"></i>
-                    </button>
-
-                    <!-- QUẦNG SÁNG STUDIO TÔN SẢN PHẨM -->
-                    <div class="ps-spotlight-glow" aria-hidden="true"></div>
-
-                    <div class="ps-hero-stage">
-                        <div class="ps-hero-img-wrap">
-                            <img src="/images/pants/cargo-acid-wash.png?v=studio_v2" alt="Quần thời trang" class="ps-hero-img is-floating" id="psHeroImg" />
-                            <div class="ps-hero-shadow" id="psHeroShadow"></div>
-                        </div>
-                    </div>
-
-                    <button type="button" class="ps-nav-arrow next" id="psNextBtn" aria-label="Mẫu quần tiếp theo" title="Mẫu kế tiếp">
-                        <i class="bi bi-chevron-right"></i>
-                    </button>
-
-                    <div class="ps-bottom-slogan">
-                        Dress Better. Feel Better.
-                    </div>
-                </section>
-
-                <!-- CỘT PHẢI: KHỐI MUA HÀNG ĐỒNG BỘ 1 CHẠM -->
-                <section class="ps-right-col">
-                    <div class="ps-purchase-card">
-                        <span class="ps-cat-badge" id="psCatBadge">Cargo Streetwear</span>
-                        <h2 class="ps-product-title" id="psProductTitle">Quần Baggy Cargo Acid-Wash Xám Khói</h2>
-
-                        <div class="ps-price-box">
-                            <span class="ps-sale-price" id="psSalePrice">650.000 ₫</span>
-                            <span class="ps-orig-price" id="psOrigPrice">890.000 ₫</span>
-                            <span class="ps-discount-tag" id="psDiscountTag">-27%</span>
+                    <!-- GÓC DƯỚI PHẢI: ARROWS, SIZES, ADD TO BAG -->
+                    <div class="pv-controls-panel">
+                        <div class="pv-arrow-group">
+                            <button type="button" class="pv-nav-btn prev" id="pvPrevBtn" aria-label="Mẫu trước">
+                                <i class="bi bi-chevron-left"></i>
+                            </button>
+                            <button type="button" class="pv-nav-btn next" id="pvNextBtn" aria-label="Mẫu tiếp theo">
+                                <i class="bi bi-chevron-right"></i>
+                            </button>
                         </div>
 
-                        <!-- CHỌN SIZE QUẦN -->
-                        <div class="ps-size-box">
-                            <div class="ps-size-header">
-                                <span class="ps-size-label">CHỌN KÍCH CỠ</span>
-                                <button type="button" class="ps-size-guide-btn" id="psSizeGuideBtn">Bảng size</button>
-                            </div>
-                            <div class="ps-size-pills" id="psSizePills">
+                        <div class="pv-size-selector">
+                            <span class="pv-size-label">CHỌN SIZE</span>
+                            <div class="pv-size-pills" id="pvSizePills">
                                 <!-- Render tự động bởi pants-studio.js -->
                             </div>
                         </div>
 
-                        <!-- NÚT THÊM VÀO GIỎ NGAY DƯỚI BẢNG SIZE -->
-                        <div class="ps-cta-wrap">
-                            <button type="button" class="ps-cta-btn" id="psAddToCartBtn">
-                                <span>THÊM VÀO GIỎ HÀNG</span>
-                                <i class="bi bi-arrow-right"></i>
-                            </button>
-                        </div>
-
-                        <!-- CHÍNH SÁCH MUA HÀNG -->
-                        <div class="ps-perks-row">
-                            <span><i class="bi bi-shield-check"></i> Chính hãng 100%</span>
-                            <span><i class="bi bi-truck"></i> Giao 2-3 ngày</span>
-                            <span><i class="bi bi-arrow-repeat"></i> Đổi trả 30 ngày</span>
-                        </div>
-
-                        <!-- HÀNG ĐỢI XEM TRƯỚC -->
-                        <div class="ps-queue-box">
-                            <span class="ps-queue-label">SẮP CHIẾU TIẾP THEO</span>
-                            <div class="ps-queue-list" id="psQueueList">
-                                <!-- Render thumbnail hàng đợi mini bởi pants-studio.js -->
-                            </div>
-                        </div>
+                        <button type="button" class="pv-add-bag-btn" id="pvAddBagBtn">
+                            <span>THÊM VÀO GIỎ</span>
+                            <i class="bi bi-arrow-right"></i>
+                        </button>
                     </div>
-                </section>
-            </main>
 
-            <!-- 3. POPUP MODAL BẢNG SIZE -->
-            <div class="ps-size-modal-backdrop" id="psSizeModalBackdrop" role="dialog" aria-modal="true" aria-label="Bảng quy đổi kích cỡ quần">
-                <div class="ps-size-modal">
-                    <div class="ps-size-modal-header">
-                        <h3 class="ps-size-modal-title">BẢNG QUY ĐỔI KÍCH CỠ QUẦN HNMTSHOP</h3>
-                        <button type="button" class="ps-size-modal-close" id="psSizeModalClose" aria-label="Đóng">&times;</button>
-                    </div>
-                    <table class="ps-size-table">
-                        <thead>
-                            <tr>
-                                <th>Size</th>
-                                <th>Chiều Cao (cm)</th>
-                                <th>Cân Nặng (kg)</th>
-                                <th>Vòng Eo (cm)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr><td><strong>29</strong></td><td>160 - 168</td><td>50 - 58</td><td>73 - 76</td></tr>
-                            <tr><td><strong>30</strong></td><td>165 - 172</td><td>59 - 65</td><td>77 - 80</td></tr>
-                            <tr><td><strong>31</strong></td><td>168 - 176</td><td>66 - 72</td><td>81 - 84</td></tr>
-                            <tr><td><strong>32</strong></td><td>172 - 180</td><td>73 - 78</td><td>85 - 88</td></tr>
-                            <tr><td><strong>34</strong></td><td>175 - 185</td><td>79 - 86</td><td>89 - 94</td></tr>
-                        </tbody>
-                    </table>
-                    <p class="ps-size-hint-text">
-                        * Khuyên dùng: Nếu bạn phân vân giữa 2 size hoặc thích mặc phom rộng phóng khoáng (Baggy/Wide-Leg), hãy chọn tăng 1 size.
-                    </p>
-                </div>
-            </div>
+                </footer>
+
+            </section>
+
         </div>
     </div>
 

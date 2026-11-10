@@ -1,207 +1,308 @@
 /**
- * HNMTSHOP — PANTS STUDIO INTERACTIVE LOOKBOOK (LUXURY & E-COMMERCE LOGIC)
- * Seamless drop-in animation, background color morphing, spotlight backlight glow,
- * unified purchasing column, technical garment specs card, and dynamic category filtering.
+ * HNMTSHOP — PANTS VAULT (ĐỒNG BỘ 100% VỚI SNEAKER VAULT)
+ * 2 viewing modes: Floating Grid Mode & Cinematic 3D Slider Mode.
+ * Giant typography watermark, interactive 3D mouse parallax, tech specs,
+ * circular size selectors, and collection vault switcher.
  */
 
 (function () {
     'use strict';
 
-    // DỮ LIỆU CÁC MẪU QUẦN THỜI TRANG HNMTSHOP
-    const PANTS_DATA = [
+    // DỮ LIỆU CÁC BỘ SƯU TẬP QUẦN THỜI TRANG HNMTSHOP
+    const PANTS_COLLECTIONS = [
         {
-            id: 'pnt-01',
-            name: 'Quần Baggy Cargo Acid-Wash Xám Khói',
-            badge: 'Cargo Streetwear',
-            category: 'cargo',
-            headline1: 'Wear Confidence.',
-            headline2: 'Define Your Style.',
-            desc: 'Thiết kế Baggy Cargo xám khói ứng dụng công nghệ Acid-Wash tạo vân loang độc bản. Cấu trúc túi hộp 3D vát góc sắc sảo mang đậm hơi thở thời trang đường phố tân thời.',
-            fit: 'Baggy Relaxed (Ống suông rộng)',
-            fabric: '100% Canvas Heavy-Wash (13.5oz)',
-            hardware: 'Khóa zip YKK đồng đúc, chốt gấu co rút',
-            feature: 'Đứng form tự nhiên, chống sờn rách',
-            price: 650000,
-            originalPrice: 890000,
-            discount: '-27%',
-            themeColor: '#7E1B38', // Sắc đỏ Burgundy thẫm như mở màn video
-            sizes: ['29', '30', '31', '32', '34'],
-            image: '/images/pants/cargo-acid-wash.png?v=studio_v2'
+            id: 'all',
+            title: 'STREETWEAR PANTS VAULT',
+            items: [
+                {
+                    id: 'pnt-01',
+                    giantTitle: 'CARGO ACID IV',
+                    modelName: 'ACID WASH DARK SMOKE',
+                    styleCode: 'HNP-01-ACID',
+                    fit: 'BAGGY RELAXED',
+                    fabric: '100% HEAVY CANVAS 13.5OZ',
+                    price: 650000,
+                    sizes: ['29', '30', '31', '32', '34'],
+                    image: '/images/pants/cargo-acid-wash.png?v=vault_v1'
+                },
+                {
+                    id: 'pnt-02',
+                    giantTitle: 'VINTAGE INDIGO XI',
+                    modelName: 'WIDE-LEG VINTAGE INDIGO',
+                    styleCode: 'HNP-02-INDIGO',
+                    fit: 'WIDE-LEG FIT',
+                    fabric: '100% RIGID DENIM 12.8OZ',
+                    price: 590000,
+                    sizes: ['29', '30', '31', '32', '34'],
+                    image: '/images/pants/wide-leg-denim.png?v=vault_v1'
+                },
+                {
+                    id: 'pnt-03',
+                    giantTitle: 'TACTICAL UTILITY III',
+                    modelName: 'TACTICAL OLIVE RIPSTOP',
+                    styleCode: 'HNP-03-TACT',
+                    fit: 'TAPERED JOGGER',
+                    fabric: 'RIPSTOP COTTON-NYLON',
+                    price: 620000,
+                    sizes: ['29', '30', '31', '32', '34'],
+                    image: '/images/pants/tactical-olive.png?v=vault_v1'
+                },
+                {
+                    id: 'pnt-04',
+                    giantTitle: 'PLEATED SAND V',
+                    modelName: 'PLEATED RELAXED BEIGE',
+                    styleCode: 'HNP-04-SAND',
+                    fit: 'RELAXED TAILORED',
+                    fabric: 'WOOL-BLEND TWILL',
+                    price: 690000,
+                    sizes: ['29', '30', '31', '32', '34'],
+                    image: '/images/pants/pleated-sand-beige.png?v=vault_v1'
+                },
+                {
+                    id: 'pnt-05',
+                    giantTitle: 'RAW SELVEDGE I',
+                    modelName: 'MIDNIGHT RAW SELVEDGE',
+                    styleCode: 'HNP-05-SELVEDGE',
+                    fit: 'STRAIGHT-LEG FIT',
+                    fabric: 'JAPANESE SELVEDGE 14.5OZ',
+                    price: 720000,
+                    sizes: ['29', '30', '31', '32', '34'],
+                    image: '/images/pants/raw-selvedge-black.png?v=vault_v1'
+                }
+            ]
         },
         {
-            id: 'pnt-02',
-            name: 'Quần Jeans Wide-Leg Vintage Wash Indigo',
-            badge: 'Vintage Denim',
-            category: 'denim',
-            headline1: 'Timeless Denim.',
-            headline2: 'Effortless Cool.',
-            desc: 'Quần jeans ống rộng phom suông kinh điển với tông màu chàm wash sờn cổ điển. Kỹ thuật giặt đá tự nhiên tạo độ mềm mại hoàn hảo trên nền vải denim đanh chắc.',
-            fit: 'Wide-Leg (Ống rộng suông dài)',
-            fabric: '100% Rigid Denim Cotton (12.8oz)',
-            hardware: 'Đinh tán & khuy đồng dập chìm Hnmt',
-            feature: 'Tôn dáng chân dài, không bai gião',
-            price: 590000,
-            originalPrice: 850000,
-            discount: '-31%',
-            themeColor: '#4A3628', // Nâu Mocha ấm áp
-            sizes: ['29', '30', '31', '32', '34'],
-            image: '/images/pants/wide-leg-denim.png?v=studio_v2'
+            id: 'cargo',
+            title: 'CARGO STREETWEAR',
+            items: [
+                {
+                    id: 'pnt-01',
+                    giantTitle: 'CARGO ACID IV',
+                    modelName: 'ACID WASH DARK SMOKE',
+                    styleCode: 'HNP-01-ACID',
+                    fit: 'BAGGY RELAXED',
+                    fabric: '100% HEAVY CANVAS 13.5OZ',
+                    price: 650000,
+                    sizes: ['29', '30', '31', '32', '34'],
+                    image: '/images/pants/cargo-acid-wash.png?v=vault_v1'
+                },
+                {
+                    id: 'pnt-03',
+                    giantTitle: 'TACTICAL UTILITY III',
+                    modelName: 'TACTICAL OLIVE RIPSTOP',
+                    styleCode: 'HNP-03-TACT',
+                    fit: 'TAPERED JOGGER',
+                    fabric: 'RIPSTOP COTTON-NYLON',
+                    price: 620000,
+                    sizes: ['29', '30', '31', '32', '34'],
+                    image: '/images/pants/tactical-olive.png?v=vault_v1'
+                }
+            ]
         },
         {
-            id: 'pnt-03',
-            name: 'Quần Tactical Utility Olive Ripstop',
-            badge: 'Utility Techwear',
-            category: 'cargo',
-            headline1: 'Urban Utility.',
-            headline2: 'Built To Move.',
-            desc: 'Phong cách Techwear dã chiến với sắc xanh rêu lính. Cấu trúc túi hộp vát góc tối ưu không gian chứa đồ, đai thắt quick-release phản quang hỗ trợ mọi chuyển động.',
-            fit: 'Tapered Cargo (Ống côn bo gấu)',
-            fabric: 'Ripstop Cotton-Nylon dệt tổ ong',
-            hardware: 'Khóa bấm Quick-Release, zip trượt nước',
-            feature: 'Chống sờn rách, co giãn nhẹ 2 chiều',
-            price: 620000,
-            originalPrice: 820000,
-            discount: '-24%',
-            themeColor: '#2B3038', // Xám than chì Graphite
-            sizes: ['29', '30', '31', '32', '34'],
-            image: '/images/pants/tactical-olive.png?v=studio_v2'
+            id: 'denim',
+            title: 'HERITAGE DENIM',
+            items: [
+                {
+                    id: 'pnt-02',
+                    giantTitle: 'VINTAGE INDIGO XI',
+                    modelName: 'WIDE-LEG VINTAGE INDIGO',
+                    styleCode: 'HNP-02-INDIGO',
+                    fit: 'WIDE-LEG FIT',
+                    fabric: '100% RIGID DENIM 12.8OZ',
+                    price: 590000,
+                    sizes: ['29', '30', '31', '32', '34'],
+                    image: '/images/pants/wide-leg-denim.png?v=vault_v1'
+                },
+                {
+                    id: 'pnt-05',
+                    giantTitle: 'RAW SELVEDGE I',
+                    modelName: 'MIDNIGHT RAW SELVEDGE',
+                    styleCode: 'HNP-05-SELVEDGE',
+                    fit: 'STRAIGHT-LEG FIT',
+                    fabric: 'JAPANESE SELVEDGE 14.5OZ',
+                    price: 720000,
+                    sizes: ['29', '30', '31', '32', '34'],
+                    image: '/images/pants/raw-selvedge-black.png?v=vault_v1'
+                }
+            ]
         },
         {
-            id: 'pnt-04',
-            name: 'Quần Tây Pleated Relaxed Sand Beige',
-            badge: 'Tailored Trousers',
-            category: 'trousers',
-            headline1: 'Quiet Luxury.',
-            headline2: 'Modern Tailoring.',
-            desc: 'Quần âu xếp ly kép với phom dáng suông phóng khoáng mang tinh thần Quiet Luxury. Tông be cát trang nhã dễ dàng kết hợp cùng áo thun, polo hoặc blazer sang trọng.',
-            fit: 'Relaxed Tailored (Ống suông xếp ly)',
-            fabric: 'Wool-Blend cao cấp (Sợi dệt mịn)',
-            hardware: 'Cạp tăng đơ ẩn thông minh tinh chỉnh eo',
-            feature: 'Độ rũ thanh thoát, chống nhăn tuyệt đối',
-            price: 690000,
-            originalPrice: 950000,
-            discount: '-27%',
-            themeColor: '#6B5847', // Be Cát Sand Beige
-            sizes: ['29', '30', '31', '32', '34'],
-            image: '/images/pants/pleated-sand-beige.png?v=studio_v2'
-        },
-        {
-            id: 'pnt-05',
-            name: 'Quần Midnight Raw Selvedge Straight-Leg',
-            badge: 'Premium Selvedge',
-            category: 'denim',
-            headline1: 'Pure Darkness.',
-            headline2: 'Sharp & Clean.',
-            desc: 'Tuyệt phẩm denim dệt biên Selvedge nhuộm đen tuyền bóng nhẹ. Cấu trúc ống đứng thẳng tắp tôn chiều cao, tạo điểm nhấn bí ẩn, sắc lạnh và đẳng cấp cho mọi outfit.',
-            fit: 'Straight-Leg (Ống đứng tôn chiều cao)',
-            fabric: 'Japanese Raw Selvedge Denim 14.5oz',
-            hardware: 'Khuy Button Fly truyền thống mạ titan',
-            feature: 'Vải mộc sống, fade vân theo cơ thể người mặc',
-            price: 720000,
-            originalPrice: 990000,
-            discount: '-27%',
-            themeColor: '#1A1C22', // Đen Midnight sang trọng
-            sizes: ['29', '30', '31', '32', '34'],
-            image: '/images/pants/raw-selvedge-black.png?v=studio_v2'
+            id: 'trousers',
+            title: 'TAILORED TROUSERS',
+            items: [
+                {
+                    id: 'pnt-04',
+                    giantTitle: 'PLEATED SAND V',
+                    modelName: 'PLEATED RELAXED BEIGE',
+                    styleCode: 'HNP-04-SAND',
+                    fit: 'RELAXED TAILORED',
+                    fabric: 'WOOL-BLEND TWILL',
+                    price: 690000,
+                    sizes: ['29', '30', '31', '32', '34'],
+                    image: '/images/pants/pleated-sand-beige.png?v=vault_v1'
+                }
+            ]
         }
     ];
 
-    let currentFilter = 'all';
-    let filteredList = [...PANTS_DATA];
-    let currentIndex = 0;
-    let selectedSize = '30';
-    let isAnimating = false;
-    let cartCount = 0;
+    let currentCollectionIndex = 0;
+    const getActiveCollection = () => PANTS_COLLECTIONS[currentCollectionIndex];
+    const getPants = () => getActiveCollection().items;
 
-    // Helper DOM selectors
-    const $ = (sel) => document.querySelector(sel);
-    const $$ = (sel) => document.querySelectorAll(sel);
+    let currentIndex = 0;
+    let isSliderView = false; // Mặc định mở dạng Grid 3x2 sang trọng như Sneaker Vault
+    let selectedSize = '30';
+    let bagCount = 0;
+    let isAnimating = false;
+
+    const $ = s => document.querySelector(s);
+    const $$ = s => document.querySelectorAll(s);
 
     function formatPrice(num) {
         return num.toLocaleString('vi-VN') + ' ₫';
     }
 
-    // --- CẬP NHẬT GIAO DIỆN QUẦN ---
-    function renderPants(index, direction = 1) {
-        if (!filteredList.length) return;
+    // --- RENDER DANH SÁCH DẠNG LƯỚI (VIEW 1: FLOATING GRID) ---
+    function renderGrid() {
+        const grid = $('#pvGrid');
+        if (!grid) return;
 
-        if (index < 0) index = filteredList.length - 1;
-        if (index >= filteredList.length) index = 0;
+        grid.innerHTML = '';
+        const items = getPants();
+
+        items.forEach((pant, idx) => {
+            const card = document.createElement('div');
+            card.className = 'pv-grid-item';
+            card.setAttribute('role', 'button');
+            card.setAttribute('title', `Xem chi tiết ${pant.giantTitle}`);
+            card.innerHTML = `
+                <div class="pv-item-image-wrap">
+                    <img src="${pant.image}" alt="${pant.giantTitle}" class="pv-item-img" />
+                    <div class="pv-item-shadow"></div>
+                </div>
+                <div class="pv-item-meta">
+                    <h3 class="pv-item-title">${pant.giantTitle}</h3>
+                    <div class="pv-item-price">${formatPrice(pant.price)}</div>
+                </div>
+            `;
+
+            card.onclick = (e) => {
+                e.stopPropagation();
+                openSliderAt(idx);
+            };
+
+            grid.appendChild(card);
+        });
+    }
+
+    // --- MỞ VIEW SLIDER TẠI VỊ TRÍ INDEX ---
+    function openSliderAt(idx) {
+        currentIndex = idx;
+        isSliderView = true;
+        updateViewMode();
+        renderSliderPant(currentIndex);
+    }
+
+    // --- CẬP NHẬT GIAO DIỆN CHẾ ĐỘ XEM (GRID vs SLIDER 3D) ---
+    function updateViewMode() {
+        const app = $('#pvApp');
+        const gridContainer = $('#pvGridContainer');
+        const sliderContainer = $('#pvSliderContainer');
+        const toggleBtnText = $('#pvToggleViewText');
+        const toggleBtnIcon = $('#pvToggleViewIcon');
+
+        if (isSliderView) {
+            if (app) {
+                app.classList.remove('is-grid-mode');
+                app.classList.add('is-slider-mode');
+            }
+            if (gridContainer) gridContainer.classList.add('is-hidden');
+            if (sliderContainer) sliderContainer.classList.add('is-active');
+            if (toggleBtnText) toggleBtnText.textContent = 'LƯỚI TỔNG QUAN';
+            if (toggleBtnIcon) toggleBtnIcon.className = 'bi bi-grid-3x3';
+        } else {
+            if (app) {
+                app.classList.add('is-grid-mode');
+                app.classList.remove('is-slider-mode');
+            }
+            if (gridContainer) gridContainer.classList.remove('is-hidden');
+            if (sliderContainer) sliderContainer.classList.remove('is-active');
+            if (toggleBtnText) toggleBtnText.textContent = 'SLIDER 3D';
+            if (toggleBtnIcon) toggleBtnIcon.className = 'bi bi-view-stacked';
+        }
+    }
+
+    // --- RENDER MẪU QUẦN TRONG SLIDER 3D ---
+    function renderSliderPant(index) {
+        const items = getPants();
+        if (!items.length) return;
+
+        if (index < 0) index = items.length - 1;
+        if (index >= items.length) index = 0;
         currentIndex = index;
 
-        const pant = filteredList[currentIndex];
+        const pant = items[currentIndex];
         if (!pant) return;
 
         isAnimating = true;
 
-        // 1. Đổi màu nền mượt mà
-        const app = $('#psApp');
-        if (app) {
-            app.style.backgroundColor = pant.themeColor;
+        // 1. Chữ Typography khổng lồ sau lưng quần
+        const giantTitle = $('#pvGiantTitle');
+        if (giantTitle) {
+            giantTitle.style.transform = 'translateY(20px)';
+            giantTitle.style.opacity = '0';
+            setTimeout(() => {
+                giantTitle.textContent = pant.giantTitle;
+                giantTitle.style.transform = 'translateY(0)';
+                giantTitle.style.opacity = '1';
+            }, 180);
         }
 
-        // 2. Cột trái: Headline, Mô tả & Thẻ thông số kỹ thuật (Garment Specs)
-        const hl1 = $('#psHeadline1');
-        const hl2 = $('#psHeadline2');
-        const desc = $('#psDesc');
-        if (hl1) hl1.textContent = pant.headline1;
-        if (hl2) hl2.textContent = pant.headline2;
-        if (desc) desc.textContent = pant.desc;
+        // 2. Thông số kỹ thuật góc dưới trái (Tech Specs)
+        const modelName = $('#pvModelName');
+        const styleCode = $('#pvStyleCode');
+        const fit = $('#pvFit');
+        const fabric = $('#pvFabric');
+        const price = $('#pvPrice');
 
-        const specFit = $('#psSpecFit');
-        const specFabric = $('#psSpecFabric');
-        const specHdw = $('#psSpecHdw');
-        const specFeat = $('#psSpecFeat');
-        if (specFit) specFit.textContent = pant.fit;
-        if (specFabric) specFabric.textContent = pant.fabric;
-        if (specHdw) specHdw.textContent = pant.hardware;
-        if (specFeat) specFeat.textContent = pant.feature;
+        if (modelName) modelName.textContent = pant.modelName;
+        if (styleCode) styleCode.textContent = pant.styleCode;
+        if (fit) fit.textContent = pant.fit;
+        if (fabric) fabric.textContent = pant.fabric;
+        if (price) price.textContent = formatPrice(pant.price);
 
-        // 3. Cột phải (Khối mua hàng đồng bộ): Tên, Badge, Giá, Giảm giá
-        const badge = $('#psCatBadge');
-        const title = $('#psProductTitle');
-        const salePrice = $('#psSalePrice');
-        const origPrice = $('#psOrigPrice');
-        const discountTag = $('#psDiscountTag');
-
-        if (badge) badge.textContent = pant.badge;
-        if (title) title.textContent = pant.name;
-        if (salePrice) salePrice.textContent = formatPrice(pant.price);
-        if (origPrice) origPrice.textContent = formatPrice(pant.originalPrice);
-        if (discountTag) discountTag.textContent = pant.discount;
-
-        // 4. Cập nhật Size Pills
-        renderSizes(pant.sizes);
-
-        // 5. Hiệu ứng Drop-In cho Hero Image ở giữa
-        const heroImg = $('#psHeroImg');
+        // 3. Ảnh quần ở giữa với hiệu ứng nổi khối
+        const heroImg = $('#pvHeroImg');
         if (heroImg) {
             heroImg.classList.remove('is-floating');
-            heroImg.classList.remove('is-animating-in');
+            heroImg.style.transform = 'translateY(-30px) scale(0.92)';
+            heroImg.style.opacity = '0';
 
-            // Force reflow
-            void heroImg.offsetWidth;
+            void heroImg.offsetWidth; // Force reflow
 
             heroImg.src = pant.image;
-            heroImg.alt = pant.name;
-            heroImg.classList.add('is-animating-in');
+            heroImg.alt = pant.giantTitle;
 
             setTimeout(() => {
-                heroImg.classList.remove('is-animating-in');
-                heroImg.classList.add('is-floating');
-                isAnimating = false;
-            }, 850);
+                heroImg.style.transform = 'translateY(0) scale(1)';
+                heroImg.style.opacity = '1';
+                setTimeout(() => {
+                    heroImg.classList.add('is-floating');
+                    isAnimating = false;
+                }, 400);
+            }, 100);
         } else {
             isAnimating = false;
         }
 
-        // 6. Cập nhật Hàng đợi Mini Thumbnail góc dưới phải
-        renderQueue();
+        // 4. Render danh sách size
+        renderSizes(pant.sizes);
     }
 
-    // --- RENDER DANH SÁCH SIZE QUẦN TRÒN ---
+    // --- RENDER CÁC NÚT SIZE TRÒN ĐỒNG BỘ ---
     function renderSizes(sizes) {
-        const container = $('#psSizePills');
+        const container = $('#pvSizePills');
         if (!container) return;
 
         container.innerHTML = '';
@@ -212,216 +313,156 @@
         sizes.forEach(sz => {
             const btn = document.createElement('button');
             btn.type = 'button';
-            btn.className = `ps-size-btn ${sz === selectedSize ? 'is-active' : ''}`;
+            btn.className = `pv-size-pill ${sz === selectedSize ? 'is-active' : ''}`;
             btn.textContent = sz;
             btn.setAttribute('data-size', sz);
             btn.onclick = (e) => {
                 e.stopPropagation();
                 selectedSize = sz;
-                $$('.ps-size-btn').forEach(b => b.classList.remove('is-active'));
+                $$('.pv-size-pill').forEach(b => b.classList.remove('is-active'));
                 btn.classList.add('is-active');
             };
             container.appendChild(btn);
         });
     }
 
-    // --- RENDER HÀNG ĐỢI MINI THUMBNAILS GÓC PHẢI DƯỚI ---
-    function renderQueue() {
-        const queueList = $('#psQueueList');
-        if (!queueList) return;
+    // --- CHUYỂN ĐỔI BỘ SƯU TẬP (VAULT SWITCHER) ---
+    function switchCollection(direction) {
+        currentCollectionIndex += direction;
+        if (currentCollectionIndex < 0) currentCollectionIndex = PANTS_COLLECTIONS.length - 1;
+        if (currentCollectionIndex >= PANTS_COLLECTIONS.length) currentCollectionIndex = 0;
 
-        queueList.innerHTML = '';
+        const titleEl = $('#pvCollectionTitle');
+        if (titleEl) {
+            titleEl.textContent = getActiveCollection().title;
+        }
 
-        // Hiển thị 2 mẫu quần tiếp theo trong danh sách đang lọc (hoặc toàn bộ)
-        const sourceList = filteredList.length > 1 ? filteredList : PANTS_DATA;
-        const total = sourceList.length;
-
-        for (let offset = 1; offset <= Math.min(2, total - 1); offset++) {
-            const nextIdx = (currentIndex + offset) % total;
-            const item = sourceList[nextIdx];
-
-            const card = document.createElement('div');
-            card.className = 'ps-queue-card';
-            card.setAttribute('role', 'button');
-            card.setAttribute('title', `Xem ${item.name}`);
-            card.innerHTML = `
-                <img src="${item.image}" alt="${item.name}" class="ps-queue-img" />
-                <div class="ps-queue-shadow"></div>
-            `;
-
-            card.onclick = (e) => {
-                e.stopPropagation();
-                if (isAnimating) return;
-                // Nếu đang dùng sourceList khác filteredList, reset lọc về all
-                if (sourceList !== filteredList) {
-                    setCategoryFilter('all');
-                }
-                const targetIdx = filteredList.findIndex(p => p.id === item.id);
-                renderPants(targetIdx !== -1 ? targetIdx : 0, 1);
-            };
-
-            queueList.appendChild(card);
+        currentIndex = 0;
+        renderGrid();
+        if (isSliderView) {
+            renderSliderPant(0);
         }
     }
 
-    // --- BỘ LỌC DANH MỤC THỜI TRANG ---
-    function setCategoryFilter(cat) {
-        currentFilter = cat.toLowerCase();
+    // --- SETUP TƯƠNG TÁC CHUỘT 3D PARALLAX CHO HERO IMAGE ---
+    function setupParallax() {
+        const stage = $('#pvStage');
+        const heroWrap = $('#pvHeroWrap');
+        if (!stage || !heroWrap) return;
 
-        $$('.ps-tab-btn').forEach(t => {
-            const tCat = (t.getAttribute('data-cat') || '').toLowerCase();
-            if (tCat === currentFilter) {
-                t.classList.add('is-active');
-            } else {
-                t.classList.remove('is-active');
-            }
+        stage.addEventListener('mousemove', (e) => {
+            if (!isSliderView) return;
+            const rect = stage.getBoundingClientRect();
+            const x = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2);
+            const y = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2);
+
+            heroWrap.style.transform = `perspective(1000px) rotateY(${x * 12}deg) rotateX(${-y * 10}deg) translateZ(20px)`;
         });
 
-        if (currentFilter === 'all') {
-            filteredList = [...PANTS_DATA];
-        } else {
-            filteredList = PANTS_DATA.filter(p => p.category === currentFilter);
-            if (!filteredList.length) {
-                filteredList = [...PANTS_DATA];
-            }
-        }
-
-        renderPants(0, 1);
+        stage.addEventListener('mouseleave', () => {
+            heroWrap.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) translateZ(0)';
+        });
     }
 
-    // --- MORPHING CTA BUTTON KHI THÊM VÀO GIỎ ---
+    // --- THÊM VÀO GIỎ HÀNG VỚI NÚT MORPHING ---
     function setupAddToCart() {
-        const btn = $('#psAddToCartBtn');
+        const btn = $('#pvAddBagBtn');
         if (!btn) return;
 
         btn.onclick = (e) => {
             e.preventDefault();
             if (btn.classList.contains('is-added')) return;
 
-            const pant = filteredList[currentIndex] || PANTS_DATA[0];
+            bagCount++;
+            const badge = $('#pvBagBadge');
+            if (badge) badge.textContent = bagCount;
+
+            const siteBagBadges = document.querySelectorAll('#cartCount, .cart-count, .sv-bag-badge');
+            siteBagBadges.forEach(b => b.textContent = bagCount);
+
+            const pant = getPants()[currentIndex];
             const size = selectedSize || '30';
 
-            // 1. Tăng giỏ hàng
-            cartCount++;
-            const badge = $('#psCartBadge');
-            if (badge) badge.textContent = cartCount;
-
-            // Cập nhật giỏ hàng chung của trang nếu có
-            const siteBagBadges = document.querySelectorAll('#cartCount, .cart-count, .sv-bag-badge');
-            siteBagBadges.forEach(b => b.textContent = cartCount);
-
-            // 2. Chuyển nút sang trạng thái đã thêm vào giỏ
             btn.classList.add('is-added');
             btn.innerHTML = `
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="20 6 9 17 4 12"></polyline>
                 </svg>
-                <span>ĐÃ THÊM VÀO GIỎ (SIZE ${size})</span>
+                <span>ĐÃ THÊM (SIZE ${size})</span>
             `;
 
-            // 3. Tự động phục hồi nút sau 2.4s
             setTimeout(() => {
                 btn.classList.remove('is-added');
                 btn.innerHTML = `
-                    <span>THÊM VÀO GIỎ HÀNG</span>
+                    <span>THÊM VÀO GIỎ</span>
                     <i class="bi bi-arrow-right"></i>
                 `;
             }, 2400);
         };
     }
 
-    // --- MODAL BẢNG SIZE QUẦN ---
-    function setupSizeModal() {
-        const guideBtn = $('#psSizeGuideBtn');
-        const modalBackdrop = $('#psSizeModalBackdrop');
-        const closeBtn = $('#psSizeModalClose');
-
-        if (guideBtn && modalBackdrop) {
-            guideBtn.onclick = (e) => {
+    // --- GẮN SỰ KIỆN NÚT VÀ PHÍM TẮT ---
+    function bindEvents() {
+        // Toggle view Grid / Slider 3D
+        const toggleBtn = $('#pvToggleViewBtn');
+        if (toggleBtn) {
+            toggleBtn.onclick = (e) => {
                 e.stopPropagation();
-                modalBackdrop.classList.add('is-open');
-            };
-        }
-
-        if (closeBtn && modalBackdrop) {
-            closeBtn.onclick = (e) => {
-                e.stopPropagation();
-                modalBackdrop.classList.remove('is-open');
-            };
-        }
-
-        if (modalBackdrop) {
-            modalBackdrop.onclick = (e) => {
-                if (e.target === modalBackdrop) {
-                    modalBackdrop.classList.remove('is-open');
+                isSliderView = !isSliderView;
+                updateViewMode();
+                if (isSliderView) {
+                    renderSliderPant(currentIndex);
                 }
             };
         }
-    }
 
-    // --- GẮN SỰ KIỆN NÚT BẤM VÀ PHÍM TẮT ---
-    function bindEvents() {
-        const prevBtn = $('#psPrevBtn');
-        const nextBtn = $('#psNextBtn');
+        // Vault Collection Switcher (< >)
+        const prevColBtn = $('#pvPrevCollectionBtn');
+        const nextColBtn = $('#pvNextCollectionBtn');
+        if (prevColBtn) prevColBtn.onclick = (e) => { e.stopPropagation(); switchCollection(-1); };
+        if (nextColBtn) nextColBtn.onclick = (e) => { e.stopPropagation(); switchCollection(1); };
 
+        // Prev / Next Pants trong Slider Mode
+        const prevBtn = $('#pvPrevBtn');
+        const nextBtn = $('#pvNextBtn');
         if (prevBtn) {
             prevBtn.onclick = (e) => {
                 e.stopPropagation();
                 if (isAnimating) return;
-                renderPants(currentIndex - 1, -1);
+                renderSliderPant(currentIndex - 1);
             };
         }
-
         if (nextBtn) {
             nextBtn.onclick = (e) => {
                 e.stopPropagation();
                 if (isAnimating) return;
-                renderPants(currentIndex + 1, 1);
+                renderSliderPant(currentIndex + 1);
             };
         }
 
-        // Filter tabs ở Header
-        const tabs = $$('.ps-tab-btn');
-        tabs.forEach(tab => {
-            tab.onclick = (e) => {
-                e.stopPropagation();
-                const cat = tab.getAttribute('data-cat') || 'all';
-                setCategoryFilter(cat);
-            };
-        });
-
-        // Phím mũi tên qua lại
+        // Phím tắt bàn phím
         document.addEventListener('keydown', (e) => {
             const overlay = $('#hnmtPantsOverlay');
             if (!overlay || !overlay.classList.contains('is-active')) return;
 
-            const modalBackdrop = $('#psSizeModalBackdrop');
-            if (modalBackdrop && modalBackdrop.classList.contains('is-open')) {
-                if (e.key === 'Escape') {
-                    modalBackdrop.classList.remove('is-open');
-                }
-                return;
-            }
-
             if (e.key === 'ArrowLeft') {
-                if (prevBtn) prevBtn.click();
+                if (isSliderView && prevBtn) prevBtn.click();
             } else if (e.key === 'ArrowRight') {
-                if (nextBtn) nextBtn.click();
+                if (isSliderView && nextBtn) nextBtn.click();
             } else if (e.key === 'Escape') {
                 window.closePantsStudio();
             }
         });
 
         setupAddToCart();
-        setupSizeModal();
+        setupParallax();
     }
 
-    // --- TỰ ĐỘNG ĐẢM BẢO HTML PANTS STUDIO NẰM TRONG DOM (CHỐNG LỖI CACHE SERVER) ---
+    // --- TỰ ĐỘNG ĐẢM BẢO HTML PANTS VAULT NẰM TRÊN DOM ---
     function ensurePantsStudioInDOM() {
         const existing = $('#hnmtPantsOverlay');
         if (existing) {
-            // Thay thế nội dung bằng markup hoàn chỉnh mới
-            existing.innerHTML = getPantsStudioMarkup();
+            existing.innerHTML = getPantsVaultMarkup();
             bindEvents();
             return;
         }
@@ -430,196 +471,124 @@
         wrap.id = 'hnmtPantsOverlay';
         wrap.className = 'hnmt-pants-studio-wrap';
         wrap.setAttribute('aria-hidden', 'true');
-        wrap.innerHTML = getPantsStudioMarkup();
+        wrap.innerHTML = getPantsVaultMarkup();
 
         const portal = document.getElementById('hnmtChilePortal') || document.body;
         portal.appendChild(wrap);
         bindEvents();
     }
 
-    function getPantsStudioMarkup() {
+    function getPantsVaultMarkup() {
         return `
-        <div class="ps-app" id="psApp">
-            <!-- 1. HEADER -->
-            <header class="ps-header">
-                <nav class="ps-nav-tabs" aria-label="Bộ lọc danh mục quần">
-                    <button type="button" class="ps-tab-btn is-active" data-cat="all">Tất cả</button>
-                    <button type="button" class="ps-tab-btn" data-cat="cargo">Cargo</button>
-                    <button type="button" class="ps-tab-btn" data-cat="denim">Denim Jeans</button>
-                    <button type="button" class="ps-tab-btn" data-cat="trousers">Trousers</button>
-                </nav>
+        <div class="pv-app is-grid-mode" id="pvApp">
 
-                <a href="/" class="ps-brand-logo" title="HnmtShop">
-                    <span class="ps-brand-sig">HnmtShop</span>
-                </a>
-
-                <div class="ps-header-right">
-                    <button type="button" class="ps-header-btn" id="psCartBtn" aria-label="Giỏ hàng">
-                        <i class="bi bi-bag"></i>
-                        <span class="ps-cart-badge" id="psCartBadge">0</span>
+            <!-- 1. HEADER (ĐỒNG BỘ 1:1 VỚI SNEAKER VAULT) -->
+            <header class="pv-header">
+                <div class="pv-header-left">
+                    <button type="button" class="pv-icon-btn" id="pvToggleViewBtn" title="Chuyển chế độ xem">
+                        <i class="bi bi-view-stacked" id="pvToggleViewIcon"></i>
+                        <span id="pvToggleViewText">SLIDER 3D</span>
                     </button>
-                    <button type="button" class="ps-exit-btn" id="psExitBtn" onclick="window.closePantsStudio()" title="Quay lại Showroom">
+                    <div class="pv-vault-switcher" id="pvVaultSwitcher">
+                        <button type="button" class="pv-vault-arrow" id="pvPrevCollectionBtn" aria-label="Bộ sưu tập trước" title="Bộ sưu tập trước">
+                            <i class="bi bi-chevron-left"></i>
+                        </button>
+                        <span class="pv-header-title" id="pvCollectionTitle">STREETWEAR PANTS VAULT</span>
+                        <button type="button" class="pv-vault-arrow" id="pvNextCollectionBtn" aria-label="Bộ sưu tập tiếp theo" title="Bộ sưu tập kế tiếp">
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <a href="/" class="pv-brand-signature" title="Về trang chủ HnmtShop">HnmtShop</a>
+
+                <div class="pv-head-right">
+                    <button type="button" class="pv-bag-btn" id="pvBagBtn" aria-label="Giỏ hàng">
+                        <svg fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+                            <path d="M4 8h16l-1 13H5L4 8Z" />
+                            <path d="M9 9V6a3 3 0 0 1 6 0v3" />
+                        </svg>
+                        <span class="pv-bag-badge" id="pvBagBadge">0</span>
+                    </button>
+                    <button type="button" class="pv-exit-btn" id="pvExitBtn" onclick="window.closePantsStudio()" title="Quay lại Showroom">
                         <i class="bi bi-arrow-left"></i>
                         <span>Quay lại</span>
                     </button>
                 </div>
             </header>
 
-            <!-- 2. MAIN STAGE (3 CỘT LOOKBOOK THỜI TRANG THỰC TẾ) -->
-            <main class="ps-main-stage">
-                <!-- CỘT TRÁI: EDITORIAL & GARMENT SPECS -->
-                <section class="ps-left-col">
-                    <h1 class="ps-headline">
-                        <span id="psHeadline1">Wear Confidence.</span>
-                        <span id="psHeadline2">Define Your Style.</span>
-                    </h1>
-                    <p class="ps-desc" id="psDesc">
-                        Khám phá thiết kế quần Baggy Cargo xám khói ứng dụng công nghệ Acid-Wash tạo vân loang độc bản. Cấu trúc túi hộp 3D vát góc sắc sảo mang đậm hơi thở streetwear quân đội tân thời.
-                    </p>
+            <!-- 2. VIEW 1: FLOATING PANTS GRID -->
+            <section class="pv-grid-container" id="pvGridContainer" aria-label="Bộ sưu tập quần dạng lưới">
+                <div class="pv-grid" id="pvGrid">
+                    <!-- Render tự động bởi pants-studio.js -->
+                </div>
+            </section>
 
-                    <!-- BẢNG THÔNG SỐ VẢI KỸ THUẬT (SPECS) -->
-                    <div class="ps-specs-card">
-                        <div class="ps-spec-item">
-                            <i class="bi bi-aspect-ratio ps-spec-icon"></i>
-                            <div class="ps-spec-content">
-                                <span class="ps-spec-label">Phom Dáng</span>
-                                <span class="ps-spec-val" id="psSpecFit">Baggy Relaxed (Ống suông rộng)</span>
-                            </div>
-                        </div>
-                        <div class="ps-spec-item">
-                            <i class="bi bi-layers ps-spec-icon"></i>
-                            <div class="ps-spec-content">
-                                <span class="ps-spec-label">Chất Liệu</span>
-                                <span class="ps-spec-val" id="psSpecFabric">100% Canvas Heavy-Wash (13.5oz)</span>
-                            </div>
-                        </div>
-                        <div class="ps-spec-item">
-                            <i class="bi bi-nut ps-spec-icon"></i>
-                            <div class="ps-spec-content">
-                                <span class="ps-spec-label">Khóa & Phụ Liệu</span>
-                                <span class="ps-spec-val" id="psSpecHdw">Khóa zip YKK đồng đúc, chốt gấu</span>
-                            </div>
-                        </div>
-                        <div class="ps-spec-item">
-                            <i class="bi bi-shield-check ps-spec-icon"></i>
-                            <div class="ps-spec-content">
-                                <span class="ps-spec-label">Đặc Tính</span>
-                                <span class="ps-spec-val" id="psSpecFeat">Đứng form tự nhiên, chống sờn rách</span>
-                            </div>
-                        </div>
+            <!-- 3. VIEW 2: CINEMATIC SLIDER 3D -->
+            <section class="pv-slider-container" id="pvSliderContainer" aria-label="Chi tiết Quần nổi khối 3D">
+
+                <!-- CHỮ TYPOGRAPHY KHỔNG LỒ NẰM CHÌM SAU LƯNG QUẦN -->
+                <div class="pv-giant-title-track" aria-hidden="true">
+                    <h2 class="pv-giant-title" id="pvGiantTitle">CARGO ACID IV</h2>
+                </div>
+
+                <!-- SÂN KHẤU QUẦN 3D VỚI CHUỘT PARALLAX TILT -->
+                <div class="pv-stage" id="pvStage">
+                    <div class="pv-hero-wrap" id="pvHeroWrap">
+                        <img src="/images/pants/cargo-acid-wash.png?v=vault_v1" alt="CARGO ACID IV" class="pv-hero-img is-floating" id="pvHeroImg" />
+                        <div class="pv-hero-shadow" id="pvHeroShadow"></div>
+                    </div>
+                </div>
+
+                <!-- THANH THÔNG SỐ VÀ ĐIỀU KHIỂN DƯỚI ĐÁY -->
+                <footer class="pv-bottom-bar">
+
+                    <!-- GÓC DƯỚI TRÁI: TECH SPECS -->
+                    <div class="pv-specs-panel">
+                        <h3 class="pv-model-name" id="pvModelName">ACID WASH DARK SMOKE</h3>
+                        <dl class="pv-spec-grid">
+                            <dt>MÃ QUẦN:</dt>
+                            <dd id="pvStyleCode">HNP-01-ACID</dd>
+
+                            <dt>PHOM DÁNG:</dt>
+                            <dd id="pvFit">BAGGY RELAXED</dd>
+
+                            <dt>CHẤT LIỆU:</dt>
+                            <dd id="pvFabric">100% HEAVY CANVAS 13.5OZ</dd>
+
+                            <dt>GIÁ BÁN:</dt>
+                            <dd id="pvPrice">650.000 ₫</dd>
+                        </dl>
                     </div>
 
-                    <div class="ps-social-row">
-                        <a href="https://instagram.com" target="_blank" rel="noopener" class="ps-social-link" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-                        <a href="https://twitter.com" target="_blank" rel="noopener" class="ps-social-link" aria-label="X / Twitter"><i class="bi bi-twitter-x"></i></a>
-                        <a href="https://facebook.com" target="_blank" rel="noopener" class="ps-social-link" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
-                        <a href="https://tiktok.com" target="_blank" rel="noopener" class="ps-social-link" aria-label="TikTok"><i class="bi bi-tiktok"></i></a>
-                    </div>
-                </section>
-
-                <!-- CỘT GIỮA: SÂN KHẤU QUẦN 3D VỚI SPOTLIGHT GLOW LƯNG QUẦN -->
-                <section class="ps-center-col">
-                    <button type="button" class="ps-nav-arrow prev" id="psPrevBtn" aria-label="Mẫu quần trước" title="Mẫu trước">
-                        <i class="bi bi-chevron-left"></i>
-                    </button>
-
-                    <!-- QUẦNG SÁNG STUDIO TÔN SẢN PHẨM -->
-                    <div class="ps-spotlight-glow" aria-hidden="true"></div>
-
-                    <div class="ps-hero-stage">
-                        <div class="ps-hero-img-wrap">
-                            <img src="/images/pants/cargo-acid-wash.png?v=studio_v2" alt="Quần thời trang" class="ps-hero-img is-floating" id="psHeroImg" />
-                            <div class="ps-hero-shadow" id="psHeroShadow"></div>
-                        </div>
-                    </div>
-
-                    <button type="button" class="ps-nav-arrow next" id="psNextBtn" aria-label="Mẫu quần tiếp theo" title="Mẫu kế tiếp">
-                        <i class="bi bi-chevron-right"></i>
-                    </button>
-
-                    <div class="ps-bottom-slogan">
-                        Dress Better. Feel Better.
-                    </div>
-                </section>
-
-                <!-- CỘT PHẢI: KHỐI MUA HÀNG ĐỒNG BỘ 1 CHẠM -->
-                <section class="ps-right-col">
-                    <div class="ps-purchase-card">
-                        <span class="ps-cat-badge" id="psCatBadge">Cargo Streetwear</span>
-                        <h2 class="ps-product-title" id="psProductTitle">Quần Baggy Cargo Acid-Wash Xám Khói</h2>
-
-                        <div class="ps-price-box">
-                            <span class="ps-sale-price" id="psSalePrice">650.000 ₫</span>
-                            <span class="ps-orig-price" id="psOrigPrice">890.000 ₫</span>
-                            <span class="ps-discount-tag" id="psDiscountTag">-27%</span>
+                    <!-- GÓC DƯỚI PHẢI: ARROWS, SIZES, ADD TO BAG -->
+                    <div class="pv-controls-panel">
+                        <div class="pv-arrow-group">
+                            <button type="button" class="pv-nav-btn prev" id="pvPrevBtn" aria-label="Mẫu trước">
+                                <i class="bi bi-chevron-left"></i>
+                            </button>
+                            <button type="button" class="pv-nav-btn next" id="pvNextBtn" aria-label="Mẫu tiếp theo">
+                                <i class="bi bi-chevron-right"></i>
+                            </button>
                         </div>
 
-                        <!-- CHỌN SIZE QUẦN -->
-                        <div class="ps-size-box">
-                            <div class="ps-size-header">
-                                <span class="ps-size-label">CHỌN KÍCH CỠ</span>
-                                <button type="button" class="ps-size-guide-btn" id="psSizeGuideBtn">Bảng size</button>
-                            </div>
-                            <div class="ps-size-pills" id="psSizePills">
+                        <div class="pv-size-selector">
+                            <span class="pv-size-label">CHỌN SIZE</span>
+                            <div class="pv-size-pills" id="pvSizePills">
                                 <!-- Render tự động bởi pants-studio.js -->
                             </div>
                         </div>
 
-                        <!-- NÚT THÊM VÀO GIỎ NGAY DƯỚI BẢNG SIZE -->
-                        <div class="ps-cta-wrap">
-                            <button type="button" class="ps-cta-btn" id="psAddToCartBtn">
-                                <span>THÊM VÀO GIỎ HÀNG</span>
-                                <i class="bi bi-arrow-right"></i>
-                            </button>
-                        </div>
-
-                        <!-- CHÍNH SÁCH MUA HÀNG -->
-                        <div class="ps-perks-row">
-                            <span><i class="bi bi-shield-check"></i> Chính hãng 100%</span>
-                            <span><i class="bi bi-truck"></i> Giao 2-3 ngày</span>
-                            <span><i class="bi bi-arrow-repeat"></i> Đổi trả 30 ngày</span>
-                        </div>
-
-                        <!-- HÀNG ĐỢI XEM TRƯỚC -->
-                        <div class="ps-queue-box">
-                            <span class="ps-queue-label">SẮP CHIẾU TIẾP THEO</span>
-                            <div class="ps-queue-list" id="psQueueList">
-                                <!-- Render thumbnail hàng đợi mini bởi pants-studio.js -->
-                            </div>
-                        </div>
+                        <button type="button" class="pv-add-bag-btn" id="pvAddBagBtn">
+                            <span>THÊM VÀO GIỎ</span>
+                            <i class="bi bi-arrow-right"></i>
+                        </button>
                     </div>
-                </section>
-            </main>
 
-            <!-- 3. POPUP MODAL BẢNG SIZE -->
-            <div class="ps-size-modal-backdrop" id="psSizeModalBackdrop" role="dialog" aria-modal="true" aria-label="Bảng quy đổi kích cỡ quần">
-                <div class="ps-size-modal">
-                    <div class="ps-size-modal-header">
-                        <h3 class="ps-size-modal-title">BẢNG QUY ĐỔI KÍCH CỠ QUẦN HNMTSHOP</h3>
-                        <button type="button" class="ps-size-modal-close" id="psSizeModalClose" aria-label="Đóng">&times;</button>
-                    </div>
-                    <table class="ps-size-table">
-                        <thead>
-                            <tr>
-                                <th>Size</th>
-                                <th>Chiều Cao (cm)</th>
-                                <th>Cân Nặng (kg)</th>
-                                <th>Vòng Eo (cm)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr><td><strong>29</strong></td><td>160 - 168</td><td>50 - 58</td><td>73 - 76</td></tr>
-                            <tr><td><strong>30</strong></td><td>165 - 172</td><td>59 - 65</td><td>77 - 80</td></tr>
-                            <tr><td><strong>31</strong></td><td>168 - 176</td><td>66 - 72</td><td>81 - 84</td></tr>
-                            <tr><td><strong>32</strong></td><td>172 - 180</td><td>73 - 78</td><td>85 - 88</td></tr>
-                            <tr><td><strong>34</strong></td><td>175 - 185</td><td>79 - 86</td><td>89 - 94</td></tr>
-                        </tbody>
-                    </table>
-                    <p class="ps-size-hint-text">
-                        * Khuyên dùng: Nếu bạn phân vân giữa 2 size hoặc thích mặc phom rộng phóng khoáng (Baggy/Wide-Leg), hãy chọn tăng 1 size.
-                    </p>
-                </div>
-            </div>
+                </footer>
+
+            </section>
+
         </div>
         `;
     }
@@ -630,7 +599,10 @@
         const overlay = $('#hnmtPantsOverlay');
         if (overlay) {
             overlay.classList.add('is-active');
-            renderPants(currentIndex);
+            renderGrid();
+            if (isSliderView) {
+                renderSliderPant(currentIndex);
+            }
         }
         // Ẩn footer và header của Showroom 3D
         const promptEl = document.querySelector('.hnmt-portal-footer');
@@ -654,7 +626,7 @@
     // Khởi tạo ban đầu
     function init() {
         ensurePantsStudioInDOM();
-        renderPants(0);
+        renderGrid();
     }
 
     if (document.readyState === 'loading') {
