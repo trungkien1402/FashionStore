@@ -20,7 +20,7 @@
             release: 'DECEMBER 2026',
             colorName: 'STORM GREY / INFRARED',
             swatches: ['#FFFFFF', '#CE1234', '#1F2024'],
-            image: '/images/sneakers/air-future-iv.webp'
+            image: '/images/sneakers/air-future-iv.webp?v=center_h_v27'
         },
         {
             id: 'snk-02',
@@ -34,7 +34,7 @@
             release: 'JANUARY 2027',
             colorName: 'DEEP BLUE / SONIC BLUE',
             swatches: ['#FFFFFF', '#0077D8', '#00E5FF'],
-            image: '/images/sneakers/air-future-xi.webp'
+            image: '/images/sneakers/air-future-xi.webp?v=center_h_v27'
         },
         {
             id: 'snk-03',
@@ -48,7 +48,7 @@
             release: 'FEBRUARY 2027',
             colorName: 'WHITE / ACID VOLT / BLACK',
             swatches: ['#FFFFFF', '#4EA819', '#15161A'],
-            image: '/images/sneakers/air-future-iii.webp'
+            image: '/images/sneakers/air-future-iii.webp?v=center_h_v27'
         },
         {
             id: 'snk-04',
@@ -62,7 +62,7 @@
             release: 'MARCH 2027',
             colorName: 'VIOLET CHROME / MIDNIGHT',
             swatches: ['#6D3AA6', '#B666FF', '#0D0E12'],
-            image: '/images/sneakers/air-future-v.webp'
+            image: '/images/sneakers/air-future-v.webp?v=center_h_v27'
         },
         {
             id: 'snk-05',
@@ -76,7 +76,7 @@
             release: 'APRIL 2027',
             colorName: 'DESERT SAND / GOLD CHROME',
             swatches: ['#F5E6CC', '#B9935A', '#FFD700'],
-            image: '/images/sneakers/air-future-i.webp'
+            image: '/images/sneakers/air-future-i.webp?v=center_h_v27'
         },
         {
             id: 'snk-06',
@@ -90,7 +90,7 @@
             release: 'MAY 2027',
             colorName: 'MAGMA RED / CARBON BLACK',
             swatches: ['#FF2A2A', '#2E3038', '#111215'],
-            image: '/images/sneakers/air-future-ix.webp'
+            image: '/images/sneakers/air-future-ix.webp?v=center_h_v27'
         }
     ];
 
