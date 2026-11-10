@@ -116,17 +116,16 @@
             const item = document.createElement('div');
             item.className = 'sv-grid-item';
             item.setAttribute('data-idx', String(idx));
+            item.setAttribute('role', 'button');
+            item.setAttribute('tabindex', '0');
+            item.setAttribute('aria-label', `Xem chi tiết ${snk.model} - ${snk.colorway}`);
             item.innerHTML = `
                 <div class="sv-item-image-wrap">
                     <img src="${snk.image}" alt="${snk.model}" class="sv-item-img" />
                     <div class="sv-item-shadow"></div>
                 </div>
-                <div class="sv-item-meta">
-                    <h3 class="sv-item-title">${snk.model}</h3>
-                    <span class="sv-item-price">${formatPrice(snk.price)}</span>
-                </div>
             `;
-            // Click trực tiếp vào item để mở chi tiết
+            // Click trực tiếp vào đôi giày để mở chi tiết
             item.onclick = function (e) {
                 e.stopPropagation();
                 openSliderView(idx);
