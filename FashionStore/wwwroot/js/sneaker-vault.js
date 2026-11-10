@@ -216,14 +216,18 @@
                 heroImg.src = snk.image;
                 heroImg.alt = snk.model;
                 heroImg.style.opacity = '1';
-                heroImg.style.transform = 'translate(0, 0) scale(1)';
+                heroImg.style.transform = 'translate(0, 0) scale(1) rotate(-18deg)';
+            }
+            if (heroShadow) {
+                heroShadow.style.opacity = '1';
+                heroShadow.style.transform = 'translateX(-50%) rotate(-10deg) scale(1)';
             }
             if (specsPanel) {
                 specsPanel.style.opacity = '1';
                 specsPanel.style.transform = 'translate(0, 0)';
             }
         } else {
-            // Hiệu ứng Slide-In 2D mượt mà chuẩn Smart Animate
+            // Hiệu ứng Slide-In 2D mượt mà chuẩn Smart Animate (Giữ góc nghiêng -18deg nâng đế)
             const slideOffset = direction > 0 ? 80 : -80;
 
             if (giantTitle) {
@@ -232,11 +236,11 @@
             }
             if (heroImg) {
                 heroImg.style.opacity = '0';
-                heroImg.style.transform = `translateX(${slideOffset}px) scale(0.92)`;
+                heroImg.style.transform = `translateX(${slideOffset}px) scale(0.92) rotate(-18deg)`;
             }
             if (heroShadow) {
                 heroShadow.style.opacity = '0';
-                heroShadow.style.transform = `scale(0.8)`;
+                heroShadow.style.transform = `translateX(-50%) rotate(-10deg) scale(0.8)`;
             }
             if (specsPanel) {
                 specsPanel.style.opacity = '0';
@@ -253,11 +257,11 @@
                     heroImg.src = snk.image;
                     heroImg.alt = snk.model;
                     heroImg.style.opacity = '1';
-                    heroImg.style.transform = 'translate(0, 0) scale(1)';
+                    heroImg.style.transform = 'translate(0, 0) scale(1) rotate(-18deg)';
                 }
                 if (heroShadow) {
                     heroShadow.style.opacity = '1';
-                    heroShadow.style.transform = 'scale(1)';
+                    heroShadow.style.transform = 'translateX(-50%) rotate(-10deg) scale(1)';
                 }
                 if (specsPanel) {
                     specsPanel.style.opacity = '1';

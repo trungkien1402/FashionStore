@@ -248,7 +248,7 @@
 .sv-grid-item {
     background: radial-gradient(circle at 50% 60%, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 70%);
     border-radius: 20px;
-    padding: 26px 20px 22px;
+    padding: 24px 20px 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -262,14 +262,14 @@
 }
 
 .sv-grid-item:hover {
-    transform: translateY(-12px) scale(1.04);
+    transform: translateY(-10px) scale(1.04);
     background: radial-gradient(circle at 50% 60%, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.01) 75%);
 }
 
 .sv-item-image-wrap {
     position: relative;
     width: 100%;
-    height: 180px;
+    height: 160px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -278,10 +278,10 @@
 
 .sv-item-img {
     width: 100%;
-    max-width: 270px;
-    height: 150px;
+    max-width: 250px;
+    height: 140px;
     object-fit: contain;
-    filter: drop-shadow(0 18px 22px rgba(0, 0, 0, 0.65));
+    filter: drop-shadow(0 16px 20px rgba(0, 0, 0, 0.65));
     transition: transform 0.35s var(--sv-bounce);
     animation: svLevitate 4.5s ease-in-out infinite alternate;
     pointer-events: none;
@@ -294,13 +294,13 @@
 .sv-grid-item:nth-child(6) .sv-item-img { animation-delay: -3.1s; }
 
 .sv-grid-item:hover .sv-item-img {
-    transform: scale(1.10) rotate(-2deg);
+    transform: scale(1.08) rotate(-2deg);
 }
 
 .sv-item-shadow {
     position: absolute;
-    bottom: 10px;
-    width: 65%;
+    bottom: 8px;
+    width: 60%;
     height: 12px;
     background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 70%);
     border-radius: 50%;
@@ -365,7 +365,7 @@
     visibility: visible !important;
 }
 
-/* GIANT BACKGROUND TYPOGRAPHY (Nằm ngay sau thân giày) */
+/* GIANT BACKGROUND TYPOGRAPHY (Thu nhỏ vừa vặn sau thân giày, không bị tràn cắt) */
 .sv-giant-title-track {
     position: absolute;
     top: 48%;
@@ -381,19 +381,19 @@
 
 .sv-giant-title {
     font-family: 'Montserrat', sans-serif;
-    font-size: clamp(80px, 15.5vw, 220px);
+    font-size: clamp(52px, 8.8vw, 125px);
     font-weight: 900;
-    line-height: 0.85;
-    letter-spacing: -0.04em;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.94);
-    text-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    color: rgba(255, 255, 255, 0.92);
+    text-shadow: 0 10px 40px rgba(0, 0, 0, 0.22);
     white-space: nowrap;
     display: inline-block;
     transition: transform 0.65s var(--sv-ease), opacity 0.5s var(--sv-ease);
 }
 
-/* SNEAKER STAGE (Giày to, nổi bật ngay giữa màn hình, đè lên Typography) */
+/* SNEAKER STAGE (Giày phóng to nổi bật, nghiêng góc ~-18deg nhấc đế lên như hình mẫu) */
 .sv-stage {
     flex: 1;
     position: relative;
@@ -413,24 +413,28 @@
 }
 
 .sv-hero-img {
-    height: clamp(360px, 56vh, 600px);
+    height: clamp(440px, 68vh, 740px);
     width: auto;
-    max-width: 90vw;
+    max-width: 86vw;
     object-fit: contain;
-    filter: drop-shadow(0 35px 45px rgba(0, 0, 0, 0.55));
+    filter: drop-shadow(0 32px 42px rgba(0, 0, 0, 0.58));
     transition: transform 0.65s var(--sv-ease), opacity 0.5s var(--sv-ease);
     user-select: none;
     pointer-events: none;
+    transform: rotate(-18deg);
     animation: svHeroFloat 5s ease-in-out infinite alternate;
 }
 
 .sv-hero-shadow {
     position: absolute;
-    bottom: -22px;
-    width: 68%;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%) rotate(-10deg);
+    width: 58%;
     height: 24px;
-    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0) 72%);
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0) 70%);
     border-radius: 50%;
+    filter: blur(8px);
     pointer-events: none;
     transition: transform 0.65s var(--sv-ease), opacity 0.5s ease;
 }
@@ -446,7 +450,7 @@
     gap: 20px;
 }
 
-/* BOTTOM-LEFT: TECH SPECS */
+/* BOTTOM-LEFT: TECH SPECS (Chuẩn bố cục & font chữ hình Dreamina AI) */
 .sv-specs-panel {
     display: flex;
     flex-direction: column;
@@ -455,10 +459,10 @@
 }
 
 .sv-colorway-name {
-    font-family: 'Space Grotesk', -apple-system, sans-serif;
-    font-size: clamp(16px, 1.8vw, 22px);
-    font-weight: 800;
-    letter-spacing: 0.1em;
+    font-family: 'Space Grotesk', 'Montserrat', -apple-system, sans-serif;
+    font-size: clamp(20px, 2.2vw, 28px);
+    font-weight: 900;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
     color: #ffffff;
     margin: 0 0 6px;
@@ -467,22 +471,24 @@
 .sv-spec-grid {
     display: grid;
     grid-template-columns: auto auto;
-    gap: 4px 28px;
+    gap: 4px 32px;
     font-size: 11px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.78);
+    color: rgba(255, 255, 255, 0.72);
+    line-height: 1.55;
 }
 
 .sv-spec-grid dt {
-    color: rgba(255, 255, 255, 0.55);
+    color: rgba(255, 255, 255, 0.52);
+    font-weight: 700;
 }
 
 .sv-spec-grid dd {
     margin: 0;
     color: #ffffff;
-    font-weight: 700;
+    font-weight: 800;
 }
 
 /* BOTTOM-CENTER: DASH INDICATORS */
@@ -508,13 +514,13 @@
     background: #ffffff;
 }
 
-/* BOTTOM-RIGHT: CONTROLS & ADD TO BAG */
+/* BOTTOM-RIGHT: CONTROLS & ADD TO BAG (Nút tròn đỏ/tối chuẩn hình mẫu) */
 .sv-controls-panel {
     justify-self: end;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    gap: 14px;
+    gap: 12px;
 }
 
 .sv-arrow-group {
@@ -527,21 +533,23 @@
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(0, 0, 0, 0.32);
     backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
     color: #ffffff;
     display: inline-grid;
     place-items: center;
-    font-size: 18px;
+    font-size: 16px;
     cursor: pointer;
     transition: all 0.25s var(--sv-bounce);
 }
 
 .sv-nav-btn:hover {
-    background: #ffffff;
-    color: #000000;
-    transform: scale(1.12);
+    background: rgba(255, 255, 255, 0.25);
+    border-color: #ffffff;
+    color: #ffffff;
+    transform: scale(1.08);
 }
 
 .sv-nav-btn:active {
@@ -564,18 +572,19 @@
 }
 
 .sv-color-dot {
-    width: 14px;
-    height: 14px;
+    width: 15px;
+    height: 15px;
     border-radius: 50%;
     border: 2px solid transparent;
     cursor: pointer;
-    transition: transform 0.2s, border-color 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
 }
 
 .sv-color-dot:hover,
 .sv-color-dot.is-active {
-    transform: scale(1.3);
-    border-color: #ffffff;
+    transform: scale(1.25);
+    box-shadow: 0 0 0 2px #ffffff, 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 .sv-add-bag-btn {
@@ -607,7 +616,7 @@
 }
 
 /* ==========================================================================
-   ANIMATIONS & KEYFRAMES (Floating Levitation)
+   ANIMATIONS & KEYFRAMES (Giữ góc nghiêng -18deg khi bay lơ lửng)
    ========================================================================== */
 @keyframes svLevitate {
     0% {
@@ -620,10 +629,10 @@
 
 @keyframes svHeroFloat {
     0% {
-        transform: translateY(0);
+        transform: translateY(0) rotate(-18deg);
     }
     100% {
-        transform: translateY(-12px);
+        transform: translateY(-12px) rotate(-18deg);
     }
 }
 
