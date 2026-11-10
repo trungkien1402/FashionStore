@@ -322,6 +322,11 @@
                 colTitle.id = 'svCollectionTitle';
                 colTitle.textContent = getActiveCollection().title;
 
+                const badge = document.createElement('span');
+                badge.className = 'sv-vault-badge';
+                badge.id = 'svCollectionBadge';
+                badge.textContent = `0${currentCollectionIndex + 1} / 0${SNEAKER_COLLECTIONS.length}`;
+
                 const nextBtn = document.createElement('button');
                 nextBtn.type = 'button';
                 nextBtn.className = 'sv-vault-arrow';
@@ -332,6 +337,7 @@
 
                 switcher.appendChild(prevBtn);
                 switcher.appendChild(colTitle);
+                switcher.appendChild(badge);
                 switcher.appendChild(nextBtn);
 
                 if (titleEl) {
@@ -390,6 +396,12 @@
                 el.style.opacity = '1';
                 el.style.transform = 'translateX(0)';
             }, 180);
+        });
+
+        // Cập nhật badge số thứ tự bộ sưu tập 01/03
+        const badges = document.querySelectorAll('#svCollectionBadge, .sv-vault-badge');
+        badges.forEach(b => {
+            b.textContent = `0${currentCollectionIndex + 1} / 0${SNEAKER_COLLECTIONS.length}`;
         });
 
         const activeSneakers = getSneakers();
