@@ -99,18 +99,66 @@
 .sv-header-left {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
+}
+
+.sv-vault-switcher {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1.5px solid rgba(255, 255, 255, 0.22);
+    border-radius: 999px;
+    padding: 4px 8px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: all 0.25s ease;
+}
+
+.sv-vault-switcher:hover {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.45);
+}
+
+.sv-vault-arrow {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    padding: 0;
+    line-height: 1;
+}
+
+.sv-vault-arrow:hover {
+    background: #ffffff;
+    color: #000000;
+    transform: scale(1.12);
+}
+
+.sv-vault-arrow:active {
+    transform: scale(0.92);
 }
 
 .sv-header-title {
     font-family: 'Space Grotesk', -apple-system, sans-serif;
     font-size: 13px;
     font-weight: 700;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.85);
+    color: rgba(255, 255, 255, 0.95);
     margin: 0;
+    padding: 0 4px;
     white-space: nowrap;
+    user-select: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
 .sv-brand-signature {

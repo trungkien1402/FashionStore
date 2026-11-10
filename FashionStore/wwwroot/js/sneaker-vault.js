@@ -6,93 +6,283 @@
 (function () {
     'use strict';
 
-    // 6 Siêu Phẩm Sneaker Tương Ứng Với 6 Tông Màu Điện Ảnh Chuẩn Video
-    const SNEAKERS = [
+    // --- CÁC BỘ SƯU TẬP GIÀY (SNEAKER COLLECTIONS) CÓ THỂ ĐỔI QUA LẠI BẰNG NÚT BẤM ---
+    const SNEAKER_COLLECTIONS = [
         {
-            id: 'snk-01',
-            model: 'AIR FUTURE IV',
-            colorway: 'INFRARAY STORM',
-            themeColor: '#CE1234', // Đỏ Crimson Rực Rỡ
-            accentColor: '#FF2A55',
-            price: 5200000,
-            styleCode: 'HFS-04-STORM',
-            designer: 'HNMTSHOP × FUTURE LAB',
-            release: 'DECEMBER 2026',
-            colorName: 'STORM GREY / INFRARED',
-            swatches: ['#FFFFFF', '#CE1234', '#1F2024'],
-            image: '/images/sneakers/air-future-iv.webp?v=center_h_v27'
+            id: 'futurist',
+            title: 'FUTURIST SNEAKER VAULT',
+            items: [
+                {
+                    id: 'snk-01',
+                    model: 'AIR FUTURE IV',
+                    colorway: 'INFRARAY STORM',
+                    themeColor: '#CE1234', // Đỏ Crimson Rực Rỡ
+                    accentColor: '#FF2A55',
+                    price: 5200000,
+                    styleCode: 'HFS-04-STORM',
+                    designer: 'HNMTSHOP × FUTURE LAB',
+                    release: 'DECEMBER 2026',
+                    colorName: 'STORM GREY / INFRARED',
+                    swatches: ['#FFFFFF', '#CE1234', '#1F2024'],
+                    image: '/images/sneakers/air-future-iv.webp?v=center_h_v27'
+                },
+                {
+                    id: 'snk-02',
+                    model: 'AIR FUTURE XI',
+                    colorway: 'HYPER FLUX',
+                    themeColor: '#0077D8', // Xanh Biển Điện Tử
+                    accentColor: '#00E5FF',
+                    price: 5500000,
+                    styleCode: 'HFS-11-FLUX',
+                    designer: 'HNMTSHOP × FUTURE LAB',
+                    release: 'JANUARY 2027',
+                    colorName: 'DEEP BLUE / SONIC BLUE',
+                    swatches: ['#FFFFFF', '#0077D8', '#00E5FF'],
+                    image: '/images/sneakers/air-future-xi.webp?v=center_h_v27'
+                },
+                {
+                    id: 'snk-03',
+                    model: 'AIR FUTURE III',
+                    colorway: 'NEXUS X1',
+                    themeColor: '#4EA819', // Xanh Acid Volt Neon
+                    accentColor: '#8CFF00',
+                    price: 4900000,
+                    styleCode: 'HFS-03-NEXUS',
+                    designer: 'HNMTSHOP × FUTURE LAB',
+                    release: 'FEBRUARY 2027',
+                    colorName: 'WHITE / ACID VOLT / BLACK',
+                    swatches: ['#FFFFFF', '#4EA819', '#15161A'],
+                    image: '/images/sneakers/air-future-iii.webp?v=center_h_v27'
+                },
+                {
+                    id: 'snk-04',
+                    model: 'AIR FUTURE V',
+                    colorway: 'LUNAR CHROME',
+                    themeColor: '#6D3AA6', // Tím Cyberpunk Iridescent
+                    accentColor: '#B666FF',
+                    price: 5800000,
+                    styleCode: 'HFS-05-LUNAR',
+                    designer: 'HNMTSHOP × FUTURE LAB',
+                    release: 'MARCH 2027',
+                    colorName: 'VIOLET CHROME / MIDNIGHT',
+                    swatches: ['#6D3AA6', '#B666FF', '#0D0E12'],
+                    image: '/images/sneakers/air-future-v.webp?v=center_h_v27'
+                },
+                {
+                    id: 'snk-05',
+                    model: 'AIR FUTURE I',
+                    colorway: 'DUNE PHANTOM',
+                    themeColor: '#B9935A', // Vàng Cát Sa Mạc Sang Trọng
+                    accentColor: '#FFD700',
+                    price: 6200000,
+                    styleCode: 'HFS-01-DUNE',
+                    designer: 'HNMTSHOP × FUTURE LAB',
+                    release: 'APRIL 2027',
+                    colorName: 'DESERT SAND / GOLD CHROME',
+                    swatches: ['#F5E6CC', '#B9935A', '#FFD700'],
+                    image: '/images/sneakers/air-future-i.webp?v=center_h_v27'
+                },
+                {
+                    id: 'snk-06',
+                    model: 'AIR FUTURE IX',
+                    colorway: 'VOLT MAGMA',
+                    themeColor: '#1A1B20', // Đen Titan Than Chì Viền Magma
+                    accentColor: '#FF2A2A',
+                    price: 6500000,
+                    styleCode: 'HFS-09-MAGMA',
+                    designer: 'HNMTSHOP × FUTURE LAB',
+                    release: 'MAY 2027',
+                    colorName: 'MAGMA RED / CARBON BLACK',
+                    swatches: ['#FF2A2A', '#2E3038', '#111215'],
+                    image: '/images/sneakers/air-future-ix.webp?v=center_h_v27'
+                }
+            ]
         },
         {
-            id: 'snk-02',
-            model: 'AIR FUTURE XI',
-            colorway: 'HYPER FLUX',
-            themeColor: '#0077D8', // Xanh Biển Điện Tử
-            accentColor: '#00E5FF',
-            price: 5500000,
-            styleCode: 'HFS-11-FLUX',
-            designer: 'HNMTSHOP × FUTURE LAB',
-            release: 'JANUARY 2027',
-            colorName: 'DEEP BLUE / SONIC BLUE',
-            swatches: ['#FFFFFF', '#0077D8', '#00E5FF'],
-            image: '/images/sneakers/air-future-xi.webp?v=center_h_v27'
+            id: 'cyber',
+            title: 'CYBER PROTOCOL VAULT',
+            items: [
+                {
+                    id: 'cp-01',
+                    model: 'AIR FUTURE IV',
+                    colorway: 'CYBER TEAL',
+                    themeColor: '#00838F',
+                    accentColor: '#00E5FF',
+                    price: 5400000,
+                    styleCode: 'CP-04-TEAL',
+                    designer: 'HNMTSHOP × CYBER LAB',
+                    release: 'JUNE 2027',
+                    colorName: 'STEALTH WHITE / ELECTRIC TEAL',
+                    swatches: ['#FFFFFF', '#00E5FF', '#1F2024'],
+                    image: '/images/sneakers/cyber/cyber-air-future-iv.webp?v=c2_v1'
+                },
+                {
+                    id: 'cp-02',
+                    model: 'AIR FUTURE XI',
+                    colorway: 'NEON MAGENTA',
+                    themeColor: '#AD1457',
+                    accentColor: '#FF007F',
+                    price: 5700000,
+                    styleCode: 'CP-11-MAGENTA',
+                    designer: 'HNMTSHOP × CYBER LAB',
+                    release: 'JULY 2027',
+                    colorName: 'FROST WHITE / NEON PINK',
+                    swatches: ['#FFFFFF', '#AD1457', '#FF007F'],
+                    image: '/images/sneakers/cyber/cyber-air-future-xi.webp?v=c2_v1'
+                },
+                {
+                    id: 'cp-03',
+                    model: 'AIR FUTURE III',
+                    colorway: 'SOLAR FLARE',
+                    themeColor: '#E65100',
+                    accentColor: '#FFB300',
+                    price: 5100000,
+                    styleCode: 'CP-03-SOLAR',
+                    designer: 'HNMTSHOP × CYBER LAB',
+                    release: 'AUGUST 2027',
+                    colorName: 'TITANIUM / SOLAR AMBER',
+                    swatches: ['#FFFFFF', '#E65100', '#FFB300'],
+                    image: '/images/sneakers/cyber/cyber-air-future-iii.webp?v=c2_v1'
+                },
+                {
+                    id: 'cp-04',
+                    model: 'AIR FUTURE V',
+                    colorway: 'TACTICAL OLIVE',
+                    themeColor: '#33691E',
+                    accentColor: '#C0CA33',
+                    price: 5900000,
+                    styleCode: 'CP-05-OLIVE',
+                    designer: 'HNMTSHOP × CYBER LAB',
+                    release: 'SEPTEMBER 2027',
+                    colorName: 'MILITARY OLIVE / GOLD LIGHT',
+                    swatches: ['#33691E', '#C0CA33', '#1B1C20'],
+                    image: '/images/sneakers/cyber/cyber-air-future-v.webp?v=c2_v1'
+                },
+                {
+                    id: 'cp-05',
+                    model: 'AIR FUTURE I',
+                    colorway: 'GLACIER FROST',
+                    themeColor: '#1565C0',
+                    accentColor: '#80D8FF',
+                    price: 6400000,
+                    styleCode: 'CP-01-GLACIER',
+                    designer: 'HNMTSHOP × CYBER LAB',
+                    release: 'OCTOBER 2027',
+                    colorName: 'ICE BLUE / POLAR CHROME',
+                    swatches: ['#E1F5FE', '#1565C0', '#80D8FF'],
+                    image: '/images/sneakers/cyber/cyber-air-future-i.webp?v=c2_v1'
+                },
+                {
+                    id: 'cp-06',
+                    model: 'AIR FUTURE IX',
+                    colorway: 'MATRIX EMERALD',
+                    themeColor: '#004D40',
+                    accentColor: '#00E676',
+                    price: 6700000,
+                    styleCode: 'CP-09-MATRIX',
+                    designer: 'HNMTSHOP × CYBER LAB',
+                    release: 'NOVEMBER 2027',
+                    colorName: 'CARBON BLACK / MATRIX NEON',
+                    swatches: ['#00E676', '#004D40', '#0D0E12'],
+                    image: '/images/sneakers/cyber/cyber-air-future-ix.webp?v=c2_v1'
+                }
+            ]
         },
         {
-            id: 'snk-03',
-            model: 'AIR FUTURE III',
-            colorway: 'NEXUS X1',
-            themeColor: '#4EA819', // Xanh Acid Volt Neon
-            accentColor: '#8CFF00',
-            price: 4900000,
-            styleCode: 'HFS-03-NEXUS',
-            designer: 'HNMTSHOP × FUTURE LAB',
-            release: 'FEBRUARY 2027',
-            colorName: 'WHITE / ACID VOLT / BLACK',
-            swatches: ['#FFFFFF', '#4EA819', '#15161A'],
-            image: '/images/sneakers/air-future-iii.webp?v=center_h_v27'
-        },
-        {
-            id: 'snk-04',
-            model: 'AIR FUTURE V',
-            colorway: 'LUNAR CHROME',
-            themeColor: '#6D3AA6', // Tím Cyberpunk Iridescent
-            accentColor: '#B666FF',
-            price: 5800000,
-            styleCode: 'HFS-05-LUNAR',
-            designer: 'HNMTSHOP × FUTURE LAB',
-            release: 'MARCH 2027',
-            colorName: 'VIOLET CHROME / MIDNIGHT',
-            swatches: ['#6D3AA6', '#B666FF', '#0D0E12'],
-            image: '/images/sneakers/air-future-v.webp?v=center_h_v27'
-        },
-        {
-            id: 'snk-05',
-            model: 'AIR FUTURE I',
-            colorway: 'DUNE PHANTOM',
-            themeColor: '#B9935A', // Vàng Cát Sa Mạc Sang Trọng
-            accentColor: '#FFD700',
-            price: 6200000,
-            styleCode: 'HFS-01-DUNE',
-            designer: 'HNMTSHOP × FUTURE LAB',
-            release: 'APRIL 2027',
-            colorName: 'DESERT SAND / GOLD CHROME',
-            swatches: ['#F5E6CC', '#B9935A', '#FFD700'],
-            image: '/images/sneakers/air-future-i.webp?v=center_h_v27'
-        },
-        {
-            id: 'snk-06',
-            model: 'AIR FUTURE IX',
-            colorway: 'VOLT MAGMA',
-            themeColor: '#1A1B20', // Đen Titan Than Chì Viền Magma
-            accentColor: '#FF2A2A',
-            price: 6500000,
-            styleCode: 'HFS-09-MAGMA',
-            designer: 'HNMTSHOP × FUTURE LAB',
-            release: 'MAY 2027',
-            colorName: 'MAGMA RED / CARBON BLACK',
-            swatches: ['#FF2A2A', '#2E3038', '#111215'],
-            image: '/images/sneakers/air-future-ix.webp?v=center_h_v27'
+            id: 'chile20',
+            title: 'CHILE 20 CONCEPT VAULT',
+            items: [
+                {
+                    id: 'ch-01',
+                    model: 'AIR FUTURE IV',
+                    colorway: 'ROYAL VIOLET',
+                    themeColor: '#4A148C',
+                    accentColor: '#9C27B0',
+                    price: 5600000,
+                    styleCode: 'CH-04-VIOLET',
+                    designer: 'HNMTSHOP × CHILE 20',
+                    release: 'DECEMBER 2027',
+                    colorName: 'METALLIC / ROYAL PURPLE',
+                    swatches: ['#FFFFFF', '#4A148C', '#9C27B0'],
+                    image: '/images/sneakers/chile20/chile-air-future-iv.webp?v=c3_v1'
+                },
+                {
+                    id: 'ch-02',
+                    model: 'AIR FUTURE XI',
+                    colorway: 'IMPERIAL GOLD',
+                    themeColor: '#B78103',
+                    accentColor: '#FFD700',
+                    price: 5800000,
+                    styleCode: 'CH-11-GOLD',
+                    designer: 'HNMTSHOP × CHILE 20',
+                    release: 'JANUARY 2028',
+                    colorName: 'PURE WHITE / IMPERIAL GOLD',
+                    swatches: ['#FFFFFF', '#B78103', '#FFD700'],
+                    image: '/images/sneakers/chile20/chile-air-future-xi.webp?v=c3_v1'
+                },
+                {
+                    id: 'ch-03',
+                    model: 'AIR FUTURE III',
+                    colorway: 'CRIMSON FURY',
+                    themeColor: '#B71C1C',
+                    accentColor: '#FF1744',
+                    price: 5300000,
+                    styleCode: 'CH-03-FURY',
+                    designer: 'HNMTSHOP × CHILE 20',
+                    release: 'FEBRUARY 2028',
+                    colorName: 'CHILE RED / AIR FURY',
+                    swatches: ['#FFFFFF', '#B71C1C', '#FF1744'],
+                    image: '/images/sneakers/chile20/chile-air-future-iii.webp?v=c3_v1'
+                },
+                {
+                    id: 'ch-04',
+                    model: 'AIR FUTURE V',
+                    colorway: 'DEEP TURQUOISE',
+                    themeColor: '#00695C',
+                    accentColor: '#1DE9B6',
+                    price: 6100000,
+                    styleCode: 'CH-05-TURQUOISE',
+                    designer: 'HNMTSHOP × CHILE 20',
+                    release: 'MARCH 2028',
+                    colorName: 'ATLANTIS / TURQUOISE CHROME',
+                    swatches: ['#00695C', '#1DE9B6', '#1A1C20'],
+                    image: '/images/sneakers/chile20/chile-air-future-v.webp?v=c3_v1'
+                },
+                {
+                    id: 'ch-05',
+                    model: 'AIR FUTURE I',
+                    colorway: 'SUNSET CLAY',
+                    themeColor: '#BF360C',
+                    accentColor: '#FF6E40',
+                    price: 6500000,
+                    styleCode: 'CH-01-SUNSET',
+                    designer: 'HNMTSHOP × CHILE 20',
+                    release: 'APRIL 2028',
+                    colorName: 'TERRACOTTA / SUNSET GOLD',
+                    swatches: ['#FFCCBC', '#BF360C', '#FF6E40'],
+                    image: '/images/sneakers/chile20/chile-air-future-i.webp?v=c3_v1'
+                },
+                {
+                    id: 'ch-06',
+                    model: 'AIR FUTURE IX',
+                    colorway: 'COBALT LASER',
+                    themeColor: '#0D47A1',
+                    accentColor: '#2979FF',
+                    price: 6900000,
+                    styleCode: 'CH-09-COBALT',
+                    designer: 'HNMTSHOP × CHILE 20',
+                    release: 'MAY 2028',
+                    colorName: 'DEEP CARBON / COBALT LASER',
+                    swatches: ['#2979FF', '#0D47A1', '#0A0A0D'],
+                    image: '/images/sneakers/chile20/chile-air-future-ix.webp?v=c3_v1'
+                }
+            ]
         }
     ];
+
+    let currentCollectionIndex = 0;
+    const getSneakers = () => SNEAKER_COLLECTIONS[currentCollectionIndex].items;
+    const getActiveCollection = () => SNEAKER_COLLECTIONS[currentCollectionIndex];
 
     let currentIndex = 0;
     let isSliderView = false;
@@ -107,13 +297,65 @@
         return num.toLocaleString('vi-VN') + ' ₫';
     }
 
+    // --- Đổi bộ sưu tập giày (Switch Sneaker Collection / Vault) ---
+    function changeCollection(direction = 1) {
+        if (isTransitioning) return;
+
+        currentCollectionIndex = (currentCollectionIndex + direction + SNEAKER_COLLECTIONS.length) % SNEAKER_COLLECTIONS.length;
+        const col = getActiveCollection();
+
+        // Cập nhật tiêu đề bộ sưu tập với hiệu ứng chuyển động mượt mà
+        const titleEls = document.querySelectorAll('#svCollectionTitle, .sv-header-title');
+        titleEls.forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = direction > 0 ? 'translateX(12px)' : 'translateX(-12px)';
+            setTimeout(() => {
+                el.textContent = col.title;
+                el.style.opacity = '1';
+                el.style.transform = 'translateX(0)';
+            }, 180);
+        });
+
+        const activeSneakers = getSneakers();
+        if (currentIndex >= activeSneakers.length) {
+            currentIndex = 0;
+        }
+
+        if (!isSliderView) {
+            // Chế độ Grid: Mờ nhẹ các đôi cũ, đổi dữ liệu và stagger xuất hiện các đôi mới
+            const items = $$('.sv-grid-item');
+            items.forEach(it => {
+                it.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+                it.style.opacity = '0';
+                it.style.transform = 'scale(0.88)';
+            });
+
+            setTimeout(() => {
+                renderGrid();
+                const newItems = $$('.sv-grid-item');
+                newItems.forEach((it, i) => {
+                    it.style.opacity = '0';
+                    it.style.transform = 'scale(0.88)';
+                    setTimeout(() => {
+                        it.style.transition = 'opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+                        it.style.opacity = '1';
+                        it.style.transform = 'scale(1)';
+                    }, i * 45);
+                });
+            }, 260);
+        } else {
+            // Chế độ Slider 3D: Cập nhật sang đôi giày tương ứng trong bộ sưu tập mới
+            updateSliderDisplay(direction);
+        }
+    }
+
     // --- Khởi tạo lưới 6 đôi ban đầu (Grid Overview) ---
     function renderGrid() {
         const grid = $('#svGrid');
         if (!grid) return;
         grid.innerHTML = '';
 
-        SNEAKERS.forEach((snk, idx) => {
+        getSneakers().forEach((snk, idx) => {
             const item = document.createElement('div');
             item.className = 'sv-grid-item';
             item.setAttribute('data-idx', String(idx));
@@ -162,7 +404,7 @@
         const specsPanel = $('.sv-specs-panel');
         const controlsPanel = $('.sv-controls-panel');
 
-        const snk = SNEAKERS[currentIndex];
+        const snk = getSneakers()[currentIndex];
         if (!snk) {
             isTransitioning = false;
             return;
@@ -218,6 +460,22 @@
             heroShadow.style.opacity = '0';
             heroShadow.style.transform = 'translateX(-50%) rotate(-10deg) scale(0.35)';
         }
+
+        // Nút chuyển đổi bộ sưu tập giày (Left / Right Arrow)
+        const prevColBtns = document.querySelectorAll('#svPrevCollectionBtn');
+        const nextColBtns = document.querySelectorAll('#svNextCollectionBtn');
+        prevColBtns.forEach(btn => {
+            btn.onclick = (e) => {
+                e.stopPropagation();
+                changeCollection(-1);
+            };
+        });
+        nextColBtns.forEach(btn => {
+            btn.onclick = (e) => {
+                e.stopPropagation();
+                changeCollection(1);
+            };
+        });
 
         if (toggleBtn) {
             toggleBtn.innerHTML = '<i class="bi bi-grid-3x3-gap"></i> <span>TẤT CẢ GIÀY</span>';
@@ -473,7 +731,7 @@
 
         if (swatchesContainer) {
             swatchesContainer.innerHTML = '';
-            SNEAKERS.forEach((snkItem, i) => {
+            getSneakers().forEach((snkItem, i) => {
                 const dot = document.createElement('span');
                 dot.className = `sv-color-dot ${i === currentIndex ? 'is-active' : ''}`;
                 dot.style.backgroundColor = snkItem.themeColor;
@@ -493,7 +751,7 @@
 
     // --- Cập nhật giao diện Slider với hiệu ứng Slide-In mượt mà (direction: +1 next, -1 prev) ---
     function updateSliderDisplay(direction = 1, immediate = false) {
-        const snk = SNEAKERS[currentIndex];
+        const snk = getSneakers()[currentIndex];
         if (!snk) return;
 
         const app = $('#svApp');
@@ -588,7 +846,7 @@
         if (!container) return;
         container.innerHTML = '';
 
-        SNEAKERS.forEach((_, idx) => {
+        getSneakers().forEach((_, idx) => {
             const dash = document.createElement('div');
             dash.className = `sv-dash ${idx === currentIndex ? 'is-active' : ''}`;
             dash.onclick = () => {
@@ -604,12 +862,12 @@
 
     // --- Chuyển chiếc giày kế tiếp / trước đó ---
     function nextSneaker() {
-        currentIndex = (currentIndex + 1) % SNEAKERS.length;
+        currentIndex = (currentIndex + 1) % getSneakers().length;
         updateSliderDisplay(1);
     }
 
     function prevSneaker() {
-        currentIndex = (currentIndex - 1 + SNEAKERS.length) % SNEAKERS.length;
+        currentIndex = (currentIndex - 1 + getSneakers().length) % getSneakers().length;
         updateSliderDisplay(-1);
     }
 
@@ -622,7 +880,7 @@
             badge.style.transform = 'scale(1.4)';
             setTimeout(() => badge.style.transform = 'scale(1)', 250);
         }
-        const snk = SNEAKERS[currentIndex];
+        const snk = getSneakers()[currentIndex];
         showToast(`Đã thêm ${snk.model} (${snk.colorway}) vào giỏ hàng!`);
     }
 
@@ -761,7 +1019,7 @@
             const heroImg = $('#svHeroImg');
             if (heroImg) {
                 heroImg.classList.add('is-floating');
-                updateSliderDataOnly(SNEAKERS[currentIndex]);
+                updateSliderDataOnly(getSneakers()[currentIndex]);
             }
         }
     }
