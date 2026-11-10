@@ -160,7 +160,8 @@
             app.style.backgroundImage = 'none';
         }
 
-        updateSliderDisplay(0, true);
+        // Mở với hiệu ứng Zoom-in đàn hồi mượt mà từ lưới 3D
+        updateSliderDisplay(0, false, true);
     }
 
     // --- Quay lại xem dạng lưới 6 đôi ---
@@ -194,16 +195,16 @@
         }
     }
 
-    // --- Cập nhật giao diện Slider với hiệu ứng Slide-In mượt mà (direction: +1 next, -1 prev) ---
-    function updateSliderDisplay(direction = 1, immediate = false) {
-        const snk = SNEAKERS[currentIndex];
-        if (!snk) return;
+    // --- Preload tất cả hình ảnh để chuyển cảnh tức thì không giật lag ---
+    function preloadSneakerImages() {
+        SNEAKERS.forEach(snk => {
+            const img = new Image();
+            img.src = snk.image;
+        });
+    }
 
-        const app = $('#svApp');
-        const giantTitle = $('#svGiantTitle');
-        const heroImg = $('#svHeroImg');
-        const heroShadow = $('#svHeroShadow');
-        const specsPanel = $('.sv-specs-panel');
+    // --- Cập nhật thông số kỹ thuật Tech Specs ---
+    function updateSpecsContent(snk) {
         const colorwayName = $('#svColorwayName');
         const styleCode = $('#svStyleCode');
         const price = $('#svPrice');
@@ -212,77 +213,6 @@
         const release = $('#svRelease');
         const swatchesContainer = $('#svSwatches');
 
-        // 1. Đổi màu nền mượt mà theo đúng video
-        if (app) {
-            app.style.backgroundColor = snk.themeColor;
-        }
-
-        if (immediate) {
-            // Không tạo độ trễ khi mở lần đầu
-            if (giantTitle) {
-                giantTitle.textContent = snk.model;
-                giantTitle.style.opacity = '0.94';
-                giantTitle.style.transform = 'translate(0, 0)';
-            }
-            if (heroImg) {
-                heroImg.src = snk.image;
-                heroImg.alt = snk.model;
-                heroImg.style.opacity = '1';
-                heroImg.style.transform = 'translate(0, 0) scale(1) rotate(-15deg)';
-            }
-            if (heroShadow) {
-                heroShadow.style.opacity = '1';
-                heroShadow.style.transform = 'translateX(-50%) rotate(-10deg) scale(1)';
-            }
-            if (specsPanel) {
-                specsPanel.style.opacity = '1';
-                specsPanel.style.transform = 'translate(0, 0)';
-            }
-        } else {
-            // Hiệu ứng Slide-In 2D mượt mà chuẩn Smart Animate (Giữ góc nghiêng -15deg vừa vặn)
-            const slideOffset = direction > 0 ? 80 : -80;
-
-            if (giantTitle) {
-                giantTitle.style.opacity = '0';
-                giantTitle.style.transform = `translateY(30px)`;
-            }
-            if (heroImg) {
-                heroImg.style.opacity = '0';
-                heroImg.style.transform = `translateX(${slideOffset}px) scale(0.92) rotate(-15deg)`;
-            }
-            if (heroShadow) {
-                heroShadow.style.opacity = '0';
-                heroShadow.style.transform = `translateX(-50%) rotate(-10deg) scale(0.8)`;
-            }
-            if (specsPanel) {
-                specsPanel.style.opacity = '0';
-                specsPanel.style.transform = `translateY(15px)`;
-            }
-
-            setTimeout(() => {
-                if (giantTitle) {
-                    giantTitle.textContent = snk.model;
-                    giantTitle.style.opacity = '0.94';
-                    giantTitle.style.transform = 'translate(0, 0)';
-                }
-                if (heroImg) {
-                    heroImg.src = snk.image;
-                    heroImg.alt = snk.model;
-                    heroImg.style.opacity = '1';
-                    heroImg.style.transform = 'translate(0, 0) scale(1) rotate(-15deg)';
-                }
-                if (heroShadow) {
-                    heroShadow.style.opacity = '1';
-                    heroShadow.style.transform = 'translateX(-50%) rotate(-10deg) scale(1)';
-                }
-                if (specsPanel) {
-                    specsPanel.style.opacity = '1';
-                    specsPanel.style.transform = 'translate(0, 0)';
-                }
-            }, 180);
-        }
-
-        // Cập nhật thông số kỹ thuật Tech Specs
         if (colorwayName) colorwayName.textContent = snk.colorway;
         if (styleCode) styleCode.textContent = snk.styleCode;
         if (price) price.textContent = formatPrice(snk.price);
@@ -290,7 +220,6 @@
         if (designer) designer.textContent = snk.designer;
         if (release) release.textContent = snk.release;
 
-        // Đảm bảo nhãn luôn luôn hiển thị tiếng Việt chuẩn xác
         localizeAllLabels();
 
         // Chấm màu Swatches: Chọn màu trực tiếp chuyển ngay sang đôi giày và màu nền tương ứng
@@ -313,8 +242,117 @@
             });
         }
 
-        // Cập nhật vạch Dash Indicators
         renderDashes();
+    }
+
+    // --- Cập nhật giao diện Slider với hiệu ứng lướt mượt mà chuẩn Smart Animate (direction: +1 next, -1 prev) ---
+    function updateSliderDisplay(direction = 1, immediate = false, fromGrid = false) {
+        const snk = SNEAKERS[currentIndex];
+        if (!snk) return;
+
+        const app = $('#svApp');
+        const giantTitle = $('#svGiantTitle');
+        const heroWrap = $('#svHeroWrap');
+        const heroImg = $('#svHeroImg');
+        const specsPanel = $('.sv-specs-panel');
+
+        // 1. Đổi màu nền điện ảnh mượt mà
+        if (app) {
+            app.style.backgroundColor = snk.themeColor;
+        }
+
+        if (immediate) {
+            if (giantTitle) {
+                giantTitle.textContent = snk.model;
+                giantTitle.style.opacity = '0.94';
+            }
+            if (heroImg) {
+                heroImg.src = snk.image;
+                heroImg.alt = snk.model;
+            }
+            updateSpecsContent(snk);
+            return;
+        }
+
+        if (fromGrid) {
+            // Hiệu ứng bừng sáng & phóng to từ lưới vào chi tiết
+            if (heroWrap) heroWrap.classList.add('sv-anim-entry-grid');
+            if (giantTitle) {
+                giantTitle.textContent = snk.model;
+                giantTitle.classList.add('sv-title-enter-grid');
+            }
+            if (specsPanel) specsPanel.classList.add('sv-specs-enter');
+            if (heroImg) {
+                heroImg.src = snk.image;
+                heroImg.alt = snk.model;
+            }
+            updateSpecsContent(snk);
+
+            // Ép trình duyệt tính toán lại vị trí mới
+            if (heroWrap) void heroWrap.offsetWidth;
+
+            requestAnimationFrame(() => {
+                if (heroWrap) heroWrap.classList.remove('sv-anim-entry-grid');
+                if (giantTitle) giantTitle.classList.remove('sv-title-enter-grid');
+                if (specsPanel) specsPanel.classList.remove('sv-specs-enter');
+            });
+            return;
+        }
+
+        // Hiệu ứng chuyển động lướt ngang mượt mà chuẩn Smart Animate theo video
+        if (isAnimating) return;
+        isAnimating = true;
+
+        const exitWrapClass = direction > 0 ? 'sv-anim-exit-left' : 'sv-anim-exit-right';
+        const enterWrapClass = direction > 0 ? 'sv-anim-enter-right' : 'sv-anim-enter-left';
+
+        const exitTitleClass = direction > 0 ? 'sv-title-exit-left' : 'sv-title-exit-right';
+        const enterTitleClass = direction > 0 ? 'sv-title-enter-right' : 'sv-title-enter-left';
+
+        // 1. Kích hoạt hiệu ứng lướt ra (Exit)
+        if (heroWrap) heroWrap.classList.add(exitWrapClass);
+        if (giantTitle) giantTitle.classList.add(exitTitleClass);
+        if (specsPanel) specsPanel.classList.add('sv-specs-exit');
+
+        // 2. Điểm chuyển tiếp (sau 190ms)
+        setTimeout(() => {
+            if (heroImg) {
+                heroImg.src = snk.image;
+                heroImg.alt = snk.model;
+            }
+            if (giantTitle) {
+                giantTitle.textContent = snk.model;
+            }
+            updateSpecsContent(snk);
+
+            // Gỡ class exit, chuẩn bị vị trí lướt vào (transition: none)
+            if (heroWrap) {
+                heroWrap.classList.remove(exitWrapClass);
+                heroWrap.classList.add(enterWrapClass);
+            }
+            if (giantTitle) {
+                giantTitle.classList.remove(exitTitleClass);
+                giantTitle.classList.add(enterTitleClass);
+            }
+            if (specsPanel) {
+                specsPanel.classList.remove('sv-specs-exit');
+                specsPanel.classList.add('sv-specs-enter');
+            }
+
+            // Ép trình duyệt tính toán lại vị trí mới
+            if (heroWrap) void heroWrap.offsetWidth;
+
+            // 3. Lướt mượt mà vào chính giữa với đường cong đàn hồi tự nhiên
+            requestAnimationFrame(() => {
+                if (heroWrap) heroWrap.classList.remove(enterWrapClass);
+                if (giantTitle) giantTitle.classList.remove(enterTitleClass);
+                if (specsPanel) specsPanel.classList.remove('sv-specs-enter');
+            });
+
+            setTimeout(() => {
+                isAnimating = false;
+            }, 550);
+        }, 190);
     }
 
     // --- Render các vạch Dash chuyển trang ở đáy ---
@@ -426,6 +464,27 @@
                 else if (typeof window.closeSneakerShowcase === 'function') window.closeSneakerShowcase();
             }
         });
+
+        // Thao tác vuốt màn hình cảm ứng / Trackpad (Touch Swipe)
+        let touchStartX = 0;
+        let touchStartY = 0;
+        window.addEventListener('touchstart', (e) => {
+            if (!isSliderView) return;
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+        }, { passive: true });
+
+        window.addEventListener('touchend', (e) => {
+            if (!isSliderView) return;
+            const touchEndX = e.changedTouches[0].screenX;
+            const touchEndY = e.changedTouches[0].screenY;
+            const dx = touchEndX - touchStartX;
+            const dy = touchEndY - touchStartY;
+            if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+                if (dx < 0) nextSneaker();
+                else prevSneaker();
+            }
+        }, { passive: true });
     }
 
     // --- Xuất các hàm điều khiển toàn cục cho Showroom 3D ---
@@ -484,6 +543,7 @@
 
     // Tự khởi chạy an toàn
     function init() {
+        preloadSneakerImages();
         localizeAllLabels();
         renderGrid();
         bindEvents();
