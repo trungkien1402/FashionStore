@@ -432,7 +432,8 @@
                 });
             }, 260);
         } else {
-            // Chế độ Slider 3D: Cập nhật sang đôi giày tương ứng trong bộ sưu tập mới
+            // Chế độ Slider 3D: Cập nhật sang đôi giày tương ứng trong bộ sưu tập mới VÀ đồng thời cập nhật Grid bên dưới
+            renderGrid();
             updateSliderDisplay(direction);
         }
     }
@@ -442,6 +443,7 @@
         const grid = $('#svGrid');
         if (!grid) return;
         grid.innerHTML = '';
+        grid.setAttribute('data-collection', String(currentCollectionIndex));
 
         getSneakers().forEach((snk, idx) => {
             const item = document.createElement('div');
@@ -686,17 +688,23 @@
 
         isTransitioning = true;
 
-        // 2. Mở lại grid container bên dưới để đo vị trí chính xác
+        // 2. Mở lại grid container bên dưới và ĐỒNG BỘ lưới với bộ sưu tập hiện tại
         if (gridContainer) {
             gridContainer.classList.remove('is-hidden');
         }
 
-        const targetItem = gridItems[currentIndex] || gridItems[0];
+        const grid = $('#svGrid');
+        if (grid && grid.getAttribute('data-collection') !== String(currentCollectionIndex)) {
+            renderGrid();
+        }
+
+        const activeGridItems = $$('.sv-grid-item');
+        const targetItem = activeGridItems[currentIndex] || activeGridItems[0];
         const targetImg = targetItem ? targetItem.querySelector('.sv-item-img') : null;
         const targetShadow = targetItem ? targetItem.querySelector('.sv-item-shadow') : null;
 
         // Giữ 5 đôi giày khác mờ nhẹ trong lúc chiếc hero chuẩn bị đáp xuống
-        gridItems.forEach((it, i) => {
+        activeGridItems.forEach((it, i) => {
             if (i !== currentIndex) {
                 it.classList.add('is-fading-out');
             }
@@ -752,7 +760,7 @@
 
             // Fade in lại 5 đôi giày còn lại sau 280ms
             setTimeout(() => {
-                gridItems.forEach(it => it.classList.remove('is-fading-out'));
+                activeGridItems.forEach(it => it.classList.remove('is-fading-out'));
             }, 280);
 
             // Khi đôi giày đã đáp gọn vào ô grid (860ms)
