@@ -104,7 +104,7 @@
             items: [
                 {
                     id: 'cp-01',
-                    model: 'AIR FUTURE IV',
+                    model: 'CYBER PROTOCOL IV',
                     colorway: 'CYBER TEAL',
                     themeColor: '#00838F',
                     accentColor: '#00E5FF',
@@ -118,7 +118,7 @@
                 },
                 {
                     id: 'cp-02',
-                    model: 'AIR FUTURE XI',
+                    model: 'CYBER PROTOCOL XI',
                     colorway: 'NEON MAGENTA',
                     themeColor: '#AD1457',
                     accentColor: '#FF007F',
@@ -132,7 +132,7 @@
                 },
                 {
                     id: 'cp-03',
-                    model: 'AIR FUTURE III',
+                    model: 'CYBER PROTOCOL III',
                     colorway: 'SOLAR FLARE',
                     themeColor: '#E65100',
                     accentColor: '#FFB300',
@@ -146,7 +146,7 @@
                 },
                 {
                     id: 'cp-04',
-                    model: 'AIR FUTURE V',
+                    model: 'CYBER PROTOCOL V',
                     colorway: 'TACTICAL OLIVE',
                     themeColor: '#33691E',
                     accentColor: '#C0CA33',
@@ -160,7 +160,7 @@
                 },
                 {
                     id: 'cp-05',
-                    model: 'AIR FUTURE I',
+                    model: 'CYBER PROTOCOL I',
                     colorway: 'GLACIER FROST',
                     themeColor: '#1565C0',
                     accentColor: '#80D8FF',
@@ -174,7 +174,7 @@
                 },
                 {
                     id: 'cp-06',
-                    model: 'AIR FUTURE IX',
+                    model: 'CYBER PROTOCOL IX',
                     colorway: 'MATRIX EMERALD',
                     themeColor: '#004D40',
                     accentColor: '#00E676',
@@ -194,7 +194,7 @@
             items: [
                 {
                     id: 'ch-01',
-                    model: 'AIR FUTURE IV',
+                    model: 'CHILE 20 CONCEPT IV',
                     colorway: 'ROYAL VIOLET',
                     themeColor: '#4A148C',
                     accentColor: '#9C27B0',
@@ -208,7 +208,7 @@
                 },
                 {
                     id: 'ch-02',
-                    model: 'AIR FUTURE XI',
+                    model: 'CHILE 20 CONCEPT XI',
                     colorway: 'IMPERIAL GOLD',
                     themeColor: '#B78103',
                     accentColor: '#FFD700',
@@ -222,7 +222,7 @@
                 },
                 {
                     id: 'ch-03',
-                    model: 'AIR FUTURE III',
+                    model: 'CHILE 20 CONCEPT III',
                     colorway: 'CRIMSON FURY',
                     themeColor: '#B71C1C',
                     accentColor: '#FF1744',
@@ -236,7 +236,7 @@
                 },
                 {
                     id: 'ch-04',
-                    model: 'AIR FUTURE V',
+                    model: 'CHILE 20 CONCEPT V',
                     colorway: 'DEEP TURQUOISE',
                     themeColor: '#00695C',
                     accentColor: '#1DE9B6',
@@ -250,7 +250,7 @@
                 },
                 {
                     id: 'ch-05',
-                    model: 'AIR FUTURE I',
+                    model: 'CHILE 20 CONCEPT I',
                     colorway: 'SUNSET CLAY',
                     themeColor: '#BF360C',
                     accentColor: '#FF6E40',
@@ -264,7 +264,7 @@
                 },
                 {
                     id: 'ch-06',
-                    model: 'AIR FUTURE IX',
+                    model: 'CHILE 20 CONCEPT IX',
                     colorway: 'COBALT LASER',
                     themeColor: '#0D47A1',
                     accentColor: '#2979FF',
