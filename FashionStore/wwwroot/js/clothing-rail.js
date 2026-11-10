@@ -367,13 +367,33 @@
         }
     }
 
-    function notify(text) {
+    function notify(text, type = 'success') {
         clearTimeout(toastTimer);
-        const t = $('#toast');
-        if (!t) return;
-        t.textContent = text;
-        t.classList.add('visible');
-        toastTimer = setTimeout(() => t.classList.remove('visible'), 2800);
+        let t = document.getElementById('toast');
+        if (!t) {
+            t = document.createElement('aside');
+            t.className = 'rail-toast';
+            t.id = 'toast';
+            t.setAttribute('role', 'status');
+            t.setAttribute('aria-live', 'polite');
+            document.body.appendChild(t);
+        } else if (t.parentElement !== document.body) {
+            document.body.appendChild(t);
+        }
+
+        const isSuccess = type === 'success';
+        const iconSvg = isSuccess 
+            ? `<span class="rail-toast-badge success"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>`
+            : `<span class="rail-toast-badge warn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg></span>`;
+
+        t.innerHTML = `${iconSvg}<span class="rail-toast-msg">${text}</span>`;
+        t.classList.remove('visible', 'show');
+        void t.offsetWidth;
+        t.classList.add('visible', 'show');
+
+        toastTimer = setTimeout(() => {
+            t.classList.remove('visible', 'show');
+        }, 3200);
     }
 
     function openModal(title, text) {
@@ -467,12 +487,12 @@
                 const p = products[current];
                 if (p.upcoming) return;
                 if (!selectedSize) {
-                    notify('Vui lòng chọn kích cỡ trước khi thêm vào giỏ.');
+                    notify('Vui lòng chọn kích cỡ trước khi thêm vào giỏ.', 'warn');
                     return;
                 }
 
                 bag++;
-                const bagCount = $('#bagCount');
+                const bagCount = document.getElementById('bagCount');
                 if (bagCount) {
                     bagCount.textContent = bag;
                     bagCount.classList.remove('bump');
@@ -480,7 +500,41 @@
                     bagCount.classList.add('bump');
                 }
 
-                notify(`Đã thêm ${p.name} · Size ${selectedSize} vào giỏ hàng!`);
+                // Cập nhật các badge giỏ hàng khác nếu có trên giao diện (như svBagBadge)
+                const svBag = document.getElementById('svBagBadge');
+                if (svBag) {
+                    svBag.textContent = bag;
+                    svBag.style.transform = 'scale(1.4)';
+                    setTimeout(() => svBag.style.transform = 'scale(1)', 250);
+                }
+
+                const v = p.variant || 0;
+                let colorLabel = '';
+                if (p.colors && p.colors[v]) {
+                    colorLabel = p.colors[v][0].split('(')[0].trim();
+                }
+                const colorStr = colorLabel ? ` · ${colorLabel}` : '';
+
+                // Thông báo Toast cao cấp nổi bật
+                notify(`Đã thêm <strong>${p.name}</strong> (${selectedSize}${colorStr}) vào giỏ hàng!`, 'success');
+
+                // Phản hồi trực quan tức thì trên chính nút "THÊM VÀO GIỎ"
+                cartCta.innerHTML = `
+                    <span class="rail-btn-feedback">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        ĐÃ THÊM VÀO GIỎ (${selectedSize}) ✓
+                    </span>
+                `;
+                cartCta.classList.add('is-added');
+                cartCta.disabled = true;
+
+                setTimeout(() => {
+                    cartCta.classList.remove('is-added');
+                    cartCta.disabled = false;
+                    renderSizes();
+                }, 2200);
             };
         }
 
