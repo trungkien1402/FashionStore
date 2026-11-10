@@ -367,7 +367,7 @@
         }
     }
 
-    function notify(text, type = 'success') {
+    function notifyProductAdded(p, size) {
         clearTimeout(toastTimer);
         let t = document.getElementById('toast');
         if (!t) {
@@ -381,12 +381,76 @@
             document.body.appendChild(t);
         }
 
-        const isSuccess = type === 'success';
-        const iconSvg = isSuccess 
-            ? `<span class="rail-toast-badge success"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>`
-            : `<span class="rail-toast-badge warn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg></span>`;
+        const v = p.variant || 0;
+        const thumbSrc = photo(p, v);
+        let colorName = '';
+        if (p.colors && p.colors[v]) {
+            colorName = p.colors[v][0].split('(')[0].trim();
+        }
+        const metaParts = [];
+        if (size) metaParts.push(`Size ${size}`);
+        if (colorName) metaParts.push(colorName);
+        metaParts.push(formatPrice(p.price));
 
-        t.innerHTML = `${iconSvg}<span class="rail-toast-msg">${text}</span>`;
+        t.innerHTML = `
+            <div class="atelier-toast-thumb-wrap">
+                <img class="atelier-toast-thumb" src="${thumbSrc}" alt="${p.name}">
+            </div>
+            <div class="atelier-toast-body">
+                <div class="atelier-toast-header">
+                    <span class="atelier-toast-tag">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        ĐÃ THÊM VÀO TÚI
+                    </span>
+                    <button type="button" class="atelier-toast-close" aria-label="Đóng" onclick="document.getElementById('toast').classList.remove('visible','show')">×</button>
+                </div>
+                <div class="atelier-toast-title">${p.name}</div>
+                <div class="atelier-toast-meta">${metaParts.join(' · ')}</div>
+            </div>
+        `;
+
+        t.classList.remove('visible', 'show');
+        void t.offsetWidth;
+        t.classList.add('visible', 'show');
+
+        toastTimer = setTimeout(() => {
+            t.classList.remove('visible', 'show');
+        }, 3800);
+    }
+
+    function notify(text, type = 'info') {
+        clearTimeout(toastTimer);
+        let t = document.getElementById('toast');
+        if (!t) {
+            t = document.createElement('aside');
+            t.className = 'rail-toast';
+            t.id = 'toast';
+            t.setAttribute('role', 'status');
+            t.setAttribute('aria-live', 'polite');
+            document.body.appendChild(t);
+        } else if (t.parentElement !== document.body) {
+            document.body.appendChild(t);
+        }
+
+        const isWarn = type === 'warn';
+        const tagText = isWarn ? 'NHẮC NHỞ' : 'THÔNG BÁO';
+        const tagColor = isWarn ? '#D97706' : 'var(--rail-ink)';
+        const tagBg = isWarn ? 'rgba(217, 119, 6, 0.1)' : 'rgba(43, 51, 96, 0.08)';
+
+        t.innerHTML = `
+            <div class="atelier-toast-body">
+                <div class="atelier-toast-header">
+                    <span class="atelier-toast-tag" style="color: ${tagColor}; background: ${tagBg};">
+                        ${tagText}
+                    </span>
+                    <button type="button" class="atelier-toast-close" aria-label="Đóng" onclick="document.getElementById('toast').classList.remove('visible','show')">×</button>
+                </div>
+                <div class="atelier-toast-title" style="font-size: 13.5px; font-weight: 500;">${text}</div>
+            </div>
+        `;
+
         t.classList.remove('visible', 'show');
         void t.offsetWidth;
         t.classList.add('visible', 'show');
@@ -508,15 +572,8 @@
                     setTimeout(() => svBag.style.transform = 'scale(1)', 250);
                 }
 
-                const v = p.variant || 0;
-                let colorLabel = '';
-                if (p.colors && p.colors[v]) {
-                    colorLabel = p.colors[v][0].split('(')[0].trim();
-                }
-                const colorStr = colorLabel ? ` · ${colorLabel}` : '';
-
-                // Thông báo Toast cao cấp nổi bật
-                notify(`Đã thêm <strong>${p.name}</strong> (${selectedSize}${colorStr}) vào giỏ hàng!`, 'success');
+                // Thẻ thông báo Atelier kính mờ sang trọng chuẩn Farfetch/Dior
+                notifyProductAdded(p, selectedSize);
 
                 // Phản hồi trực quan tức thì trên chính nút "THÊM VÀO GIỎ"
                 cartCta.innerHTML = `
