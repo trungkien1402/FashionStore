@@ -100,11 +100,11 @@
         },
         {
             id: 'cyber',
-            title: 'CYBER PROTOCOL VAULT',
+            title: 'CYBER VAULT',
             items: [
                 {
                     id: 'cp-01',
-                    model: 'CYBER PROTOCOL IV',
+                    model: 'CYBER IV',
                     colorway: 'CYBER TEAL',
                     themeColor: '#00838F',
                     accentColor: '#00E5FF',
@@ -118,7 +118,7 @@
                 },
                 {
                     id: 'cp-02',
-                    model: 'CYBER PROTOCOL XI',
+                    model: 'CYBER XI',
                     colorway: 'NEON MAGENTA',
                     themeColor: '#AD1457',
                     accentColor: '#FF007F',
@@ -132,7 +132,7 @@
                 },
                 {
                     id: 'cp-03',
-                    model: 'CYBER PROTOCOL III',
+                    model: 'CYBER III',
                     colorway: 'SOLAR FLARE',
                     themeColor: '#E65100',
                     accentColor: '#FFB300',
@@ -146,7 +146,7 @@
                 },
                 {
                     id: 'cp-04',
-                    model: 'CYBER PROTOCOL V',
+                    model: 'CYBER V',
                     colorway: 'TACTICAL OLIVE',
                     themeColor: '#33691E',
                     accentColor: '#C0CA33',
@@ -160,7 +160,7 @@
                 },
                 {
                     id: 'cp-05',
-                    model: 'CYBER PROTOCOL I',
+                    model: 'CYBER I',
                     colorway: 'GLACIER FROST',
                     themeColor: '#1565C0',
                     accentColor: '#80D8FF',
@@ -174,7 +174,7 @@
                 },
                 {
                     id: 'cp-06',
-                    model: 'CYBER PROTOCOL IX',
+                    model: 'CYBER IX',
                     colorway: 'MATRIX EMERALD',
                     themeColor: '#004D40',
                     accentColor: '#00E676',
@@ -190,11 +190,11 @@
         },
         {
             id: 'chile20',
-            title: 'CHILE 20 CONCEPT VAULT',
+            title: 'CHILE 20 VAULT',
             items: [
                 {
                     id: 'ch-01',
-                    model: 'CHILE 20 CONCEPT IV',
+                    model: 'CHILE 20 IV',
                     colorway: 'ROYAL VIOLET',
                     themeColor: '#4A148C',
                     accentColor: '#9C27B0',
@@ -208,7 +208,7 @@
                 },
                 {
                     id: 'ch-02',
-                    model: 'CHILE 20 CONCEPT XI',
+                    model: 'CHILE 20 XI',
                     colorway: 'IMPERIAL GOLD',
                     themeColor: '#B78103',
                     accentColor: '#FFD700',
@@ -222,7 +222,7 @@
                 },
                 {
                     id: 'ch-03',
-                    model: 'CHILE 20 CONCEPT III',
+                    model: 'CHILE 20 III',
                     colorway: 'CRIMSON FURY',
                     themeColor: '#B71C1C',
                     accentColor: '#FF1744',
@@ -236,7 +236,7 @@
                 },
                 {
                     id: 'ch-04',
-                    model: 'CHILE 20 CONCEPT V',
+                    model: 'CHILE 20 V',
                     colorway: 'DEEP TURQUOISE',
                     themeColor: '#00695C',
                     accentColor: '#1DE9B6',
@@ -250,7 +250,7 @@
                 },
                 {
                     id: 'ch-05',
-                    model: 'CHILE 20 CONCEPT I',
+                    model: 'CHILE 20 I',
                     colorway: 'SUNSET CLAY',
                     themeColor: '#BF360C',
                     accentColor: '#FF6E40',
@@ -264,7 +264,7 @@
                 },
                 {
                     id: 'ch-06',
-                    model: 'CHILE 20 CONCEPT IX',
+                    model: 'CHILE 20 IX',
                     colorway: 'COBALT LASER',
                     themeColor: '#0D47A1',
                     accentColor: '#2979FF',
@@ -522,7 +522,7 @@
 
         // Ẩn tạm thời typography, specs, controls và hero shadow để chuẩn bị hiệu ứng bay vào
         if (giantTitle) {
-            giantTitle.textContent = snk.model;
+            setGiantTitleText(snk.model);
             giantTitle.style.transition = 'none';
             giantTitle.style.opacity = '0';
             giantTitle.style.transform = 'scale(0.82)';
@@ -782,6 +782,24 @@
         }
     }
 
+    // --- Cập nhật tiêu đề khổng lồ phía sau (tự co giãn thông minh nếu tên dài) ---
+    function setGiantTitleText(modelName) {
+        if (!giantTitle) return;
+        const text = modelName || '';
+        giantTitle.textContent = text;
+        const len = text.length;
+        if (len > 15) {
+            giantTitle.style.fontSize = 'clamp(44px, 7.2vw, 100px)';
+            giantTitle.style.letterSpacing = '-0.025em';
+        } else if (len > 12) {
+            giantTitle.style.fontSize = 'clamp(58px, 9vw, 125px)';
+            giantTitle.style.letterSpacing = '-0.02em';
+        } else {
+            giantTitle.style.fontSize = '';
+            giantTitle.style.letterSpacing = '';
+        }
+    }
+
     // --- Cập nhật dữ liệu thông số Tech Specs & Swatches (không làm gián đoạn FLIP) ---
     function updateSliderDataOnly(snk) {
         const colorwayName = $('#svColorwayName');
@@ -839,7 +857,7 @@
 
         if (immediate) {
             if (giantTitle) {
-                giantTitle.textContent = snk.model;
+                setGiantTitleText(snk.model);
                 giantTitle.style.opacity = '0.94';
                 giantTitle.style.transform = 'scale(1)';
             }
@@ -883,7 +901,7 @@
 
             setTimeout(() => {
                 if (giantTitle) {
-                    giantTitle.textContent = snk.model;
+                    setGiantTitleText(snk.model);
                     giantTitle.style.opacity = '0.94';
                     giantTitle.style.transform = 'scale(1)';
                 }
