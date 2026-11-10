@@ -143,6 +143,7 @@
         const gridContainer = $('#svGridContainer');
         const sliderContainer = $('#svSliderContainer');
         const toggleBtn = $('#svToggleViewBtn');
+        const app = $('#svApp');
 
         if (gridContainer) {
             gridContainer.classList.add('is-hidden');
@@ -153,6 +154,11 @@
 
         if (toggleBtn) {
             toggleBtn.innerHTML = '<i class="bi bi-grid-3x3-gap"></i> <span>TẤT CẢ GIÀY</span>';
+        }
+
+        if (app) {
+            app.classList.remove('is-grid-mode');
+            app.style.backgroundImage = 'none';
         }
 
         updateSliderDisplay(0, true);
@@ -174,8 +180,15 @@
             gridContainer.classList.remove('is-hidden');
         }
 
-        // Trả nền về màu đen tối giản của showroom
-        if (app) app.style.backgroundColor = 'var(--sv-dark-bg)';
+        // Áp dụng hình nền vân tối cao cấp từ bản thiết kế của người dùng
+        if (app) {
+            app.classList.add('is-grid-mode');
+            app.style.backgroundImage = "url('/images/sneakers/sneaker-grid-bg.webp?v=bg_v1')";
+            app.style.backgroundRepeat = 'no-repeat';
+            app.style.backgroundPosition = 'center center';
+            app.style.backgroundSize = 'cover';
+            app.style.backgroundColor = '#0D0E12';
+        }
 
         if (toggleBtn) {
             toggleBtn.innerHTML = '<i class="bi bi-view-stacked"></i> <span>SLIDER 3D</span>';

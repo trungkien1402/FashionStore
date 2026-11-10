@@ -60,9 +60,18 @@
     display: flex;
     flex-direction: column;
     position: relative;
-    transition: background-color 0.75s var(--sv-ease);
+    transition: background-color 0.75s var(--sv-ease), background-image 0.5s ease;
     background-color: var(--sv-dark-bg);
     overflow: hidden;
+}
+
+.sv-app.is-grid-mode {
+    background-color: #0D0E12 !important;
+    background-image: url('/images/sneakers/sneaker-grid-bg.webp?v=bg_v1') !important;
+    background-repeat: no-repeat !important;
+    background-position: center center !important;
+    background-size: cover !important;
+    background-attachment: fixed !important;
 }
 
 /* ==========================================================================
