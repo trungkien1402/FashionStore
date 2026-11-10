@@ -322,11 +322,6 @@
                 colTitle.id = 'svCollectionTitle';
                 colTitle.textContent = getActiveCollection().title;
 
-                const badge = document.createElement('span');
-                badge.className = 'sv-vault-badge';
-                badge.id = 'svCollectionBadge';
-                badge.textContent = `0${currentCollectionIndex + 1} / 0${SNEAKER_COLLECTIONS.length}`;
-
                 const nextBtn = document.createElement('button');
                 nextBtn.type = 'button';
                 nextBtn.className = 'sv-vault-arrow';
@@ -337,7 +332,6 @@
 
                 switcher.appendChild(prevBtn);
                 switcher.appendChild(colTitle);
-                switcher.appendChild(badge);
                 switcher.appendChild(nextBtn);
 
                 if (titleEl) {
@@ -358,6 +352,7 @@
                 const prevBtn = switcher.querySelector('.sv-vault-arrow:first-child, #svPrevCollectionBtn');
                 const nextBtn = switcher.querySelector('.sv-vault-arrow:last-child, #svNextCollectionBtn');
                 const colTitle = switcher.querySelector('#svCollectionTitle, .sv-header-title');
+                switcher.querySelectorAll('.sv-vault-badge, #svCollectionBadge').forEach(el => el.remove());
 
                 if (colTitle) colTitle.textContent = getActiveCollection().title;
 
@@ -398,11 +393,8 @@
             }, 180);
         });
 
-        // Cập nhật badge số thứ tự bộ sưu tập 01/03
-        const badges = document.querySelectorAll('#svCollectionBadge, .sv-vault-badge');
-        badges.forEach(b => {
-            b.textContent = `0${currentCollectionIndex + 1} / 0${SNEAKER_COLLECTIONS.length}`;
-        });
+        // Bỏ hiển thị số thứ tự bộ sưu tập theo yêu cầu của user
+        document.querySelectorAll('#svCollectionBadge, .sv-vault-badge').forEach(b => b.remove());
 
         const activeSneakers = getSneakers();
         if (currentIndex >= activeSneakers.length) {
@@ -988,7 +980,7 @@
                         <span>Chuẩn size EU • Hỗ trợ đổi size tận nơi trong 7 ngày</span>
                     </div>
                     <button type="button" class="sv-size-confirm-btn" id="svConfirmSizeBtn">
-                        <span id="svConfirmSizeText">XÁC NHẬN (SIZE 42)</span>
+                        <span id="svConfirmSizeText">XÁC NHẬN</span>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                     </button>
                 `;
@@ -1034,14 +1026,14 @@
                     grid.querySelectorAll('.sv-size-item').forEach(b => b.classList.remove('is-selected'));
                     btn.classList.add('is-selected');
                     const confirmText = $('#svConfirmSizeText');
-                    if (confirmText) confirmText.textContent = `XÁC NHẬN (SIZE ${selectedSize})`;
+                    if (confirmText) confirmText.textContent = 'XÁC NHẬN';
                 };
                 grid.appendChild(btn);
             });
         }
 
         const confirmText = $('#svConfirmSizeText');
-        if (confirmText) confirmText.textContent = `XÁC NHẬN (SIZE ${selectedSize})`;
+        if (confirmText) confirmText.textContent = 'XÁC NHẬN';
     }
 
     function closeSizeDrawer() {
@@ -1063,21 +1055,27 @@
             setTimeout(() => badge.style.transform = 'scale(1)', 250);
         }
 
-        const snk = getSneakers()[currentIndex];
-        showToast(`Đã thêm ${snk.model} (Size ${selectedSize}) vào giỏ hàng!`);
+        // Đã tắt popup thông báo theo yêu cầu
 
-        // Hiệu ứng phản hồi trên nút Thêm vào giỏ
+        // Hiệu ứng phản hồi trên nút Thêm vào giỏ: ĐÃ THÊM VÀO GIỎ (SIZE ...)
         const addBagBtn = $('#svAddBagBtn');
         if (addBagBtn) {
             const originalHTML = addBagBtn.innerHTML;
-            addBagBtn.innerHTML = `<span>ĐÃ THÊM (SIZE ${selectedSize}) ✓</span>`;
+            addBagBtn.innerHTML = `
+                <span style="display:inline-flex;align-items:center;justify-content:center;gap:6px;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    ĐÃ THÊM VÀO GIỎ (SIZE ${selectedSize})
+                </span>
+            `;
             addBagBtn.style.background = '#FFFFFF';
             addBagBtn.style.color = '#000000';
             setTimeout(() => {
                 addBagBtn.innerHTML = originalHTML;
                 addBagBtn.style.background = '';
                 addBagBtn.style.color = '';
-            }, 2200);
+            }, 2400);
         }
     }
 
@@ -1088,36 +1086,9 @@
     }
 
     function showToast(msg) {
-        let toast = $('#svToast');
-        if (!toast) {
-            toast = document.createElement('div');
-            toast.id = 'svToast';
-            toast.style.cssText = `
-                position: fixed;
-                bottom: 30px;
-                left: 50%;
-                transform: translateX(-50%) translateY(30px);
-                background: #FFFFFF;
-                color: #000000;
-                padding: 12px 26px;
-                border-radius: 999px;
-                font-weight: 800;
-                font-size: 13px;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-                z-index: 999999;
-                opacity: 0;
-                transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-                pointer-events: none;
-            `;
-            document.body.appendChild(toast);
-        }
-        toast.textContent = msg;
-        toast.style.opacity = '1';
-        toast.style.transform = 'translateX(-50%) translateY(0)';
-        setTimeout(() => {
-            toast.style.opacity = '0';
-            toast.style.transform = 'translateX(-50%) translateY(30px)';
-        }, 2200);
+        // Tắt toàn bộ thông báo nổi theo yêu cầu
+        const toast = $('#svToast');
+        if (toast) toast.remove();
     }
 
     // --- Bind sự kiện nút bấm & Bàn phím ---
