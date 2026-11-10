@@ -344,9 +344,7 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    padding-top: 85px;
-    box-sizing: border-box;
+    justify-content: flex-end;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.5s var(--sv-ease);
@@ -367,10 +365,10 @@
     visibility: visible !important;
 }
 
-/* TYPOGRAPHY NẰM SAU THÂN GIÀY (To đậm sắc nét, cân xứng hoàn hảo ngay tâm sân khấu) */
+/* TYPOGRAPHY NẰM CHÍNH GIỮA KHUNG HÌNH VÀ ĐÔI GIÀY */
 .sv-giant-title-track {
     position: absolute;
-    top: calc(50% + 15px);
+    top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 100vw;
@@ -383,7 +381,7 @@
 
 .sv-giant-title {
     font-family: 'Montserrat', sans-serif;
-    font-size: clamp(75px, 11.5vw, 160px);
+    font-size: clamp(85px, 12.5vw, 170px);
     font-weight: 900;
     line-height: 0.9;
     letter-spacing: -0.015em;
@@ -395,16 +393,17 @@
     transition: transform 0.65s var(--sv-ease), opacity 0.5s var(--sv-ease);
 }
 
-/* SNEAKER STAGE (Giày vừa vặn, cân đối hoàn hảo chính giữa sân khấu, nghiêng góc -15deg) */
+/* SNEAKER STAGE (Nằm chính giữa khung hình 50% 50%, phóng to đôi giày chuẩn ảnh mẫu) */
 .sv-stage {
-    flex: 1;
-    position: relative;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 5;
     pointer-events: none;
-    min-height: 0;
 }
 
 .sv-hero-wrap {
@@ -416,11 +415,11 @@
 }
 
 .sv-hero-img {
-    height: clamp(300px, 44vh, 480px);
+    height: clamp(360px, 52vh, 560px);
     width: auto;
-    max-width: 68vw;
+    max-width: 76vw;
     object-fit: contain;
-    filter: drop-shadow(0 26px 36px rgba(0, 0, 0, 0.55));
+    filter: drop-shadow(0 28px 38px rgba(0, 0, 0, 0.55));
     transition: transform 0.65s var(--sv-ease), opacity 0.5s var(--sv-ease);
     user-select: none;
     pointer-events: none;
@@ -430,11 +429,11 @@
 
 .sv-hero-shadow {
     position: absolute;
-    bottom: -16px;
+    bottom: -18px;
     left: 50%;
     transform: translateX(-50%) rotate(-10deg);
     width: 55%;
-    height: 20px;
+    height: 22px;
     background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.52) 0%, rgba(0, 0, 0, 0) 70%);
     border-radius: 50%;
     filter: blur(10px);
