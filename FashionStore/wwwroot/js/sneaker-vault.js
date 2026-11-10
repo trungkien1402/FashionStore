@@ -278,6 +278,9 @@
         if (designer) designer.textContent = snk.designer;
         if (release) release.textContent = snk.release;
 
+        // Đảm bảo nhãn luôn luôn hiển thị tiếng Việt chuẩn xác
+        localizeAllLabels();
+
         // Chấm màu Swatches: Chọn màu trực tiếp chuyển ngay sang đôi giày và màu nền tương ứng
         if (swatchesContainer) {
             swatchesContainer.innerHTML = '';
@@ -418,7 +421,7 @@
         const overlay = $('#hnmtSneakerOverlay');
         if (overlay) {
             overlay.classList.add('is-active');
-            fixExitButtonText();
+            localizeAllLabels();
             openSliderView(0); // Mở thẳng vào đôi đầu tiên cực kỳ hoành tráng
         }
     };
@@ -435,17 +438,41 @@
         if (portalHeaderEl) portalHeaderEl.style.display = '';
     };
 
-    function fixExitButtonText() {
+    function localizeAllLabels() {
         const exitBtns = document.querySelectorAll('.sv-exit-btn');
         exitBtns.forEach(btn => {
             const span = btn.querySelector('span');
             if (span) span.textContent = 'Quay lại';
         });
+
+        // Việt hóa nhãn thông số kỹ thuật
+        const specGrids = document.querySelectorAll('.sv-spec-grid');
+        specGrids.forEach(grid => {
+            const dts = grid.querySelectorAll('dt');
+            if (dts.length >= 4) {
+                dts[0].textContent = 'MÃ GIÀY:';
+                dts[1].textContent = 'PHỐI MÀU:';
+                dts[2].textContent = 'THIẾT KẾ:';
+                dts[3].textContent = 'GIÁ BÁN:';
+            }
+        });
+
+        // Việt hóa nhãn chọn màu
+        const swatchesLabels = document.querySelectorAll('.sv-swatches-label');
+        swatchesLabels.forEach(lbl => {
+            lbl.textContent = 'CHỌN MÀU';
+        });
+
+        // Việt hóa nút thêm giỏ
+        const addBagBtns = document.querySelectorAll('.sv-add-bag-btn span');
+        addBagBtns.forEach(span => {
+            span.textContent = 'THÊM VÀO GIỎ';
+        });
     }
 
     // Tự khởi chạy an toàn
     function init() {
-        fixExitButtonText();
+        localizeAllLabels();
         renderGrid();
         bindEvents();
         renderDashes();
