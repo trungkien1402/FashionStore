@@ -148,15 +148,18 @@
 .hnmt-exit-btn {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+    gap: 7px;
     background: transparent;
     border: 1.5px solid rgba(255, 255, 255, 0.85);
     border-radius: 999px;
-    padding: 7px 22px;
+    height: 38px;
+    padding: 0 20px;
+    box-sizing: border-box;
     color: #ffffff;
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
     cursor: pointer;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
@@ -164,14 +167,15 @@
 }
 
 .hnmt-exit-btn:hover {
-    background: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.18);
     border-color: #ffffff;
-    transform: translateX(-4px);
+    color: #ffffff;
+    transform: translateX(-2px);
     box-shadow: 0 0 16px rgba(255, 255, 255, 0.25);
 }
 
 .hnmt-exit-btn i {
-    font-size: 16px;
+    font-size: 15px;
     display: inline-flex;
     align-items: center;
     transition: transform 0.25s ease;

@@ -134,7 +134,7 @@
     display: flex;
     justify-self: end;
     align-items: center;
-    gap: 24px;
+    gap: 16px;
 }
 
 
@@ -182,24 +182,38 @@
 }
 
 .rail-bag-btn {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 9px;
+    gap: 8px;
+    height: 38px;
+    padding: 0 4px;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    color: var(--rail-ink);
+    transition: opacity 0.2s ease;
+}
+
+.rail-bag-btn:hover {
+    opacity: 0.75;
 }
 
 .rail-bag-btn svg {
-    width: 18px;
+    width: 19px;
     height: 20px;
+    stroke-width: 1.6;
 }
 
 .rail-bag-count {
-    min-width: 19px;
-    height: 19px;
-    border: 1px solid currentColor;
+    min-width: 20px;
+    height: 20px;
+    border: 1.5px solid currentColor;
     border-radius: 50%;
     display: inline-grid;
     place-items: center;
-    font-size: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
     transition: transform 0.2s;
 }
 
@@ -214,13 +228,16 @@
 .rail-portal-exit-btn {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    justify-content: center;
+    gap: 7px;
+    height: 38px;
+    padding: 0 20px;
+    box-sizing: border-box;
     background: transparent;
     border: 1.5px solid var(--rail-ink);
     border-radius: 999px;
-    padding: 6px 16px;
     color: var(--rail-ink);
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 700;
     letter-spacing: 0.05em;
     cursor: pointer;
@@ -230,6 +247,18 @@
 .rail-portal-exit-btn:hover {
     background: var(--rail-ink);
     color: #ffffff;
+    transform: translateX(-2px);
+}
+
+.rail-portal-exit-btn i {
+    font-size: 15px;
+    display: inline-flex;
+    align-items: center;
+    transition: transform 0.25s ease;
+}
+
+.rail-portal-exit-btn:hover i {
+    transform: translateX(-2px);
 }
 
 /* ==========================================================================
