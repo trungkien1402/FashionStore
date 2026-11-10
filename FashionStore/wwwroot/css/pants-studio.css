@@ -1,0 +1,611 @@
+/**
+ * HNMTSHOP — PANTS STUDIO (EDITORIAL LOOKBOOK 1:1 THEO VIDEO MẪU)
+ * Seamless drop-in animation, background color morphing, interactive size picker,
+ * upcoming queue thumbnails, and morphing CTA button.
+ */
+
+:root {
+    --ps-font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --ps-font-serif: 'Playfair Display', 'Cinzel', Georgia, serif;
+    --ps-ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* OVERLAY TOÀN MÀN HÌNH */
+.hnmt-pants-studio-wrap {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 99999;
+    display: none;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.45s ease, visibility 0.45s ease;
+    overflow: hidden;
+}
+
+.hnmt-pants-studio-wrap.is-active {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* APP SHELL VỚI NỀN ĐỔI MÀU MƯỢT MÀ THEO TỪNG CHIẾC QUẦN */
+.ps-app {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: #8C1D40; /* Màu mặc định đầu tiên */
+    color: #ffffff;
+    font-family: var(--ps-font-sans);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 32px 48px;
+    box-sizing: border-box;
+    transition: background-color 0.85s var(--ps-ease);
+    user-select: none;
+    overflow: hidden;
+}
+
+/* --- 1. HEADER --- */
+.ps-header {
+    position: relative;
+    z-index: 20;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    width: 100%;
+}
+
+.ps-nav-tabs {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ps-tab-btn {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 6px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.ps-tab-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.ps-tab-btn.is-active {
+    background: #ffffff;
+    color: #111111;
+    font-weight: 700;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+
+/* LOGO CHỮ KÝ TRUNG TÂM */
+.ps-brand-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #ffffff;
+}
+
+.ps-brand-sig {
+    font-family: 'Dancing Script', 'Alex Brush', cursive;
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #ffffff;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* CỤM NÚT PHẢI CỦA HEADER */
+.ps-header-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 16px;
+}
+
+.ps-header-btn {
+    position: relative;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #ffffff;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.25s ease;
+}
+
+.ps-header-btn:hover {
+    background: rgba(255, 255, 255, 0.22);
+    transform: scale(1.05);
+}
+
+.ps-cart-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    background: #ff3b30;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 800;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.ps-exit-btn {
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: #ffffff;
+    padding: 8px 18px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.ps-exit-btn:hover {
+    background: #ffffff;
+    color: #000000;
+    border-color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+/* --- 2. KHU VỰC THÂN TRANG (3 CỘT LOOKBOOK) --- */
+.ps-main-stage {
+    position: relative;
+    flex: 1;
+    display: grid;
+    grid-template-columns: 340px 1fr 340px;
+    align-items: center;
+    width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 20px 0;
+    box-sizing: border-box;
+}
+
+/* CỘT TRÁI: EDITORIAL COPY & CTA */
+.ps-left-col {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-right: 20px;
+}
+
+.ps-headline {
+    font-family: var(--ps-font-serif);
+    font-size: clamp(38px, 3.8vw, 54px);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: #ffffff;
+    margin: 0 0 18px 0;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.ps-headline span {
+    display: block;
+}
+
+.ps-desc {
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.82);
+    margin: 0 0 28px 0;
+    max-width: 310px;
+    font-weight: 400;
+}
+
+.ps-cta-wrap {
+    margin-bottom: 36px;
+}
+
+/* NÚT THÊM VÀO GIỎ VỚI HIỆU ỨNG MORPHING HOÀN HẢO */
+.ps-cta-btn {
+    background: #ffffff;
+    color: #111111;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+    transition: all 0.35s var(--ps-ease);
+}
+
+.ps-cta-btn:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.28);
+    background: #f8f9fa;
+}
+
+.ps-cta-btn.is-added {
+    background: #181D33 !important;
+    color: #ffffff !important;
+    transform: scale(0.98);
+    pointer-events: none;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+.ps-cta-btn svg {
+    width: 17px;
+    height: 17px;
+}
+
+/* MẠNG XÃ HỘI GÓC DƯỚI TRÁI */
+.ps-social-row {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.ps-social-link {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 17px;
+    text-decoration: none;
+    transition: all 0.25s ease;
+}
+
+.ps-social-link:hover {
+    color: #ffffff;
+    transform: translateY(-2px);
+}
+
+/* CỘT GIỮA: SÂN KHẤU QUẦN 3D LƠ LỬNG & MŨI TÊN ĐIỀU HƯỚNG */
+.ps-center-col {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 520px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.ps-hero-stage {
+    position: relative;
+    width: 100%;
+    max-width: 440px;
+    height: clamp(420px, 58vh, 600px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ẢNH QUẦN TRÊN MÓC GỖ LƠ LỬNG VỚI HIỆU ỨNG THẢ RƠI MƯỢT MÀ */
+.ps-hero-img-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.ps-hero-img {
+    max-height: 92%;
+    max-width: 100%;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 20px 32px rgba(0, 0, 0, 0.35));
+    transition: transform 0.75s var(--ps-ease), opacity 0.5s ease;
+    will-change: transform, opacity;
+}
+
+.ps-hero-img.is-animating-in {
+    animation: psDropIn 0.85s var(--ps-ease) forwards;
+}
+
+.ps-hero-img.is-floating {
+    animation: psHeroFloat 4.8s ease-in-out infinite alternate;
+}
+
+@keyframes psDropIn {
+    0% {
+        transform: translateY(-120px) scale(0.92);
+        opacity: 0;
+    }
+    60% {
+        transform: translateY(12px) scale(1.02);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes psHeroFloat {
+    0% {
+        transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-12px) rotate(0.4deg);
+    }
+    100% {
+        transform: translateY(0px) rotate(-0.3deg);
+    }
+}
+
+/* BÓNG ĐỔ DƯỚI ĐÁY SÀN */
+.ps-hero-shadow {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 48%;
+    height: 24px;
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0) 70%);
+    border-radius: 50%;
+    filter: blur(8px);
+    transition: all 0.6s ease;
+    pointer-events: none;
+    animation: psShadowPulse 4.8s ease-in-out infinite alternate;
+}
+
+@keyframes psShadowPulse {
+    0% {
+        transform: translateX(-50%) scale(1);
+        opacity: 0.45;
+    }
+    50% {
+        transform: translateX(-50%) scale(0.85);
+        opacity: 0.28;
+    }
+    100% {
+        transform: translateX(-50%) scale(1);
+        opacity: 0.45;
+    }
+}
+
+/* MŨI TÊN ĐIỀU HƯỚNG TRÁI / PHẢI ĐẶT CÂN ĐỐI 2 BÊN QUẦN */
+.ps-nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 20px;
+    z-index: 15;
+    transition: all 0.3s ease;
+}
+
+.ps-nav-arrow:hover {
+    background: rgba(0, 0, 0, 0.65);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-50%) scale(1.12);
+}
+
+.ps-nav-arrow.prev {
+    left: -20px;
+}
+
+.ps-nav-arrow.next {
+    right: -20px;
+}
+
+/* SLOGAN DƯỚI ĐÁY SÂN KHẤU */
+.ps-bottom-slogan {
+    font-family: var(--ps-font-serif);
+    font-size: 21px;
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.88);
+    margin-top: 10px;
+    text-align: center;
+    letter-spacing: 0.3px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+
+/* CỘT PHẢI: GIÁ BÁN, SIZE PICKER & HÀNG ĐỢI MINI */
+.ps-right-col {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+    padding-left: 20px;
+}
+
+.ps-price-box {
+    text-align: right;
+    margin-bottom: 32px;
+}
+
+.ps-sale-price {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+    display: block;
+    line-height: 1;
+    margin-bottom: 6px;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+}
+
+.ps-orig-price {
+    font-size: 20px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.45);
+    text-decoration: line-through;
+    display: block;
+}
+
+/* BỘ CHỌN SIZE QUẦN TRÒN 1:1 THEO VIDEO */
+.ps-size-box {
+    text-align: right;
+    margin-bottom: 40px;
+}
+
+.ps-size-label {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.8);
+    display: block;
+    margin-bottom: 14px;
+}
+
+.ps-size-pills {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.ps-size-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #000000;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+}
+
+.ps-size-btn:hover {
+    border-color: rgba(255, 255, 255, 0.45);
+    transform: scale(1.08);
+}
+
+.ps-size-btn.is-active {
+    background: #ffffff;
+    color: #000000;
+    border-color: #ffffff;
+    transform: scale(1.12);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+}
+
+/* HÀNG ĐỢI XEM TRƯỚC (THUMBNAIL QUEUE GÓC DƯỚI PHẢI) */
+.ps-queue-box {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+}
+
+.ps-queue-list {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+}
+
+.ps-queue-card {
+    position: relative;
+    width: 76px;
+    height: 110px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    transition: all 0.35s var(--ps-ease);
+}
+
+.ps-queue-card:hover {
+    transform: translateY(-8px) scale(1.08);
+}
+
+.ps-queue-img {
+    max-height: 85%;
+    max-width: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 14px rgba(0, 0, 0, 0.3));
+    transition: transform 0.3s ease;
+}
+
+.ps-queue-shadow {
+    width: 60%;
+    height: 10px;
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0) 70%);
+    border-radius: 50%;
+    margin-top: 4px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1180px) {
+    .ps-app {
+        padding: 24px;
+        overflow-y: auto;
+    }
+    .ps-main-stage {
+        grid-template-columns: 1fr;
+        gap: 32px;
+        text-align: center;
+    }
+    .ps-left-col {
+        align-items: center;
+        padding-right: 0;
+    }
+    .ps-desc {
+        max-width: 100%;
+    }
+    .ps-right-col {
+        align-items: center;
+        padding-left: 0;
+    }
+    .ps-price-box, .ps-size-box {
+        text-align: center;
+    }
+    .ps-size-pills, .ps-queue-box {
+        justify-content: center;
+    }
+}

@@ -1268,7 +1268,12 @@
             return;
         }
 
-        // Quần và Giày chưa làm không gian 3D chi tiết -> hiển thị thông báo hướng dẫn chọn Áo
+        // Bật chế độ PANTS STUDIO LOOKBOOK (Chính xác như video Hally)
+        if (cfg.id === 'quan') {
+            openPantsStudioFrom3D();
+            return;
+        }
+
         showCategoryNotice(cfg);
     }
 
@@ -1334,6 +1339,10 @@
                     }
                     if (cfg.id === 'giay') {
                         openSneakerVaultFrom3D();
+                        return;
+                    }
+                    if (cfg.id === 'quan') {
+                        openPantsStudioFrom3D();
                         return;
                     }
                     showCategoryNotice(cfg);
@@ -2034,6 +2043,37 @@
     }
     window.openSneakerVaultFrom3D = openSneakerVaultFrom3D;
     window.closeSneakerVaultFrom3D = closeSneakerVaultFrom3D;
+
+    // --- MỞ VÀ ĐÓNG PANTS STUDIO TỪ SHOWROOM 3D ---
+    function openPantsStudioFrom3D() {
+        const promptEl = document.querySelector('.hnmt-portal-footer');
+        const portalHeaderEl = document.querySelector('.hnmt-portal-header');
+        if (promptEl) promptEl.style.display = 'none';
+        if (portalHeaderEl) portalHeaderEl.style.display = 'none';
+
+        if (typeof window.openPantsStudio === 'function') {
+            window.openPantsStudio();
+        } else {
+            const overlay = document.getElementById('hnmtPantsOverlay');
+            if (overlay) overlay.classList.add('is-active');
+        }
+    }
+
+    function closePantsStudioFrom3D() {
+        const promptEl = document.querySelector('.hnmt-portal-footer');
+        const portalHeaderEl = document.querySelector('.hnmt-portal-header');
+        if (promptEl) promptEl.style.display = '';
+        if (portalHeaderEl) portalHeaderEl.style.display = '';
+
+        if (typeof window.closePantsStudio === 'function') {
+            window.closePantsStudio();
+        } else {
+            const overlay = document.getElementById('hnmtPantsOverlay');
+            if (overlay) overlay.classList.remove('is-active');
+        }
+    }
+    window.openPantsStudioFrom3D = openPantsStudioFrom3D;
+    window.closePantsStudioFrom3D = closePantsStudioFrom3D;
 
     window.HNMTChilePortal = { open: openPortal, close: closePortal };
 })();
