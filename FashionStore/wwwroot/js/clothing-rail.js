@@ -11,7 +11,7 @@
         {
             id: 'rack-shirt-01',
             badge: 'SÀO 01 // ESSENTIAL STREETWEAR',
-            eyebrow: 'BỘ SƯU TẬP 01',
+            eyebrow: 'BỘ SƯU TẬP ÁO',
             heroTitle: 'Thời Trang Độc Bản · Nâng Tầm Phong Cách',
             brandSignature: '<span>Sào Đồ</span><span>Thời Trang</span>',
             captionHeading: 'Bộ sưu tập độc bản HNMTSHOP.',
@@ -123,11 +123,11 @@
         {
             id: 'rack-shirt-02',
             badge: 'SÀO 02 // WINTER DROP',
-            eyebrow: 'BỘ SƯU TẬP 02',
-            heroTitle: 'Phong Cách Đường Phố · Bản Lĩnh Đột Phá',
+            eyebrow: 'BỘ SƯU TẬP ÁO',
+            heroTitle: 'Thời Trang Độc Bản · Nâng Tầm Phong Cách',
             brandSignature: '<span>Sào Đồ</span><span>Thời Trang</span>',
-            captionHeading: 'Bộ sưu tập mùa đông HNMTSHOP.',
-            captionDetail: 'Áo khoác bóng chày & Áo da Motorsport — Lướt sào hoặc chọn để xem chi tiết.',
+            captionHeading: 'Bộ sưu tập áo HNMTSHOP.',
+            captionDetail: 'Lướt sào hoặc chọn đồ xem chi tiết.',
             products: [
                 {
                     name: 'CYBERPUNK Heavyweight Boxy Tee (300GSM)',
@@ -167,11 +167,11 @@
         {
             id: 'rack-pants-01',
             badge: 'SÀO QUẦN // THỜI TRANG ĐỘC BẢN',
-            eyebrow: 'BỘ SƯU TẬP QUẦN 2026',
-            heroTitle: 'Thiết Kế Đột Phá · Phom Dáng Thượng Hạng',
+            eyebrow: 'BỘ SƯU TẬP QUẦN',
+            heroTitle: 'Thời Trang Độc Bản · Nâng Tầm Phong Cách',
             brandSignature: '<span>Sào Quần</span><span>Thời Trang</span>',
             captionHeading: 'Bộ sưu tập quần cao cấp HNMTSHOP.',
-            captionDetail: 'Phom dáng chuẩn may đo cao cấp — Lướt sào hoặc chọn để xem chi tiết.',
+            captionDetail: 'Lướt sào hoặc chọn đồ xem chi tiết.',
             products: [
                 {
                     name: 'Quần Baggy Cargo Jeans Acid-Wash Đen Xám',
@@ -371,10 +371,10 @@
         products = currentRack.products;
         
         const eyebrowEl = $('.rail-eyebrow');
-        if (eyebrowEl) eyebrowEl.textContent = currentRack.eyebrow;
+        if (eyebrowEl) eyebrowEl.textContent = (currentCategory === 'quan') ? 'BỘ SƯU TẬP QUẦN' : 'BỘ SƯU TẬP ÁO';
         
         const heroTitleEl = $('.rail-hero-title');
-        if (heroTitleEl) heroTitleEl.innerHTML = currentRack.heroTitle;
+        if (heroTitleEl) heroTitleEl.innerHTML = 'Thời Trang Độc Bản · Nâng Tầm Phong Cách';
 
         const brandEl = $('.rail-brand');
         if (brandEl && currentRack.brandSignature) {
@@ -605,6 +605,18 @@
     };
 
     function init() {
+        // Hỗ trợ mở trực tiếp Sào Quần qua URL param (?category=quan hoặc ?cat=quan)
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const catParam = urlParams.get('category') || urlParams.get('cat');
+            if (catParam === 'quan') {
+                currentCategory = 'quan';
+                currentRacks = PANTS_RACKS;
+                currentRackIdx = 0;
+                products = currentRacks[0].products;
+            }
+        } catch (e) {}
+
         ensureSearchButton();
         setInterval(ensureSearchButton, 600);
         const prevBtn = $('#prevBtn');
