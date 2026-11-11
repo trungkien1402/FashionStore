@@ -247,8 +247,8 @@
     let currentRackIdx = 0;
     let products = currentRacks[0].products;
 
-    const photo = (p, variant = 0) => p.frontImg || `/clothing-rail/assets/${p.slug}-${variant ? 'alt' : 'front'}.webp`;
-    const sidePhoto = p => p.sideImg || `/clothing-rail/assets/${p.slug}-side.webp`;
+    const photo = (p, variant = 0) => (p.frontImg ? `${p.frontImg}?v=pants_v2` : `/clothing-rail/assets/${p.slug}-${variant ? 'alt' : 'front'}.webp?v=pants_v2`);
+    const sidePhoto = p => (p.sideImg ? `${p.sideImg}?v=pants_v2` : `/clothing-rail/assets/${p.slug}-side.webp?v=pants_v2`);
 
     function formatPrice(num) {
         return (num * 10000).toLocaleString('vi-VN') + ' ₫';
