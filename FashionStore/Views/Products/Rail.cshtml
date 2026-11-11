@@ -116,50 +116,100 @@
 
     <script src="~/js/clothing-rail.js" asp-append-version="true"></script>
 
-    <!-- SPOTLIGHT QUICK SEARCH MODAL -->
+        <!-- SPOTLIGHT MULTI-CRITERIA QUICK SEARCH MODAL -->
     <div id="hnmtSpotlightSearchModal" class="hnmt-spotlight-modal" aria-hidden="true">
         <div class="hnmt-spotlight-backdrop" id="spotlightBackdrop"></div>
         <div class="hnmt-spotlight-dialog" role="dialog" aria-modal="true" aria-label="Tìm kiếm sản phẩm nhanh">
+            <!-- Search Input Header -->
             <div class="hnmt-spotlight-search-header">
                 <div class="hnmt-spotlight-input-wrap">
                     <svg class="hnmt-spotlight-search-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <circle cx="11" cy="11" r="7"/>
                         <path d="m20 20-4.35-4.35"/>
                     </svg>
-                    <input type="text" id="hnmtSpotlightInput" class="hnmt-spotlight-input" placeholder="Tìm quần, áo, sneaker hoặc kiểu dáng... (ví dụ: cargo, jeans, hoodie, runner)" autocomplete="off" spellcheck="false">
-                    <button type="button" id="hnmtSpotlightClearBtn" class="hnmt-spotlight-clear-btn" aria-label="Xóa tìm kiếm" style="display: none;">
+                    <input type="text" id="hnmtSpotlightInput" class="hnmt-spotlight-input" placeholder="Tìm kiếm theo tên đồ hoặc từ khóa... (Enter để đẩy lên sào)" autocomplete="off" spellcheck="false">
+                    <button type="button" id="hnmtSpotlightClearBtn" class="hnmt-spotlight-clear-btn" aria-label="Xóa từ khóa" style="display: none;">
                         <i class="bi bi-x-lg"></i>
+                    </button>
+                    <button type="button" id="hnmtSpotlightSubmitBtn" class="hnmt-spotlight-submit-btn" title="Tìm kiếm và đưa ra sào (Enter)">
+                        <i class="bi bi-search"></i>
+                        <span>TÌM KIẾM</span>
                     </button>
                 </div>
                 <div class="hnmt-spotlight-meta">
-                    <span class="hnmt-spotlight-esc-pill">ESC để đóng</span>
+                    <button type="button" class="hnmt-spotlight-esc-pill" id="spotlightClosePillBtn">ESC ĐÓNG</button>
                 </div>
             </div>
+
+            <!-- Category Tabs -->
             <div class="hnmt-spotlight-tabs" id="spotlightTabs">
                 <button type="button" class="hnmt-spotlight-tab is-active" data-cat="all">Tất Cả <span class="tab-count" id="tabCountAll">0</span></button>
-                <button type="button" class="hnmt-spotlight-tab" data-cat="quan">Sào Quần <span class="tab-count" id="tabCountQuan">5</span></button>
-                <button type="button" class="hnmt-spotlight-tab" data-cat="ao">Sào Áo <span class="tab-count" id="tabCountAo">20</span></button>
-                <button type="button" class="hnmt-spotlight-tab" data-cat="giay">Tủ Giày <span class="tab-count" id="tabCountGiay">6</span></button>
+                <button type="button" class="hnmt-spotlight-tab" data-cat="quan">Sào Quần <span class="tab-count" id="tabCountQuan">12</span></button>
+                <button type="button" class="hnmt-spotlight-tab" data-cat="ao">Sào Áo <span class="tab-count" id="tabCountAo">15</span></button>
+                <button type="button" class="hnmt-spotlight-tab" data-cat="giay">Tủ Giày <span class="tab-count" id="tabCountGiay">18</span></button>
             </div>
-            <div class="hnmt-spotlight-quick-tags" id="spotlightQuickTags">
-                <span class="quick-tags-label">Gợi ý nhanh:</span>
-                <div class="quick-tags-scroll" id="quickTagsContainer"></div>
+
+            <!-- Multi-criteria Filter Section -->
+            <div class="hnmt-spotlight-filter-panel" id="spotlightFilterPanel">
+                <!-- Row 1: Khoảng Giá -->
+                <div class="spotlight-filter-row">
+                    <span class="filter-row-label">Khoảng Giá:</span>
+                    <div class="filter-pills-wrap" id="pricePillsContainer"></div>
+                </div>
+
+                <!-- Row 2: Kiểu Cách / Loại Đồ -->
+                <div class="spotlight-filter-row">
+                    <span class="filter-row-label">Kiểu Dáng:</span>
+                    <div class="filter-pills-wrap" id="stylePillsContainer"></div>
+                </div>
+
+                <!-- Row 3: Màu Sắc -->
+                <div class="spotlight-filter-row">
+                    <span class="filter-row-label">Màu Sắc:</span>
+                    <div class="filter-pills-wrap" id="colorPillsContainer"></div>
+                </div>
+
+                <!-- Action Bar: Đếm số lượng, Reset & Đẩy lên sào -->
+                <div class="spotlight-filter-action-bar">
+                    <div class="filter-match-stat">
+                        <span class="stat-dot"></span>
+                        <span>Phù hợp: <strong id="spotlightMatchCount">0</strong> sản phẩm</span>
+                    </div>
+                    <div class="filter-action-btns">
+                        <button type="button" id="spotlightResetFilterBtn" class="spotlight-reset-btn" title="Đặt lại bộ lọc về mặc định">
+                            <i class="bi bi-arrow-counterclockwise"></i>
+                            <span>Đặt lại</span>
+                        </button>
+                        <button type="button" id="spotlightApplyToRailBtn" class="spotlight-apply-rail-cta" title="Đẩy các sản phẩm phù hợp ra trên sào đồ (Enter)">
+                            <i class="bi bi-funnel-fill"></i>
+                            <span>ÁP DỤNG LÊN SÀO (<strong id="spotlightRailCount">0</strong>)</span>
+                            <kbd>↵ ENTER</kbd>
+                        </button>
+                    </div>
+                </div>
             </div>
+
+            <!-- Results Preview List -->
             <div class="hnmt-spotlight-results" id="spotlightResults"></div>
+
+            <!-- Empty State Notice -->
             <div class="hnmt-spotlight-empty" id="spotlightEmpty" style="display: none;">
                 <div class="empty-icon">🔍</div>
                 <p class="empty-title">Không tìm thấy sản phẩm phù hợp</p>
-                <p class="empty-desc">Thử tìm với từ khóa khác như "jeans", "cargo", "hoodie", "runner", hoặc bấm các gợi ý nhanh bên trên.</p>
+                <p class="empty-desc">Thử chọn "Tất cả giá", "Tất cả màu" hoặc bấm "Đặt lại" để xem toàn bộ bộ sưu tập trên sào.</p>
             </div>
+
+            <!-- Footer Hint -->
             <div class="hnmt-spotlight-footer">
                 <div class="spotlight-hint">
-                    <span><kbd>↑</kbd><kbd>↓</kbd> Chọn</span>
-                    <span><kbd>ENTER</kbd> Xem đồ</span>
+                    <span><kbd>ENTER</kbd> Đẩy đồ lên sào</span>
+                    <span><kbd>↑</kbd><kbd>↓</kbd> Chọn nhanh</span>
                     <span><kbd>ESC</kbd> Đóng</span>
                 </div>
-                <div class="spotlight-brand">HNMTSHOP // FAST FIND</div>
+                <div class="spotlight-brand">HNMTSHOP // FAST FIND & RAIL FILTER</div>
             </div>
         </div>
+    </div>
     </div>
 
     <script src="~/js/sneaker-vault.js" asp-append-version="true"></script>
