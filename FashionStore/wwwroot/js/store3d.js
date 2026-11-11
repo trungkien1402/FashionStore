@@ -1262,6 +1262,14 @@
             return;
         }
 
+        // Bật chế độ SÀO TREO QUẦN 3D TƯƠNG TÁC (PANTS RAIL)
+        if (cfg.id === 'quan') {
+            if (typeof window.open3DPantsRack === 'function') {
+                window.open3DPantsRack();
+            }
+            return;
+        }
+
         // Bật chế độ SNEAKER VAULT 3D (Chính xác như video Sneaker Figma)
         if (cfg.id === 'giay') {
             openSneakerVaultFrom3D();
@@ -1330,6 +1338,12 @@
                     const cfg = hitWrapper.userData.config;
                     if (cfg.id === 'ao') {
                         open3DClothesRack();
+                        return;
+                    }
+                    if (cfg.id === 'quan') {
+                        if (typeof window.open3DPantsRack === 'function') {
+                            window.open3DPantsRack();
+                        }
                         return;
                     }
                     if (cfg.id === 'giay') {

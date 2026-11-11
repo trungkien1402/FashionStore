@@ -1,0 +1,747 @@
+@import url('https://fonts.googleapis.com/css2?family=Alex+Brush&family=Dancing+Script:wght@600;700&family=Pacifico&family=Playfair+Display:ital,wght@0,600;1,600&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500;1,600&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+:root {
+    --pants-bg: #E8E7E3;
+    --pants-ink: #1C2033;
+    --pants-muted: #6E7285;
+    --pants-stripe: #3B456C;
+    --pants-ease: cubic-bezier(.22, .8, .18, 1);
+    --pants-font: 'Plus Jakarta Sans', 'Instrument Sans', Arial, sans-serif;
+}
+
+/* ==========================================================================
+   PORTAL CONTAINER (Full-screen overlay when triggered from 3D Showroom)
+   ========================================================================== */
+#hnmtPantsOverlay {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 50;
+    background-color: var(--pants-bg);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='54' height='54' viewBox='0 0 54 54'%3E%3Cpath d='M25 22c-1-5 5-7 7-3 1 3-1 5-5 7L14 34q-2 2 1 2h25q3 0 1-2L28 26' fill='none' stroke='%231C2033' opacity='.075' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E");
+    font-family: var(--pants-font);
+    color: var(--pants-ink);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    display: none;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+#hnmtPantsOverlay.is-active {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+}
+
+.hnmt-pants-rail-wrap * {
+    box-sizing: border-box;
+}
+
+.pants-rail-app {
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    user-select: none;
+}
+
+/* ==========================================================================
+   SITE HEADER
+   ========================================================================== */
+.pants-header {
+    height: 110px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: start;
+    padding: 24px clamp(20px, 4vw, 70px) 0;
+    position: relative;
+    z-index: 10;
+    transition: filter 0.5s, opacity 0.5s;
+}
+
+.pants-brand-signature {
+    justify-self: start;
+    align-self: flex-start;
+    font-family: 'Dancing Script', 'Alex Brush', cursive, sans-serif;
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--pants-ink);
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    padding: 4px 0;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    cursor: pointer;
+}
+
+.pants-brand-signature:hover {
+    opacity: 0.82;
+    transform: scale(1.02);
+}
+
+.pants-brand {
+    font-size: 13.5px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 1.35;
+    justify-self: center;
+    color: var(--pants-ink);
+}
+
+.pants-brand span {
+    display: block;
+}
+
+.pants-brand span:last-child {
+    font-weight: 500;
+    letter-spacing: 0.26em;
+    color: var(--pants-muted);
+}
+
+.pants-head-right {
+    justify-self: end;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.pants-bag-btn {
+    border: none;
+    background: none;
+    cursor: pointer;
+    position: relative;
+    padding: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--pants-ink);
+    transition: transform 0.2s ease;
+}
+
+.pants-bag-btn:hover {
+    transform: scale(1.08);
+}
+
+.pants-bag-btn svg {
+    width: 22px;
+    height: 22px;
+}
+
+.pants-bag-count {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 10.5px;
+    font-weight: 700;
+    min-width: 17px;
+    height: 17px;
+    border-radius: 9px;
+    background: var(--pants-ink);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    font-feature-settings: "tnum";
+    box-shadow: 0 2px 6px rgba(28, 32, 51, 0.35);
+}
+
+.pants-bag-count.bump {
+    animation: pantsBagBump 0.35s ease;
+}
+
+@keyframes pantsBagBump {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.35); }
+    100% { transform: scale(1); }
+}
+
+.pants-portal-exit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(28, 32, 51, 0.22);
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: var(--pants-ink);
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.pants-portal-exit-btn:hover {
+    background: var(--pants-ink);
+    color: #ffffff;
+    border-color: var(--pants-ink);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(28, 32, 51, 0.2);
+}
+
+/* ==========================================================================
+   MAIN SCENE (PANTS RAIL)
+   ========================================================================== */
+.pants-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-bottom: 24px;
+    position: relative;
+}
+
+.pants-intro {
+    text-align: center;
+    margin-top: 4px;
+}
+
+.pants-eyebrow {
+    font-size: 11.5px;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--pants-muted);
+    font-weight: 700;
+    margin: 0 0 6px;
+}
+
+.pants-title-row {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+}
+
+.pants-rack-nav-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid rgba(28, 32, 51, 0.18);
+    background: rgba(255, 255, 255, 0.7);
+    color: var(--pants-ink);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: all 0.25s ease;
+}
+
+.pants-rack-nav-btn:hover {
+    background: var(--pants-ink);
+    color: #ffffff;
+    transform: scale(1.08);
+    border-color: var(--pants-ink);
+}
+
+.pants-hero-title {
+    font-size: clamp(22px, 3.2vw, 36px);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--pants-ink);
+    margin: 0;
+}
+
+.pants-scene {
+    position: relative;
+    margin: 18px 0 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.pants-scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 0 clamp(20px, 5vw, 60px);
+}
+
+.pants-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.pants-stage {
+    display: flex;
+    position: relative;
+    padding-top: 36px;
+    height: 480px;
+    min-width: 100%;
+    width: max-content;
+    align-items: flex-start;
+}
+
+.pants-chrome-rail {
+    position: absolute;
+    top: 28px;
+    left: -50vw;
+    right: -50vw;
+    height: 7px;
+    border-radius: 4px;
+    background: linear-gradient(180deg, #FFFFFF 0%, #B8B9C2 40%, #5E6070 70%, #9FA1AF 100%);
+    box-shadow: 0 4px 12px rgba(28, 32, 51, 0.22), inset 0 1px 1px rgba(255, 255, 255, 0.9);
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* ==========================================================================
+   PANTS SLOTS (SLIDING ITEMS ON RAIL)
+   ========================================================================== */
+.pants-slot {
+    flex: 1 0 78px;
+    min-width: 78px;
+    height: 430px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    transition: flex-grow 0.7s var(--pants-ease);
+    z-index: 4;
+    perspective: 2000px;
+    border: 0;
+    background: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    outline: none;
+}
+
+.pants-slot.active {
+    flex-grow: 3.2;
+    min-width: 280px;
+    z-index: 6;
+}
+
+.pants-assembly {
+    position: relative;
+    transform-origin: 50% 29px;
+    transform: translateY(-28px) rotate(7deg);
+    opacity: 0;
+    animation: pantsDrop 1.1s both;
+    animation-delay: var(--delay);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.pants-assembly.settle {
+    animation: none;
+    opacity: 1;
+    transform: none;
+}
+
+.pants-slot:not(.active) .pants-assembly.settle {
+    animation: pantsRelease 1s ease;
+}
+
+.pants-turn {
+    position: absolute;
+    top: 14px;
+    height: 400px;
+    width: 100%;
+    transform-style: preserve-3d;
+    transform: rotateY(90deg);
+    transition: transform 0.7s var(--pants-ease);
+    display: grid;
+    place-items: start center;
+}
+
+.pants-slot.active .pants-turn {
+    transform: rotateY(0deg);
+}
+
+.pants-face {
+    top: 0;
+    left: 50%;
+    height: clamp(340px, 46vh, 410px);
+    width: auto;
+    max-width: none;
+    object-fit: contain;
+    transform-origin: center center;
+    pointer-events: none;
+    user-select: none;
+    position: absolute;
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
+}
+
+.pants-face.front {
+    transform: translateX(-50%);
+    filter: drop-shadow(0 16px 14px rgba(28, 32, 51, 0.16));
+    transition: filter 0.4s ease;
+}
+
+.pants-face.side {
+    transform: translateX(-50%) rotateY(-90deg);
+    opacity: 1;
+    filter: drop-shadow(0 14px 10px rgba(28, 32, 51, 0.14));
+}
+
+.pants-slot.active .pants-face.front {
+    filter: drop-shadow(0 24px 22px rgba(28, 32, 51, 0.28));
+}
+
+@keyframes pantsDrop {
+    0% { opacity: 0; transform: translateY(-28px) rotate(7deg); }
+    45% { opacity: 1; transform: translateY(0) rotate(-3deg); }
+    75% { transform: rotate(1.2deg); }
+    100% { opacity: 1; transform: none; }
+}
+
+@keyframes pantsRelease {
+    0% { transform: rotate(2.4deg); }
+    35% { transform: rotate(-1.4deg); }
+    70% { transform: rotate(0.6deg); }
+    100% { transform: rotate(0); }
+}
+
+/* ==========================================================================
+   CAPTION PANEL
+   ========================================================================== */
+.pants-caption-panel {
+    text-align: center;
+    margin: -4px auto 0;
+    min-height: 105px;
+    padding: 8px 18px 20px;
+    position: relative;
+}
+
+.pants-caption-heading {
+    height: 29px;
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--pants-ink);
+    margin-bottom: 4px;
+}
+
+.pants-caption-detail {
+    font-size: 13.5px;
+    color: var(--pants-muted);
+    margin-bottom: 14px;
+}
+
+.pants-outline-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 24px;
+    border-radius: 999px;
+    border: 1px solid rgba(28, 32, 51, 0.25);
+    background: rgba(255, 255, 255, 0.7);
+    color: var(--pants-ink);
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: all 0.25s ease;
+}
+
+.pants-outline-pill:hover {
+    background: var(--pants-ink);
+    color: #ffffff;
+    border-color: var(--pants-ink);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(28, 32, 51, 0.2);
+}
+
+/* ==========================================================================
+   PRODUCT DETAIL MODAL OVERLAY (PANTS OVERVIEW & SIZE PICKER)
+   ========================================================================== */
+.pants-product-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(232, 231, 227, 0.94);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.pants-product-overlay.open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.pants-product-close {
+    position: absolute;
+    top: 26px;
+    right: clamp(20px, 4vw, 50px);
+    border: none;
+    background: none;
+    color: var(--pants-ink);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(8px);
+    transition: all 0.2s ease;
+}
+
+.pants-product-close:hover {
+    background: var(--pants-ink);
+    color: #ffffff;
+}
+
+.pants-product-close span {
+    font-size: 18px;
+    line-height: 1;
+}
+
+.pants-detail-content {
+    max-width: 480px;
+    width: 90%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+}
+
+.pants-detail-image-row {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.pants-detail-img {
+    height: clamp(280px, 38vh, 360px);
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 20px 24px rgba(28, 32, 51, 0.22));
+    user-select: none;
+    transition: transform 0.3s ease;
+}
+
+.pants-arrow-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid rgba(28, 32, 51, 0.2);
+    background: rgba(255, 255, 255, 0.7);
+    color: var(--pants-ink);
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    transition: all 0.2s ease;
+    margin: 0 10px;
+}
+
+.pants-arrow-btn:hover {
+    background: var(--pants-ink);
+    color: #ffffff;
+    transform: scale(1.08);
+}
+
+.pants-counter {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--pants-muted);
+    text-transform: uppercase;
+    margin: 0 0 4px;
+}
+
+.pants-detail-name {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--pants-ink);
+    margin: 0 0 6px;
+    letter-spacing: -0.015em;
+}
+
+.pants-description {
+    font-size: 13.5px;
+    color: var(--pants-muted);
+    line-height: 1.5;
+    margin: 0 0 14px;
+    max-width: 400px;
+}
+
+.pants-price-line {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.pants-detail-price {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--pants-ink);
+}
+
+.pants-stock-tag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: rgba(28, 32, 51, 0.08);
+    color: var(--pants-ink);
+}
+
+.pants-options-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--pants-muted);
+    margin-bottom: 8px;
+    display: block;
+}
+
+.pants-color-options {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 14px;
+}
+
+.pants-color-chip {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, outline 0.2s ease;
+}
+
+.pants-color-chip.selected {
+    transform: scale(1.18);
+    outline: 2px solid var(--pants-ink);
+    outline-offset: 2px;
+}
+
+.pants-size-options {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 18px;
+}
+
+.pants-size-chip {
+    min-width: 44px;
+    height: 38px;
+    border-radius: 8px;
+    border: 1px solid rgba(28, 32, 51, 0.2);
+    background: rgba(255, 255, 255, 0.8);
+    color: var(--pants-ink);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.pants-size-chip:hover:not(:disabled) {
+    border-color: var(--pants-ink);
+    background: #ffffff;
+    transform: translateY(-1px);
+}
+
+.pants-size-chip.selected {
+    background: var(--pants-ink);
+    color: #ffffff;
+    border-color: var(--pants-ink);
+    box-shadow: 0 4px 10px rgba(28, 32, 51, 0.25);
+}
+
+.pants-size-chip:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+/* ==========================================================================
+   MORPHING CTA BUTTON (Acne Studios Luxury Standard)
+   ========================================================================== */
+.pants-cart-cta {
+    width: 100%;
+    max-width: 380px;
+    height: 48px;
+    border-radius: 999px;
+    border: none;
+    background: var(--pants-ink);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 6px 20px rgba(28, 32, 51, 0.28);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.pants-cart-cta:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 26px rgba(28, 32, 51, 0.36);
+    background: #111422;
+}
+
+.pants-cart-cta.is-added {
+    background: #181D33 !important;
+    color: #ffffff !important;
+    transform: scale(0.98);
+    box-shadow: 0 4px 14px rgba(24, 29, 51, 0.35) !important;
+}
+
+.pants-btn-feedback {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    animation: pantsCtaPop 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes pantsCtaPop {
+    0% { opacity: 0; transform: scale(0.85); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+.pants-delivery-sub {
+    font-size: 11px;
+    color: var(--pants-muted);
+    margin: 0;
+}
