@@ -1,116 +1,122 @@
 @model List<FashionStore.Models.Entities.Order>
+@using FashionStore.Models.Enums
 
 @{
     ViewData["Title"] = "Đơn hàng của tôi";
+
+    string GetBadgeClass(OrderStatus status) => status switch
+    {
+        OrderStatus.PendingConfirmation => "pending",
+        OrderStatus.Confirmed => "confirmed",
+        OrderStatus.Processing => "processing",
+        OrderStatus.Shipping => "shipping",
+        OrderStatus.Delivered => "delivered",
+        OrderStatus.Cancelled => "cancelled",
+        OrderStatus.DeliveryFailed => "failed",
+        OrderStatus.Returned => "returned",
+        _ => "pending"
+    };
+
+    string GetStatusText(OrderStatus status) => status switch
+    {
+        OrderStatus.PendingConfirmation => "Chờ xác nhận",
+        OrderStatus.Confirmed => "Đã xác nhận",
+        OrderStatus.Processing => "Đang xử lý kho",
+        OrderStatus.Shipping => "Đang giao hàng",
+        OrderStatus.Delivered => "Đã nhận hàng",
+        OrderStatus.Cancelled => "Đã hủy đơn",
+        OrderStatus.DeliveryFailed => "Giao thất bại",
+        OrderStatus.Returned => "Đã trả hàng",
+        _ => status.ToString()
+    };
 }
 
-<section class="container py-5">
-    <div class="mb-4">
-        <div class="text-uppercase text-muted small mb-2">Tài khoản của tôi</div>
-        <h1 class="display-6" style="font-family:'Playfair Display',serif;">
-            Đơn hàng của tôi
-        </h1>
-        <p class="text-muted">Theo dõi và xem lại các đơn hàng bạn đã đặt.</p>
-    </div>
-
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle me-2"></i>@TempData["Success"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+<div class="fs-page-wrap">
+    <div class="container">
+        
+        <!-- HEADER -->
+        <div class="fs-page-header">
+            <span class="fs-eyebrow">TÀI KHOẢN & LỊCH SỬ MUA SẮM</span>
+            <h1 class="fs-page-title">Đơn hàng của tôi</h1>
+            <p class="fs-page-desc">Theo dõi tiến trình vận chuyển, tình trạng thanh toán và tra cứu hồ sơ các đơn hàng đã đặt.</p>
         </div>
-    }
 
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="bi bi-exclamation-triangle me-2"></i>@TempData["Error"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    }
+        @if (TempData["Success"] != null)
+        {
+            <div class="fs-pill-alert success">
+                <i class="bi bi-check-circle-fill fs-5"></i>
+                <span>@TempData["Success"]</span>
+            </div>
+        }
 
-    @if (Model == null || !Model.Any())
-    {
-        <div class="text-center py-5 border">
-            <h4>Bạn chưa có đơn hàng nào</h4>
-            <p class="text-muted">Hãy khám phá các sản phẩm mới nhất của chúng tôi.</p>
-            <a asp-controller="Products" asp-action="Index"
-               class="fs-btn fs-btn-dark">
-                MUA SẮM NGAY
-            </a>
-        </div>
-    }
-    else
-    {
-        <div class="table-responsive">
-            <table class="table align-middle">
-                <thead>
-                    <tr>
-                        <th>Mã đơn hàng</th>
-                        <th>Ngày đặt</th>
-                        <th>Tổng tiền</th>
-                        <th>Trạng thái</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var order in Model)
-                    {
-                        <tr>
-                            <td class="fw-semibold">@order.OrderCode</td>
-                            <td>@order.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
-                            <td class="fw-semibold">
-                                @order.TotalAmount.ToString("N0") đ
-                            </td>
-                            <td>
-                                @switch (order.Status)
-                                {
-                                    case FashionStore.Models.Enums.OrderStatus.PendingConfirmation:
-                                        <span class="badge bg-warning text-dark">Chờ xác nhận</span>
-                                        break;
-                                    case FashionStore.Models.Enums.OrderStatus.Confirmed:
-                                        <span class="badge bg-info text-dark">Đã xác nhận</span>
-                                        break;
-                                    case FashionStore.Models.Enums.OrderStatus.Processing:
-                                        <span class="badge bg-primary">Đang xử lý</span>
-                                        break;
-                                    case FashionStore.Models.Enums.OrderStatus.Shipping:
-                                        <span class="badge bg-primary">Đang giao</span>
-                                        break;
-                                    case FashionStore.Models.Enums.OrderStatus.Delivered:
-                                        <span class="badge bg-success">Đã giao</span>
-                                        break;
-                                    case FashionStore.Models.Enums.OrderStatus.Cancelled:
-                                        <span class="badge bg-danger">Đã hủy</span>
-                                        break;
-                                    case FashionStore.Models.Enums.OrderStatus.DeliveryFailed:
-                                        <span class="badge bg-danger">Giao hàng thất bại</span>
-                                        break;
-                                    case FashionStore.Models.Enums.OrderStatus.Returned:
-                                        <span class="badge bg-secondary">Đã trả hàng</span>
-                                        break;
-                                }
-                            </td>
-                            <td class="text-end">
-                                <a asp-action="Details" asp-route-id="@order.Id"
-                                   class="btn btn-outline-dark btn-sm">
-                                    Chi tiết
+        @if (TempData["Error"] != null)
+        {
+            <div class="fs-pill-alert error">
+                <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                <span>@TempData["Error"]</span>
+            </div>
+        }
+
+        @if (Model == null || !Model.Any())
+        {
+            <div class="text-center py-5 border rounded-4 bg-light my-4">
+                <div class="mb-3 text-muted">
+                    <i class="bi bi-bag-x" style="font-size: 3.5rem; opacity: 0.4;"></i>
+                </div>
+                <h3 class="fw-bold mb-2" style="font-family:'Cormorant Garamond', Georgia, serif; font-size: 28px;">Bạn chưa có đơn hàng nào</h3>
+                <p class="text-muted mb-4 small">Hãy khám phá bộ sưu tập sản phẩm và sắm cho mình những bộ trang phục ấn tượng.</p>
+                <a asp-controller="Products" asp-action="Index" class="fs-btn fs-btn-dark">
+                    MUA SẮM NGAY
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="mb-4">
+                @foreach (var order in Model)
+                {
+                    <div class="fs-order-dossier-card">
+                        <div>
+                            <div class="d-flex align-items-center gap-3 mb-2">
+                                <span class="fs-code-badge">@order.OrderCode</span>
+                                <span class="fs-badge-status @GetBadgeClass(order.Status)">
+                                    <span style="width:6px; height:6px; border-radius:50%; background:currentColor;"></span>
+                                    @GetStatusText(order.Status)
+                                </span>
+                            </div>
+                            <div class="text-muted small">
+                                Ngày đặt: <strong class="text-dark">@order.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</strong>
+                                <span class="mx-2">•</span>
+                                PT Thanh toán: <strong>@(order.PaymentMethod == PaymentMethod.VietQR ? "VietQR" : "COD")</strong>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-4 flex-wrap">
+                            <div class="text-md-end">
+                                <div class="text-muted small">Tổng tiền</div>
+                                <div class="fw-bold fs-5 text-dark font-monospace">@order.TotalAmount.ToString("N0") đ</div>
+                            </div>
+
+                            <div class="d-flex align-items-center gap-2">
+                                <a asp-action="Details" asp-route-id="@order.Id" class="btn btn-dark rounded-pill px-4 py-2 fw-semibold" style="font-size: 13px;">
+                                    Chi tiết <i class="bi bi-chevron-right ms-1"></i>
                                 </a>
-                                @if (order.Status == FashionStore.Models.Enums.OrderStatus.PendingConfirmation)
+
+                                @if (order.Status == OrderStatus.PendingConfirmation)
                                 {
-                                    <form asp-action="CancelOrder" asp-route-id="@order.Id" method="post" class="d-inline"
+                                    <form asp-action="CancelOrder" asp-route-id="@order.Id" method="post" class="m-0"
                                           onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?');">
                                         @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-outline-danger btn-sm ms-1">
+                                        <button type="submit" class="btn btn-outline-danger rounded-pill px-3 py-2 fw-semibold" style="font-size: 13px;">
                                             Hủy đơn
                                         </button>
                                     </form>
                                 }
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    }
-</section>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>

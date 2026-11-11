@@ -5,183 +5,169 @@
     var grandTotal = Model.Sum(x => x.TotalPrice);
 }
 
-<div class="container py-5">
-    <div class="mb-5">
-        <p class="text-muted text-uppercase small">FashionStore</p>
-        <h1>Giỏ hàng của bạn</h1>
-        <p class="text-muted">
-            Kiểm tra sản phẩm trước khi tiến hành thanh toán.
-        </p>
-    </div>
-
-    @if (TempData["CartSuccess"] != null)
-    {
-        <div class="alert alert-success">
-            @TempData["CartSuccess"]
+<div class="fs-page-wrap">
+    <div class="container">
+        
+        <!-- HEADER -->
+        <div class="fs-page-header">
+            <span class="fs-eyebrow">ATELIER ARCHIVE & SHOPPING BAG</span>
+            <h1 class="fs-page-title">Giỏ hàng của bạn</h1>
+            <p class="fs-page-desc">Kiểm tra danh mục thời trang thượng hạng trước khi chuyển sang bước thanh toán.</p>
         </div>
-    }
 
-    @if (TempData["CartError"] != null)
-    {
-        <div class="alert alert-danger">
-            @TempData["CartError"]
-        </div>
-    }
+        @if (TempData["CartSuccess"] != null)
+        {
+            <div class="fs-pill-alert success">
+                <i class="bi bi-check-circle-fill fs-5"></i>
+                <span>@TempData["CartSuccess"]</span>
+            </div>
+        }
 
-    @if (!Model.Any())
-    {
-        <div class="text-center py-5">
-            <h3>Giỏ hàng đang trống</h3>
-            <p class="text-muted">
-                Hãy khám phá những sản phẩm mới nhất của chúng tôi.
-            </p>
+        @if (TempData["CartError"] != null)
+        {
+            <div class="fs-pill-alert error">
+                <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                <span>@TempData["CartError"]</span>
+            </div>
+        }
 
-            <a asp-controller="Products"
-               asp-action="Index"
-               class="fs-btn fs-btn-dark">
-                TIẾP TỤC MUA SẮM
-            </a>
-        </div>
-    }
-    else
-    {
-        <div class="row g-5">
-            <div class="col-lg-8">
+        @if (!Model.Any())
+        {
+            <div class="text-center py-5 border rounded-4 my-4 bg-light">
+                <div class="mb-3 text-muted">
+                    <i class="bi bi-bag" style="font-size: 3.5rem; opacity: 0.4;"></i>
+                </div>
+                <h3 class="fw-bold mb-2" style="font-family:'Cormorant Garamond', Georgia, serif; font-size: 28px;">Giỏ hàng của bạn đang trống</h3>
+                <p class="text-muted mb-4 small">Khám phá các bộ sưu tập thời trang độc bản và sào đồ Runway mới nhất.</p>
 
-                @foreach (var item in Model)
-                {
-                    <div class="cart-item-row d-flex gap-4 py-4 border-bottom">
+                <a asp-controller="Products" asp-action="Index" class="fs-btn fs-btn-dark">
+                    TIẾP TỤC KHÁM PHÁ
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="row g-5">
+                <!-- CART ITEMS LIST -->
+                <div class="col-lg-8">
+                    @foreach (var item in Model)
+                    {
+                        <div class="fs-cart-item-card">
+                            <img src="@item.ImageUrl"
+                                 alt="@item.ProductName"
+                                 class="fs-cart-item-img"
+                                 onerror="this.src='https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800'" />
 
-                        <img src="@item.ImageUrl"
-                             alt="@item.ProductName"
-                             style="width:120px;height:145px;object-fit:cover;"
-                             onerror="this.src='https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800'" />
+                            <div class="flex-grow-1 d-flex flex-column justify-content-between">
+                                <div>
+                                    <div class="d-flex justify-content-between align-items-start gap-2 mb-1">
+                                        <h3 class="fs-cart-item-title mb-0">@item.ProductName</h3>
+                                        <span class="fw-bold fs-6 text-dark font-monospace">@item.TotalPrice.ToString("N0") ₫</span>
+                                    </div>
 
-                        <div class="flex-grow-1">
-                            <h5>@item.ProductName</h5>
+                                    <div class="fs-cart-item-attr">
+                                        <span>Size: <strong>@item.Size</strong></span>
+                                        <span class="mx-2">•</span>
+                                        <span>Màu: <strong>@item.Color</strong></span>
+                                    </div>
+                                    <div class="text-muted small">
+                                        Đơn giá: @item.UnitPrice.ToString("N0") ₫
+                                    </div>
+                                </div>
 
-                            <p class="text-muted mb-1">
-                                Size: @item.Size
-                            </p>
+                                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 pt-3 mt-2 border-top">
+                                    <!-- QUANTITY STEPPER -->
+                                    <form asp-controller="Cart" asp-action="Update" method="post" class="d-flex align-items-center gap-2 m-0">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="variantId" value="@item.ProductVariantId" />
+                                        
+                                        <div class="fs-qty-stepper">
+                                            <button type="button" class="btn btn-sm btn-link text-dark px-2 text-decoration-none" onclick="stepQty(this, -1)">-</button>
+                                            <input type="number" name="quantity" value="@item.Quantity" min="1" max="20" class="fs-qty-input" />
+                                            <button type="button" class="btn btn-sm btn-link text-dark px-2 text-decoration-none" onclick="stepQty(this, 1)">+</button>
+                                        </div>
 
-                            <p class="text-muted mb-2">
-                                Màu: @item.Color
-                            </p>
+                                        <button type="submit" class="btn btn-sm btn-outline-dark rounded-pill px-3 py-1 fw-semibold" style="font-size: 12px;">
+                                            Cập nhật
+                                        </button>
+                                    </form>
 
-                            <p class="fw-semibold">
-                                @item.UnitPrice.ToString("N0") ₫
-                            </p>
-
-                            <div class="d-flex flex-wrap align-items-center gap-3">
-
-                                <form asp-controller="Cart"
-                                      asp-action="Update"
-                                      method="post"
-                                      class="d-flex gap-2 align-items-center">
-
-                                    @Html.AntiForgeryToken()
-
-                                    <input type="hidden"
-                                           name="variantId"
-                                           value="@item.ProductVariantId" />
-
-                                    <input type="number"
-                                           name="quantity"
-                                           value="@item.Quantity"
-                                           min="1"
-                                           max="20"
-                                           class="form-control"
-                                           style="width:85px;" />
-
-                                    <button type="submit"
-                                            class="btn btn-outline-dark btn-sm">
-                                        Cập nhật
-                                    </button>
-                                </form>
-
-                                <form asp-controller="Cart"
-                                      asp-action="Remove"
-                                      method="post">
-
-                                    @Html.AntiForgeryToken()
-
-                                    <input type="hidden"
-                                           name="variantId"
-                                           value="@item.ProductVariantId" />
-
-                                    <button type="submit"
-                                            class="btn btn-link text-danger p-0"
-                                            onclick="return confirm('Bạn muốn xóa sản phẩm này?')">
-                                        Xóa
-                                    </button>
-                                </form>
+                                    <!-- REMOVE BUTTON -->
+                                    <form asp-controller="Cart" asp-action="Remove" method="post" class="m-0">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="variantId" value="@item.ProductVariantId" />
+                                        <button type="submit" class="btn btn-link text-danger p-0 text-decoration-none small fw-semibold" onclick="return confirm('Bạn muốn xóa sản phẩm này khỏi giỏ?')">
+                                            <i class="bi bi-trash3 me-1"></i> Xóa
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
+                    }
 
-                        <div class="text-end">
-                            <strong>
-                                @item.TotalPrice.ToString("N0") ₫
-                            </strong>
+                    <div class="d-flex justify-content-between align-items-center mt-4 pt-2">
+                        <a asp-controller="Products" asp-action="Index" class="text-dark fw-bold text-decoration-none small">
+                            <i class="bi bi-arrow-left me-1"></i> Tiếp tục chọn đồ
+                        </a>
+
+                        <form asp-controller="Cart" asp-action="Clear" method="post" class="m-0">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-link text-muted text-decoration-underline p-0 small" onclick="return confirm('Bạn chắc chắn muốn làm trống toàn bộ giỏ hàng?')">
+                                Xóa toàn bộ giỏ
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- ORDER SUMMARY SIDEBAR -->
+                <div class="col-lg-4">
+                    <div class="fs-summary-panel">
+                        <h4 class="fs-summary-heading">Tóm tắt đơn hàng</h4>
+
+                        <div class="fs-summary-line">
+                            <span>Tạm tính hàng hóa</span>
+                            <span class="fw-semibold">@grandTotal.ToString("N0") ₫</span>
+                        </div>
+
+                        <div class="fs-summary-line">
+                            <span>Phí vận chuyển dự kiến</span>
+                            <span class="text-success fw-semibold">Miễn phí toàn quốc</span>
+                        </div>
+
+                        <div class="fs-summary-line total">
+                            <span>Tổng thanh toán</span>
+                            <span>@grandTotal.ToString("N0") ₫</span>
+                        </div>
+
+                        <a asp-controller="Orders" asp-action="Checkout" class="fs-btn fs-btn-dark w-100 text-center py-3">
+                            TIẾN HÀNH ĐẶT HÀNG
+                        </a>
+
+                        <div class="mt-4 pt-3 border-top text-muted small">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <i class="bi bi-shield-check text-dark fs-5"></i>
+                                <span>Bảo hành chính hãng & Đổi trả trong 7 ngày</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="bi bi-truck text-dark fs-5"></i>
+                                <span>Giao nhận hỏa tốc & Kiểm tra hàng khi nhận</span>
+                            </div>
                         </div>
                     </div>
-                }
-
-                <div class="d-flex justify-content-between mt-4">
-                    <a asp-controller="Products"
-                       asp-action="Index"
-                       class="text-dark">
-                        ← Tiếp tục mua sắm
-                    </a>
-
-                    <form asp-controller="Cart"
-                          asp-action="Clear"
-                          method="post">
-
-                        @Html.AntiForgeryToken()
-
-                        <button type="submit"
-                                class="btn btn-link text-danger"
-                                onclick="return confirm('Bạn muốn xóa toàn bộ giỏ hàng?')">
-                            Xóa toàn bộ
-                        </button>
-                    </form>
                 </div>
             </div>
-
-            <div class="col-lg-4">
-                <div class="p-4 border">
-                    <h4 class="mb-4">Tóm tắt đơn hàng</h4>
-
-                    <div class="d-flex justify-content-between mb-3">
-                        <span>Tạm tính</span>
-                        <span>@grandTotal.ToString("N0") ₫</span>
-                    </div>
-
-                    <div class="d-flex justify-content-between mb-3">
-                        <span>Phí vận chuyển</span>
-                        <span>Tính khi thanh toán</span>
-                    </div>
-
-                    <hr />
-
-                    <div class="d-flex justify-content-between mb-4">
-                        <strong>Tổng tiền</strong>
-                        <strong class="fs-5">
-                            @grandTotal.ToString("N0") ₫
-                        </strong>
-                    </div>
-
-                    <a asp-controller="Orders"
-                       asp-action="Checkout"
-                       class="fs-btn fs-btn-dark w-100 text-center">
-                        TIẾN HÀNH THANH TOÁN
-                    </a>
-
-                    <p class="small text-muted mt-3 mb-0">
-                        Chức năng thanh toán sẽ được triển khai ở bước tiếp theo.
-                    </p>
-                </div>
-            </div>
-        </div>
-    }
+        }
+    </div>
 </div>
+
+<script>
+    function stepQty(btn, delta) {
+        const form = btn.closest('form');
+        const input = form.querySelector('input[name="quantity"]');
+        if (input) {
+            let val = parseInt(input.value) || 1;
+            val = Math.max(1, Math.min(20, val + delta));
+            input.value = val;
+        }
+    }
+</script>
