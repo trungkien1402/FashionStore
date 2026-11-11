@@ -154,14 +154,87 @@
                     stock: [4, 6, 5, 2, 0]
                 }
             ]
+        },
+        {
+            id: 'rack-03',
+            badge: 'SÀO 03 // BỘ SƯU TẬP QUẦN 3D',
+            eyebrow: 'BỘ SƯU TẬP 03',
+            heroTitle: 'Thiết Kế Đột Phá · Phom Dáng Thượng Hạng',
+            products: [
+                {
+                    name: 'Quần Baggy Cargo Jeans Acid-Wash Đen Xám',
+                    slug: 'acid-cargo',
+                    price: 56,
+                    type: 'pants',
+                    art: 'cargo',
+                    desc: 'Quần jeans túi hộp phom thụng rộng, wash mài xám khói bụi bặm phong cách Y2K và streetwear đương đại.',
+                    colors: [['Washed Xám Đen (Vintage Charcoal)', '#25262B'], ['Xám Bạc (Silver Wash)', '#42454F']],
+                    sizes: ['28', '29', '30', '31', '32', '34'],
+                    stock: [8, 12, 15, 10, 6, 3],
+                    frontImg: '/clothing-rail/assets/acid-cargo-front.webp',
+                    sideImg: '/clothing-rail/assets/acid-cargo-side.webp'
+                },
+                {
+                    name: 'Quần Tây Xếp Ly Ống Rộng May Đo Sand Beige',
+                    slug: 'sand-pleated',
+                    price: 62,
+                    type: 'pants',
+                    art: 'tailored',
+                    desc: 'Phom dáng xếp 2 ly cạp cao may đo tinh xảo, chất vải twill rủ mềm mại tạo bước đi thanh thoát chuẩn quiet luxury.',
+                    colors: [['Be Cát Tự Nhiên (Sand Beige)', '#D9CDB8'], ['Đen Midnight (Pitch Black)', '#17181C']],
+                    sizes: ['28', '29', '30', '31', '32', '34'],
+                    stock: [6, 9, 14, 11, 5, 2],
+                    frontImg: '/clothing-rail/assets/sand-pleated-front.webp',
+                    sideImg: '/clothing-rail/assets/sand-pleated-side.webp'
+                },
+                {
+                    name: 'Quần Dù Parachute Tactical Rêu Quân Đội',
+                    slug: 'tactical-parachute',
+                    price: 58,
+                    type: 'pants',
+                    art: 'parachute',
+                    desc: 'Chất liệu vải dù công nghệ trượt nước nhẹ, nhiều ngăn túi khóa bấm kim loại cùng dây rút lai quần biến hóa linh hoạt.',
+                    colors: [['Xanh Rêu Quân Đội (Military Olive)', '#4B5320'], ['Đen Stealth (Shadow Black)', '#1B1C20']],
+                    sizes: ['28', '29', '30', '31', '32', '34'],
+                    stock: [10, 14, 12, 8, 4, 1],
+                    frontImg: '/clothing-rail/assets/tactical-parachute-front.webp',
+                    sideImg: '/clothing-rail/assets/tactical-parachute-side.webp'
+                },
+                {
+                    name: 'Quần Jeans Ống Suông Raw Selvedge Denim',
+                    slug: 'raw-selvedge',
+                    price: 68,
+                    type: 'pants',
+                    art: 'denim',
+                    desc: 'Denim 14oz dệt thoi con thoi cổ điển Nhật Bản, giữ phom đứng cá tính cùng viền chỉ đỏ selvedge độc bản khi xắn gấu.',
+                    colors: [['Đen Selvedge Chỉ Đỏ (Raw Black)', '#1A1A1E'], ['Chàm Đậm (Deep Indigo)', '#141E30']],
+                    sizes: ['28', '29', '30', '31', '32', '34'],
+                    stock: [5, 7, 10, 8, 4, 0],
+                    frontImg: '/clothing-rail/assets/raw-selvedge-front.webp',
+                    sideImg: '/clothing-rail/assets/raw-selvedge-side.webp'
+                },
+                {
+                    name: 'Quần Jeans Ống Rộng Vintage Washed Indigo',
+                    slug: 'wide-denim',
+                    price: 54,
+                    type: 'pants',
+                    art: 'denim',
+                    desc: 'Phom suông rộng phóng khoáng kinh điển thập niên 90, xử lý wash nhẹ tạo độ rủ mềm mại cực kỳ thoải mái vận động.',
+                    colors: [['Xanh Vintage Washed (90s Blue)', '#5B7C99'], ['Xanh Khói (Smoky Azure)', '#4A657D']],
+                    sizes: ['28', '29', '30', '31', '32', '34'],
+                    stock: [9, 11, 16, 12, 7, 3],
+                    frontImg: '/clothing-rail/assets/wide-denim-front.webp',
+                    sideImg: '/clothing-rail/assets/wide-denim-side.webp'
+                }
+            ]
         }
     ];
 
     let currentRackIdx = 0;
     let products = racks[0].products;
 
-    const photo = (p, variant = 0) => `/clothing-rail/assets/${p.slug}-${variant ? 'alt' : 'front'}.webp`;
-    const sidePhoto = p => `/clothing-rail/assets/${p.slug}-side.webp`;
+    const photo = (p, variant = 0) => p.frontImg || `/clothing-rail/assets/${p.slug}-${variant ? 'alt' : 'front'}.webp`;
+    const sidePhoto = p => p.sideImg || `/clothing-rail/assets/${p.slug}-side.webp`;
 
     function formatPrice(num) {
         return (num * 10000).toLocaleString('vi-VN') + ' ₫';
@@ -327,12 +400,13 @@
         const sizesEl = $('#sizes');
         if (sizesEl) {
             sizesEl.innerHTML = '';
-            sizeNames.forEach((size, idx) => {
+            const currentSizes = p.sizes || sizeNames;
+            currentSizes.forEach((size, idx) => {
                 const b = document.createElement('button');
                 b.className = 'rail-size-chip' + (selectedSize === size ? ' selected' : '');
                 b.textContent = size;
-                b.disabled = p.upcoming || p.stock[idx] === 0;
-                b.title = b.disabled ? 'Hết hàng' : `Còn ${p.stock[idx]} sản phẩm`;
+                b.disabled = p.upcoming || (p.stock && p.stock[idx] === 0);
+                b.title = b.disabled ? 'Hết hàng' : `Còn ${p.stock ? p.stock[idx] : 10} sản phẩm`;
                 b.onclick = () => {
                     selectedSize = size;
                     renderSizes();
@@ -346,11 +420,13 @@
 
     function renderSizes() {
         const p = products[current];
+        const currentSizes = p.sizes || sizeNames;
         document.querySelectorAll('.rail-size-chip').forEach(b => {
             b.classList.toggle('selected', b.textContent === selectedSize);
         });
 
-        const count = p.stock[sizeNames.indexOf(selectedSize)] || 0;
+        const sizeIdx = currentSizes.indexOf(selectedSize);
+        const count = (p.stock && sizeIdx >= 0) ? p.stock[sizeIdx] : 0;
         const hintEl = $('#sizeHint');
         if (hintEl) {
             hintEl.textContent = selectedSize && count <= 2 && count > 0 ? `Chỉ còn ${count} sản phẩm size ${selectedSize}` : '';
@@ -399,7 +475,34 @@
         }
     }
 
-    function openClothingRail() {
+    function switchToRack(idx) {
+        if (idx < 0 || idx >= racks.length) return;
+        currentRackIdx = idx;
+        const currentRack = racks[currentRackIdx];
+        products = currentRack.products;
+        if (detailOpen) closeDetail();
+        
+        const eyebrowEl = $('.rail-eyebrow');
+        if (eyebrowEl) eyebrowEl.textContent = currentRack.eyebrow;
+        
+        const heroTitleEl = $('.rail-hero-title');
+        if (heroTitleEl) heroTitleEl.innerHTML = currentRack.heroTitle;
+        
+        makeRail();
+        const scroll = $('#railScroll');
+        if (scroll) scroll.scrollLeft = 0;
+        active = -1;
+        setActive(0);
+    }
+
+    function openClothingRail(category) {
+        if (category === 'quan') {
+            const pantsIdx = racks.findIndex(r => r.id === 'rack-03');
+            if (pantsIdx >= 0) switchToRack(pantsIdx);
+        } else if (category === 'ao') {
+            switchToRack(0);
+        }
+
         const rackOverlayEl = document.getElementById('hnmtRackOverlay');
         if (rackOverlayEl) {
             rackOverlayEl.classList.add('is-active');
@@ -417,7 +520,15 @@
     }
 
     window.open3DClothesRack = openClothingRail;
+    window.open3DPantsRack = function () { openClothingRail('quan'); };
     window.close3DClothesRack = closeClothingRail;
+    window.close3DPantsRack = closeClothingRail;
+    window.ClothingRail = {
+        openClothingRail,
+        closeClothingRail,
+        switchToRack,
+        racks
+    };
 
     function init() {
         const prevBtn = $('#prevBtn');
