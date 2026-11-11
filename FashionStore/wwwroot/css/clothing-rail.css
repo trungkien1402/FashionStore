@@ -1086,50 +1086,70 @@ body.show-detail .rail-ticker {
    SPOTLIGHT QUICK SEARCH MODAL & BUTTONS (HNMTSHOP SHOWROOM SEARCH)
    ========================================================================== */
 
-.rail-search-btn,
-.sv-search-btn {
-    width: 42px;
-    height: 42px;
+/* Nút tìm kiếm trong Sào Đồ (Quần & Áo: Nền sáng #E7E7E4) */
+.rail-search-btn {
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    color: #f5f5f7;
-    display: inline-flex;
+    background: rgba(0, 0, 0, 0.06);
+    border: 1.5px solid rgba(0, 0, 0, 0.14);
+    color: var(--rail-ink, #121316) !important;
+    display: inline-flex !important;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.25s ease;
-    margin-right: 8px;
+    transition: all 0.22s ease;
+    margin-right: 10px;
     position: relative;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    z-index: 10;
 }
 
-.rail-search-btn svg,
-.sv-search-btn svg {
-    width: 19px;
-    height: 19px;
+.rail-search-btn svg {
+    width: 20px;
+    height: 20px;
     stroke: currentColor;
-    transition: transform 0.25s ease;
+    stroke-width: 2;
+    transition: transform 0.2s ease;
 }
 
-.rail-search-btn:hover,
-.sv-search-btn:hover {
-    background: rgba(255, 255, 255, 0.18);
-    border-color: rgba(255, 255, 255, 0.35);
-    color: #ffffff;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
-}
-
-.rail-search-btn:hover svg,
-.sv-search-btn:hover svg {
+.rail-search-btn:hover {
+    background: rgba(0, 0, 0, 0.12);
+    border-color: rgba(0, 0, 0, 0.3);
+    color: #000000 !important;
     transform: scale(1.08);
 }
 
-.rail-search-btn:active,
-.sv-search-btn:active {
-    transform: scale(0.95);
+/* Nút tìm kiếm trong Tủ Giày Sneaker (Nền tối #0a0b0e) */
+.sv-search-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1.5px solid rgba(255, 255, 255, 0.22);
+    color: #ffffff !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    margin-right: 10px;
+    position: relative;
+    z-index: 10;
+}
+
+.sv-search-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    stroke-width: 2;
+    transition: transform 0.2s ease;
+}
+
+.sv-search-btn:hover {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.45);
+    color: #ffffff !important;
+    transform: scale(1.08);
 }
 
 /* Spotlight Modal Overlay */

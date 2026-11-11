@@ -19,6 +19,7 @@
 
     <!-- Futurist Sneaker Vault CSS -->
     <link rel="stylesheet" href="~/css/sneaker-vault.css?v=uniform_font_v43" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/clothing-rail.css?v=spotlight_v2" asp-append-version="true" />
 </head>
 <body class="is-sneaker-standalone">
 
@@ -46,6 +47,12 @@
                 <a href="/" class="sv-brand-signature" title="Về trang chủ HnmtShop">HnmtShop</a>
 
                 <div class="sv-head-right">
+                    <button type="button" class="sv-search-btn" id="svSearchBtn" aria-label="Tìm kiếm giày" title="Tìm đồ nhanh (Phím tắt /)">
+                        <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                            <circle cx="11" cy="11" r="7"/>
+                            <path d="m20 20-4.35-4.35"/>
+                        </svg>
+                    </button>
                     <button type="button" class="sv-bag-btn" id="svBagBtn" aria-label="Giỏ hàng">
                         <svg fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
                             <path d="M4 8h16l-1 13H5L4 8Z" />
@@ -137,5 +144,54 @@
 
     <!-- Sneaker Vault Logic -->
     <script src="~/js/sneaker-vault.js?v=uniform_font_v43" asp-append-version="true"></script>
+
+    <!-- SPOTLIGHT QUICK SEARCH MODAL -->
+    <div id="hnmtSpotlightSearchModal" class="hnmt-spotlight-modal" aria-hidden="true">
+        <div class="hnmt-spotlight-backdrop" id="spotlightBackdrop"></div>
+        <div class="hnmt-spotlight-dialog" role="dialog" aria-modal="true" aria-label="Tìm kiếm sản phẩm nhanh">
+            <div class="hnmt-spotlight-search-header">
+                <div class="hnmt-spotlight-input-wrap">
+                    <svg class="hnmt-spotlight-search-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <circle cx="11" cy="11" r="7"/>
+                        <path d="m20 20-4.35-4.35"/>
+                    </svg>
+                    <input type="text" id="hnmtSpotlightInput" class="hnmt-spotlight-input" placeholder="Tìm quần, áo, sneaker hoặc kiểu dáng... (ví dụ: cargo, jeans, hoodie, runner)" autocomplete="off" spellcheck="false">
+                    <button type="button" id="hnmtSpotlightClearBtn" class="hnmt-spotlight-clear-btn" aria-label="Xóa tìm kiếm" style="display: none;">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+                <div class="hnmt-spotlight-meta">
+                    <span class="hnmt-spotlight-esc-pill">ESC để đóng</span>
+                </div>
+            </div>
+            <div class="hnmt-spotlight-tabs" id="spotlightTabs">
+                <button type="button" class="hnmt-spotlight-tab is-active" data-cat="all">Tất Cả <span class="tab-count" id="tabCountAll">0</span></button>
+                <button type="button" class="hnmt-spotlight-tab" data-cat="quan">Sào Quần <span class="tab-count" id="tabCountQuan">5</span></button>
+                <button type="button" class="hnmt-spotlight-tab" data-cat="ao">Sào Áo <span class="tab-count" id="tabCountAo">20</span></button>
+                <button type="button" class="hnmt-spotlight-tab" data-cat="giay">Tủ Giày <span class="tab-count" id="tabCountGiay">6</span></button>
+            </div>
+            <div class="hnmt-spotlight-quick-tags" id="spotlightQuickTags">
+                <span class="quick-tags-label">Gợi ý nhanh:</span>
+                <div class="quick-tags-scroll" id="quickTagsContainer"></div>
+            </div>
+            <div class="hnmt-spotlight-results" id="spotlightResults"></div>
+            <div class="hnmt-spotlight-empty" id="spotlightEmpty" style="display: none;">
+                <div class="empty-icon">🔍</div>
+                <p class="empty-title">Không tìm thấy sản phẩm phù hợp</p>
+                <p class="empty-desc">Thử tìm với từ khóa khác như "jeans", "cargo", "hoodie", "runner", hoặc bấm các gợi ý nhanh bên trên.</p>
+            </div>
+            <div class="hnmt-spotlight-footer">
+                <div class="spotlight-hint">
+                    <span><kbd>↑</kbd><kbd>↓</kbd> Chọn</span>
+                    <span><kbd>ENTER</kbd> Xem đồ</span>
+                    <span><kbd>ESC</kbd> Đóng</span>
+                </div>
+                <div class="spotlight-brand">HNMTSHOP // FAST FIND</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/js/clothing-rail.js" asp-append-version="true"></script>
+    <script src="~/js/spotlight-search.js" asp-append-version="true"></script>
 </body>
 </html>
