@@ -1167,6 +1167,17 @@
         if (portalHeaderEl) portalHeaderEl.style.display = '';
     };
 
+    window.SneakerVault = {
+        openSliderView: function (idx, collectionIdx = 0) {
+            if (typeof collectionIdx === 'number' && SNEAKER_COLLECTIONS[collectionIdx]) {
+                currentCollectionIndex = collectionIdx;
+            }
+            openSliderView(idx);
+        },
+        getSneakers: () => getSneakers(),
+        getCollections: () => SNEAKER_COLLECTIONS
+    };
+
     function localizeAllLabels() {
         const exitBtns = document.querySelectorAll('.sv-exit-btn');
         exitBtns.forEach(btn => {

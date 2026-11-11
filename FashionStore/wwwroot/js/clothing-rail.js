@@ -524,6 +524,39 @@
         }
     }
 
+    function selectProduct(category, slugOrIdx) {
+        if (category && currentCategory !== category) {
+            openClothingRail(category);
+        } else {
+            const rackOverlayEl = document.getElementById('hnmtRackOverlay');
+            if (rackOverlayEl && !rackOverlayEl.classList.contains('is-active')) {
+                openClothingRail(category || currentCategory);
+            }
+        }
+
+        let foundRackIdx = -1;
+        let foundProdIdx = -1;
+
+        currentRacks.forEach((rack, rIdx) => {
+            rack.products.forEach((p, pIdx) => {
+                if (p.slug === slugOrIdx || p.name === slugOrIdx || pIdx === slugOrIdx) {
+                    foundRackIdx = rIdx;
+                    foundProdIdx = pIdx;
+                }
+            });
+        });
+
+        if (foundRackIdx !== -1 && foundProdIdx !== -1) {
+            if (currentRackIdx !== foundRackIdx) {
+                applyRack(currentRacks[foundRackIdx]);
+            }
+            setTimeout(() => {
+                setActive(foundProdIdx);
+                openDetail(foundProdIdx);
+            }, 120);
+        }
+    }
+
     window.open3DClothesRack = openClothingRail;
     window.open3DPantsRack = function () { openClothingRail('quan'); };
     window.close3DClothesRack = closeClothingRail;
@@ -531,6 +564,8 @@
     window.ClothingRail = {
         openClothingRail,
         closeClothingRail,
+        selectProduct,
+        getCategory: () => currentCategory,
         SHIRT_RACKS,
         PANTS_RACKS
     };
