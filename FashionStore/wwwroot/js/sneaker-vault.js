@@ -281,28 +281,8 @@
     ];
 
     let currentCollectionIndex = 0;
-    const getSneakers = () => {
-        const streamKey = (window.normalizeFashionStream ? window.normalizeFashionStream(window.HNMT_CURRENT_STREAM) : (window.HNMT_CURRENT_STREAM || 'Men'));
-        if (streamKey === 'Men') {
-            return SNEAKER_COLLECTIONS[currentCollectionIndex].items;
-        }
-        if (window.getFashionStreamItems) {
-            const streamSnks = window.getFashionStreamItems(streamKey, 'giay');
-            if (streamSnks && streamSnks.length > 0) return streamSnks;
-        }
-        return SNEAKER_COLLECTIONS[0].items;
-    };
-
-    const getActiveCollection = () => {
-        const streamKey = (window.normalizeFashionStream ? window.normalizeFashionStream(window.HNMT_CURRENT_STREAM) : (window.HNMT_CURRENT_STREAM || 'Men'));
-        if (streamKey === 'Men') {
-            return SNEAKER_COLLECTIONS[currentCollectionIndex];
-        }
-        return {
-            id: streamKey.toLowerCase(),
-            title: (streamKey.toUpperCase() + ' SNEAKER VAULT')
-        };
-    };
+    const getSneakers = () => SNEAKER_COLLECTIONS[currentCollectionIndex].items;
+    const getActiveCollection = () => SNEAKER_COLLECTIONS[currentCollectionIndex];
 
     let currentIndex = 0;
     let isSliderView = false;
@@ -397,22 +377,6 @@
     // --- Đổi bộ sưu tập giày (Switch Sneaker Collection / Vault) ---
     function changeCollection(direction = 1) {
         if (isTransitioning) return;
-
-        const streamKey = (window.normalizeFashionStream ? window.normalizeFashionStream(window.HNMT_CURRENT_STREAM) : (window.HNMT_CURRENT_STREAM || 'Men'));
-
-        if (streamKey !== 'Men') {
-            const streams = ['Women', 'Girls', 'Men', 'Boy'];
-            const curIdx = streams.indexOf(streamKey);
-            const nextIdx = (curIdx + direction + streams.length) % streams.length;
-            const nextStream = streams[nextIdx];
-            if (typeof window.setFashionStream === 'function') {
-                window.setFashionStream(nextStream);
-            } else {
-                window.HNMT_CURRENT_STREAM = nextStream;
-                window.SneakerVault.reloadStream();
-            }
-            return;
-        }
 
         currentCollectionIndex = (currentCollectionIndex + direction + SNEAKER_COLLECTIONS.length) % SNEAKER_COLLECTIONS.length;
         const col = getActiveCollection();
@@ -696,7 +660,6 @@
         if (immediate) {
             if (sliderContainer) sliderContainer.classList.remove('is-active');
             if (gridContainer) gridContainer.classList.remove('is-hidden');
-            renderGrid();
             if (app) {
                 app.classList.add('is-grid-mode');
                 app.style.backgroundColor = '#0D0E12';
@@ -989,17 +952,8 @@
         updateSliderDisplay(-1);
     }
 
-    function getAvailableSizes() {
-        const streamKey = (window.normalizeFashionStream ? window.normalizeFashionStream(window.HNMT_CURRENT_STREAM) : (window.HNMT_CURRENT_STREAM || 'Men'));
-        if (streamKey === 'Girls' || streamKey === 'Boy') {
-            return ['30', '31', '32', '33', '34', '35'];
-        }
-        if (streamKey === 'Women') {
-            return ['35', '36', '37', '38', '39', '40'];
-        }
-        return ['39', '40', '41', '42', '43', '44'];
-    }
-    let selectedSize = '';
+    const SIZES = ['39', '40', '41', '42', '43', '44'];
+    let selectedSize = '42'; // Mặc định size 42
 
     // --- Đảm bảo Glassmorphism Size Drawer luôn tồn tại trên DOM ---
     function ensureSizeDrawerInDOM() {
@@ -1025,7 +979,7 @@
                         <button type="button" class="sv-size-close-btn" id="svCloseSizeDrawerBtn" title="Đóng">✕</button>
                     </div>
                     <div class="sv-size-product-info">
-                        <span class="sv-size-model-name" id="svSizeModelName">SNEAKER VAULT</span>
+                        <span class="sv-size-model-name" id="svSizeModelName">AIR FUTURE</span>
                         <span class="sv-size-price" id="svSizePrice">0 ₫</span>
                     </div>
                     <div class="sv-size-grid" id="svSizeGrid">
@@ -1055,11 +1009,6 @@
         const snk = getSneakers()[currentIndex];
         if (!snk) return;
 
-        const sizes = getAvailableSizes();
-        if (!selectedSize || !sizes.includes(selectedSize)) {
-            selectedSize = sizes[Math.floor(sizes.length / 2)];
-        }
-
         const backdrop = $('#svSizeBackdrop');
         const drawer = $('#svSizeDrawer');
         if (backdrop) backdrop.classList.add('is-open');
@@ -1075,7 +1024,7 @@
         const grid = $('#svSizeGrid');
         if (grid) {
             grid.innerHTML = '';
-            sizes.forEach(sz => {
+            SIZES.forEach(sz => {
                 const btn = document.createElement('button');
                 btn.type = 'button';
                 btn.className = `sv-size-item ${sz === selectedSize ? 'is-selected' : ''}`;
@@ -1202,9 +1151,6 @@
             overlay.classList.add('is-active');
             ensureVaultSwitcherInDOM();
             localizeAllLabels();
-            if (window.SneakerVault && typeof window.SneakerVault.reloadStream === 'function') {
-                window.SneakerVault.reloadStream();
-            }
             closeSliderView(true); // Luôn luôn mở ở trang lưới TẤT CẢ GIÀY theo đúng yêu cầu!
         }
     };
@@ -1219,20 +1165,6 @@
         const portalHeaderEl = document.querySelector('.hnmt-portal-header');
         if (promptEl) promptEl.style.display = '';
         if (portalHeaderEl) portalHeaderEl.style.display = '';
-    };
-
-    window.SneakerVault = {
-        reloadStream: function () {
-            currentIndex = 0;
-            renderGrid();
-            renderDashes();
-            const colTitle = $('#svCollectionTitle');
-            if (colTitle) colTitle.textContent = getActiveCollection().title;
-            const snks = getSneakers();
-            if (snks && snks.length > 0) {
-                updateSliderDisplay(0, true);
-            }
-        }
     };
 
     function localizeAllLabels() {

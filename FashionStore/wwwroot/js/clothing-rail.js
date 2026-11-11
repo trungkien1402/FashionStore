@@ -158,34 +158,10 @@
     ];
 
     let currentRackIdx = 0;
-    let currentCategory = 'ao'; // 'ao' hoặc 'quan'
     let products = racks[0].products;
 
-    function syncProductsFromCatalog() {
-        const streamKey = (window.normalizeFashionStream ? window.normalizeFashionStream(window.HNMT_CURRENT_STREAM) : (window.HNMT_CURRENT_STREAM || 'Men'));
-        if (window.getFashionStreamItems) {
-            const streamItems = window.getFashionStreamItems(streamKey, currentCategory);
-            if (streamItems && streamItems.length > 0) {
-                products = streamItems.map((item, i) => ({
-                    name: item.name,
-                    slug: item.slug,
-                    price: Math.round(item.price / 10000),
-                    type: item.type || currentCategory,
-                    art: item.slug,
-                    desc: item.description || 'Chất liệu cao cấp, phom dáng thời thượng được may đo chuẩn xác.',
-                    colors: (item.colors || []).map(c => [c.name, c.hex, '#1c1d21']),
-                    stock: [9, 8, 12, 10, 5],
-                    image: item.image,
-                    sizes: item.sizes || (currentCategory === 'quan' ? ['28', '29', '30', '31', '32'] : ['XS', 'S', 'M', 'L', 'XL'])
-                }));
-                return;
-            }
-        }
-        products = racks[currentRackIdx].products;
-    }
-
-    const photo = (p, variant = 0) => p.image || `/clothing-rail/assets/${p.slug}-${variant ? 'alt' : 'front'}.webp`;
-    const sidePhoto = p => p.image || `/clothing-rail/assets/${p.slug}-side.webp`;
+    const photo = (p, variant = 0) => `/clothing-rail/assets/${p.slug}-${variant ? 'alt' : 'front'}.webp`;
+    const sidePhoto = p => `/clothing-rail/assets/${p.slug}-side.webp`;
 
     function formatPrice(num) {
         return (num * 10000).toLocaleString('vi-VN') + ' ₫';
@@ -275,10 +251,18 @@
         if (stage) stage.classList.add('is-switching');
         
         setTimeout(() => {
-            // Chuyển đổi qua lại giữa Áo và Quần của Luồng hiện tại
-            currentCategory = (currentCategory === 'ao' ? 'quan' : 'ao');
-            syncProductsFromCatalog();
-            updateRailHeaderTitle();
+            currentRackIdx = (currentRackIdx + dir + racks.length) % racks.length;
+            const currentRack = racks[currentRackIdx];
+            products = currentRack.products;
+            
+            // Cập nhật Badge Sào & Tiêu đề
+            const eyebrowEl = $('.rail-eyebrow');
+            if (eyebrowEl) eyebrowEl.textContent = currentRack.eyebrow;
+            
+            const heroTitleEl = $('.rail-hero-title');
+            if (heroTitleEl) heroTitleEl.innerHTML = currentRack.heroTitle;
+            
+            // Render lại sào mới
             makeRail();
             
             const scroll = $('#railScroll');
@@ -341,16 +325,14 @@
         }
 
         const sizesEl = $('#sizes');
-        const activeSizes = p.sizes || (currentCategory === 'quan' ? ['28', '29', '30', '31', '32'] : sizeNames);
         if (sizesEl) {
             sizesEl.innerHTML = '';
-            activeSizes.forEach((size, idx) => {
+            sizeNames.forEach((size, idx) => {
                 const b = document.createElement('button');
                 b.className = 'rail-size-chip' + (selectedSize === size ? ' selected' : '');
                 b.textContent = size;
-                const stockCount = (p.stock && p.stock[idx] !== undefined) ? p.stock[idx] : 10;
-                b.disabled = p.upcoming || stockCount === 0;
-                b.title = b.disabled ? 'Hết hàng' : `Còn ${stockCount} sản phẩm`;
+                b.disabled = p.upcoming || p.stock[idx] === 0;
+                b.title = b.disabled ? 'Hết hàng' : `Còn ${p.stock[idx]} sản phẩm`;
                 b.onclick = () => {
                     selectedSize = size;
                     renderSizes();
@@ -417,14 +399,7 @@
         }
     }
 
-    function openClothingRail(category) {
-        if (category) {
-            currentCategory = category;
-        }
-        syncProductsFromCatalog();
-        updateRailHeaderTitle();
-        makeRail();
-
+    function openClothingRail() {
         const rackOverlayEl = document.getElementById('hnmtRackOverlay');
         if (rackOverlayEl) {
             rackOverlayEl.classList.add('is-active');
@@ -443,31 +418,6 @@
 
     window.open3DClothesRack = openClothingRail;
     window.close3DClothesRack = closeClothingRail;
-
-    function updateRailHeaderTitle() {
-        const brand = $('.rail-brand');
-        const streamKey = (window.normalizeFashionStream ? window.normalizeFashionStream(window.HNMT_CURRENT_STREAM) : (window.HNMT_CURRENT_STREAM || 'Men'));
-        const stream = streamKey.toUpperCase();
-        if (brand) {
-            brand.innerHTML = currentCategory === 'quan'
-                ? `<span>Kệ Quần</span><span>${stream}</span>`
-                : `<span>Sào Áo</span><span>${stream}</span>`;
-        }
-        const eyebrow = $('.rail-eyebrow');
-        if (eyebrow) {
-            eyebrow.textContent = `BỘ SƯU TẬP ${stream}`;
-        }
-        const captionHeading = $('#captionTitle');
-        const captionSub = $('#captionDetail');
-        if (captionHeading) {
-            captionHeading.textContent = currentCategory === 'quan'
-                ? `Kệ Quần ${streamKey} Tuyển Chọn`
-                : `Sào Áo ${streamKey} Thiết Kế`;
-        }
-        if (captionSub) {
-            captionSub.textContent = `${products.length} mẫu cao cấp dành riêng cho ${streamKey} — Lướt sào hoặc chọn để xem chi tiết.`;
-        }
-    }
 
     function init() {
         const prevBtn = $('#prevBtn');
@@ -581,32 +531,6 @@
             });
         }
 
-        window.ClothingRail = {
-            initRail: (category) => {
-                if (category) currentCategory = category;
-                syncProductsFromCatalog();
-                updateRailHeaderTitle();
-                makeRail();
-                setActive(0);
-            },
-            setCategory: (cat) => {
-                currentCategory = cat || 'ao';
-                syncProductsFromCatalog();
-                updateRailHeaderTitle();
-                makeRail();
-                setActive(0);
-            },
-            setStream: (stream) => {
-                window.HNMT_CURRENT_STREAM = stream;
-                syncProductsFromCatalog();
-                updateRailHeaderTitle();
-                makeRail();
-                setActive(0);
-            }
-        };
-
-        syncProductsFromCatalog();
-        updateRailHeaderTitle();
         makeRail();
         setActive(0);
     }

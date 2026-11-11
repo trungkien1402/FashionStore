@@ -1256,15 +1256,9 @@
 
         const cfg = wrapper.userData.config;
 
-        // Bật chế độ SÀO TREO ÁO 3D TƯƠNG TÁC (Chính xác như video FraxBIT)
+        // Bật chế độ SÀO TREO ĐỒ 3D TƯƠNG TÁC (Chính xác như video FraxBIT)
         if (cfg.id === 'ao') {
-            open3DClothesRack('ao');
-            return;
-        }
-
-        // Bật chế độ KỆ QUẦN THỜI TRANG 3D TƯƠNG TÁC
-        if (cfg.id === 'quan') {
-            open3DClothesRack('quan');
+            open3DClothesRack();
             return;
         }
 
@@ -1274,6 +1268,7 @@
             return;
         }
 
+        // Quần và Giày chưa làm không gian 3D chi tiết -> hiển thị thông báo hướng dẫn chọn Áo
         showCategoryNotice(cfg);
     }
 
@@ -1334,11 +1329,7 @@
                 if (hitWrapper?.userData?.config) {
                     const cfg = hitWrapper.userData.config;
                     if (cfg.id === 'ao') {
-                        open3DClothesRack('ao');
-                        return;
-                    }
-                    if (cfg.id === 'quan') {
-                        open3DClothesRack('quan');
+                        open3DClothesRack();
                         return;
                     }
                     if (cfg.id === 'giay') {
@@ -1364,37 +1355,10 @@
         if (reflRT) reflRT.setSize(Math.floor(window.innerWidth * 0.75), Math.floor(window.innerHeight * 0.75));
     }
 
-    // --- Thiết lập và chuyển đổi 4 Luồng Thời Trang (Women // Girls // Men // Boy) ---
-    function setStream(stream) {
-        if (!stream) return;
-        const norm = (window.normalizeFashionStream ? window.normalizeFashionStream(stream) : stream);
-        window.HNMT_CURRENT_STREAM = norm;
-        const btns = document.querySelectorAll('.hnmt-stream-btn');
-        btns.forEach(b => {
-            b.classList.toggle('is-active', (b.getAttribute('data-stream') || '').toLowerCase() === norm.toLowerCase());
-        });
-
-        const promptEl = document.querySelector('.hnmt-badge-prompt');
-        if (promptEl) {
-            promptEl.textContent = `BỘ SƯU TẬP ${norm.toUpperCase()} // CHỌN 1 MÓN ĐỒ`;
-        }
-
-        if (window.ClothingRail && typeof window.ClothingRail.setStream === 'function') {
-            window.ClothingRail.setStream(norm);
-        }
-        if (window.SneakerVault && typeof window.SneakerVault.reloadStream === 'function') {
-            window.SneakerVault.reloadStream();
-        }
-    }
-    window.setFashionStream = setStream;
-
     // --- Mở / Đóng Showroom với hiệu ứng Zoom-Out từ cột giữa chuẩn video 1107.mp4 ---
-    function openPortal(targetAudience) {
+    function openPortal() {
         if (!portalEl) return;
         isPortalOpen = true;
-
-        const target = targetAudience || window.HNMT_CURRENT_STREAM || 'Men';
-        setStream(target);
 
         portalEl.classList.add('is-active');
         portalEl.setAttribute('aria-hidden', 'false');
@@ -1407,13 +1371,6 @@
         onResize();
         cancelAnimationFrame(animId);
         render();
-
-        if (window.ClothingRail && typeof window.ClothingRail.setStream === 'function') {
-            window.ClothingRail.setStream(target);
-        }
-        if (window.SneakerVault && typeof window.SneakerVault.reloadStream === 'function') {
-            window.SneakerVault.reloadStream();
-        }
 
         if (window.gsap) {
             camera.position.set(0, 0.12, 3.20);
@@ -1502,27 +1459,14 @@
     // --- Bắt sự kiện click vào bất kỳ Danh Mục hoặc Khối Chọn 3D ---
     function bindTriggers() {
         document.addEventListener('click', (e) => {
-            const streamBtn = e.target.closest('.hnmt-stream-btn');
-            if (streamBtn) {
-                e.preventDefault();
-                e.stopPropagation();
-                const st = streamBtn.getAttribute('data-stream');
-                setStream(st);
-                return;
-            }
-
-            const block = e.target.closest('[data-open-chile-portal], .hnmt-cat-block, .hnmt-cat-card, .urbn-cat-card');
+            const block = e.target.closest('[data-open-chile-portal], .hnmt-cat-block');
             if (!block) return;
 
             if (block.closest('#hnmtChilePortal')) return;
 
             e.preventDefault();
             e.stopPropagation();
-            const aud = block.getAttribute('data-category-title') || 
-                        block.getAttribute('data-category') || 
-                        block.querySelector('.urbn-cat-pill, .hnmt-card-pill')?.textContent?.trim() || 
-                        'Men';
-            openPortal(aud);
+            openPortal();
         }, true);
     }
     // ==============================================================================
@@ -1789,7 +1733,7 @@
         }
     }
 
-    function open3DClothesRack(category = 'ao') {
+    function open3DClothesRack() {
         isRackModeActive = true;
         const rackOverlayEl = document.getElementById('hnmtRackOverlay');
         const promptEl = document.querySelector('.hnmt-portal-footer');
@@ -1809,10 +1753,8 @@
             rackOverlayEl.classList.add('is-active');
             rackOverlayEl.setAttribute('aria-hidden', 'false');
         }
-        if (window.ClothingRail && typeof window.ClothingRail.setCategory === 'function') {
-            window.ClothingRail.setCategory(category || 'ao');
-        } else if (window.ClothingRail && typeof window.ClothingRail.initRail === 'function') {
-            window.ClothingRail.initRail(category || 'ao');
+        if (window.ClothingRail && typeof window.ClothingRail.initRail === 'function') {
+            window.ClothingRail.initRail();
         }
 
         if (window.gsap) {
