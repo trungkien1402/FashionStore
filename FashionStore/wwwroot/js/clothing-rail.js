@@ -163,6 +163,54 @@
         }
     ];
 
+    // Danh sách 4 mẫu quần đang chờ gen ảnh mới hoàn toàn từ đầu (khi AI hồi quota)
+    const PENDING_PANTS_PRODUCTS = [
+        {
+            name: 'Quần Tây Xếp Ly Ống Rộng May Đo Sand Beige',
+            slug: 'sand-pleated',
+            price: 62,
+            type: 'quần tây may đo',
+            art: 'tailored',
+            desc: 'Phom dáng xếp 2 ly cạp cao may đo tinh xảo, chất vải twill rủ mềm mại tạo bước đi thanh thoát chuẩn quiet luxury.',
+            colors: [['Be Cát Tự Nhiên (Sand Beige)', '#D9CDB8'], ['Đen Midnight (Pitch Black)', '#17181C']],
+            sizes: ['28', '29', '30', '31', '32', '34'],
+            stock: [6, 9, 14, 11, 5, 2]
+        },
+        {
+            name: 'Quần Dù Parachute Tactical Rêu Quân Đội',
+            slug: 'tactical-parachute',
+            price: 58,
+            type: 'quần dù parachute',
+            art: 'parachute',
+            desc: 'Chất liệu vải dù công nghệ trượt nước nhẹ, nhiều ngăn túi khóa bấm kim loại cùng dây rút lai quần biến hóa linh hoạt.',
+            colors: [['Xanh Rêu Quân Đội (Military Olive)', '#4B5320'], ['Đen Stealth (Shadow Black)', '#1B1C20']],
+            sizes: ['28', '29', '30', '31', '32', '34'],
+            stock: [10, 14, 12, 8, 4, 1]
+        },
+        {
+            name: 'Quần Jeans Ống Suông Raw Selvedge Denim',
+            slug: 'raw-selvedge',
+            price: 68,
+            type: 'quần raw denim',
+            art: 'denim',
+            desc: 'Denim 14oz dệt thoi con thoi cổ điển Nhật Bản, giữ phom đứng cá tính cùng viền chỉ đỏ selvedge độc bản khi xắn gấu.',
+            colors: [['Đen Selvedge Chỉ Đỏ (Raw Black)', '#1A1A1E'], ['Chàm Đậm (Deep Indigo)', '#141E30']],
+            sizes: ['28', '29', '30', '31', '32', '34'],
+            stock: [5, 7, 10, 8, 4, 0]
+        },
+        {
+            name: 'Quần Jeans Ống Rộng Vintage Washed Indigo',
+            slug: 'wide-denim',
+            price: 54,
+            type: 'quần jeans ống rộng',
+            art: 'denim',
+            desc: 'Phom suông rộng phóng khoáng kinh điển thập niên 90, xử lý wash nhẹ tạo độ rủ mềm mại cực kỳ thoải mái vận động.',
+            colors: [['Xanh Vintage Washed (90s Blue)', '#5B7C99'], ['Xanh Khói (Smoky Azure)', '#4A657D']],
+            sizes: ['28', '29', '30', '31', '32', '34'],
+            stock: [9, 11, 16, 12, 7, 3]
+        }
+    ];
+
     const PANTS_RACKS = [
         {
             id: 'rack-pants-01',
@@ -185,58 +233,6 @@
                     stock: [8, 12, 15, 10, 6, 3],
                     frontImg: '/clothing-rail/assets/acid-cargo-front.webp',
                     sideImg: '/clothing-rail/assets/acid-cargo-side.webp'
-                },
-                {
-                    name: 'Quần Tây Xếp Ly Ống Rộng May Đo Sand Beige',
-                    slug: 'sand-pleated',
-                    price: 62,
-                    type: 'quần tây may đo',
-                    art: 'tailored',
-                    desc: 'Phom dáng xếp 2 ly cạp cao may đo tinh xảo, chất vải twill rủ mềm mại tạo bước đi thanh thoát chuẩn quiet luxury.',
-                    colors: [['Be Cát Tự Nhiên (Sand Beige)', '#D9CDB8'], ['Đen Midnight (Pitch Black)', '#17181C']],
-                    sizes: ['28', '29', '30', '31', '32', '34'],
-                    stock: [6, 9, 14, 11, 5, 2],
-                    frontImg: '/clothing-rail/assets/sand-pleated-front.webp',
-                    sideImg: '/clothing-rail/assets/sand-pleated-side.webp'
-                },
-                {
-                    name: 'Quần Dù Parachute Tactical Rêu Quân Đội',
-                    slug: 'tactical-parachute',
-                    price: 58,
-                    type: 'quần dù parachute',
-                    art: 'parachute',
-                    desc: 'Chất liệu vải dù công nghệ trượt nước nhẹ, nhiều ngăn túi khóa bấm kim loại cùng dây rút lai quần biến hóa linh hoạt.',
-                    colors: [['Xanh Rêu Quân Đội (Military Olive)', '#4B5320'], ['Đen Stealth (Shadow Black)', '#1B1C20']],
-                    sizes: ['28', '29', '30', '31', '32', '34'],
-                    stock: [10, 14, 12, 8, 4, 1],
-                    frontImg: '/clothing-rail/assets/tactical-parachute-front.webp',
-                    sideImg: '/clothing-rail/assets/tactical-parachute-side.webp'
-                },
-                {
-                    name: 'Quần Jeans Ống Suông Raw Selvedge Denim',
-                    slug: 'raw-selvedge',
-                    price: 68,
-                    type: 'quần raw denim',
-                    art: 'denim',
-                    desc: 'Denim 14oz dệt thoi con thoi cổ điển Nhật Bản, giữ phom đứng cá tính cùng viền chỉ đỏ selvedge độc bản khi xắn gấu.',
-                    colors: [['Đen Selvedge Chỉ Đỏ (Raw Black)', '#1A1A1E'], ['Chàm Đậm (Deep Indigo)', '#141E30']],
-                    sizes: ['28', '29', '30', '31', '32', '34'],
-                    stock: [5, 7, 10, 8, 4, 0],
-                    frontImg: '/clothing-rail/assets/raw-selvedge-front.webp',
-                    sideImg: '/clothing-rail/assets/raw-selvedge-side.webp'
-                },
-                {
-                    name: 'Quần Jeans Ống Rộng Vintage Washed Indigo',
-                    slug: 'wide-denim',
-                    price: 54,
-                    type: 'quần jeans ống rộng',
-                    art: 'denim',
-                    desc: 'Phom suông rộng phóng khoáng kinh điển thập niên 90, xử lý wash nhẹ tạo độ rủ mềm mại cực kỳ thoải mái vận động.',
-                    colors: [['Xanh Vintage Washed (90s Blue)', '#5B7C99'], ['Xanh Khói (Smoky Azure)', '#4A657D']],
-                    sizes: ['28', '29', '30', '31', '32', '34'],
-                    stock: [9, 11, 16, 12, 7, 3],
-                    frontImg: '/clothing-rail/assets/wide-denim-front.webp',
-                    sideImg: '/clothing-rail/assets/wide-denim-side.webp'
                 }
             ]
         }
