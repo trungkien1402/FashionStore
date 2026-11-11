@@ -1,4 +1,4 @@
-﻿
+
 using System.Globalization;
 using System.Text;
 using FashionStore.Data;
@@ -50,7 +50,12 @@ public class AdminCategoriesController : Controller
             .Select(c => new AdminCategoryListItemViewModel
             {
                 Category = c,
-                ProductCount = c.Products.Count()
+                ProductCount = c.Products.Count(),
+                RepresentativeImageUrl = c.Products
+                    .Where(p => !string.IsNullOrEmpty(p.ImageUrl))
+                    .OrderByDescending(p => p.CreatedAt)
+                    .Select(p => p.ImageUrl)
+                    .FirstOrDefault()
             })
             .ToListAsync();
 

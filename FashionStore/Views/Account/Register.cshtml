@@ -1,113 +1,395 @@
-﻿@model FashionStore.Models.ViewModels.RegisterViewModel
+@model FashionStore.Models.ViewModels.RegisterViewModel
 
 @{
-    ViewData["Title"] = "Tạo tài khoản";
+    ViewData["Title"] = "Tạo Tài Khoản — HNMTSHOP Atelier";
 }
 
-<div class="fs-auth-page">
-    <div class="fs-auth-image"
-         style="background-image: url('https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1200&q=85')">
-        <div class="fs-auth-image-content">
-            <p class="text-uppercase small mb-3"
-               style="letter-spacing: 3px;">Your Style, Your Story</p>
-            <h2>Discover a style that belongs to you.</h2>
-            <p class="mt-3 mb-0">
-                Bắt đầu hành trình thời trang của riêng bạn.
-            </p>
+@section Styles {
+    <link rel="stylesheet" href="~/css/atelier-login.css" asp-append-version="true" />
+}
+
+<div class="at-login-page" id="atRegisterPage">
+    <!-- Edge-to-Edge Continuous Lookbook Background Layer -->
+    <div class="at-bg-layer" id="atBgLayer" aria-hidden="true"></div>
+    <div class="at-bg-overlay" aria-hidden="true"></div>
+    <div class="at-bg-grain" aria-hidden="true"></div>
+
+    <!-- Minimalist Top Navigation -->
+    <header class="at-topbar">
+        <a asp-controller="Home" asp-action="Index" class="at-brand-link" title="Về trang chủ HNMTSHOP">
+            <span class="at-diamond">&#9670;</span>
+            <span class="at-brand-text">HNMTSHOP ATELIER</span>
+        </a>
+
+        <div class="at-top-actions">
+            <a asp-controller="Home" asp-action="Index" class="at-top-back" title="Quay lại mua sắm">
+                <i class="bi bi-arrow-left"></i>
+                <span>Trang Chủ</span>
+            </a>
+            <a asp-controller="Account" asp-action="Login" class="at-top-action-btn">
+                <span>Đăng Nhập</span>
+            </a>
         </div>
-    </div>
+    </header>
 
-    <div class="fs-auth-panel">
-        <div class="fs-auth-form">
-            <p class="text-uppercase small fw-bold mb-3"
-               style="letter-spacing: 2px; color: #a17c55;">
-                Join FashionStore
+    <!-- Left Side: Editorial Lookbook Statement (Desktop only) -->
+    <section class="at-left-statement" aria-hidden="true">
+        <div class="at-stmt-kicker">HNMTSHOP ATELIER · GIA NHẬP THƯƠNG HIỆU</div>
+        <h2 class="at-stmt-title">
+            Khởi đầu phong cách<br />
+            <em>của riêng bạn.</em>
+        </h2>
+        <div class="at-stmt-spec">
+            <span>&#9670; Đặc quyền trải nghiệm trước BST mới · Chăm sóc thành viên cá nhân hóa</span>
+        </div>
+    </section>
+
+    <!-- Right Side: Translucent Charcoal Glass Form Card -->
+    <main class="at-form-container">
+        <div class="at-login-card">
+            
+            <div class="at-card-kicker">
+                <span>&#9670;</span>
+                <span>TÀI KHOẢN HNMTSHOP</span>
+            </div>
+
+            <h1 class="at-card-title">Tạo tài khoản</h1>
+            <p class="at-card-desc">
+                Đăng ký thành viên để khám phá những bộ sưu tập giới hạn và quản lý đơn hàng của bạn.
             </p>
 
-            <h1>Tạo tài khoản</h1>
-            <p class="fs-auth-subtitle">
-                Đăng ký thành viên để khám phá những bộ sưu tập mới nhất.
-            </p>
+            <!-- Luxury Social OAuth -->
+            <div class="at-social-grid">
+                <button type="button" class="at-btn-social" id="btnGoogleReg" title="Đăng ký với Google">
+                    <svg viewBox="0 0 24 24" width="16" height="16">
+                        <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"/>
+                        <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5.1 3.7-8.8z"/>
+                        <path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.8s.2-2.1.4-2.8L1.9 6.3C.7 8.7 0 10.3 0 12s.7 3.3 1.9 5.7l3.7-2.9z"/>
+                        <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2-6.4-4.8L1.9 16.4C3.7 20.4 7.5 23 12 23z"/>
+                    </svg>
+                    <span>Google</span>
+                </button>
 
-            <form asp-action="Register" method="post">
+                <button type="button" class="at-btn-social" id="btnAppleReg" title="Đăng ký với Apple ID">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                        <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.63-.77 1.06-1.84.94-2.91-.91.04-2.02.61-2.67 1.38-.58.68-1.09 1.77-.95 2.81 1.02.08 2.05-.51 2.68-1.28z"/>
+                    </svg>
+                    <span>Apple ID</span>
+                </button>
+            </div>
+
+            <!-- Divider with Gold Diamond -->
+            <div class="at-divider">
+                <span>&#9670; Hoặc đăng ký bằng Email &#9670;</span>
+            </div>
+
+            <!-- Form -->
+            <form asp-action="Register" method="post" class="at-form" id="atRegisterForm" novalidate>
                 @Html.AntiForgeryToken()
 
-                <div asp-validation-summary="ModelOnly"
-                     class="fs-alert"></div>
+                <!-- Server-Side Validation Summary -->
+                <div asp-validation-summary="ModelOnly" class="at-alert-danger" role="alert"></div>
 
-                <div class="fs-auth-field">
-                    <label asp-for="FullName" class="fs-form-label"></label>
-                    <input asp-for="FullName"
-                           class="fs-form-control"
-                           placeholder="Nguyễn Văn A"
-                           autocomplete="name" />
-                    <span asp-validation-for="FullName"
-                          class="fs-validation"></span>
+                <!-- Họ và tên -->
+                <div class="at-input-group">
+                    <label asp-for="FullName" class="at-input-label">Họ và tên <span class="at-req">*</span></label>
+                    <div class="at-input-box">
+                        <i class="bi bi-person at-input-icon"></i>
+                        <input asp-for="FullName" 
+                               class="at-input-field" 
+                               placeholder="Nguyễn Văn A" 
+                               autocomplete="name" 
+                               required />
+                    </div>
+                    <span asp-validation-for="FullName" class="at-input-error"></span>
                 </div>
 
-                <div class="fs-auth-field">
-                    <label asp-for="Email" class="fs-form-label"></label>
-                    <input asp-for="Email"
-                           class="fs-form-control"
-                           placeholder="name@example.com"
-                           autocomplete="email" />
-                    <span asp-validation-for="Email"
-                          class="fs-validation"></span>
+                <!-- Email -->
+                <div class="at-input-group">
+                    <label asp-for="Email" class="at-input-label">Email <span class="at-req">*</span></label>
+                    <div class="at-input-box">
+                        <i class="bi bi-envelope at-input-icon"></i>
+                        <input asp-for="Email" 
+                               class="at-input-field" 
+                               placeholder="ten@vidu.vn" 
+                               autocomplete="email" 
+                               required />
+                    </div>
+                    <span asp-validation-for="Email" class="at-input-error"></span>
                 </div>
 
-                <div class="fs-auth-field">
-                    <label asp-for="PhoneNumber" class="fs-form-label"></label>
-                    <input asp-for="PhoneNumber"
-                           class="fs-form-control"
-                           placeholder="Nhập số điện thoại"
-                           autocomplete="tel" />
-                    <span asp-validation-for="PhoneNumber"
-                          class="fs-validation"></span>
+                <!-- Số điện thoại -->
+                <div class="at-input-group">
+                    <label asp-for="PhoneNumber" class="at-input-label">Số điện thoại</label>
+                    <div class="at-input-box">
+                        <i class="bi bi-telephone at-input-icon"></i>
+                        <input asp-for="PhoneNumber" 
+                               class="at-input-field" 
+                               placeholder="0912 345 678" 
+                               autocomplete="tel" />
+                    </div>
+                    <span asp-validation-for="PhoneNumber" class="at-input-error"></span>
                 </div>
 
-                <div class="fs-auth-field">
-                    <label asp-for="Password" class="fs-form-label"></label>
-                    <input asp-for="Password"
-                           class="fs-form-control"
-                           placeholder="Ít nhất 6 ký tự"
-                           autocomplete="new-password" />
-                    <span asp-validation-for="Password"
-                          class="fs-validation"></span>
+                <!-- Mật khẩu với Realtime Strength Meter -->
+                <div class="at-input-group">
+                    <label asp-for="Password" class="at-input-label">Mật khẩu <span class="at-req">*</span></label>
+                    <div class="at-input-box">
+                        <i class="bi bi-shield-lock at-input-icon"></i>
+                        <input asp-for="Password" 
+                               id="atRegPassword" 
+                               type="password" 
+                               class="at-input-field at-password-input" 
+                               placeholder="Nhập mật khẩu (tối thiểu 8 ký tự)" 
+                               autocomplete="new-password" 
+                               required />
+                        <button type="button" 
+                                id="atToggleRegPassword" 
+                                class="at-password-toggle"
+                                aria-label="Hiện mật khẩu" 
+                                aria-pressed="false"
+                                title="Hiện hoặc ẩn mật khẩu">
+                            <i class="bi bi-eye" id="atToggleRegIcon"></i>
+                        </button>
+                    </div>
+
+                    <!-- 4-Tier Realtime Password Strength Bar (Atelier Champagne Amber Style) -->
+                    <div class="at-strength-container" id="atStrengthContainer">
+                        <div class="at-strength-bars">
+                            <div class="at-strength-bar" id="atBar1"></div>
+                            <div class="at-strength-bar" id="atBar2"></div>
+                            <div class="at-strength-bar" id="atBar3"></div>
+                            <div class="at-strength-bar" id="atBar4"></div>
+                        </div>
+                        <div class="at-strength-label-row">
+                            <span style="color: var(--atl-ink-muted); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;">ĐỘ MẠNH:</span>
+                            <span class="at-strength-status" id="atStrengthStatus">Chưa nhập</span>
+                        </div>
+                        <div class="at-strength-rules">
+                            <span class="at-strength-rule" id="atRuleLen"><i class="bi bi-circle"></i> ≥ 8 ký tự</span>
+                            <span class="at-strength-rule" id="atRuleUpper"><i class="bi bi-circle"></i> Có chữ hoa</span>
+                            <span class="at-strength-rule" id="atRuleNum"><i class="bi bi-circle"></i> Có chữ số</span>
+                            <span class="at-strength-rule" id="atRuleSpecial"><i class="bi bi-circle"></i> Ký tự đặc biệt</span>
+                        </div>
+                    </div>
+
+                    <span asp-validation-for="Password" class="at-input-error"></span>
                 </div>
 
-                <div class="fs-auth-field">
-                    <label asp-for="ConfirmPassword"
-                           class="fs-form-label"></label>
-                    <input asp-for="ConfirmPassword"
-                           class="fs-form-control"
-                           placeholder="Nhập lại mật khẩu"
-                           autocomplete="new-password" />
-                    <span asp-validation-for="ConfirmPassword"
-                          class="fs-validation"></span>
+                <!-- Xác nhận mật khẩu -->
+                <div class="at-input-group">
+                    <label asp-for="ConfirmPassword" class="at-input-label">Xác nhận mật khẩu <span class="at-req">*</span></label>
+                    <div class="at-input-box">
+                        <i class="bi bi-shield-check at-input-icon"></i>
+                        <input asp-for="ConfirmPassword" 
+                               id="atRegConfirmPassword" 
+                               type="password" 
+                               class="at-input-field at-password-input" 
+                               placeholder="Nhập lại mật khẩu vừa đặt" 
+                               autocomplete="new-password" 
+                               required />
+                        <button type="button" 
+                                id="atToggleConfirmPassword" 
+                                class="at-password-toggle"
+                                aria-label="Hiện mật khẩu" 
+                                aria-pressed="false"
+                                title="Hiện hoặc ẩn mật khẩu">
+                            <i class="bi bi-eye" id="atToggleConfirmIcon"></i>
+                        </button>
+                    </div>
+                    <span id="atMatchStatus" style="font-size: 0.74rem; margin-top: 2px; display: none;"></span>
+                    <span asp-validation-for="ConfirmPassword" class="at-input-error"></span>
                 </div>
 
-                <button type="submit" class="fs-btn w-100">
-                    Tạo tài khoản
+                <!-- Champagne Submit Button -->
+                <button type="submit" class="at-btn-submit" id="atSubmitRegBtn">
+                    <span>Tạo Tài Khoản</span>
+                    <i class="bi bi-arrow-right"></i>
                 </button>
             </form>
 
-            <div class="fs-auth-bottom">
-                Bạn đã có tài khoản?
-                <a asp-controller="Account" asp-action="Login">
-                    Đăng nhập
+            <!-- Bottom Login Link -->
+            <div class="at-card-footer">
+                <span>Bạn đã có tài khoản?</span>
+                <a asp-controller="Account" asp-action="Login" class="at-footer-link">
+                    Đăng nhập ngay &rarr;
                 </a>
             </div>
 
-            <div class="text-center mt-4">
-                <a asp-controller="Home" asp-action="Index"
-                   class="small text-muted">
-                    ← Quay lại trang chủ
-                </a>
+            <!-- Security Footnote -->
+            <div class="at-security-note">
+                <i class="bi bi-shield-check"></i>
+                <span>Dữ Liệu Cá Nhân Được Bảo Mật Nghiêm Ngặt</span>
             </div>
+
         </div>
-    </div>
+    </main>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Helper for Password Toggling
+            function setupPasswordToggle(btnId, inputId, iconId) {
+                const btn = document.getElementById(btnId);
+                const input = document.getElementById(inputId);
+                const icon = document.getElementById(iconId);
+
+                if (!btn || !input || !icon) return;
+
+                function toggle() {
+                    const isPass = input.getAttribute("type") === "password";
+                    if (isPass) {
+                        input.setAttribute("type", "text");
+                        btn.setAttribute("aria-label", "Ẩn mật khẩu");
+                        btn.setAttribute("aria-pressed", "true");
+                        icon.className = "bi bi-eye-slash";
+                    } else {
+                        input.setAttribute("type", "password");
+                        btn.setAttribute("aria-label", "Hiện mật khẩu");
+                        btn.setAttribute("aria-pressed", "false");
+                        icon.className = "bi bi-eye";
+                    }
+                }
+
+                btn.addEventListener("click", toggle);
+                btn.addEventListener("keydown", function (e) {
+                    if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        toggle();
+                    }
+                });
+            }
+
+            setupPasswordToggle("atToggleRegPassword", "atRegPassword", "atToggleRegIcon");
+            setupPasswordToggle("atToggleConfirmPassword", "atRegConfirmPassword", "atToggleConfirmIcon");
+
+            // Realtime Password Strength Evaluation (Atelier Palette)
+            const passInput = document.getElementById("atRegPassword");
+            const confirmInput = document.getElementById("atRegConfirmPassword");
+            const matchStatus = document.getElementById("atMatchStatus");
+
+            const bar1 = document.getElementById("atBar1");
+            const bar2 = document.getElementById("atBar2");
+            const bar3 = document.getElementById("atBar3");
+            const bar4 = document.getElementById("atBar4");
+            const statusLabel = document.getElementById("atStrengthStatus");
+
+            const ruleLen = document.getElementById("atRuleLen");
+            const ruleUpper = document.getElementById("atRuleUpper");
+            const ruleNum = document.getElementById("atRuleNum");
+            const ruleSpecial = document.getElementById("atRuleSpecial");
+
+            function updateRule(elem, met) {
+                if (met) {
+                    elem.classList.add("met");
+                    elem.querySelector("i").className = "bi bi-check-circle-fill text-warning";
+                } else {
+                    elem.classList.remove("met");
+                    elem.querySelector("i").className = "bi bi-circle";
+                }
+            }
+
+            if (passInput) {
+                passInput.addEventListener("input", function () {
+                    const val = passInput.value;
+                    let score = 0;
+
+                    const hasLen = val.length >= 8;
+                    const hasUpper = /[A-Z]/.test(val);
+                    const hasNum = /[0-9]/.test(val);
+                    const hasSpecial = /[^A-Za-z0-9]/.test(val);
+
+                    updateRule(ruleLen, hasLen);
+                    updateRule(ruleUpper, hasUpper);
+                    updateRule(ruleNum, hasNum);
+                    updateRule(ruleSpecial, hasSpecial);
+
+                    if (hasLen) score++;
+                    if (hasUpper) score++;
+                    if (hasNum) score++;
+                    if (hasSpecial) score++;
+
+                    // Reset bars
+                    [bar1, bar2, bar3, bar4].forEach(b => b.style.backgroundColor = "rgba(255, 255, 255, 0.1)");
+
+                    if (!val) {
+                        statusLabel.textContent = "Chưa nhập";
+                        statusLabel.style.color = "var(--atl-ink-dim)";
+                    } else if (score === 1) {
+                        bar1.style.backgroundColor = "#f87171";
+                        statusLabel.textContent = "Cần cải thiện";
+                        statusLabel.style.color = "#f87171";
+                    } else if (score === 2) {
+                        bar1.style.backgroundColor = "#fb923c";
+                        bar2.style.backgroundColor = "#fb923c";
+                        statusLabel.textContent = "Trung bình";
+                        statusLabel.style.color = "#fb923c";
+                    } else if (score === 3) {
+                        bar1.style.backgroundColor = "#d8bd82";
+                        bar2.style.backgroundColor = "#d8bd82";
+                        bar3.style.backgroundColor = "#d8bd82";
+                        statusLabel.textContent = "Đạt chuẩn an toàn";
+                        statusLabel.style.color = "#d8bd82";
+                    } else if (score >= 4) {
+                        bar1.style.backgroundColor = "#10b981";
+                        bar2.style.backgroundColor = "#10b981";
+                        bar3.style.backgroundColor = "#10b981";
+                        bar4.style.backgroundColor = "#10b981";
+                        statusLabel.textContent = "Bảo mật tối ưu (Atelier)";
+                        statusLabel.style.color = "#10b981";
+                    }
+
+                    checkMatch();
+                });
+            }
+
+            function checkMatch() {
+                if (!confirmInput || !passInput || !confirmInput.value) {
+                    if (matchStatus) matchStatus.style.display = "none";
+                    return;
+                }
+
+                matchStatus.style.display = "block";
+                if (passInput.value === confirmInput.value) {
+                    matchStatus.innerHTML = `<span style="color: #10b981;"><i class="bi bi-check-circle-fill me-1"></i> Mật khẩu trùng khớp hoàn toàn</span>`;
+                } else {
+                    matchStatus.innerHTML = `<span style="color: #f87171;"><i class="bi bi-exclamation-triangle-fill me-1"></i> Mật khẩu xác nhận chưa khớp</span>`;
+                }
+            }
+
+            if (confirmInput) {
+                confirmInput.addEventListener("input", checkMatch);
+            }
+
+            // Simulated Social OAuth feedback
+            ["btnGoogleReg", "btnAppleReg"].forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn) {
+                    btn.addEventListener("click", function() {
+                        const provider = id.includes("Google") ? "Google" : "Apple";
+                        alert(`[HNMTSHOP ATELIER] Đang kết nối tài khoản ${provider} để hoàn thiện hồ sơ thành viên...`);
+                    });
+                }
+            });
+
+            // Desktop Parallax
+            const bgLayer = document.getElementById("atBgLayer");
+            const page = document.getElementById("atRegisterPage");
+            const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+            if (bgLayer && page && !prefersReduced && window.innerWidth > 1024) {
+                page.addEventListener("mousemove", function (e) {
+                    const xPct = (e.clientX / window.innerWidth) - 0.5;
+                    const yPct = (e.clientY / window.innerHeight) - 0.5;
+                    bgLayer.style.transform = `translate3d(${xPct * 12}px, ${yPct * 12}px, 0) scale(1.02)`;
+                });
+
+                page.addEventListener("mouseleave", function () {
+                    bgLayer.style.transform = "translate3d(0, 0, 0) scale(1)";
+                });
+            }
+        });
+    </script>
 }

@@ -88,6 +88,7 @@ public static class SeedData
         {
             db.ShipmentHistories.RemoveRange(db.ShipmentHistories);
             db.Shipments.RemoveRange(db.Shipments);
+            db.PaymentHistories.RemoveRange(db.PaymentHistories);
             db.OrderStatusHistories.RemoveRange(db.OrderStatusHistories);
             db.OrderItems.RemoveRange(db.OrderItems);
             db.Orders.RemoveRange(db.Orders);

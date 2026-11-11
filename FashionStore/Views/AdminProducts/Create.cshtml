@@ -1,113 +1,135 @@
-﻿@model FashionStore.Models.ViewModels.AdminProductViewModel
+@model FashionStore.Models.ViewModels.AdminProductViewModel
 
 @{
-    ViewData["Title"] = "Thêm sản phẩm";
+    ViewData["Title"] = "Thêm sản phẩm mới";
 }
 
-<section class="container py-5">
-    <div class="mb-4">
-        <a asp-action="Index" class="text-muted text-decoration-none">
-            ← Quay lại danh sách
-        </a>
-        <h1 class="mt-3" style="font-family:'Playfair Display',serif;">
-            Thêm sản phẩm mới
-        </h1>
+<div class="mb-4">
+    <a asp-action="Index" class="adm-btn-outline py-1 px-3 mb-3 d-inline-flex" style="font-size: 0.8rem;">
+        <i class="bi bi-arrow-left"></i>
+        <span>Quay lại Showroom</span>
+    </a>
+
+    <div class="d-flex align-items-center gap-2 mb-1">
+        <span style="font-size: 0.68rem; font-weight: 700; letter-spacing: 0.28em; color: var(--adm-gold); text-transform: uppercase;">
+            ATELIER PRODUCT STUDIO
+        </span>
+        <span style="width: 4px; height: 4px; border-radius: 50%; background: var(--adm-gold);"></span>
+        <span class="text-muted small">NEW ITEM CREATION</span>
     </div>
+    <h2 class="fw-bold mb-0 adm-heading" style="letter-spacing: -0.02em;">Thêm Sản phẩm Mới</h2>
+</div>
 
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger">@TempData["Error"]</div>
-    }
+<form asp-action="Create" method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
 
-    <div class="border p-4">
-        <form asp-action="Create" method="post" enctype="multipart/form-data">
-            @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4"></div>
 
-            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="row g-4">
+        <!-- LEFT COLUMN: MAIN SPECS -->
+        <div class="col-lg-8">
+            <div class="adm-form-card mb-4">
+                <h5 class="fw-bold mb-3 adm-heading">Thông tin Sản phẩm</h5>
 
-            <div class="row g-4">
-                <div class="col-md-8">
-                    <div class="mb-3">
-                        <label asp-for="Name" class="form-label">Tên sản phẩm</label>
-                        <input asp-for="Name" class="form-control" />
-                        <span asp-validation-for="Name" class="text-danger"></span>
+                <div class="mb-3">
+                    <label asp-for="Name" class="adm-form-label">Tên sản phẩm *</label>
+                    <input asp-for="Name" class="form-control adm-input-dark" placeholder="Ví dụ: Heavyweight Boxy Hoodie, Atelier Wool Coat..." />
+                    <span asp-validation-for="Name" class="text-danger small mt-1 d-block"></span>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Price" class="adm-form-label">Giá bán niêm yết (VNĐ) *</label>
+                        <div class="input-group">
+                            <!-- FIXED: step="1" allows values like 299900 without browser constraint errors -->
+                            <input asp-for="Price" type="number" min="1" step="1"
+                                   class="form-control adm-input-dark" placeholder="299900" />
+                            <span class="input-group-text border-start-0" style="background: var(--adm-surface); border-color: var(--adm-border); color: var(--adm-gold); font-weight: 600;">
+                                ₫
+                            </span>
+                        </div>
+                        <span asp-validation-for="Price" class="text-danger small mt-1 d-block"></span>
                     </div>
 
-                    <div class="mb-3">
-                        <label asp-for="Description" class="form-label">Mô tả</label>
-                        <textarea asp-for="Description" class="form-control"
-                                  rows="6"></textarea>
-                        <span asp-validation-for="Description" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Price" class="form-label">Giá bán (VNĐ)</label>
-                        <input asp-for="Price" type="number" min="1" step="1000"
-                               class="form-control" />
-                        <span asp-validation-for="Price" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="CategoryId" class="form-label">Danh mục</label>
-                        <select asp-for="CategoryId" class="form-select"
+                    <div class="col-md-6">
+                        <label asp-for="CategoryId" class="adm-form-label">Bộ sưu tập / Danh mục *</label>
+                        <select asp-for="CategoryId" class="form-select adm-input-dark"
                                 asp-items="@(new SelectList(ViewBag.Categories, "Id", "Name"))">
                             <option value="">-- Chọn danh mục --</option>
                         </select>
-                        <span asp-validation-for="CategoryId" class="text-danger"></span>
+                        <span asp-validation-for="CategoryId" class="text-danger small mt-1 d-block"></span>
                     </div>
                 </div>
 
-                <div class="col-md-4">
-                    <div class="mb-3">
-                        <label asp-for="ImageFile" class="form-label">Ảnh sản phẩm</label>
-                        <input asp-for="ImageFile" type="file"
-                               class="form-control" accept=".jpg,.jpeg,.png,.webp" />
-                        <span asp-validation-for="ImageFile" class="text-danger"></span>
-                        <small class="text-muted">JPG, PNG, WEBP. Tối đa 5 MB.</small>
+                <div class="mb-0">
+                    <label asp-for="Description" class="adm-form-label">Mô tả & Câu chuyện sản phẩm</label>
+                    <textarea asp-for="Description" class="form-control adm-input-dark" rows="7"
+                              placeholder="Chi tiết chất liệu (Cotton 100%, GSM 380), phom dáng (Oversized Boxy Fit), kỹ thuật dệt may thủ công..."></textarea>
+                    <span asp-validation-for="Description" class="text-danger small mt-1 d-block"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: MEDIA & STATUS -->
+        <div class="col-lg-4">
+            <div class="adm-form-card mb-4">
+                <h5 class="fw-bold mb-3 adm-heading">Hình ảnh & Trạng thái</h5>
+
+                <div class="mb-3">
+                    <label class="adm-form-label" id="imgLabel">Ảnh đại diện sản phẩm *</label>
+
+                    <!-- FIXED: Keyboard accessible label with tabindex="0", focus-visible outline and Enter/Space support -->
+                    <label for="ImageFile" tabindex="0" role="button" aria-labelledby="imgLabel"
+                           class="adm-img-preview-box mb-2" id="imageUploadBox"
+                           onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();document.getElementById('ImageFile').click();}">
+                        <img id="imagePreview" src="#" alt="Xem trước" class="d-none" />
+                        <div id="imagePlaceholder" class="text-center p-3">
+                            <i class="bi bi-cloud-arrow-up fs-2" style="color: var(--adm-gold);"></i>
+                            <div class="small fw-semibold mt-2 adm-heading">Chọn ảnh từ máy (Nhấn Enter)</div>
+                            <div class="text-muted" style="font-size: 0.72rem;">Hỗ trợ JPG, PNG, WEBP (Tối đa 5MB)</div>
+                        </div>
+                    </label>
+
+                    <input asp-for="ImageFile" type="file" id="ImageFile" class="visually-hidden"
+                           accept=".jpg,.jpeg,.png,.webp"
+                           onchange="previewAdmImage(this, 'imagePreview', 'imagePlaceholder')" />
+
+                    <div class="d-flex align-items-center justify-content-between mt-1">
+                        <button type="button" class="btn btn-sm adm-btn-outline py-1 px-3" onclick="document.getElementById('ImageFile').click()">
+                            <i class="bi bi-folder2-open me-1"></i> Duyệt tệp...
+                        </button>
+                        <span class="text-muted small" style="font-size: 0.72rem;">Bắt buộc</span>
                     </div>
 
-                    <img id="imagePreview" src="#"
-                         alt="Xem trước ảnh"
-                         style="display:none;width:100%;max-height:350px;object-fit:contain;"
-                         class="mt-3 border p-2" />
+                    <span asp-validation-for="ImageFile" class="text-danger small mt-1 d-block"></span>
+                </div>
 
-                    <div class="form-check mt-4">
-                        <input asp-for="IsActive" class="form-check-input" />
-                        <label asp-for="IsActive" class="form-check-label">
-                            Hiển thị sản phẩm
+                <div class="pt-3 border-top border-secondary border-opacity-10">
+                    <div class="form-check form-switch d-flex align-items-center justify-content-between p-0 mb-0">
+                        <label class="form-check-label fw-semibold adm-heading" for="IsActive" style="cursor: pointer;">
+                            Hiển thị trên Shop
+                            <div class="text-muted fw-normal" style="font-size: 0.75rem;">Cho phép khách hàng xem và đặt mua</div>
                         </label>
+                        <input asp-for="IsActive" class="form-check-input ms-3" type="checkbox" role="switch" id="IsActive" checked style="cursor: pointer; width: 2.5em; height: 1.3em;" />
                     </div>
                 </div>
             </div>
 
-            <hr />
-
-            <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-dark px-4">
-                    Lưu sản phẩm
+            <!-- ACTIONS -->
+            <div class="d-flex flex-column gap-2">
+                <button type="submit" class="btn adm-btn-atelier py-2 justify-content-center w-100">
+                    <i class="bi bi-check2-circle"></i>
+                    <span>Tạo và tiếp tục tạo Size</span>
                 </button>
-                <a asp-action="Index" class="btn btn-outline-secondary">
-                    Hủy
+
+                <a asp-action="Index" class="btn adm-btn-outline py-2 justify-content-center w-100">
+                    Hủy thao tác
                 </a>
             </div>
-        </form>
+        </div>
     </div>
-</section>
+</form>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-
-    <script>
-        document.getElementById("ImageFile").addEventListener("change", function(event) {
-            const file = event.target.files[0];
-            const preview = document.getElementById("imagePreview");
-
-            if (file) {
-                preview.src = URL.createObjectURL(file);
-                preview.style.display = "block";
-            } else {
-                preview.style.display = "none";
-            }
-        });
-    </script>
 }

@@ -2,7 +2,7 @@
 @using FashionStore.Models.Enums
 
 @{
-    ViewData["Title"] = "Quản lý vận chuyển & giao hàng";
+    ViewData["Title"] = "Điều phối Vận chuyển";
     var selectedStatus = ViewBag.SelectedStatus as ShipmentStatus?;
     var search = ViewBag.Search as string;
 
@@ -16,153 +16,189 @@
         ShipmentStatus.Returned => "Đã hoàn kho",
         _ => status.ToString()
     };
-
-    string GetStatusBadgeClass(ShipmentStatus status) => status switch
-    {
-        ShipmentStatus.Assigned => "bg-secondary",
-        ShipmentStatus.PickedUp => "bg-info text-dark",
-        ShipmentStatus.InTransit => "bg-primary",
-        ShipmentStatus.Delivered => "bg-success",
-        ShipmentStatus.Failed => "bg-danger",
-        ShipmentStatus.Returned => "bg-dark",
-        _ => "bg-light text-dark"
-    };
 }
 
-<div class="container-fluid px-0">
-    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
-        <div>
-            <div class="text-muted small text-uppercase">Vận chuyển</div>
-            <h2 class="fw-bold mb-0">Quản lý giao hàng</h2>
-            <p class="text-muted mb-0">Theo dõi các lượt giao hàng, phân công và kiểm soát shipper.</p>
+<!-- HEADER -->
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div>
+        <div class="d-flex align-items-center gap-2 mb-1">
+            <span style="font-size: 0.68rem; font-weight: 700; letter-spacing: 0.28em; color: var(--adm-gold); text-transform: uppercase;">
+                LOGISTICS & DISPATCH COMMAND
+            </span>
+            <span style="width: 4px; height: 4px; border-radius: 50%; background: var(--adm-gold);"></span>
+            <span class="text-muted small">@Model.Count VẬN ĐƠN</span>
         </div>
+        <h2 class="fw-bold mb-0 adm-heading" style="letter-spacing: -0.02em;">Bảng Điều phối Giao hàng</h2>
     </div>
 
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle me-2"></i>@TempData["Success"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    }
-
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="bi bi-exclamation-triangle me-2"></i>@TempData["Error"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    }
-
-    <!-- BỘ LỌC VÀ TÌM KIẾM -->
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body">
-            <form asp-action="Index" method="get" class="row g-3">
-                <div class="col-md-4">
-                    <input type="text" name="search" value="@search" class="form-control"
-                           placeholder="Mã vận đơn, mã đơn, khách, shipper..." />
-                </div>
-
-                <div class="col-md-4">
-                    <select name="status" class="form-select">
-                        <option value="">Tất cả trạng thái vận chuyển</option>
-                        @foreach (ShipmentStatus st in Enum.GetValues(typeof(ShipmentStatus)))
-                        {
-                            if (selectedStatus == st)
-                            {
-                                <option value="@((int)st)" selected>@GetShipmentStatusName(st)</option>
-                            }
-                            else
-                            {
-                                <option value="@((int)st)">@GetShipmentStatusName(st)</option>
-                            }
-                        }
-                    </select>
-                </div>
-
-                <div class="col-md-4 d-flex gap-2">
-                    <button type="submit" class="btn btn-dark">
-                        <i class="bi bi-search me-1"></i> Tìm kiếm
-                    </button>
-                    <a asp-action="Index" class="btn btn-outline-secondary">Đặt lại</a>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- DANH SÁCH VẬN ĐƠN -->
-    @if (!Model.Any())
-    {
-        <div class="card border-0 shadow-sm text-center py-5">
-            <div class="py-4">
-                <i class="bi bi-truck text-muted" style="font-size: 3rem;"></i>
-                <h5 class="mt-3">Chưa có lượt giao hàng nào</h5>
-                <p class="text-muted">Các lượt giao sẽ hiển thị ở đây khi bạn phân công Shipper từ trang Chi tiết đơn hàng.</p>
-                <a asp-controller="AdminOrders" asp-action="Index" class="btn btn-outline-dark">
-                    Xem danh sách đơn hàng
-                </a>
-            </div>
-        </div>
-    }
-    else
-    {
-        <div class="card border-0 shadow-sm">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th class="ps-3">Mã vận đơn</th>
-                            <th>Mã đơn hàng</th>
-                            <th>Shipper</th>
-                            <th>Người nhận & Địa chỉ</th>
-                            <th>Tiền COD</th>
-                            <th>Trạng thái</th>
-                            <th>Ngày tạo</th>
-                            <th class="text-end pe-3">Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
-                            <tr>
-                                <td class="ps-3 fw-bold text-primary">@item.TrackingCode</td>
-                                <td>
-                                    <a asp-controller="AdminOrders" asp-action="Details" asp-route-id="@item.OrderId" class="text-decoration-none fw-semibold">
-                                        @item.Order?.OrderCode
-                                    </a>
-                                </td>
-                                <td>
-                                    <div class="fw-semibold">@(item.Shipper?.FullName ?? "Chưa chỉ định")</div>
-                                    <small class="text-muted">@(item.Shipper?.PhoneNumber ?? "")</small>
-                                </td>
-                                <td>
-                                    <div class="fw-semibold">@item.Order?.ReceiverName</div>
-                                    <div class="small text-muted text-truncate" style="max-width: 200px;" title="@item.Order?.Address">
-                                        @item.Order?.Address
-                                    </div>
-                                    <small class="text-muted">ĐT: @item.Order?.Phone</small>
-                                </td>
-                                <td class="fw-semibold text-danger">
-                                    @(item.CODAmount > 0 ? item.CODAmount.ToString("N0") + " đ" : "0 đ (Đã thanh toán)")
-                                </td>
-                                <td>
-                                    <span class="badge @GetStatusBadgeClass(item.Status)">
-                                        @GetShipmentStatusName(item.Status)
-                                    </span>
-                                </td>
-                                <td class="small text-muted">
-                                    @item.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
-                                </td>
-                                <td class="text-end pe-3">
-                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-dark">
-                                        Chi tiết
-                                    </a>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    }
+    <a asp-controller="AdminOrders" asp-action="Index" class="adm-btn-outline py-2 px-3">
+        <i class="bi bi-receipt me-1"></i>
+        <span>Xem hàng đợi Đơn hàng</span>
+    </a>
 </div>
+
+<!-- STATUS TABS -->
+<div class="adm-tabs">
+    <a asp-action="Index" class="adm-tab-item @(selectedStatus == null ? "active" : "")">
+        Tất cả vận đơn (@Model.Count)
+    </a>
+    <a asp-action="Index" asp-route-status="@((int)ShipmentStatus.Assigned)" 
+       class="adm-tab-item @(selectedStatus == ShipmentStatus.Assigned ? "active" : "")">
+        Chờ lấy hàng
+    </a>
+    <a asp-action="Index" asp-route-status="@((int)ShipmentStatus.InTransit)" 
+       class="adm-tab-item @(selectedStatus == ShipmentStatus.InTransit ? "active" : "")">
+        <i class="bi bi-truck me-1" style="color: var(--adm-cyan);"></i> Đang giao
+    </a>
+    <a asp-action="Index" asp-route-status="@((int)ShipmentStatus.Delivered)" 
+       class="adm-tab-item @(selectedStatus == ShipmentStatus.Delivered ? "active" : "")">
+        <i class="bi bi-check-circle me-1" style="color: var(--adm-emerald);"></i> Giao thành công
+    </a>
+    <a asp-action="Index" asp-route-status="@((int)ShipmentStatus.Failed)" 
+       class="adm-tab-item @(selectedStatus == ShipmentStatus.Failed ? "active" : "")">
+        <i class="bi bi-x-circle me-1" style="color: var(--adm-crimson);"></i> Giao thất bại
+    </a>
+    <a asp-action="Index" asp-route-status="@((int)ShipmentStatus.Returned)" 
+       class="adm-tab-item @(selectedStatus == ShipmentStatus.Returned ? "active" : "")">
+        <i class="bi bi-arrow-return-left me-1" style="color: var(--adm-ink-muted);"></i> Đã hoàn kho
+    </a>
+</div>
+
+<!-- FILTER BAR -->
+<div class="adm-filter-bar mb-4">
+    <form asp-action="Index" method="get" class="row g-2 align-items-center">
+        <div class="col-md-5">
+            <div class="input-group">
+                <span class="input-group-text border-end-0" style="background: var(--adm-surface); border-color: var(--adm-border); color: var(--adm-ink-muted);">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="text" name="search" value="@search"
+                       class="form-control adm-input-dark border-start-0" 
+                       placeholder="Tìm mã vận đơn, mã đơn, tên shipper, SĐT..." />
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <select name="status" class="form-select adm-input-dark">
+                <option value="">Tất cả trạng thái vận chuyển</option>
+                @foreach (ShipmentStatus st in Enum.GetValues(typeof(ShipmentStatus)))
+                {
+                    <option value="@((int)st)" selected="@(selectedStatus == st)">@GetShipmentStatusName(st)</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-3 d-flex gap-2">
+            <button type="submit" class="btn adm-btn-atelier py-2 px-3">
+                <i class="bi bi-funnel"></i> Lọc
+            </button>
+
+            <a asp-action="Index" class="btn adm-btn-outline py-2 px-3" title="Đặt lại bộ lọc">
+                <i class="bi bi-arrow-counterclockwise"></i>
+            </a>
+        </div>
+    </form>
+</div>
+
+<!-- SHIPMENTS TABLE -->
+@if (!Model.Any())
+{
+    <div class="adm-card text-center py-5">
+        <i class="bi bi-truck fs-1 text-muted d-block mb-3"></i>
+        <h5 class="fw-bold adm-heading">Chưa có vận đơn nào phù hợp</h5>
+        <p class="text-muted small">Hãy chuyển sang danh sách Đơn hàng để tạo lượt phân công giao hàng cho Shipper.</p>
+        <a asp-controller="AdminOrders" asp-action="Index" class="btn adm-btn-atelier mt-2">
+            <i class="bi bi-receipt me-1"></i> Xem danh sách đơn cần giao
+        </a>
+    </div>
+}
+else
+{
+    <div class="adm-card p-0 overflow-hidden mb-4">
+        <div class="table-responsive">
+            <table class="adm-table mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">MÃ VẬN ĐƠN</th>
+                        <th>ĐƠN HÀNG</th>
+                        <th>SHIPPER PHỤ TRÁCH</th>
+                        <th>TIỀN THU (COD)</th>
+                        <th>TRẠNG THÁI</th>
+                        <th>NGÀY TẠO</th>
+                        <th class="text-end pe-4">THAO TÁC</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var sh in Model)
+                    {
+                        <tr>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center gap-1">
+                                    <span class="font-monospace fw-bold" style="color: var(--adm-cyan); font-size: 0.88rem;">@sh.TrackingCode</span>
+                                    <button type="button" class="btn btn-sm p-0 text-muted" onclick="copyAdmText(this, '@sh.TrackingCode')" title="Sao chép mã vận đơn">
+                                        <i class="bi bi-copy" style="font-size: 0.75rem;"></i>
+                                    </button>
+                                </div>
+                            </td>
+                            <td>
+                                <a asp-controller="AdminOrders" asp-action="Details" asp-route-id="@sh.OrderId" 
+                                   class="font-monospace fw-semibold text-decoration-none adm-heading" title="Xem chi tiết đơn hàng">
+                                    @sh.Order?.OrderCode
+                                </a>
+                                <div class="text-muted small">@sh.Order?.ReceiverName</div>
+                            </td>
+                            <td>
+                                <div class="fw-bold adm-heading">@(sh.Shipper?.FullName ?? "Chưa phân công")</div>
+                                <div class="text-muted small font-monospace">@(sh.Shipper?.PhoneNumber ?? "")</div>
+                            </td>
+                            <td>
+                                @if (sh.CODAmount > 0)
+                                {
+                                    <div class="fw-bold text-danger">@sh.CODAmount.ToString("N0") ₫</div>
+                                    <span class="badge" style="background: rgba(225, 29, 72, 0.1); color: #be123c; font-size: 0.68rem;">Thu tiền mặt</span>
+                                }
+                                else
+                                {
+                                    <span class="fw-bold text-success">0 ₫</span>
+                                    <div class="text-muted" style="font-size: 0.72rem;">Đã thanh toán trước</div>
+                                }
+                            </td>
+                            <td>
+                                @switch (sh.Status)
+                                {
+                                    case ShipmentStatus.Assigned:
+                                        <span class="adm-pill adm-pill-faint">Đã giao Shipper</span>
+                                        break;
+                                    case ShipmentStatus.PickedUp:
+                                    case ShipmentStatus.InTransit:
+                                        <span class="adm-pill adm-pill-blue">Đang giao hàng</span>
+                                        break;
+                                    case ShipmentStatus.Delivered:
+                                        <span class="adm-pill adm-pill-emerald">Giao thành công</span>
+                                        break;
+                                    case ShipmentStatus.Failed:
+                                    case ShipmentStatus.Returned:
+                                        <span class="adm-pill adm-pill-rose">Thất bại / Hoàn</span>
+                                        break;
+                                    default:
+                                        <span class="adm-pill adm-pill-faint">@sh.Status</span>
+                                        break;
+                                }
+                            </td>
+                            <td>
+                                <div class="adm-text-contrast small">@sh.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")</div>
+                                <div class="text-muted font-monospace" style="font-size: 0.72rem;">@sh.CreatedAt.ToLocalTime().ToString("HH:mm")</div>
+                            </td>
+                            <td class="text-end pe-4">
+                                <a asp-action="Details" asp-route-id="@sh.Id"
+                                   class="btn btn-sm adm-btn-outline py-1 px-3" style="font-size: 0.78rem;" title="Xem chi tiết vận đơn">
+                                    Chi tiết <i class="bi bi-chevron-right ms-1"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
