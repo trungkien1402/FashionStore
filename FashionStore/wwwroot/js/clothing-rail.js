@@ -169,7 +169,7 @@
             badge: 'SÀO QUẦN // THỜI TRANG ĐỘC BẢN',
             eyebrow: 'BỘ SƯU TẬP QUẦN',
             heroTitle: 'Thời Trang Độc Bản · Nâng Tầm Phong Cách',
-            brandSignature: '<span>Sào Quần</span><span>Thời Trang</span>',
+            brandSignature: '<span>Sào Đồ</span><span>Thời Trang</span>',
             captionHeading: 'Bộ sưu tập quần cao cấp HNMTSHOP.',
             captionDetail: 'Lướt sào hoặc chọn đồ xem chi tiết.',
             products: [
@@ -247,8 +247,8 @@
     let currentRackIdx = 0;
     let products = currentRacks[0].products;
 
-    const photo = (p, variant = 0) => (p.frontImg ? `${p.frontImg}?v=pants_v2` : `/clothing-rail/assets/${p.slug}-${variant ? 'alt' : 'front'}.webp?v=pants_v2`);
-    const sidePhoto = p => (p.sideImg ? `${p.sideImg}?v=pants_v2` : `/clothing-rail/assets/${p.slug}-side.webp?v=pants_v2`);
+    const photo = (p, variant = 0) => (p.frontImg ? `${p.frontImg}?v=pants_v3` : `/clothing-rail/assets/${p.slug}-${variant ? 'alt' : 'front'}.webp?v=pants_v3`);
+    const sidePhoto = p => (p.sideImg ? `${p.sideImg}?v=pants_v3` : `/clothing-rail/assets/${p.slug}-side.webp?v=pants_v3`);
 
     function formatPrice(num) {
         return (num * 10000).toLocaleString('vi-VN') + ' ₫';
