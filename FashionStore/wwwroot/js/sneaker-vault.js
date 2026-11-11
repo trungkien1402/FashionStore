@@ -442,7 +442,7 @@
                 btn.setAttribute('aria-label', 'Tìm kiếm giày');
                 btn.title = 'Tìm đồ nhanh (Phím tắt /)';
                 btn.innerHTML = `
-                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <svg fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                         <circle cx="11" cy="11" r="7"/>
                         <path d="m20 20-4.35-4.35"/>
                     </svg>
