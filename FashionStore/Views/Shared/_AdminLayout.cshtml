@@ -3,290 +3,165 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - HNMTSHOP Admin</title>
 
-    <title>@ViewData["Title"] - FashionStore Admin</title>
+    <!-- Google Fonts & Bootstrap Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet" />
+    <!-- Atelier Admin Theme (Light & Dark Dual Mode) -->
+    <link rel="stylesheet" href="~/css/admin-atelier.css" asp-append-version="true" />
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-          rel="stylesheet" />
-
-    <style>
-        body {
-            margin: 0;
-            background: #f5f6fa;
-            font-family: "Segoe UI", sans-serif;
-        }
-
-        .admin-sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            width: 250px;
-            background: #171717;
-            color: white;
-            padding: 24px 16px;
-            overflow-y: auto;
-            z-index: 1000;
-        }
-
-        .admin-brand {
-            display: block;
-            color: white;
-            text-decoration: none;
-            font-size: 23px;
-            font-weight: 700;
-            padding: 0 12px 28px;
-        }
-
-        .admin-menu-label {
-            color: #929292;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            padding: 15px 12px 8px;
-        }
-
-        .admin-sidebar a.menu-link {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: #c9c9c9;
-            text-decoration: none;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 5px;
-            transition: .2s;
-        }
-
-            .admin-sidebar a.menu-link:hover,
-            .admin-sidebar a.menu-link.active {
-                color: white;
-                background: #343434;
-            }
-
-            .admin-sidebar a.menu-link i {
-                font-size: 18px;
-                width: 22px;
-            }
-
-        .admin-main {
-            margin-left: 250px;
-            min-height: 100vh;
-        }
-
-        .admin-topbar {
-            height: 70px;
-            background: white;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 30px;
-        }
-
-        .admin-content {
-            padding: 30px;
-        }
-
-        .admin-card {
-            background: white;
-            border: 1px solid #eee;
-            border-radius: 12px;
-            padding: 22px;
-            height: 100%;
-        }
-
-        .admin-stat-icon {
-            width: 46px;
-            height: 46px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 10px;
-            font-size: 21px;
-        }
-
-        .admin-table th {
-            color: #777;
-            font-size: 13px;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-
-        .admin-table td {
-            vertical-align: middle;
-        }
-
-        @@media (max-width: 768px) {
-            .admin-sidebar {
-                width: 70px;
-                padding: 20px 8px;
-            }
-
-            .admin-brand {
-                font-size: 0;
-                padding: 10px;
-            }
-
-                .admin-brand::first-letter {
-                    font-size: 23px;
-                }
-
-            .admin-sidebar .menu-text,
-            .admin-menu-label {
-                display: none;
-            }
-
-            .admin-sidebar a.menu-link {
-                justify-content: center;
-            }
-
-                .admin-sidebar a.menu-link i {
-                    width: auto;
-                }
-
-            .admin-main {
-                margin-left: 70px;
-            }
-
-            .admin-content {
-                padding: 15px;
-            }
-
-            .admin-topbar {
-                padding: 0 15px;
-            }
-        }
-    </style>
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 
-<body>
+<body class="adm-body">
 
-    <aside class="admin-sidebar">
-
-        <a asp-controller="Admin"
-           asp-action="Index"
-           class="admin-brand">
-            <i class="bi bi-shop"></i>
-            <span class="menu-text">FASHIONSTORE</span>
+    <!-- SIDEBAR -->
+    <aside class="adm-sidebar" id="admSidebar">
+        <a asp-controller="Admin" asp-action="Index" class="adm-brand">
+            <span class="adm-brand-logo" aria-hidden="true">◆</span>
+            <div>
+                <span class="adm-brand-title">HNMTSHOP</span>
+                <div class="adm-brand-subtitle">Quản trị cửa hàng</div>
+            </div>
         </a>
 
-        <div class="admin-menu-label">TỔNG QUAN</div>
+        <nav class="adm-nav" aria-label="Quản trị cửa hàng">
+            <div class="adm-nav-label">Tổng quan</div>
 
-        <a asp-controller="Admin"
-           asp-action="Index"
-           class="menu-link">
-            <i class="bi bi-grid"></i>
-            <span class="menu-text">Dashboard</span>
-        </a>
+            @{
+                var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+                var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+            }
 
-        <div class="admin-menu-label">QUẢN LÝ CỬA HÀNG</div>
-
-        <a asp-controller="AdminProducts"
-           asp-action="Index"
-           class="menu-link">
-            <i class="bi bi-box-seam"></i>
-            <span class="menu-text">Sản phẩm</span>
-        </a>
-
-        <a asp-controller="AdminCategories"
-           asp-action="Index"
-           class="menu-link">
-            <i class="bi bi-tags"></i>
-            <span class="menu-text">Danh mục</span>
-        </a>
-
-        <a asp-controller="AdminOrders"
-           asp-action="Index"
-           class="menu-link">
-            <i class="bi bi-receipt"></i>
-            <span class="menu-text">Đơn hàng</span>
-        </a>
-
-        <a asp-controller="AdminShipments"
-           asp-action="Index"
-           class="menu-link">
-            <i class="bi bi-truck"></i>
-            <span class="menu-text">Vận chuyển</span>
-        </a>
-
-        @if (User.IsInRole("Shipper"))
-        {
-            <div class="admin-menu-label">SHIPPER</div>
-
-            <a asp-controller="Shipper"
-               asp-action="Index"
-               class="menu-link">
-                <i class="bi bi-bicycle"></i>
-                <span class="menu-text">Giao hàng (Shipper)</span>
+            <a asp-controller="Admin" asp-action="Index"
+               class="adm-nav-link @(currentController == "Admin" && currentAction == "Index" ? "active" : "")">
+                <i class="bi bi-grid-1x2"></i>
+                <span>Dashboard</span>
             </a>
-        }
 
-        <div class="admin-menu-label">HỆ THỐNG</div>
+            <div class="adm-nav-label">Vận hành</div>
 
-        <a asp-controller="Home"
-           asp-action="Index"
-           class="menu-link">
-            <i class="bi bi-house"></i>
-            <span class="menu-text">Xem cửa hàng</span>
-        </a>
+            <a asp-controller="AdminOrders" asp-action="Index"
+               class="adm-nav-link @(currentController == "AdminOrders" ? "active" : "")">
+                <i class="bi bi-receipt-cutoff"></i>
+                <span>Đơn hàng</span>
+            </a>
 
-        <form asp-controller="Account"
-              asp-action="Logout"
-              method="post"
-              class="mt-3">
+            <a asp-controller="AdminProducts" asp-action="Index"
+               class="adm-nav-link @(currentController == "AdminProducts" || currentController == "AdminProductVariants" ? "active" : "")">
+                <i class="bi bi-box-seam"></i>
+                <span>Sản phẩm</span>
+            </a>
 
-            @Html.AntiForgeryToken()
+            <a asp-controller="AdminCategories" asp-action="Index"
+               class="adm-nav-link @(currentController == "AdminCategories" ? "active" : "")">
+                <i class="bi bi-tags"></i>
+                <span>Danh mục</span>
+            </a>
 
-            <button type="submit"
-                    class="menu-link w-100 border-0 text-start"
-                    style="background:transparent;">
-                <i class="bi bi-box-arrow-right"></i>
-                <span class="menu-text">Đăng xuất</span>
-            </button>
-        </form>
+            <a asp-controller="AdminShipments" asp-action="Index"
+               class="adm-nav-link @(currentController == "AdminShipments" ? "active" : "")">
+                <i class="bi bi-truck"></i>
+                <span>Vận chuyển</span>
+            </a>
 
+            @if (User.IsInRole("Shipper"))
+            {
+                <div class="adm-nav-label">Giao nhận</div>
+                <a asp-controller="Shipper" asp-action="Index"
+                   class="adm-nav-link @(currentController == "Shipper" ? "active" : "")">
+                    <i class="bi bi-geo-alt"></i>
+                    <span>Tác vụ Shipper</span>
+                </a>
+            }
+
+        </nav>
+
+        <div class="adm-sidebar-footer">
+            <div class="d-flex align-items-center justify-content-between mb-2 px-2">
+                <div class="d-flex align-items-center gap-2">
+                    <div style="width: 34px; height: 34px; border-radius: 50%; background: var(--adm-surface-hover); border: 1px solid var(--adm-gold); display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: var(--adm-gold); font-weight: 700;">
+                        @(User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "A")
+                    </div>
+                    <div style="line-height: 1.2;">
+                        <div class="adm-text-contrast" style="font-size: 0.82rem; font-weight: 600; max-width: 120px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            @User.Identity?.Name
+                        </div>
+                        <div style="font-size: 0.65rem; color: var(--adm-gold); text-transform: uppercase;">
+                            Tài khoản quản trị
+                        </div>
+                    </div>
+                </div>
+
+                <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn p-0 text-muted" title="Đăng xuất" style="background: none; border: none; font-size: 1.1rem;">
+                        <i class="bi bi-box-arrow-right"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
     </aside>
 
-    <main class="admin-main">
+    <!-- MAIN WRAPPER -->
+    <div class="adm-main-wrap">
 
-        <header class="admin-topbar">
-            <div class="fw-semibold">
-                Hệ thống quản trị
+        <!-- TOPBAR -->
+        <header class="adm-topbar">
+            <div class="d-flex align-items-center gap-3">
+                <button type="button" class="adm-btn-outline d-lg-none p-1 px-2" id="admSidebarToggle"
+                        aria-label="Menu quản trị" aria-controls="admSidebar" aria-expanded="false">
+                    <i class="bi bi-list fs-5"></i>
+                </button>
+
+                <span class="adm-topbar-label">Quản trị cửa hàng</span>
             </div>
 
-            <div class="d-flex align-items-center gap-2">
-                <i class="bi bi-person-circle fs-5"></i>
-                <span>@User.Identity?.Name</span>
+            <div class="d-flex align-items-center gap-3">
+                <!-- THEME SWITCHER (SÁNG / TỐI) -->
+                <button type="button" class="btn adm-btn-outline py-1 px-3" id="admThemeToggle" title="Chuyển đổi giao diện Sáng / Tối">
+                    <i class="bi bi-sun-fill text-warning" id="admThemeIcon"></i>
+                    <span class="d-none d-sm-inline" id="admThemeText">Chế độ Sáng</span>
+                </button>
+
+                <a asp-controller="Home" asp-action="Index" class="adm-btn-outline" aria-label="Xem cửa hàng">
+                    <span class="d-none d-sm-inline">Xem cửa hàng</span>
+                    <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
+                </a>
             </div>
         </header>
 
-        <div class="admin-content">
-
+        <!-- CONTENT BODY -->
+        <main class="adm-content-body">
             @if (TempData["Success"] != null)
             {
-                <div class="alert alert-success alert-dismissible fade show">
+                <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm" style="background: rgba(16, 185, 129, 0.12); color: #059669; border: 1px solid rgba(16, 185, 129, 0.25) !important;">
+                    <i class="bi bi-check-circle-fill me-2"></i>
                     @TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
 
-                    <button type="button"
-                            class="btn-close"
-                            data-bs-dismiss="alert">
-                    </button>
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm" style="background: rgba(244, 63, 94, 0.12); color: #e11d48; border: 1px solid rgba(244, 63, 94, 0.25) !important;">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             }
 
             @RenderBody()
+        </main>
+    </div>
 
-        </div>
-
-    </main>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/admin-atelier.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
-
 </body>
 </html>

@@ -1,105 +1,172 @@
-﻿@model List<FashionStore.Models.Entities.ProductVariant>
+@model List<FashionStore.Models.Entities.ProductVariant>
 
 @{
-    ViewData["Title"] = "Quản lý biến thể";
+    ViewData["Title"] = "Quản lý biến thể sản phẩm";
     var product = ViewBag.Product as FashionStore.Models.Entities.Product;
+    var totalStock = Model?.Sum(x => x.StockQuantity) ?? 0;
+    var outOfStockCount = Model?.Count(x => x.StockQuantity == 0) ?? 0;
+    var lowStockCount = Model?.Count(x => x.StockQuantity > 0 && x.StockQuantity <= 5) ?? 0;
 }
 
-<section class="container py-5">
-    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
-        <div>
-            <div class="text-muted small text-uppercase mb-2">Quản lý sản phẩm</div>
-            <h1 style="font-family:'Playfair Display',serif;">
-                Biến thể sản phẩm
-            </h1>
-            <p class="text-muted mb-0">
-                Sản phẩm: <strong>@product?.Name</strong>
-            </p>
+<!-- HEADER -->
+<div class="mb-4">
+    <a asp-controller="AdminProducts" asp-action="Index" class="adm-btn-outline py-1 px-3 mb-3 d-inline-flex" style="font-size: 0.8rem;">
+        <i class="bi bi-arrow-left"></i>
+        <span>Quay lại Showroom Sản phẩm</span>
+    </a>
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <div class="d-flex align-items-center gap-3">
+            @if (product != null && !string.IsNullOrWhiteSpace(product.ImageUrl))
+            {
+                <img src="@product.ImageUrl" alt="@product.Name"
+                     style="width: 54px; height: 64px; object-fit: cover; border-radius: 8px; border: 1px solid var(--adm-border);"
+                     onerror="this.src='/images/placeholder-product.png'" />
+            }
+            <div>
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <span style="font-size: 0.68rem; font-weight: 700; letter-spacing: 0.28em; color: var(--adm-gold); text-transform: uppercase;">
+                        PRODUCT VARIANTS & INVENTORY
+                    </span>
+                    <span style="width: 4px; height: 4px; border-radius: 50%; background: var(--adm-gold);"></span>
+                    <span class="text-muted small">@product?.Category?.Name</span>
+                </div>
+                <h2 class="fw-bold mb-0 adm-heading" style="letter-spacing: -0.02em;">@product?.Name</h2>
+            </div>
         </div>
 
-        <div class="d-flex gap-2">
-            <a asp-controller="AdminProducts" asp-action="Index"
-               class="btn btn-outline-dark">Quay lại</a>
+        <a asp-action="Create" asp-route-productId="@product?.Id" class="adm-btn-atelier">
+            <i class="bi bi-plus-lg"></i>
+            <span>Thêm biến thể mới</span>
+        </a>
+    </div>
+</div>
 
-            <a asp-action="Create" asp-route-productId="@product?.Id"
-               class="btn btn-dark">+ Thêm biến thể</a>
+<!-- INVENTORY SUMMARY TILES -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="adm-card p-3">
+            <div class="text-muted small text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.1em;">Tổng biến thể</div>
+            <div class="fs-4 fw-bold adm-heading mt-1">@(Model?.Count ?? 0) <span class="fs-6 text-muted font-normal">mã</span></div>
         </div>
     </div>
-
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success">@TempData["Success"]</div>
-    }
-
-    @if (!Model.Any())
-    {
-        <div class="border p-5 text-center">
-            <h5>Sản phẩm chưa có biến thể</h5>
-            <p class="text-muted">Hãy thêm Size, màu sắc và số lượng tồn kho.</p>
+    <div class="col-6 col-md-3">
+        <div class="adm-card p-3">
+            <div class="text-muted small text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.1em;">Tổng tồn kho</div>
+            <div class="fs-4 fw-bold mt-1" style="color: var(--adm-gold);">@totalStock <span class="fs-6 text-muted font-normal">sản phẩm</span></div>
         </div>
-    }
-    else
-    {
-        <div class="table-responsive border">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="adm-card p-3">
+            <div class="text-muted small text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.1em;">Sắp hết hàng (&le;5)</div>
+            <div class="fs-4 fw-bold text-warning mt-1">@lowStockCount <span class="fs-6 text-muted font-normal">mã</span></div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="adm-card p-3">
+            <div class="text-muted small text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.1em;">Hết hàng (0)</div>
+            <div class="fs-4 fw-bold text-danger mt-1">@outOfStockCount <span class="fs-6 text-muted font-normal">mã</span></div>
+        </div>
+    </div>
+</div>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="adm-card text-center py-5">
+        <i class="bi bi-layers fs-1 text-muted d-block mb-3"></i>
+        <h5 class="fw-bold adm-heading">Sản phẩm chưa có Size hay Màu sắc</h5>
+        <p class="text-muted small">Hãy thêm ít nhất một biến thể (Size, Màu sắc, Mã SKU và Số lượng tồn kho) để khách có thể đặt mua.</p>
+        <a asp-action="Create" asp-route-productId="@product?.Id" class="btn adm-btn-atelier mt-2">
+            <i class="bi bi-plus-lg me-1"></i> Thêm biến thể đầu tiên
+        </a>
+    </div>
+}
+else
+{
+    <div class="adm-card p-0 overflow-hidden">
+        <div class="table-responsive">
+            <table class="adm-table mb-0">
+                <thead>
                     <tr>
-                        <th class="ps-3">SKU</th>
-                        <th>Size</th>
-                        <th>Màu sắc</th>
-                        <th>Giá</th>
-                        <th>Tồn kho</th>
-                        <th>Trạng thái</th>
-                        <th class="text-end pe-3">Thao tác</th>
+                        <th class="ps-4">MÃ SKU</th>
+                        <th>KÍCH THƯỚC (SIZE)</th>
+                        <th>MÀU SẮC</th>
+                        <th>GIÁ BIẾN THỂ</th>
+                        <th>TỒN KHO</th>
+                        <th>TRẠNG THÁI</th>
+                        <th class="text-end pe-4">THAO TÁC</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in Model)
                     {
                         <tr>
-                            <td class="ps-3 fw-semibold">@item.SKU</td>
-                            <td>@item.Size</td>
-                            <td>@item.Color</td>
-                            <td>@item.Price.ToString("N0") đ</td>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center gap-1">
+                                    <span class="font-monospace fw-bold adm-heading" style="font-size: 0.85rem;">@item.SKU</span>
+                                    <button type="button" class="btn btn-sm p-0 text-muted" onclick="copyAdmText(this, '@item.SKU')" title="Sao chép SKU">
+                                        <i class="bi bi-copy" style="font-size: 0.72rem;"></i>
+                                    </button>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge" style="background: var(--adm-surface-hover); color: var(--adm-ink); border: 1px solid var(--adm-border); font-size: 0.82rem; padding: 5px 10px;">
+                                    @item.Size
+                                </span>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span style="width: 12px; height: 12px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.2); background: @((item.Color ?? "").ToLower() switch { "đen" => "#111", "trắng" => "#fcfcfc", "đỏ" => "#dc2626", "xanh" => "#2563eb", "be" => "#f5f5dc", "nâu" => "#854d0e", "hồng" => "#f472b6", _ => "#94a3b8" });"></span>
+                                    <span class="fw-medium adm-heading">@item.Color</span>
+                                </div>
+                            </td>
+                            <td class="fw-bold" style="color: var(--adm-gold);">
+                                @item.Price.ToString("N0") ₫
+                            </td>
                             <td>
                                 @if (item.StockQuantity == 0)
                                 {
-                                    <span class="text-danger fw-semibold">Hết hàng</span>
+                                    <span class="badge bg-danger bg-opacity-75 text-white">Hết hàng</span>
+                                }
+                                else if (item.StockQuantity <= 5)
+                                {
+                                    <span class="badge bg-warning text-dark">Còn @item.StockQuantity cái</span>
                                 }
                                 else
                                 {
-                                    <span>@item.StockQuantity</span>
+                                    <span class="adm-heading fw-bold font-monospace">@item.StockQuantity</span>
                                 }
                             </td>
                             <td>
                                 @if (item.IsActive)
                                 {
-                                    <span class="badge bg-success">Đang bán</span>
+                                    <span class="adm-pill adm-pill-emerald">Đang bán</span>
                                 }
                                 else
                                 {
-                                    <span class="badge bg-secondary">Đã ẩn</span>
+                                    <span class="adm-pill adm-pill-faint">Đã ẩn</span>
                                 }
                             </td>
-                            <td class="text-end pe-3">
-                                <a asp-action="Edit" asp-route-id="@item.Id"
-                                   class="btn btn-sm btn-outline-dark">Sửa</a>
+                            <td class="text-end pe-4">
+                                <div class="d-inline-flex gap-1">
+                                    <a asp-action="Edit" asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem;" title="Sửa biến thể">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
 
-                                <form asp-action="ToggleActive"
-                                      asp-route-id="@item.Id"
-                                      method="post" class="d-inline">
-                                    @Html.AntiForgeryToken()
-
-                                    <button type="submit"
-                                            class="btn btn-sm btn-outline-secondary">
-                                        @(item.IsActive ? "Ẩn" : "Hiện")
-                                    </button>
-                                </form>
+                                    <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline"
+                                          onsubmit="return confirm('Bạn có chắc chắn muốn xóa biến thể @item.SKU?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-outline-danger py-1 px-2" style="font-size: 0.75rem;" title="Xóa">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     }
                 </tbody>
             </table>
         </div>
-    }
-</section>
+    </div>
+}

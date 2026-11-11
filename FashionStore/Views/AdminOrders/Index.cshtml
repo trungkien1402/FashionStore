@@ -2,166 +2,204 @@
 @using FashionStore.Models.Enums
 
 @{
-    ViewData["Title"] = "Quản lý đơn hàng";
+    ViewData["Title"] = "Hàng đợi Đơn hàng";
     var selectedStatus = ViewBag.SelectedStatus as OrderStatus?;
-
-    string GetStatusName(OrderStatus status) => status switch
-    {
-        OrderStatus.PendingConfirmation => "Chờ xác nhận",
-        OrderStatus.Confirmed => "Đã xác nhận",
-        OrderStatus.Processing => "Đang xử lý",
-        OrderStatus.Shipping => "Đang giao",
-        OrderStatus.Delivered => "Đã giao",
-        OrderStatus.Cancelled => "Đã hủy",
-        OrderStatus.DeliveryFailed => "Giao thất bại",
-        OrderStatus.Returned => "Đã hoàn hàng",
-        _ => status.ToString()
-    };
-
-    string GetStatusBadge(OrderStatus status) => status switch
-    {
-        OrderStatus.PendingConfirmation => "bg-warning text-dark",
-        OrderStatus.Confirmed => "bg-info text-dark",
-        OrderStatus.Processing => "bg-primary",
-        OrderStatus.Shipping => "bg-primary",
-        OrderStatus.Delivered => "bg-success",
-        OrderStatus.Cancelled => "bg-danger",
-        OrderStatus.DeliveryFailed => "bg-danger",
-        OrderStatus.Returned => "bg-secondary",
-        _ => "bg-light text-dark"
-    };
+    var pendingCount = Model.Count(o => o.Status == OrderStatus.PendingConfirmation);
 }
 
-<div class="container-fluid px-0">
-    <div class="mb-4">
-        <div class="text-muted small text-uppercase mb-1">Administration</div>
-        <h2 class="fw-bold mb-1">Quản lý đơn hàng</h2>
-        <p class="text-muted mb-0">Theo dõi, duyệt đơn và điều phối xử lý đơn hàng của cửa hàng.</p>
+<!-- HEADER -->
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div>
+        <div class="d-flex align-items-center gap-2 mb-1">
+            <span style="font-size: 0.68rem; font-weight: 700; letter-spacing: 0.28em; color: var(--adm-gold); text-transform: uppercase;">
+                ORDER FULFILLMENT & DISPATCH
+            </span>
+            <span style="width: 4px; height: 4px; border-radius: 50%; background: var(--adm-gold);"></span>
+            <span class="text-muted small">@Model.Count ĐƠN HÀNG</span>
+        </div>
+        <h2 class="fw-bold mb-0 adm-heading" style="letter-spacing: -0.02em;">Hàng đợi Xử lý Đơn hàng</h2>
     </div>
 
-    @if (TempData["Success"] != null)
+    @if (pendingCount > 0)
     {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle me-2"></i>@TempData["Success"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+        <a asp-action="Index" asp-route-status="@((int)OrderStatus.PendingConfirmation)" 
+           class="adm-card p-2 px-3 d-flex align-items-center gap-2 text-decoration-none border-warning" 
+           style="background: rgba(217, 119, 6, 0.08); border-color: rgba(217, 119, 6, 0.3) !important;">
+            <span class="adm-pulse-dot" style="background: var(--adm-amber); box-shadow: 0 0 8px var(--adm-amber);"></span>
+            <span class="small fw-bold text-warning">@pendingCount đơn đang chờ duyệt gấp</span>
+            <i class="bi bi-chevron-right text-warning small"></i>
+        </a>
     }
+</div>
 
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="bi bi-exclamation-triangle me-2"></i>@TempData["Error"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    }
+<!-- QUICK STATUS TABS -->
+<div class="adm-tabs">
+    <a asp-action="Index" class="adm-tab-item @(selectedStatus == null ? "active" : "")">
+        Tất cả đơn (@Model.Count)
+    </a>
+    <a asp-action="Index" asp-route-status="@((int)OrderStatus.PendingConfirmation)" 
+       class="adm-tab-item @(selectedStatus == OrderStatus.PendingConfirmation ? "active" : "")">
+        <i class="bi bi-clock-history me-1 text-warning"></i> Chờ duyệt
+    </a>
+    <a asp-action="Index" asp-route-status="@((int)OrderStatus.Confirmed)" 
+       class="adm-tab-item @(selectedStatus == OrderStatus.Confirmed ? "active" : "")">
+        Đã xác nhận
+    </a>
+    <a asp-action="Index" asp-route-status="@((int)OrderStatus.Processing)" 
+       class="adm-tab-item @(selectedStatus == OrderStatus.Processing ? "active" : "")">
+        Đang xử lý kho
+    </a>
+    <a asp-action="Index" asp-route-status="@((int)OrderStatus.Shipping)" 
+       class="adm-tab-item @(selectedStatus == OrderStatus.Shipping ? "active" : "")">
+        Đang giao
+    </a>
+    <a asp-action="Index" asp-route-status="@((int)OrderStatus.Delivered)" 
+       class="adm-tab-item @(selectedStatus == OrderStatus.Delivered ? "active" : "")">
+        Đã giao thành công
+    </a>
+    <a asp-action="Index" asp-route-status="@((int)OrderStatus.Cancelled)" 
+       class="adm-tab-item @(selectedStatus == OrderStatus.Cancelled ? "active" : "")">
+        Đã hủy
+    </a>
+</div>
 
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body">
-            <form asp-action="Index" method="get" class="row g-2 align-items-center">
-                <div class="col-md-5">
-                    <select name="status" class="form-select">
-                        <option value="">Tất cả trạng thái đơn</option>
-                        @foreach (OrderStatus status in Enum.GetValues(typeof(OrderStatus)))
-                        {
-                            if (selectedStatus == status)
-                            {
-                                <option value="@((int)status)" selected>
-                                    @GetStatusName(status)
-                                </option>
-                            }
-                            else
-                            {
-                                <option value="@((int)status)">
-                                    @GetStatusName(status)
-                                </option>
-                            }
-                        }
-                    </select>
-                </div>
-
-                <div class="col-auto">
-                    <button type="submit" class="btn btn-dark">
-                        <i class="bi bi-funnel me-1"></i> Lọc đơn hàng
-                    </button>
-                    <a asp-action="Index" class="btn btn-outline-secondary">Đặt lại</a>
-                </div>
-            </form>
-        </div>
+<!-- ORDERS TABLE -->
+@if (!Model.Any())
+{
+    <div class="adm-card text-center py-5">
+        <i class="bi bi-inbox fs-1 text-muted d-block mb-3"></i>
+        <h5 class="fw-bold adm-heading">Không có đơn hàng nào trong mục này</h5>
+        <p class="text-muted small">Tất cả các đơn đã được điều phối hoặc chưa có giao dịch phát sinh.</p>
+        <a asp-action="Index" class="btn adm-btn-outline mt-2">
+            Xem toàn bộ đơn hàng
+        </a>
     </div>
+}
+else
+{
+    <div class="adm-card p-0 overflow-hidden mb-4">
+        <div class="table-responsive">
+            <table class="adm-table mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">MÃ ĐƠN HÀNG</th>
+                        <th>NGÀY ĐẶT</th>
+                        <th>KHÁCH HÀNG</th>
+                        <th>PHƯƠNG THỨC & TT</th>
+                        <th>TỔNG TIỀN</th>
+                        <th>TRẠNG THÁI ĐƠN</th>
+                        <th class="text-end pe-4">THAO TÁC</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model)
+                    {
+                        var isPending = order.Status == OrderStatus.PendingConfirmation;
 
-    @if (!Model.Any())
-    {
-        <div class="card border-0 shadow-sm text-center py-5">
-            <div class="py-4">
-                <i class="bi bi-receipt text-muted" style="font-size: 3rem;"></i>
-                <h5 class="mt-3">Chưa có đơn hàng nào</h5>
-                <p class="text-muted">Đơn hàng mới của khách sẽ xuất hiện tại đây.</p>
-            </div>
-        </div>
-    }
-    else
-    {
-        <div class="card border-0 shadow-sm">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th class="ps-3">Mã đơn</th>
-                            <th>Người nhận</th>
-                            <th>Ngày đặt</th>
-                            <th>Thanh toán</th>
-                            <th>Tổng tiền</th>
-                            <th>Trạng thái</th>
-                            <th class="text-end pe-3">Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var order in Model)
-                        {
-                            <tr>
-                                <td class="ps-3 fw-bold text-dark">@order.OrderCode</td>
-                                <td>
-                                    <div class="fw-semibold">@order.ReceiverName</div>
-                                    <small class="text-muted">@order.Phone</small>
-                                </td>
-                                <td>@order.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
-                                <td>
-                                    <div><small class="fw-semibold">@order.PaymentMethod</small></div>
-                                    @if (order.PaymentStatus == PaymentStatus.Paid)
+                        <tr style="@(isPending ? "background: rgba(217, 119, 6, 0.04);" : "")">
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center gap-1">
+                                    <span class="font-monospace fw-bold adm-heading" style="font-size: 0.88rem;">@order.OrderCode</span>
+                                    <button type="button" class="btn btn-sm p-0 text-muted" onclick="copyAdmText(this, '@order.OrderCode')" title="Sao chép mã đơn">
+                                        <i class="bi bi-copy" style="font-size: 0.75rem;"></i>
+                                    </button>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="adm-text-contrast small fw-medium">@order.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")</div>
+                                <div class="text-muted font-monospace" style="font-size: 0.72rem;">@order.CreatedAt.ToLocalTime().ToString("HH:mm:ss")</div>
+                            </td>
+                            <td>
+                                <div class="fw-bold adm-heading">@order.ReceiverName</div>
+                                <div class="text-muted font-monospace" style="font-size: 0.75rem;">
+                                    <i class="bi bi-telephone me-1"></i>@order.Phone
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex flex-column gap-1">
+                                    @if (order.PaymentMethod == PaymentMethod.VietQR)
                                     {
-                                        <span class="badge bg-success-subtle text-success border border-success-subtle">Đã thanh toán</span>
-                                    }
-                                    else if (order.PaymentStatus == PaymentStatus.Pending)
-                                    {
-                                        <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">Chưa thanh toán</span>
-                                    }
-                                    else if (order.PaymentStatus == PaymentStatus.Refunded)
-                                    {
-                                        <span class="badge bg-info-subtle text-info-emphasis border border-info-subtle">Đã hoàn tiền</span>
+                                        <span class="badge" style="background: rgba(2, 132, 199, 0.12); color: var(--adm-cyan); border: 1px solid rgba(2, 132, 199, 0.3); width: fit-content;">
+                                            <i class="bi bi-qr-code me-1"></i> VietQR
+                                        </span>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle">Thất bại</span>
+                                        <span class="badge" style="background: var(--adm-surface-hover); color: var(--adm-ink-muted); border: 1px solid var(--adm-border); width: fit-content;">
+                                            <i class="bi bi-cash me-1"></i> COD
+                                        </span>
                                     }
-                                </td>
-                                <td class="fw-bold text-dark">@order.TotalAmount.ToString("N0") đ</td>
-                                <td>
-                                    <span class="badge @GetStatusBadge(order.Status)">
-                                        @GetStatusName(order.Status)
-                                    </span>
-                                </td>
-                                <td class="text-end pe-3">
-                                    <a asp-action="Details"
-                                       asp-route-id="@order.Id"
-                                       class="btn btn-sm btn-outline-dark">
-                                        Chi tiết
+
+                                    <div style="font-size: 0.72rem;">
+                                        @if (order.PaymentStatus == PaymentStatus.Paid)
+                                        {
+                                            <span class="text-success fw-semibold"><i class="bi bi-check-circle-fill me-1"></i>Đã thanh toán</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted"><i class="bi bi-clock me-1"></i>Chưa thanh toán</span>
+                                        }
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="fw-bold" style="color: var(--adm-gold); font-size: 1.05rem;">
+                                    @order.TotalAmount.ToString("N0") ₫
+                                </div>
+                            </td>
+                            <td>
+                                @switch (order.Status)
+                                {
+                                    case OrderStatus.PendingConfirmation:
+                                        <span class="adm-pill adm-pill-amber">Chờ duyệt</span>
+                                        break;
+                                    case OrderStatus.Confirmed:
+                                        <span class="adm-pill adm-pill-blue">Đã duyệt</span>
+                                        break;
+                                    case OrderStatus.Processing:
+                                        <span class="adm-pill adm-pill-blue">Xử lý kho</span>
+                                        break;
+                                    case OrderStatus.Shipping:
+                                        <span class="adm-pill adm-pill-blue">Đang giao</span>
+                                        break;
+                                    case OrderStatus.Delivered:
+                                        <span class="adm-pill adm-pill-emerald">Đã giao</span>
+                                        break;
+                                    case OrderStatus.Cancelled:
+                                        <span class="adm-pill adm-pill-rose">Đã hủy</span>
+                                        break;
+                                    case OrderStatus.DeliveryFailed:
+                                        <span class="adm-pill adm-pill-rose">Giao thất bại</span>
+                                        break;
+                                    default:
+                                        <span class="adm-pill adm-pill-faint">@order.Status</span>
+                                        break;
+                                }
+                            </td>
+                            <td class="text-end pe-4">
+                                <div class="d-inline-flex gap-2">
+                                    @if (isPending)
+                                    {
+                                        <form asp-action="UpdateStatus" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@order.Id" />
+                                            <input type="hidden" name="newStatus" value="@OrderStatus.Confirmed" />
+                                            <button type="submit" class="btn btn-sm btn-warning fw-bold py-1 px-2" style="font-size: 0.75rem;" title="Duyệt đơn nhanh">
+                                                <i class="bi bi-check-lg"></i> Duyệt
+                                            </button>
+                                        </form>
+                                    }
+
+                                    <a asp-action="Details" asp-route-id="@order.Id"
+                                       class="btn btn-sm adm-btn-outline py-1 px-2" style="font-size: 0.75rem;" title="Chi tiết đơn hàng">
+                                        <i class="bi bi-eye me-1"></i> Xem
                                     </a>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
-    }
-</div>
+    </div>
+}

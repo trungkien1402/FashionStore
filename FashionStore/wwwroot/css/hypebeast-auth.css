@@ -1,0 +1,736 @@
+/* ===================================================================
+   HNMTSHOP STREETWEAR HYPEBEAST AUTHENTICATION SYSTEM
+   Style: Balenciaga / Off-White / Dark Urban Industrial Chrome
+   Includes: Realtime Password Strength, Social OAuth, Modal, Accessibility
+   =================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+/* Hide global layout header & footer on auth pages */
+.urbn-header,
+.urbn-footer-section,
+#fsCartDrawer,
+#fsCartBackdrop {
+    display: none !important;
+}
+
+:root {
+    --hb-bg: #07080c;
+    --hb-card-bg: rgba(13, 15, 22, 0.88);
+    --hb-card-border: rgba(255, 255, 255, 0.12);
+    --hb-card-border-glow: rgba(255, 255, 255, 0.28);
+    --hb-chrome-grad: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #94a3b8 100%);
+    --hb-chrome-btn: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 40%, #94a3b8 100%);
+    --hb-chrome-hover: linear-gradient(135deg, #ffffff 0%, #f1f5f9 60%, #cbd5e1 100%);
+    
+    --hb-text-main: #f8fafc;
+    --hb-text-dim: #94a3b8;
+    --hb-text-faint: #64748b;
+    --hb-silver-accent: #e2e8f0;
+    
+    --hb-input-bg: rgba(255, 255, 255, 0.04);
+    --hb-input-border: rgba(255, 255, 255, 0.14);
+    --hb-input-focus: rgba(255, 255, 255, 0.4);
+    
+    --hb-font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+    --hb-font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --hb-font-mono: 'JetBrains Mono', monospace;
+    
+    --hb-ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Reset for auth page */
+.hb-auth-page,
+.hb-auth-page *,
+.hb-auth-page *::before,
+.hb-auth-page *::after {
+    box-sizing: border-box !important;
+    margin: 0;
+    padding: 0;
+}
+
+/* 1. Viewport Container */
+.hb-auth-page {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    background-color: var(--hb-bg);
+    color: var(--hb-text-main);
+    font-family: var(--hb-font-sans);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* 2. Atmospheric Background Layers */
+.hb-bg-layer {
+    position: fixed;
+    inset: -20px;
+    z-index: 1;
+    background-image: 
+        radial-gradient(circle at 15% 25%, rgba(148, 163, 184, 0.15) 0%, transparent 45%),
+        radial-gradient(circle at 85% 75%, rgba(226, 232, 240, 0.12) 0%, transparent 45%),
+        url('/images/lookbook-atelier-fullscreen.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: brightness(0.38) contrast(1.15) grayscale(25%);
+    transition: transform 0.25s var(--hb-ease);
+    will-change: transform;
+}
+
+.hb-bg-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    background: radial-gradient(circle at 50% 50%, rgba(7, 8, 12, 0.6) 0%, rgba(7, 8, 12, 0.94) 100%);
+    pointer-events: none;
+}
+
+.hb-bg-grid {
+    position: fixed;
+    inset: 0;
+    z-index: 3;
+    background-size: 40px 40px;
+    background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    pointer-events: none;
+}
+
+/* 3. Minimalist Topbar */
+.hb-topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 72px;
+    padding: 0 clamp(16px, 4vw, 40px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 100;
+    background: linear-gradient(180deg, rgba(7, 8, 12, 0.8) 0%, transparent 100%);
+    backdrop-filter: blur(8px);
+}
+
+.hb-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--hb-text-main);
+}
+
+.hb-brand-tag {
+    font-family: var(--hb-font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    letter-spacing: 1.5px;
+    color: #e2e8f0;
+}
+
+.hb-brand-name {
+    font-family: var(--hb-font-display);
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    background: var(--hb-chrome-grad);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hb-topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.hb-btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+    color: var(--hb-text-dim);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.25s var(--hb-ease);
+}
+
+.hb-btn-back:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateX(-2px);
+}
+
+.hb-btn-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #000000;
+    background: var(--hb-chrome-btn);
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.15);
+    transition: all 0.25s var(--hb-ease);
+}
+
+.hb-btn-switch:hover {
+    color: #000000;
+    background: var(--hb-chrome-hover);
+    box-shadow: 0 6px 22px rgba(255, 255, 255, 0.28);
+    transform: translateY(-1px);
+}
+
+/* 4. Main Authentication Card */
+.hb-card-wrapper {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 480px;
+    margin-top: 60px;
+}
+
+.hb-card {
+    background: var(--hb-card-bg);
+    border: 1px solid var(--hb-card-border);
+    border-radius: 20px;
+    padding: clamp(28px, 5vw, 44px);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    box-shadow: 
+        0 20px 50px rgba(0, 0, 0, 0.8),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Industrial Corner Decors */
+.hb-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+}
+
+.hb-card-kicker-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.hb-card-badge {
+    font-family: var(--hb-font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    color: #94a3b8;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.hb-card-badge::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 8px #10b981;
+}
+
+.hb-card-edition {
+    font-family: var(--hb-font-mono);
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--hb-text-faint);
+}
+
+.hb-card-title {
+    font-family: var(--hb-font-display);
+    font-size: clamp(24px, 3.2vw, 30px);
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #ffffff;
+    margin-bottom: 8px;
+    line-height: 1.15;
+}
+
+.hb-card-desc {
+    font-size: 13.5px;
+    color: var(--hb-text-dim);
+    line-height: 1.5;
+    margin-bottom: 26px;
+}
+
+/* 5. Social Quick Login Buttons */
+.hb-social-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.hb-btn-social {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s var(--hb-ease);
+}
+
+.hb-btn-social:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.hb-btn-social svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* 6. Form Divider */
+.hb-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.hb-divider::before,
+.hb-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.hb-divider span {
+    font-family: var(--hb-font-mono);
+    font-size: 10.5px;
+    letter-spacing: 1.5px;
+    color: var(--hb-text-faint);
+    text-transform: uppercase;
+}
+
+/* 7. Input Groups */
+.hb-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.hb-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.hb-input-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.hb-input-label {
+    font-family: var(--hb-font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--hb-text-dim);
+}
+
+.hb-input-label .req {
+    color: #ef4444;
+}
+
+.hb-input-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: var(--hb-input-bg);
+    border: 1px solid var(--hb-input-border);
+    border-radius: 10px;
+    transition: all 0.25s var(--hb-ease);
+}
+
+.hb-input-box:focus-within {
+    border-color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.15);
+}
+
+.hb-input-icon {
+    position: absolute;
+    left: 14px;
+    color: var(--hb-text-faint);
+    font-size: 16px;
+    pointer-events: none;
+}
+
+.hb-input-field {
+    width: 100%;
+    padding: 13px 44px 13px 42px;
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 14px;
+    font-family: var(--hb-font-sans);
+    outline: none;
+}
+
+.hb-input-field::placeholder {
+    color: rgba(255, 255, 255, 0.28);
+}
+
+.hb-password-toggle {
+    position: absolute;
+    right: 12px;
+    background: transparent;
+    border: none;
+    color: var(--hb-text-dim);
+    cursor: pointer;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: color 0.2s, background 0.2s;
+}
+
+.hb-password-toggle:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.hb-input-error {
+    font-size: 12px;
+    color: #f87171;
+    font-weight: 500;
+    display: block;
+    margin-top: 2px;
+}
+
+/* 8. Password Strength Meter */
+.hb-strength-container {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.hb-strength-bars {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    height: 4px;
+}
+
+.hb-strength-bar {
+    height: 100%;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 2px;
+    transition: background-color 0.3s ease;
+}
+
+.hb-strength-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: var(--hb-font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.5px;
+}
+
+.hb-strength-status {
+    color: var(--hb-text-dim);
+    font-weight: 600;
+}
+
+.hb-strength-rules {
+    font-size: 11px;
+    color: var(--hb-text-faint);
+    line-height: 1.4;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.hb-strength-rule {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.hb-strength-rule.met {
+    color: #10b981;
+}
+
+/* 9. Options Row (Remember & Forgot) */
+.hb-options-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 4px 0 6px 0;
+}
+
+.hb-checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--hb-text-dim);
+    cursor: pointer;
+    user-select: none;
+}
+
+.hb-checkbox-input {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 17px;
+    height: 17px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s var(--hb-ease);
+}
+
+.hb-checkbox-input:checked {
+    background: #ffffff;
+    border-color: #ffffff;
+}
+
+.hb-checkbox-input:checked::after {
+    content: "✓";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000000;
+    font-size: 11px;
+    font-weight: 900;
+}
+
+.hb-forgot-btn {
+    background: transparent;
+    border: none;
+    color: #e2e8f0;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    transition: color 0.2s;
+}
+
+.hb-forgot-btn:hover {
+    color: #ffffff;
+}
+
+/* 10. Submit Button */
+.hb-btn-submit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 15px;
+    background: var(--hb-chrome-btn);
+    border: none;
+    border-radius: 10px;
+    color: #07080c;
+    font-family: var(--hb-font-display);
+    font-size: 14.5px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 
+        0 8px 24px rgba(255, 255, 255, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    transition: all 0.25s var(--hb-ease);
+    margin-top: 6px;
+}
+
+.hb-btn-submit:hover {
+    background: var(--hb-chrome-hover);
+    box-shadow: 
+        0 10px 30px rgba(255, 255, 255, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 1);
+    transform: translateY(-2px);
+}
+
+.hb-btn-submit:active {
+    transform: translateY(0);
+}
+
+/* 11. Card Footer Switcher */
+.hb-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 24px;
+    font-size: 13px;
+    color: var(--hb-text-dim);
+}
+
+.hb-footer-link {
+    color: #ffffff;
+    font-weight: 700;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    transition: color 0.2s;
+}
+
+.hb-footer-link:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+/* 12. Security Footnote */
+.hb-security-note {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+    font-family: var(--hb-font-mono);
+    font-size: 10.5px;
+    letter-spacing: 1px;
+    color: var(--hb-text-faint);
+    text-transform: uppercase;
+}
+
+/* 13. Alert Message */
+.hb-alert-danger {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: #fca5a5;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.4;
+    margin-bottom: 20px;
+}
+
+.hb-alert-danger ul {
+    margin-left: 18px;
+    margin-top: 4px;
+}
+
+/* 14. Interactive Forgot Password Modal */
+.hb-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    background: rgba(0, 0, 0, 0.82);
+    backdrop-filter: blur(16px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    transition: opacity 0.3s var(--hb-ease);
+}
+
+.hb-modal-backdrop.is-active {
+    display: flex;
+    opacity: 1;
+}
+
+.hb-modal-box {
+    width: 100%;
+    max-width: 440px;
+    background: #0f1118;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 18px;
+    padding: 32px 28px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9);
+    position: relative;
+    transform: scale(0.94);
+    transition: transform 0.3s var(--hb-ease);
+}
+
+.hb-modal-backdrop.is-active .hb-modal-box {
+    transform: scale(1);
+}
+
+.hb-modal-close {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    background: transparent;
+    border: none;
+    color: var(--hb-text-dim);
+    font-size: 20px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px;
+    border-radius: 4px;
+    transition: color 0.2s;
+}
+
+.hb-modal-close:hover {
+    color: #ffffff;
+}
+
+/* Responsive Overrides */
+@media (max-width: 768px) {
+    .hb-topbar {
+        padding: 0 16px;
+        height: 64px;
+    }
+
+    .hb-card-wrapper {
+        margin-top: 50px;
+    }
+
+    .hb-card {
+        padding: 24px 20px;
+        border-radius: 16px;
+    }
+
+    .hb-social-grid {
+        grid-template-columns: 1fr;
+    }
+}
