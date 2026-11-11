@@ -7,12 +7,15 @@
 (() => {
     'use strict';
 
-    const racks = [
+    const SHIRT_RACKS = [
         {
-            id: 'rack-01',
+            id: 'rack-shirt-01',
             badge: 'SÀO 01 // ESSENTIAL STREETWEAR',
             eyebrow: 'BỘ SƯU TẬP 01',
             heroTitle: 'Thời Trang Độc Bản · Nâng Tầm Phong Cách',
+            brandSignature: '<span>Sào Đồ</span><span>Thời Trang</span>',
+            captionHeading: 'Bộ sưu tập độc bản HNMTSHOP.',
+            captionDetail: '10 thiết kế giới hạn — Lướt sào hoặc chọn để xem chi tiết.',
             products: [
                 {
                     name: 'Reach Shirt',
@@ -117,11 +120,14 @@
                 }
             ]
         },
-                {
-            id: 'rack-02',
-            badge: 'SÀO 02',
+        {
+            id: 'rack-shirt-02',
+            badge: 'SÀO 02 // WINTER DROP',
             eyebrow: 'BỘ SƯU TẬP 02',
             heroTitle: 'Phong Cách Đường Phố · Bản Lĩnh Đột Phá',
+            brandSignature: '<span>Sào Đồ</span><span>Thời Trang</span>',
+            captionHeading: 'Bộ sưu tập mùa đông HNMTSHOP.',
+            captionDetail: 'Áo khoác bóng chày & Áo da Motorsport — Lướt sào hoặc chọn để xem chi tiết.',
             products: [
                 {
                     name: 'CYBERPUNK Heavyweight Boxy Tee (300GSM)',
@@ -154,18 +160,24 @@
                     stock: [4, 6, 5, 2, 0]
                 }
             ]
-        },
+        }
+    ];
+
+    const PANTS_RACKS = [
         {
-            id: 'rack-03',
-            badge: 'SÀO 03 // BỘ SƯU TẬP QUẦN 3D',
-            eyebrow: 'BỘ SƯU TẬP 03',
+            id: 'rack-pants-01',
+            badge: 'SÀO QUẦN // THỜI TRANG ĐỘC BẢN',
+            eyebrow: 'BỘ SƯU TẬP QUẦN 2026',
             heroTitle: 'Thiết Kế Đột Phá · Phom Dáng Thượng Hạng',
+            brandSignature: '<span>Sào Quần</span><span>Thời Trang</span>',
+            captionHeading: 'Bộ sưu tập quần cao cấp HNMTSHOP.',
+            captionDetail: 'Phom dáng chuẩn may đo cao cấp — Lướt sào hoặc chọn để xem chi tiết.',
             products: [
                 {
                     name: 'Quần Baggy Cargo Jeans Acid-Wash Đen Xám',
                     slug: 'acid-cargo',
                     price: 56,
-                    type: 'pants',
+                    type: 'quần cargo jeans',
                     art: 'cargo',
                     desc: 'Quần jeans túi hộp phom thụng rộng, wash mài xám khói bụi bặm phong cách Y2K và streetwear đương đại.',
                     colors: [['Washed Xám Đen (Vintage Charcoal)', '#25262B'], ['Xám Bạc (Silver Wash)', '#42454F']],
@@ -178,7 +190,7 @@
                     name: 'Quần Tây Xếp Ly Ống Rộng May Đo Sand Beige',
                     slug: 'sand-pleated',
                     price: 62,
-                    type: 'pants',
+                    type: 'quần tây may đo',
                     art: 'tailored',
                     desc: 'Phom dáng xếp 2 ly cạp cao may đo tinh xảo, chất vải twill rủ mềm mại tạo bước đi thanh thoát chuẩn quiet luxury.',
                     colors: [['Be Cát Tự Nhiên (Sand Beige)', '#D9CDB8'], ['Đen Midnight (Pitch Black)', '#17181C']],
@@ -191,7 +203,7 @@
                     name: 'Quần Dù Parachute Tactical Rêu Quân Đội',
                     slug: 'tactical-parachute',
                     price: 58,
-                    type: 'pants',
+                    type: 'quần dù parachute',
                     art: 'parachute',
                     desc: 'Chất liệu vải dù công nghệ trượt nước nhẹ, nhiều ngăn túi khóa bấm kim loại cùng dây rút lai quần biến hóa linh hoạt.',
                     colors: [['Xanh Rêu Quân Đội (Military Olive)', '#4B5320'], ['Đen Stealth (Shadow Black)', '#1B1C20']],
@@ -204,7 +216,7 @@
                     name: 'Quần Jeans Ống Suông Raw Selvedge Denim',
                     slug: 'raw-selvedge',
                     price: 68,
-                    type: 'pants',
+                    type: 'quần raw denim',
                     art: 'denim',
                     desc: 'Denim 14oz dệt thoi con thoi cổ điển Nhật Bản, giữ phom đứng cá tính cùng viền chỉ đỏ selvedge độc bản khi xắn gấu.',
                     colors: [['Đen Selvedge Chỉ Đỏ (Raw Black)', '#1A1A1E'], ['Chàm Đậm (Deep Indigo)', '#141E30']],
@@ -217,7 +229,7 @@
                     name: 'Quần Jeans Ống Rộng Vintage Washed Indigo',
                     slug: 'wide-denim',
                     price: 54,
-                    type: 'pants',
+                    type: 'quần jeans ống rộng',
                     art: 'denim',
                     desc: 'Phom suông rộng phóng khoáng kinh điển thập niên 90, xử lý wash nhẹ tạo độ rủ mềm mại cực kỳ thoải mái vận động.',
                     colors: [['Xanh Vintage Washed (90s Blue)', '#5B7C99'], ['Xanh Khói (Smoky Azure)', '#4A657D']],
@@ -230,8 +242,10 @@
         }
     ];
 
+    let currentCategory = 'ao'; // 'ao' or 'quan'
+    let currentRacks = SHIRT_RACKS;
     let currentRackIdx = 0;
-    let products = racks[0].products;
+    let products = currentRacks[0].products;
 
     const photo = (p, variant = 0) => p.frontImg || `/clothing-rail/assets/${p.slug}-${variant ? 'alt' : 'front'}.webp`;
     const sidePhoto = p => p.sideImg || `/clothing-rail/assets/${p.slug}-side.webp`;
@@ -318,32 +332,48 @@
         renderDetail();
     }
 
+    function applyRack(currentRack) {
+        if (!currentRack) return;
+        products = currentRack.products;
+        
+        const eyebrowEl = $('.rail-eyebrow');
+        if (eyebrowEl) eyebrowEl.textContent = currentRack.eyebrow;
+        
+        const heroTitleEl = $('.rail-hero-title');
+        if (heroTitleEl) heroTitleEl.innerHTML = currentRack.heroTitle;
+
+        const brandEl = $('.rail-brand');
+        if (brandEl && currentRack.brandSignature) {
+            brandEl.innerHTML = currentRack.brandSignature;
+        }
+
+        const capTitleEl = $('#captionTitle');
+        const capDetailEl = $('#captionDetail');
+        if (capTitleEl && currentRack.captionHeading) capTitleEl.textContent = currentRack.captionHeading;
+        if (capDetailEl && currentRack.captionDetail) capDetailEl.textContent = currentRack.captionDetail;
+
+        const prevRackBtn = $('#rackPrevBtn');
+        const nextRackBtn = $('#rackNextBtn');
+        const showArrows = currentRacks.length > 1;
+        if (prevRackBtn) prevRackBtn.style.display = showArrows ? '' : 'none';
+        if (nextRackBtn) nextRackBtn.style.display = showArrows ? '' : 'none';
+
+        makeRail();
+        const scroll = $('#railScroll');
+        if (scroll) scroll.scrollLeft = 0;
+        active = -1;
+        setActive(0);
+    }
+
     function switchRack(dir) {
         if (detailOpen) closeDetail();
+        if (currentRacks.length <= 1) return;
         const stage = $('#railStage');
         if (stage) stage.classList.add('is-switching');
         
         setTimeout(() => {
-            currentRackIdx = (currentRackIdx + dir + racks.length) % racks.length;
-            const currentRack = racks[currentRackIdx];
-            products = currentRack.products;
-            
-            // Cập nhật Badge Sào & Tiêu đề
-            const eyebrowEl = $('.rail-eyebrow');
-            if (eyebrowEl) eyebrowEl.textContent = currentRack.eyebrow;
-            
-            const heroTitleEl = $('.rail-hero-title');
-            if (heroTitleEl) heroTitleEl.innerHTML = currentRack.heroTitle;
-            
-            // Render lại sào mới
-            makeRail();
-            
-            const scroll = $('#railScroll');
-            if (scroll) scroll.scrollLeft = 0;
-            
-            active = -1;
-            setActive(0);
-            
+            currentRackIdx = (currentRackIdx + dir + currentRacks.length) % currentRacks.length;
+            applyRack(currentRacks[currentRackIdx]);
             setTimeout(() => {
                 if (stage) stage.classList.remove('is-switching');
             }, 60);
@@ -475,33 +505,10 @@
         }
     }
 
-    function switchToRack(idx) {
-        if (idx < 0 || idx >= racks.length) return;
-        currentRackIdx = idx;
-        const currentRack = racks[currentRackIdx];
-        products = currentRack.products;
-        if (detailOpen) closeDetail();
-        
-        const eyebrowEl = $('.rail-eyebrow');
-        if (eyebrowEl) eyebrowEl.textContent = currentRack.eyebrow;
-        
-        const heroTitleEl = $('.rail-hero-title');
-        if (heroTitleEl) heroTitleEl.innerHTML = currentRack.heroTitle;
-        
-        makeRail();
-        const scroll = $('#railScroll');
-        if (scroll) scroll.scrollLeft = 0;
-        active = -1;
-        setActive(0);
-    }
-
-    function openClothingRail(category) {
-        if (category === 'quan') {
-            const pantsIdx = racks.findIndex(r => r.id === 'rack-03');
-            if (pantsIdx >= 0) switchToRack(pantsIdx);
-        } else if (category === 'ao') {
-            switchToRack(0);
-        }
+    function openClothingRail(category = 'ao') {
+        currentCategory = (category === 'quan') ? 'quan' : 'ao';
+        currentRacks = (currentCategory === 'quan') ? PANTS_RACKS : SHIRT_RACKS;
+        currentRackIdx = 0;
 
         const rackOverlayEl = document.getElementById('hnmtRackOverlay');
         if (rackOverlayEl) {
@@ -513,9 +520,7 @@
             if (promptEl) promptEl.style.display = 'none';
             if (portalHeaderEl) portalHeaderEl.style.display = 'none';
             
-            const scroll = $('#railScroll');
-            if (scroll) scroll.scrollLeft = 0;
-            setActive(0);
+            applyRack(currentRacks[0]);
         }
     }
 
@@ -526,8 +531,8 @@
     window.ClothingRail = {
         openClothingRail,
         closeClothingRail,
-        switchToRack,
-        racks
+        SHIRT_RACKS,
+        PANTS_RACKS
     };
 
     function init() {
