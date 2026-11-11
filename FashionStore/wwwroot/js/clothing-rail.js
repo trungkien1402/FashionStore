@@ -264,7 +264,41 @@
     let modalOpen = false;
     const sizeNames = ['XS', 'S', 'M', 'L', 'XL'];
 
+        function ensureSearchButton() {
+        const bagBtns = document.querySelectorAll('.rail-bag-btn');
+        bagBtns.forEach(bagBtn => {
+            if (bagBtn.parentNode && !bagBtn.parentNode.querySelector('.rail-search-btn')) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'rail-search-btn';
+                btn.id = 'railSearchBtn';
+                btn.setAttribute('aria-label', 'Tìm kiếm đồ');
+                btn.title = 'Tìm đồ nhanh (Phím tắt /)';
+                btn.innerHTML = `
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <circle cx="11" cy="11" r="7"/>
+                        <path d="m20 20-4.35-4.35"/>
+                    </svg>
+                `;
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (window.HNMTSpotlightSearch) {
+                        window.HNMTSpotlightSearch.open(currentCategory);
+                    }
+                });
+                bagBtn.parentNode.insertBefore(btn, bagBtn);
+            }
+        });
+
+        if (!window.HNMTSpotlightSearch && !document.querySelector('script[src*="spotlight-search.js"]')) {
+            const s = document.createElement('script');
+            s.src = '/js/spotlight-search.js?v=inject_v2';
+            document.head.appendChild(s);
+        }
+    }
+
     function makeRail() {
+        ensureSearchButton();
         const stage = $('#railStage');
         if (!stage) return;
         stage.querySelectorAll('.slot').forEach(e => e.remove());
@@ -571,6 +605,8 @@
     };
 
     function init() {
+        ensureSearchButton();
+        setInterval(ensureSearchButton, 600);
         const prevBtn = $('#prevBtn');
         const nextBtn = $('#nextBtn');
         const closeBtn = $('#closeBtn');

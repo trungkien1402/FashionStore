@@ -139,8 +139,64 @@
         return items;
     }
 
+        function ensureModalDOM() {
+        let modal = document.getElementById('hnmtSpotlightSearchModal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'hnmtSpotlightSearchModal';
+            modal.className = 'hnmt-spotlight-modal';
+            modal.setAttribute('aria-hidden', 'true');
+            modal.innerHTML = `
+                <div class="hnmt-spotlight-backdrop" id="spotlightBackdrop"></div>
+                <div class="hnmt-spotlight-dialog" role="dialog" aria-modal="true" aria-label="Tìm kiếm sản phẩm nhanh">
+                    <div class="hnmt-spotlight-search-header">
+                        <div class="hnmt-spotlight-input-wrap">
+                            <svg class="hnmt-spotlight-search-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <circle cx="11" cy="11" r="7"/>
+                                <path d="m20 20-4.35-4.35"/>
+                            </svg>
+                            <input type="text" id="hnmtSpotlightInput" class="hnmt-spotlight-input" placeholder="Tìm quần, áo, sneaker hoặc kiểu dáng... (ví dụ: cargo, jeans, hoodie, runner)" autocomplete="off" spellcheck="false">
+                            <button type="button" id="hnmtSpotlightClearBtn" class="hnmt-spotlight-clear-btn" aria-label="Xóa tìm kiếm" style="display: none;">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+                        <div class="hnmt-spotlight-meta">
+                            <span class="hnmt-spotlight-esc-pill">ESC để đóng</span>
+                        </div>
+                    </div>
+                    <div class="hnmt-spotlight-tabs" id="spotlightTabs">
+                        <button type="button" class="hnmt-spotlight-tab is-active" data-cat="all">Tất Cả <span class="tab-count" id="tabCountAll">0</span></button>
+                        <button type="button" class="hnmt-spotlight-tab" data-cat="quan">Sào Quần <span class="tab-count" id="tabCountQuan">5</span></button>
+                        <button type="button" class="hnmt-spotlight-tab" data-cat="ao">Sào Áo <span class="tab-count" id="tabCountAo">20</span></button>
+                        <button type="button" class="hnmt-spotlight-tab" data-cat="giay">Tủ Giày <span class="tab-count" id="tabCountGiay">6</span></button>
+                    </div>
+                    <div class="hnmt-spotlight-quick-tags" id="spotlightQuickTags">
+                        <span class="quick-tags-label">Gợi ý nhanh:</span>
+                        <div class="quick-tags-scroll" id="quickTagsContainer"></div>
+                    </div>
+                    <div class="hnmt-spotlight-results" id="spotlightResults"></div>
+                    <div class="hnmt-spotlight-empty" id="spotlightEmpty" style="display: none;">
+                        <div class="empty-icon">🔍</div>
+                        <p class="empty-title">Không tìm thấy sản phẩm phù hợp</p>
+                        <p class="empty-desc">Thử tìm với từ khóa khác như "jeans", "cargo", "hoodie", "runner", hoặc bấm các gợi ý nhanh bên trên.</p>
+                    </div>
+                    <div class="hnmt-spotlight-footer">
+                        <div class="spotlight-hint">
+                            <span><kbd>↑</kbd><kbd>↓</kbd> Chọn</span>
+                            <span><kbd>ENTER</kbd> Xem đồ</span>
+                            <span><kbd>ESC</kbd> Đóng</span>
+                        </div>
+                        <div class="spotlight-brand">HNMTSHOP // FAST FIND</div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+        return modal;
+    }
+
     function initSpotlight() {
-        const modal = document.getElementById('hnmtSpotlightSearchModal');
+        const modal = ensureModalDOM();
         const input = document.getElementById('hnmtSpotlightInput');
         const clearBtn = document.getElementById('hnmtSpotlightClearBtn');
         const backdrop = document.getElementById('spotlightBackdrop');

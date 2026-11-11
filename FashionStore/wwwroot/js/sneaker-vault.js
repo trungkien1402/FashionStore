@@ -431,7 +431,41 @@
     }
 
     // --- Khởi tạo lưới 6 đôi ban đầu (Grid Overview) ---
+        function ensureSneakerSearchButton() {
+        const bagBtns = document.querySelectorAll('.sv-bag-btn');
+        bagBtns.forEach(svBagBtn => {
+            if (svBagBtn.parentNode && !svBagBtn.parentNode.querySelector('.sv-search-btn')) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'sv-search-btn';
+                btn.id = 'svSearchBtn';
+                btn.setAttribute('aria-label', 'Tìm kiếm giày');
+                btn.title = 'Tìm đồ nhanh (Phím tắt /)';
+                btn.innerHTML = `
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <circle cx="11" cy="11" r="7"/>
+                        <path d="m20 20-4.35-4.35"/>
+                    </svg>
+                `;
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (window.HNMTSpotlightSearch) {
+                        window.HNMTSpotlightSearch.open('giay');
+                    }
+                });
+                svBagBtn.parentNode.insertBefore(btn, svBagBtn);
+            }
+        });
+
+        if (!window.HNMTSpotlightSearch && !document.querySelector('script[src*="spotlight-search.js"]')) {
+            const s = document.createElement('script');
+            s.src = '/js/spotlight-search.js?v=inject_v2';
+            document.head.appendChild(s);
+        }
+    }
+
     function renderGrid() {
+        ensureSneakerSearchButton();
         const grid = $('#svGrid');
         if (!grid) return;
         grid.innerHTML = '';
@@ -1212,6 +1246,8 @@
 
     // Tự khởi chạy an toàn
     function init() {
+        ensureSneakerSearchButton();
+        setInterval(ensureSneakerSearchButton, 600);
         ensureVaultSwitcherInDOM();
         ensureSizeDrawerInDOM();
         localizeAllLabels();
