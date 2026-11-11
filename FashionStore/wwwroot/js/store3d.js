@@ -1264,9 +1264,7 @@
 
         // Bật chế độ SÀO TREO QUẦN 3D TƯƠNG TÁC (PANTS RAIL)
         if (cfg.id === 'quan') {
-            if (typeof window.open3DPantsRack === 'function') {
-                window.open3DPantsRack();
-            }
+            openPantsRailFrom3D();
             return;
         }
 
@@ -1341,9 +1339,7 @@
                         return;
                     }
                     if (cfg.id === 'quan') {
-                        if (typeof window.open3DPantsRack === 'function') {
-                            window.open3DPantsRack();
-                        }
+                        openPantsRailFrom3D();
                         return;
                     }
                     if (cfg.id === 'giay') {
@@ -2048,6 +2044,37 @@
     }
     window.openSneakerVaultFrom3D = openSneakerVaultFrom3D;
     window.closeSneakerVaultFrom3D = closeSneakerVaultFrom3D;
+
+    // --- MỞ VÀ ĐÓNG SÀO QUẦN 3D TỪ SHOWROOM ---
+    function openPantsRailFrom3D() {
+        const promptEl = document.querySelector('.hnmt-portal-footer');
+        const portalHeaderEl = document.querySelector('.hnmt-portal-header');
+        if (promptEl) promptEl.style.display = 'none';
+        if (portalHeaderEl) portalHeaderEl.style.display = 'none';
+
+        if (typeof window.open3DPantsRack === 'function') {
+            window.open3DPantsRack();
+        } else {
+            const overlay = document.getElementById('hnmtPantsOverlay');
+            if (overlay) overlay.classList.add('is-active');
+        }
+    }
+
+    function closePantsRailFrom3D() {
+        const promptEl = document.querySelector('.hnmt-portal-footer');
+        const portalHeaderEl = document.querySelector('.hnmt-portal-header');
+        if (promptEl) promptEl.style.display = '';
+        if (portalHeaderEl) portalHeaderEl.style.display = '';
+
+        if (typeof window.close3DPantsRack === 'function') {
+            window.close3DPantsRack();
+        } else {
+            const overlay = document.getElementById('hnmtPantsOverlay');
+            if (overlay) overlay.classList.remove('is-active');
+        }
+    }
+    window.openPantsRailFrom3D = openPantsRailFrom3D;
+    window.closePantsRailFrom3D = closePantsRailFrom3D;
 
     window.HNMTChilePortal = { open: openPortal, close: closePortal };
 })();

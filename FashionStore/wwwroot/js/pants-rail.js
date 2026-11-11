@@ -223,14 +223,108 @@
         }
     }
 
+    // --- ĐẢM BẢO HTML SÀO QUẦN LUÔN TỒN TẠI TRONG DOM (CHỐNG CACHE SERVER RAZOR) ---
+    function ensurePantsRailInDOM() {
+        if (document.getElementById('hnmtPantsOverlay')) return;
+        const portal = document.getElementById('hnmtChilePortal') || document.body;
+        const div = document.createElement('div');
+        div.id = 'hnmtPantsOverlay';
+        div.className = 'hnmt-pants-rail-wrap';
+        div.setAttribute('aria-hidden', 'true');
+        div.innerHTML = `
+            <div class="pants-rail-app">
+                <header class="pants-header">
+                    <a href="/" class="pants-brand-signature" id="pantsBrandSignature" title="Về trang chủ HnmtShop">HnmtShop</a>
+                    <div class="pants-brand">
+                        <span>SÀO QUẦN 3D</span>
+                        <span>BỘ SƯU TẬP 2026-2027</span>
+                    </div>
+                    <div class="pants-head-right">
+                        <button type="button" class="pants-bag-btn" id="pantsBagBtn" aria-label="Giỏ hàng">
+                            <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                <path d="M4 8h16l-1 13H5L4 8Z"/>
+                                <path d="M9 9V6a3 3 0 0 1 6 0v3"/>
+                            </svg>
+                            <span class="pants-bag-count" id="pantsBagCount">0</span>
+                        </button>
+                        <button type="button" class="pants-portal-exit-btn" id="hnmtPantsBackToLobbyBtn" title="Quay lại">
+                            <i class="bi bi-arrow-left"></i>
+                            <span>Quay lại</span>
+                        </button>
+                    </div>
+                </header>
+
+                <main class="pants-main">
+                    <div class="pants-intro">
+                        <p class="pants-eyebrow">BỘ SƯU TẬP QUẦN CAO CẤP</p>
+                        <div class="pants-title-row">
+                            <button type="button" class="pants-rack-nav-btn prev" id="pantsRackPrevBtn" title="Sào trước" aria-label="Sào trước">
+                                <i class="bi bi-chevron-left"></i>
+                            </button>
+                            <h1 class="pants-hero-title">Thiết Kế Đột Phá · Phom Dáng Thượng Hạng</h1>
+                            <button type="button" class="pants-rack-nav-btn next" id="pantsRackNextBtn" title="Sào tiếp theo" aria-label="Sào tiếp theo">
+                                <i class="bi bi-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <section class="pants-scene" aria-label="Sào treo quần 3D">
+                        <div class="pants-scroll" id="pantsScroll">
+                            <div class="pants-stage" id="pantsStage">
+                                <div class="pants-chrome-rail" aria-hidden="true"></div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="pants-caption-panel">
+                        <div class="pants-caption-heading" id="pantsCaptionTitle">Bộ sưu tập quần HNMTSHOP.</div>
+                        <div class="pants-caption-detail" id="pantsCaptionDetail">Phom dáng chuẩn may đo cao cấp — Lướt sào hoặc chọn để xem chi tiết.</div>
+                        <button type="button" class="pants-outline-pill" id="pantsAvailabilityBtn">XEM CHI TIẾT ↗</button>
+                    </section>
+                </main>
+            </div>
+
+            <section class="pants-product-overlay" id="pantsProductOverlay" role="dialog" aria-modal="true" aria-label="Chi tiết sản phẩm quần">
+                <button type="button" class="pants-product-close" id="pantsCloseBtn">ĐÓNG <span>×</span></button>
+                <div class="pants-detail-content">
+                    <div class="pants-detail-image-row">
+                        <button type="button" class="pants-arrow-btn" id="pantsPrevBtn" aria-label="Sản phẩm trước">←</button>
+                        <img class="pants-detail-img" id="pantsDetailImage" alt="">
+                        <button type="button" class="pants-arrow-btn" id="pantsNextBtn" aria-label="Sản phẩm sau">→</button>
+                    </div>
+                    <p class="pants-counter" id="pantsCounter"></p>
+                    <h2 class="pants-detail-name" id="pantsDetailName"></h2>
+                    <p class="pants-description" id="pantsDescription"></p>
+                    <div class="pants-price-line">
+                        <span class="pants-detail-price" id="pantsDetailPrice"></span>
+                        <span class="pants-stock-tag" id="pantsStock"></span>
+                    </div>
+                    <span class="pants-options-label">MÀU SẮC</span>
+                    <div class="pants-color-options" id="pantsColors"></div>
+                    <span class="pants-options-label">KÍCH CỠ (SIZE)</span>
+                    <div class="pants-size-options" id="pantsSizes"></div>
+                    <button type="button" class="pants-cart-cta" id="pantsCartCta">CHỌN KÍCH CỠ ĐỂ MUA</button>
+                    <p class="pants-delivery-sub">Miễn phí giao hàng toàn quốc từ 500.000 ₫. Đổi trả trong 30 ngày.</p>
+                </div>
+            </section>
+        `;
+        portal.appendChild(div);
+        bindEvents();
+    }
+
     // --- MỞ VÀ ĐÓNG SÀO QUẦN TOÀN CỤC ---
     function openPantsRail() {
+        ensurePantsRailInDOM();
         const overlay = $('#hnmtPantsOverlay');
         if (overlay) {
             overlay.classList.add('is-active');
             renderRail();
             setActive(0);
         }
+        const promptEl = document.querySelector('.hnmt-portal-footer');
+        const portalHeaderEl = document.querySelector('.hnmt-portal-header');
+        if (promptEl) promptEl.style.display = 'none';
+        if (portalHeaderEl) portalHeaderEl.style.display = 'none';
     }
 
     function closePantsRail() {
@@ -331,6 +425,7 @@
     }
 
     function init() {
+        ensurePantsRailInDOM();
         bindEvents();
         renderRail();
         setActive(0);

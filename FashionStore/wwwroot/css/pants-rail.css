@@ -17,7 +17,7 @@
     inset: 0;
     width: 100%;
     height: 100%;
-    z-index: 50;
+    z-index: 60;
     background-color: var(--pants-bg);
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='54' height='54' viewBox='0 0 54 54'%3E%3Cpath d='M25 22c-1-5 5-7 7-3 1 3-1 5-5 7L14 34q-2 2 1 2h25q3 0 1-2L28 26' fill='none' stroke='%231C2033' opacity='.075' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E");
     font-family: var(--pants-font);
