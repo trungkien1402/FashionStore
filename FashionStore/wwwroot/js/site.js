@@ -304,4 +304,153 @@
         }, 3000);
     };
 
+    // =========================================================================
+    // HNMT ATELIER — "TRY THE LOOK" LOOKBOOK INITIALIZER & CARD REPLACER
+    // =========================================================================
+    function initSeasonalLookbook() {
+        // Ensure CSS is loaded
+        if (!document.querySelector('link[href*="lookbook.css"]')) {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = '/css/lookbook.css?v=atelier_v1';
+            document.head.appendChild(link);
+        }
+
+        // Hydrate seasonal section cards on Home page
+        const seasonHeading = document.querySelector('.urbn-seasonal-section .urbn-center-heading');
+        if (seasonHeading) {
+            const p = seasonHeading.querySelector('p');
+            if (p) p.textContent = 'Trải nghiệm phối đồ Head-to-Toe trong không gian Studio độc bản — Đậm chất avant-garde và tinh thần đường phố';
+        }
+
+        const cards = document.querySelectorAll('.urbn-seasonal-section .urbn-rack-card');
+        if (cards && cards.length >= 2) {
+            // Card 1: Nightfall Metropolis
+            const card1 = cards[0];
+            card1.setAttribute('href', '#lookbook-nightfall');
+            card1.setAttribute('data-open-lookbook', 'nightfall');
+            const img1 = card1.querySelector('img');
+            if (img1) {
+                img1.src = '/images/lookbook/look-nightfall-1.jpg';
+                img1.alt = 'NIGHTFALL METROPOLIS';
+                img1.style.objectFit = 'cover';
+                img1.style.objectPosition = 'center top';
+            }
+            const pill1 = card1.querySelector('.urbn-cat-pill');
+            if (pill1) pill1.innerHTML = 'NIGHTFALL METROPOLIS &bull; ĐÊM ĐÔ THỊ';
+
+            // Card 2: Raw Earth & Dust
+            const card2 = cards[1];
+            card2.setAttribute('href', '#lookbook-rawearth');
+            card2.setAttribute('data-open-lookbook', 'rawearth');
+            const img2 = card2.querySelector('img');
+            if (img2) {
+                img2.src = '/images/lookbook/look-rawearth-1.jpg';
+                img2.alt = 'RAW EARTH & DUST';
+                img2.style.objectFit = 'cover';
+                img2.style.objectPosition = 'center top';
+            }
+            const pill2 = card2.querySelector('.urbn-cat-pill');
+            if (pill2) pill2.innerHTML = 'RAW EARTH & DUST &bull; DENIM THÔ & VINTAGE';
+
+            // Click listener
+            card1.onclick = function (e) {
+                e.preventDefault();
+                if (window.HNMTLookbook) window.HNMTLookbook.open('nightfall');
+            };
+            card2.onclick = function (e) {
+                e.preventDefault();
+                if (window.HNMTLookbook) window.HNMTLookbook.open('rawearth');
+            };
+        }
+
+        // Ensure lookbook DOM markup exists
+        if (!document.getElementById('lookbookRoot')) {
+            const root = document.createElement('div');
+            root.id = 'lookbookRoot';
+            root.className = 'lb-wrapper theme-nightfall';
+            root.innerHTML = `
+                <header class="lb-topbar">
+                    <div class="lb-top-left">
+                        <a href="/" class="lb-back-btn">
+                            <i class="bi bi-arrow-left"></i>
+                            <span>Quay lại</span>
+                        </a>
+                        <div class="lb-brand-title">
+                            <span>HNMT ATELIER</span>
+                            <span class="lb-brand-badge">TRY THE LOOK</span>
+                        </div>
+                    </div>
+                    <div class="lb-theme-switcher">
+                        <button type="button" class="lb-theme-tab active" data-theme="nightfall">
+                            <span>🌌 NIGHTFALL METROPOLIS</span>
+                        </button>
+                        <button type="button" class="lb-theme-tab" data-theme="rawearth">
+                            <span>🏜️ RAW EARTH & DUST</span>
+                        </button>
+                    </div>
+                    <div class="lb-top-right">
+                        <button type="button" class="lb-cart-btn" id="lbCartBtn" title="Xem túi đồ">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                                <line x1="3" y1="6" x2="21" y2="6"></line>
+                                <path d="M16 10a4 4 0 0 1-8 0"></path>
+                            </svg>
+                            <span class="lb-cart-count" id="lbCartCount">0</span>
+                        </button>
+                    </div>
+                </header>
+                <main class="lb-main">
+                    <div class="lb-stage-viewport">
+                        <div class="lb-stage-floor"></div>
+                        <div class="lb-runway-track" id="lbRunwayTrack"></div>
+                        <div class="lb-bottom-bar">
+                            <button type="button" class="lb-nav-btn" id="lbPrevBtn" title="Outfit trước">
+                                <i class="bi bi-chevron-left"></i>
+                            </button>
+                            <div class="lb-look-pills" id="lbLookPills"></div>
+                            <button type="button" class="lb-nav-btn" id="lbNextBtn" title="Outfit tiếp theo">
+                                <i class="bi bi-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <aside class="lb-sidebar">
+                        <div class="lb-sidebar-header">
+                            <div class="lb-sidebar-sub">In This Look &bull; Phối Đồ Head-to-Toe</div>
+                            <div class="lb-sidebar-title-row">
+                                <h3 class="lb-sidebar-title" id="lbSidebarTitle">LOOK 01</h3>
+                                <span class="lb-items-count-badge">3 sản phẩm</span>
+                            </div>
+                        </div>
+                        <div class="lb-items-list" id="lbItemsList"></div>
+                        <div class="lb-sidebar-footer">
+                            <div class="lb-total-row">
+                                <span class="lb-total-label">Tổng cả bộ outfit:</span>
+                                <span class="lb-total-price" id="lbTotalPrice">0 ₫</span>
+                            </div>
+                            <button type="button" class="lb-add-full-btn" id="lbAddFullLookBtn">
+                                <span>Thêm Trọn Bộ Vào Túi Đồ</span>
+                                <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </div>
+                    </aside>
+                </main>
+            `;
+            document.body.appendChild(root);
+        }
+
+        // Ensure lookbook.js is loaded
+        if (!window.HNMTLookbook && !document.querySelector('script[src*="lookbook.js"]')) {
+            const script = document.createElement('script');
+            script.src = '/js/lookbook.js?v=atelier_v1';
+            document.body.appendChild(script);
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSeasonalLookbook);
+    } else {
+        initSeasonalLookbook();
+    }
+
 })();

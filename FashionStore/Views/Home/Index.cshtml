@@ -386,26 +386,26 @@
 
         <div class="urbn-center-heading">
             <h2>Bộ Sưu Tập Theo Mùa</h2>
-            <p>Mỗi mùa mang đến một đợt Drop mới — Thiết kế táo bạo, phom dáng chuẩn mực, sinh ra cho đường phố</p>
+            <p>Trải nghiệm phối đồ Head-to-Toe trong không gian Studio độc bản — Đậm chất avant-garde và tinh thần đường phố</p>
         </div>
 
         <div class="urbn-racks-grid">
 
-            <!-- Sào 1: TỐI GIẢN & CÔNG SỞ -->
-            <a asp-controller="Products" asp-action="Index" class="urbn-rack-card">
-                <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1000&q=80"
-                     alt="Tối Giản & Công Sở" />
+            <!-- Sào 1: NIGHTFALL METROPOLIS -->
+            <a href="#lookbook-nightfall" class="urbn-rack-card hnmt-lookbook-card" data-open-lookbook="nightfall">
+                <img src="/images/lookbook/look-nightfall-1.jpg"
+                     alt="NIGHTFALL METROPOLIS" />
                 <div class="urbn-cat-pill-wrap">
-                    <span class="urbn-cat-pill">TỐI GIẢN & CÔNG SỞ</span>
+                    <span class="urbn-cat-pill">NIGHTFALL METROPOLIS &bull; ĐÊM ĐÔ THỊ</span>
                 </div>
             </a>
 
-            <!-- Sào 2: PHONG CÁCH ĐƯỜNG PHỐ -->
-            <a asp-controller="Products" asp-action="Index" class="urbn-rack-card">
-                <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=1000&q=80"
-                     alt="Phong Cách Đường Phố" />
+            <!-- Sào 2: RAW EARTH & DUST -->
+            <a href="#lookbook-rawearth" class="urbn-rack-card hnmt-lookbook-card" data-open-lookbook="rawearth">
+                <img src="/images/lookbook/look-rawearth-1.jpg"
+                     alt="RAW EARTH & DUST" />
                 <div class="urbn-cat-pill-wrap">
-                    <span class="urbn-cat-pill">STREETWEAR</span>
+                    <span class="urbn-cat-pill">RAW EARTH & DUST &bull; DENIM THÔ & VINTAGE</span>
                 </div>
             </a>
 
@@ -497,3 +497,108 @@
 
     </div>
 </section>
+
+<!-- ============================================================== -->
+<!-- HNMT ATELIER — "TRY THE LOOK" INTERACTIVE OUTFIT SHOWROOM      -->
+<!-- 1:1 REPLICATION OF RUNWAY HOTSPOT STYLING STUDIO (2026)        -->
+<!-- ============================================================== -->
+<link rel="stylesheet" href="~/css/lookbook.css?v=atelier_v1" asp-append-version="true" />
+
+<div id="lookbookRoot" class="lb-wrapper theme-nightfall">
+
+    <!-- TOPBAR -->
+    <header class="lb-topbar">
+        <div class="lb-top-left">
+            <a href="/" class="lb-back-btn">
+                <i class="bi bi-arrow-left"></i>
+                <span>Quay lại</span>
+            </a>
+            <div class="lb-brand-title">
+                <span>HNMT ATELIER</span>
+                <span class="lb-brand-badge">TRY THE LOOK</span>
+            </div>
+        </div>
+
+        <!-- THEME CAPSULE SWITCHER -->
+        <div class="lb-theme-switcher">
+            <button type="button" class="lb-theme-tab active" data-theme="nightfall">
+                <span>🌌 NIGHTFALL METROPOLIS</span>
+            </button>
+            <button type="button" class="lb-theme-tab" data-theme="rawearth">
+                <span>🏜️ RAW EARTH & DUST</span>
+            </button>
+        </div>
+
+        <!-- TOP RIGHT (SHOPPING BAG INTEGRATED) -->
+        <div class="lb-top-right">
+            <button type="button" class="lb-cart-btn" id="lbCartBtn" title="Xem túi đồ">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <path d="M16 10a4 4 0 0 1-8 0"></path>
+                </svg>
+                <span class="lb-cart-count" id="lbCartCount">0</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN BODY -->
+    <main class="lb-main">
+
+        <!-- RUNWAY STAGE VIEWPORT (LEFT / CENTER) -->
+        <div class="lb-stage-viewport">
+            <!-- Studio Ambient Floor Glow -->
+            <div class="lb-stage-floor"></div>
+
+            <!-- Horizontal Track with Models & Hotspots -->
+            <div class="lb-runway-track" id="lbRunwayTrack">
+                <!-- Dynamically rendered by lookbook.js -->
+            </div>
+
+            <!-- Bottom Floating Controls -->
+            <div class="lb-bottom-bar">
+                <button type="button" class="lb-nav-btn" id="lbPrevBtn" title="Outfit trước">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+                <div class="lb-look-pills" id="lbLookPills">
+                    <!-- Dynamically rendered pills -->
+                </div>
+                <button type="button" class="lb-nav-btn" id="lbNextBtn" title="Outfit tiếp theo">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- RIGHT SIDEBAR ("IN THIS LOOK") -->
+        <aside class="lb-sidebar">
+            <div class="lb-sidebar-header">
+                <div class="lb-sidebar-sub">In This Look &bull; Phối Đồ Head-to-Toe</div>
+                <div class="lb-sidebar-title-row">
+                    <h3 class="lb-sidebar-title" id="lbSidebarTitle">LOOK 01</h3>
+                    <span class="lb-items-count-badge">3 sản phẩm</span>
+                </div>
+            </div>
+
+            <!-- Items List -->
+            <div class="lb-items-list" id="lbItemsList">
+                <!-- Dynamically rendered items -->
+            </div>
+
+            <!-- Sticky Sidebar Footer -->
+            <div class="lb-sidebar-footer">
+                <div class="lb-total-row">
+                    <span class="lb-total-label">Tổng cả bộ outfit:</span>
+                    <span class="lb-total-price" id="lbTotalPrice">0 ₫</span>
+                </div>
+                <button type="button" class="lb-add-full-btn" id="lbAddFullLookBtn">
+                    <span>Thêm Trọn Bộ Vào Túi Đồ</span>
+                    <i class="bi bi-arrow-right"></i>
+                </button>
+            </div>
+        </aside>
+
+    </main>
+
+</div>
+
+<script src="~/js/lookbook.js?v=atelier_v1" asp-append-version="true"></script>

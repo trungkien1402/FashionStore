@@ -41,12 +41,13 @@
 @{
     var isHome = string.Equals(ViewContext.RouteData.Values["controller"]?.ToString(), "Home", StringComparison.OrdinalIgnoreCase) &&
                  string.Equals(ViewContext.RouteData.Values["action"]?.ToString(), "Index", StringComparison.OrdinalIgnoreCase);
+    var isLookbook = string.Equals(ViewContext.RouteData.Values["action"]?.ToString(), "Lookbook", StringComparison.OrdinalIgnoreCase);
 }
 
     <!-- ============================================================== -->
     <!-- NAVBAR (URBNMIND EXACT: LOGO, CENTER LINKS, ICONS, BUY NOW)    -->
     <!-- ============================================================== -->
-    <header class="urbn-header @(isHome ? "urbn-header-hidden" : "")">
+    <header class="urbn-header @(isHome || isLookbook ? "urbn-header-hidden" : "")">
         <div class="urbn-container">
             <nav class="urbn-nav">
 
@@ -120,64 +121,67 @@
 
 
 
-    <!-- ============================================================== -->
-    <!-- FOOTER (EXACT VIDEO: BLACK 4-COLUMNS + NEWSLETTER JOIN NOW)   -->
-    <!-- ============================================================== -->
-    <footer class="urbn-footer-section" id="contact">
-        <div class="urbn-container">
-            <div class="urbn-footer-grid">
+    @if (!isLookbook)
+    {
+        <!-- ============================================================== -->
+        <!-- FOOTER (EXACT VIDEO: BLACK 4-COLUMNS + NEWSLETTER JOIN NOW)   -->
+        <!-- ============================================================== -->
+        <footer class="urbn-footer-section" id="contact">
+            <div class="urbn-container">
+                <div class="urbn-footer-grid">
 
-                <!-- Col 1: Brand & Newsletter -->
-                <div>
-                    <span class="urbn-footer-logo">HNMTSHOP</span>
-                    <p class="urbn-footer-sub">Kết Nối Phong Cách. Dẫn Đầu Xu Hướng.</p>
-                    <p class="urbn-footer-desc">
-                        Gia nhập cộng đồng HNMTSHOP để không bao giờ bỏ lỡ các đợt phát hành mới, ưu đãi độc quyền và cảm hứng thời trang đường phố mỗi ngày.
-                    </p>
-                    <form class="urbn-newsletter-form" onsubmit="event.preventDefault(); showFsToast('Cảm ơn bạn đã gia nhập cộng đồng HNMTSHOP!', 'success'); this.reset();">
-                        <input type="email" class="urbn-newsletter-input" placeholder="Nhập email của bạn..." required />
-                        <button type="submit" class="urbn-btn-join">Tham Gia</button>
-                    </form>
+                    <!-- Col 1: Brand & Newsletter -->
+                    <div>
+                        <span class="urbn-footer-logo">HNMTSHOP</span>
+                        <p class="urbn-footer-sub">Kết Nối Phong Cách. Dẫn Đầu Xu Hướng.</p>
+                        <p class="urbn-footer-desc">
+                            Gia nhập cộng đồng HNMTSHOP để không bao giờ bỏ lỡ các đợt phát hành mới, ưu đãi độc quyền và cảm hứng thời trang đường phố mỗi ngày.
+                        </p>
+                        <form class="urbn-newsletter-form" onsubmit="event.preventDefault(); showFsToast('Cảm ơn bạn đã gia nhập cộng đồng HNMTSHOP!', 'success'); this.reset();">
+                            <input type="email" class="urbn-newsletter-input" placeholder="Nhập email của bạn..." required />
+                            <button type="submit" class="urbn-btn-join">Tham Gia</button>
+                        </form>
+                    </div>
+
+                    <!-- Col 2: Information -->
+                    <div class="urbn-footer-col">
+                        <h5>Thông Tin</h5>
+                        <ul>
+                            <li><a href="#">Về HNMTSHOP</a></li>
+                            <li><a href="#">Hệ Thống Cửa Hàng</a></li>
+                            <li><a href="#">Nhà Đầu Tư</a></li>
+                            <li><a href="/Products">Sản Phẩm Mới</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Col 3: Help Center -->
+                    <div class="urbn-footer-col">
+                        <h5>Trung Tâm Trợ Giúp</h5>
+                        <ul>
+                            <li><a href="#">Câu Hỏi Thường Gặp</a></li>
+                            <li><a href="#">Điều Khoản Dịch Vụ</a></li>
+                            <li><a href="#">Chính Sách Bảo Mật</a></li>
+                            <li><a href="#">Chính Sách Đổi Trả</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Col 4: Contact Us -->
+                    <div class="urbn-footer-col urbn-footer-contact">
+                        <h5>Liên Hệ</h5>
+                        <p>hotro@hnmtshop.vn</p>
+                        <p>+84 988 776 655</p>
+                        <p style="font-size: 13px; color: #9CA3AF; margin-top: 8px;">Hà Nội & TP. Hồ Chí Minh, Việt Nam</p>
+                    </div>
+
                 </div>
 
-                <!-- Col 2: Information -->
-                <div class="urbn-footer-col">
-                    <h5>Thông Tin</h5>
-                    <ul>
-                        <li><a href="#">Về HNMTSHOP</a></li>
-                        <li><a href="#">Hệ Thống Cửa Hàng</a></li>
-                        <li><a href="#">Nhà Đầu Tư</a></li>
-                        <li><a href="/Products">Sản Phẩm Mới</a></li>
-                    </ul>
+                <!-- Bottom Copyright -->
+                <div class="urbn-footer-bottom">
+                    &copy; 2026 HNMTSHOP. Tất cả các quyền được bảo lưu. Thiết kế dành riêng cho giới trẻ.
                 </div>
-
-                <!-- Col 3: Help Center -->
-                <div class="urbn-footer-col">
-                    <h5>Trung Tâm Trợ Giúp</h5>
-                    <ul>
-                        <li><a href="#">Câu Hỏi Thường Gặp</a></li>
-                        <li><a href="#">Điều Khoản Dịch Vụ</a></li>
-                        <li><a href="#">Chính Sách Bảo Mật</a></li>
-                        <li><a href="#">Chính Sách Đổi Trả</a></li>
-                    </ul>
-                </div>
-
-                <!-- Col 4: Contact Us -->
-                <div class="urbn-footer-col urbn-footer-contact">
-                    <h5>Liên Hệ</h5>
-                    <p>hotro@hnmtshop.vn</p>
-                    <p>+84 988 776 655</p>
-                    <p style="font-size: 13px; color: #9CA3AF; margin-top: 8px;">Hà Nội & TP. Hồ Chí Minh, Việt Nam</p>
-                </div>
-
             </div>
-
-            <!-- Bottom Copyright -->
-            <div class="urbn-footer-bottom">
-                &copy; 2026 HNMTSHOP. Tất cả các quyền được bảo lưu. Thiết kế dành riêng cho giới trẻ.
-            </div>
-        </div>
-    </footer>
+        </footer>
+    }
 
     <!-- 3D, WebGL & Motion Libraries (Three.js, GLTF, GSAP Draggable, Vanilla-Tilt, Lenis, Spline) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
