@@ -1,4 +1,4 @@
-﻿using FashionStore.Data;
+using FashionStore.Data;
 using FashionStore.Models.Entities;
 using FashionStore.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -22,10 +22,11 @@ public class AdminProductsController : Controller
     }
 
     // GET: /AdminProducts
-    public async Task<IActionResult> Index(string? keyword, bool? isActive)
+    public async Task<IActionResult> Index(string? keyword, int? categoryId, bool? isActive)
     {
         var query = _context.Products
             .Include(p => p.Category)
+            .Include(p => p.Variants)
             .AsNoTracking()
             .AsQueryable();
 
@@ -34,6 +35,11 @@ public class AdminProductsController : Controller
             query = query.Where(p =>
                 p.Name.Contains(keyword) ||
                 p.Slug.Contains(keyword));
+        }
+
+        if (categoryId.HasValue && categoryId.Value > 0)
+        {
+            query = query.Where(p => p.CategoryId == categoryId.Value);
         }
 
         if (isActive.HasValue)
@@ -46,6 +52,8 @@ public class AdminProductsController : Controller
             .ToListAsync();
 
         ViewBag.Keyword = keyword;
+        ViewBag.CategoryId = categoryId;
+        ViewBag.Categories = await _context.Categories.AsNoTracking().OrderBy(c => c.Name).ToListAsync();
         ViewBag.IsActive = isActive;
 
         return View(products);

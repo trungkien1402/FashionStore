@@ -980,3 +980,394 @@ img {
         display: none;
     }
 }
+
+
+/* ==========================================================================
+   MODULE 4 & 5 — LUXURY ATELIER & TACTICAL FIELD DESIGN SYSTEM
+   ========================================================================== */
+
+/* Buttons & Common */
+.fs-btn {
+  display: inline-block;
+  font-family: var(--urbn-font, 'Plus Jakarta Sans', sans-serif);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  padding: 14px 32px;
+  border-radius: 999px;
+  border: 1.5px solid #000;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-decoration: none;
+  text-align: center;
+  white-space: nowrap;
+}
+.fs-btn-dark {
+  background: #000;
+  color: #fff !important;
+}
+.fs-btn-dark:hover {
+  background: #27272a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  color: #fff !important;
+}
+.fs-btn-outline {
+  background: transparent;
+  color: #000 !important;
+}
+.fs-btn-outline:hover {
+  background: #000;
+  color: #fff !important;
+}
+
+/* Page Scaffolding */
+.fs-page-wrap {
+  padding: 60px 0 90px;
+  background: #fff;
+}
+.fs-page-header {
+  margin-bottom: 40px;
+}
+.fs-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: #9ca3af;
+  margin-bottom: 8px;
+  display: block;
+}
+.fs-page-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(32px, 4vw, 46px);
+  font-weight: 600;
+  letter-spacing: -0.5px;
+  line-height: 1.15;
+  color: #000;
+  margin-bottom: 8px;
+}
+.fs-page-desc {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* Custom Pills / Alerts */
+.fs-pill-alert {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 22px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+.fs-pill-alert.success {
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+.fs-pill-alert.error {
+  background: #fff1f2;
+  color: #be123c;
+  border: 1px solid #fecdd3;
+}
+
+/* Cart Specific Styles */
+.fs-cart-item-card {
+  display: flex;
+  gap: 20px;
+  padding: 24px;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  margin-bottom: 16px;
+  background: #fff;
+  transition: all 0.25s ease;
+}
+.fs-cart-item-card:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+}
+.fs-cart-item-img {
+  width: 110px;
+  height: 135px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: #f4f5f7;
+}
+.fs-cart-item-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 21px;
+  font-weight: 600;
+  color: #000;
+  line-height: 1.25;
+  margin-bottom: 6px;
+}
+.fs-cart-item-attr {
+  font-size: 12.5px;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+.fs-qty-stepper {
+  display: inline-flex;
+  align-items: center;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #f9fafb;
+}
+.fs-qty-input {
+  width: 44px;
+  text-align: center;
+  border: none;
+  background: transparent;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #000;
+  outline: none;
+  padding: 6px 0;
+  -moz-appearance: textfield;
+}
+.fs-qty-input::-webkit-outer-spin-button,
+.fs-qty-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.fs-summary-panel {
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 30px;
+  background: #fff;
+  box-shadow: 0 4px 25px rgba(0,0,0,0.03);
+  position: sticky;
+  top: 96px;
+}
+.fs-summary-heading {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 24px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #e5e7eb;
+}
+.fs-summary-line {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #4b5563;
+  margin-bottom: 14px;
+}
+.fs-summary-line.total {
+  font-size: 18px;
+  font-weight: 800;
+  color: #000;
+  border-top: 1.5px dashed #e5e7eb;
+  padding-top: 18px;
+  margin-top: 14px;
+  margin-bottom: 26px;
+}
+
+/* Order Dossier Cards */
+.fs-order-dossier-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 24px 28px;
+  margin-bottom: 18px;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.fs-order-dossier-card:hover {
+  border-color: #111;
+  box-shadow: 0 6px 25px rgba(0,0,0,0.06);
+  transform: translateY(-2px);
+}
+.fs-code-badge {
+  font-family: 'Courier New', monospace;
+  font-weight: 700;
+  font-size: 14px;
+  color: #111;
+  background: #f3f4f6;
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+}
+
+/* Status Badges */
+.fs-badge-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+.fs-badge-status.pending { background: #fef3c7; color: #92400e; }
+.fs-badge-status.confirmed { background: #eff6ff; color: #1d4ed8; }
+.fs-badge-status.processing { background: #e0e7ff; color: #4338ca; }
+.fs-badge-status.shipping { background: #e0f2fe; color: #0369a1; }
+.fs-badge-status.delivered { background: #dcfce7; color: #15803d; }
+.fs-badge-status.cancelled { background: #fee2e2; color: #b91c1c; }
+.fs-badge-status.failed { background: #ffedd5; color: #c2410c; }
+.fs-badge-status.returned { background: #f3f4f6; color: #4b5563; }
+
+/* Timeline Stepper for Details */
+.fs-timeline-container {
+  position: relative;
+  padding-left: 32px;
+}
+.fs-timeline-container::before {
+  content: "";
+  position: absolute;
+  left: 9px;
+  top: 10px;
+  bottom: 20px;
+  width: 2px;
+  background: #e5e7eb;
+}
+.fs-timeline-row {
+  position: relative;
+  padding-bottom: 28px;
+}
+.fs-timeline-row:last-child {
+  padding-bottom: 0;
+}
+.fs-timeline-dot {
+  position: absolute;
+  left: -32px;
+  top: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid #d1d5db;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  color: #9ca3af;
+  z-index: 1;
+}
+.fs-timeline-dot.current {
+  background: #000;
+  border-color: #000;
+  color: #fff;
+  box-shadow: 0 0 0 4px rgba(0,0,0,0.1);
+}
+.fs-timeline-dot.passed {
+  background: #10b981;
+  border-color: #10b981;
+  color: #fff;
+}
+.fs-timeline-dot.danger {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: #fff;
+}
+
+/* Shipper Field App Tactical Layout */
+.shp-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.shp-stat-box {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px 12px;
+  text-align: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+}
+.shp-stat-num {
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+.shp-stat-label {
+  font-size: 11px;
+  color: #6b7280;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.shp-tab-strip {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  margin-bottom: 20px;
+  scrollbar-width: none;
+}
+.shp-tab-strip::-webkit-scrollbar { display: none; }
+.shp-tab-item {
+  flex-shrink: 0;
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #4b5563;
+  background: #f3f4f6;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+.shp-tab-item.active {
+  background: #000;
+  color: #fff !important;
+}
+.shp-delivery-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 22px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+  transition: all 0.2s ease;
+}
+.shp-delivery-card:hover {
+  border-color: #111;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.07);
+}
+.shp-cod-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin: 14px 0 16px;
+}
+.shp-cod-bar.due {
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+}
+.shp-cod-bar.cleared {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+}
+.shp-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 13.5px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  width: 100%;
+}

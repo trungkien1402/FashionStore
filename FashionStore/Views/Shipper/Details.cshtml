@@ -2,7 +2,7 @@
 @using FashionStore.Models.Enums
 
 @{
-    ViewData["Title"] = "Chi tiết giao hàng #" + Model.TrackingCode;
+    ViewData["Title"] = "Chi tiết vận đơn #" + Model.TrackingCode;
 
     string GetShipmentStatusName(ShipmentStatus status) => status switch
     {
@@ -15,303 +15,492 @@
         _ => status.ToString()
     };
 
-    string GetStatusBadgeClass(ShipmentStatus status) => status switch
+    string GetStatusClass(ShipmentStatus status) => status switch
     {
-        ShipmentStatus.Assigned => "bg-secondary",
-        ShipmentStatus.PickedUp => "bg-info text-dark",
-        ShipmentStatus.InTransit => "bg-primary",
-        ShipmentStatus.Delivered => "bg-success",
-        ShipmentStatus.Failed => "bg-danger",
-        ShipmentStatus.Returned => "bg-dark",
-        _ => "bg-light text-dark"
+        ShipmentStatus.Assigned => "pending",
+        ShipmentStatus.PickedUp => "confirmed",
+        ShipmentStatus.InTransit => "shipping",
+        ShipmentStatus.Delivered => "delivered",
+        ShipmentStatus.Failed => "failed",
+        ShipmentStatus.Returned => "returned",
+        _ => "pending"
     };
 }
 
-<div class="container-fluid px-0">
-    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+<div class="container-fluid px-3 py-4 shp-page shp-details-page">
+    
+    <!-- TOP BAR -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
         <div>
-            <div class="text-muted small text-uppercase">Cổng thông tin Shipper</div>
-            <h2 class="fw-bold mb-0">Mã vận đơn: @Model.TrackingCode</h2>
-            <p class="text-muted mb-0">Mã đơn hàng: <strong>@Model.Order?.OrderCode</strong></p>
+            <a asp-action="Index" class="text-muted text-decoration-none small d-inline-flex align-items-center gap-1 mb-1">
+                <i class="bi bi-arrow-left"></i> Danh sách vận đơn
+            </a>
+            <h2 class="fw-bold mb-0 text-dark">
+                Vận đơn <span class="font-monospace text-primary">#@Model.TrackingCode</span>
+            </h2>
+            <div class="text-muted small">Đơn hàng gốc: <strong class="text-dark">@Model.Order?.OrderCode</strong></div>
         </div>
 
-        <a asp-action="Index" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left me-1"></i> Quay lại danh sách
-        </a>
+        <span class="fs-badge-status @GetStatusClass(Model.Status)" style="font-size: 14px; padding: 8px 18px;">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: currentColor;"></span>
+            @GetShipmentStatusName(Model.Status)
+        </span>
     </div>
 
     @if (TempData["Success"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle me-2"></i>@TempData["Success"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div class="fs-pill-alert success">
+            <i class="bi bi-check-circle-fill fs-5"></i>
+            <span>@TempData["Success"]</span>
         </div>
     }
 
     @if (TempData["Error"] != null)
     {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="bi bi-exclamation-triangle me-2"></i>@TempData["Error"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div class="fs-pill-alert error">
+            <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+            <span>@TempData["Error"]</span>
         </div>
     }
 
     <div class="row g-4">
-        <!-- CỘT TRÁI: THÔNG TIN KHÁCH HÀNG & TIỀN THU -->
+        <!-- LEFT COLUMN: RECEIVER & PACKAGES -->
         <div class="col-lg-7">
-            <!-- THẺ TIỀN COD PHẢI THU -->
-            <div class="card border-0 shadow-sm mb-4 @(Model.CODAmount > 0 ? "border-start border-danger border-4" : "border-start border-success border-4")">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <small class="text-muted text-uppercase fw-semibold">Số tiền cần thu của khách (COD)</small>
-                            <h2 class="fw-bold mb-0 @(Model.CODAmount > 0 ? "text-danger" : "text-success")">
-                                @(Model.CODAmount > 0 ? Model.CODAmount.ToString("N0") + " đ" : "0 đ (Đã thanh toán trước)")
-                            </h2>
+            
+            <!-- COD AMOUNT HERO CARD -->
+            <div class="card border rounded-4 p-4 mb-4 @(Model.CODAmount > 0 ? "border-danger bg-danger-subtle" : "border-success bg-success-subtle")">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="small fw-bold text-uppercase @(Model.CODAmount > 0 ? "text-danger" : "text-success")">
+                            @(Model.CODAmount > 0 ? "Tiền mặt cần thu khi giao (COD)" : "Tình trạng thanh toán")
                         </div>
-                        <div class="text-end">
-                            <span class="badge @GetStatusBadgeClass(Model.Status) fs-6">
-                                @GetShipmentStatusName(Model.Status)
-                            </span>
-                        </div>
+                        <h2 class="fw-bold mb-0 font-monospace @(Model.CODAmount > 0 ? "text-danger" : "text-success") mt-1">
+                            @(Model.CODAmount > 0 ? Model.CODAmount.ToString("N0") + " ₫" : "0 ₫ (ĐÃ THANH TOÁN)")
+                        </h2>
                     </div>
+                    <i class="bi @(Model.CODAmount > 0 ? "bi-cash-coin text-danger" : "bi-check2-circle text-success")" style="font-size: 2.5rem;"></i>
                 </div>
             </div>
 
-            <!-- THÔNG TIN NGƯỜI NHẬN -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-white py-3">
-                    <h5 class="fw-bold mb-0">
-                        <i class="bi bi-person me-2"></i>Thông tin người nhận
-                    </h5>
+            <!-- RECEIVER DOSSIER -->
+            <div class="card border rounded-4 p-4 mb-4 bg-white shadow-sm">
+                <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                    <i class="bi bi-person-badge text-primary"></i> Thông tin khách hàng
+                </h5>
+
+                <div class="mb-3">
+                    <div class="text-muted small">Người nhận</div>
+                    <div class="fw-bold fs-5 text-dark">@Model.Order?.ReceiverName</div>
                 </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <small class="text-muted">Họ tên người nhận</small>
-                        <div class="fw-bold fs-5">@Model.Order?.ReceiverName</div>
-                    </div>
 
-                    <div class="mb-3 d-flex align-items-center gap-3">
-                        <div>
-                            <small class="text-muted">Số điện thoại</small>
-                            <div class="fw-bold fs-5 text-dark">@Model.Order?.Phone</div>
-                        </div>
-                        <a href="tel:@Model.Order?.Phone" class="btn btn-success btn-sm px-3">
-                            <i class="bi bi-telephone-fill me-1"></i> Gọi ngay
-                        </a>
+                <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded-3 mb-3">
+                    <div>
+                        <div class="text-muted small">Điện thoại liên hệ</div>
+                        <div class="fw-bold fs-5 font-monospace text-dark">@Model.Order?.Phone</div>
                     </div>
-
-                    <div class="mb-3">
-                        <small class="text-muted">Địa chỉ giao hàng</small>
-                        <div class="p-3 bg-light rounded mt-1 fw-semibold">
-                            <i class="bi bi-geo-alt-fill text-danger me-1"></i>
-                            @Model.Order?.Address
-                        </div>
-                    </div>
-
-                    @if (!string.IsNullOrWhiteSpace(Model.Note))
-                    {
-                        <div>
-                            <small class="text-muted">Lưu ý của cửa hàng</small>
-                            <div class="p-2 alert alert-warning mb-0">
-                                <i class="bi bi-info-circle me-1"></i>@Model.Note
-                            </div>
-                        </div>
-                    }
+                    <a href="tel:@Model.Order?.Phone" class="btn btn-success rounded-pill px-3 py-2 fw-bold d-flex align-items-center gap-1">
+                        <i class="bi bi-telephone-fill"></i> Gọi ngay
+                    </a>
                 </div>
+
+                <div class="mb-3">
+                    <div class="text-muted small">Địa chỉ nhận hàng</div>
+                    <div class="p-3 bg-light rounded-3 fw-semibold text-dark mt-1">
+                        <i class="bi bi-geo-alt-fill text-danger me-1"></i> @Model.Order?.Address
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(Model.Note))
+                {
+                    <div>
+                        <div class="text-muted small">Lưu ý điều phối</div>
+                        <div class="alert alert-warning py-2 px-3 mt-1 small mb-0 rounded-3">
+                            <i class="bi bi-info-circle me-1"></i> @Model.Note
+                        </div>
+                    </div>
+                }
             </div>
 
-            <!-- SẢN PHẨM CẦN GIAO -->
+            <!-- PACKAGED ITEMS -->
             @if (Model.Order?.Items != null)
             {
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-white py-3">
-                        <h5 class="fw-bold mb-0">
-                            <i class="bi bi-bag me-2"></i>Sản phẩm trong kiện
-                        </h5>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table align-middle mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th class="ps-3">Sản phẩm</th>
-                                    <th>Phân loại</th>
-                                    <th class="text-end pe-3">Số lượng</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model.Order.Items)
-                                {
-                                    <tr>
-                                        <td class="ps-3 fw-semibold">@item.ProductName</td>
-                                        <td>Size @item.Size - Màu @item.Color</td>
-                                        <td class="text-end pe-3 fw-bold">x @item.Quantity</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="card border rounded-4 p-4 bg-white shadow-sm">
+                    <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                        <i class="bi bi-box-seam text-primary"></i> Danh mục trong kiện (@Model.Order.Items.Count)
+                    </h5>
+                    @foreach (var item in Model.Order.Items)
+                    {
+                        <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                            <div>
+                                <div class="fw-bold">@item.ProductName</div>
+                                <div class="text-muted small">Size: @item.Size • Màu: @item.Color</div>
+                            </div>
+                            <span class="badge bg-dark rounded-pill px-3 py-2 font-monospace">x@item.Quantity</span>
+                        </div>
+                    }
                 </div>
             }
         </div>
 
-        <!-- CỘT PHẢI: HÀNH ĐỘNG CẬP NHẬT TRẠNG THÁI -->
+        <!-- RIGHT COLUMN: ACTION CONTROLS & TIMELINE -->
         <div class="col-lg-5">
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-white py-3">
-                    <h5 class="fw-bold mb-0">
-                        <i class="bi bi-lightning-charge me-2"></i>Cập nhật tiến độ giao
+            
+            @if (Model.Status == ShipmentStatus.InTransit)
+            {
+                <div class="card border rounded-4 p-4 mb-4 bg-white shadow-sm"
+                     id="gpsTracking"
+                     data-shipment-id="@Model.Id">
+
+                    <h5 class="fw-bold mb-3">
+                        <i class="bi bi-geo-alt-fill text-danger me-2"></i>
+                        Chia sẻ vị trí GPS
                     </h5>
-                </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <small class="text-muted">Trạng thái hiện tại:</small>
-                        <div class="fw-bold fs-5 mt-1">@GetShipmentStatusName(Model.Status)</div>
+
+                    <div class="alert alert-info small" id="gpsStatus">
+                        Bạn chưa bật chia sẻ vị trí.
                     </div>
 
-                    @if (Model.Status == ShipmentStatus.Assigned)
-                    {
-                        <div class="alert alert-info small">
-                            Đơn mới được phân công. Bạn vui lòng xác nhận khi đã lấy hàng từ kho/shop.
-                        </div>
+                    <div class="d-grid gap-2">
+                        <button type="button"
+                                class="btn btn-success py-2 fw-bold"
+                                id="startGpsButton">
+                            <i class="bi bi-geo-alt me-1"></i>
+                            BẮT ĐẦU CHIA SẺ GPS
+                        </button>
 
-                        <form asp-action="UpdateStatus" method="post" class="mb-3">
+                        <button type="button"
+                                class="btn btn-outline-danger py-2 fw-bold"
+                                id="stopGpsButton"
+                                disabled>
+                            <i class="bi bi-geo-alt-slash me-1"></i>
+                            DỪNG CHIA SẺ GPS
+                        </button>
+                    </div>
+
+                    <div class="mt-3 small text-muted" id="gpsCoordinates">
+                        Chưa có tọa độ GPS.
+                    </div>
+
+                    <form id="gpsForm">
+                        @Html.AntiForgeryToken()
+                    </form>
+                </div>
+            }
+
+            <div class="card border rounded-4 p-4 mb-4 bg-white shadow-sm">
+                <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                    <i class="bi bi-lightning-charge-fill text-warning"></i> Thao tác Giao Hàng
+                </h5>
+
+                @if (Model.Status == ShipmentStatus.Assigned)
+                {
+                    <div class="alert alert-info small rounded-3 mb-3">
+                        <i class="bi bi-info-circle me-1"></i> Đơn mới gán. Hãy xác nhận khi bạn đã nhận kiện từ kho FashionStore.
+                    </div>
+
+                    <form asp-action="UpdateStatus" method="post" class="m-0">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <input type="hidden" name="newStatus" value="@((int)ShipmentStatus.PickedUp)" />
+                        <button type="submit" class="btn btn-primary w-100 py-3 rounded-3 fw-bold fs-6">
+                            <i class="bi bi-box-arrow-in-down me-1"></i> XÁC NHẬN ĐÃ LẤY HÀNG
+                        </button>
+                    </form>
+                }
+                else if (Model.Status == ShipmentStatus.PickedUp)
+                {
+                    <div class="alert alert-info small rounded-3 mb-3">
+                        <i class="bi bi-info-circle me-1"></i> Đã lấy kiện hàng. Bấm bắt đầu đi giao khi bạn đang trên đường đến địa chỉ khách.
+                    </div>
+
+                    <form asp-action="UpdateStatus" method="post" class="m-0">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <input type="hidden" name="newStatus" value="@((int)ShipmentStatus.InTransit)" />
+                        <button type="submit" class="btn btn-primary w-100 py-3 rounded-3 fw-bold fs-6">
+                            <i class="bi bi-truck me-1"></i> BẮT ĐẦU ĐI GIAO HÀNG
+                        </button>
+                    </form>
+                }
+                else if (Model.Status == ShipmentStatus.InTransit)
+                {
+                    <div class="d-grid gap-2 mb-3">
+                        <form asp-action="UpdateStatus" method="post" class="m-0"
+                              onsubmit="return confirm('Xác nhận khách đã nhận đủ kiện và thu đủ tiền @(Model.CODAmount > 0 ? Model.CODAmount.ToString("N0") + "đ" : "")?');">
                             @Html.AntiForgeryToken()
                             <input type="hidden" name="id" value="@Model.Id" />
-                            <input type="hidden" name="newStatus" value="@((int)ShipmentStatus.PickedUp)" />
-                            <button type="submit" class="btn btn-info w-100 py-2 fw-semibold">
-                                <i class="bi bi-box-arrow-in-down me-1"></i> Xác nhận đã lấy hàng
+                            <input type="hidden" name="newStatus" value="@((int)ShipmentStatus.Delivered)" />
+                            <button type="submit" class="btn btn-success w-100 py-3 rounded-3 fw-bold fs-6 shadow-sm">
+                                <i class="bi bi-check-circle-fill me-1"></i> GIAO THÀNH CÔNG @(Model.CODAmount > 0 ? "(& ĐÃ THU TIỀN)" : "")
                             </button>
                         </form>
-                    }
-                    else if (Model.Status == ShipmentStatus.PickedUp)
-                    {
-                        <div class="alert alert-info small">
-                            Đã lấy hàng. Bấm vào đây khi bạn bắt đầu di chuyển đi giao tới khách.
-                        </div>
 
-                        <form asp-action="UpdateStatus" method="post" class="mb-3">
+                        <button type="button" class="btn btn-outline-danger w-100 py-2 rounded-3 fw-semibold"
+                                data-bs-toggle="collapse" data-bs-target="#failedForm">
+                            <i class="bi bi-x-circle me-1"></i> Báo Giao Không Thành Công...
+                        </button>
+                    </div>
+
+                    <!-- COLLAPSE FORM REPORT FAILURE -->
+                    <div class="collapse border p-3 rounded-3 bg-light" id="failedForm">
+                        <h6 class="fw-bold text-danger mb-2">Ghi nhận lý do giao thất bại</h6>
+                        <form asp-action="UpdateStatus" method="post" class="m-0">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@Model.Id" />
+                            <input type="hidden" name="newStatus" value="@((int)ShipmentStatus.Failed)" />
+
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Lý do chính xác:</label>
+                                <textarea name="note" class="form-control" rows="3" required
+                                          placeholder="VD: Thuê bao không liên lạc được, khách hẹn dời sang chiều mai..."></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-danger w-100 rounded-pill fw-bold">
+                                Xác nhận Giao Thất Bại
+                            </button>
+                        </form>
+                    </div>
+                }
+                else if (Model.Status == ShipmentStatus.Failed)
+                {
+                    <div class="alert alert-danger small rounded-3 mb-3">
+                        <i class="bi bi-exclamation-octagon me-1"></i> Đơn hàng giao thất bại. Bạn có thể thử liên hệ giao lại hoặc mang trả về kho.
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <form asp-action="UpdateStatus" method="post" class="m-0">
                             @Html.AntiForgeryToken()
                             <input type="hidden" name="id" value="@Model.Id" />
                             <input type="hidden" name="newStatus" value="@((int)ShipmentStatus.InTransit)" />
-                            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
-                                <i class="bi bi-truck me-1"></i> Bắt đầu đi giao hàng
+                            <button type="submit" class="btn btn-primary w-100 py-2 rounded-3 fw-bold">
+                                <i class="bi bi-arrow-repeat me-1"></i> Thử giao lại lần nữa
                             </button>
                         </form>
-                    }
-                    else if (Model.Status == ShipmentStatus.InTransit)
-                    {
-                        <div class="d-grid gap-2 mb-3">
-                            <form asp-action="UpdateStatus" method="post"
-                                  onsubmit="return confirm('Xác nhận khách đã nhận hàng và thu đủ tiền (nếu COD)?');">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="id" value="@Model.Id" />
-                                <input type="hidden" name="newStatus" value="@((int)ShipmentStatus.Delivered)" />
-                                <button type="submit" class="btn btn-success w-100 py-2 fw-semibold">
-                                    <i class="bi bi-check-circle me-1"></i> GIAO THÀNH CÔNG @(Model.CODAmount > 0 ? "(& ĐÃ THU TIỀN)" : "")
-                                </button>
-                            </form>
 
-                            <button type="button" class="btn btn-outline-danger w-100 py-2 fw-semibold"
-                                    data-bs-toggle="collapse" data-bs-target="#failedForm">
-                                <i class="bi bi-x-circle me-1"></i> Giao không thành công...
+                        <form asp-action="UpdateStatus" method="post" class="m-0"
+                              onsubmit="return confirm('Xác nhận đã mang kiện hàng hoàn trả lại kho FashionStore?');">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@Model.Id" />
+                            <input type="hidden" name="newStatus" value="@((int)ShipmentStatus.Returned)" />
+                            <button type="submit" class="btn btn-dark w-100 py-2 rounded-3 fw-bold">
+                                <i class="bi bi-arrow-return-left me-1"></i> Đã hoàn trả về kho
                             </button>
-                        </div>
-
-                        <!-- Form báo giao thất bại có lý do -->
-                        <div class="collapse border p-3 rounded bg-light" id="failedForm">
-                            <h6 class="fw-bold text-danger mb-2">Báo cáo giao không thành công</h6>
-                            <form asp-action="UpdateStatus" method="post">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="id" value="@Model.Id" />
-                                <input type="hidden" name="newStatus" value="@((int)ShipmentStatus.Failed)" />
-
-                                <div class="mb-3">
-                                    <label class="form-label small fw-semibold">Lý do thất bại <span class="text-danger">*</span></label>
-                                    <textarea name="note" class="form-control" rows="3" required
-                                              placeholder="VD: Gọi không nghe máy, khách hẹn ngày mai, địa chỉ sai..."></textarea>
-                                </div>
-
-                                <button type="submit" class="btn btn-danger w-100">
-                                    Xác nhận giao thất bại
-                                </button>
-                            </form>
-                        </div>
-                    }
-                    else if (Model.Status == ShipmentStatus.Failed)
-                    {
-                        <div class="alert alert-danger small mb-3">
-                            Đơn hàng đang ở trạng thái giao thất bại. Bạn có thể hẹn giao lại hoặc mang trả về kho.
-                        </div>
-
-                        <div class="d-grid gap-2">
-                            <form asp-action="UpdateStatus" method="post">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="id" value="@Model.Id" />
-                                <input type="hidden" name="newStatus" value="@((int)ShipmentStatus.InTransit)" />
-                                <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
-                                    <i class="bi bi-arrow-clockwise me-1"></i> Thử đi giao lại
-                                </button>
-                            </form>
-
-                            <form asp-action="UpdateStatus" method="post"
-                                  onsubmit="return confirm('Xác nhận đã mang hàng trả về lại kho FashionStore?');">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="id" value="@Model.Id" />
-                                <input type="hidden" name="newStatus" value="@((int)ShipmentStatus.Returned)" />
-                                <button type="submit" class="btn btn-dark w-100 py-2 fw-semibold">
-                                    <i class="bi bi-arrow-return-left me-1"></i> Đã hoàn hàng về kho
-                                </button>
-                            </form>
-                        </div>
-                    }
-                    else if (Model.Status == ShipmentStatus.Delivered)
-                    {
-                        <div class="alert alert-success mb-0">
-                            <i class="bi bi-check-circle-fill me-1"></i>
-                            Đơn hàng đã được bạn giao thành công hoàn tất!
-                        </div>
-                    }
-                    else if (Model.Status == ShipmentStatus.Returned)
-                    {
-                        <div class="alert alert-dark mb-0">
-                            <i class="bi bi-archive-fill me-1"></i>
-                            Đơn hàng đã được hoàn trả về kho và nhập lại tồn kho.
-                        </div>
-                    }
-                </div>
+                        </form>
+                    </div>
+                }
+                else if (Model.Status == ShipmentStatus.Delivered)
+                {
+                    <div class="text-center py-4 bg-light rounded-3">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+                        <h6 class="fw-bold mt-2 text-dark">Kiện hàng đã giao thành công</h6>
+                        <p class="text-muted small mb-0">Nhiệm vụ hoàn tất xuất sắc.</p>
+                    </div>
+                }
+                else if (Model.Status == ShipmentStatus.Returned)
+                {
+                    <div class="text-center py-4 bg-light rounded-3">
+                        <i class="bi bi-archive-fill text-dark" style="font-size: 3rem;"></i>
+                        <h6 class="fw-bold mt-2 text-dark">Đã hoàn hàng về kho</h6>
+                        <p class="text-muted small mb-0">Hàng tồn kho đã được khôi phục.</p>
+                    </div>
+                }
             </div>
 
-            <!-- LỊCH SỬ THAO TÁC -->
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white py-3">
-                    <h6 class="fw-bold mb-0">Lịch sử tiến trình</h6>
-                </div>
-                <div class="card-body">
-                    @if (Model.Histories != null && Model.Histories.Any())
-                    {
-                        <ul class="list-unstyled mb-0 small">
-                            @foreach (var h in Model.Histories)
-                            {
-                                <li class="mb-3 border-bottom pb-2">
-                                    <div class="d-flex justify-content-between">
-                                        <span class="badge @GetStatusBadgeClass(h.NewStatus)">@GetShipmentStatusName(h.NewStatus)</span>
-                                        <span class="text-muted">@h.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span>
-                                    </div>
-                                    @if (!string.IsNullOrWhiteSpace(h.Note))
-                                    {
-                                        <div class="mt-1 text-muted">@h.Note</div>
-                                    }
-                                </li>
-                            }
-                        </ul>
-                    }
-                    else
-                    {
-                        <p class="text-muted small mb-0">Chưa có lịch sử.</p>
-                    }
-                </div>
+            <!-- AUDIT TIMELINE -->
+            <div class="card border rounded-4 p-4 bg-white shadow-sm">
+                <h6 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                    <i class="bi bi-clock-history text-muted"></i> Nhật ký hành trình
+                </h6>
+                @if (Model.Histories != null && Model.Histories.Any())
+                {
+                    <div class="small">
+                        @foreach (var h in Model.Histories.OrderByDescending(x => x.CreatedAt))
+                        {
+                            <div class="pb-2 mb-2 border-bottom">
+                                <div class="d-flex justify-content-between">
+                                    <span class="fs-badge-status @GetStatusClass(h.NewStatus)" style="font-size: 11px; padding: 2px 10px;">
+                                        @GetShipmentStatusName(h.NewStatus)
+                                    </span>
+                                    <span class="text-muted font-monospace" style="font-size: 11px;">
+                                        @h.CreatedAt.ToLocalTime().ToString("dd/MM HH:mm")
+                                    </span>
+                                </div>
+                                @if (!string.IsNullOrWhiteSpace(h.Note))
+                                {
+                                    <div class="text-muted mt-1" style="font-size: 12px;">@h.Note</div>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-muted small">Chưa có nhật ký ghi nhận.</div>
+                }
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const gpsContainer = document.getElementById("gpsTracking");
+
+        if (!gpsContainer) return;
+
+        const shipmentId = gpsContainer.dataset.shipmentId;
+
+        const startButton = document.getElementById("startGpsButton");
+        const stopButton = document.getElementById("stopGpsButton");
+        const statusElement = document.getElementById("gpsStatus");
+        const coordinatesElement = document.getElementById("gpsCoordinates");
+
+        const tokenElement = document.querySelector(
+            '#gpsForm input[name="__RequestVerificationToken"]'
+        );
+
+        if (!startButton || !stopButton || !tokenElement) return;
+
+        const token = tokenElement.value;
+
+        let watchId = null;
+        let lastSentAt = 0;
+        let isSending = false;
+
+        const updateStatus = (message, type) => {
+            statusElement.textContent = message;
+            statusElement.className = `alert alert-${type} small`;
+        };
+
+        const stopTracking = () => {
+            if (watchId !== null) {
+                navigator.geolocation.clearWatch(watchId);
+                watchId = null;
+            }
+
+            startButton.disabled = false;
+            stopButton.disabled = true;
+            updateStatus("Đã dừng chia sẻ vị trí.", "secondary");
+        };
+
+        const sendLocation = async (position) => {
+            const now = Date.now();
+
+            // Giới hạn gửi tối đa một lần mỗi 5 giây.
+            if (now - lastSentAt < 5000 || isSending) return;
+
+            isSending = true;
+
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            const accuracy = position.coords.accuracy;
+
+            try {
+                const body = new URLSearchParams({
+                    latitude: String(latitude),
+                    longitude: String(longitude),
+                    accuracy: String(accuracy),
+                    __RequestVerificationToken: token
+                });
+
+                const response = await fetch(
+                    `/Shipper/UpdateLocation?id=${encodeURIComponent(shipmentId)}`,
+                    {
+                        method: "POST",
+                        credentials: "same-origin",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                            "RequestVerificationToken": token
+                        },
+                        body: body.toString()
+                    }
+                );
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    updateStatus(
+                        result.message || "Không thể cập nhật vị trí.",
+                        "danger"
+                    );
+
+                    if (response.status === 404 ||
+                        response.status === 401 ||
+                        response.status === 403) {
+                        stopTracking();
+                    }
+
+                    return;
+                }
+
+                lastSentAt = now;
+
+                coordinatesElement.textContent =
+                    `Vĩ độ: ${latitude.toFixed(6)} | ` +
+                    `Kinh độ: ${longitude.toFixed(6)} | ` +
+                    `Sai số: ${accuracy.toFixed(1)} m`;
+
+                updateStatus(
+                    "Đang chia sẻ vị trí GPS thành công.",
+                    "success"
+                );
+            }
+            catch (error) {
+                console.error("GPS error:", error);
+                updateStatus("Không thể kết nối máy chủ.", "danger");
+            }
+            finally {
+                isSending = false;
+            }
+        };
+
+        const handleGpsError = (error) => {
+            let message = "Không thể lấy vị trí GPS.";
+
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    message = "Bạn chưa cấp quyền truy cập vị trí.";
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    message = "Không xác định được vị trí hiện tại.";
+                    break;
+                case error.TIMEOUT:
+                    message = "Hết thời gian chờ GPS.";
+                    break;
+            }
+
+            updateStatus(message, "danger");
+            stopTracking();
+        };
+
+        startButton.addEventListener("click", () => {
+            if (!navigator.geolocation) {
+                updateStatus(
+                    "Trình duyệt không hỗ trợ định vị GPS.",
+                    "danger"
+                );
+                return;
+            }
+
+            startButton.disabled = true;
+            stopButton.disabled = false;
+
+            updateStatus("Đang lấy vị trí GPS...", "info");
+
+            watchId = navigator.geolocation.watchPosition(
+                sendLocation,
+                handleGpsError,
+                {
+                    enableHighAccuracy: true,
+                    maximumAge: 5000,
+                    timeout: 15000
+                }
+            );
+        });
+
+        stopButton.addEventListener("click", stopTracking);
+
+        // Tắt GPS khi shipper rời trang.
+        window.addEventListener("pagehide", stopTracking);
+    });
+</script>

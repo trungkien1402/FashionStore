@@ -1,0 +1,796 @@
+/* ===================================================================
+   HNMTSHOP ATELIER — UNIFIED SINGLE-FRAME LOOKBOOK AUTHENTICATION
+   (Edge-to-Edge Background, Translucent Charcoal Glass Form, Champagne Accents)
+   Applies to both Login and Register views with natural page scrolling
+   =================================================================== */
+
+/* Hide Global Header & Footer on Login & Register pages for complete cinematic immersion */
+.urbn-header,
+.urbn-footer-section,
+#fsCartDrawer,
+#fsCartBackdrop {
+    display: none !important;
+}
+
+:root {
+    --atl-bg-dark: #0a0a0c;
+    --atl-gold: #c6a35c;
+    --atl-gold-hover: #d8bd82;
+    --atl-gold-line: rgba(198, 163, 92, 0.35);
+    --atl-gold-glow: rgba(198, 163, 92, 0.2);
+    --atl-ink-light: #f5f2eb;
+    --atl-ink-dim: #c5bfb4;
+    --atl-ink-muted: #9c9588;
+    --atl-card-bg: rgba(13, 13, 18, 0.82);
+    --atl-card-border: rgba(198, 163, 92, 0.38);
+    --atl-input-bg: rgba(255, 255, 255, 0.05);
+    --atl-input-border: rgba(255, 255, 255, 0.16);
+    --atl-serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+    --atl-sans: "Jost", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --atl-ease: cubic-bezier(0.16, 0.84, 0.32, 1);
+}
+
+/* Box-sizing reset scoped */
+.at-login-page,
+.at-login-page *,
+.at-login-page *::before,
+.at-login-page *::after {
+    box-sizing: border-box !important;
+    margin: 0;
+    padding: 0;
+}
+
+/* 1. Fullscreen Single-Frame Container */
+.at-login-page {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background-color: var(--atl-bg-dark);
+    font-family: var(--atl-sans);
+    color: var(--atl-ink-light);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+/* 2. Edge-to-Edge Continuous Background Layer (Runway Catwalk Option) */
+.at-bg-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    background-image: url('/images/lookbook-atelier-fullscreen.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: 20% center; /* Framing the male runway model and catwalk perfectly */
+    transition: transform 0.25s var(--atl-ease);
+    will-change: transform;
+}
+
+/* Cinematic Atmospheric Vignette (Clear on runway action, shaded on right for form readability) */
+.at-bg-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    background: linear-gradient(
+        90deg,
+        rgba(10, 10, 12, 0.2) 0%,
+        rgba(10, 10, 12, 0.1) 32%,
+        rgba(10, 10, 12, 0.45) 58%,
+        rgba(10, 10, 12, 0.8) 78%,
+        rgba(10, 10, 12, 0.94) 100%
+    );
+    pointer-events: none;
+}
+
+/* Subtle Film Grain Texture (Fixed) */
+.at-bg-grain {
+    position: fixed;
+    inset: 0;
+    z-index: 3;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 0);
+    background-size: 28px 28px;
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* 3. Minimalist Top Bar */
+.at-topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 25;
+    padding: clamp(16px, 2.8vw, 28px) clamp(20px, 4vw, 56px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(180deg, rgba(10, 10, 12, 0.75) 0%, transparent 100%);
+    backdrop-filter: blur(6px);
+}
+
+.at-brand-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--atl-ink-light);
+    transition: opacity 0.2s ease;
+}
+
+.at-brand-link:hover {
+    opacity: 0.88;
+}
+
+.at-diamond {
+    color: var(--atl-gold);
+    font-size: 1.25rem;
+    line-height: 1;
+    filter: drop-shadow(0 0 10px rgba(198, 163, 92, 0.65));
+}
+
+.at-brand-text {
+    font-family: var(--atl-sans);
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: 0.36em;
+    text-transform: uppercase;
+    color: #ffffff;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+.at-top-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.at-top-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.76rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--atl-ink-dim);
+    text-decoration: none;
+    padding: 7px 16px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    transition: all 0.2s ease;
+}
+
+.at-top-back:hover {
+    color: #ffffff;
+    border-color: var(--atl-gold);
+    background: rgba(198, 163, 92, 0.15);
+}
+
+.at-top-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--atl-gold);
+    text-decoration: none;
+    padding: 7px 18px;
+    border-radius: 999px;
+    border: 1px solid var(--atl-gold-line);
+    background: rgba(198, 163, 92, 0.08);
+    backdrop-filter: blur(8px);
+    transition: all 0.25s ease;
+}
+
+.at-top-action-btn:hover {
+    background: var(--atl-gold);
+    color: #0a0a0c;
+    box-shadow: 0 0 18px rgba(198, 163, 92, 0.4);
+}
+
+/* 4. Left Side Editorial Statement (Positioned cleanly on dark runway floor) */
+.at-left-statement {
+    position: fixed;
+    bottom: clamp(32px, 5vh, 60px);
+    left: clamp(24px, 4vw, 56px);
+    z-index: 10;
+    max-width: 380px;
+    pointer-events: none;
+}
+
+.at-stmt-kicker {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: var(--atl-gold);
+    margin-bottom: 10px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
+}
+
+.at-stmt-title {
+    font-family: var(--atl-serif);
+    font-size: clamp(2.2rem, 3.5vw, 3.4rem);
+    font-weight: 400;
+    line-height: 1.05;
+    color: #ffffff;
+    margin-bottom: 16px;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.9);
+}
+
+.at-stmt-title em {
+    font-style: italic;
+    font-family: var(--atl-serif);
+    color: var(--atl-gold-hover);
+}
+
+.at-stmt-spec {
+    font-size: 0.74rem;
+    color: var(--atl-ink-dim);
+    letter-spacing: 0.08em;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
+    line-height: 1.4;
+}
+
+/* 5. Translucent Charcoal Form Container */
+.at-form-container {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 440px;
+    margin-right: clamp(24px, 6vw, 100px);
+    padding-top: clamp(80px, 10vh, 105px);
+    padding-bottom: clamp(40px, 6vh, 70px);
+    display: flex;
+    justify-content: center;
+}
+
+.at-login-card {
+    width: 100%;
+    background: var(--atl-card-bg);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--atl-card-border);
+    border-radius: 20px;
+    padding: clamp(28px, 3.8vw, 38px) clamp(22px, 3.2vw, 32px);
+    box-shadow: 
+        0 25px 60px rgba(0, 0, 0, 0.75),
+        0 0 28px rgba(198, 163, 92, 0.12),
+        inset 0 0 20px rgba(198, 163, 92, 0.04);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+}
+
+.at-login-card:hover {
+    border-color: rgba(198, 163, 92, 0.55);
+    box-shadow: 
+        0 30px 70px rgba(0, 0, 0, 0.85),
+        0 0 35px rgba(198, 163, 92, 0.2),
+        inset 0 0 25px rgba(198, 163, 92, 0.06);
+}
+
+/* Card Header */
+.at-card-kicker {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    color: var(--atl-gold);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.at-card-title {
+    font-family: var(--atl-serif);
+    font-size: clamp(2rem, 3vw, 2.35rem);
+    font-weight: 500;
+    color: #ffffff;
+    line-height: 1.15;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+}
+
+.at-card-desc {
+    font-size: 0.84rem;
+    line-height: 1.5;
+    color: var(--atl-ink-dim);
+    margin-bottom: 22px;
+}
+
+/* Luxury Social OAuth Grid */
+.at-social-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.at-btn-social {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(198, 163, 92, 0.25);
+    color: var(--atl-ink-light);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s var(--atl-ease);
+}
+
+.at-btn-social:hover {
+    background: rgba(198, 163, 92, 0.12);
+    border-color: var(--atl-gold);
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.at-btn-social svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Divider with Gold Diamond */
+.at-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.at-divider::before,
+.at-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: rgba(198, 163, 92, 0.2);
+}
+
+.at-divider span {
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    color: var(--atl-gold);
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+/* Form Groups & Persistent Uppercase Labels */
+.at-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.at-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.at-input-label {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--atl-gold);
+    margin-bottom: 2px;
+}
+
+.at-req {
+    color: #ef4444;
+}
+
+.at-input-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.at-input-icon {
+    position: absolute;
+    left: 14px;
+    color: var(--atl-ink-muted);
+    font-size: 1.05rem;
+    pointer-events: none;
+    transition: color 0.2s ease;
+}
+
+.at-input-field {
+    width: 100%;
+    height: 48px;
+    padding: 0 14px 0 42px;
+    font-family: var(--atl-sans);
+    font-size: 0.92rem;
+    color: #ffffff;
+    background: var(--atl-input-bg);
+    border: 1px solid var(--atl-input-border);
+    border-radius: 8px;
+    outline: none;
+    transition: all 0.25s ease;
+}
+
+.at-input-field::placeholder {
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 0.88rem;
+}
+
+.at-input-field:focus {
+    border-color: var(--atl-gold);
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 0 3px rgba(198, 163, 92, 0.25);
+}
+
+/* FIX: Chrome/Edge Autofill ugly light blue box in dark mode */
+.at-input-field:-webkit-autofill,
+.at-input-field:-webkit-autofill:hover,
+.at-input-field:-webkit-autofill:focus,
+.at-input-field:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px #13131a inset !important;
+    -webkit-text-fill-color: #f5f2eb !important;
+    caret-color: #f5f2eb !important;
+    border-color: var(--atl-gold) !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+.at-password-input {
+    padding-right: 44px;
+}
+
+.at-password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: var(--atl-ink-muted);
+    padding: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: color 0.2s ease;
+}
+
+.at-password-toggle:hover {
+    color: var(--atl-gold);
+}
+
+/* Realtime Password Strength Meter */
+.at-strength-container {
+    margin-top: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.at-strength-bars {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    height: 3px;
+}
+
+.at-strength-bar {
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    transition: background-color 0.3s ease;
+}
+
+.at-strength-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+}
+
+.at-strength-status {
+    color: var(--atl-ink-dim);
+    font-weight: 600;
+}
+
+.at-strength-rules {
+    font-size: 0.74rem;
+    color: var(--atl-ink-muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 2px;
+}
+
+.at-strength-rule {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: color 0.2s ease;
+}
+
+.at-strength-rule.met {
+    color: var(--atl-gold-hover);
+}
+
+.at-input-error {
+    font-size: 0.74rem;
+    color: #f87171;
+    margin-top: 2px;
+}
+
+/* Options Row: Remember Me & Forgot Password */
+.at-options-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: -2px;
+    font-size: 0.82rem;
+}
+
+.at-checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+    color: var(--atl-ink-dim);
+}
+
+.at-checkbox-input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--atl-gold);
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.at-forgot-btn {
+    background: transparent;
+    border: none;
+    color: var(--atl-gold);
+    font-size: 0.82rem;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.2s ease;
+}
+
+.at-forgot-btn:hover {
+    color: var(--atl-gold-hover);
+}
+
+/* Champagne CTA Button */
+.at-btn-submit {
+    width: 100%;
+    height: 50px;
+    margin-top: 6px;
+    background: linear-gradient(135deg, #c6a35c 0%, #b3882f 100%);
+    color: #0a0a0c !important;
+    border: 1px solid rgba(198, 163, 92, 0.4);
+    border-radius: 8px;
+    font-family: var(--atl-sans);
+    font-size: 0.86rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 16px rgba(198, 163, 92, 0.3);
+    transition: all 0.25s var(--atl-ease);
+}
+
+.at-btn-submit:hover {
+    background: linear-gradient(135deg, #d8bd82 0%, #c6a35c 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 22px rgba(198, 163, 92, 0.45);
+}
+
+.at-btn-submit:active {
+    transform: translateY(1px);
+}
+
+/* Card Footer: Navigation Link */
+.at-card-footer {
+    margin-top: 20px;
+    text-align: center;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.82rem;
+    color: var(--atl-ink-muted);
+}
+
+.at-footer-link {
+    color: var(--atl-gold);
+    font-weight: 700;
+    text-decoration: none;
+    margin-left: 6px;
+    transition: color 0.2s ease;
+}
+
+.at-footer-link:hover {
+    color: var(--atl-gold-hover);
+    text-decoration: underline;
+}
+
+/* Security Footnote */
+.at-security-note {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 18px;
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    color: var(--atl-ink-muted);
+    text-transform: uppercase;
+}
+
+.at-security-note i {
+    color: var(--atl-gold);
+}
+
+/* Validation Alert */
+.at-alert-danger {
+    background: rgba(220, 38, 38, 0.2);
+    border: 1px solid rgba(248, 113, 113, 0.4);
+    color: #fca5a5;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    margin-bottom: 16px;
+}
+
+.at-alert-danger ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Interactive Forgot Password Modal in Atelier Glass */
+.at-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(16px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    transition: opacity 0.3s var(--atl-ease);
+}
+
+.at-modal-backdrop.is-active {
+    display: flex;
+    opacity: 1;
+}
+
+.at-modal-box {
+    width: 100%;
+    max-width: 440px;
+    background: rgba(13, 13, 18, 0.95);
+    border: 1px solid var(--atl-gold-line);
+    border-radius: 18px;
+    padding: 34px 30px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 30px rgba(198, 163, 92, 0.18);
+    position: relative;
+    transform: scale(0.95);
+    transition: transform 0.3s var(--atl-ease);
+}
+
+.at-modal-backdrop.is-active .at-modal-box {
+    transform: scale(1);
+}
+
+.at-modal-close {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    background: transparent;
+    border: none;
+    color: var(--atl-ink-dim);
+    font-size: 20px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px;
+    border-radius: 4px;
+    transition: color 0.2s;
+}
+
+.at-modal-close:hover {
+    color: var(--atl-gold);
+}
+
+/* ===================================================================
+   MOBILE & RESPONSIVE BREAKPOINTS (390px, 768px, 1024px)
+   =================================================================== */
+@media (max-width: 1200px) {
+    .at-left-statement {
+        left: clamp(320px, 28vw, 400px);
+    }
+}
+
+@media (max-width: 1024px) {
+    .at-left-statement {
+        display: none !important;
+    }
+
+    .at-login-page {
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    .at-form-container {
+        margin-right: 0;
+        max-width: 430px;
+        padding-top: 85px;
+        padding-bottom: 40px;
+    }
+}
+
+@media (max-width: 640px) {
+    .at-topbar {
+        padding: 16px 20px;
+    }
+
+    .at-brand-text {
+        font-size: 0.8rem;
+        letter-spacing: 0.25em;
+    }
+
+    .at-top-back span {
+        display: none;
+    }
+
+    .at-bg-layer {
+        background-position: 22% center;
+    }
+
+    .at-form-container {
+        max-width: calc(100% - 32px);
+        padding-top: 75px;
+        padding-bottom: 30px;
+    }
+
+    .at-login-card {
+        padding: 28px 20px 24px;
+        border-radius: 16px;
+    }
+
+    .at-card-title {
+        font-size: 1.85rem;
+    }
+
+    .at-social-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .at-bg-layer,
+    .at-btn-submit {
+        transition: none !important;
+        transform: none !important;
+    }
+}

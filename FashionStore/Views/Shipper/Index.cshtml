@@ -2,7 +2,8 @@
 @using FashionStore.Models.Enums
 
 @{
-    ViewData["Title"] = "Đơn hàng cần giao";
+    ViewData["Title"] = "Cổng Shipper - Nhiệm vụ giao nhận";
+
     var selectedStatus = ViewBag.SelectedStatus as ShipmentStatus?;
 
     string GetShipmentStatusName(ShipmentStatus status) => status switch
@@ -10,208 +11,273 @@
         ShipmentStatus.Assigned => "Mới phân công",
         ShipmentStatus.PickedUp => "Đã lấy hàng",
         ShipmentStatus.InTransit => "Đang giao",
-        ShipmentStatus.Delivered => "Giao thành công",
-        ShipmentStatus.Failed => "Giao thất bại",
+        ShipmentStatus.Delivered => "Thành công",
+        ShipmentStatus.Failed => "Thất bại",
         ShipmentStatus.Returned => "Đã hoàn kho",
         _ => status.ToString()
     };
 
-    string GetStatusBadgeClass(ShipmentStatus status) => status switch
+    string GetStatusClass(ShipmentStatus status) => status switch
     {
-        ShipmentStatus.Assigned => "bg-secondary",
-        ShipmentStatus.PickedUp => "bg-info text-dark",
-        ShipmentStatus.InTransit => "bg-primary",
-        ShipmentStatus.Delivered => "bg-success",
-        ShipmentStatus.Failed => "bg-danger",
-        ShipmentStatus.Returned => "bg-dark",
-        _ => "bg-light text-dark"
+        ShipmentStatus.Assigned => "pending",
+        ShipmentStatus.PickedUp => "confirmed",
+        ShipmentStatus.InTransit => "shipping",
+        ShipmentStatus.Delivered => "delivered",
+        ShipmentStatus.Failed => "failed",
+        ShipmentStatus.Returned => "returned",
+        _ => "pending"
     };
 
+    // Thống kê theo danh sách vận đơn được Controller trả về
     var countAssigned = Model.Count(s => s.Status == ShipmentStatus.Assigned);
-    var countInTransit = Model.Count(s => s.Status == ShipmentStatus.InTransit || s.Status == ShipmentStatus.PickedUp);
-    var countDelivered = Model.Count(s => s.Status == ShipmentStatus.Delivered);
+
+    var countInTransit = Model.Count(s =>
+        s.Status == ShipmentStatus.InTransit ||
+        s.Status == ShipmentStatus.PickedUp);
+
+    var countDelivered = Model.Count(s =>
+        s.Status == ShipmentStatus.Delivered);
+
+    var countFailed = Model.Count(s =>
+        s.Status == ShipmentStatus.Failed);
+
+    var countReturned = Model.Count(s =>
+        s.Status == ShipmentStatus.Returned);
 }
 
-<div class="container-fluid px-0">
-    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+<div class="container-fluid px-3 py-4 shp-page shp-index-page">
+
+    <!-- TOP BAR -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <div class="text-muted small text-uppercase">Cổng thông tin Shipper</div>
-            <h2 class="fw-bold mb-0">Nhiệm vụ giao hàng của tôi</h2>
-            <p class="text-muted mb-0">Xem danh sách các đơn hàng được phân công và cập nhật trạng thái giao hàng.</p>
+            <span style="font-size: 0.68rem; font-weight: 700; letter-spacing: 0.28em; color: var(--adm-gold, #c6a35c); text-transform: uppercase;">
+                TACTICAL LOGISTICS PORTAL
+            </span>
+            <h2 class="fw-bold mb-0 text-dark">Nhiệm vụ Giao hàng</h2>
         </div>
+
+        <a asp-controller="Shipper"
+           asp-action="Index"
+           class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1">
+            <i class="bi bi-arrow-clockwise"></i> Làm mới
+        </a>
     </div>
 
+    <!-- ALERT -->
     @if (TempData["Success"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle me-2"></i>@TempData["Success"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div class="fs-pill-alert success">
+            <i class="bi bi-check-circle-fill fs-5"></i>
+            <span>@TempData["Success"]</span>
         </div>
     }
 
     @if (TempData["Error"] != null)
     {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="bi bi-exclamation-triangle me-2"></i>@TempData["Error"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div class="fs-pill-alert error">
+            <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+            <span>@TempData["Error"]</span>
         </div>
     }
 
-    <!-- THẺ THỐNG KÊ NHANH -->
-    <div class="row g-3 mb-4">
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm p-3 bg-white">
-                <div class="text-muted small">Đơn mới phân công</div>
-                <div class="fs-3 fw-bold text-secondary">@countAssigned</div>
-            </div>
+    <!-- STATISTICS -->
+    <div class="shp-stat-grid">
+        <div class="shp-stat-box">
+            <div class="shp-stat-num text-warning">@countAssigned</div>
+            <div class="shp-stat-label">Chờ lấy hàng</div>
         </div>
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm p-3 bg-white">
-                <div class="text-muted small">Đang đi giao</div>
-                <div class="fs-3 fw-bold text-primary">@countInTransit</div>
-            </div>
+
+        <div class="shp-stat-box">
+            <div class="shp-stat-num text-primary">@countInTransit</div>
+            <div class="shp-stat-label">Đang giao</div>
         </div>
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm p-3 bg-white">
-                <div class="text-muted small">Giao thành công</div>
-                <div class="fs-3 fw-bold text-success">@countDelivered</div>
-            </div>
+
+        <div class="shp-stat-box">
+            <div class="shp-stat-num text-success">@countDelivered</div>
+            <div class="shp-stat-label">Đã giao</div>
         </div>
     </div>
 
-    <!-- BỘ LỌC -->
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body">
-            <form asp-action="Index" method="get" class="row g-2 align-items-center">
-                <div class="col-md-6">
-                    <select name="status" class="form-select" onchange="this.form.submit()">
-                        <option value="">-- Tất cả trạng thái giao --</option>
-                        @foreach (ShipmentStatus st in Enum.GetValues(typeof(ShipmentStatus)))
-                        {
-                            if (selectedStatus == st)
-                            {
-                                <option value="@((int)st)" selected>@GetShipmentStatusName(st)</option>
-                            }
-                            else
-                            {
-                                <option value="@((int)st)">@GetShipmentStatusName(st)</option>
-                            }
-                        }
-                    </select>
-                </div>
-                <div class="col-auto">
-                    <a asp-action="Index" class="btn btn-outline-secondary">Đặt lại lọc</a>
-                </div>
-            </form>
-        </div>
+    <!-- FILTER TABS -->
+    <div class="shp-tab-strip">
+
+        <a asp-controller="Shipper"
+           asp-action="Index"
+           class="shp-tab-item @(selectedStatus == null ? "active" : "")">
+            Tất cả
+        </a>
+
+        <a asp-controller="Shipper"
+           asp-action="Index"
+           asp-route-status="@((int)ShipmentStatus.Assigned)"
+           class="shp-tab-item @(selectedStatus == ShipmentStatus.Assigned ? "active" : "")">
+            Chờ lấy hàng
+        </a>
+
+        <a asp-controller="Shipper"
+           asp-action="Index"
+           asp-route-status="@((int)ShipmentStatus.PickedUp)"
+           class="shp-tab-item @(selectedStatus == ShipmentStatus.PickedUp ? "active" : "")">
+            Đã lấy hàng
+        </a>
+
+        <a asp-controller="Shipper"
+           asp-action="Index"
+           asp-route-status="@((int)ShipmentStatus.InTransit)"
+           class="shp-tab-item @(selectedStatus == ShipmentStatus.InTransit ? "active" : "")">
+            Đang giao
+        </a>
+
+        <a asp-controller="Shipper"
+           asp-action="Index"
+           asp-route-status="@((int)ShipmentStatus.Delivered)"
+           class="shp-tab-item @(selectedStatus == ShipmentStatus.Delivered ? "active" : "")">
+            Thành công
+        </a>
+
+        <a asp-controller="Shipper"
+           asp-action="Index"
+           asp-route-status="@((int)ShipmentStatus.Failed)"
+           class="shp-tab-item @(selectedStatus == ShipmentStatus.Failed ? "active" : "")">
+            Thất bại
+        </a>
+
+        <a asp-controller="Shipper"
+           asp-action="Index"
+           asp-route-status="@((int)ShipmentStatus.Returned)"
+           class="shp-tab-item @(selectedStatus == ShipmentStatus.Returned ? "active" : "")">
+            Hoàn kho
+        </a>
     </div>
 
-    <!-- DANH SÁCH ĐƠN HÀNG CỦA SHIPPER -->
+    <!-- SHIPMENT LIST -->
     @if (!Model.Any())
     {
-        <div class="card border-0 shadow-sm text-center py-5">
+        <div class="card border rounded-4 text-center py-5 bg-white shadow-sm my-3">
             <div class="py-4">
-                <i class="bi bi-bicycle text-muted" style="font-size: 3rem;"></i>
-                <h5 class="mt-3">Bạn chưa có đơn giao nào</h5>
-                <p class="text-muted">Khi người quản lý điều phối đơn cho bạn, các đơn sẽ hiển thị tại đây.</p>
+                <i class="bi bi-box-seam text-muted"
+                   style="font-size: 3rem; opacity: 0.5;"></i>
+
+                <h5 class="fw-bold mt-3">Không có vận đơn nào</h5>
+
+                <p class="text-muted small mb-0">
+                    Hiện chưa có kiện hàng nào thuộc danh mục lọc này được gán cho bạn.
+                </p>
             </div>
         </div>
     }
     else
     {
-        <!-- GIAO DIỆN MOBILE-FIRST (DÀNH CHO SHIPPER ĐI ĐƯỜNG) -->
-        <div class="d-block d-md-none">
+        <div>
             @foreach (var s in Model)
             {
-                <div class="fs-shipper-card mb-3">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <strong class="text-primary fw-bold">@s.TrackingCode</strong>
-                        <span class="badge @GetStatusBadgeClass(s.Status)">@GetShipmentStatusName(s.Status)</span>
+                <div class="shp-delivery-card">
+
+                    <!-- CARD HEADER -->
+                    <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <span class="fs-code-badge font-monospace text-primary">
+                                #@s.TrackingCode
+                            </span>
+
+                            <span class="text-muted small">
+                                Đơn: <strong>@(s.Order?.OrderCode ?? "N/A")</strong>
+                            </span>
+                        </div>
+
+                        <span class="fs-badge-status @GetStatusClass(s.Status)">
+                            <span style="width: 6px; height: 6px; border-radius: 50%; background: currentColor;"></span>
+                            @GetShipmentStatusName(s.Status)
+                        </span>
                     </div>
 
-                    <div class="small text-muted mb-2">Đơn hàng: <span class="badge bg-light text-dark border">@s.Order?.OrderCode</span></div>
-                    <hr class="my-2" />
+                    <!-- RECEIVER INFO -->
+                    <h4 class="fw-bold text-dark mt-2 mb-1" style="font-size: 19px;">
+                        @(s.Order?.ReceiverName ?? "Chưa có tên người nhận")
+                    </h4>
 
-                    <h5 class="fw-bold mb-1">@s.Order?.ReceiverName</h5>
-                    <p class="text-secondary small mb-2">
-                        <i class="bi bi-geo-alt-fill text-danger me-1"></i> @s.Order?.Address
-                    </p>
-
-                    <div class="d-flex justify-content-between align-items-center bg-light p-2 rounded-2 mb-3">
-                        <span class="small text-muted"><i class="bi bi-cash me-1"></i>Tiền COD thu hộ:</span>
-                        <strong class="@(s.CODAmount > 0 ? "text-danger" : "text-success") fs-6">
-                            @(s.CODAmount > 0 ? s.CODAmount.ToString("N0") + " đ" : "0 đ (Đã thanh toán)")
-                        </strong>
+                    <div class="text-muted small d-flex align-items-start gap-1 mb-2">
+                        <i class="bi bi-geo-alt-fill text-danger mt-1"></i>
+                        <span>@(s.Order?.Address ?? "Chưa có địa chỉ")</span>
                     </div>
 
+                    @if (!string.IsNullOrWhiteSpace(s.Order?.Phone))
+                    {
+                        <div class="text-muted small mb-3">
+                            <i class="bi bi-telephone me-1"></i>
+                            @s.Order.Phone
+                        </div>
+                    }
+
+                    <!-- COD -->
+                    <div class="shp-cod-bar @(s.CODAmount > 0 ? "due" : "cleared")">
+                        <div>
+                            <span class="text-muted small fw-bold text-uppercase d-block"
+                                  style="font-size: 10px;">
+                                @(s.CODAmount > 0 ? "Tiền mặt cần thu (COD)" : "Thanh toán")
+                            </span>
+
+                            <strong class="fs-5 @(s.CODAmount > 0 ? "text-danger" : "text-success") font-monospace">
+                                @(s.CODAmount > 0
+                                    ? s.CODAmount.ToString("N0") + " ₫"
+                                    : "0 ₫ (ĐÃ THANH TOÁN)")
+                            </strong>
+                        </div>
+
+                        <div>
+                            @if (s.CODAmount > 0)
+                            {
+                                <span class="badge bg-danger rounded-pill px-2 py-1"
+                                      style="font-size: 11px;">
+                                    Thu tiền mặt
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success rounded-pill px-2 py-1"
+                                      style="font-size: 11px;">
+                                    Không thu tiền
+                                </span>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- ACTIONS -->
                     <div class="row g-2">
+
                         <div class="col-6">
-                            <a href="tel:@s.Order?.Phone" class="btn btn-outline-success w-100 py-2">
-                                <i class="bi bi-telephone-fill me-1"></i> Gọi khách
+                            @if (!string.IsNullOrWhiteSpace(s.Order?.Phone))
+                            {
+                                <a href="tel:@s.Order.Phone"
+                                   class="btn btn-outline-success w-100 py-2 rounded-3 fw-bold d-flex align-items-center justify-content-center gap-2">
+                                    <i class="bi bi-telephone-fill"></i>
+                                    Gọi khách
+                                </a>
+                            }
+                            else
+                            {
+                                <button type="button"
+                                        class="btn btn-outline-secondary w-100 py-2 rounded-3"
+                                        disabled>
+                                    Không có SĐT
+                                </button>
+                            }
+                        </div>
+
+                        <div class="col-6">
+                            <a asp-controller="Shipper"
+                               asp-action="Details"
+                               asp-route-id="@s.Id"
+                               class="btn btn-dark w-100 py-2 rounded-3 fw-bold d-flex align-items-center justify-content-center gap-2">
+                                <i class="bi bi-pencil-square"></i>
+                                Cập nhật
                             </a>
                         </div>
-                        <div class="col-6">
-                            <a asp-action="Details" asp-route-id="@s.Id" class="btn btn-dark w-100 py-2">
-                                <i class="bi bi-pencil-square me-1"></i> Cập nhật
-                            </a>
-                        </div>
+
                     </div>
                 </div>
             }
         </div>
-
-        <!-- GIAO DIỆN DESKTOP / TABLET -->
-        <div class="card border-0 shadow-sm d-none d-md-block">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th class="ps-3">Mã vận đơn</th>
-                            <th>Mã đơn</th>
-                            <th>Người nhận</th>
-                            <th>Địa chỉ giao hàng</th>
-                            <th>Tiền COD cần thu</th>
-                            <th>Trạng thái</th>
-                            <th class="text-end pe-3">Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var s in Model)
-                        {
-                            <tr>
-                                <td class="ps-3 fw-bold text-primary">@s.TrackingCode</td>
-                                <td><span class="badge bg-light text-dark border">@s.Order?.OrderCode</span></td>
-                                <td>
-                                    <div class="fw-semibold">@s.Order?.ReceiverName</div>
-                                    <a href="tel:@s.Order?.Phone" class="text-decoration-none small text-success fw-bold">
-                                        <i class="bi bi-telephone-fill me-1"></i>@s.Order?.Phone
-                                    </a>
-                                </td>
-                                <td>
-                                    <div class="text-wrap" style="max-width: 280px;">
-                                        <i class="bi bi-geo-alt-fill text-danger me-1"></i>@s.Order?.Address
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="fw-bold @(s.CODAmount > 0 ? "text-danger" : "text-muted")">
-                                        @(s.CODAmount > 0 ? s.CODAmount.ToString("N0") + " đ" : "0 đ (Đã thanh toán)")
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="badge @GetStatusBadgeClass(s.Status)">
-                                        @GetShipmentStatusName(s.Status)
-                                    </span>
-                                </td>
-                                <td class="text-end pe-3">
-                                    <a asp-action="Details" asp-route-id="@s.Id" class="btn btn-sm btn-dark">
-                                        <i class="bi bi-pencil-square me-1"></i>Xử lý
-                                    </a>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
     }
+
 </div>

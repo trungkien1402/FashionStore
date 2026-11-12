@@ -1,155 +1,281 @@
-﻿@model List<AdminCategoryListItemViewModel>
+@model List<AdminCategoryListItemViewModel>
 
 @{
-    ViewData["Title"] = "Quản lý danh mục";
+    ViewData["Title"] = "Quản lý Bộ sưu tập";
 }
 
-<div class="container-fluid py-4">
+<!-- HEADER -->
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div>
+        <div class="d-flex align-items-center gap-2 mb-1">
+            <span style="font-size: 0.68rem; font-weight: 700; letter-spacing: 0.28em; color: var(--adm-gold); text-transform: uppercase;">
+                ATELIER COLLECTIONS & ARCHIVE
+            </span>
+            <span style="width: 4px; height: 4px; border-radius: 50%; background: var(--adm-gold);"></span>
+            <span class="text-muted small">@Model.Count BỘ SƯU TẬP</span>
+        </div>
+        <h2 class="fw-bold mb-0 adm-heading" style="letter-spacing: -0.02em;">Quản lý Danh mục Bộ sưu tập</h2>
+    </div>
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="fw-bold mb-1">Quản lý danh mục</h2>
-            <p class="text-muted mb-0">
-                Quản lý các danh mục sản phẩm của cửa hàng.
-            </p>
+    <div class="d-flex align-items-center gap-3">
+        <!-- VIEW SWITCHER -->
+        <div class="adm-view-switcher">
+            <button type="button" class="adm-view-btn active" id="admBtnCatGrid" onclick="toggleCatView('grid')" aria-pressed="true">
+                <i class="bi bi-grid-fill"></i>
+                <span class="d-none d-sm-inline">Lookbook</span>
+            </button>
+            <button type="button" class="adm-view-btn" id="admBtnCatTable" onclick="toggleCatView('table')" aria-pressed="false">
+                <i class="bi bi-list-ul"></i>
+                <span class="d-none d-sm-inline">Bảng chi tiết</span>
+            </button>
         </div>
 
-        <a asp-action="Create" class="btn btn-dark">
+        <a asp-action="Create" class="adm-btn-atelier">
             <i class="bi bi-plus-lg"></i>
-            Thêm danh mục
+            <span>Thêm danh mục</span>
         </a>
     </div>
+</div>
 
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body">
-            <form asp-action="Index" method="get"
-                  class="row g-3 align-items-end">
-
-                <div class="col-md-6">
-                    <label class="form-label">Tìm kiếm</label>
-                    <input type="text"
-                           name="keyword"
-                           value="@ViewBag.Keyword"
-                           class="form-control"
-                           placeholder="Nhập tên danh mục..." />
-                </div>
-
-                <div class="col-md-3">
-                    <label class="form-label">Trạng thái</label>
-                    <select name="status" class="form-select">
-                        <option value="">Tất cả</option>
-                        <option value="active"
-                                selected="@(ViewBag.Status == "active")">
-                            Đang hiển thị
-                        </option>
-                        <option value="inactive"
-                                selected="@(ViewBag.Status == "inactive")">
-                            Đang ẩn
-                        </option>
-                    </select>
-                </div>
-
-                <div class="col-md-3 d-flex gap-2">
-                    <button type="submit" class="btn btn-dark">
-                        Tìm kiếm
-                    </button>
-
-                    <a asp-action="Index"
-                       class="btn btn-outline-secondary">
-                        Làm mới
-                    </a>
-                </div>
-            </form>
+<!-- FILTER BAR -->
+<div class="adm-filter-bar mb-4">
+    <form asp-action="Index" method="get" class="row g-2 align-items-center">
+        <div class="col-md-5">
+            <div class="input-group">
+                <span class="input-group-text border-end-0" style="background: var(--adm-surface); border-color: var(--adm-border); color: var(--adm-ink-muted);">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="text" name="keyword" value="@ViewBag.Keyword"
+                       class="form-control adm-input-dark border-start-0" 
+                       placeholder="Tìm kiếm danh mục, slug..." />
+            </div>
         </div>
+
+        <div class="col-md-4">
+            <select name="status" class="form-select adm-input-dark">
+                <option value="">Tất cả trạng thái hiển thị</option>
+                <option value="active" selected="@(ViewBag.Status == "active")">Đang hiển thị trên Shop</option>
+                <option value="inactive" selected="@(ViewBag.Status == "inactive")">Đang ẩn</option>
+            </select>
+        </div>
+
+        <div class="col-md-3 d-flex gap-2">
+            <button type="submit" class="btn adm-btn-atelier py-2 px-3">
+                <i class="bi bi-funnel"></i> Lọc
+            </button>
+
+            <a asp-action="Index" class="btn adm-btn-outline py-2 px-3" title="Đặt lại bộ lọc">
+                <i class="bi bi-arrow-counterclockwise"></i>
+            </a>
+        </div>
+    </form>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="adm-card text-center py-5">
+        <i class="bi bi-tags fs-1 text-muted d-block mb-3"></i>
+        <h5 class="fw-bold adm-heading">Chưa có danh mục nào phù hợp</h5>
+        <p class="text-muted small">Thử thay đổi điều kiện lọc hoặc tạo một danh mục bộ sưu tập mới.</p>
+        <a asp-action="Create" class="btn adm-btn-atelier mt-2">
+            <i class="bi bi-plus-lg me-1"></i> Thêm danh mục mới
+        </a>
     </div>
+}
+else
+{
+    <!-- 1. LOOKBOOK CARDS VIEW -->
+    <div id="admCatGrid" class="adm-lookbook-grid mb-4">
+        @foreach (var item in Model)
+        {
+            var hasImage = !string.IsNullOrWhiteSpace(item.RepresentativeImageUrl);
 
-    <div class="card border-0 shadow-sm">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th style="width:70px">ID</th>
-                            <th>Tên danh mục</th>
-                            <th>Slug</th>
-                            <th class="text-center">Số sản phẩm</th>
-                            <th class="text-center">Trạng thái</th>
-                            <th class="text-end">Thao tác</th>
-                        </tr>
-                    </thead>
+            <div class="adm-lookbook-card">
+                <div class="adm-lookbook-banner" style="position: relative; overflow: hidden; height: 140px; @(hasImage ? "background: #121216;" : "background: linear-gradient(135deg, rgba(179, 136, 47, 0.12) 0%, rgba(2, 132, 199, 0.08) 100%);")">
+                    @if (hasImage)
+                    {
+                        <img src="@item.RepresentativeImageUrl" alt="@item.Category.Name" 
+                             style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.82; transition: transform 0.4s ease;" 
+                             onerror="this.style.display='none'" />
+                        <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.65) 100%);"></div>
+                    }
+                    else
+                    {
+                        <div style="width: 52px; height: 52px; border-radius: 50%; background: var(--adm-surface); border: 1px solid var(--adm-border); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: var(--adm-gold); box-shadow: 0 4px 15px rgba(0,0,0,0.06);">
+                            <i class="bi bi-tag-fill"></i>
+                        </div>
+                    }
 
-                    <tbody>
-                        @if (Model.Count == 0)
+                    <div class="position-absolute top-0 end-0 m-2" style="z-index: 2;">
+                        @if (item.Category.IsActive)
                         {
-                            <tr>
-                                <td colspan="6"
-                                    class="text-center text-muted py-4">
-                                    Không tìm thấy danh mục nào.
-                                </td>
-                            </tr>
+                            <span class="adm-pill adm-pill-emerald shadow-sm">Hiển thị</span>
                         }
                         else
                         {
-                            @foreach (var item in Model)
-                            {
-                                <tr>
-                                    <td>@item.Category.Id</td>
-
-                                    <td class="fw-semibold">
-                                        @item.Category.Name
-                                    </td>
-
-                                    <td>
-                                        <code>@item.Category.Slug</code>
-                                    </td>
-
-                                    <td class="text-center">
-                                        @item.ProductCount
-                                    </td>
-
-                                    <td class="text-center">
-                                        @if (item.Category.IsActive)
-                                        {
-                                            <span class="badge bg-success">
-                                                Đang hiển thị
-                                            </span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge bg-secondary">
-                                                Đang ẩn
-                                            </span>
-                                        }
-                                    </td>
-
-                                    <td class="text-end">
-                                        <a asp-action="Edit"
-                                           asp-route-id="@item.Category.Id"
-                                           class="btn btn-sm btn-outline-primary">
-                                            Sửa
-                                        </a>
-
-                                        <form asp-action="ToggleActive"
-                                              asp-route-id="@item.Category.Id"
-                                              method="post"
-                                              class="d-inline">
-
-                                            @Html.AntiForgeryToken()
-
-                                            <button type="submit"
-                                                    class="btn btn-sm @(item.Category.IsActive ? "btn-outline-danger" : "btn-outline-success")"
-                                                    onclick="return confirm('Bạn có chắc muốn thay đổi trạng thái danh mục này?')">
-
-                                                @(item.Category.IsActive ? "Ẩn" : "Hiện")
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            }
+                            <span class="adm-pill adm-pill-faint shadow-sm">Đã ẩn</span>
                         }
-                    </tbody>
-                </table>
+                    </div>
+
+                    @if (hasImage)
+                    {
+                        <div class="position-absolute bottom-0 start-0 m-2 text-white" style="z-index: 2;">
+                            <span class="badge" style="background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); font-size: 0.7rem; border: 1px solid rgba(255,255,255,0.2);">
+                                <i class="bi bi-image me-1"></i> Ảnh đại diện
+                            </span>
+                        </div>
+                    }
+                </div>
+
+                <div class="p-3 d-flex flex-column justify-content-between flex-grow-1">
+                    <div>
+                        <h5 class="fw-bold adm-heading mb-1" style="font-size: 1.05rem;">@item.Category.Name</h5>
+                        <div class="font-monospace text-muted small mb-3" style="font-size: 0.75rem;">
+                            slug: @item.Category.Slug
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="p-2 rounded-2 mb-3 d-flex justify-content-between align-items-center" style="background: var(--adm-surface-hover); border: 1px solid var(--adm-border);">
+                            <span class="text-muted small">Sản phẩm liên kết:</span>
+                            <span class="fw-bold adm-heading">@item.ProductCount sản phẩm</span>
+                        </div>
+
+                        <div class="pt-2 border-top border-secondary border-opacity-10 d-flex justify-content-between align-items-center">
+                            <!-- FIXED: Pass categoryId to filter by Category ID -->
+                            <a asp-controller="AdminProducts" asp-action="Index" asp-route-categoryId="@item.Category.Id"
+                               class="text-decoration-none small fw-semibold" style="color: var(--adm-gold);">
+                                Xem sản phẩm &rarr;
+                            </a>
+
+                            <div class="d-flex gap-1">
+                                <a asp-action="Edit" asp-route-id="@item.Category.Id"
+                                   class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.78rem;" title="Sửa danh mục">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+
+                                <form asp-action="Delete" asp-route-id="@item.Category.Id" method="post" class="d-inline"
+                                      onsubmit="return confirm('Bạn có chắc chắn muốn xóa danh mục @item.Category.Name?');">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-outline-danger py-1 px-2" style="font-size: 0.78rem;" title="Xóa">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
+        }
+    </div>
+
+    <!-- 2. TABLE VIEW -->
+    <div id="admCatTable" class="adm-card d-none mb-4 p-0 overflow-hidden">
+        <div class="table-responsive">
+            <table class="adm-table mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">TÊN DANH MỤC</th>
+                        <th>ĐƯỜNG DẪN (SLUG)</th>
+                        <th>SỐ LƯỢNG SẢN PHẨM</th>
+                        <th>TRẠNG THÁI</th>
+                        <th class="text-end pe-4">THAO TÁC</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div style="width: 32px; height: 32px; border-radius: 6px; background: var(--adm-surface-hover); border: 1px solid var(--adm-border); display: flex; align-items: center; justify-content: center; color: var(--adm-gold);">
+                                        <i class="bi bi-tag"></i>
+                                    </div>
+                                    <span class="fw-bold adm-heading">@item.Category.Name</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="font-monospace text-muted small">@item.Category.Slug</span>
+                            </td>
+                            <td>
+                                <a asp-controller="AdminProducts" asp-action="Index" asp-route-categoryId="@item.Category.Id" class="text-decoration-none">
+                                    <strong class="adm-text-contrast">@item.ProductCount</strong> sản phẩm
+                                </a>
+                            </td>
+                            <td>
+                                @if (item.Category.IsActive)
+                                {
+                                    <span class="adm-pill adm-pill-emerald">Đang hiển thị</span>
+                                }
+                                else
+                                {
+                                    <span class="adm-pill adm-pill-faint">Đang ẩn</span>
+                                }
+                            </td>
+                            <td class="text-end pe-4">
+                                <div class="d-inline-flex gap-1">
+                                    <a asp-controller="AdminProducts" asp-action="Index" asp-route-categoryId="@item.Category.Id"
+                                       class="btn btn-sm adm-btn-outline py-1 px-2" style="font-size: 0.75rem;" title="Xem sản phẩm trong danh mục">
+                                        <i class="bi bi-box-seam me-1"></i> Xem SP
+                                    </a>
+
+                                    <a asp-action="Edit" asp-route-id="@item.Category.Id"
+                                       class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem;" title="Sửa">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+
+                                    <form asp-action="Delete" asp-route-id="@item.Category.Id" method="post" class="d-inline"
+                                          onsubmit="return confirm('Bạn có chắc chắn muốn xóa danh mục @item.Category.Name?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-outline-danger py-1 px-2" style="font-size: 0.75rem;" title="Xóa">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
-</div>
+}
+
+@section Scripts {
+    <script>
+        function toggleCatView(mode) {
+            const grid = document.getElementById('admCatGrid');
+            const table = document.getElementById('admCatTable');
+            const btnG = document.getElementById('admBtnCatGrid');
+            const btnT = document.getElementById('admBtnCatTable');
+
+            if (mode === 'table') {
+                if (grid) grid.classList.add('d-none');
+                if (table) table.classList.remove('d-none');
+                if (btnT) {
+                    btnT.classList.add('active');
+                    btnT.setAttribute('aria-pressed', 'true');
+                }
+                if (btnG) {
+                    btnG.classList.remove('active');
+                    btnG.setAttribute('aria-pressed', 'false');
+                }
+            } else {
+                if (grid) grid.classList.remove('d-none');
+                if (table) table.classList.add('d-none');
+                if (btnG) {
+                    btnG.classList.add('active');
+                    btnG.setAttribute('aria-pressed', 'true');
+                }
+                if (btnT) {
+                    btnT.classList.remove('active');
+                    btnT.setAttribute('aria-pressed', 'false');
+                }
+            }
+            localStorage.setItem('hnmt_adm_cat_view', mode);
+        }
+
+        const savedCatMode = localStorage.getItem('hnmt_adm_cat_view') || 'grid';
+        toggleCatView(savedCatMode);
+    </script>
+}
