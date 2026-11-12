@@ -1,13 +1,15 @@
 @{
-    ViewData["Title"] = "HNMT ATELIER — Try the Look";
+    var currentTheme = (ViewBag.InitialTheme as string) == "sunwash" ? "sunwash" : "noir";
+    var collectionName = currentTheme == "sunwash" ? "SUN-WASHED" : "NOIR UNIT";
+    ViewData["Title"] = $"HNMT ATELIER — {collectionName} (Try the Look)";
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/lookbook.css?v=cutout_v1" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/lookbook.css?v=turntable_3d_v4" asp-append-version="true" />
 }
 
-<div id="lookbookRoot" class="lb-wrapper"></div>
+<div id="lookbookRoot" class="lb-wrapper is-open theme-@currentTheme" data-theme="@currentTheme"></div>
 
 @section Scripts {
-    <script src="~/js/lookbook.js?v=cutout_v1" asp-append-version="true"></script>
+    <script src="~/js/lookbook.js?v=turntable_3d_v4" asp-append-version="true"></script>
 }
