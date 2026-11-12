@@ -487,6 +487,8 @@
                     e.stopPropagation();
                     if (currentCategory === 'ao' && window.HNMTShirtFilter) {
                         window.HNMTShirtFilter.open();
+                    } else if (currentCategory === 'quan' && window.HNMTPantsFilter) {
+                        window.HNMTPantsFilter.open();
                     } else if (window.HNMTSpotlightSearch) {
                         window.HNMTSpotlightSearch.open(currentCategory);
                     }
@@ -497,7 +499,13 @@
 
         if (!window.HNMTShirtFilter && !document.querySelector('script[src*="shirt-filter.js"]')) {
             const s = document.createElement('script');
-            s.src = '/js/shirt-filter.js?v=inject_v1';
+            s.src = '/js/shirt-filter.js?v=inject_v2';
+            document.head.appendChild(s);
+        }
+
+        if (!window.HNMTPantsFilter && !document.querySelector('script[src*="pants-filter.js"]')) {
+            const s = document.createElement('script');
+            s.src = '/js/pants-filter.js?v=inject_v1';
             document.head.appendChild(s);
         }
 
@@ -1016,7 +1024,9 @@
         // Phím tắt bàn phím
         document.addEventListener('keydown', e => {
             if (e.key === 'Escape') {
-                if (window.HNMTShirtFilter && document.getElementById('hnmtShirtFilterModal')?.classList.contains('is-open')) {
+                if (window.HNMTPantsFilter && document.getElementById('hnmtPantsFilterModal')?.classList.contains('is-open')) {
+                    window.HNMTPantsFilter.close();
+                } else if (window.HNMTShirtFilter && document.getElementById('hnmtShirtFilterModal')?.classList.contains('is-open')) {
                     window.HNMTShirtFilter.close();
                 } else if (modalOpen) closeModal();
                 else if (detailOpen) closeDetail();
@@ -1025,10 +1035,15 @@
                 if (detailOpen) navigate(-1);
             } else if (e.key === 'ArrowRight') {
                 if (detailOpen) navigate(1);
-            } else if ((e.key === '/' || (e.ctrlKey && e.key.toLowerCase() === 'k')) && !document.getElementById('hnmtShirtFilterModal')?.classList.contains('is-open')) {
+            } else if ((e.key === '/' || (e.ctrlKey && e.key.toLowerCase() === 'k')) && 
+                       !document.getElementById('hnmtShirtFilterModal')?.classList.contains('is-open') &&
+                       !document.getElementById('hnmtPantsFilterModal')?.classList.contains('is-open')) {
                 const activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
                 if (activeTag !== 'input' && activeTag !== 'textarea') {
-                    if (currentCategory === 'ao' && window.HNMTShirtFilter) {
+                    if (currentCategory === 'quan' && window.HNMTPantsFilter) {
+                        e.preventDefault();
+                        window.HNMTPantsFilter.open();
+                    } else if (currentCategory === 'ao' && window.HNMTShirtFilter) {
                         e.preventDefault();
                         window.HNMTShirtFilter.open();
                     }

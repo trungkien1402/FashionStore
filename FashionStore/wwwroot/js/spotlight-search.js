@@ -636,7 +636,11 @@
                 detectedCat = (currentCat === 'quan') ? 'quan' : 'ao';
             }
 
-            // Khi ở Sào Áo: Tự động chuyển hướng sang Bộ Lọc Riêng Của Sào Áo (HNMTShirtFilter)
+            // Tự động chuyển hướng sang bộ lọc riêng chuyên biệt của từng Sào Đồ
+            if (detectedCat === 'quan' && window.HNMTPantsFilter && typeof window.HNMTPantsFilter.open === 'function') {
+                window.HNMTPantsFilter.open();
+                return;
+            }
             if (detectedCat === 'ao' && window.HNMTShirtFilter && typeof window.HNMTShirtFilter.open === 'function') {
                 window.HNMTShirtFilter.open();
                 return;
