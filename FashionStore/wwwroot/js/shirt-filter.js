@@ -167,7 +167,7 @@
             <!-- Footer Tinh Gọn: Nút Áp Dụng Căn Giữa Đẹp Mắt -->
             <div class="fashion-sidebar-footer">
                 <button type="button" id="shirtApplyBtn" class="sv-apply-capsule-btn" title="Áp dụng bộ lọc lên sào đồ (Enter)">
-                    <span class="apply-text">Áp dụng</span>
+                    <span class="apply-text">Áp Dụng</span>
                     <span class="capsule-badge" id="shirtApplyCount">15 áo</span>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="9 18 15 12 9 6"></polyline>

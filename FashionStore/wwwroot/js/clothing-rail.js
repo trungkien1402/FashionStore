@@ -508,45 +508,10 @@
         }
     }
 
-    // Hiển thị thanh thông báo bộ lọc đang áp dụng trên Sào
+    // Không hiển thị banner lọc đẩy lệch chữ tiêu đề theo yêu cầu người dùng
     function renderActiveFilterBanner(filterInfo, count) {
         let banner = document.getElementById('railActiveFilterBanner');
-        if (!filterInfo || count === null) {
-            if (banner) banner.remove();
-            return;
-        }
-
-        const introEl = document.querySelector('.rail-intro');
-        if (!introEl) return;
-
-        if (!banner) {
-            banner = document.createElement('div');
-            banner.id = 'railActiveFilterBanner';
-            banner.className = 'rail-active-filter-banner';
-            introEl.appendChild(banner);
-        }
-
-        banner.innerHTML = `
-            <div class="rail-filter-pill-info">
-                <span class="rail-filter-pulse"></span>
-                <span class="rail-filter-text">Đang lọc: <strong>${filterInfo}</strong> (${count} sản phẩm)</span>
-            </div>
-            <button type="button" class="rail-filter-reset-btn" id="railBannerResetBtn" title="Bỏ lọc và xem tất cả đồ">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-                <span>Bỏ lọc / Hiện tất cả</span>
-            </button>
-        `;
-
-        const resetBtn = banner.querySelector('#railBannerResetBtn');
-        if (resetBtn) {
-            resetBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                resetFilter();
-            });
-        }
+        if (banner) banner.remove();
     }
 
     // Dựng các móc treo đồ trên sào
@@ -879,49 +844,26 @@
         const brandSig = '<span>Sào Đồ</span><span>Thời Trang</span>';
 
         if (filteredList.length === 0) {
-            // Không tìm thấy sản phẩm nào
+            // Không tìm thấy sản phẩm nào: Để sào đồ trống trơn, không hiện hộp thông báo rườm rà
             currentRacks = [{
                 id: `rack-${currentCategory}-empty`,
-                badge: 'KẾT QUẢ TÌM KIẾM // KHÔNG CÓ SẢN PHẨM',
+                badge: `BỘ SƯU TẬP // 0 SẢN PHẨM`,
                 eyebrow: catName,
-                heroTitle: 'Không Tìm Thấy Sản Phẩm Phù Hợp',
+                heroTitle: currentRacks && currentRacks[0] ? currentRacks[0].heroTitle : (currentCategory === 'quan' ? 'Quần' : 'Bộ Sưu Tập Áo'),
                 brandSignature: brandSig,
-                captionHeading: 'Không có sản phẩm nào khớp với bộ lọc.',
-                captionDetail: 'Vui lòng thử tìm với từ khóa hoặc tiêu chí lọc khác.',
+                captionHeading: '',
+                captionDetail: '',
                 products: []
             }];
             currentRackIdx = 0;
             applyRack(currentRacks[0]);
-            renderActiveFilterBanner(filterLabel || 'Không có kết quả', 0);
 
-            // Hiển thị thông báo trống lịch thiệp trên sào
+            // Dọn sạch móc treo, sào đồ trống trơn thanh thoát
             const stage = $('#railStage');
             if (stage) {
                 stage.querySelectorAll('.slot').forEach(e => e.remove());
-                const emptyNotice = document.createElement('div');
-                emptyNotice.className = 'rail-empty-results-box';
-                emptyNotice.innerHTML = `
-                    <div class="empty-icon">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="11" cy="11" r="7"/>
-                            <path d="m20 20-4.35-4.35"/>
-                        </svg>
-                    </div>
-                    <h3>Không tìm thấy sản phẩm phù hợp</h3>
-                    <p>Bộ lọc: <em>"${filterLabel || 'Tất cả tiêu chí'}"</em> không khớp với mẫu đồ nào trên sào.</p>
-                    <button type="button" class="rail-reset-action-cta" id="railEmptyResetBtn">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-                            <path d="M3 3v5h5"/>
-                        </svg>
-                        <span>Xem tất cả ${currentCategory === 'quan' ? 'quần' : 'áo'}</span>
-                    </button>
-                `;
-                stage.appendChild(emptyNotice);
-                const emptyResetBtn = emptyNotice.querySelector('#railEmptyResetBtn');
-                if (emptyResetBtn) {
-                    emptyResetBtn.addEventListener('click', resetFilter);
-                }
+                const emptyNotice = stage.querySelector('.rail-empty-results-box');
+                if (emptyNotice) emptyNotice.remove();
             }
             return;
         }
