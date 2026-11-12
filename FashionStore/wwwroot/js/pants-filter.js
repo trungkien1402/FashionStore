@@ -147,15 +147,24 @@
                 </button>
             </div>
 
-            <!-- Thanh tìm kiếm theo tên quần -->
-            <div class="fashion-search-bar">
-                <svg class="search-bar-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <circle cx="11" cy="11" r="7"/>
-                    <path d="m20 20-4.35-4.35"/>
-                </svg>
-                <input type="text" id="pantsSearchInput" class="fashion-search-input" placeholder="Tìm tên quần, chất liệu, form dáng..." autocomplete="off" spellcheck="false">
-                <button type="button" id="pantsClearSearchBtn" class="fashion-clear-btn" style="display:none;" title="Xóa từ khóa">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            <!-- Hàng tìm kiếm & Nút Đặt Lại ngang hàng chuẩn Luxury Atelier -->
+            <div class="fashion-search-row">
+                <div class="fashion-search-bar">
+                    <svg class="search-bar-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <circle cx="11" cy="11" r="7"/>
+                        <path d="m20 20-4.35-4.35"/>
+                    </svg>
+                    <input type="text" id="pantsSearchInput" class="fashion-search-input" placeholder="Tìm tên quần, chất liệu, form dáng..." autocomplete="off" spellcheck="false">
+                    <button type="button" id="pantsClearSearchBtn" class="fashion-clear-btn" style="display:none;" title="Xóa từ khóa">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                </div>
+                <button type="button" id="pantsResetFilterBtn" class="fashion-reset-filter-btn" title="Đặt lại toàn bộ tiêu chí về mặc định">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                        <path d="M3 3v5h5"/>
+                    </svg>
+                    <span>Đặt lại</span>
                 </button>
             </div>
 
@@ -221,16 +230,7 @@
                     </div>
                 </div>
 
-                <!-- Nút Đặt Lại Tinh Tế ở ngay dưới các tiêu chí chọn -->
-                <div class="fashion-reset-action-row">
-                    <button type="button" id="pantsResetFilterBtn" class="fashion-reset-filter-btn" title="Đặt lại toàn bộ tiêu chí về mặc định">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-                            <path d="M3 3v5h5"/>
-                        </svg>
-                        <span>Đặt lại bộ lọc</span>
-                    </button>
-                </div>
+
             </div>
 
             <!-- Footer Tinh Gọn: Nút Áp Dụng Căn Giữa Đẹp Mắt -->
