@@ -77,11 +77,85 @@
     }
 
     // State bộ lọc của riêng Sào Áo
+    let selectedCategory = 'all';
     let selectedStyle = 'all';
     let selectedColor = 'all';
     let maxPriceValue = 1500000; // Giá tối đa mặc định (1.500.000 ₫)
     let searchKeyword = '';
     let filteredShirts = [];
+
+    // Từ điển kiểu dáng chi tiết phân cấp theo loại áo
+    const SHIRT_SUBSTYLES = {
+        'all': [
+            { value: 'all', text: 'Tất cả kiểu dáng chi tiết' },
+            {
+                group: 'Áo Thun & Polo',
+                items: [
+                    { value: 'tee', text: 'Áo Thun Cổ Tròn (Crewneck Tee)' },
+                    { value: 'boxy', text: 'Áo Thun Oversized / Boxy Vai Trễ' },
+                    { value: 'polo', text: 'Áo Polo Dệt Kim (Knit Polo)' },
+                    { value: 'tank', text: 'Áo Ba Lỗ (Tank Top / Sleeveless)' }
+                ]
+            },
+            {
+                group: 'Áo Sơ Mi',
+                items: [
+                    { value: 'shirt', text: 'Áo Sơ Mi Camp-Collar (Cổ Danton)' },
+                    { value: 'oxford', text: 'Áo Sơ Mi Oxford / Linen Cổ Điển' },
+                    { value: 'utility', text: 'Áo Sơ Mi Utility Túi Hộp (Safari)' },
+                    { value: 'flannel', text: 'Áo Sơ Mi Flannel Kẻ Caro' }
+                ]
+            },
+            {
+                group: 'Áo Khoác (Jackets)',
+                items: [
+                    { value: 'jacket', text: 'Áo Khoác Bóng Chày (Varsity Jacket)' },
+                    { value: 'leather', text: 'Áo Khoác Da Moto Biker (Motorsport)' },
+                    { value: 'bomber', text: 'Áo Khoác Bomber MA-1' },
+                    { value: 'windbreaker', text: 'Áo Khoác Gió (Windbreaker)' },
+                    { value: 'blazer', text: 'Áo Blazer May Đo Casual' }
+                ]
+            },
+            {
+                group: 'Áo Nỉ & Hoodie',
+                items: [
+                    { value: 'hoodie', text: 'Áo Hoodie Mũ Trùm Chân Cua' },
+                    { value: 'crewneck', text: 'Áo Nỉ Chui Đầu (Sweatshirt / Fleece)' },
+                    { value: 'zip-hoodie', text: 'Áo Zip Hoodie Khóa Kéo' },
+                    { value: 'cardigan', text: 'Áo Cardigan Dệt Len Nổi' }
+                ]
+            }
+        ],
+        'tee-polo': [
+            { value: 'all', text: 'Tất cả kiểu dáng Áo Thun & Polo' },
+            { value: 'tee', text: 'Áo Thun Cổ Tròn (Crewneck Tee)' },
+            { value: 'boxy', text: 'Áo Thun Oversized / Boxy Vai Trễ' },
+            { value: 'polo', text: 'Áo Polo Dệt Kim (Knit Polo)' },
+            { value: 'tank', text: 'Áo Ba Lỗ (Tank Top / Sleeveless)' }
+        ],
+        'shirt': [
+            { value: 'all', text: 'Tất cả kiểu dáng Áo Sơ Mi' },
+            { value: 'shirt', text: 'Áo Sơ Mi Camp-Collar (Cổ Danton)' },
+            { value: 'oxford', text: 'Áo Sơ Mi Oxford / Linen Cổ Điển' },
+            { value: 'utility', text: 'Áo Sơ Mi Utility Túi Hộp (Safari)' },
+            { value: 'flannel', text: 'Áo Sơ Mi Flannel Kẻ Caro' }
+        ],
+        'jacket': [
+            { value: 'all', text: 'Tất cả kiểu dáng Áo Khoác' },
+            { value: 'jacket', text: 'Áo Khoác Bóng Chày (Varsity Jacket)' },
+            { value: 'leather', text: 'Áo Khoác Da Moto Biker (Motorsport)' },
+            { value: 'bomber', text: 'Áo Khoác Bomber MA-1' },
+            { value: 'windbreaker', text: 'Áo Khoác Gió (Windbreaker)' },
+            { value: 'blazer', text: 'Áo Blazer May Đo Casual' }
+        ],
+        'hoodie': [
+            { value: 'all', text: 'Tất cả kiểu dáng Áo Nỉ & Hoodie' },
+            { value: 'hoodie', text: 'Áo Hoodie Mũ Trùm Chân Cua' },
+            { value: 'crewneck', text: 'Áo Nỉ Chui Đầu (Sweatshirt / Fleece)' },
+            { value: 'zip-hoodie', text: 'Áo Zip Hoodie Khóa Kéo' },
+            { value: 'cardigan', text: 'Áo Cardigan Dệt Len Nổi' }
+        ]
+    };
 
     // Lấy toàn bộ danh sách 15 áo từ ClothingRail
     function getShirtCatalog() {
@@ -120,37 +194,29 @@
 
             <!-- Vùng nội dung các tiêu chí lọc -->
             <div class="fashion-sidebar-scroll">
-                <!-- 1. Kiểu Dáng Áo (Select-from-list đa dạng đầy đủ chủng loại) -->
+                <!-- 1. Phân Loại Áo (Chọn loại áo trước) -->
                 <div class="fashion-select-card">
-                    <label class="fashion-card-label" for="shirtStyleSelect">Kiểu Dáng Áo</label>
+                    <label class="fashion-card-label" for="shirtCategorySelect">Phân Loại Áo</label>
                     <div class="fashion-select-wrapper">
-                        <select id="shirtStyleSelect" class="fashion-select-input">
-                            <option value="all">Tất cả kiểu dáng áo</option>
-                            <optgroup label="Áo Thun & Polo">
-                                <option value="tee">Áo Thun Cổ Tròn (Crewneck Tee)</option>
-                                <option value="boxy">Áo Thun Oversized / Boxy Vai Trễ</option>
-                                <option value="polo">Áo Polo Dệt Kim (Knit Polo)</option>
-                                <option value="tank">Áo Ba Lỗ (Tank Top / Sleeveless)</option>
-                            </optgroup>
-                            <optgroup label="Áo Sơ Mi">
-                                <option value="shirt">Áo Sơ Mi Camp-Collar (Cổ Danton)</option>
-                                <option value="oxford">Áo Sơ Mi Oxford / Linen Cổ Điển</option>
-                                <option value="utility">Áo Sơ Mi Utility Túi Hộp (Safari)</option>
-                                <option value="flannel">Áo Sơ Mi Flannel Kẻ Caro</option>
-                            </optgroup>
-                            <optgroup label="Áo Khoác (Jackets)">
-                                <option value="jacket">Áo Khoác Bóng Chày (Varsity Jacket)</option>
-                                <option value="leather">Áo Khoác Da Moto Biker (Motorsport)</option>
-                                <option value="bomber">Áo Khoác Bomber MA-1</option>
-                                <option value="windbreaker">Áo Khoác Gió (Windbreaker)</option>
-                                <option value="blazer">Áo Blazer May Đo Casual</option>
-                            </optgroup>
-                            <optgroup label="Áo Nỉ & Hoodie">
-                                <option value="hoodie">Áo Hoodie Mũ Trùm Chân Cua</option>
-                                <option value="crewneck">Áo Nỉ Chui Đầu (Sweatshirt / Fleece)</option>
-                                <option value="zip-hoodie">Áo Zip Hoodie Khóa Kéo</option>
-                                <option value="cardigan">Áo Cardigan Dệt Len Nổi</option>
-                            </optgroup>
+                        <select id="shirtCategorySelect" class="fashion-select-input">
+                            <option value="all">Tất cả loại áo</option>
+                            <option value="tee-polo">Áo Thun & Polo</option>
+                            <option value="shirt">Áo Sơ Mi</option>
+                            <option value="jacket">Áo Khoác (Jackets)</option>
+                            <option value="hoodie">Áo Nỉ & Hoodie</option>
+                        </select>
+                        <div class="select-chevron-icon" aria-hidden="true">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Kiểu Dáng Chi Tiết (Chọn chi tiết hơn theo phân loại) -->
+                <div class="fashion-select-card">
+                    <label class="fashion-card-label" for="shirtSubStyleSelect">Kiểu Dáng Chi Tiết</label>
+                    <div class="fashion-select-wrapper">
+                        <select id="shirtSubStyleSelect" class="fashion-select-input">
+                            <option value="all">Tất cả kiểu dáng chi tiết</option>
                         </select>
                         <div class="select-chevron-icon" aria-hidden="true">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
@@ -233,7 +299,8 @@
         const closeBtn = document.getElementById('shirtFilterCloseBtn');
         const searchInput = document.getElementById('shirtSearchInput');
         const clearBtn = document.getElementById('shirtClearSearchBtn');
-        const styleSelect = document.getElementById('shirtStyleSelect');
+        const categorySelect = document.getElementById('shirtCategorySelect');
+        const subStyleSelect = document.getElementById('shirtSubStyleSelect');
         const swatchesGrid = document.getElementById('shirtColorSwatchesGrid');
         const selectedColorBadge = document.getElementById('shirtSelectedColorName');
         const priceRange = document.getElementById('shirtPriceRange');
@@ -242,6 +309,49 @@
         const resetBtn = document.getElementById('shirtResetFilterBtn');
 
         if (!modal || !searchInput) return;
+
+        // Điền danh sách kiểu dáng chi tiết phụ thuộc theo phân loại đã chọn
+        function populateSubStyleSelect(cat, preserveValue = false) {
+            if (!subStyleSelect) return;
+            const prevVal = preserveValue ? subStyleSelect.value : 'all';
+            subStyleSelect.innerHTML = '';
+
+            const list = SHIRT_SUBSTYLES[cat] || SHIRT_SUBSTYLES['all'];
+            list.forEach(entry => {
+                if (entry.group) {
+                    const optgroup = document.createElement('optgroup');
+                    optgroup.label = entry.group;
+                    entry.items.forEach(item => {
+                        const opt = document.createElement('option');
+                        opt.value = item.value;
+                        opt.textContent = item.text;
+                        optgroup.appendChild(opt);
+                    });
+                    subStyleSelect.appendChild(optgroup);
+                } else {
+                    const opt = document.createElement('option');
+                    opt.value = entry.value;
+                    opt.textContent = entry.text;
+                    subStyleSelect.appendChild(opt);
+                }
+            });
+
+            let found = false;
+            for (let i = 0; i < subStyleSelect.options.length; i++) {
+                if (subStyleSelect.options[i].value === prevVal) {
+                    subStyleSelect.selectedIndex = i;
+                    selectedStyle = prevVal;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                subStyleSelect.value = 'all';
+                selectedStyle = 'all';
+            }
+        }
+
+        populateSubStyleSelect(selectedCategory, true);
 
         // Render khay chấm màu tương tác (Direction 1 - Color Swatches Atelier)
         function renderColorSwatches() {
@@ -316,25 +426,69 @@
             const normalizedKeyword = removeVietnameseTones(searchKeyword);
 
             filteredShirts = allShirts.filter(item => {
-                // 1. Lọc theo kiểu dáng áo (Select dropdown)
-                if (selectedStyle !== 'all') {
-                    if (item.style !== selectedStyle) {
-                        const itemType = removeVietnameseTones(item.type || '');
-                        const itemDesc = removeVietnameseTones(item.desc || '');
-                        const target = removeVietnameseTones(selectedStyle);
-                        if (!itemType.includes(target) && !itemDesc.includes(target)) {
-                            return false;
-                        }
+                // 1. Lọc theo Phân Loại Áo (Category)
+                if (selectedCategory !== 'all') {
+                    if (selectedCategory === 'tee-polo') {
+                        if (item.style !== 'tee') return false;
+                    } else if (item.style !== selectedCategory) {
+                        return false;
                     }
                 }
 
-                // 2. Lọc theo giá thanh trượt kéo (Range slider)
+                // 2. Lọc theo Kiểu Dáng Chi Tiết (Sub-Style)
+                if (selectedStyle !== 'all') {
+                    const itemName = removeVietnameseTones(item.name || '');
+                    const itemType = removeVietnameseTones(item.type || '');
+                    const itemDesc = removeVietnameseTones(item.desc || '');
+                    const itemText = `${itemName} ${itemType} ${itemDesc}`;
+
+                    if (selectedStyle === 'tee') {
+                        if (item.style !== 'tee') return false;
+                    } else if (selectedStyle === 'shirt') {
+                        if (item.style !== 'shirt') return false;
+                    } else if (selectedStyle === 'jacket') {
+                        if (item.style !== 'jacket') return false;
+                    } else if (selectedStyle === 'hoodie') {
+                        if (item.style !== 'hoodie') return false;
+                    } else if (selectedStyle === 'boxy') {
+                        if (!itemText.includes('boxy') && !itemText.includes('oversized') && !itemText.includes('vai tre')) return false;
+                    } else if (selectedStyle === 'polo') {
+                        if (!itemText.includes('polo')) return false;
+                    } else if (selectedStyle === 'tank') {
+                        if (!itemText.includes('tank') && !itemText.includes('ba lo') && !itemText.includes('sleeveless')) return false;
+                    } else if (selectedStyle === 'oxford') {
+                        if (!itemText.includes('oxford') && !itemText.includes('linen')) return false;
+                    } else if (selectedStyle === 'utility') {
+                        if (!itemText.includes('utility') && !itemText.includes('tui hop') && !itemText.includes('safari')) return false;
+                    } else if (selectedStyle === 'flannel') {
+                        if (!itemText.includes('flannel') && !itemText.includes('caro')) return false;
+                    } else if (selectedStyle === 'leather') {
+                        if (!itemText.includes('da') && !itemText.includes('leather') && !itemText.includes('moto') && !itemText.includes('biker')) return false;
+                    } else if (selectedStyle === 'bomber') {
+                        if (!itemText.includes('bomber')) return false;
+                    } else if (selectedStyle === 'windbreaker') {
+                        if (!itemText.includes('gio') && !itemText.includes('windbreaker')) return false;
+                    } else if (selectedStyle === 'blazer') {
+                        if (!itemText.includes('blazer')) return false;
+                    } else if (selectedStyle === 'crewneck') {
+                        if (!itemText.includes('crewneck') && !itemText.includes('chui dau') && !itemText.includes('sweatshirt')) return false;
+                    } else if (selectedStyle === 'zip-hoodie') {
+                        if (!itemText.includes('zip') && !itemText.includes('khoa keo')) return false;
+                    } else if (selectedStyle === 'cardigan') {
+                        if (!itemText.includes('cardigan') && !itemText.includes('len')) return false;
+                    } else {
+                        const target = removeVietnameseTones(selectedStyle);
+                        if (!itemText.includes(target) && item.style !== selectedStyle) return false;
+                    }
+                }
+
+                // 3. Lọc theo giá thanh trượt kéo (Range slider)
                 const itemPriceVND = item.price * 10000;
                 if (maxPriceValue < 1500000 && itemPriceVND > maxPriceValue) {
                     return false;
                 }
 
-                // 3. Lọc theo màu sắc (Hỗ trợ toàn bộ áo có 2 màu đổi qua lại được)
+                // 4. Lọc theo màu sắc (Hỗ trợ toàn bộ áo có 2 màu đổi qua lại được)
                 if (selectedColor !== 'all') {
                     const keywords = COLOR_KEYWORDS[selectedColor] || [selectedColor];
                     const colors = item.colors || [];
@@ -362,7 +516,7 @@
                     item.variant = 0;
                 }
 
-                // 4. Lọc theo từ khóa tên hoặc mô tả
+                // 5. Lọc theo từ khóa tên hoặc mô tả
                 if (normalizedKeyword) {
                     const matchName = removeVietnameseTones(item.name).includes(normalizedKeyword);
                     const matchDesc = removeVietnameseTones(item.desc).includes(normalizedKeyword);
@@ -389,8 +543,11 @@
             if (searchKeyword.trim()) {
                 parts.push(`"${searchKeyword.trim()}"`);
             }
-            if (selectedStyle !== 'all' && styleSelect) {
-                const opt = styleSelect.options[styleSelect.selectedIndex];
+            if (selectedStyle !== 'all' && subStyleSelect) {
+                const opt = subStyleSelect.options[subStyleSelect.selectedIndex];
+                if (opt) parts.push(opt.text.split('(')[0].trim());
+            } else if (selectedCategory !== 'all' && categorySelect) {
+                const opt = categorySelect.options[categorySelect.selectedIndex];
                 if (opt) parts.push(opt.text.split('(')[0].trim());
             }
             if (maxPriceValue < 1500000) {
@@ -412,7 +569,7 @@
             }
 
             const label = buildSummaryLabel();
-            const isFullCatalog = (selectedStyle === 'all' && maxPriceValue >= 1500000 && selectedColor === 'all' && !searchKeyword.trim());
+            const isFullCatalog = (selectedCategory === 'all' && selectedStyle === 'all' && maxPriceValue >= 1500000 && selectedColor === 'all' && !searchKeyword.trim());
 
             if (window.ClothingRail) {
                 if (isFullCatalog) {
@@ -444,6 +601,7 @@
         }
 
         function resetAll() {
+            selectedCategory = 'all';
             selectedStyle = 'all';
             selectedColor = 'all';
             maxPriceValue = 1500000;
@@ -454,7 +612,8 @@
 
             if (searchInput) searchInput.value = '';
             if (clearBtn) clearBtn.style.display = 'none';
-            if (styleSelect) styleSelect.value = 'all';
+            if (categorySelect) categorySelect.value = 'all';
+            populateSubStyleSelect('all', false);
             updateColorSwatchesUI();
             if (priceRange) priceRange.value = 1500000;
 
@@ -466,10 +625,20 @@
             }
         }
 
-        // Sự kiện thay đổi Kiểu Dáng
-        if (styleSelect) {
-            styleSelect.addEventListener('change', () => {
-                selectedStyle = styleSelect.value;
+        // Sự kiện thay đổi Phân Loại Áo
+        if (categorySelect) {
+            categorySelect.addEventListener('change', () => {
+                selectedCategory = categorySelect.value;
+                selectedStyle = 'all';
+                populateSubStyleSelect(selectedCategory, false);
+                performFilter();
+            });
+        }
+
+        // Sự kiện thay đổi Kiểu Dáng Chi Tiết
+        if (subStyleSelect) {
+            subStyleSelect.addEventListener('change', () => {
+                selectedStyle = subStyleSelect.value;
                 performFilter();
             });
         }

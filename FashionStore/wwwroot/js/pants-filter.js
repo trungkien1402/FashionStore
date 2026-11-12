@@ -77,11 +77,99 @@
     }
 
     // State bộ lọc của riêng Sào Quần
+    let selectedCategory = 'all';
     let selectedStyle = 'all';
     let selectedColor = 'all';
     let maxPriceValue = 1500000; // Giá tối đa mặc định (1.500.000 ₫)
     let searchKeyword = '';
     let filteredPants = [];
+
+    // Từ điển kiểu dáng chi tiết phân cấp theo phân loại quần
+    const PANTS_SUBSTYLES = {
+        'all': [
+            { value: 'all', text: 'Tất cả kiểu dáng chi tiết' },
+            {
+                group: 'Quần Jeans & Denim',
+                items: [
+                    { value: 'jeans', text: 'Tất Cả Quần Jeans & Denim' },
+                    { value: 'acid-cargo', text: 'Quần Baggy Jeans Acid-Wash (Y2K / Skater)' },
+                    { value: 'wide-denim', text: 'Quần Jeans Ống Rộng (Wide-Leg Denim)' },
+                    { value: 'raw-selvedge', text: 'Quần Raw Selvedge Denim 14oz Cổ Điển' },
+                    { value: 'distressed-denim', text: 'Quần Jeans Rách / Mài Vintage' }
+                ]
+            },
+            {
+                group: 'Quần Tây May Đo (Tailored)',
+                items: [
+                    { value: 'tay', text: 'Tất Cả Quần Tây May Đo' },
+                    { value: 'sand-pleated', text: 'Quần Tây Xếp 2 Ly Cạp Cao (Quiet Luxury)' },
+                    { value: 'tailored-black', text: 'Quần Tây Cạp Cao Sartorial Side-Adjuster' },
+                    { value: 'pleated-grey', text: 'Quần Tây Ống Suông Xếp Ly Minimalist' },
+                    { value: 'chino-cream', text: 'Quần Chino May Đo Co Giãn Smart-Casual' },
+                    { value: 'flannel-trousers', text: 'Quần Tây Flannel Thu Đông' }
+                ]
+            },
+            {
+                group: 'Quần Dù Parachute & Tactical',
+                items: [
+                    { value: 'parachute', text: 'Tất Cả Quần Dù Parachute' },
+                    { value: 'tactical-parachute', text: 'Quần Dù Parachute Tactical Rêu Quân Đội' },
+                    { value: 'parachute-black', text: 'Quần Dù Parachute Dây Rút Gấu City' },
+                    { value: 'windpants', text: 'Quần Gió Thể Thao / Trackpants' }
+                ]
+            },
+            {
+                group: 'Quần Cargo Túi Hộp',
+                items: [
+                    { value: 'cargo', text: 'Tất Cả Quần Cargo Túi Hộp' },
+                    { value: 'cargo-olive', text: 'Quần Cargo 8 Túi Streetwear Rêu Khói' },
+                    { value: 'cargo-baggy', text: 'Quần Baggy Cargo Jeans Túi Hộp' },
+                    { value: 'techwear-cargo', text: 'Quần Techwear Cargo Đa Năng' }
+                ]
+            },
+            {
+                group: 'Quần Shorts & Bo Gấu',
+                items: [
+                    { value: 'jogger', text: 'Quần Sweatpants Nỉ Bo Gấu (Jogger)' },
+                    { value: 'shorts', text: 'Quần Short Dù Thể Thao (Nylon Shorts)' },
+                    { value: 'bermuda', text: 'Quần Bermuda Denim Shorts' }
+                ]
+            }
+        ],
+        'jeans': [
+            { value: 'all', text: 'Tất cả dáng Quần Jeans & Denim' },
+            { value: 'acid-cargo', text: 'Quần Baggy Jeans Acid-Wash (Y2K / Skater)' },
+            { value: 'wide-denim', text: 'Quần Jeans Ống Rộng (Wide-Leg Denim)' },
+            { value: 'raw-selvedge', text: 'Quần Raw Selvedge Denim 14oz Cổ Điển' },
+            { value: 'distressed-denim', text: 'Quần Jeans Rách / Mài Vintage' }
+        ],
+        'tay': [
+            { value: 'all', text: 'Tất cả dáng Quần Tây May Đo' },
+            { value: 'sand-pleated', text: 'Quần Tây Xếp 2 Ly Cạp Cao (Quiet Luxury)' },
+            { value: 'tailored-black', text: 'Quần Tây Cạp Cao Sartorial Side-Adjuster' },
+            { value: 'pleated-grey', text: 'Quần Tây Ống Suông Xếp Ly Minimalist' },
+            { value: 'chino-cream', text: 'Quần Chino May Đo Co Giãn Smart-Casual' },
+            { value: 'flannel-trousers', text: 'Quần Tây Flannel Thu Đông' }
+        ],
+        'parachute': [
+            { value: 'all', text: 'Tất cả dáng Quần Dù Parachute' },
+            { value: 'tactical-parachute', text: 'Quần Dù Parachute Tactical Rêu Quân Đội' },
+            { value: 'parachute-black', text: 'Quần Dù Parachute Dây Rút Gấu City' },
+            { value: 'windpants', text: 'Quần Gió Thể Thao / Trackpants' }
+        ],
+        'cargo': [
+            { value: 'all', text: 'Tất cả dáng Quần Cargo Túi Hộp' },
+            { value: 'cargo-olive', text: 'Quần Cargo 8 Túi Streetwear Rêu Khói' },
+            { value: 'cargo-baggy', text: 'Quần Baggy Cargo Jeans Túi Hộp' },
+            { value: 'techwear-cargo', text: 'Quần Techwear Cargo Đa Năng' }
+        ],
+        'shorts': [
+            { value: 'all', text: 'Tất cả dáng Quần Shorts & Bo Gấu' },
+            { value: 'jogger', text: 'Quần Sweatpants Nỉ Bo Gấu (Jogger)' },
+            { value: 'shorts', text: 'Quần Short Dù Thể Thao (Nylon Shorts)' },
+            { value: 'bermuda', text: 'Quần Bermuda Denim Shorts' }
+        ]
+    };
 
     // Lấy toàn bộ danh sách 12 quần từ ClothingRail
     function getPantsCatalog() {
@@ -120,44 +208,30 @@
 
             <!-- Vùng nội dung các tiêu chí lọc -->
             <div class="fashion-sidebar-scroll">
-                <!-- 1. Kiểu Dáng Quần (Select-from-list đa dạng đầy đủ chủng loại) -->
+                <!-- 1. Phân Loại Quần (Chọn loại quần trước) -->
                 <div class="fashion-select-card">
-                    <label class="fashion-card-label" for="pantsStyleSelect">Kiểu Dáng Quần</label>
+                    <label class="fashion-card-label" for="pantsCategorySelect">Phân Loại Quần</label>
                     <div class="fashion-select-wrapper">
-                        <select id="pantsStyleSelect" class="fashion-select-input">
-                            <option value="all">Tất cả kiểu dáng quần</option>
-                            <optgroup label="Quần Jeans & Denim">
-                                <option value="jeans">Tất Cả Quần Jeans & Denim</option>
-                                <option value="acid-cargo">Quần Baggy Jeans Acid-Wash (Y2K / Skater)</option>
-                                <option value="wide-denim">Quần Jeans Ống Rộng (Wide-Leg Denim)</option>
-                                <option value="raw-selvedge">Quần Raw Selvedge Denim 14oz Cổ Điển</option>
-                                <option value="distressed-denim">Quần Jeans Rách / Mài Vintage</option>
-                            </optgroup>
-                            <optgroup label="Quần Tây May Đo (Tailored)">
-                                <option value="tay">Tất Cả Quần Tây May Đo</option>
-                                <option value="sand-pleated">Quần Tây Xếp 2 Ly Cạp Cao (Quiet Luxury)</option>
-                                <option value="tailored-black">Quần Tây Cạp Cao Sartorial Side-Adjuster</option>
-                                <option value="pleated-grey">Quần Tây Ống Suông Xếp Ly Minimalist</option>
-                                <option value="chino-cream">Quần Chino May Đo Co Giãn Smart-Casual</option>
-                                <option value="flannel-trousers">Quần Tây Flannel Thu Đông</option>
-                            </optgroup>
-                            <optgroup label="Quần Dù Parachute & Tactical">
-                                <option value="parachute">Tất Cả Quần Dù Parachute</option>
-                                <option value="tactical-parachute">Quần Dù Parachute Tactical Rêu Quân Đội</option>
-                                <option value="parachute-black">Quần Dù Parachute Dây Rút Gấu City</option>
-                                <option value="windpants">Quần Gió Thể Thao / Trackpants</option>
-                            </optgroup>
-                            <optgroup label="Quần Cargo Túi Hộp">
-                                <option value="cargo">Tất Cả Quần Cargo Túi Hộp</option>
-                                <option value="cargo-olive">Quần Cargo 8 Túi Streetwear Rêu Khói</option>
-                                <option value="cargo-baggy">Quần Baggy Cargo Jeans Túi Hộp</option>
-                                <option value="techwear-cargo">Quần Techwear Cargo Đa Năng</option>
-                            </optgroup>
-                            <optgroup label="Quần Shorts & Bo Gấu">
-                                <option value="jogger">Quần Sweatpants Nỉ Bo Gấu (Jogger)</option>
-                                <option value="shorts">Quần Short Dù Thể Thao (Nylon Shorts)</option>
-                                <option value="bermuda">Quần Bermuda Denim Shorts</option>
-                            </optgroup>
+                        <select id="pantsCategorySelect" class="fashion-select-input">
+                            <option value="all">Tất cả loại quần</option>
+                            <option value="jeans">Quần Jeans & Denim</option>
+                            <option value="tay">Quần Tây May Đo (Tailored)</option>
+                            <option value="parachute">Quần Dù Parachute & Tactical</option>
+                            <option value="cargo">Quần Cargo Túi Hộp</option>
+                            <option value="shorts">Quần Shorts & Bo Gấu</option>
+                        </select>
+                        <div class="select-chevron-icon" aria-hidden="true">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Kiểu Dáng Chi Tiết (Chọn chi tiết hơn theo phân loại) -->
+                <div class="fashion-select-card">
+                    <label class="fashion-card-label" for="pantsSubStyleSelect">Kiểu Dáng Chi Tiết</label>
+                    <div class="fashion-select-wrapper">
+                        <select id="pantsSubStyleSelect" class="fashion-select-input">
+                            <option value="all">Tất cả kiểu dáng chi tiết</option>
                         </select>
                         <div class="select-chevron-icon" aria-hidden="true">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
@@ -240,13 +314,57 @@
         const closeBtn = document.getElementById('pantsFilterCloseBtn');
         const searchInput = document.getElementById('pantsSearchInput');
         const clearSearchBtn = document.getElementById('pantsClearSearchBtn');
-        const styleSelect = document.getElementById('pantsStyleSelect');
+        const categorySelect = document.getElementById('pantsCategorySelect');
+        const subStyleSelect = document.getElementById('pantsSubStyleSelect');
         const swatchesGrid = document.getElementById('pantsColorSwatchesGrid');
         const selectedColorBadge = document.getElementById('pantsSelectedColorName');
         const priceRange = document.getElementById('pantsPriceRange');
         const priceDisplay = document.getElementById('pantsPriceDisplay');
         const applyBtn = document.getElementById('pantsApplyBtn');
         const resetBtn = document.getElementById('pantsResetFilterBtn');
+
+        // Điền danh sách kiểu dáng chi tiết phụ thuộc theo phân loại đã chọn
+        function populateSubStyleSelect(cat, preserveValue = false) {
+            if (!subStyleSelect) return;
+            const prevVal = preserveValue ? subStyleSelect.value : 'all';
+            subStyleSelect.innerHTML = '';
+
+            const list = PANTS_SUBSTYLES[cat] || PANTS_SUBSTYLES['all'];
+            list.forEach(entry => {
+                if (entry.group) {
+                    const optgroup = document.createElement('optgroup');
+                    optgroup.label = entry.group;
+                    entry.items.forEach(item => {
+                        const opt = document.createElement('option');
+                        opt.value = item.value;
+                        opt.textContent = item.text;
+                        optgroup.appendChild(opt);
+                    });
+                    subStyleSelect.appendChild(optgroup);
+                } else {
+                    const opt = document.createElement('option');
+                    opt.value = entry.value;
+                    opt.textContent = entry.text;
+                    subStyleSelect.appendChild(opt);
+                }
+            });
+
+            let found = false;
+            for (let i = 0; i < subStyleSelect.options.length; i++) {
+                if (subStyleSelect.options[i].value === prevVal) {
+                    subStyleSelect.selectedIndex = i;
+                    selectedStyle = prevVal;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                subStyleSelect.value = 'all';
+                selectedStyle = 'all';
+            }
+        }
+
+        populateSubStyleSelect(selectedCategory, true);
 
         // Render khay chấm màu tương tác (Direction 1 - Color Swatches Atelier)
         function renderColorSwatches() {
@@ -321,12 +439,37 @@
             const normalizedKeyword = removeVietnameseTones(searchKeyword);
 
             filteredPants = allPants.filter(item => {
-                // 1. Lọc theo kiểu dáng quần (Select dropdown)
+                // 1. Lọc theo Phân Loại Quần (Category)
+                if (selectedCategory !== 'all') {
+                    const itemStyle = (item.style || '').toLowerCase();
+                    const itemType = removeVietnameseTones(item.type || '');
+                    let matchCat = false;
+
+                    if (selectedCategory === 'jeans') {
+                        if (itemStyle === 'jeans' || itemType.includes('jeans') || itemType.includes('denim')) matchCat = true;
+                    } else if (selectedCategory === 'tay') {
+                        if (itemStyle === 'tay' || itemType.includes('tay') || itemType.includes('chino')) matchCat = true;
+                    } else if (selectedCategory === 'parachute') {
+                        if (itemStyle === 'parachute' || itemType.includes('du') || itemType.includes('parachute')) matchCat = true;
+                    } else if (selectedCategory === 'cargo') {
+                        if (itemStyle === 'cargo' || itemType.includes('cargo')) matchCat = true;
+                    } else if (selectedCategory === 'shorts') {
+                        if (itemStyle === 'shorts' || itemType.includes('short') || itemType.includes('jogger')) matchCat = true;
+                    } else if (itemStyle === selectedCategory) {
+                        matchCat = true;
+                    }
+
+                    if (!matchCat) return false;
+                }
+
+                // 2. Lọc theo Kiểu Dáng Chi Tiết (Sub-Style)
                 if (selectedStyle !== 'all') {
                     const itemStyle = (item.style || '').toLowerCase();
                     const itemSlug = (item.slug || '').toLowerCase();
+                    const itemName = removeVietnameseTones(item.name || '');
                     const itemType = removeVietnameseTones(item.type || '');
                     const itemDesc = removeVietnameseTones(item.desc || '');
+                    const itemText = `${itemSlug} ${itemName} ${itemType} ${itemDesc}`;
                     const target = removeVietnameseTones(selectedStyle);
 
                     let matchStyle = false;
@@ -334,18 +477,28 @@
                     else if (selectedStyle === 'tay' && (itemStyle === 'tay' || itemType.includes('tay') || itemType.includes('chino') || itemDesc.includes('xep ly'))) matchStyle = true;
                     else if (selectedStyle === 'parachute' && (itemStyle === 'parachute' || itemType.includes('du') || itemType.includes('parachute'))) matchStyle = true;
                     else if (selectedStyle === 'cargo' && (itemStyle === 'cargo' || itemType.includes('cargo') || itemDesc.includes('tui hop'))) matchStyle = true;
-                    else if (itemSlug === selectedStyle || itemStyle === selectedStyle || itemType.includes(target) || itemDesc.includes(target)) matchStyle = true;
+                    else if (selectedStyle === 'acid-cargo' && (itemSlug.includes('acid') || itemText.includes('acid'))) matchStyle = true;
+                    else if (selectedStyle === 'wide-denim' && (itemSlug.includes('wide') || itemText.includes('ong rong'))) matchStyle = true;
+                    else if (selectedStyle === 'raw-selvedge' && (itemSlug.includes('selvedge') || itemText.includes('selvedge') || itemText.includes('raw'))) matchStyle = true;
+                    else if (selectedStyle === 'sand-pleated' && (itemSlug.includes('sand') || itemText.includes('sand') || itemText.includes('2 ly'))) matchStyle = true;
+                    else if (selectedStyle === 'tailored-black' && (itemSlug.includes('tailored') || itemText.includes('sartorial') || itemText.includes('cap cao'))) matchStyle = true;
+                    else if (selectedStyle === 'pleated-grey' && (itemSlug.includes('pleated') || itemText.includes('ong suong') || itemText.includes('xam khoi'))) matchStyle = true;
+                    else if (selectedStyle === 'chino-cream' && (itemSlug.includes('chino') || itemText.includes('chino'))) matchStyle = true;
+                    else if (selectedStyle === 'tactical-parachute' && (itemSlug.includes('tactical') || itemText.includes('tactical') || itemText.includes('reu quan doi'))) matchStyle = true;
+                    else if (selectedStyle === 'parachute-black' && (itemSlug.includes('parachute-black') || itemText.includes('day rut') || itemText.includes('city'))) matchStyle = true;
+                    else if (selectedStyle === 'cargo-olive' && (itemSlug.includes('cargo-olive') || itemText.includes('8 tui') || itemText.includes('reu khoi'))) matchStyle = true;
+                    else if (itemSlug === selectedStyle || itemStyle === selectedStyle || itemText.includes(target)) matchStyle = true;
 
                     if (!matchStyle) return false;
                 }
 
-                // 2. Lọc theo giá thanh trượt kéo (Range slider)
+                // 3. Lọc theo giá thanh trượt kéo (Range slider)
                 const itemPriceVND = item.price * 10000;
                 if (maxPriceValue < 1500000 && itemPriceVND > maxPriceValue) {
                     return false;
                 }
 
-                // 3. Lọc theo màu sắc (Hỗ trợ toàn bộ quần có 2 màu đổi qua lại được)
+                // 4. Lọc theo màu sắc (Hỗ trợ toàn bộ quần có 2 màu đổi qua lại được)
                 if (selectedColor !== 'all') {
                     const keywords = COLOR_KEYWORDS[selectedColor] || [selectedColor];
                     const colors = item.colors || [];
@@ -373,7 +526,7 @@
                     item.variant = 0;
                 }
 
-                // 4. Lọc theo từ khóa tên hoặc mô tả
+                // 5. Lọc theo từ khóa tên hoặc mô tả
                 if (normalizedKeyword) {
                     const matchName = removeVietnameseTones(item.name).includes(normalizedKeyword);
                     const matchDesc = removeVietnameseTones(item.desc).includes(normalizedKeyword);
@@ -397,8 +550,11 @@
             if (searchKeyword.trim()) {
                 parts.push(`"${searchKeyword.trim()}"`);
             }
-            if (selectedStyle !== 'all' && styleSelect) {
-                const opt = styleSelect.options[styleSelect.selectedIndex];
+            if (selectedStyle !== 'all' && subStyleSelect) {
+                const opt = subStyleSelect.options[subStyleSelect.selectedIndex];
+                if (opt) parts.push(opt.text.split('(')[0].trim());
+            } else if (selectedCategory !== 'all' && categorySelect) {
+                const opt = categorySelect.options[categorySelect.selectedIndex];
                 if (opt) parts.push(opt.text.split('(')[0].trim());
             }
             if (maxPriceValue < 1500000) {
@@ -420,7 +576,7 @@
             }
 
             const label = buildSummaryLabel();
-            const isFullCatalog = (selectedStyle === 'all' && maxPriceValue >= 1500000 && selectedColor === 'all' && !searchKeyword.trim());
+            const isFullCatalog = (selectedCategory === 'all' && selectedStyle === 'all' && maxPriceValue >= 1500000 && selectedColor === 'all' && !searchKeyword.trim());
 
             if (window.ClothingRail) {
                 if (isFullCatalog) {
@@ -456,6 +612,7 @@
         }
 
         function resetAllFilters() {
+            selectedCategory = 'all';
             selectedStyle = 'all';
             selectedColor = 'all';
             maxPriceValue = 1500000;
@@ -468,7 +625,8 @@
                 searchInput.value = '';
                 if (clearSearchBtn) clearSearchBtn.style.display = 'none';
             }
-            if (styleSelect) styleSelect.value = 'all';
+            if (categorySelect) categorySelect.value = 'all';
+            populateSubStyleSelect('all', false);
             updateColorSwatchesUI();
             if (priceRange) priceRange.value = '1500000';
 
@@ -510,9 +668,19 @@
             });
         }
 
-        // Event: Kiểu dáng Select dropdown
-        if (styleSelect) {
-            styleSelect.addEventListener('change', (e) => {
+        // Event: Phân loại quần Select dropdown
+        if (categorySelect) {
+            categorySelect.addEventListener('change', (e) => {
+                selectedCategory = e.target.value;
+                selectedStyle = 'all';
+                populateSubStyleSelect(selectedCategory, false);
+                performFilter();
+            });
+        }
+
+        // Event: Kiểu dáng chi tiết Select dropdown
+        if (subStyleSelect) {
+            subStyleSelect.addEventListener('change', (e) => {
                 selectedStyle = e.target.value;
                 performFilter();
             });
