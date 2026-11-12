@@ -546,15 +546,19 @@
     // ---------- Initialization ----------
     function init() {
         var isLookbookPage = /\/lookbook|\/collections/i.test(window.location.pathname);
-        var rootEl = document.getElementById('lookbookRoot');
 
-        // Only auto-mount if on the dedicated /lookbook route or rootEl exists on the page
-        if (!isLookbookPage && !rootEl) {
+        // NẾU KHÔNG PHẢI TRANG /lookbook THÌ XÓA NGAY LẬP TỨC ĐỂ KHÔNG CHẶN TRANG CHỦ!
+        if (!isLookbookPage) {
+            var stray = document.getElementById('lookbookRoot');
+            if (stray) {
+                stray.remove();
+            }
             return;
         }
 
         var params = new URLSearchParams(window.location.search);
         var requestedTheme = params.get('theme') || 'noir';
+        var rootEl = document.getElementById('lookbookRoot');
         if (rootEl && rootEl.dataset.theme) {
             requestedTheme = rootEl.dataset.theme;
         }
