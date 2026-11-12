@@ -1,0 +1,168 @@
+@model FashionStore.Models.Entities.SupportRequest
+@using FashionStore.Models.Enums
+
+@{
+    ViewData["Title"] = $"Chi tiết yêu cầu hỗ trợ #{Model.Id}";
+}
+
+<!-- BREADCRUMB / BACK -->
+<div class="mb-3">
+    <a asp-action="Index" class="text-decoration-none text-muted small">
+        <i class="bi bi-arrow-left me-1"></i> Quay lại danh sách yêu cầu
+    </a>
+</div>
+
+<!-- HEADER -->
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div>
+        <div class="d-flex align-items-center gap-2 mb-1">
+            <span style="font-size: 0.68rem; font-weight: 700; letter-spacing: 0.28em; color: var(--adm-gold); text-transform: uppercase;">
+                INQUIRY TICKET #@Model.Id
+            </span>
+            <span style="width: 4px; height: 4px; border-radius: 50%; background: var(--adm-gold);"></span>
+            <span class="text-muted small">@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span>
+        </div>
+        <h2 class="fw-bold mb-0 adm-heading" style="letter-spacing: -0.02em;">@Model.Subject</h2>
+    </div>
+
+    <div>
+        @switch (Model.Status)
+        {
+            case SupportRequestStatus.Pending:
+                <span class="badge bg-warning text-dark px-3 py-2 fs-6"><i class="bi bi-clock me-1"></i>Chờ xử lý</span>
+                break;
+            case SupportRequestStatus.InProgress:
+                <span class="badge bg-primary px-3 py-2 fs-6"><i class="bi bi-gear me-1"></i>Đang xử lý</span>
+                break;
+            case SupportRequestStatus.Resolved:
+                <span class="badge bg-success px-3 py-2 fs-6"><i class="bi bi-check2 me-1"></i>Đã giải quyết</span>
+                break;
+            case SupportRequestStatus.Closed:
+                <span class="badge bg-secondary px-3 py-2 fs-6"><i class="bi bi-x me-1"></i>Đã đóng</span>
+                break;
+        }
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="row g-4">
+    <!-- LEFT: CONTENT -->
+    <div class="col-lg-8">
+        <div class="adm-card p-4 mb-4">
+            <h5 class="fw-bold mb-3 border-bottom pb-2">
+                <i class="bi bi-chat-left-text me-2 text-primary"></i>Nội dung phản ánh từ khách hàng
+            </h5>
+            <div class="p-3 bg-light rounded-3 mb-3" style="font-size: 1.05rem; line-height: 1.6; white-space: pre-wrap;">@Model.Message</div>
+
+            @if (!string.IsNullOrEmpty(Model.OrderCode))
+            {
+                <div class="alert alert-info d-flex align-items-center justify-content-between mb-0">
+                    <div>
+                        <i class="bi bi-receipt me-2"></i>
+                        Mã đơn hàng liên quan: <strong>@Model.OrderCode</strong>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- FORM UPDATE STATUS & NOTE -->
+        <div class="adm-card p-4">
+            <h5 class="fw-bold mb-3 border-bottom pb-2">
+                <i class="bi bi-pencil-square me-2 text-warning"></i>Cập nhật tiến độ & Ghi chú nội bộ
+            </h5>
+            <form asp-action="UpdateStatus" asp-route-id="@Model.Id" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Trạng thái xử lý:</label>
+                        <select name="status" class="form-select">
+                            <option value="@((int)SupportRequestStatus.Pending)" selected="@(Model.Status == SupportRequestStatus.Pending)">Chờ xử lý (Pending)</option>
+                            <option value="@((int)SupportRequestStatus.InProgress)" selected="@(Model.Status == SupportRequestStatus.InProgress)">Đang xử lý (InProgress)</option>
+                            <option value="@((int)SupportRequestStatus.Resolved)" selected="@(Model.Status == SupportRequestStatus.Resolved)">Đã giải quyết (Resolved)</option>
+                            <option value="@((int)SupportRequestStatus.Closed)" selected="@(Model.Status == SupportRequestStatus.Closed)">Đã đóng ticket (Closed)</option>
+                        </select>
+                    </div>
+
+                    @if (Model.ResolvedAt.HasValue)
+                    {
+                        <div class="col-md-6">
+                            <label class="form-label text-muted">Thời điểm hoàn tất:</label>
+                            <div class="form-control bg-light">
+                                @Model.ResolvedAt.Value.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss")
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Ghi chú xử lý / Nội bộ nhân viên:</label>
+                    <textarea name="adminNote" rows="4" class="form-control" 
+                              placeholder="Nhập ghi chú phản hồi, nội dung đã gọi điện thoại/trao đổi với khách hàng...">@Model.AdminNote</textarea>
+                    <small class="text-muted">Ghi chú này giúp các nhân viên trong ca làm việc nắm được tiến độ hỗ trợ.</small>
+                </div>
+
+                <button type="submit" class="btn btn-dark px-4 fw-bold">
+                    <i class="bi bi-save me-1"></i> Lưu cập nhật
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- RIGHT: CUSTOMER INFO -->
+    <div class="col-lg-4">
+        <div class="adm-card p-4 mb-4">
+            <h5 class="fw-bold mb-3 border-bottom pb-2">
+                <i class="bi bi-person-circle me-2 text-dark"></i>Thông tin người liên hệ
+            </h5>
+
+            <div class="mb-3">
+                <label class="text-muted small d-block">Họ và tên</label>
+                <div class="fw-bold fs-6">@Model.FullName</div>
+            </div>
+
+            <div class="mb-3">
+                <label class="text-muted small d-block">Số điện thoại</label>
+                <div class="fw-bold">
+                    <a href="tel:@Model.PhoneNumber" class="text-decoration-none text-dark">
+                        <i class="bi bi-telephone-outbound me-1 text-primary"></i>@Model.PhoneNumber
+                    </a>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="text-muted small d-block">Email</label>
+                <div>
+                    <a href="mailto:@Model.Email" class="text-decoration-none text-dark">
+                        <i class="bi bi-envelope me-1 text-danger"></i>@Model.Email
+                    </a>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="text-muted small d-block">Tài khoản thành viên</label>
+                @if (Model.User != null)
+                {
+                    <span class="badge bg-success"><i class="bi bi-person-check me-1"></i>Đã đăng ký tài khoản</span>
+                    <div class="small text-muted mt-1">Username: @Model.User.UserName</div>
+                }
+                else
+                {
+                    <span class="badge bg-secondary"><i class="bi bi-person me-1"></i>Khách vãng lai</span>
+                }
+            </div>
+
+            <div class="pt-2 border-top">
+                <label class="text-muted small d-block">Thời gian gửi</label>
+                <div class="small fw-semibold">@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss")</div>
+            </div>
+        </div>
+    </div>
+</div>

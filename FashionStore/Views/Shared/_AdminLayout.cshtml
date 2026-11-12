@@ -70,6 +70,12 @@
                 <span>Vận chuyển</span>
             </a>
 
+            <a asp-controller="AdminSupportRequests" asp-action="Index"
+               class="adm-nav-link @(currentController == "AdminSupportRequests" ? "active" : "")">
+                <i class="bi bi-chat-heart"></i>
+                <span>Hỗ trợ CSKH</span>
+            </a>
+
             @if (User.IsInRole("Shipper"))
             {
                 <div class="adm-nav-label">Giao nhận</div>

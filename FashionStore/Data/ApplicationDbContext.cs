@@ -34,6 +34,8 @@ public class ApplicationDbContext
 
     public DbSet<ShipmentLocation> ShipmentLocations => Set<ShipmentLocation>();
 
+    public DbSet<SupportRequest> SupportRequests => Set<SupportRequest>();
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -161,6 +163,20 @@ public class ApplicationDbContext
                 .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasIndex(x => new { x.ShipmentId, x.RecordedAt });
+        });
+
+        // --- SupportRequest ---
+        builder.Entity<SupportRequest>(entity =>
+        {
+            entity.HasKey(s => s.Id);
+
+            entity.HasOne(s => s.User)
+                .WithMany()
+                .HasForeignKey(s => s.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasIndex(s => s.CreatedAt);
+            entity.HasIndex(s => s.Status);
         });
     }
 }
