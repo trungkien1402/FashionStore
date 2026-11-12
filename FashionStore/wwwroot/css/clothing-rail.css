@@ -2337,12 +2337,56 @@ body.show-detail .rail-ticker {
     user-select: none;
 }
 
-/* Sticky Bottom Bar Tinh Gọn */
+/* Nút Đặt Lại Tinh Tế ở ngay dưới các chỗ chọn */
+.fashion-reset-action-row {
+    display: flex;
+    justify-content: center;
+    padding: 10px 0 4px;
+}
+
+.fashion-reset-filter-btn {
+    height: 36px;
+    padding: 0 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    cursor: pointer;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fashion-reset-filter-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.35);
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+.fashion-reset-filter-btn svg {
+    transition: transform 0.4s ease;
+    opacity: 0.85;
+}
+
+.fashion-reset-filter-btn:hover svg {
+    transform: rotate(-120deg);
+    opacity: 1;
+}
+
+/* Sticky Bottom Bar Tinh Gọn - Nút Áp Dụng Căn Chính Giữa */
 .fashion-sidebar-footer {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px;
+    justify-content: center;
     padding: 18px 24px 22px;
     background: rgba(20, 22, 28, 0.85);
     backdrop-filter: blur(20px);
@@ -2352,85 +2396,54 @@ body.show-detail .rail-ticker {
     box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.35);
 }
 
-.footer-count-box {
-    display: flex;
-    align-items: center;
-}
-
-.count-text {
-    font-size: 14px;
-    color: #ffffff;
-    font-weight: 500;
-}
-
-.count-text strong {
-    font-weight: 800;
-    color: #38bdf8;
-}
-
-.footer-buttons-group {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.sv-reset-pill-btn {
-    height: 38px;
-    padding: 0 14px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 999px;
-    color: rgba(255, 255, 255, 0.78);
-    font-size: 12px;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.sv-reset-pill-btn:hover {
-    background: rgba(255, 255, 255, 0.14);
-    color: #ffffff;
-    border-color: rgba(255, 255, 255, 0.32);
-}
-
-/* Nút hành động chính trong suốt mờ đục chuẩn Sneaker Vault Capsule */
+/* Nút Áp Dụng Chính Giữa Chuẩn Sneaker Vault Capsule */
 .sv-apply-capsule-btn {
-    height: 38px;
-    padding: 0 16px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.24);
+    width: 100%;
+    max-width: 280px;
+    height: 44px;
+    padding: 0 24px;
+    background: rgba(255, 255, 255, 0.09);
+    border: 1px solid rgba(255, 255, 255, 0.26);
     border-radius: 999px;
     color: #ffffff;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 800;
     letter-spacing: 0.08em;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+    gap: 10px;
     cursor: pointer;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.25);
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .sv-apply-capsule-btn:hover {
-    background: rgba(255, 255, 255, 0.16);
-    border-color: rgba(255, 255, 255, 0.45);
-    transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.sv-apply-capsule-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+}
+
+.sv-apply-capsule-btn .apply-text {
+    font-size: 13px;
+    letter-spacing: 0.1em;
 }
 
 .sv-apply-capsule-btn .capsule-badge {
     background: rgba(56, 189, 248, 0.25);
-    border: 1px solid rgba(56, 189, 248, 0.4);
+    border: 1px solid rgba(56, 189, 248, 0.45);
     border-radius: 999px;
-    padding: 2px 7px;
-    font-size: 10px;
+    padding: 3px 9px;
+    font-size: 11px;
     font-weight: 800;
     color: #ffffff;
     letter-spacing: 0.04em;

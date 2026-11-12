@@ -151,29 +151,28 @@
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Footer Tinh Gọn (Đã xóa dòng chữ dư thừa 'Enter để đẩy ra sào đồ') -->
-            <div class="fashion-sidebar-footer">
-                <div class="footer-count-box">
-                    <span class="count-text">Khớp <strong id="shirtMatchCount">15</strong> mẫu áo</span>
-                </div>
-                <div class="footer-buttons-group">
-                    <button type="button" id="shirtResetFilterBtn" class="sv-reset-pill-btn" title="Đặt lại bộ lọc về mặc định">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <!-- Nút Đặt Lại Tinh Tế ở ngay dưới các tiêu chí chọn -->
+                <div class="fashion-reset-action-row">
+                    <button type="button" id="shirtResetFilterBtn" class="fashion-reset-filter-btn" title="Đặt lại toàn bộ tiêu chí về mặc định">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
                             <path d="M3 3v5h5"/>
                         </svg>
-                        <span>Đặt lại</span>
-                    </button>
-                    <button type="button" id="shirtApplyBtn" class="sv-apply-capsule-btn" title="Đẩy các mẫu áo phù hợp ra trên sào đồ (Enter)">
-                        <span>XEM TRÊN SÀO</span>
-                        <span class="capsule-badge" id="shirtApplyCount">15 ÁO</span>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="9 18 15 12 9 6"></polyline>
-                        </svg>
+                        <span>Đặt lại bộ lọc</span>
                     </button>
                 </div>
+            </div>
+
+            <!-- Footer Tinh Gọn: Nút Áp Dụng Căn Giữa Đẹp Mắt -->
+            <div class="fashion-sidebar-footer">
+                <button type="button" id="shirtApplyBtn" class="sv-apply-capsule-btn" title="Áp dụng bộ lọc lên sào đồ (Enter)">
+                    <span class="apply-text">ÁP DỤNG</span>
+                    <span class="capsule-badge" id="shirtApplyCount">15 ÁO</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </button>
             </div>
         </aside>
     `;
