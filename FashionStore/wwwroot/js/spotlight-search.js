@@ -636,7 +636,11 @@
                 detectedCat = (currentCat === 'quan') ? 'quan' : 'ao';
             }
 
-            // Tự động chuyển hướng sang bộ lọc riêng chuyên biệt của từng Sào Đồ
+            // Tự động chuyển hướng sang bộ lọc riêng chuyên biệt của từng Sào Đồ / Tủ Giày
+            if (detectedCat === 'giay' && window.HNMTSneakerFilter && typeof window.HNMTSneakerFilter.open === 'function') {
+                window.HNMTSneakerFilter.open();
+                return;
+            }
             if (detectedCat === 'quan' && window.HNMTPantsFilter && typeof window.HNMTPantsFilter.open === 'function') {
                 window.HNMTPantsFilter.open();
                 return;
