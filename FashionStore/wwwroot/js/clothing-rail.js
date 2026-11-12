@@ -485,13 +485,21 @@
                 `;
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    if (window.HNMTSpotlightSearch) {
+                    if (currentCategory === 'ao' && window.HNMTShirtFilter) {
+                        window.HNMTShirtFilter.open();
+                    } else if (window.HNMTSpotlightSearch) {
                         window.HNMTSpotlightSearch.open(currentCategory);
                     }
                 });
                 bagBtn.parentNode.insertBefore(btn, bagBtn);
             }
         });
+
+        if (!window.HNMTShirtFilter && !document.querySelector('script[src*="shirt-filter.js"]')) {
+            const s = document.createElement('script');
+            s.src = '/js/shirt-filter.js?v=inject_v1';
+            document.head.appendChild(s);
+        }
 
         if (!window.HNMTSpotlightSearch && !document.querySelector('script[src*="spotlight-search.js"]')) {
             const s = document.createElement('script');
@@ -1066,13 +1074,23 @@
         // Phím tắt bàn phím
         document.addEventListener('keydown', e => {
             if (e.key === 'Escape') {
-                if (modalOpen) closeModal();
+                if (window.HNMTShirtFilter && document.getElementById('hnmtShirtFilterModal')?.classList.contains('is-open')) {
+                    window.HNMTShirtFilter.close();
+                } else if (modalOpen) closeModal();
                 else if (detailOpen) closeDetail();
                 else if ($('#hnmtRackOverlay')?.classList.contains('is-active')) closeClothingRail();
             } else if (e.key === 'ArrowLeft') {
                 if (detailOpen) navigate(-1);
             } else if (e.key === 'ArrowRight') {
                 if (detailOpen) navigate(1);
+            } else if ((e.key === '/' || (e.ctrlKey && e.key.toLowerCase() === 'k')) && !document.getElementById('hnmtShirtFilterModal')?.classList.contains('is-open')) {
+                const activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+                if (activeTag !== 'input' && activeTag !== 'textarea') {
+                    if (currentCategory === 'ao' && window.HNMTShirtFilter) {
+                        e.preventDefault();
+                        window.HNMTShirtFilter.open();
+                    }
+                }
             }
         });
 

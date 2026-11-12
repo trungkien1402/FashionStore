@@ -636,6 +636,12 @@
                 detectedCat = (currentCat === 'quan') ? 'quan' : 'ao';
             }
 
+            // Khi ở Sào Áo: Tự động chuyển hướng sang Bộ Lọc Riêng Của Sào Áo (HNMTShirtFilter)
+            if (detectedCat === 'ao' && window.HNMTShirtFilter && typeof window.HNMTShirtFilter.open === 'function') {
+                window.HNMTShirtFilter.open();
+                return;
+            }
+
             activeCategory = detectedCat;
             tabs.forEach(t => t.classList.toggle('is-active', t.dataset.cat === activeCategory));
 
