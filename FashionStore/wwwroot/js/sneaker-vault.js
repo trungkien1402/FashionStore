@@ -287,15 +287,15 @@
     let activeFilterLabel = '';
 
     const getAllSneakers = () => SNEAKER_COLLECTIONS.flatMap(c => c.items.map(it => ({ ...it, collectionId: c.id, collectionTitle: c.title })));
-    const getSneakers = () => (filteredSneakers !== null ? filteredSneakers : SNEAKER_COLLECTIONS[currentCollectionIndex].items);
     const getFilteredTotalPages = () => (!filteredSneakers ? 1 : Math.max(1, Math.ceil(filteredSneakers.length / ITEMS_PER_GRID)));
-    const getGridSneakers = () => {
+    const getSneakers = () => {
         if (filteredSneakers !== null) {
             const start = filteredPageIdx * ITEMS_PER_GRID;
             return filteredSneakers.slice(start, start + ITEMS_PER_GRID);
         }
         return SNEAKER_COLLECTIONS[currentCollectionIndex].items;
     };
+    const getGridSneakers = () => getSneakers();
     const getActiveCollection = () => SNEAKER_COLLECTIONS[currentCollectionIndex];
 
     let currentIndex = 0;
@@ -319,9 +319,10 @@
 
         if (isFiltered) {
             const totalPages = getFilteredTotalPages();
+            const currentCount = getSneakers().length;
             currentTitle = totalPages > 1
-                ? `KẾT QUẢ LỌC ${filteredPageIdx + 1}/${totalPages} [${filteredSneakers.length} ĐÔI]`
-                : `KẾT QUẢ LỌC [${filteredSneakers.length} ĐÔI]`;
+                ? `KẾT QUẢ LỌC ${filteredPageIdx + 1}/${totalPages} [${currentCount} ĐÔI]`
+                : `KẾT QUẢ LỌC [${currentCount} ĐÔI]`;
             showArrows = totalPages > 1;
         } else {
             currentTitle = getActiveCollection().title;
@@ -381,8 +382,9 @@
         const isFiltered = filteredSneakers !== null;
         const totalPages = isFiltered ? getFilteredTotalPages() : 1;
         const showArrows = !isFiltered || totalPages > 1;
+        const currentCount = isFiltered ? getSneakers().length : 6;
         const currentTitle = isFiltered
-            ? (totalPages > 1 ? `KẾT QUẢ LỌC ${filteredPageIdx + 1}/${totalPages} [${filteredSneakers.length} ĐÔI]` : `KẾT QUẢ LỌC [${filteredSneakers.length} ĐÔI]`)
+            ? (totalPages > 1 ? `KẾT QUẢ LỌC ${filteredPageIdx + 1}/${totalPages} [${currentCount} ĐÔI]` : `KẾT QUẢ LỌC [${currentCount} ĐÔI]`)
             : getActiveCollection().title;
 
         headerLefts.forEach(headerLeft => {
@@ -472,8 +474,10 @@
             if (totalPages <= 1) return;
 
             filteredPageIdx = (filteredPageIdx + direction + totalPages) % totalPages;
+            currentIndex = 0; // Đặt về đôi đầu tiên của trang 6 đôi mới
 
-            const currentTitle = `KẾT QUẢ LỌC ${filteredPageIdx + 1}/${totalPages} [${filteredSneakers.length} ĐÔI]`;
+            const currentCount = getSneakers().length;
+            const currentTitle = `KẾT QUẢ LỌC ${filteredPageIdx + 1}/${totalPages} [${currentCount} ĐÔI]`;
             const titleEls = document.querySelectorAll('#svCollectionTitle, .sv-header-title');
             titleEls.forEach(el => {
                 el.style.opacity = '0';
@@ -508,7 +512,6 @@
                     });
                 }, 220);
             } else {
-                currentIndex = filteredPageIdx * ITEMS_PER_GRID;
                 renderGrid();
                 updateSliderDisplay(direction);
             }
@@ -616,14 +619,10 @@
         grid.innerHTML = '';
         grid.setAttribute('data-collection', String(currentCollectionIndex));
 
-        const gridSneakers = getGridSneakers();
-        const baseIdx = filteredSneakers !== null ? (filteredPageIdx * ITEMS_PER_GRID) : 0;
-
-        gridSneakers.forEach((snk, i) => {
-            const globalIdx = baseIdx + i;
+        getSneakers().forEach((snk, idx) => {
             const item = document.createElement('div');
             item.className = 'sv-grid-item';
-            item.setAttribute('data-idx', String(globalIdx));
+            item.setAttribute('data-idx', String(idx));
             item.setAttribute('role', 'button');
             item.setAttribute('tabindex', '0');
             item.setAttribute('aria-label', `Xem chi tiết ${snk.model} - ${snk.colorway}`);
@@ -636,7 +635,7 @@
             // Click trực tiếp vào đôi giày để kích hoạt hiệu ứng FLIP mở chi tiết
             item.onclick = function (e) {
                 e.stopPropagation();
-                openSliderView(globalIdx);
+                openSliderView(idx);
             };
             grid.appendChild(item);
         });
@@ -677,8 +676,7 @@
 
         // 1. Tìm phần tử đôi giày vừa được bấm trong Grid
         const gridItems = $$('.sv-grid-item');
-        const pageIdx = filteredSneakers !== null ? (idx % ITEMS_PER_GRID) : idx;
-        const clickedItem = document.querySelector(`.sv-grid-item[data-idx="${idx}"]`) || gridItems[pageIdx];
+        const clickedItem = gridItems[idx];
         const clickedImg = clickedItem ? clickedItem.querySelector('.sv-item-img') : null;
         const clickedShadow = clickedItem ? clickedItem.querySelector('.sv-item-shadow') : null;
 
@@ -870,23 +868,18 @@
         }
 
         const grid = $('#svGrid');
-        if (filteredSneakers !== null) {
-            filteredPageIdx = Math.floor(currentIndex / ITEMS_PER_GRID);
-            updateVaultSwitcherUI();
-            renderGrid();
-        } else if (grid && grid.getAttribute('data-collection') !== String(currentCollectionIndex)) {
+        if (grid && grid.getAttribute('data-collection') !== String(currentCollectionIndex)) {
             renderGrid();
         }
 
         const activeGridItems = $$('.sv-grid-item');
-        const targetPageIdx = filteredSneakers !== null ? (currentIndex % ITEMS_PER_GRID) : currentIndex;
-        const targetItem = activeGridItems[targetPageIdx] || activeGridItems[0];
+        const targetItem = activeGridItems[currentIndex] || activeGridItems[0];
         const targetImg = targetItem ? targetItem.querySelector('.sv-item-img') : null;
         const targetShadow = targetItem ? targetItem.querySelector('.sv-item-shadow') : null;
 
         // Giữ các đôi giày khác mờ nhẹ trong lúc chiếc hero chuẩn bị đáp xuống
         activeGridItems.forEach((it, i) => {
-            if (i !== targetPageIdx) {
+            if (i !== currentIndex) {
                 it.classList.add('is-fading-out');
             }
         });
