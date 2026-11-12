@@ -2567,6 +2567,9 @@ body.show-detail .rail-ticker {
 }
 
 .fashion-swatch-item[data-color="white"].is-selected::after,
+.fashion-swatch-item[data-color="sand"].is-selected::after,
+.fashion-swatch-item[data-color="yellow"].is-selected::after,
+.fashion-swatch-item[data-color="lime"].is-selected::after,
 .fashion-swatch-item[data-color="all"].is-selected::after {
     border-color: #0f172a;
     filter: none;

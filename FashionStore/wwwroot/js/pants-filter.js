@@ -24,35 +24,52 @@
         return str.trim();
     }
 
-    // Bảng từ khóa nhận diện các gam màu thời trang (tiếng Việt & tiếng Anh)
+    // Bảng từ khóa nhận diện các gam màu thời trang toàn diện (tiếng Việt & tiếng Anh)
     const COLOR_KEYWORDS = {
-        black: ['den', 'black', 'charcoal', 'pitch', 'than chi', 'onyx', 'stealth'],
-        white: ['trang', 'white', 'be', 'kem', 'cream', 'sand', 'ivory', 'ecru', 'alabaster', 'sua'],
-        blue: ['xanh', 'blue', 'indigo', 'denim', 'cham', 'cobalt', 'azure', 'troi'],
-        navy: ['navy', 'muc', 'tram', 'prussian'],
-        gray: ['xam', 'gray', 'grey', 'bac', 'silver', 'acid', 'smoke', 'marl', 'stone', 'da'],
-        green: ['reu', 'green', 'olive', 'rung', 'military', 'safari'],
-        sand: ['cat', 'sand', 'khaki', 'camel', 'nau', 'brown', 'tan'],
-        red: ['do', 'red', 'burgundy', 'vang do', 'terracotta', 'ruou', 'rust'],
-        yellow: ['vang', 'yellow', 'mustard', 'lime'],
-        orange: ['cam', 'orange', 'dat nung', 'terracotta'],
-        purple: ['tim', 'purple', 'violet', 'lilac', 'lavender', 'hoa ca']
+        black: ['den', 'black', 'carbon', 'charcoal', 'pitch', 'than chi', 'onyx', 'stealth'],
+        white: ['trang', 'white', 'be', 'kem', 'cream', 'sand', 'ivory', 'ecru', 'alabaster', 'sua', 'frost', 'pure', 'ice'],
+        gray: ['xam', 'gray', 'grey', 'bac', 'silver', 'acid', 'smoke', 'marl', 'stone', 'da', 'storm', 'chrome', 'slate'],
+        sand: ['cat', 'sand', 'khaki', 'camel', 'tan', 'beige', 'nau nhat', 'sa mac', 'desert'],
+        brown: ['nau', 'brown', 'mocha', 'chocolate', 'espresso', 'cacao', 'coffee', 'go', 'wood', 'nau dam'],
+        blue: ['xanh', 'blue', 'indigo', 'denim', 'cham', 'cobalt', 'azure', 'troi', 'sonic', 'polar', 'glacier'],
+        navy: ['navy', 'hai quan', 'xanh tham', 'dam', 'dark blue', 'midnight', 'muc', 'deep blue', 'deep carbon'],
+        teal: ['ngoc', 'teal', 'mint', 'turquoise', 'cyan', 'tiffany'],
+        green: ['reu', 'green', 'olive', 'la cay', 'moss', 'army', 'khaki green', 'bo', 'forest', 'emerald', 'matrix'],
+        lime: ['volt', 'lime', 'neon', 'acid', 'chuoi', 'da quang'],
+        purple: ['tim', 'purple', 'violet', 'lunar', 'magenta', 'aura', 'lilac', 'lavender', 'hoa ca', 'plum'],
+        red: ['do', 'red', 'crimson', 'scarlet', 'magma', 'infrared', 'infraray', 'fury', 'rubi'],
+        burgundy: ['burgundy', 'maroon', 'ruou', 'man', 'bordeaux', 'do tham', 'wine'],
+        orange: ['cam', 'orange', 'amber', 'sunset', 'flare', 'terracotta', 'clay', 'dat nung', 'rust'],
+        yellow: ['vang', 'yellow', 'gold', 'solaris', 'imperial', 'mustard', 'lemon', 'canary'],
+        pink: ['hong', 'pink', 'rose', 'phan', 'pastel', 'lotus', 'dao', 'blush', 'fuchsia'],
+        metallic: ['kim loai', 'metallic', 'metal', 'dong', 'bronze', 'copper', 'gold chrome', 'anh kim']
     };
 
-    // Bảng màu Swatches thời trang cao cấp (Design Direction 1 - Visual Palette Circles)
+    // Bảng 18 màu Swatches thời trang cao cấp (3 hàng × 6 cột hoàn hảo)
     const FASHION_SWATCHES = [
+        // Hàng 1: Cơ bản & Trung tính
         { id: 'all', name: 'Tất cả màu', bg: 'conic-gradient(from 180deg at 50% 50%, #ff4d4d, #f9cb28, #79d70f, #00d2fc, #c56cf0, #ff4d4d)', border: 'rgba(255,255,255,0.4)' },
         { id: 'black', name: 'Đen', bg: '#121316', border: 'rgba(255,255,255,0.28)' },
         { id: 'white', name: 'Trắng / Be / Kem', bg: 'linear-gradient(135deg, #ffffff 50%, #f1ebdf 50%)', border: 'rgba(255,255,255,0.35)' },
-        { id: 'blue', name: 'Xanh denim / Indigo', bg: 'linear-gradient(135deg, #2563eb 50%, #06b6d4 50%)' },
-        { id: 'navy', name: 'Xanh navy', bg: '#0f172a', border: 'rgba(255,255,255,0.25)' },
         { id: 'gray', name: 'Xám / Bạc', bg: 'linear-gradient(135deg, #94a3b8 50%, #cbd5e1 50%)' },
-        { id: 'green', name: 'Xanh rêu / Olive', bg: 'linear-gradient(135deg, #15803d 50%, #4d7c0f 50%)' },
         { id: 'sand', name: 'Nâu cát / Khaki', bg: 'linear-gradient(135deg, #d4a373 50%, #faedcd 50%)' },
-        { id: 'red', name: 'Đỏ rượu / Nâu đất', bg: 'linear-gradient(135deg, #dc2626 50%, #881337 50%)' },
-        { id: 'yellow', name: 'Vàng be', bg: 'linear-gradient(135deg, #eab308 50%, #fde047 50%)' },
+        { id: 'brown', name: 'Nâu đậm / Mocha', bg: 'linear-gradient(135deg, #451a03 50%, #78350f 50%)' },
+
+        // Hàng 2: Tông Lạnh & Phong Cách
+        { id: 'blue', name: 'Xanh denim / Indigo', bg: 'linear-gradient(135deg, #2563eb 50%, #0284c7 50%)' },
+        { id: 'navy', name: 'Xanh navy', bg: '#0f172a', border: 'rgba(255,255,255,0.25)' },
+        { id: 'teal', name: 'Xanh ngọc / Mint', bg: 'linear-gradient(135deg, #0d9488 50%, #2dd4bf 50%)' },
+        { id: 'green', name: 'Xanh rêu / Olive', bg: 'linear-gradient(135deg, #15803d 50%, #4d7c0f 50%)' },
+        { id: 'lime', name: 'Xanh neon / Volt', bg: 'linear-gradient(135deg, #84cc16 50%, #a3e635 50%)' },
+        { id: 'purple', name: 'Tím khói', bg: 'linear-gradient(135deg, #7c3aed 50%, #a855f7 50%)' },
+
+        // Hàng 3: Tông Ấm & Thời Thượng
+        { id: 'red', name: 'Đỏ rượu / Nâu đất', bg: 'linear-gradient(135deg, #dc2626 50%, #ef4444 50%)' },
+        { id: 'burgundy', name: 'Đỏ mận / Burgundy', bg: 'linear-gradient(135deg, #881337 50%, #4c0519 50%)' },
         { id: 'orange', name: 'Cam đất', bg: 'linear-gradient(135deg, #ea580c 50%, #f97316 50%)' },
-        { id: 'purple', name: 'Tím khói', bg: 'linear-gradient(135deg, #7c3aed 50%, #a855f7 50%)' }
+        { id: 'yellow', name: 'Vàng be', bg: 'linear-gradient(135deg, #eab308 50%, #fde047 50%)' },
+        { id: 'pink', name: 'Hồng pastel', bg: 'linear-gradient(135deg, #ec4899 50%, #f472b6 50%)' },
+        { id: 'metallic', name: 'Ánh kim / Chrome', bg: 'linear-gradient(135deg, #b45309 30%, #e2e8f0 70%)', border: 'rgba(255,255,255,0.3)' }
     ];
 
     function formatPrice(num) {
