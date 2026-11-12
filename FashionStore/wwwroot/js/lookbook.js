@@ -84,12 +84,12 @@
                   '<button type="button" data-col="noir">NOIR UNIT</button>' +
                   '<button type="button" data-col="sunwash">SUN-WASHED</button>' +
                 '</div>' +
-                '<button type="button" class="lb-cart-btn" id="lbCart" title="Giỏ hàng">' +
-                  '<svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="20" height="20" style="display:block;">' +
+                '<button type="button" class="rail-bag-btn lb-cart-btn" id="lbCart" title="Giỏ hàng">' +
+                  '<svg fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24" width="19" height="20" style="display:block;">' +
                     '<path d="M4 8h16l-1 13H5L4 8Z" stroke-linecap="round" stroke-linejoin="round"/>' +
                     '<path d="M9 9V6a3 3 0 0 1 6 0v3" stroke-linecap="round" stroke-linejoin="round"/>' +
                   '</svg>' +
-                  '<span class="lb-cart-badge" id="lbBadge">0</span></button>' +
+                  '<span class="rail-bag-count" id="lbBadge">0</span></button>' +
                 '<button type="button" class="lb-icon-btn" id="lbClose" title="Đóng (Esc)">' +
                   '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>' +
               '</div>' +
