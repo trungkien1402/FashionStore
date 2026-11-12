@@ -1,12 +1,13 @@
 /**
  * HNMT ATELIER - LUXURY SHOPPING BAG & MINI-CART DRAWER
  * Thiết kế giao diện Giỏ Hàng kính mờ Dark Glassmorphism chuẩn Fashion Runway
- * Đồng bộ 100% ngôn ngữ thiết kế với Bộ Lọc Sào Đồ (Floating Card, Typography, Capsule CTA).
+ * Tích hợp toàn diện trên Sào Áo, Sào Quần, Sneaker Vault và Main Store.
  */
 (function (window, document) {
     'use strict';
 
     const CART_STORAGE_KEY = 'hnmt_atelier_cart_v1';
+    const FREESHIP_THRESHOLD = 1000000; // 1.000.000 ₫ miễn phí giao hàng
 
     // Lấy dữ liệu giỏ hàng từ localStorage
     function loadLocalCart() {
@@ -82,17 +83,20 @@
         }
     }
 
-    // HTML Template của Giỏ Hàng Kính Mờ - Đồng bộ 100% với Bộ Lọc
+    // HTML Template của Giỏ Hàng Slide-over Kính Mờ (Glassmorphism Atelier)
     const DRAWER_HTML = `
-        <div class="fashion-filter-backdrop" id="hnmtCartBackdrop"></div>
-        <aside class="fashion-filter-sidebar hnmt-cart-sidebar-override" id="hnmtCartSidebar" role="dialog" aria-modal="true" aria-label="Túi đồ thời trang">
-            <!-- 1. Header Tinh Giản Chuẩn Bộ Lọc -->
-            <div class="fashion-sidebar-header">
-                <div class="hnmt-cart-header-title-group">
-                    <h2 class="fashion-filter-title">Giỏ Hàng</h2>
-                    <span class="hnmt-cart-count-pill" id="hnmtCartDrawerCountBadge">0 món</span>
+        <div class="hnmt-cart-backdrop" id="hnmtCartBackdrop"></div>
+        <aside class="hnmt-cart-sidebar" id="hnmtCartSidebar" role="dialog" aria-modal="true" aria-label="Túi đồ thời trang">
+            <!-- 1. Header Tinh Tế -->
+            <div class="hnmt-cart-header">
+                <div class="hnmt-cart-title-wrap">
+                    <svg class="hnmt-cart-header-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>
+                    </svg>
+                    <h2 class="hnmt-cart-title">Túi Đồ Của Bạn</h2>
+                    <span class="hnmt-cart-badge" id="hnmtCartDrawerCountBadge">0 món</span>
                 </div>
-                <button type="button" class="fashion-filter-close" id="hnmtCartCloseBtn" aria-label="Đóng giỏ hàng" title="Đóng (ESC)">
+                <button type="button" class="hnmt-cart-close" id="hnmtCartCloseBtn" aria-label="Đóng túi đồ" title="Đóng (ESC)">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -100,55 +104,73 @@
                 </button>
             </div>
 
-            <!-- 2. Vùng danh sách sản phẩm (Scrollable) -->
-            <div class="fashion-sidebar-scroll hnmt-cart-scroll-area">
-                <div class="hnmt-cart-items-wrapper" id="hnmtCartItemsList">
+            <!-- 2. Free-Shipping Progress Bar (Tăng AOV) -->
+            <div class="hnmt-cart-freeship-card" id="hnmtCartFreeshipCard">
+                <div class="hnmt-freeship-info">
+                    <span class="hnmt-freeship-icon">🚀</span>
+                    <span class="hnmt-freeship-text" id="hnmtCartFreeshipText">Thêm 1.000.000 ₫ để nhận FREESHIP Toàn Quốc</span>
+                </div>
+                <div class="hnmt-freeship-track">
+                    <div class="hnmt-freeship-bar" id="hnmtCartFreeshipBar" style="width: 0%;"></div>
+                </div>
+            </div>
+
+            <!-- 3. Danh sách sản phẩm trong giỏ (Scrollable Area) -->
+            <div class="hnmt-cart-body" id="hnmtCartBody">
+                <div class="hnmt-cart-items-list" id="hnmtCartItemsList">
                     <!-- Danh sách Cart Item Render bằng JavaScript -->
                 </div>
 
                 <!-- Trạng thái trống (Empty State) -->
                 <div class="hnmt-cart-empty-view" id="hnmtCartEmptyView" style="display: none;">
-                    <div class="hnmt-empty-icon-circle">
-                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                    <div class="hnmt-empty-glow-ring">
+                        <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>
                         </svg>
                     </div>
                     <h3 class="hnmt-empty-title">Túi đồ của bạn đang trống</h3>
-                    <p class="hnmt-empty-desc">Chưa có sản phẩm nào được chọn. Hãy khám phá và chọn size từ các thiết kế độc bản của HNMT Atelier.</p>
-                    <button type="button" class="hnmt-empty-btn" id="hnmtCartExploreBtn">
-                        <span>Khám Phá Sào Đồ</span>
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    <p class="hnmt-empty-desc">Hãy khám phá và chọn những thiết kế độc bản trong các sào đồ và showroom của HNMT Atelier.</p>
+                    <button type="button" class="hnmt-empty-explore-btn" id="hnmtCartExploreBtn">
+                        <span>Khám Phá Sào Đồ Ngay</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                     </button>
                 </div>
             </div>
 
-            <!-- 3. Footer Căn Giữa Đẹp Mắt Chuẩn Bộ Lọc -->
-            <div class="fashion-sidebar-footer hnmt-cart-footer-box" id="hnmtCartFooter">
-                <!-- Tóm tắt chi phí -->
-                <div class="hnmt-cart-bill-card">
-                    <div class="hnmt-bill-row">
-                        <span>Tạm tính</span>
-                        <strong id="hnmtCartSubtotal">0 ₫</strong>
+            <!-- 4. Sticky Footer: Tổng tiền & Nút Thanh Toán Viên Thuốc -->
+            <div class="hnmt-cart-footer" id="hnmtCartFooter">
+                <div class="hnmt-cart-summary-box">
+                    <div class="hnmt-summary-row">
+                        <span class="hnmt-summary-label">Tạm tính</span>
+                        <span class="hnmt-summary-value" id="hnmtCartSubtotal">0 ₫</span>
                     </div>
-                    <div class="hnmt-bill-row">
-                        <span>Vận chuyển</span>
-                        <strong id="hnmtCartShipFee">Miễn phí</strong>
+                    <div class="hnmt-summary-row">
+                        <span class="hnmt-summary-label">Vận chuyển</span>
+                        <span class="hnmt-summary-value hnmt-ship-badge" id="hnmtCartShipFee">Miễn phí</span>
                     </div>
-                    <div class="hnmt-bill-separator"></div>
-                    <div class="hnmt-bill-row hnmt-bill-total">
-                        <span>Tổng thanh toán</span>
-                        <strong class="hnmt-total-highlight" id="hnmtCartTotalAmount">0 ₫</strong>
+                    <div class="hnmt-summary-divider"></div>
+                    <div class="hnmt-summary-row hnmt-total-row">
+                        <span class="hnmt-total-label">Tổng thanh toán</span>
+                        <span class="hnmt-total-value" id="hnmtCartTotalAmount">0 ₫</span>
                     </div>
                 </div>
 
-                <!-- Nút Thanh Toán Dạng Viên Thuốc Capsule Đen/Kính Đồng Bộ -->
-                <button type="button" class="sv-apply-capsule-btn hnmt-checkout-capsule-btn" id="hnmtCartCheckoutBtn" title="Tiến hành đặt hàng">
-                    <span class="apply-text">Thanh Toán</span>
-                    <span class="capsule-badge" id="hnmtCartBtnBadge">0 ₫</span>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <!-- Nút CTA Thanh Toán Chính (Capsule Button) -->
+                <button type="button" class="hnmt-cart-checkout-btn" id="hnmtCartCheckoutBtn">
+                    <span class="btn-text">THANH TOÁN</span>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="9 18 15 12 9 6"></polyline>
                     </svg>
                 </button>
+
+                <!-- Dòng cam kết an tâm thời trang cao cấp -->
+                <div class="hnmt-cart-guarantees">
+                    <span><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Chính hãng 100%</span>
+                    <span>•</span>
+                    <span>Đổi size trong 7 ngày</span>
+                    <span>•</span>
+                    <span>Kiểm hàng trước nhận</span>
+                </div>
             </div>
         </aside>
     `;
@@ -158,7 +180,7 @@
         if (!modal) {
             modal = document.createElement('div');
             modal.id = 'hnmtCartDrawerModal';
-            modal.className = 'hnmt-fashion-filter-modal';
+            modal.className = 'hnmt-cart-modal';
             modal.setAttribute('aria-hidden', 'true');
             modal.innerHTML = DRAWER_HTML;
             document.body.appendChild(modal);
@@ -171,6 +193,7 @@
         const listEl = document.getElementById('hnmtCartItemsList');
         const emptyEl = document.getElementById('hnmtCartEmptyView');
         const footerEl = document.getElementById('hnmtCartFooter');
+        const freeshipCard = document.getElementById('hnmtCartFreeshipCard');
         if (!listEl) return;
 
         const count = calculateTotalCount();
@@ -180,65 +203,87 @@
             listEl.innerHTML = '';
             if (emptyEl) emptyEl.style.display = 'flex';
             if (footerEl) footerEl.style.display = 'none';
+            if (freeshipCard) freeshipCard.style.display = 'none';
             syncAllBadges();
             return;
         }
 
         if (emptyEl) emptyEl.style.display = 'none';
-        if (footerEl) footerEl.style.display = 'flex';
+        if (footerEl) footerEl.style.display = 'block';
+        if (freeshipCard) freeshipCard.style.display = 'block';
+
+        // Cập nhật thanh Free Shipping
+        const freeshipText = document.getElementById('hnmtCartFreeshipText');
+        const freeshipBar = document.getElementById('hnmtCartFreeshipBar');
+        if (freeshipText && freeshipBar) {
+            const percent = Math.min(100, Math.round((total / FREESHIP_THRESHOLD) * 100));
+            freeshipBar.style.width = `${percent}%`;
+
+            if (total >= FREESHIP_THRESHOLD) {
+                freeshipText.innerHTML = '<strong>🎉 Bạn đã được Miễn Phí Vận Chuyển Toàn Quốc!</strong>';
+                freeshipBar.classList.add('is-unlocked');
+            } else {
+                const remain = FREESHIP_THRESHOLD - total;
+                freeshipText.innerHTML = `Thêm <strong>${formatMoney(remain)}</strong> để nhận <strong>FREESHIP</strong>`;
+                freeshipBar.classList.remove('is-unlocked');
+            }
+        }
 
         // Render từng item
         listEl.innerHTML = '';
         cartItems.forEach(item => {
             const card = document.createElement('div');
-            card.className = 'fashion-select-card hnmt-cart-card';
+            card.className = 'hnmt-cart-item-card';
             card.setAttribute('data-id', item.id);
 
+            const itemTotal = (Number(item.price) || 0) * (Number(item.quantity) || 1);
             const thumbImg = item.imageUrl || '/clothing-rail/assets/reach-shirt-front.webp';
 
             card.innerHTML = `
-                <div class="hnmt-card-thumb-wrap">
-                    <img src="${thumbImg}" alt="${item.name || 'Sản phẩm'}" class="hnmt-card-thumb-img" onerror="this.src='/clothing-rail/assets/reach-shirt-front.webp'">
+                <div class="hnmt-item-thumb-box">
+                    <img src="${thumbImg}" alt="${item.name || 'Sản phẩm'}" class="hnmt-item-thumb" onerror="this.src='/clothing-rail/assets/reach-shirt-front.webp'">
                 </div>
-                <div class="hnmt-card-content">
-                    <div class="hnmt-card-header-row">
-                        <h4 class="hnmt-card-product-title" title="${item.name}">${item.name}</h4>
-                        <button type="button" class="hnmt-card-del-btn" title="Xóa món này" aria-label="Xóa">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <div class="hnmt-item-details">
+                    <div class="hnmt-item-top">
+                        <h4 class="hnmt-item-name" title="${item.name}">${item.name}</h4>
+                        <button type="button" class="hnmt-item-remove-btn" title="Xóa món này" aria-label="Xóa">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="18" y1="6" x2="6" y2="18"></line>
                                 <line x1="6" y1="6" x2="18" y2="18"></line>
                             </svg>
                         </button>
                     </div>
 
-                    <div class="hnmt-card-pill-row">
-                        ${item.size ? `<span class="hnmt-pill-tag">Size ${item.size}</span>` : ''}
+                    <div class="hnmt-item-meta">
+                        ${item.size ? `<span class="hnmt-meta-pill hnmt-size-pill">Size ${item.size}</span>` : ''}
                         ${item.color ? `
-                            <span class="hnmt-pill-tag hnmt-color-tag">
-                                ${item.colorDot ? `<span class="hnmt-dot-indicator" style="background:${item.colorDot}"></span>` : ''}
-                                <span>${item.color}</span>
+                            <span class="hnmt-meta-pill hnmt-color-pill" title="${item.color}">
+                                ${item.colorDot ? `<span class="hnmt-color-swatch-dot" style="background:${item.colorDot}"></span>` : ''}
+                                <span class="hnmt-color-label">${item.color}</span>
                             </span>
                         ` : ''}
                     </div>
 
-                    <div class="hnmt-card-bottom-row">
-                        <span class="hnmt-card-price">${formatMoney(item.price)}</span>
+                    <div class="hnmt-item-bottom">
+                        <div class="hnmt-item-price-wrap">
+                            <span class="hnmt-item-unit-price">${formatMoney(item.price)}</span>
+                        </div>
 
                         <!-- Stepper Tăng Giảm Số Lượng -->
-                        <div class="hnmt-item-stepper">
-                            <button type="button" class="hnmt-step-btn hnmt-step-minus" aria-label="Giảm" title="Giảm">
+                        <div class="hnmt-stepper-capsule">
+                            <button type="button" class="hnmt-step-btn hnmt-step-minus" aria-label="Giảm số lượng" title="Giảm">
                                 ${item.quantity <= 1 ? `
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                         <polyline points="3 6 5 6 21 6"></polyline>
                                         <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                                     </svg>
                                 ` : `
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                                 `}
                             </button>
-                            <span class="hnmt-step-qty">${item.quantity}</span>
-                            <button type="button" class="hnmt-step-btn hnmt-step-plus" aria-label="Tăng" title="Tăng">
-                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            <span class="hnmt-step-value">${item.quantity}</span>
+                            <button type="button" class="hnmt-step-btn hnmt-step-plus" aria-label="Tăng số lượng" title="Tăng">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                             </button>
                         </div>
                     </div>
@@ -246,7 +291,7 @@
             `;
 
             // Gán sự kiện nút xóa
-            const removeBtn = card.querySelector('.hnmt-card-del-btn');
+            const removeBtn = card.querySelector('.hnmt-item-remove-btn');
             if (removeBtn) {
                 removeBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -275,16 +320,17 @@
             listEl.appendChild(card);
         });
 
-        // Cập nhật Footer Bill
+        // Cập nhật Footer
         const subtotalEl = document.getElementById('hnmtCartSubtotal');
         const shipFeeEl = document.getElementById('hnmtCartShipFee');
         const totalAmountEl = document.getElementById('hnmtCartTotalAmount');
-        const btnBadgeEl = document.getElementById('hnmtCartBtnBadge');
+
+        const shipFee = total >= FREESHIP_THRESHOLD || total === 0 ? 0 : 30000;
+        const grandTotal = total + shipFee;
 
         if (subtotalEl) subtotalEl.textContent = formatMoney(total);
-        if (shipFeeEl) shipFeeEl.textContent = 'Miễn phí';
-        if (totalAmountEl) totalAmountEl.textContent = formatMoney(total);
-        if (btnBadgeEl) btnBadgeEl.textContent = formatMoney(total);
+        if (shipFeeEl) shipFeeEl.textContent = shipFee === 0 ? 'Miễn phí' : formatMoney(shipFee);
+        if (totalAmountEl) totalAmountEl.textContent = formatMoney(grandTotal);
 
         syncAllBadges();
     }
@@ -323,15 +369,15 @@
 
     // Xóa một món khỏi giỏ
     function removeItem(id) {
-        const card = document.querySelector(`.hnmt-cart-card[data-id="${id}"]`);
+        const card = document.querySelector(`.hnmt-cart-item-card[data-id="${id}"]`);
         if (card) {
-            card.classList.add('is-fade-out');
+            card.classList.add('is-removing');
             setTimeout(() => {
                 cartItems = cartItems.filter(x => x.id !== id);
                 saveLocalCart(cartItems);
                 renderCartItems();
                 syncAllBadges();
-            }, 200);
+            }, 240);
         } else {
             cartItems = cartItems.filter(x => x.id !== id);
             saveLocalCart(cartItems);
@@ -442,6 +488,7 @@
 
         if (checkoutBtn) {
             checkoutBtn.addEventListener('click', () => {
+                // Điều hướng sang trang Checkout hoặc Cart
                 window.location.href = '/Orders/Checkout';
             });
         }
