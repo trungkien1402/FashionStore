@@ -1980,151 +1980,170 @@ body.show-detail .rail-ticker {
 
 
 /* ==============================================================================
-   HNMTSHOP DEDICATED LUXURY FASHION FILTER MODAL (SÀO ÁO / SHIRTS)
-   Thiết kế độc bản phong cách Luxury Showroom (Frosted Glass & Editorial Lookbook)
+   HNMTSHOP APPLE iOS TRANSLUCENT LIQUID GLASS VERTICAL SIDEBAR (SÀO ÁO / SHIRTS)
+   Thiết kế nguyên chiều dọc bên trái màn hình (Docked Left Vertical Sidebar)
+   Đặc tính: Translucent Frosted Glass, Acrylic Specular Highlights, iOS Squircles
    ============================================================================== */
 .hnmt-fashion-filter-modal {
     position: fixed;
     inset: 0;
     z-index: 99999;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    visibility: hidden;
     pointer-events: none;
-    transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.28s;
-    padding: 20px;
-    box-sizing: border-box;
+    visibility: hidden;
+    transition: visibility 0.4s;
 }
 
 .hnmt-fashion-filter-modal.is-open {
-    opacity: 1;
-    visibility: visible;
     pointer-events: auto;
+    visibility: visible;
 }
 
+/* Subtle Ambient Tint Backdrop (User still sees the clothing rail on the right) */
 .fashion-filter-backdrop {
-    position: absolute;
+    position: fixed;
     inset: 0;
-    background: rgba(22, 23, 27, 0.42);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    background: rgba(15, 23, 38, 0.28);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    opacity: 0;
     cursor: pointer;
+    transition: opacity 0.38s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.fashion-filter-dialog {
-    position: relative;
-    z-index: 2;
-    width: 100%;
-    max-width: 780px;
-    max-height: 90vh;
-    overflow-y: auto;
-    background: rgba(255, 255, 255, 0.94);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 24px;
-    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.16), 0 4px 16px rgba(0, 0, 0, 0.04);
-    padding: 32px 36px;
-    box-sizing: border-box;
-    transform: scale(0.95) translateY(12px);
-    transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
-    color: #16171b;
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+.hnmt-fashion-filter-modal.is-open .fashion-filter-backdrop {
+    opacity: 1;
 }
 
-.hnmt-fashion-filter-modal.is-open .fashion-filter-dialog {
-    transform: scale(1) translateY(0);
-}
-
-.fashion-filter-dialog::-webkit-scrollbar {
-    width: 6px;
-}
-.fashion-filter-dialog::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.15);
-    border-radius: 3px;
-}
-
-.fashion-filter-close {
-    position: absolute;
-    top: 24px;
-    right: 28px;
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    background: rgba(0, 0, 0, 0.04);
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 999px;
-    padding: 6px 14px;
-    color: #64748b;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.fashion-filter-close:hover {
-    background: #16171b;
+/* The Left Vertical Sidebar */
+.fashion-filter-sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    height: 100vh;
+    height: 100dvh;
+    width: 440px;
+    max-width: 90vw;
+    background: rgba(20, 28, 42, 0.74); /* Iconic iPhone Translucent Glass Tint */
+    backdrop-filter: blur(48px) saturate(210%);
+    -webkit-backdrop-filter: blur(48px) saturate(210%);
+    border-right: 1px solid rgba(255, 255, 255, 0.16);
+    border-top-right-radius: 36px;
+    border-bottom-right-radius: 36px;
+    box-shadow: 28px 0 90px rgba(0, 0, 0, 0.45), 
+                inset -1px 0 0 rgba(255, 255, 255, 0.12), 
+                inset 0 1px 1px rgba(255, 255, 255, 0.25);
+    transform: translateX(-102%);
+    transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
     color: #ffffff;
-    border-color: #16171b;
-    transform: translateY(-1px);
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Plus Jakarta Sans', sans-serif;
+    z-index: 2;
+    box-sizing: border-box;
 }
 
-.fashion-filter-header {
-    margin-bottom: 22px;
-    padding-right: 90px;
+.hnmt-fashion-filter-modal.is-open .fashion-filter-sidebar {
+    transform: translateX(0);
+}
+
+/* Sidebar Top Bar */
+.fashion-sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 24px 14px 28px;
+    flex-shrink: 0;
+}
+
+.header-text-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
 .fashion-filter-eyebrow {
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 800;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: #8f95a5;
-    display: block;
-    margin-bottom: 6px;
+    color: rgba(255, 255, 255, 0.6);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.ios-status-indicator {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #38bdf8;
+    box-shadow: 0 0 10px #38bdf8;
+    display: inline-block;
 }
 
 .fashion-filter-title {
-    font-family: 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
-    font-size: 28px;
+    font-family: 'Playfair Display', -apple-system, Georgia, serif;
+    font-size: 26px;
     font-weight: 600;
-    color: #16171b;
-    margin: 0 0 6px;
-    line-height: 1.2;
-}
-
-.fashion-filter-desc {
-    font-size: 13.5px;
-    color: #6b7280;
+    color: #ffffff;
     margin: 0;
-    line-height: 1.5;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
+/* Apple Circular Frosted Close Button */
+.fashion-filter-close {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: rgba(255, 255, 255, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.fashion-filter-close:hover {
+    background: rgba(255, 255, 255, 0.24);
+    color: #ffffff;
+    transform: scale(1.08);
+    box-shadow: 0 0 16px rgba(255, 255, 255, 0.2);
+}
+
+/* Apple Spotlight Search Input Bar */
 .fashion-search-bar {
+    margin: 0 24px 16px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 16px;
+    padding: 11px 16px;
     display: flex;
     align-items: center;
     gap: 12px;
-    background: #ffffff;
-    border: 1.5px solid rgba(0, 0, 0, 0.1);
-    border-radius: 14px;
-    padding: 10px 18px;
-    margin-bottom: 24px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
-    transition: all 0.2s ease;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.22s ease;
+    flex-shrink: 0;
 }
 
 .fashion-search-bar:focus-within {
-    border-color: #16171b;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.35);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(56, 189, 248, 0.25);
 }
 
 .search-bar-icon {
-    width: 20px;
-    height: 20px;
-    color: #9ca3af;
+    width: 19px;
+    height: 19px;
+    color: rgba(255, 255, 255, 0.55);
     flex-shrink: 0;
 }
 
@@ -2133,13 +2152,14 @@ body.show-detail .rail-ticker {
     border: none;
     outline: none;
     background: transparent;
-    font-size: 15px;
-    color: #16171b;
+    font-size: 14.5px;
+    color: #ffffff;
     font-family: inherit;
+    font-weight: 400;
 }
 
 .fashion-search-input::placeholder {
-    color: #9ca3af;
+    color: rgba(255, 255, 255, 0.45);
     font-size: 14px;
 }
 
@@ -2147,124 +2167,148 @@ body.show-detail .rail-ticker {
     width: 22px;
     height: 22px;
     border-radius: 50%;
-    background: rgba(0, 0, 0, 0.06);
+    background: rgba(255, 255, 255, 0.15);
     border: none;
-    color: #6b7280;
+    color: #ffffff;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.18s;
 }
 
 .fashion-clear-btn:hover {
-    background: #16171b;
-    color: #ffffff;
+    background: rgba(255, 255, 255, 0.3);
 }
 
-.fashion-filter-body {
+/* Scrollable Container for Cards */
+.fashion-sidebar-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 24px 20px;
     display: flex;
     flex-direction: column;
-    gap: 18px;
-    margin-bottom: 24px;
+    gap: 14px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
 }
 
-.fashion-filter-section {
+.fashion-sidebar-scroll::-webkit-scrollbar {
+    width: 4px;
+}
+
+.fashion-sidebar-scroll::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 4px;
+}
+
+/* iOS Widget Frosted Acrylic Cards */
+.fashion-ios-card {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 16px 18px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.12);
     display: flex;
     flex-direction: column;
     gap: 10px;
+    transition: border-color 0.2s ease;
 }
 
-.fashion-filter-section .section-label {
+.fashion-ios-card:hover {
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+.fashion-ios-card .section-label {
     display: flex;
     align-items: baseline;
-    gap: 8px;
+    justify-content: space-between;
 }
 
 .section-label .label-title {
-    font-size: 12px;
+    font-size: 11.5px;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: #1e293b;
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .section-label .label-hint {
-    font-size: 11.5px;
-    color: #94a3b8;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.45);
 }
 
 .fashion-pills-row {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 7px;
     flex-wrap: wrap;
 }
 
+/* Apple Liquid Glass Pill Buttons */
 .fashion-pill {
-    height: 38px;
-    padding: 0 16px;
+    height: 35px;
+    padding: 0 14px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.85);
-    border: 1px solid rgba(0, 0, 0, 0.12);
-    color: #374151;
-    font-size: 13px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 12.5px;
     font-weight: 500;
     font-family: inherit;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 7px;
     white-space: nowrap;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     user-select: none;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .fashion-pill:hover {
-    background: #f1f5f9;
-    border-color: rgba(0, 0, 0, 0.25);
-    color: #0f172a;
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.25);
     transform: translateY(-1px);
 }
 
 .fashion-pill.is-active {
-    background: #16171b;
-    border-color: #16171b;
+    background: rgba(255, 255, 255, 0.26);
+    border-color: rgba(255, 255, 255, 0.5);
     color: #ffffff;
     font-weight: 700;
-    box-shadow: 0 4px 14px rgba(22, 23, 27, 0.22);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.4);
     transform: translateY(-1px);
 }
 
 .fashion-pill .color-swatch {
-    width: 13px;
-    height: 13px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     flex-shrink: 0;
     display: inline-block;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .fashion-pill.is-active .color-swatch {
     box-shadow: 0 0 0 1.5px #ffffff;
 }
 
-.fashion-preview-block {
-    margin-bottom: 22px;
-    padding-top: 16px;
-    border-top: 1px dashed rgba(0, 0, 0, 0.1);
+/* Lookbook Mini Stream */
+.fashion-ios-card.preview-card {
+    padding-bottom: 12px;
 }
 
 .preview-header {
-    font-size: 11.5px;
+    font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: #64748b;
-    margin-bottom: 10px;
+    color: rgba(255, 255, 255, 0.55);
 }
 
 .preview-header strong {
-    color: #16171b;
+    color: #38bdf8;
 }
 
 .fashion-preview-strip {
@@ -2272,7 +2316,7 @@ body.show-detail .rail-ticker {
     align-items: center;
     gap: 10px;
     overflow-x: auto;
-    padding-bottom: 6px;
+    padding: 4px 2px 8px;
     scrollbar-width: thin;
 }
 
@@ -2281,8 +2325,8 @@ body.show-detail .rail-ticker {
 }
 
 .fashion-preview-strip::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.12);
-    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
 }
 
 .shirt-mini-card {
@@ -2290,26 +2334,27 @@ body.show-detail .rail-ticker {
     display: flex;
     align-items: center;
     gap: 10px;
-    background: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
     padding: 6px 12px 6px 6px;
     cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .shirt-mini-card:hover {
     transform: translateY(-2px);
-    border-color: #16171b;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    background: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.35);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
 }
 
 .mini-thumb {
-    width: 38px;
-    height: 48px;
-    background: #f3f4f6;
-    border-radius: 6px;
+    width: 36px;
+    height: 46px;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 8px;
     overflow: hidden;
     display: flex;
     align-items: center;
@@ -2329,11 +2374,11 @@ body.show-detail .rail-ticker {
 }
 
 .mini-name {
-    font-size: 12.5px;
+    font-size: 12px;
     font-weight: 600;
-    color: #18181b;
+    color: #ffffff;
     white-space: nowrap;
-    max-width: 140px;
+    max-width: 130px;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -2341,62 +2386,67 @@ body.show-detail .rail-ticker {
 .mini-price {
     font-size: 11.5px;
     font-weight: 700;
-    color: #64748b;
+    color: #38bdf8;
 }
 
 .preview-empty-state {
-    font-size: 13px;
-    color: #94a3b8;
-    padding: 12px 0;
+    font-size: 12.5px;
+    color: rgba(255, 255, 255, 0.5);
+    padding: 10px 0;
     font-style: italic;
 }
 
-.fashion-filter-footer {
+/* Sticky Bottom Bar */
+.fashion-sidebar-footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
-    padding-top: 20px;
-    border-top: 1px solid rgba(0, 0, 0, 0.08);
-    flex-wrap: wrap;
+    gap: 12px;
+    padding: 16px 24px 20px;
+    background: rgba(15, 22, 34, 0.88);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .footer-summary {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 2px;
 }
 
 .summary-count {
-    font-size: 14.5px;
-    color: #1e293b;
+    font-size: 13.5px;
+    color: #ffffff;
     font-weight: 500;
 }
 
 .summary-count strong {
     font-weight: 800;
-    color: #0f172a;
+    color: #38bdf8;
 }
 
 .summary-sub {
-    font-size: 11.5px;
-    color: #94a3b8;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.45);
 }
 
 .footer-buttons {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
 
 .fashion-reset-btn {
-    height: 42px;
-    padding: 0 16px;
-    background: transparent;
-    border: 1px solid rgba(0, 0, 0, 0.12);
+    height: 40px;
+    padding: 0 14px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.14);
     border-radius: 999px;
-    color: #64748b;
-    font-size: 12.5px;
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 12px;
     font-weight: 600;
     display: inline-flex;
     align-items: center;
@@ -2406,40 +2456,45 @@ body.show-detail .rail-ticker {
 }
 
 .fashion-reset-btn:hover {
-    background: rgba(0, 0, 0, 0.04);
-    color: #0f172a;
-    border-color: rgba(0, 0, 0, 0.25);
+    background: rgba(255, 255, 255, 0.16);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
+/* Apple Liquid Glass Glow Action CTA */
 .fashion-apply-cta {
-    height: 44px;
-    padding: 0 24px;
-    background: #16171b;
-    border: none;
+    height: 42px;
+    padding: 0 20px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.12));
+    border: 1px solid rgba(255, 255, 255, 0.35);
     border-radius: 999px;
     color: #ffffff;
-    font-size: 13px;
+    font-size: 12.5px;
     font-weight: 800;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.05em;
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     cursor: pointer;
-    box-shadow: 0 6px 20px rgba(22, 23, 27, 0.25);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.4);
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .fashion-apply-cta:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 28px rgba(22, 23, 27, 0.35);
-    background: #000000;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.36), rgba(255, 255, 255, 0.18));
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45), 0 0 20px rgba(56, 189, 248, 0.3);
 }
 
 .fashion-apply-cta .badge {
-    background: rgba(255, 255, 255, 0.2);
-    font-size: 11px;
+    background: rgba(56, 189, 248, 0.3);
+    border: 1px solid rgba(56, 189, 248, 0.45);
+    color: #ffffff;
+    font-size: 10.5px;
     font-weight: 800;
-    padding: 2px 8px;
+    padding: 2px 7px;
     border-radius: 999px;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.04em;
 }
