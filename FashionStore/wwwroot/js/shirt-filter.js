@@ -87,44 +87,7 @@
     // Từ điển kiểu dáng chi tiết phân cấp theo loại áo
     const SHIRT_SUBSTYLES = {
         'all': [
-            { value: 'all', text: 'Tất cả kiểu dáng chi tiết' },
-            {
-                group: 'Áo Thun & Polo',
-                items: [
-                    { value: 'tee', text: 'Áo Thun Cổ Tròn (Crewneck Tee)' },
-                    { value: 'boxy', text: 'Áo Thun Oversized / Boxy Vai Trễ' },
-                    { value: 'polo', text: 'Áo Polo Dệt Kim (Knit Polo)' },
-                    { value: 'tank', text: 'Áo Ba Lỗ (Tank Top / Sleeveless)' }
-                ]
-            },
-            {
-                group: 'Áo Sơ Mi',
-                items: [
-                    { value: 'shirt', text: 'Áo Sơ Mi Camp-Collar (Cổ Danton)' },
-                    { value: 'oxford', text: 'Áo Sơ Mi Oxford / Linen Cổ Điển' },
-                    { value: 'utility', text: 'Áo Sơ Mi Utility Túi Hộp (Safari)' },
-                    { value: 'flannel', text: 'Áo Sơ Mi Flannel Kẻ Caro' }
-                ]
-            },
-            {
-                group: 'Áo Khoác (Jackets)',
-                items: [
-                    { value: 'jacket', text: 'Áo Khoác Bóng Chày (Varsity Jacket)' },
-                    { value: 'leather', text: 'Áo Khoác Da Moto Biker (Motorsport)' },
-                    { value: 'bomber', text: 'Áo Khoác Bomber MA-1' },
-                    { value: 'windbreaker', text: 'Áo Khoác Gió (Windbreaker)' },
-                    { value: 'blazer', text: 'Áo Blazer May Đo Casual' }
-                ]
-            },
-            {
-                group: 'Áo Nỉ & Hoodie',
-                items: [
-                    { value: 'hoodie', text: 'Áo Hoodie Mũ Trùm Chân Cua' },
-                    { value: 'crewneck', text: 'Áo Nỉ Chui Đầu (Sweatshirt / Fleece)' },
-                    { value: 'zip-hoodie', text: 'Áo Zip Hoodie Khóa Kéo' },
-                    { value: 'cardigan', text: 'Áo Cardigan Dệt Len Nổi' }
-                ]
-            }
+            { value: 'all', text: '— Vui lòng chọn loại áo trước —' }
         ],
         'tee-polo': [
             { value: 'all', text: 'Tất cả kiểu dáng Áo Thun & Polo' },
@@ -212,11 +175,11 @@
                 </div>
 
                 <!-- 2. Kiểu Dáng Chi Tiết (Chọn chi tiết hơn theo phân loại) -->
-                <div class="fashion-select-card">
+                <div class="fashion-select-card" id="shirtSubStyleCard">
                     <label class="fashion-card-label" for="shirtSubStyleSelect">Kiểu Dáng Chi Tiết</label>
                     <div class="fashion-select-wrapper">
-                        <select id="shirtSubStyleSelect" class="fashion-select-input">
-                            <option value="all">Tất cả kiểu dáng chi tiết</option>
+                        <select id="shirtSubStyleSelect" class="fashion-select-input" disabled>
+                            <option value="all">— Vui lòng chọn loại áo trước —</option>
                         </select>
                         <div class="select-chevron-icon" aria-hidden="true">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
@@ -313,27 +276,32 @@
         // Điền danh sách kiểu dáng chi tiết phụ thuộc theo phân loại đã chọn
         function populateSubStyleSelect(cat, preserveValue = false) {
             if (!subStyleSelect) return;
+            const subStyleCard = document.getElementById('shirtSubStyleCard') || subStyleSelect.closest('.fashion-select-card');
             const prevVal = preserveValue ? subStyleSelect.value : 'all';
             subStyleSelect.innerHTML = '';
 
-            const list = SHIRT_SUBSTYLES[cat] || SHIRT_SUBSTYLES['all'];
+            const isAllCat = (!cat || cat === 'all');
+            if (isAllCat) {
+                subStyleSelect.disabled = true;
+                if (subStyleCard) subStyleCard.classList.add('is-disabled');
+                const opt = document.createElement('option');
+                opt.value = 'all';
+                opt.textContent = '— Vui lòng chọn loại áo trước —';
+                subStyleSelect.appendChild(opt);
+                subStyleSelect.value = 'all';
+                selectedStyle = 'all';
+                return;
+            }
+
+            subStyleSelect.disabled = false;
+            if (subStyleCard) subStyleCard.classList.remove('is-disabled');
+
+            const list = SHIRT_SUBSTYLES[cat] || [];
             list.forEach(entry => {
-                if (entry.group) {
-                    const optgroup = document.createElement('optgroup');
-                    optgroup.label = entry.group;
-                    entry.items.forEach(item => {
-                        const opt = document.createElement('option');
-                        opt.value = item.value;
-                        opt.textContent = item.text;
-                        optgroup.appendChild(opt);
-                    });
-                    subStyleSelect.appendChild(optgroup);
-                } else {
-                    const opt = document.createElement('option');
-                    opt.value = entry.value;
-                    opt.textContent = entry.text;
-                    subStyleSelect.appendChild(opt);
-                }
+                const opt = document.createElement('option');
+                opt.value = entry.value;
+                opt.textContent = entry.text;
+                subStyleSelect.appendChild(opt);
             });
 
             let found = false;

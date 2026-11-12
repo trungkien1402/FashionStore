@@ -2252,6 +2252,23 @@ body.show-detail .rail-ticker {
     box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
 }
 
+.fashion-select-input:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.45);
+    box-shadow: none;
+}
+
+.fashion-select-card.is-disabled {
+    opacity: 0.65;
+}
+
+.fashion-select-card.is-disabled .select-chevron-icon {
+    opacity: 0.3;
+}
+
 .fashion-select-input option,
 .fashion-select-input optgroup {
     background: #1c1e24;

@@ -87,54 +87,7 @@
     // Từ điển kiểu dáng chi tiết phân cấp theo phân loại quần
     const PANTS_SUBSTYLES = {
         'all': [
-            { value: 'all', text: 'Tất cả kiểu dáng chi tiết' },
-            {
-                group: 'Quần Jeans & Denim',
-                items: [
-                    { value: 'jeans', text: 'Tất Cả Quần Jeans & Denim' },
-                    { value: 'acid-cargo', text: 'Quần Baggy Jeans Acid-Wash (Y2K / Skater)' },
-                    { value: 'wide-denim', text: 'Quần Jeans Ống Rộng (Wide-Leg Denim)' },
-                    { value: 'raw-selvedge', text: 'Quần Raw Selvedge Denim 14oz Cổ Điển' },
-                    { value: 'distressed-denim', text: 'Quần Jeans Rách / Mài Vintage' }
-                ]
-            },
-            {
-                group: 'Quần Tây May Đo (Tailored)',
-                items: [
-                    { value: 'tay', text: 'Tất Cả Quần Tây May Đo' },
-                    { value: 'sand-pleated', text: 'Quần Tây Xếp 2 Ly Cạp Cao (Quiet Luxury)' },
-                    { value: 'tailored-black', text: 'Quần Tây Cạp Cao Sartorial Side-Adjuster' },
-                    { value: 'pleated-grey', text: 'Quần Tây Ống Suông Xếp Ly Minimalist' },
-                    { value: 'chino-cream', text: 'Quần Chino May Đo Co Giãn Smart-Casual' },
-                    { value: 'flannel-trousers', text: 'Quần Tây Flannel Thu Đông' }
-                ]
-            },
-            {
-                group: 'Quần Dù Parachute & Tactical',
-                items: [
-                    { value: 'parachute', text: 'Tất Cả Quần Dù Parachute' },
-                    { value: 'tactical-parachute', text: 'Quần Dù Parachute Tactical Rêu Quân Đội' },
-                    { value: 'parachute-black', text: 'Quần Dù Parachute Dây Rút Gấu City' },
-                    { value: 'windpants', text: 'Quần Gió Thể Thao / Trackpants' }
-                ]
-            },
-            {
-                group: 'Quần Cargo Túi Hộp',
-                items: [
-                    { value: 'cargo', text: 'Tất Cả Quần Cargo Túi Hộp' },
-                    { value: 'cargo-olive', text: 'Quần Cargo 8 Túi Streetwear Rêu Khói' },
-                    { value: 'cargo-baggy', text: 'Quần Baggy Cargo Jeans Túi Hộp' },
-                    { value: 'techwear-cargo', text: 'Quần Techwear Cargo Đa Năng' }
-                ]
-            },
-            {
-                group: 'Quần Shorts & Bo Gấu',
-                items: [
-                    { value: 'jogger', text: 'Quần Sweatpants Nỉ Bo Gấu (Jogger)' },
-                    { value: 'shorts', text: 'Quần Short Dù Thể Thao (Nylon Shorts)' },
-                    { value: 'bermuda', text: 'Quần Bermuda Denim Shorts' }
-                ]
-            }
+            { value: 'all', text: '— Vui lòng chọn loại quần trước —' }
         ],
         'jeans': [
             { value: 'all', text: 'Tất cả dáng Quần Jeans & Denim' },
@@ -227,11 +180,11 @@
                 </div>
 
                 <!-- 2. Kiểu Dáng Chi Tiết (Chọn chi tiết hơn theo phân loại) -->
-                <div class="fashion-select-card">
+                <div class="fashion-select-card" id="pantsSubStyleCard">
                     <label class="fashion-card-label" for="pantsSubStyleSelect">Kiểu Dáng Chi Tiết</label>
                     <div class="fashion-select-wrapper">
-                        <select id="pantsSubStyleSelect" class="fashion-select-input">
-                            <option value="all">Tất cả kiểu dáng chi tiết</option>
+                        <select id="pantsSubStyleSelect" class="fashion-select-input" disabled>
+                            <option value="all">— Vui lòng chọn loại quần trước —</option>
                         </select>
                         <div class="select-chevron-icon" aria-hidden="true">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
@@ -326,27 +279,32 @@
         // Điền danh sách kiểu dáng chi tiết phụ thuộc theo phân loại đã chọn
         function populateSubStyleSelect(cat, preserveValue = false) {
             if (!subStyleSelect) return;
+            const subStyleCard = document.getElementById('pantsSubStyleCard') || subStyleSelect.closest('.fashion-select-card');
             const prevVal = preserveValue ? subStyleSelect.value : 'all';
             subStyleSelect.innerHTML = '';
 
-            const list = PANTS_SUBSTYLES[cat] || PANTS_SUBSTYLES['all'];
+            const isAllCat = (!cat || cat === 'all');
+            if (isAllCat) {
+                subStyleSelect.disabled = true;
+                if (subStyleCard) subStyleCard.classList.add('is-disabled');
+                const opt = document.createElement('option');
+                opt.value = 'all';
+                opt.textContent = '— Vui lòng chọn loại quần trước —';
+                subStyleSelect.appendChild(opt);
+                subStyleSelect.value = 'all';
+                selectedStyle = 'all';
+                return;
+            }
+
+            subStyleSelect.disabled = false;
+            if (subStyleCard) subStyleCard.classList.remove('is-disabled');
+
+            const list = PANTS_SUBSTYLES[cat] || [];
             list.forEach(entry => {
-                if (entry.group) {
-                    const optgroup = document.createElement('optgroup');
-                    optgroup.label = entry.group;
-                    entry.items.forEach(item => {
-                        const opt = document.createElement('option');
-                        opt.value = item.value;
-                        opt.textContent = item.text;
-                        optgroup.appendChild(opt);
-                    });
-                    subStyleSelect.appendChild(optgroup);
-                } else {
-                    const opt = document.createElement('option');
-                    opt.value = entry.value;
-                    opt.textContent = entry.text;
-                    subStyleSelect.appendChild(opt);
-                }
+                const opt = document.createElement('option');
+                opt.value = entry.value;
+                opt.textContent = entry.text;
+                subStyleSelect.appendChild(opt);
             });
 
             let found = false;
