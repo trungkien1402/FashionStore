@@ -1,116 +1,13 @@
 @{
-    ViewData["Title"] = "HNMT ATELIER — Try the Look | Interactive Outfit Studio";
-    var initialTheme = ViewBag.InitialTheme as string ?? "nightfall";
+    ViewData["Title"] = "HNMT ATELIER — Try the Look";
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/lookbook.css?v=atelier_v1" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/lookbook.css?v=cutout_v1" asp-append-version="true" />
 }
 
-<!-- ============================================================== -->
-<!-- HNMT ATELIER — "TRY THE LOOK" INTERACTIVE OUTFIT SHOWROOM      -->
-<!-- 1:1 REPLICATION OF RUNWAY HOTSPOT STYLING STUDIO (2026)        -->
-<!-- ============================================================== -->
-<div id="lookbookRoot" class="lb-wrapper theme-@initialTheme">
-
-    <!-- TOPBAR -->
-    <header class="lb-topbar">
-        <div class="lb-top-left">
-            <a href="/" class="lb-back-btn">
-                <i class="bi bi-arrow-left"></i>
-                <span>Trang Chủ</span>
-            </a>
-            <div class="lb-brand-title">
-                <span>HNMT ATELIER</span>
-                <span class="lb-brand-badge">TRY THE LOOK</span>
-            </div>
-        </div>
-
-        <!-- THEME CAPSULE SWITCHER -->
-        <div class="lb-theme-switcher">
-            <button type="button" class="lb-theme-tab @(initialTheme == "nightfall" ? "active" : "")" data-theme="nightfall">
-                <span>🌌 NIGHTFALL METROPOLIS</span>
-            </button>
-            <button type="button" class="lb-theme-tab @(initialTheme == "rawearth" ? "active" : "")" data-theme="rawearth">
-                <span>🏜️ RAW EARTH & DUST</span>
-            </button>
-        </div>
-
-        <!-- TOP RIGHT (SHOPPING BAG INTEGRATED) -->
-        <div class="lb-top-right">
-            <button type="button" class="lb-cart-btn" id="lbCartBtn" title="Xem túi đồ">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-                    <line x1="3" y1="6" x2="21" y2="6"></line>
-                    <path d="M16 10a4 4 0 0 1-8 0"></path>
-                </svg>
-                <span class="lb-cart-count" id="lbCartCount">0</span>
-            </button>
-        </div>
-    </header>
-
-    <!-- MAIN BODY -->
-    <main class="lb-main">
-
-        <!-- RUNWAY STAGE VIEWPORT (LEFT / CENTER) -->
-        <div class="lb-stage-viewport">
-            <!-- Studio Ambient Floor Glow -->
-            <div class="lb-stage-floor"></div>
-
-            <!-- Horizontal Track with Models & Hotspots -->
-            <div class="lb-runway-track" id="lbRunwayTrack">
-                <!-- Dynamically rendered by lookbook.js -->
-            </div>
-
-            <!-- Bottom Floating Controls -->
-            <div class="lb-bottom-bar">
-                <button type="button" class="lb-nav-btn" id="lbPrevBtn" title="Outfit trước">
-                    <i class="bi bi-chevron-left"></i>
-                </button>
-                <div class="lb-look-pills" id="lbLookPills">
-                    <!-- Dynamically rendered pills -->
-                </div>
-                <button type="button" class="lb-nav-btn" id="lbNextBtn" title="Outfit tiếp theo">
-                    <i class="bi bi-chevron-right"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- RIGHT SIDEBAR ("IN THIS LOOK") -->
-        <aside class="lb-sidebar">
-            <div class="lb-sidebar-header">
-                <div class="lb-sidebar-sub">In This Look &bull; Phối Đồ Head-to-Toe</div>
-                <div class="lb-sidebar-title-row">
-                    <h3 class="lb-sidebar-title" id="lbSidebarTitle">LOOK 01</h3>
-                    <span class="lb-items-count-badge">3 sản phẩm</span>
-                </div>
-            </div>
-
-            <!-- Items List -->
-            <div class="lb-items-list" id="lbItemsList">
-                <!-- Dynamically rendered items -->
-            </div>
-
-            <!-- Sticky Sidebar Footer -->
-            <div class="lb-sidebar-footer">
-                <div class="lb-total-row">
-                    <span class="lb-total-label">Tổng cả bộ outfit:</span>
-                    <span class="lb-total-price" id="lbTotalPrice">0 ₫</span>
-                </div>
-                <button type="button" class="lb-add-full-btn" id="lbAddFullLookBtn">
-                    <span>Thêm Trọn Bộ Vào Túi Đồ</span>
-                    <i class="bi bi-arrow-right"></i>
-                </button>
-            </div>
-        </aside>
-
-    </main>
-
-</div>
+<div id="lookbookRoot" class="lb-wrapper"></div>
 
 @section Scripts {
-    <script>
-        window.__INITIAL_THEME = '@initialTheme';
-    </script>
-    <script src="~/js/lookbook.js?v=atelier_v1" asp-append-version="true"></script>
+    <script src="~/js/lookbook.js?v=cutout_v1" asp-append-version="true"></script>
 }
