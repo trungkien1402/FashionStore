@@ -38,7 +38,40 @@
 .lb-switch button.active { background: var(--lb-ink); color: #fff; }
 .lb-icon-btn { position: relative; width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--lb-line); background: rgba(255,255,255,.55); color: var(--lb-ink); display: grid; place-items: center; cursor: pointer; transition: all .2s; backdrop-filter: blur(8px); }
 .lb-icon-btn:hover { background: var(--lb-ink); color: #fff; }
-.lb-badge { position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 999px; background: var(--lb-ink); color: #fff; font-size: 10.5px; font-weight: 600; display: grid; place-items: center; }
+.lb-cart-btn {
+    position: relative;
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 0;
+    color: var(--lb-ink);
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    padding: 0;
+}
+.lb-cart-btn:hover { opacity: 0.75; transform: scale(1.06); }
+.lb-cart-btn svg { width: 21px; height: 21px; stroke-width: 1.8; display: block; }
+.lb-cart-badge {
+    position: absolute;
+    top: -5px;
+    right: -7px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #000000;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    pointer-events: none;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
 
 /* ---------- RUNWAY (circular) ---------- */
 .lb-runway { position: absolute; inset: 0 0 96px 0; }
