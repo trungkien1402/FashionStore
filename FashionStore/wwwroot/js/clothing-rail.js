@@ -161,6 +161,7 @@
     let products = racks[0].products;
 
     const photo = (p, variant = 0) => `/clothing-rail/assets/${p.slug}-${variant ? 'alt' : 'front'}.webp`;
+    const backPhoto = (p, variant = 0) => `/clothing-rail/assets/${p.slug}-${variant ? 'back-alt' : 'back'}.webp`;
     const sidePhoto = p => `/clothing-rail/assets/${p.slug}-side.webp`;
 
     function formatPrice(num) {
@@ -170,6 +171,8 @@
     const $ = s => document.querySelector(s);
     let active = -1;
     let current = 0;
+    let currentViewSide = 'front';
+    let detailFlipTimer;
     let selectedSize = '';
     let bag = 0;
     let toastTimer;
@@ -222,6 +225,7 @@
 
     function openDetail(idx) {
         current = idx;
+        currentViewSide = 'front';
         const p = products[idx];
         if (!p) return;
         detailOpen = true;
@@ -241,6 +245,7 @@
 
     function navigate(dir) {
         current = (current + dir + products.length) % products.length;
+        currentViewSide = 'front';
         selectedSize = '';
         renderDetail();
     }
@@ -278,6 +283,7 @@
     }
 
     function renderDetail() {
+        clearTimeout(detailFlipTimer);
         const p = products[current];
         if (!p) return;
         const v = p.variant || 0;
@@ -292,9 +298,50 @@
         if (priceEl) priceEl.textContent = formatPrice(p.price);
         if (descEl) descEl.textContent = p.desc;
         if (typeEl) typeEl.textContent = p.type ? `// ${p.type.toUpperCase()}` : '// THIẾT KẾ GIỚI HẠN';
-        if (imgEl) {
-            imgEl.src = photo(p, v);
-            imgEl.alt = p.name;
+        const updateDetailImage = () => {
+            if (!imgEl) return;
+            const showBack = currentViewSide === 'back';
+            imgEl.src = showBack ? backPhoto(p, v) : photo(p, v);
+            imgEl.alt = `${p.name} - ${showBack ? 'mặt sau' : 'mặt trước'}`;
+            imgEl.classList.remove('is-flipping');
+        };
+        updateDetailImage();
+
+        // Render Front / Back View Switcher (Side A · Side B)
+        const viewSwitchEl = $('#viewSwitch');
+        if (viewSwitchEl) {
+            const optFront = viewSwitchEl.querySelector('[data-view="front"]');
+            const optBack = viewSwitchEl.querySelector('[data-view="back"]');
+            if (optFront) optFront.textContent = 'Side A';
+            if (optBack) optBack.textContent = 'Side B';
+            const sep = viewSwitchEl.querySelector('.rail-view-sep');
+            if (sep) sep.textContent = '|';
+
+            const opts = viewSwitchEl.querySelectorAll('.rail-view-opt');
+            opts.forEach(opt => {
+                const side = opt.dataset.view;
+                const isActive = (side === currentViewSide);
+                opt.classList.toggle('is-active', isActive);
+                opt.classList.toggle('is-dimmed', !isActive);
+                opt.setAttribute('aria-selected', isActive ? 'true' : 'false');
+                opt.onclick = () => {
+                    if (currentViewSide === side) return;
+                    currentViewSide = side;
+
+                    if (imgEl) {
+                        clearTimeout(detailFlipTimer);
+                        imgEl.classList.add('is-flipping');
+                        detailFlipTimer = setTimeout(updateDetailImage, 180);
+                    }
+
+                    opts.forEach(o => {
+                        const act = (o.dataset.view === currentViewSide);
+                        o.classList.toggle('is-active', act);
+                        o.classList.toggle('is-dimmed', !act);
+                        o.setAttribute('aria-selected', act ? 'true' : 'false');
+                    });
+                };
+            });
         }
 
         const totalStock = p.stock.reduce((a, b) => a + b, 0);
