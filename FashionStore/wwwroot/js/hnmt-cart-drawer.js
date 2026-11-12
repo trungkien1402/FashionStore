@@ -9,13 +9,20 @@
     const CART_STORAGE_KEY = 'hnmt_atelier_cart_v1';
     const FREESHIP_THRESHOLD = 1000000; // 1.000.000 ₫ miễn phí giao hàng
 
-    // Lấy dữ liệu giỏ hàng từ localStorage
+    // Lấy dữ liệu giỏ hàng từ localStorage (tự động dọn dẹp item lỗi)
     function loadLocalCart() {
         try {
             const raw = localStorage.getItem(CART_STORAGE_KEY);
             if (raw) {
                 const parsed = JSON.parse(raw);
-                if (Array.isArray(parsed)) return parsed;
+                if (Array.isArray(parsed)) {
+                    // Dọn dẹp các item bị lỗi tên hoặc undefined
+                    const validItems = parsed.filter(x => x && x.name && !x.name.includes('undefined'));
+                    if (validItems.length !== parsed.length) {
+                        saveLocalCart(validItems);
+                    }
+                    return validItems;
+                }
             }
         } catch (e) {
             console.warn('[HNMTCart] Không thể đọc localStorage:', e);
@@ -187,11 +194,15 @@
             card.className = 'hnmt-cart-item-card';
             card.setAttribute('data-id', item.id);
 
-            const thumbImg = item.imageUrl || '/clothing-rail/assets/reach-shirt-front.webp';
+            let defaultFallback = '/clothing-rail/assets/reach-shirt-front.webp';
+            if (item.category === 'giay') defaultFallback = '/images/sneakers/air-future-iv.webp';
+            else if (item.category === 'quan') defaultFallback = '/clothing-rail/assets/reach-pants-front.webp';
+
+            const thumbImg = item.imageUrl || defaultFallback;
 
             card.innerHTML = `
                 <div class="hnmt-item-thumb-box">
-                    <img src="${thumbImg}" alt="${item.name || 'Sản phẩm'}" class="hnmt-item-thumb" onerror="this.src='/clothing-rail/assets/reach-shirt-front.webp'">
+                    <img src="${thumbImg}" alt="${item.name || 'Sản phẩm'}" class="hnmt-item-thumb" onerror="this.src='${defaultFallback}'">
                 </div>
                 <div class="hnmt-item-details">
                     <div class="hnmt-item-top">

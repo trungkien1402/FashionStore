@@ -1255,14 +1255,22 @@
         // Thêm vào giỏ hàng thống nhất Atelier Cart
         const currentSneaker = (getSneakers() && getSneakers()[currentIndex]) ? getSneakers()[currentIndex] : null;
         if (currentSneaker && window.HNMTCart) {
+            const sneakerName = (currentSneaker.model && currentSneaker.colorway)
+                ? `${currentSneaker.model} - ${currentSneaker.colorway}`
+                : (currentSneaker.model || 'Giày Sneaker');
+            const sneakerImg = currentSneaker.image || currentSneaker.shoeImg || '';
+            const sneakerPrice = Number(currentSneaker.price || currentSneaker.priceVnd) || 6900000;
+            const sneakerSlug = currentSneaker.styleCode || currentSneaker.id || 'sneaker';
+            const colorDot = (currentSneaker.swatches && currentSneaker.swatches[0]) || currentSneaker.themeColor || currentSneaker.accentColor || '#38bdf8';
+
             window.HNMTCart.addItem({
-                name: `${currentSneaker.seriesName} ${currentSneaker.edition}`,
-                slug: currentSneaker.code || currentSneaker.sku || 'sneaker',
-                price: currentSneaker.priceVnd || 6900000,
-                size: selectedSize,
-                color: currentSneaker.colorName || '',
-                colorDot: currentSneaker.colorDot || '#38bdf8',
-                imageUrl: currentSneaker.shoeImg || '',
+                name: sneakerName,
+                slug: sneakerSlug,
+                price: sneakerPrice,
+                size: selectedSize || 42,
+                color: currentSneaker.colorName || currentSneaker.colorway || '',
+                colorDot: colorDot,
+                imageUrl: sneakerImg,
                 category: 'giay',
                 quantity: 1
             });
