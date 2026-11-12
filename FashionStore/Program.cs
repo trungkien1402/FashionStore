@@ -1,5 +1,6 @@
 
 using FashionStore.Data;
+using FashionStore.Hubs;
 using FashionStore.Models.Entities;
 using FashionStore.Repositories.Implementations;
 using FashionStore.Repositories.Interfaces;
@@ -13,6 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // MVC
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddSignalR();
 
 // Database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -97,5 +100,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}"
 );
+app.MapHub<ShipmentTrackingHub>("/hubs/shipment-tracking");
 
 app.Run();

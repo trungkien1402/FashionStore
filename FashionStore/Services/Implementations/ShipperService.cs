@@ -1,8 +1,10 @@
 ﻿
 using FashionStore.Data;
+using FashionStore.Hubs;
 using FashionStore.Models.Entities;
 using FashionStore.Models.Enums;
 using FashionStore.Services.Interfaces;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace FashionStore.Services.Implementations;
@@ -11,13 +13,16 @@ public class ShipperService : IShipperService
 {
     private readonly ApplicationDbContext _context;
     private readonly ILogger<ShipperService> _logger;
+    private readonly IHubContext<ShipmentTrackingHub> _hubContext;
 
     public ShipperService(
         ApplicationDbContext context,
-        ILogger<ShipperService> logger)
+        ILogger<ShipperService> logger,
+        IHubContext<ShipmentTrackingHub> hubContext)
     {
         _context = context;
         _logger = logger;
+        _hubContext = hubContext;
     }
 
     // Lấy danh sách vận đơn của shipper
@@ -97,7 +102,6 @@ public class ShipperService : IShipperService
                 };
             }
 
-            // Kiểm tra chuyển trạng thái
             if (!IsValidTransition(shipment.Status, newStatus))
             {
                 await transaction.RollbackAsync();
@@ -112,7 +116,6 @@ public class ShipperService : IShipperService
             shipment.Status = newStatus;
             shipment.UpdatedAt = now;
 
-            // Ghi lịch sử vận đơn
             var historyNote = string.IsNullOrWhiteSpace(note)
                 ? $"Shipper cập nhật: {GetStatusName(oldShipmentStatus)} → {GetStatusName(newStatus)}."
                 : $"Shipper cập nhật: {GetStatusName(oldShipmentStatus)} → {GetStatusName(newStatus)}. Ghi chú: {note.Trim()}";
@@ -127,7 +130,6 @@ public class ShipperService : IShipperService
                 CreatedAt = now
             });
 
-            // Đồng bộ đơn hàng
             var order = shipment.Order;
 
             if (order != null)
@@ -139,11 +141,9 @@ public class ShipperService : IShipperService
                 switch (newStatus)
                 {
                     case ShipmentStatus.Delivered:
-
                         newOrderStatus = OrderStatus.Delivered;
                         orderNote = "Shipper xác nhận giao hàng thành công.";
 
-                        // Thu COD thành công
                         if (order.PaymentMethod == PaymentMethod.COD)
                         {
                             if (order.PaymentStatus != PaymentStatus.Paid)
@@ -157,18 +157,14 @@ public class ShipperService : IShipperService
                         break;
 
                     case ShipmentStatus.Failed:
-
                         newOrderStatus = OrderStatus.DeliveryFailed;
                         orderNote = $"Giao hàng thất bại: {note!.Trim()}";
-
                         break;
 
                     case ShipmentStatus.Returned:
-
                         newOrderStatus = OrderStatus.Returned;
                         orderNote = "Đã hoàn hàng về kho.";
 
-                        // Khôi phục tồn kho một lần duy nhất
                         if (!order.InventoryRestored)
                         {
                             foreach (var item in order.Items)
@@ -189,7 +185,6 @@ public class ShipperService : IShipperService
                         break;
 
                     case ShipmentStatus.InTransit:
-
                         if (order.Status != OrderStatus.Shipping)
                         {
                             newOrderStatus = OrderStatus.Shipping;
@@ -240,6 +235,108 @@ public class ShipperService : IShipperService
         }
     }
 
+    // Cập nhật vị trí GPS và phát SignalR
+    public async Task<ShipperLocationUpdateResult> UpdateLocationAsync(
+        int shipmentId,
+        string shipperId,
+        double latitude,
+        double longitude,
+        double? accuracy)
+    {
+        if (!double.IsFinite(latitude) ||
+            latitude < -90 || latitude > 90 ||
+            !double.IsFinite(longitude) ||
+            longitude < -180 || longitude > 180 ||
+            (accuracy.HasValue &&
+             (!double.IsFinite(accuracy.Value) ||
+              accuracy.Value < 0 ||
+              accuracy.Value > 10000)))
+        {
+            return LocationFailure("Tọa độ GPS không hợp lệ.");
+        }
+
+        var shipment = await _context.Shipments
+            .AsNoTracking()
+            .Where(s =>
+                s.Id == shipmentId &&
+                s.ShipperId == shipperId)
+            .Select(s => new
+            {
+                s.Id,
+                s.Status
+            })
+            .FirstOrDefaultAsync();
+
+        if (shipment == null)
+        {
+            return new ShipperLocationUpdateResult
+            {
+                NotFound = true,
+                Message = "Không tìm thấy vận đơn hoặc bạn không được phân công."
+            };
+        }
+
+        if (shipment.Status != ShipmentStatus.InTransit)
+        {
+            return LocationFailure(
+                "Chỉ được cập nhật GPS khi đơn hàng đang giao.");
+        }
+
+        var now = DateTime.UtcNow;
+
+        var location = new ShipmentLocation
+        {
+            ShipmentId = shipmentId,
+            Latitude = latitude,
+            Longitude = longitude,
+            Accuracy = accuracy,
+            RecordedAt = now
+        };
+
+        _context.ShipmentLocations.Add(location);
+
+        await _context.SaveChangesAsync();
+
+        // Phát vị trí mới đến những người đang theo dõi vận đơn
+        try
+        {
+            await _hubContext.Clients
+                .Group($"shipment_{shipmentId}")
+                .SendAsync("ReceiveLocation", new
+                {
+                    shipmentId,
+                    latitude,
+                    longitude,
+                    accuracy,
+                    recordedAt = now
+                });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(
+                ex,
+                "Không thể phát GPS realtime cho vận đơn {ShipmentId}",
+                shipmentId);
+        }
+
+        return new ShipperLocationUpdateResult
+        {
+            Success = true,
+            Message = "Cập nhật vị trí thành công."
+        };
+    }
+
+    // Lấy vị trí GPS mới nhất
+    public async Task<ShipmentLocation?> GetLatestLocationAsync(
+        int shipmentId)
+    {
+        return await _context.ShipmentLocations
+            .AsNoTracking()
+            .Where(x => x.ShipmentId == shipmentId)
+            .OrderByDescending(x => x.RecordedAt)
+            .FirstOrDefaultAsync();
+    }
+
     // Quy tắc chuyển trạng thái
     private static bool IsValidTransition(
         ShipmentStatus current,
@@ -284,6 +381,16 @@ public class ShipperService : IShipperService
     private static ShipperUpdateResult Failure(string message)
     {
         return new ShipperUpdateResult
+        {
+            Success = false,
+            Message = message
+        };
+    }
+
+    private static ShipperLocationUpdateResult LocationFailure(
+        string message)
+    {
+        return new ShipperLocationUpdateResult
         {
             Success = false,
             Message = message

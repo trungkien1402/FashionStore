@@ -1,9 +1,10 @@
 
-using System.Security.Claims;
 using FashionStore.Models.Enums;
+using FashionStore.Models.ViewModels;
 using FashionStore.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace FashionStore.Controllers;
 
@@ -81,5 +82,39 @@ public class ShipperController : Controller
             result.Message;
 
         return RedirectToAction(nameof(Details), new { id });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UpdateLocation(
+    int id,
+    [FromForm] ShipmentLocationRequest request)
+    {
+        if (string.IsNullOrEmpty(CurrentUserId))
+            return Challenge();
+
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(new
+            {
+                success = false,
+                message = "Tọa độ GPS không hợp lệ."
+            });
+        }
+
+        var result = await _shipperService.UpdateLocationAsync(
+            id,
+            CurrentUserId,
+            request.Latitude,
+            request.Longitude,
+            request.Accuracy);
+
+        if (result.NotFound)
+            return NotFound(new { success = false, result.Message });
+
+        if (!result.Success)
+            return BadRequest(new { success = false, result.Message });
+
+        return Ok(new { success = true, result.Message });
     }
 }
