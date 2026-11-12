@@ -184,7 +184,7 @@
         listEl.innerHTML = '';
         cartItems.forEach(item => {
             const card = document.createElement('div');
-            card.className = 'hnmt-cart-item-card fashion-select-card';
+            card.className = 'hnmt-cart-item-card';
             card.setAttribute('data-id', item.id);
 
             const thumbImg = item.imageUrl || '/clothing-rail/assets/reach-shirt-front.webp';

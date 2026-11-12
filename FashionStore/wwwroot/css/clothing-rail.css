@@ -2637,9 +2637,11 @@ body.show-detail .rail-ticker {
     gap: 14px;
 }
 
-/* Item Card phong cách .fashion-select-card */
+/* Item Card: Ảnh bên trái, nội dung bên phải ngang hàng chuẩn Luxury */
 .hnmt-cart-item-card {
-    display: flex;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
     gap: 14px;
     padding: 14px 16px;
     margin: 0;
@@ -2652,6 +2654,7 @@ body.show-detail .rail-ticker {
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
     box-sizing: border-box;
+    width: 100%;
 }
 
 .hnmt-cart-item-card:hover {
@@ -2698,6 +2701,7 @@ body.show-detail .rail-ticker {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    gap: 5px;
 }
 
 .hnmt-item-top {
@@ -2708,32 +2712,31 @@ body.show-detail .rail-ticker {
 }
 
 .hnmt-item-name {
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 14.5px;
+    font-weight: 700;
     color: #ffffff;
-    line-height: 1.35;
+    line-height: 1.3;
     margin: 0;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+    white-space: nowrap;
     overflow: hidden;
+    text-overflow: ellipsis;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .hnmt-item-remove-btn {
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
     background: transparent;
     border: none;
-    color: rgba(255, 255, 255, 0.45);
+    color: rgba(255, 255, 255, 0.4);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
     flex-shrink: 0;
-    margin-top: -2px;
+    margin-top: -1px;
 }
 
 .hnmt-item-remove-btn:hover {
@@ -2747,12 +2750,12 @@ body.show-detail .rail-ticker {
     align-items: center;
     gap: 6px;
     flex-wrap: wrap;
-    margin-top: 5px;
+    margin-top: 2px;
 }
 
 .hnmt-meta-pill {
-    font-size: 11.5px;
-    padding: 2px 9px;
+    font-size: 11px;
+    padding: 2px 8px;
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.07);
     border: 1px solid rgba(255, 255, 255, 0.12);
@@ -2767,8 +2770,8 @@ body.show-detail .rail-ticker {
 }
 
 .hnmt-color-swatch-dot {
-    width: 9px;
-    height: 9px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     border: 1px solid rgba(255, 255, 255, 0.4);
     flex-shrink: 0;
@@ -2778,7 +2781,7 @@ body.show-detail .rail-ticker {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 9px;
+    margin-top: 4px;
 }
 
 .hnmt-item-unit-price {
@@ -2819,7 +2822,7 @@ body.show-detail .rail-ticker {
 }
 
 .hnmt-step-value {
-    min-width: 24px;
+    min-width: 22px;
     text-align: center;
     font-size: 12.5px;
     font-weight: 600;
@@ -2880,9 +2883,10 @@ body.show-detail .rail-ticker {
 .hnmt-cart-footer {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 18px 24px 22px;
+    align-items: stretch !important;
+    width: 100%;
+    padding: 18px 24px 24px;
+    box-sizing: border-box;
     background: rgba(20, 22, 28, 0.85);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -2891,14 +2895,14 @@ body.show-detail .rail-ticker {
     box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.35);
 }
 
-/* Hộp Tính Tổng Chuẩn (media_1794470859737_54fb7f92.png) */
+/* Hộp Tính Tổng Chuẩn */
 .hnmt-cart-bill-card {
     width: 100%;
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 20px;
     padding: 16px 20px;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     box-sizing: border-box;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
@@ -2945,37 +2949,34 @@ body.show-detail .rail-ticker {
     letter-spacing: -0.01em;
 }
 
-/* Nút Thanh Toán: Viên thuốc tối giản, chỉ có chữ 'Thanh Toán' */
+/* Nút Thanh Toán: Dài ngang bằng 100% với khung tính tiền bên trên */
 .hnmt-checkout-capsule-btn {
-    width: 100%;
-    max-width: 270px;
-    height: 44px;
-    margin: 0 auto;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 48px;
+    margin: 0;
     padding: 0 24px;
-    background: rgba(255, 255, 255, 0.09);
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: #ffffff;
+    color: #0f172a;
+    border: none;
     border-radius: 999px;
-    color: #ffffff;
     font-family: inherit;
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 0.03em;
-    display: inline-flex;
+    font-size: 14.5px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.22);
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
+    box-sizing: border-box;
 }
 
 .hnmt-checkout-capsule-btn:hover {
-    background: #ffffff;
-    color: #0f172a;
-    border-color: #ffffff;
+    background: #f8fafc;
     transform: translateY(-1.5px);
-    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 28px rgba(255, 255, 255, 0.38);
 }
 
 .hnmt-checkout-capsule-btn:active {
