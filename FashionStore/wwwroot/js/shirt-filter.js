@@ -131,17 +131,17 @@
                     <div class="fashion-select-wrapper">
                         <select id="shirtColorSelect" class="fashion-select-input">
                             <option value="all">Tất cả màu sắc</option>
-                            <option value="black">⚫ Đen (Black / Charcoal / Onyx)</option>
-                            <option value="white">⚪ Trắng / Be / Kem (White / Cream / Ivory)</option>
-                            <option value="blue">🔵 Xanh Indigo / Denim / Cobalt</option>
-                            <option value="navy">🔷 Xanh Navy / Chàm Sẫm</option>
-                            <option value="gray">🔘 Xám Khói / Bạc (Washed Grey / Silver)</option>
-                            <option value="green">🟢 Xanh Rêu / Olive / Forest Green</option>
-                            <option value="sand">🟤 Nâu Cát / Be Khaki (Sand / Camel / Tan)</option>
-                            <option value="red">🔴 Đỏ Rượu / Burgundy / Rust Terracotta</option>
-                            <option value="yellow">🟡 Vàng Nhạt / Mustard (Acre)</option>
-                            <option value="orange">🟠 Cam Đất / Vintage Orange</option>
-                            <option value="purple">🟣 Tím Pastel / Lavender / Lilac</option>
+                            <option value="black">Đen</option>
+                            <option value="white">Trắng / Kem</option>
+                            <option value="blue">Xanh dương / Indigo</option>
+                            <option value="navy">Xanh navy</option>
+                            <option value="gray">Xám / Bạc</option>
+                            <option value="green">Xanh rêu / Olive</option>
+                            <option value="sand">Nâu cát / Be</option>
+                            <option value="red">Đỏ / Burgundy</option>
+                            <option value="yellow">Vàng</option>
+                            <option value="orange">Cam</option>
+                            <option value="purple">Tím</option>
                         </select>
                         <div class="select-chevron-icon" aria-hidden="true">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
@@ -322,7 +322,7 @@
             }
             if (selectedColor !== 'all' && colorSelect) {
                 const opt = colorSelect.options[colorSelect.selectedIndex];
-                if (opt) parts.push(opt.text.replace(/^[^\s]+\s*/, '').split('(')[0].trim());
+                if (opt) parts.push(opt.text.trim());
             }
             return parts.join(' • ') || 'Tất cả áo';
         }

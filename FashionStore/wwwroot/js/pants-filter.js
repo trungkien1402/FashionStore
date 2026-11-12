@@ -138,15 +138,15 @@
                     <div class="fashion-select-wrapper">
                         <select id="pantsColorSelect" class="fashion-select-input">
                             <option value="all">Tất cả màu sắc</option>
-                            <option value="black">⚫ Đen (Black / Pitch Black / Charcoal)</option>
-                            <option value="white">⚪ Trắng / Be / Kem (Sand Beige / Ivory / Cream)</option>
-                            <option value="blue">🔵 Xanh Indigo / Washed Blue / Chàm</option>
-                            <option value="navy">🔷 Xanh Navy / Xanh Mực Cổ Điển</option>
-                            <option value="gray">🔘 Xám Khói / Bạc (Washed Grey / Silver Wash)</option>
-                            <option value="green">🟢 Xanh Rêu / Olive / Rêu Quân Đội</option>
-                            <option value="sand">🟤 Nâu Cát / Khaki / Camel</option>
-                            <option value="red">🔴 Đỏ Rượu / Nâu Đất</option>
-                            <option value="yellow">🟡 Vàng Be / Mustard</option>
+                            <option value="black">Đen</option>
+                            <option value="white">Trắng / Be / Kem</option>
+                            <option value="blue">Xanh denim / Indigo</option>
+                            <option value="navy">Xanh navy</option>
+                            <option value="gray">Xám / Bạc</option>
+                            <option value="green">Xanh rêu / Olive</option>
+                            <option value="sand">Nâu cát / Khaki</option>
+                            <option value="red">Đỏ rượu / Nâu đất</option>
+                            <option value="yellow">Vàng be</option>
                         </select>
                         <div class="select-chevron-icon" aria-hidden="true">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
@@ -328,7 +328,7 @@
             }
             if (selectedColor !== 'all' && colorSelect) {
                 const opt = colorSelect.options[colorSelect.selectedIndex];
-                if (opt) parts.push(opt.text.replace(/^[^\s]+\s*/, '').split('(')[0].trim());
+                if (opt) parts.push(opt.text.trim());
             }
             return parts.join(' • ') || 'Tất cả quần';
         }

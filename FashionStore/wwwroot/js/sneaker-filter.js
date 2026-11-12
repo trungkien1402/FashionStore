@@ -1,7 +1,8 @@
 /**
  * ==============================================================================
  * HNMTSHOP - BỘ LỌC DÀNH RIÊNG CHO TỦ GIÀY (SNEAKER VAULT RIGHT VERTICAL SIDEBAR)
- * Select-from-list phong cách cao cấp, thanh kéo khoảng giá Range Slider
+ * Tách biệt rõ ràng: Bộ Sưu Tập & Dòng Giày
+ * Gam màu sắc tinh tế (không emoji, không ngoặc dư thừa)
  * Nền trong suốt mờ đục chuẩn Sneaker Vault Capsule
  * ==============================================================================
  */
@@ -43,7 +44,8 @@
     }
 
     // State bộ lọc của riêng Tủ Giày
-    let selectedStyle = 'all';
+    let selectedVault = 'all';
+    let selectedSilhouette = 'all';
     let selectedColor = 'all';
     let maxPriceValue = 7500000; // Giá tối đa mặc định (7.500.000 ₫)
     let searchKeyword = '';
@@ -78,7 +80,7 @@
                     <circle cx="11" cy="11" r="7"/>
                     <path d="m20 20-4.35-4.35"/>
                 </svg>
-                <input type="text" id="sneakerSearchInput" class="fashion-search-input" placeholder="Tìm model (Air Future, Cyber...), phối màu..." autocomplete="off" spellcheck="false">
+                <input type="text" id="sneakerSearchInput" class="fashion-search-input" placeholder="Tìm model, phối màu, mã giày..." autocomplete="off" spellcheck="false">
                 <button type="button" id="sneakerClearSearchBtn" class="fashion-clear-btn" style="display:none;" title="Xóa từ khóa">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
@@ -86,25 +88,15 @@
 
             <!-- Vùng nội dung các tiêu chí lọc -->
             <div class="fashion-sidebar-scroll">
-                <!-- 1. Dòng Giày / Bộ Sưu Tập (Select-from-list đa dạng đầy đủ chủng loại) -->
+                <!-- 1. Bộ Sưu Tập (Tách riêng biệt theo yêu cầu) -->
                 <div class="fashion-select-card">
-                    <label class="fashion-card-label" for="sneakerStyleSelect">Dòng Giày / Bộ Sưu Tập</label>
+                    <label class="fashion-card-label" for="sneakerVaultSelect">Bộ Sưu Tập</label>
                     <div class="fashion-select-wrapper">
-                        <select id="sneakerStyleSelect" class="fashion-select-input">
-                            <option value="all">Tất cả dòng giày (18 mẫu)</option>
-                            <optgroup label="Bộ Sưu Tập (Vault Collection)">
-                                <option value="futurist">Futurist Sneaker Vault</option>
-                                <option value="cyber">Cyber Vault</option>
-                                <option value="chile20">Chile 20 Vault</option>
-                            </optgroup>
-                            <optgroup label="Dòng Giày / Silhouette">
-                                <option value="air-future">Air Future Series (Streamlined Runners)</option>
-                                <option value="cyber-series">Cyber Series (Chunky Techwear Skater)</option>
-                                <option value="chile-series">Chile 20 Series (Retro Sport Court)</option>
-                                <option value="runners">Giày Chạy Bộ Khí Động Học (Runners)</option>
-                                <option value="chunky">Giày Sneaker Đế Dày (Chunky / Platform)</option>
-                                <option value="high-top">Giày Sneaker Cổ Cao (High-Top)</option>
-                            </optgroup>
+                        <select id="sneakerVaultSelect" class="fashion-select-input">
+                            <option value="all">Tất cả bộ sưu tập</option>
+                            <option value="futurist">Futurist Sneaker Vault</option>
+                            <option value="cyber">Cyber Vault</option>
+                            <option value="chile20">Chile 20 Vault</option>
                         </select>
                         <div class="select-chevron-icon" aria-hidden="true">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
@@ -112,22 +104,42 @@
                     </div>
                 </div>
 
-                <!-- 2. Gam Màu Sắc (Select-from-list phong phú bảng màu thời trang) -->
+                <!-- 2. Dòng Giày / Kiểu Dáng (Tách riêng biệt theo yêu cầu) -->
+                <div class="fashion-select-card">
+                    <label class="fashion-card-label" for="sneakerSilhouetteSelect">Dòng Giày</label>
+                    <div class="fashion-select-wrapper">
+                        <select id="sneakerSilhouetteSelect" class="fashion-select-input">
+                            <option value="all">Tất cả dòng giày</option>
+                            <option value="air-future">Air Future Series</option>
+                            <option value="cyber-series">Cyber Series</option>
+                            <option value="chile-series">Chile 20 Series</option>
+                            <option value="runners">Giày chạy bộ (Runners)</option>
+                            <option value="chunky">Giày sneaker đế dày (Chunky)</option>
+                            <option value="high-top">Giày sneaker cổ cao (High-Top)</option>
+                            <option value="low-top">Giày sneaker cổ thấp (Low-Top)</option>
+                        </select>
+                        <div class="select-chevron-icon" aria-hidden="true">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Gam Màu Sắc (Đã bỏ icon emoji và các dấu ngoặc dư thừa) -->
                 <div class="fashion-select-card">
                     <label class="fashion-card-label" for="sneakerColorSelect">Gam Màu Sắc</label>
                     <div class="fashion-select-wrapper">
                         <select id="sneakerColorSelect" class="fashion-select-input">
                             <option value="all">Tất cả màu sắc</option>
-                            <option value="black">⚫ Đen (Carbon Black / Stealth / Midnight)</option>
-                            <option value="white">⚪ Trắng / Kem (Pure White / Frost / Titanium)</option>
-                            <option value="blue">🔵 Xanh Dương / Cobalt / Teal (Ice Blue / Sonic Blue / Cyber Teal)</option>
-                            <option value="navy">🔷 Xanh Navy / Xanh Chàm</option>
-                            <option value="gray">🔘 Xám / Bạc (Storm Grey / Titanium / Polar Chrome)</option>
-                            <option value="green">🟢 Xanh Lá / Rêu / Matrix Neon (Olive / Emerald / Acid Volt)</option>
-                            <option value="red">🔴 Đỏ / Crimson / Hồng Neon (Magma Red / Chile Red / Infrared)</option>
-                            <option value="orange">🟠 Cam / Amber (Solar Amber / Terracotta / Sunset)</option>
-                            <option value="purple">🟣 Tím / Violet / Magenta (Royal Purple / Neon Magenta / Lunar)</option>
-                            <option value="yellow">🟡 Vàng / Gold (Gold Chrome / Imperial Gold / Amber)</option>
+                            <option value="black">Đen</option>
+                            <option value="white">Trắng / Kem</option>
+                            <option value="blue">Xanh dương / Teal</option>
+                            <option value="navy">Xanh navy</option>
+                            <option value="gray">Xám / Bạc</option>
+                            <option value="green">Xanh lá / Rêu</option>
+                            <option value="red">Đỏ / Crimson</option>
+                            <option value="orange">Cam</option>
+                            <option value="purple">Tím</option>
+                            <option value="yellow">Vàng</option>
                         </select>
                         <div class="select-chevron-icon" aria-hidden="true">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
@@ -135,7 +147,7 @@
                     </div>
                 </div>
 
-                <!-- 3. Khoảng Giá: Thanh Ngang Kéo Khoảng Giá (Interactive Range Slider) -->
+                <!-- 4. Khoảng Giá: Thanh Ngang Kéo Khoảng Giá (Interactive Range Slider) -->
                 <div class="fashion-select-card price-range-card">
                     <div class="price-header-row">
                         <label class="fashion-card-label" for="sneakerPriceRange">Mức Giá Tối Đa</label>
@@ -198,7 +210,8 @@
         const closeBtn = document.getElementById('sneakerFilterCloseBtn');
         const searchInput = document.getElementById('sneakerSearchInput');
         const clearSearchBtn = document.getElementById('sneakerClearSearchBtn');
-        const styleSelect = document.getElementById('sneakerStyleSelect');
+        const vaultSelect = document.getElementById('sneakerVaultSelect');
+        const silhouetteSelect = document.getElementById('sneakerSilhouetteSelect');
         const colorSelect = document.getElementById('sneakerColorSelect');
         const priceRange = document.getElementById('sneakerPriceRange');
         const priceDisplay = document.getElementById('sneakerPriceDisplay');
@@ -223,31 +236,33 @@
             const normalizedKeyword = removeVietnameseTones(searchKeyword);
 
             filteredSneakers = allSneakers.filter(item => {
-                // 1. Lọc theo dòng giày / bộ sưu tập
-                if (selectedStyle !== 'all') {
+                // 1. Lọc theo Bộ Sưu Tập (Vault)
+                if (selectedVault !== 'all') {
                     const colId = (item.collectionId || '').toLowerCase();
-                    const modelName = removeVietnameseTones(item.model || '');
-
-                    let matchStyle = false;
-                    if (selectedStyle === 'futurist' && colId === 'futurist') matchStyle = true;
-                    else if (selectedStyle === 'cyber' && colId === 'cyber') matchStyle = true;
-                    else if (selectedStyle === 'chile20' && colId === 'chile20') matchStyle = true;
-                    else if (selectedStyle === 'air-future' && modelName.includes('air future')) matchStyle = true;
-                    else if (selectedStyle === 'cyber-series' && modelName.includes('cyber')) matchStyle = true;
-                    else if (selectedStyle === 'chile-series' && modelName.includes('chile')) matchStyle = true;
-                    else if (selectedStyle === 'runners' && (colId === 'futurist' || modelName.includes('air future'))) matchStyle = true;
-                    else if (selectedStyle === 'chunky' && (colId === 'cyber' || modelName.includes('cyber'))) matchStyle = true;
-                    else if (selectedStyle === 'high-top' && (modelName.includes('ix') || modelName.includes('viii') || modelName.includes('xi'))) matchStyle = true;
-
-                    if (!matchStyle) return false;
+                    if (colId !== selectedVault) return false;
                 }
 
-                // 2. Lọc theo giá thanh trượt kéo (Range slider)
+                // 2. Lọc theo Dòng Giày (Silhouette)
+                if (selectedSilhouette !== 'all') {
+                    const modelName = removeVietnameseTones(item.model || '');
+                    let matchSil = false;
+                    if (selectedSilhouette === 'air-future' && modelName.includes('air future')) matchSil = true;
+                    else if (selectedSilhouette === 'cyber-series' && modelName.includes('cyber')) matchSil = true;
+                    else if (selectedSilhouette === 'chile-series' && modelName.includes('chile')) matchSil = true;
+                    else if (selectedSilhouette === 'runners' && (item.collectionId === 'futurist' || modelName.includes('air future'))) matchSil = true;
+                    else if (selectedSilhouette === 'chunky' && (item.collectionId === 'cyber' || modelName.includes('cyber'))) matchSil = true;
+                    else if (selectedSilhouette === 'high-top' && (modelName.includes('ix') || modelName.includes('viii') || modelName.includes('xi'))) matchSil = true;
+                    else if (selectedSilhouette === 'low-top' && (modelName.includes('iv') || modelName.includes('iii') || modelName.includes('i'))) matchSil = true;
+
+                    if (!matchSil) return false;
+                }
+
+                // 3. Lọc theo giá thanh trượt kéo (Range slider)
                 if (maxPriceValue < 7500000 && item.price > maxPriceValue) {
                     return false;
                 }
 
-                // 3. Lọc theo màu sắc (hỗ trợ quét toàn diện phối màu & swatches)
+                // 4. Lọc theo màu sắc
                 if (selectedColor !== 'all') {
                     const keywords = COLOR_KEYWORDS[selectedColor] || [selectedColor];
                     const textToSearch = removeVietnameseTones([
@@ -267,7 +282,7 @@
                     if (!matchColor) return false;
                 }
 
-                // 4. Lọc theo từ khóa tìm kiếm (model, colorway, designer, styleCode)
+                // 5. Lọc theo từ khóa tìm kiếm (model, colorway, designer, styleCode)
                 if (normalizedKeyword) {
                     const matchModel = removeVietnameseTones(item.model || '').includes(normalizedKeyword);
                     const matchColorway = removeVietnameseTones(item.colorway || '').includes(normalizedKeyword);
@@ -294,8 +309,12 @@
             if (searchKeyword.trim()) {
                 parts.push(`"${searchKeyword.trim()}"`);
             }
-            if (selectedStyle !== 'all' && styleSelect) {
-                const opt = styleSelect.options[styleSelect.selectedIndex];
+            if (selectedVault !== 'all' && vaultSelect) {
+                const opt = vaultSelect.options[vaultSelect.selectedIndex];
+                if (opt) parts.push(opt.text.split('(')[0].trim());
+            }
+            if (selectedSilhouette !== 'all' && silhouetteSelect) {
+                const opt = silhouetteSelect.options[silhouetteSelect.selectedIndex];
                 if (opt) parts.push(opt.text.split('(')[0].trim());
             }
             if (maxPriceValue < 7500000) {
@@ -303,7 +322,7 @@
             }
             if (selectedColor !== 'all' && colorSelect) {
                 const opt = colorSelect.options[colorSelect.selectedIndex];
-                if (opt) parts.push(opt.text.replace(/^[^\s]+\s*/, '').split('(')[0].trim());
+                if (opt) parts.push(opt.text.trim());
             }
             return parts.join(' • ') || 'Tất cả giày';
         }
@@ -317,7 +336,7 @@
             }
 
             const label = buildSummaryLabel();
-            const isFullCatalog = (selectedStyle === 'all' && maxPriceValue >= 7500000 && selectedColor === 'all' && !searchKeyword.trim());
+            const isFullCatalog = (selectedVault === 'all' && selectedSilhouette === 'all' && maxPriceValue >= 7500000 && selectedColor === 'all' && !searchKeyword.trim());
 
             if (window.SneakerVault) {
                 if (isFullCatalog) {
@@ -355,7 +374,8 @@
         }
 
         function resetAllFilters() {
-            selectedStyle = 'all';
+            selectedVault = 'all';
+            selectedSilhouette = 'all';
             selectedColor = 'all';
             maxPriceValue = 7500000;
             searchKeyword = '';
@@ -364,7 +384,8 @@
                 searchInput.value = '';
                 if (clearSearchBtn) clearSearchBtn.style.display = 'none';
             }
-            if (styleSelect) styleSelect.value = 'all';
+            if (vaultSelect) vaultSelect.value = 'all';
+            if (silhouetteSelect) silhouetteSelect.value = 'all';
             if (colorSelect) colorSelect.value = 'all';
             if (priceRange) priceRange.value = '7500000';
 
@@ -410,15 +431,23 @@
             });
         }
 
-        // Event: Dòng giày Select dropdown
-        if (styleSelect) {
-            styleSelect.addEventListener('change', (e) => {
-                selectedStyle = e.target.value;
+        // Event: Bộ sưu tập Select
+        if (vaultSelect) {
+            vaultSelect.addEventListener('change', (e) => {
+                selectedVault = e.target.value;
                 performFilter();
             });
         }
 
-        // Event: Gam màu Select dropdown
+        // Event: Dòng giày Select
+        if (silhouetteSelect) {
+            silhouetteSelect.addEventListener('change', (e) => {
+                selectedSilhouette = e.target.value;
+                performFilter();
+            });
+        }
+
+        // Event: Gam màu Select
         if (colorSelect) {
             colorSelect.addEventListener('change', (e) => {
                 selectedColor = e.target.value;
