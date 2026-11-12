@@ -610,6 +610,12 @@
             s.src = '/js/spotlight-search.js?v=inject_v2';
             document.head.appendChild(s);
         }
+
+        if (!window.HNMTCart && !document.querySelector('script[src*="hnmt-cart-drawer.js"]')) {
+            const s = document.createElement('script');
+            s.src = '/js/hnmt-cart-drawer.js?v=cart_v1';
+            document.head.appendChild(s);
+        }
     }
 
     function renderGrid() {
@@ -1244,6 +1250,22 @@
             badge.textContent = bagCount;
             badge.style.transform = 'scale(1.4)';
             setTimeout(() => badge.style.transform = 'scale(1)', 250);
+        }
+
+        // Thêm vào giỏ hàng thống nhất Atelier Cart
+        const currentSneaker = (getSneakers() && getSneakers()[currentIndex]) ? getSneakers()[currentIndex] : null;
+        if (currentSneaker && window.HNMTCart) {
+            window.HNMTCart.addItem({
+                name: `${currentSneaker.seriesName} ${currentSneaker.edition}`,
+                slug: currentSneaker.code || currentSneaker.sku || 'sneaker',
+                price: currentSneaker.priceVnd || 6900000,
+                size: selectedSize,
+                color: currentSneaker.colorName || '',
+                colorDot: currentSneaker.colorDot || '#38bdf8',
+                imageUrl: currentSneaker.shoeImg || '',
+                category: 'giay',
+                quantity: 1
+            });
         }
 
         // Đã tắt popup thông báo theo yêu cầu

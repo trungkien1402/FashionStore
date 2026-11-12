@@ -514,6 +514,12 @@
             s.src = '/js/spotlight-search.js?v=inject_v3';
             document.head.appendChild(s);
         }
+
+        if (!window.HNMTCart && !document.querySelector('script[src*="hnmt-cart-drawer.js"]')) {
+            const s = document.createElement('script');
+            s.src = '/js/hnmt-cart-drawer.js?v=cart_v1';
+            document.head.appendChild(s);
+        }
     }
 
     // Không hiển thị banner lọc đẩy lệch chữ tiêu đề theo yêu cầu người dùng
@@ -949,6 +955,15 @@
         const backToLobbyBtn = $('#hnmtRackBackToLobbyBtn');
         const modalExit = $('#modalExit');
 
+        if (bagBtn) {
+            bagBtn.onclick = (e) => {
+                e.stopPropagation();
+                if (window.HNMTCart) {
+                    window.HNMTCart.open();
+                }
+            };
+        }
+
         // Nút chuyển sào tiếp theo / sào trước
         const prevRackBtn = $('#rackPrevBtn');
         const nextRackBtn = $('#rackNextBtn');
@@ -998,6 +1013,22 @@
                     svBag.textContent = bag;
                     svBag.style.transform = 'scale(1.4)';
                     setTimeout(() => svBag.style.transform = 'scale(1)', 250);
+                }
+
+                // Thêm vào giỏ hàng thống nhất Atelier Cart
+                if (window.HNMTCart) {
+                    const chosenColor = p.colors && p.colors[p.variant || 0] ? p.colors[p.variant || 0] : null;
+                    window.HNMTCart.addItem({
+                        name: p.name,
+                        slug: p.slug,
+                        price: (p.price || 0) * 10000,
+                        size: selectedSize,
+                        color: chosenColor ? chosenColor[0] : '',
+                        colorDot: chosenColor ? chosenColor[1] : '',
+                        imageUrl: photo(p, p.variant || 0),
+                        category: currentCategory === 'quan' ? 'quan' : 'ao',
+                        quantity: 1
+                    });
                 }
 
                 cartCta.innerHTML = `
