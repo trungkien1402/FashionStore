@@ -26,4 +26,8 @@ public class HomeController : Controller
 
         return View(latestProducts);
     }
+    public IActionResult SizeGuide()
+    {
+        return View();
+    }
 }

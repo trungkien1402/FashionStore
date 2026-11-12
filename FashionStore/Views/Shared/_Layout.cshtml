@@ -59,7 +59,11 @@
                 <!-- Nav Links -->
                 <ul class="urbn-nav-links">
                     <li><a asp-controller="Home" asp-action="Index">TRANG CHỦ</a></li>
-                    <li><a href="/Home/Index#categories">BẢNG GIÁ</a></li>
+                    <li>
+                        <a asp-controller="Home" asp-action="SizeGuide">
+                            HƯỚNG DẪN CHỌN SIZE
+                        </a>
+                    </li>
                     <li><a asp-controller="Products" asp-action="Index">CỬA HÀNG</a></li>
                     <li><a href="#contact">LIÊN HỆ</a></li>
                 </ul>
