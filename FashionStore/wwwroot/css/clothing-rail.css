@@ -2459,3 +2459,115 @@ body.show-detail .rail-ticker {
     color: #ffffff;
     letter-spacing: normal;
 }
+
+/* ==============================================================================
+ * LUXURY COLOR SWATCHES (CHUẨN THỜI TRANG CAO CẤP - DESIGN DIRECTION 1)
+ * ============================================================================== */
+.fashion-swatches-card {
+    padding: 16px 18px 14px 18px;
+}
+
+.fashion-swatches-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.fashion-swatches-badge {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.28);
+    padding: 2.5px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.02em;
+    transition: all 0.2s ease;
+    max-width: 160px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.fashion-swatches-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px 8px;
+    justify-items: center;
+    align-items: center;
+    padding: 2px 0 4px 0;
+}
+
+.fashion-swatch-item {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.fashion-swatch-item:hover {
+    transform: scale(1.15);
+}
+
+.fashion-swatch-item .swatch-dot {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    display: block;
+    position: relative;
+}
+
+.fashion-swatch-item:hover .swatch-dot {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.65), 0 0 0 2px rgba(255, 255, 255, 0.35);
+}
+
+.fashion-swatch-item.is-selected {
+    transform: scale(1.08);
+}
+
+.fashion-swatch-item.is-selected::before {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    border-radius: 50%;
+    border: 2px solid #38bdf8;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.45);
+    pointer-events: none;
+}
+
+.fashion-swatch-item.is-selected .swatch-dot {
+    width: 22px;
+    height: 22px;
+}
+
+/* Biểu tượng checkmark thanh mảnh khi chọn */
+.fashion-swatch-item.is-selected::after {
+    content: '';
+    position: absolute;
+    width: 5px;
+    height: 9px;
+    border: solid #ffffff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg) translate(-0.5px, -1px);
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.85));
+    pointer-events: none;
+}
+
+.fashion-swatch-item[data-color="white"].is-selected::after,
+.fashion-swatch-item[data-color="all"].is-selected::after {
+    border-color: #0f172a;
+    filter: none;
+}

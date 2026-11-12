@@ -39,6 +39,22 @@
         purple: ['tim', 'purple', 'violet', 'lilac', 'lavender', 'hoa ca']
     };
 
+    // Bảng màu Swatches thời trang cao cấp (Design Direction 1 - Visual Palette Circles)
+    const FASHION_SWATCHES = [
+        { id: 'all', name: 'Tất cả màu', bg: 'conic-gradient(from 180deg at 50% 50%, #ff4d4d, #f9cb28, #79d70f, #00d2fc, #c56cf0, #ff4d4d)', border: 'rgba(255,255,255,0.4)' },
+        { id: 'black', name: 'Đen', bg: '#121316', border: 'rgba(255,255,255,0.28)' },
+        { id: 'white', name: 'Trắng / Be / Kem', bg: 'linear-gradient(135deg, #ffffff 50%, #f1ebdf 50%)', border: 'rgba(255,255,255,0.35)' },
+        { id: 'blue', name: 'Xanh denim / Indigo', bg: 'linear-gradient(135deg, #2563eb 50%, #06b6d4 50%)' },
+        { id: 'navy', name: 'Xanh navy', bg: '#0f172a', border: 'rgba(255,255,255,0.25)' },
+        { id: 'gray', name: 'Xám / Bạc', bg: 'linear-gradient(135deg, #94a3b8 50%, #cbd5e1 50%)' },
+        { id: 'green', name: 'Xanh rêu / Olive', bg: 'linear-gradient(135deg, #15803d 50%, #4d7c0f 50%)' },
+        { id: 'sand', name: 'Nâu cát / Khaki', bg: 'linear-gradient(135deg, #d4a373 50%, #faedcd 50%)' },
+        { id: 'red', name: 'Đỏ rượu / Nâu đất', bg: 'linear-gradient(135deg, #dc2626 50%, #881337 50%)' },
+        { id: 'yellow', name: 'Vàng be', bg: 'linear-gradient(135deg, #eab308 50%, #fde047 50%)' },
+        { id: 'orange', name: 'Cam đất', bg: 'linear-gradient(135deg, #ea580c 50%, #f97316 50%)' },
+        { id: 'purple', name: 'Tím khói', bg: 'linear-gradient(135deg, #7c3aed 50%, #a855f7 50%)' }
+    ];
+
     function formatPrice(num) {
         return (num * 10000).toLocaleString('vi-VN') + ' ₫';
     }
@@ -132,25 +148,14 @@
                     </div>
                 </div>
 
-                <!-- 2. Gam Màu Sắc (Select-from-list phong phú bảng màu thời trang) -->
-                <div class="fashion-select-card">
-                    <label class="fashion-card-label" for="pantsColorSelect">Gam Màu Sắc</label>
-                    <div class="fashion-select-wrapper">
-                        <select id="pantsColorSelect" class="fashion-select-input">
-                            <option value="all">Tất cả màu sắc</option>
-                            <option value="black">Đen</option>
-                            <option value="white">Trắng / Be / Kem</option>
-                            <option value="blue">Xanh denim / Indigo</option>
-                            <option value="navy">Xanh navy</option>
-                            <option value="gray">Xám / Bạc</option>
-                            <option value="green">Xanh rêu / Olive</option>
-                            <option value="sand">Nâu cát / Khaki</option>
-                            <option value="red">Đỏ rượu / Nâu đất</option>
-                            <option value="yellow">Vàng be</option>
-                        </select>
-                        <div class="select-chevron-icon" aria-hidden="true">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                        </div>
+                <!-- 2. Gam Màu Sắc (Color Swatches tương tác chuẩn Fashion Atelier) -->
+                <div class="fashion-select-card fashion-swatches-card">
+                    <div class="fashion-swatches-header">
+                        <label class="fashion-card-label">Gam Màu Sắc</label>
+                        <span class="fashion-swatches-badge" id="pantsSelectedColorName">Tất cả màu</span>
+                    </div>
+                    <div class="fashion-swatches-grid" id="pantsColorSwatchesGrid" role="radiogroup" aria-label="Chọn gam màu sắc quần">
+                        <!-- Swatches render bằng JavaScript -->
                     </div>
                 </div>
 
@@ -219,11 +224,67 @@
         const searchInput = document.getElementById('pantsSearchInput');
         const clearSearchBtn = document.getElementById('pantsClearSearchBtn');
         const styleSelect = document.getElementById('pantsStyleSelect');
-        const colorSelect = document.getElementById('pantsColorSelect');
+        const swatchesGrid = document.getElementById('pantsColorSwatchesGrid');
+        const selectedColorBadge = document.getElementById('pantsSelectedColorName');
         const priceRange = document.getElementById('pantsPriceRange');
         const priceDisplay = document.getElementById('pantsPriceDisplay');
         const applyBtn = document.getElementById('pantsApplyBtn');
         const resetBtn = document.getElementById('pantsResetFilterBtn');
+
+        // Render khay chấm màu tương tác (Direction 1 - Color Swatches Atelier)
+        function renderColorSwatches() {
+            if (!swatchesGrid) return;
+            swatchesGrid.innerHTML = '';
+
+            FASHION_SWATCHES.forEach(sw => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = `fashion-swatch-item ${sw.id === selectedColor ? 'is-selected' : ''}`;
+                btn.setAttribute('data-color', sw.id);
+                btn.setAttribute('title', sw.name);
+                btn.setAttribute('aria-label', sw.name);
+                btn.setAttribute('aria-checked', sw.id === selectedColor ? 'true' : 'false');
+                btn.setAttribute('role', 'radio');
+
+                const dot = document.createElement('span');
+                dot.className = 'swatch-dot';
+                dot.style.background = sw.bg;
+                if (sw.border) dot.style.border = `1px solid ${sw.border}`;
+
+                btn.appendChild(dot);
+
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    selectedColor = sw.id;
+                    updateColorSwatchesUI();
+                    performFilter();
+                });
+
+                swatchesGrid.appendChild(btn);
+            });
+
+            if (selectedColorBadge) {
+                const currentSw = FASHION_SWATCHES.find(s => s.id === selectedColor) || FASHION_SWATCHES[0];
+                selectedColorBadge.textContent = currentSw.name;
+            }
+        }
+
+        function updateColorSwatchesUI() {
+            if (swatchesGrid) {
+                swatchesGrid.querySelectorAll('.fashion-swatch-item').forEach(btn => {
+                    const c = btn.getAttribute('data-color');
+                    const isSel = c === selectedColor;
+                    btn.classList.toggle('is-selected', isSel);
+                    btn.setAttribute('aria-checked', isSel ? 'true' : 'false');
+                });
+            }
+            if (selectedColorBadge) {
+                const currentSw = FASHION_SWATCHES.find(s => s.id === selectedColor) || FASHION_SWATCHES[0];
+                selectedColorBadge.textContent = currentSw.name;
+            }
+        }
+
+        renderColorSwatches();
 
         // Cập nhật nhãn hiển thị giá khi kéo thanh trượt
         function updatePriceDisplay() {
@@ -326,9 +387,9 @@
             if (maxPriceValue < 1500000) {
                 parts.push(`≤ ${maxPriceValue.toLocaleString('vi-VN')} ₫`);
             }
-            if (selectedColor !== 'all' && colorSelect) {
-                const opt = colorSelect.options[colorSelect.selectedIndex];
-                if (opt) parts.push(opt.text.trim());
+            if (selectedColor !== 'all') {
+                const sw = FASHION_SWATCHES.find(s => s.id === selectedColor);
+                if (sw) parts.push(sw.name);
             }
             return parts.join(' • ') || 'Tất cả quần';
         }
@@ -365,6 +426,7 @@
             modal.setAttribute('aria-hidden', 'false');
 
             updatePriceDisplay();
+            updateColorSwatchesUI();
             performFilter();
             setTimeout(() => {
                 if (searchInput) searchInput.focus();
@@ -390,7 +452,7 @@
                 if (clearSearchBtn) clearSearchBtn.style.display = 'none';
             }
             if (styleSelect) styleSelect.value = 'all';
-            if (colorSelect) colorSelect.value = 'all';
+            updateColorSwatchesUI();
             if (priceRange) priceRange.value = '1500000';
 
             updatePriceDisplay();
@@ -435,14 +497,6 @@
         if (styleSelect) {
             styleSelect.addEventListener('change', (e) => {
                 selectedStyle = e.target.value;
-                performFilter();
-            });
-        }
-
-        // Event: Gam màu Select dropdown
-        if (colorSelect) {
-            colorSelect.addEventListener('change', (e) => {
-                selectedColor = e.target.value;
                 performFilter();
             });
         }
