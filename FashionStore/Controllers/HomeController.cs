@@ -31,7 +31,7 @@ public class HomeController : Controller
     [HttpGet("/collections")]
     public IActionResult Lookbook(string? theme)
     {
-        ViewBag.InitialTheme = string.Equals(theme, "rawearth", StringComparison.OrdinalIgnoreCase) ? "rawearth" : "nightfall";
+        ViewBag.InitialTheme = string.Equals(theme, "sunwash", StringComparison.OrdinalIgnoreCase) ? "sunwash" : "noir";
         return View();
     }
 }

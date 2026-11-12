@@ -21,8 +21,8 @@
     user-select: none;
     transition: opacity .45s ease;
 }
-.lb-wrapper.theme-nightfall { --lb-bg1: #efefee; --lb-bg2: #dcdddf; }
-.lb-wrapper.theme-rawearth  { --lb-bg1: #f4f1ea; --lb-bg2: #e6e0d3; }
+.lb-wrapper.theme-noir { --lb-bg1: #efefee; --lb-bg2: #dcdddf; }
+.lb-wrapper.theme-sunwash  { --lb-bg1: #f4f1ea; --lb-bg2: #e6e0d3; }
 .lb-wrapper.is-open { display: flex; opacity: 1; }
 
 /* ---------- STAGE ---------- */

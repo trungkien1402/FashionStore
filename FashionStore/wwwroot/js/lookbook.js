@@ -7,8 +7,8 @@
     if (window.HNMTLookbook) return;
 
     var COL = {
-        nightfall: { label: 'NIGHTFALL METROPOLIS', sub: 'Đêm đô thị · Cyber-streetwear' },
-        rawearth:  { label: 'RAW EARTH & DUST',     sub: 'Denim thô · Vintage workwear' }
+        noir: { label: 'NOIR UNIT', sub: 'Đen tuyền đô thị · Mono streetwear' },
+        sunwash:  { label: 'SUN-WASHED', sub: 'Denim bạc màu · Sắc cát nắng' }
     };
     var PINS = [{ top: '30%', left: '50%' }, { top: '62%', left: '50%' }, { top: '93%', left: '50%' }];
     var TOPS = '/images/products/clothes/', PANTS = '/images/pants/', SNK = '/images/sneakers/', SHOES = '/images/products/shoes/';
@@ -20,31 +20,31 @@
 
     // One continuous circular runway: 4 Nightfall looks → 3 Raw Earth looks
     var LOOKS = [
-        { col: 'nightfall', name: 'Neo-Future Arc', img: '/images/lookbook/cut/look-n1.png', items: [
+        { col: 'noir', name: 'Neo-Future Arc', img: '/images/lookbook/cut/look-n1.png', items: [
             it('nf1-top', 'Áo thun', 'Neo-Future Arc Graphic Tee', 490000, TOPS + 'distressed-graphic-tee.png', SZ_TOP, 'L', 'Đen Than Chì', '#111827'),
             it('nf1-pant', 'Quần jeans', 'Quần Jeans Baggy Washed Black', 640000, PANTS + 'cargo-acid-wash.png', SZ_PANT, '31', 'Đen Wash', '#374151'),
             it('nf1-shoe', 'Sneaker', 'AIR FUTURE III – NEXUS X1', 4900000, SNK + 'air-future-iii.webp', SZ_SHOE, '43', 'WHITE / ACID VOLT / BLACK', '#84cc16')] },
-        { col: 'nightfall', name: 'Shadow Drifter', img: '/images/lookbook/cut/look-n2.png', items: [
+        { col: 'noir', name: 'Shadow Drifter', img: '/images/lookbook/cut/look-n2.png', items: [
             it('nf2-top', 'Hoodie', 'Technical Zip Hoodie Noir', 890000, TOPS + 'heavyweight-boxy-hoodie.png', SZ_TOP, 'L', 'Đen Tối Giản', '#0f172a'),
             it('nf2-pant', 'Quần cargo', 'Quần Parachute Tactical Noir', 680000, PANTS + 'raw-selvedge-black.png', SZ_PANT, '31', 'Đen Nhám', '#1e293b'),
             it('nf2-shoe', 'Sneaker', 'AIR FUTURE IX – SHADOW RUNNER', 4200000, SNK + 'air-future-ix.webp', SZ_SHOE, '42', 'STEALTH TRIPLE BLACK', '#000000')] },
-        { col: 'nightfall', name: 'Cyber Matrix', img: '/images/lookbook/cut/look-n3.png', items: [
+        { col: 'noir', name: 'Cyber Matrix', img: '/images/lookbook/cut/look-n3.png', items: [
             it('nf3-top', 'Áo thun', 'Acid Charcoal Boxy Tee', 520000, TOPS + 'vintage-washed-boxy-tee.png', SZ_TOP, 'L', 'Xám Loang Than', '#334155'),
             it('nf3-pant', 'Quần jeans', 'Quần Jeans Distressed Grey', 590000, PANTS + 'cargo-acid-wash.png', SZ_PANT, '30', 'Xám Chàm Loang', '#475569'),
             it('nf3-shoe', 'Sneaker', 'AIR FUTURE V – CYBER OVERDRIVE', 4400000, SNK + 'air-future-v.webp', SZ_SHOE, '41', 'WHITE / BLACK', '#e2e8f0')] },
-        { col: 'nightfall', name: 'Midnight Stride', img: '/images/lookbook/cut/look-n4.png', items: [
+        { col: 'noir', name: 'Midnight Stride', img: '/images/lookbook/cut/look-n4.png', items: [
             it('nf4-top', 'Áo nỉ', 'Graphic Crewneck Noir', 780000, TOPS + 'fleece-vintage-crewneck.png', SZ_TOP, 'L', 'Đen Tuyền', '#111827'),
             it('nf4-pant', 'Quần ống rộng', 'Quần Wide-Leg Navy Trousers', 640000, PANTS + 'wide-leg-denim.png', SZ_PANT, '31', 'Navy Đậm', '#1e3a5f'),
             it('nf4-shoe', 'Sneaker', 'AIR FUTURE IV – NIGHT TRACK', 4500000, SNK + 'air-future-iv.webp', SZ_SHOE, '42', 'BLACK / ANTHRACITE', '#111111')] },
-        { col: 'rawearth', name: 'Cyanotype Artisan', img: '/images/lookbook/cut/look-e1.png', items: [
+        { col: 'sunwash', name: 'Cyanotype Artisan', img: '/images/lookbook/cut/look-e1.png', items: [
             it('re1-top', 'Áo thun', 'Fern Tee – Dương Xỉ Xanh Chàm', 440000, TOPS + 'oversize-streetwear-tee-white.png', SZ_TOP, 'L', 'Trắng Ngà / Prussian', '#1d4ed8'),
             it('re1-pant', 'Quần jeans', 'Quần Jeans Ống Rộng Vintage Washed', 540000, PANTS + 'wide-leg-denim.png', SZ_PANT, '31', 'Xanh Vintage (90s Blue)', '#3b82f6'),
             it('re1-shoe', 'Sneaker', 'Retro Court Low – Gum Sole', 3600000, SHOES + 'nike-dunk-low-retro.png', SZ_SHOE, '42', 'WHITE / GUM', '#d97706')] },
-        { col: 'rawearth', name: 'Heavyweight Selvedge', img: '/images/lookbook/cut/look-e2.png', items: [
+        { col: 'sunwash', name: 'Heavyweight Selvedge', img: '/images/lookbook/cut/look-e2.png', items: [
             it('re2-top', 'Áo thun', 'Heavy Cotton Crewneck Cát', 480000, TOPS + 'vintage-washed-boxy-tee.png', SZ_TOP, 'L', 'Be Cát Thô', '#d6c7b2'),
             it('re2-pant', 'Quần jeans', 'Quần Jeans Raw Denim 14oz Chàm Đậm', 740000, PANTS + 'raw-selvedge-black.png', SZ_PANT, '31', 'Chàm Đậm (Deep Indigo)', '#1e1b4b'),
             it('re2-shoe', 'Sneaker', 'Suede Skate High – Earth', 2400000, SHOES + 'converse-chuck-70-high.png', SZ_SHOE, '41', 'OATMEAL / GUM', '#b45309')] },
-        { col: 'rawearth', name: 'Desert Workwear', img: '/images/lookbook/cut/look-e3.png', items: [
+        { col: 'sunwash', name: 'Desert Workwear', img: '/images/lookbook/cut/look-e3.png', items: [
             it('re3-top', 'Áo khoác', 'Boxy Khaki Workwear Overshirt', 690000, TOPS + 'varsity-bomber-jacket.png', SZ_TOP, 'L', 'Khaki Đất', '#a3825a'),
             it('re3-pant', 'Quần xếp ly', 'Quần Pleated Sand Beige', 680000, PANTS + 'pleated-sand-beige.png', SZ_PANT, '31', 'Be Cát Tự Nhiên', '#d5c9b6'),
             it('re3-shoe', 'Sneaker', 'Retro Low-Top Leather', 2900000, SHOES + 'nike-air-force-1-low.png', SZ_SHOE, '42', 'CHALK WHITE', '#f8fafc')] }
@@ -81,8 +81,8 @@
               '<div class="lb-head"><h2 class="lb-title">Try the Look.</h2><p class="lb-sub" id="lbSub"></p></div>' +
               '<div class="lb-tools">' +
                 '<div class="lb-switch" id="lbSwitch">' +
-                  '<button type="button" data-col="nightfall">NIGHTFALL</button>' +
-                  '<button type="button" data-col="rawearth">RAW EARTH</button>' +
+                  '<button type="button" data-col="noir">NOIR UNIT</button>' +
+                  '<button type="button" data-col="sunwash">SUN-WASHED</button>' +
                 '</div>' +
                 '<button type="button" class="lb-icon-btn" id="lbCart" title="Túi đồ">' +
                   '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>' +
@@ -236,7 +236,7 @@
 
     function renderChrome() {
         var look = LOOKS[active];
-        root.classList.remove('theme-nightfall', 'theme-rawearth');
+        root.classList.remove('theme-noir', 'theme-sunwash');
         root.classList.add('theme-' + look.col);
         root.querySelector('#lbSub').textContent = LOOKS.length + ' looks, styled head to toe — ' + COL[look.col].sub;
         root.querySelectorAll('#lbSwitch button').forEach(function (b) { b.classList.toggle('active', b.dataset.col === look.col); });
@@ -292,9 +292,9 @@
             el.addEventListener('click', function (e) { e.preventDefault(); open(el.dataset.openLookbook); });
         });
         var p = new URLSearchParams(location.search).get('theme');
-        if (/\/lookbook|\/collections/i.test(location.pathname)) open(p === 'rawearth' ? 'rawearth' : 'nightfall');
-        else if (location.hash === '#lookbook-nightfall') open('nightfall');
-        else if (location.hash === '#lookbook-rawearth') open('rawearth');
+        if (/\/lookbook|\/collections/i.test(location.pathname)) open(p === 'sunwash' ? 'sunwash' : 'noir');
+        else if (location.hash === '#lookbook-noir') open('noir');
+        else if (location.hash === '#lookbook-sunwash') open('sunwash');
         goTo(active);
         LOOKS.forEach(function (l) { var im = new Image(); im.src = l.img; });
     }
