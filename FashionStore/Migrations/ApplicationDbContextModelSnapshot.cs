@@ -492,6 +492,36 @@ namespace FashionStore.Migrations
                     b.ToTable("ShipmentHistories");
                 });
 
+            modelBuilder.Entity("FashionStore.Models.Entities.ShipmentLocation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<double?>("Accuracy")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Latitude")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("RecordedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ShipmentId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ShipmentId", "RecordedAt");
+
+                    b.ToTable("ShipmentLocations");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -750,6 +780,17 @@ namespace FashionStore.Migrations
                     b.Navigation("Shipment");
                 });
 
+            modelBuilder.Entity("FashionStore.Models.Entities.ShipmentLocation", b =>
+                {
+                    b.HasOne("FashionStore.Models.Entities.Shipment", "Shipment")
+                        .WithMany("Locations")
+                        .HasForeignKey("ShipmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Shipment");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -821,6 +862,8 @@ namespace FashionStore.Migrations
             modelBuilder.Entity("FashionStore.Models.Entities.Shipment", b =>
                 {
                     b.Navigation("Histories");
+
+                    b.Navigation("Locations");
                 });
 #pragma warning restore 612, 618
         }

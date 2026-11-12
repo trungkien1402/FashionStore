@@ -32,6 +32,8 @@ public class ApplicationDbContext
 
     public DbSet<ShipmentHistory> ShipmentHistories => Set<ShipmentHistory>();
 
+    public DbSet<ShipmentLocation> ShipmentLocations => Set<ShipmentLocation>();
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -147,6 +149,18 @@ public class ApplicationDbContext
                 .OnDelete(DeleteBehavior.SetNull);
 
             entity.Property(h => h.Note).HasMaxLength(500);
+        });
+
+        builder.Entity<ShipmentLocation>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+
+            entity.HasOne(x => x.Shipment)
+                .WithMany(x => x.Locations)
+                .HasForeignKey(x => x.ShipmentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(x => new { x.ShipmentId, x.RecordedAt });
         });
     }
 }

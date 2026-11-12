@@ -1249,30 +1249,33 @@
     }
 
     // --- Nhấp chọn món đồ để đi tiếp vào danh mục tương ứng ---
-    function onItemClick() {
-        if (activeHoveredIndex === -1) return;
-        const wrapper = itemWrappers[activeHoveredIndex];
-        if (!wrapper) return;
-
-        const cfg = wrapper.userData.config;
-
-        // Bật chế độ SÀO TREO ĐỒ 3D TƯƠNG TÁC (Chính xác như video FraxBIT)
+    function handleItemSelection(cfg) {
+        if (!cfg) return;
         if (cfg.id === 'ao') {
-            open3DClothesRack();
+            open3DClothesRack('ao');
             return;
         }
-
-        // Bật chế độ SNEAKER VAULT 3D (Chính xác như video Sneaker Figma)
+        if (cfg.id === 'quan') {
+            open3DClothesRack('quan');
+            return;
+        }
         if (cfg.id === 'giay') {
             openSneakerVaultFrom3D();
             return;
         }
-
-        // Quần và Giày chưa làm không gian 3D chi tiết -> hiển thị thông báo hướng dẫn chọn Áo
         showCategoryNotice(cfg);
     }
 
+    function onItemClick() {
+        if (activeHoveredIndex === -1) return;
+        const wrapper = itemWrappers[activeHoveredIndex];
+        if (!wrapper) return;
+        handleItemSelection(wrapper.userData.config);
+    }
+
     // --- Sự kiện chuột ---
+    let mouseDownPos = { x: 0, y: 0 };
+
     function onMouseMove(e) {
         mouse.targetX = (e.clientX / window.innerWidth) * 2 - 1;
         mouse.targetY = (e.clientY / window.innerHeight) * 2 - 1;
@@ -1302,6 +1305,7 @@
     function onMouseDown(e) {
         if (e.target !== canvasEl) return;
         isDragging = true;
+        mouseDownPos = { x: e.clientX, y: e.clientY };
         previousMousePosition = { x: e.clientX, y: e.clientY };
     }
 
@@ -1310,33 +1314,28 @@
         isDragging = false;
         if (isRackModeActive) return;
 
-        const deltaX = Math.abs(e.clientX - previousMousePosition.x);
-        const deltaY = Math.abs(e.clientY - previousMousePosition.y);
+        const deltaX = Math.abs(e.clientX - mouseDownPos.x);
+        const deltaY = Math.abs(e.clientY - mouseDownPos.y);
 
         // Click chuột chuẩn xác vào món đồ
-        if (deltaX < 12 && deltaY < 12 && raycaster && camera) {
-            raycaster.setFromCamera(mouseNormalized, camera);
+        if (deltaX < 18 && deltaY < 18 && raycaster && camera && canvasEl) {
+            const rect = canvasEl.getBoundingClientRect();
+            const clickNormX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+            const clickNormY = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+            raycaster.setFromCamera(new THREE.Vector2(clickNormX, clickNormY), camera);
+
             const hitMeshes = [];
             itemWrappers.forEach((w) => {
                 if (w) w.traverse((c) => { if (c.isMesh) hitMeshes.push(c); });
             });
-            const intersects = raycaster.intersectObjects(hitMeshes);
+            const intersects = raycaster.intersectObjects(hitMeshes, true);
             if (intersects.length > 0) {
                 let hitWrapper = intersects[0].object;
                 while (hitWrapper.parent && !hitWrapper.userData?.config) {
                     hitWrapper = hitWrapper.parent;
                 }
                 if (hitWrapper?.userData?.config) {
-                    const cfg = hitWrapper.userData.config;
-                    if (cfg.id === 'ao') {
-                        open3DClothesRack();
-                        return;
-                    }
-                    if (cfg.id === 'giay') {
-                        openSneakerVaultFrom3D();
-                        return;
-                    }
-                    showCategoryNotice(cfg);
+                    handleItemSelection(hitWrapper.userData.config);
                     return;
                 }
             }
@@ -1733,7 +1732,7 @@
         }
     }
 
-    function open3DClothesRack() {
+    function open3DClothesRack(category = 'ao') {
         isRackModeActive = true;
         const rackOverlayEl = document.getElementById('hnmtRackOverlay');
         const promptEl = document.querySelector('.hnmt-portal-footer');
@@ -1753,8 +1752,12 @@
             rackOverlayEl.classList.add('is-active');
             rackOverlayEl.setAttribute('aria-hidden', 'false');
         }
-        if (window.ClothingRail && typeof window.ClothingRail.initRail === 'function') {
-            window.ClothingRail.initRail();
+        if (window.ClothingRail && typeof window.ClothingRail.openClothingRail === 'function') {
+            window.ClothingRail.openClothingRail(category);
+        } else if (typeof window.openClothingRail === 'function') {
+            window.openClothingRail(category);
+        } else if (category === 'quan' && typeof window.open3DPantsRack === 'function') {
+            window.open3DPantsRack();
         }
 
         if (window.gsap) {
@@ -1984,6 +1987,34 @@
         window.addEventListener('mouseup', onMouseUp);
         window.addEventListener('resize', onResize);
 
+        canvasEl.addEventListener('click', (e) => {
+            if (isRackModeActive) return;
+            const rect = canvasEl.getBoundingClientRect();
+            const clickNormX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+            const clickNormY = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+            if (raycaster && camera) {
+                raycaster.setFromCamera(new THREE.Vector2(clickNormX, clickNormY), camera);
+                const hitMeshes = [];
+                itemWrappers.forEach((w) => {
+                    if (w) w.traverse((c) => { if (c.isMesh) hitMeshes.push(c); });
+                });
+                const intersects = raycaster.intersectObjects(hitMeshes, true);
+                if (intersects.length > 0) {
+                    let hitWrapper = intersects[0].object;
+                    while (hitWrapper.parent && !hitWrapper.userData?.config) {
+                        hitWrapper = hitWrapper.parent;
+                    }
+                    if (hitWrapper?.userData?.config) {
+                        handleItemSelection(hitWrapper.userData.config);
+                        return;
+                    }
+                }
+            }
+            if (activeHoveredIndex !== -1 && itemWrappers[activeHoveredIndex]) {
+                handleItemSelection(itemWrappers[activeHoveredIndex].userData.config);
+            }
+        });
+
         if (exitBtnEl) {
             exitBtnEl.addEventListener('click', closePortal);
         }
@@ -2034,6 +2065,17 @@
     }
     window.openSneakerVaultFrom3D = openSneakerVaultFrom3D;
     window.closeSneakerVaultFrom3D = closeSneakerVaultFrom3D;
+
+    // --- MỞ VÀ ĐÓNG SÀO QUẦN 3D TỪ SHOWROOM ---
+    function openPantsRailFrom3D() {
+        open3DClothesRack('quan');
+    }
+
+    function closePantsRailFrom3D() {
+        close3DClothesRack();
+    }
+    window.openPantsRailFrom3D = openPantsRailFrom3D;
+    window.closePantsRailFrom3D = closePantsRailFrom3D;
 
     window.HNMTChilePortal = { open: openPortal, close: closePortal };
 })();

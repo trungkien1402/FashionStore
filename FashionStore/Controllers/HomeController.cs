@@ -26,6 +26,14 @@ public class HomeController : Controller
 
         return View(latestProducts);
     }
+    [HttpGet("/lookbook")]
+    [HttpGet("/collections")]
+    public IActionResult Lookbook(string? theme)
+    {
+        ViewBag.InitialTheme = string.Equals(theme, "sunwash", StringComparison.OrdinalIgnoreCase) ? "sunwash" : "noir";
+        return View();
+    }
+
     public IActionResult SizeGuide()
     {
         return View();

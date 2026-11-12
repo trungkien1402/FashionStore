@@ -86,35 +86,23 @@
         setInterval(update, 1000);
     }
 
-    // 2. Slide-Over Mini-Cart Drawer
+    // 2. Slide-Over Mini-Cart Drawer (Đã chuyển sang HNMTCart Atelier đồng bộ)
     function initializeCartDrawer() {
-        const drawer = document.getElementById('fsCartDrawer');
-        const backdrop = document.getElementById('fsCartBackdrop');
-        const trigger = document.getElementById('fsCartDrawerTrigger');
-        const closeBtn = document.getElementById('fsCloseCartDrawer');
-
-        if (!drawer || !backdrop) return;
-
-        function openDrawer() {
-            drawer.classList.add('active');
-            backdrop.classList.add('active');
-            document.body.style.overflow = 'hidden';
-            loadMiniCartData();
-        }
-
-        function closeDrawer() {
-            drawer.classList.remove('active');
-            backdrop.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        if (trigger) trigger.addEventListener('click', openDrawer);
-        if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
-        if (backdrop) backdrop.addEventListener('click', closeDrawer);
-
-        window.openFsCartDrawer = openDrawer;
-        window.closeFsCartDrawer = closeDrawer;
-        window.refreshFsCart = loadMiniCartData;
+        window.openFsCartDrawer = function() {
+            if (window.HNMTCart && typeof window.HNMTCart.open === 'function') {
+                window.HNMTCart.open();
+            }
+        };
+        window.closeFsCartDrawer = function() {
+            if (window.HNMTCart && typeof window.HNMTCart.close === 'function') {
+                window.HNMTCart.close();
+            }
+        };
+        window.refreshFsCart = function() {
+            if (window.HNMTCart && typeof window.HNMTCart.syncBadges === 'function') {
+                window.HNMTCart.syncBadges();
+            }
+        };
     }
 
     // Load Cart Data via AJAX
@@ -315,5 +303,6 @@
             toast.style.transform = 'translateY(10px)';
         }, 3000);
     };
+
 
 })();

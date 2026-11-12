@@ -386,26 +386,24 @@
 
         <div class="urbn-center-heading">
             <h2>Bộ Sưu Tập Theo Mùa</h2>
-            <p>Mỗi mùa mang đến một đợt Drop mới — Thiết kế táo bạo, phom dáng chuẩn mực, sinh ra cho đường phố</p>
+            <p>Trải nghiệm phối đồ Head-to-Toe trong không gian Studio độc bản — Đậm chất avant-garde và tinh thần đường phố</p>
         </div>
 
         <div class="urbn-racks-grid">
 
-            <!-- Sào 1: TỐI GIẢN & CÔNG SỞ -->
-            <a asp-controller="Products" asp-action="Index" class="urbn-rack-card">
-                <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1000&q=80"
-                     alt="Tối Giản & Công Sở" />
+            <!-- Sào 1: NOIR UNIT -->
+            <a href="#lookbook-noir" class="urbn-rack-card hnmt-lookbook-card" data-open-lookbook="noir" style="background:#e4e5e7">
+                <img src="/images/lookbook/cut/look-n1.png" alt="NOIR UNIT" style="object-fit:contain;object-position:center bottom;padding-top:18px" />
                 <div class="urbn-cat-pill-wrap">
-                    <span class="urbn-cat-pill">TỐI GIẢN & CÔNG SỞ</span>
+                    <span class="urbn-cat-pill">NOIR UNIT &bull; ĐEN TUYỀN ĐÔ THỊ</span>
                 </div>
             </a>
 
-            <!-- Sào 2: PHONG CÁCH ĐƯỜNG PHỐ -->
-            <a asp-controller="Products" asp-action="Index" class="urbn-rack-card">
-                <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=1000&q=80"
-                     alt="Phong Cách Đường Phố" />
+            <!-- Sào 2: SUN-WASHED -->
+            <a href="#lookbook-sunwash" class="urbn-rack-card hnmt-lookbook-card" data-open-lookbook="sunwash" style="background:#ebe5d8">
+                <img src="/images/lookbook/cut/look-e1.png" alt="SUN-WASHED" style="object-fit:contain;object-position:center bottom;padding-top:18px" />
                 <div class="urbn-cat-pill-wrap">
-                    <span class="urbn-cat-pill">STREETWEAR</span>
+                    <span class="urbn-cat-pill">SUN-WASHED &bull; DENIM BẠC MÀU &amp; SẮC CÁT</span>
                 </div>
             </a>
 
@@ -497,3 +495,7 @@
 
     </div>
 </section>
+
+<link rel="stylesheet" href="~/css/lookbook.css?v=cutout_v1" asp-append-version="true" />
+<div id="lookbookRoot" class="lb-wrapper"></div>
+<script src="~/js/lookbook.js?v=cutout_v1" asp-append-version="true"></script>

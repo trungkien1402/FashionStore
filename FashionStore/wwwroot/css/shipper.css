@@ -1,0 +1,407 @@
+﻿
+/* =====================================================
+   FASHIONSTORE - SHIPPER PORTAL
+   Shared styles: Index + Details
+===================================================== */
+
+:root {
+    --shp-primary: #2563eb;
+    --shp-primary-dark: #1d4ed8;
+    --shp-navy: #172554;
+    --shp-success: #059669;
+    --shp-danger: #dc2626;
+    --shp-warning: #d97706;
+    --shp-bg: #f4f7fb;
+    --shp-border: #e2e8f0;
+    --shp-muted: #64748b;
+}
+
+/* PAGE */
+.shp-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    min-height: 80vh;
+    color: #1e293b;
+    padding-bottom: 45px !important;
+}
+
+    /* HEADER */
+    .shp-page h2 {
+        color: var(--shp-navy) !important;
+        font-size: 26px;
+        letter-spacing: -0.5px;
+    }
+
+    .shp-page h5,
+    .shp-page h6 {
+        color: var(--shp-navy);
+    }
+
+    .shp-page a {
+        text-decoration: none;
+    }
+
+    /* CARDS */
+    .shp-page .card {
+        border: 1px solid var(--shp-border) !important;
+        border-radius: 16px !important;
+        background: #fff;
+        box-shadow: 0 4px 15px rgba(15, 23, 42, .04);
+    }
+
+        .shp-page .card:hover {
+            box-shadow: 0 7px 22px rgba(15, 23, 42, .07);
+        }
+
+    /* BUTTONS */
+    .shp-page .btn {
+        font-weight: 600;
+        transition: all .2s ease;
+    }
+
+        .shp-page .btn:hover:not(:disabled) {
+            transform: translateY(-1px);
+        }
+
+    .shp-page .btn-primary {
+        background: var(--shp-primary);
+        border-color: var(--shp-primary);
+    }
+
+        .shp-page .btn-primary:hover {
+            background: var(--shp-primary-dark);
+            border-color: var(--shp-primary-dark);
+        }
+
+    .shp-page .btn-success {
+        background: var(--shp-success);
+        border-color: var(--shp-success);
+    }
+
+    .shp-page .btn-danger {
+        background: var(--shp-danger);
+        border-color: var(--shp-danger);
+    }
+
+    .shp-page .btn-dark {
+        background: var(--shp-navy);
+        border-color: var(--shp-navy);
+    }
+
+        .shp-page .btn-dark:hover {
+            background: #263b70;
+        }
+
+    /* STATUS BADGES */
+    .shp-page .fs-badge-status {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        width: fit-content;
+        padding: 6px 12px;
+        border-radius: 30px;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+        border: 1px solid transparent;
+    }
+
+        .shp-page .fs-badge-status.pending {
+            color: #92400e;
+            background: #fef3c7;
+            border-color: #fde68a;
+        }
+
+        .shp-page .fs-badge-status.confirmed {
+            color: #1d4ed8;
+            background: #dbeafe;
+            border-color: #bfdbfe;
+        }
+
+        .shp-page .fs-badge-status.shipping {
+            color: #6d28d9;
+            background: #ede9fe;
+            border-color: #ddd6fe;
+        }
+
+        .shp-page .fs-badge-status.delivered {
+            color: #047857;
+            background: #d1fae5;
+            border-color: #a7f3d0;
+        }
+
+        .shp-page .fs-badge-status.failed {
+            color: #b91c1c;
+            background: #fee2e2;
+            border-color: #fecaca;
+        }
+
+        .shp-page .fs-badge-status.returned {
+            color: #475569;
+            background: #e2e8f0;
+            border-color: #cbd5e1;
+        }
+
+    /* ALERTS */
+    .shp-page .fs-pill-alert {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 13px 16px;
+        border-radius: 12px;
+        margin-bottom: 18px;
+        font-weight: 600;
+    }
+
+        .shp-page .fs-pill-alert.success {
+            color: #047857;
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+        }
+
+        .shp-page .fs-pill-alert.error {
+            color: #b91c1c;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+        }
+
+/* =====================================================
+   INDEX PAGE
+===================================================== */
+
+/* STATISTICS */
+.shp-index-page .shp-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 25px 0;
+}
+
+.shp-index-page .shp-stat-box {
+    background: #fff;
+    border: 1px solid var(--shp-border);
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 3px 12px rgba(15, 23, 42, .03);
+    transition: all .2s ease;
+}
+
+    .shp-index-page .shp-stat-box:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 7px 20px rgba(15, 23, 42, .07);
+    }
+
+.shp-index-page .shp-stat-num {
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.shp-index-page .shp-stat-label {
+    margin-top: 7px;
+    color: var(--shp-muted);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* FILTER TABS */
+.shp-index-page .shp-tab-strip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 5px 2px 14px;
+    margin-bottom: 15px;
+    scrollbar-width: thin;
+}
+
+.shp-index-page .shp-tab-item {
+    flex-shrink: 0;
+    padding: 9px 16px;
+    border: 1px solid var(--shp-border);
+    border-radius: 30px;
+    color: #475569;
+    background: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all .2s ease;
+}
+
+    .shp-index-page .shp-tab-item:hover {
+        color: var(--shp-primary);
+        border-color: var(--shp-primary);
+        background: #eff6ff;
+    }
+
+    .shp-index-page .shp-tab-item.active {
+        color: #fff;
+        background: var(--shp-primary);
+        border-color: var(--shp-primary);
+    }
+
+/* SHIPMENT CARD */
+.shp-index-page .shp-delivery-card {
+    background: #fff;
+    border: 1px solid var(--shp-border);
+    border-radius: 16px;
+    padding: 21px;
+    margin-bottom: 16px;
+    box-shadow: 0 3px 12px rgba(15, 23, 42, .035);
+    transition: all .2s ease;
+}
+
+    .shp-index-page .shp-delivery-card:hover {
+        border-color: #bfdbfe;
+        box-shadow: 0 8px 22px rgba(37, 99, 235, .08);
+        transform: translateY(-2px);
+    }
+
+    .shp-index-page .shp-delivery-card h4 {
+        color: var(--shp-navy) !important;
+    }
+
+/* TRACKING CODE */
+.shp-index-page .fs-code-badge {
+    display: inline-flex;
+    align-items: center;
+    background: #eff6ff;
+    border: 1px solid #dbeafe;
+    color: var(--shp-primary) !important;
+    padding: 5px 10px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+/* COD */
+.shp-page .shp-cod-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    margin: 15px 0;
+}
+
+    .shp-page .shp-cod-bar.due {
+        background: #fff7ed;
+        border: 1px solid #fed7aa;
+    }
+
+    .shp-page .shp-cod-bar.cleared {
+        background: #ecfdf5;
+        border: 1px solid #a7f3d0;
+    }
+
+/* EMPTY STATE */
+.shp-index-page .card.text-center {
+    padding: 35px 20px;
+}
+
+/* =====================================================
+   DETAILS PAGE
+===================================================== */
+
+/* COD HERO */
+.shp-details-page .bg-danger-subtle {
+    background: #fff1f2 !important;
+    border-color: #fecdd3 !important;
+}
+
+.shp-details-page .bg-success-subtle {
+    background: #ecfdf5 !important;
+    border-color: #a7f3d0 !important;
+}
+
+/* INFORMATION BLOCKS */
+.shp-details-page .bg-light {
+    background: #f8fafc !important;
+}
+
+.shp-details-page .border-bottom {
+    border-color: var(--shp-border) !important;
+}
+
+/* FAILURE FORM */
+.shp-details-page #failedForm {
+    border-color: #fecaca !important;
+    background: #fffafa !important;
+}
+
+.shp-details-page textarea.form-control {
+    resize: vertical;
+    border-radius: 10px;
+    border-color: #cbd5e1;
+}
+
+    .shp-details-page textarea.form-control:focus {
+        border-color: #60a5fa;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, .12);
+    }
+
+/* TIMELINE */
+.shp-details-page .small .border-bottom:last-child {
+    border-bottom: none !important;
+    margin-bottom: 0 !important;
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 768px) {
+    .shp-page {
+        padding: 18px 12px !important;
+    }
+
+    .shp-index-page .shp-stat-grid {
+        gap: 10px;
+    }
+
+    .shp-index-page .shp-stat-box {
+        padding: 15px 8px;
+    }
+
+    .shp-index-page .shp-stat-num {
+        font-size: 24px;
+    }
+
+    .shp-index-page .shp-stat-label {
+        font-size: 11px;
+    }
+
+    .shp-index-page .shp-delivery-card {
+        padding: 16px;
+    }
+}
+
+@media (max-width: 576px) {
+    .shp-page h2 {
+        font-size: 21px;
+    }
+
+    .shp-index-page .shp-stat-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .shp-index-page .shp-tab-item {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+
+    .shp-page .shp-cod-bar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .shp-details-page .card {
+        padding: 17px !important;
+    }
+
+    .shp-page .fs-badge-status {
+        font-size: 11px;
+    }
+}

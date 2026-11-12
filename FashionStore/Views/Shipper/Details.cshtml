@@ -27,7 +27,7 @@
     };
 }
 
-<div class="container-fluid px-3 py-4" style="max-width: 1000px; margin: 0 auto;">
+<div class="container-fluid px-3 py-4 shp-page shp-details-page">
     
     <!-- TOP BAR -->
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
@@ -144,6 +144,49 @@
 
         <!-- RIGHT COLUMN: ACTION CONTROLS & TIMELINE -->
         <div class="col-lg-5">
+            
+            @if (Model.Status == ShipmentStatus.InTransit)
+            {
+                <div class="card border rounded-4 p-4 mb-4 bg-white shadow-sm"
+                     id="gpsTracking"
+                     data-shipment-id="@Model.Id">
+
+                    <h5 class="fw-bold mb-3">
+                        <i class="bi bi-geo-alt-fill text-danger me-2"></i>
+                        Chia sẻ vị trí GPS
+                    </h5>
+
+                    <div class="alert alert-info small" id="gpsStatus">
+                        Bạn chưa bật chia sẻ vị trí.
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="button"
+                                class="btn btn-success py-2 fw-bold"
+                                id="startGpsButton">
+                            <i class="bi bi-geo-alt me-1"></i>
+                            BẮT ĐẦU CHIA SẺ GPS
+                        </button>
+
+                        <button type="button"
+                                class="btn btn-outline-danger py-2 fw-bold"
+                                id="stopGpsButton"
+                                disabled>
+                            <i class="bi bi-geo-alt-slash me-1"></i>
+                            DỪNG CHIA SẺ GPS
+                        </button>
+                    </div>
+
+                    <div class="mt-3 small text-muted" id="gpsCoordinates">
+                        Chưa có tọa độ GPS.
+                    </div>
+
+                    <form id="gpsForm">
+                        @Html.AntiForgeryToken()
+                    </form>
+                </div>
+            }
+
             <div class="card border rounded-4 p-4 mb-4 bg-white shadow-sm">
                 <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
                     <i class="bi bi-lightning-charge-fill text-warning"></i> Thao tác Giao Hàng
@@ -298,3 +341,166 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const gpsContainer = document.getElementById("gpsTracking");
+
+        if (!gpsContainer) return;
+
+        const shipmentId = gpsContainer.dataset.shipmentId;
+
+        const startButton = document.getElementById("startGpsButton");
+        const stopButton = document.getElementById("stopGpsButton");
+        const statusElement = document.getElementById("gpsStatus");
+        const coordinatesElement = document.getElementById("gpsCoordinates");
+
+        const tokenElement = document.querySelector(
+            '#gpsForm input[name="__RequestVerificationToken"]'
+        );
+
+        if (!startButton || !stopButton || !tokenElement) return;
+
+        const token = tokenElement.value;
+
+        let watchId = null;
+        let lastSentAt = 0;
+        let isSending = false;
+
+        const updateStatus = (message, type) => {
+            statusElement.textContent = message;
+            statusElement.className = `alert alert-${type} small`;
+        };
+
+        const stopTracking = () => {
+            if (watchId !== null) {
+                navigator.geolocation.clearWatch(watchId);
+                watchId = null;
+            }
+
+            startButton.disabled = false;
+            stopButton.disabled = true;
+            updateStatus("Đã dừng chia sẻ vị trí.", "secondary");
+        };
+
+        const sendLocation = async (position) => {
+            const now = Date.now();
+
+            // Giới hạn gửi tối đa một lần mỗi 5 giây.
+            if (now - lastSentAt < 5000 || isSending) return;
+
+            isSending = true;
+
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            const accuracy = position.coords.accuracy;
+
+            try {
+                const body = new URLSearchParams({
+                    latitude: String(latitude),
+                    longitude: String(longitude),
+                    accuracy: String(accuracy),
+                    __RequestVerificationToken: token
+                });
+
+                const response = await fetch(
+                    `/Shipper/UpdateLocation?id=${encodeURIComponent(shipmentId)}`,
+                    {
+                        method: "POST",
+                        credentials: "same-origin",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                            "RequestVerificationToken": token
+                        },
+                        body: body.toString()
+                    }
+                );
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    updateStatus(
+                        result.message || "Không thể cập nhật vị trí.",
+                        "danger"
+                    );
+
+                    if (response.status === 404 ||
+                        response.status === 401 ||
+                        response.status === 403) {
+                        stopTracking();
+                    }
+
+                    return;
+                }
+
+                lastSentAt = now;
+
+                coordinatesElement.textContent =
+                    `Vĩ độ: ${latitude.toFixed(6)} | ` +
+                    `Kinh độ: ${longitude.toFixed(6)} | ` +
+                    `Sai số: ${accuracy.toFixed(1)} m`;
+
+                updateStatus(
+                    "Đang chia sẻ vị trí GPS thành công.",
+                    "success"
+                );
+            }
+            catch (error) {
+                console.error("GPS error:", error);
+                updateStatus("Không thể kết nối máy chủ.", "danger");
+            }
+            finally {
+                isSending = false;
+            }
+        };
+
+        const handleGpsError = (error) => {
+            let message = "Không thể lấy vị trí GPS.";
+
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    message = "Bạn chưa cấp quyền truy cập vị trí.";
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    message = "Không xác định được vị trí hiện tại.";
+                    break;
+                case error.TIMEOUT:
+                    message = "Hết thời gian chờ GPS.";
+                    break;
+            }
+
+            updateStatus(message, "danger");
+            stopTracking();
+        };
+
+        startButton.addEventListener("click", () => {
+            if (!navigator.geolocation) {
+                updateStatus(
+                    "Trình duyệt không hỗ trợ định vị GPS.",
+                    "danger"
+                );
+                return;
+            }
+
+            startButton.disabled = true;
+            stopButton.disabled = false;
+
+            updateStatus("Đang lấy vị trí GPS...", "info");
+
+            watchId = navigator.geolocation.watchPosition(
+                sendLocation,
+                handleGpsError,
+                {
+                    enableHighAccuracy: true,
+                    maximumAge: 5000,
+                    timeout: 15000
+                }
+            );
+        });
+
+        stopButton.addEventListener("click", stopTracking);
+
+        // Tắt GPS khi shipper rời trang.
+        window.addEventListener("pagehide", stopTracking);
+    });
+</script>

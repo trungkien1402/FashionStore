@@ -982,3 +982,39 @@
         transform: translateY(0) !important;
     }
 }
+
+/* Nút tìm kiếm trong suốt tương tự giỏ hàng */
+.sv-search-btn {
+    background: transparent !important;
+    border: 0 !important;
+    outline: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    color: #ffffff !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    height: 38px !important;
+    padding: 0 4px !important;
+    margin: 0 !important;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    position: relative;
+    z-index: 10;
+}
+
+.sv-search-btn svg {
+    width: 19px;
+    height: 20px;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    display: block;
+}
+
+.sv-search-btn:hover {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    opacity: 0.75;
+}
