@@ -1,8 +1,8 @@
 /**
  * ==============================================================================
- * HNMTSHOP - BỘ LỌC DÀNH RIÊNG CHO SÀO ÁO (VERTICAL LEFT SIDEBAR // APPLE GLASS)
- * Thiết kế chuẩn iOS Liquid Frosted Glass dọc nguyên mép trái màn hình
- * UX mượt mà: vừa lọc vừa nhìn thấy các mẫu áo trên sào đồ bên phải
+ * HNMTSHOP - BỘ LỌC DÀNH RIÊNG CHO SÀO ÁO (RIGHT VERTICAL TRANSLUCENT SIDEBAR)
+ * Select-from-list phong cách cao cấp, thanh kéo khoảng giá Range Slider
+ * Nền trong suốt mờ đục chuẩn Sneaker Vault Capsule
  * ==============================================================================
  */
 (function () {
@@ -30,8 +30,8 @@
 
     // State bộ lọc của riêng Sào Áo
     let selectedStyle = 'all';
-    let selectedPrice = 'all';
     let selectedColor = 'all';
+    let maxPriceValue = 1500000; // Giá tối đa mặc định (1.500.000 ₫)
     let searchKeyword = '';
     let filteredShirts = [];
 
@@ -43,18 +43,13 @@
         return [];
     }
 
-    // HTML Template: Vertical Left Sidebar (Apple iPhone Frosted Glass)
+    // HTML Template: Right Sidebar mờ đục trong suốt với Select-from-list & Range Slider
     const SIDEBAR_HTML = `
         <div class="fashion-filter-backdrop" id="shirtFilterBackdrop"></div>
         <aside class="fashion-filter-sidebar" role="dialog" aria-modal="true" aria-label="Bộ lọc tìm kiếm sào áo">
-            <!-- Top Bar Header -->
+            <!-- Header Tinh Giản (Đã bỏ dòng HNMTSHOP // BỘ SƯU TẬP ÁO) -->
             <div class="fashion-sidebar-header">
-                <div class="header-text-group">
-                    <span class="fashion-filter-eyebrow">
-                        <span class="ios-status-indicator"></span> HNMTSHOP // BỘ SƯU TẬP ÁO
-                    </span>
-                    <h2 class="fashion-filter-title">Bộ Lọc Sào Áo</h2>
-                </div>
+                <h2 class="fashion-filter-title">Bộ Lọc Sào Áo</h2>
                 <button type="button" class="fashion-filter-close" id="shirtFilterCloseBtn" aria-label="Đóng bộ lọc" title="Đóng (ESC)">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -63,7 +58,7 @@
                 </button>
             </div>
 
-            <!-- Apple Spotlight Search Input -->
+            <!-- Thanh tìm kiếm theo tên áo -->
             <div class="fashion-search-bar">
                 <svg class="search-bar-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <circle cx="11" cy="11" r="7"/>
@@ -75,97 +70,106 @@
                 </button>
             </div>
 
-            <!-- Scrollable Content Area -->
+            <!-- Vùng nội dung các tiêu chí lọc -->
             <div class="fashion-sidebar-scroll">
-                <!-- Widget 1: Kiểu Dáng Áo -->
-                <div class="fashion-ios-card">
-                    <div class="section-label">
-                        <span class="label-title">Kiểu Dáng Áo</span>
-                        <span class="label-hint">Phom dáng thiết kế</span>
-                    </div>
-                    <div class="fashion-pills-row" id="shirtStylePills">
-                        <button type="button" class="fashion-pill is-active" data-val="all">Tất cả kiểu áo</button>
-                        <button type="button" class="fashion-pill" data-val="tee">Áo Thun (Tee)</button>
-                        <button type="button" class="fashion-pill" data-val="shirt">Sơ Mi (Shirt)</button>
-                        <button type="button" class="fashion-pill" data-val="jacket">Áo Khoác (Jacket)</button>
-                        <button type="button" class="fashion-pill" data-val="hoodie">Áo Nỉ / Hoodie</button>
-                    </div>
-                </div>
-
-                <!-- Widget 2: Khoảng Giá -->
-                <div class="fashion-ios-card">
-                    <div class="section-label">
-                        <span class="label-title">Khoảng Giá</span>
-                        <span class="label-hint">Ngân sách mong muốn</span>
-                    </div>
-                    <div class="fashion-pills-row" id="shirtPricePills">
-                        <button type="button" class="fashion-pill is-active" data-val="all">Tất cả giá</button>
-                        <button type="button" class="fashion-pill" data-val="under500">&lt; 500k</button>
-                        <button type="button" class="fashion-pill" data-val="500to700">500k – 700k</button>
-                        <button type="button" class="fashion-pill" data-val="over700">&gt; 700k</button>
-                    </div>
-                </div>
-
-                <!-- Widget 3: Màu Sắc -->
-                <div class="fashion-ios-card">
-                    <div class="section-label">
-                        <span class="label-title">Gam Màu Sắc</span>
-                        <span class="label-hint">Tông màu chủ đạo</span>
-                    </div>
-                    <div class="fashion-pills-row" id="shirtColorPills">
-                        <button type="button" class="fashion-pill is-active" data-val="all">
-                            <span>Tất cả màu</span>
-                        </button>
-                        <button type="button" class="fashion-pill" data-val="black">
-                            <span class="color-swatch" style="background: #111215;"></span>
-                            <span>Đen</span>
-                        </button>
-                        <button type="button" class="fashion-pill" data-val="white">
-                            <span class="color-swatch" style="background: #f4efe6; border: 1px solid #d5d5ce;"></span>
-                            <span>Trắng / Be</span>
-                        </button>
-                        <button type="button" class="fashion-pill" data-val="blue">
-                            <span class="color-swatch" style="background: #2563eb;"></span>
-                            <span>Xanh Navy</span>
-                        </button>
-                        <button type="button" class="fashion-pill" data-val="gray">
-                            <span class="color-swatch" style="background: #9ca3af;"></span>
-                            <span>Xám Wash</span>
-                        </button>
-                        <button type="button" class="fashion-pill" data-val="green">
-                            <span class="color-swatch" style="background: #4ade80;"></span>
-                            <span>Xanh Rêu</span>
-                        </button>
+                <!-- 1. Kiểu Dáng Áo (Select-from-list đa dạng đầy đủ chủng loại) -->
+                <div class="fashion-select-card">
+                    <label class="fashion-card-label" for="shirtStyleSelect">Kiểu Dáng Áo</label>
+                    <div class="fashion-select-wrapper">
+                        <select id="shirtStyleSelect" class="fashion-select-input">
+                            <option value="all">Tất cả kiểu dáng áo</option>
+                            <optgroup label="Áo Thun & Polo">
+                                <option value="tee">Áo Thun Cổ Tròn (Crewneck Tee)</option>
+                                <option value="boxy">Áo Thun Oversized / Boxy Vai Trễ</option>
+                                <option value="polo">Áo Polo Dệt Kim (Knit Polo)</option>
+                                <option value="tank">Áo Ba Lỗ (Tank Top / Sleeveless)</option>
+                            </optgroup>
+                            <optgroup label="Áo Sơ Mi">
+                                <option value="shirt">Áo Sơ Mi Camp-Collar (Cổ Danton)</option>
+                                <option value="oxford">Áo Sơ Mi Oxford / Linen Cổ Điển</option>
+                                <option value="utility">Áo Sơ Mi Utility Túi Hộp (Safari)</option>
+                                <option value="flannel">Áo Sơ Mi Flannel Kẻ Caro</option>
+                            </optgroup>
+                            <optgroup label="Áo Khoác (Jackets)">
+                                <option value="jacket">Áo Khoác Bóng Chày (Varsity Jacket)</option>
+                                <option value="leather">Áo Khoác Da Moto Biker (Motorsport)</option>
+                                <option value="bomber">Áo Khoác Bomber MA-1</option>
+                                <option value="windbreaker">Áo Khoác Gió (Windbreaker)</option>
+                                <option value="blazer">Áo Blazer May Đo Casual</option>
+                            </optgroup>
+                            <optgroup label="Áo Nỉ & Hoodie">
+                                <option value="hoodie">Áo Hoodie Mũ Trùm Chân Cua</option>
+                                <option value="crewneck">Áo Nỉ Chui Đầu (Sweatshirt / Fleece)</option>
+                                <option value="zip-hoodie">Áo Zip Hoodie Khóa Kéo</option>
+                                <option value="cardigan">Áo Cardigan Dệt Len Nổi</option>
+                            </optgroup>
+                        </select>
+                        <div class="select-chevron-icon" aria-hidden="true">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Widget 4: Lookbook Stream Xem Trước -->
-                <div class="fashion-ios-card preview-card">
-                    <div class="preview-header">
-                        <span>Mẫu áo phù hợp (<strong id="shirtPreviewCount">0</strong>):</span>
+                <!-- 2. Gam Màu Sắc (Select-from-list phong phú bảng màu thời trang) -->
+                <div class="fashion-select-card">
+                    <label class="fashion-card-label" for="shirtColorSelect">Gam Màu Sắc</label>
+                    <div class="fashion-select-wrapper">
+                        <select id="shirtColorSelect" class="fashion-select-input">
+                            <option value="all">Tất cả màu sắc</option>
+                            <option value="black">⚫ Đen (Black / Charcoal / Onyx)</option>
+                            <option value="white">⚪ Trắng / Be / Kem (White / Cream / Ivory)</option>
+                            <option value="blue">🔵 Xanh Indigo / Denim / Cobalt</option>
+                            <option value="navy">🔷 Xanh Navy / Chàm Sẫm</option>
+                            <option value="gray">🔘 Xám Khói / Bạc (Washed Grey / Silver)</option>
+                            <option value="green">🟢 Xanh Rêu / Olive / Forest Green</option>
+                            <option value="sand">🟤 Nâu Cát / Be Khaki (Sand / Camel / Tan)</option>
+                            <option value="red">🔴 Đỏ Rượu / Burgundy / Rust Terracotta</option>
+                            <option value="yellow">🟡 Vàng Nhạt / Mustard (Acre)</option>
+                            <option value="orange">🟠 Cam Đất / Vintage Orange</option>
+                            <option value="purple">🟣 Tím Pastel / Lavender / Lilac</option>
+                        </select>
+                        <div class="select-chevron-icon" aria-hidden="true">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </div>
                     </div>
-                    <div class="fashion-preview-strip" id="shirtPreviewStrip"></div>
+                </div>
+
+                <!-- 3. Khoảng Giá: Thanh Ngang Kéo Khoảng Giá (Interactive Range Slider) -->
+                <div class="fashion-select-card price-range-card">
+                    <div class="price-header-row">
+                        <label class="fashion-card-label" for="shirtPriceRange">Mức Giá Tối Đa</label>
+                        <span class="price-badge-display" id="shirtPriceDisplay">Tất cả mức giá</span>
+                    </div>
+                    <div class="range-slider-container">
+                        <input type="range" id="shirtPriceRange" min="300000" max="1500000" step="50000" value="1500000" class="fashion-range-input">
+                        <div class="range-milestones">
+                            <span>300k</span>
+                            <span>600k</span>
+                            <span>900k</span>
+                            <span>1.2M</span>
+                            <span>Tối đa</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Sticky Bottom Bar -->
+            <!-- Footer Tinh Gọn (Đã xóa dòng chữ dư thừa 'Enter để đẩy ra sào đồ') -->
             <div class="fashion-sidebar-footer">
-                <div class="footer-summary">
-                    <span class="summary-count">Khớp <strong id="shirtMatchCount">15</strong> mẫu áo</span>
-                    <span class="summary-sub">Enter để đẩy ra sào đồ</span>
+                <div class="footer-count-box">
+                    <span class="count-text">Khớp <strong id="shirtMatchCount">15</strong> mẫu áo</span>
                 </div>
-                <div class="footer-buttons">
-                    <button type="button" id="shirtResetFilterBtn" class="fashion-reset-btn" title="Đặt lại bộ lọc về mặc định">
+                <div class="footer-buttons-group">
+                    <button type="button" id="shirtResetFilterBtn" class="sv-reset-pill-btn" title="Đặt lại bộ lọc về mặc định">
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
                             <path d="M3 3v5h5"/>
                         </svg>
                         <span>Đặt lại</span>
                     </button>
-                    <button type="button" id="shirtApplyBtn" class="fashion-apply-cta" title="Đẩy các mẫu áo phù hợp ra trên sào đồ (Enter)">
+                    <button type="button" id="shirtApplyBtn" class="sv-apply-capsule-btn" title="Đẩy các mẫu áo phù hợp ra trên sào đồ (Enter)">
                         <span>XEM TRÊN SÀO</span>
-                        <span class="badge" id="shirtApplyCount">15 ÁO</span>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <span class="capsule-badge" id="shirtApplyCount">15 ÁO</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="9 18 15 12 9 6"></polyline>
                         </svg>
                     </button>
@@ -195,11 +199,26 @@
         const closeBtn = document.getElementById('shirtFilterCloseBtn');
         const searchInput = document.getElementById('shirtSearchInput');
         const clearBtn = document.getElementById('shirtClearSearchBtn');
+        const styleSelect = document.getElementById('shirtStyleSelect');
+        const colorSelect = document.getElementById('shirtColorSelect');
+        const priceRange = document.getElementById('shirtPriceRange');
+        const priceDisplay = document.getElementById('shirtPriceDisplay');
         const applyBtn = document.getElementById('shirtApplyBtn');
         const resetBtn = document.getElementById('shirtResetFilterBtn');
-        const previewStrip = document.getElementById('shirtPreviewStrip');
 
         if (!modal || !searchInput) return;
+
+        // Cập nhật nhãn hiển thị giá khi kéo thanh trượt
+        function updatePriceDisplay() {
+            if (!priceRange || !priceDisplay) return;
+            const val = parseInt(priceRange.value, 10);
+            maxPriceValue = val;
+            if (val >= 1500000) {
+                priceDisplay.textContent = 'Tất cả mức giá';
+            } else {
+                priceDisplay.textContent = `Dưới ${(val).toLocaleString('vi-VN')} ₫`;
+            }
+        }
 
         // Lọc danh sách áo theo các tiêu chí đã chọn
         function performFilter() {
@@ -207,7 +226,7 @@
             const normalizedKeyword = removeVietnameseTones(searchKeyword);
 
             filteredShirts = allShirts.filter(item => {
-                // 1. Lọc theo kiểu dáng áo
+                // 1. Lọc theo kiểu dáng áo (Select dropdown)
                 if (selectedStyle !== 'all') {
                     if (item.style !== selectedStyle) {
                         const itemType = removeVietnameseTones(item.type || '');
@@ -219,12 +238,13 @@
                     }
                 }
 
-                // 2. Lọc theo khoảng giá
-                if (selectedPrice === 'under500' && item.price >= 50) return false;
-                if (selectedPrice === '500to700' && (item.price < 50 || item.price > 70)) return false;
-                if (selectedPrice === 'over700' && item.price <= 70) return false;
+                // 2. Lọc theo giá thanh trượt kéo (Range slider)
+                const itemPriceVND = item.price * 10000;
+                if (maxPriceValue < 1500000 && itemPriceVND > maxPriceValue) {
+                    return false;
+                }
 
-                // 3. Lọc theo màu sắc
+                // 3. Lọc theo màu sắc (Select dropdown)
                 if (selectedColor !== 'all') {
                     if (item.colorGroup !== selectedColor) {
                         const colorNames = removeVietnameseTones((item.colors || []).map(c => c[0]).join(' '));
@@ -248,58 +268,12 @@
                 return true;
             });
 
-            // Cập nhật số lượng đếm
+            // Cập nhật số lượng đếm trên footer
             const matchCountEl = document.getElementById('shirtMatchCount');
             const applyCountEl = document.getElementById('shirtApplyCount');
-            const previewCountEl = document.getElementById('shirtPreviewCount');
 
             if (matchCountEl) matchCountEl.textContent = filteredShirts.length;
             if (applyCountEl) applyCountEl.textContent = `${filteredShirts.length} ÁO`;
-            if (previewCountEl) previewCountEl.textContent = filteredShirts.length;
-
-            renderPreviewStrip();
-        }
-
-        // Render dải lookbook xem trước các mẫu áo
-        function renderPreviewStrip() {
-            if (!previewStrip) return;
-            previewStrip.innerHTML = '';
-
-            if (filteredShirts.length === 0) {
-                previewStrip.innerHTML = `
-                    <div class="preview-empty-state">
-                        <span>Không có mẫu áo nào khớp tiêu chí. Thử chọn "Tất cả" hoặc bấm Đặt lại.</span>
-                    </div>
-                `;
-                return;
-            }
-
-            filteredShirts.forEach((p) => {
-                const card = document.createElement('div');
-                card.className = 'shirt-mini-card';
-                card.title = `${p.name} - ${formatPrice(p.price)}`;
-                const imgSrc = p.frontImg || `/clothing-rail/assets/${p.slug}-front.webp`;
-
-                card.innerHTML = `
-                    <div class="mini-thumb">
-                        <img src="${imgSrc}" alt="${p.name}" loading="lazy">
-                    </div>
-                    <div class="mini-info">
-                        <span class="mini-name">${p.name}</span>
-                        <span class="mini-price">${formatPrice(p.price)}</span>
-                    </div>
-                `;
-
-                // Bấm vào 1 áo trong xem trước: Đóng sidebar và mở chi tiết áo đó trên sào ngay
-                card.addEventListener('click', () => {
-                    closeModal();
-                    if (window.ClothingRail && typeof window.ClothingRail.selectProduct === 'function') {
-                        window.ClothingRail.selectProduct('ao', p.slug);
-                    }
-                });
-
-                previewStrip.appendChild(card);
-            });
         }
 
         // Tạo nhãn tóm tắt bộ lọc bằng tiếng Việt
@@ -308,17 +282,16 @@
             if (searchKeyword.trim()) {
                 parts.push(`"${searchKeyword.trim()}"`);
             }
-            if (selectedStyle !== 'all') {
-                const styleBtn = document.querySelector(`#shirtStylePills .fashion-pill[data-val="${selectedStyle}"]`);
-                if (styleBtn) parts.push(styleBtn.textContent.trim());
+            if (selectedStyle !== 'all' && styleSelect) {
+                const opt = styleSelect.options[styleSelect.selectedIndex];
+                if (opt) parts.push(opt.text.split('(')[0].trim());
             }
-            if (selectedPrice !== 'all') {
-                const priceBtn = document.querySelector(`#shirtPricePills .fashion-pill[data-val="${selectedPrice}"]`);
-                if (priceBtn) parts.push(priceBtn.textContent.trim());
+            if (maxPriceValue < 1500000) {
+                parts.push(`≤ ${maxPriceValue.toLocaleString('vi-VN')} ₫`);
             }
-            if (selectedColor !== 'all') {
-                const colorBtn = document.querySelector(`#shirtColorPills .fashion-pill[data-val="${selectedColor}"]`);
-                if (colorBtn) parts.push(colorBtn.textContent.trim());
+            if (selectedColor !== 'all' && colorSelect) {
+                const opt = colorSelect.options[colorSelect.selectedIndex];
+                if (opt) parts.push(opt.text.replace(/^[^\s]+\s*/, '').split('(')[0].trim());
             }
             return parts.join(' • ') || 'Tất cả áo';
         }
@@ -327,13 +300,12 @@
         function applyFilterToRail() {
             closeModal();
 
-            // Đảm bảo sào áo đang được mở
             if (typeof window.open3DClothesRack === 'function') {
                 window.open3DClothesRack('ao');
             }
 
             const label = buildSummaryLabel();
-            const isFullCatalog = (selectedStyle === 'all' && selectedPrice === 'all' && selectedColor === 'all' && !searchKeyword.trim());
+            const isFullCatalog = (selectedStyle === 'all' && maxPriceValue >= 1500000 && selectedColor === 'all' && !searchKeyword.trim());
 
             if (window.ClothingRail) {
                 if (isFullCatalog) {
@@ -345,13 +317,13 @@
         }
 
         function openModal() {
-            // Đảm bảo đóng các spotlight khác nếu có
             const oldSpotlight = document.getElementById('hnmtSpotlightSearchModal');
             if (oldSpotlight) oldSpotlight.classList.remove('is-open');
 
             modal.classList.add('is-open');
             modal.setAttribute('aria-hidden', 'false');
 
+            updatePriceDisplay();
             performFilter();
             setTimeout(() => {
                 if (searchInput) searchInput.focus();
@@ -365,62 +337,49 @@
 
         function resetAll() {
             selectedStyle = 'all';
-            selectedPrice = 'all';
             selectedColor = 'all';
+            maxPriceValue = 1500000;
             searchKeyword = '';
+
             if (searchInput) searchInput.value = '';
             if (clearBtn) clearBtn.style.display = 'none';
+            if (styleSelect) styleSelect.value = 'all';
+            if (colorSelect) colorSelect.value = 'all';
+            if (priceRange) priceRange.value = 1500000;
 
-            // Cập nhật trạng thái active của các nút pills
-            document.querySelectorAll('#shirtStylePills .fashion-pill').forEach(b => {
-                b.classList.toggle('is-active', b.dataset.val === 'all');
-            });
-            document.querySelectorAll('#shirtPricePills .fashion-pill').forEach(b => {
-                b.classList.toggle('is-active', b.dataset.val === 'all');
-            });
-            document.querySelectorAll('#shirtColorPills .fashion-pill').forEach(b => {
-                b.classList.toggle('is-active', b.dataset.val === 'all');
-            });
-
+            updatePriceDisplay();
             performFilter();
 
-            // Nếu sào đồ đang áp dụng bộ lọc thì hoàn nguyên về tất cả áo
             if (window.ClothingRail && typeof window.ClothingRail.resetFilter === 'function') {
                 window.ClothingRail.resetFilter();
             }
         }
 
-        // Sự kiện click cho các Pills Kiểu Dáng
-        document.querySelectorAll('#shirtStylePills .fashion-pill').forEach(btn => {
-            btn.addEventListener('click', () => {
-                selectedStyle = btn.dataset.val || 'all';
-                document.querySelectorAll('#shirtStylePills .fashion-pill').forEach(b => b.classList.remove('is-active'));
-                btn.classList.add('is-active');
+        // Sự kiện thay đổi Kiểu Dáng
+        if (styleSelect) {
+            styleSelect.addEventListener('change', () => {
+                selectedStyle = styleSelect.value;
                 performFilter();
             });
-        });
+        }
 
-        // Sự kiện click cho các Pills Khoảng Giá
-        document.querySelectorAll('#shirtPricePills .fashion-pill').forEach(btn => {
-            btn.addEventListener('click', () => {
-                selectedPrice = btn.dataset.val || 'all';
-                document.querySelectorAll('#shirtPricePills .fashion-pill').forEach(b => b.classList.remove('is-active'));
-                btn.classList.add('is-active');
+        // Sự kiện thay đổi Màu Sắc
+        if (colorSelect) {
+            colorSelect.addEventListener('change', () => {
+                selectedColor = colorSelect.value;
                 performFilter();
             });
-        });
+        }
 
-        // Sự kiện click cho các Pills Màu Sắc
-        document.querySelectorAll('#shirtColorPills .fashion-pill').forEach(btn => {
-            btn.addEventListener('click', () => {
-                selectedColor = btn.dataset.val || 'all';
-                document.querySelectorAll('#shirtColorPills .fashion-pill').forEach(b => b.classList.remove('is-active'));
-                btn.classList.add('is-active');
+        // Sự kiện kéo thanh trượt khoảng giá
+        if (priceRange) {
+            priceRange.addEventListener('input', () => {
+                updatePriceDisplay();
                 performFilter();
             });
-        });
+        }
 
-        // Sự kiện nhập ô tìm kiếm
+        // Sự kiện ô tìm kiếm
         searchInput.addEventListener('input', () => {
             searchKeyword = searchInput.value;
             if (clearBtn) clearBtn.style.display = searchKeyword ? 'inline-flex' : 'none';
@@ -463,14 +422,12 @@
             backdrop.addEventListener('click', closeModal);
         }
 
-        // Phím tắt bàn phím
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && modal.classList.contains('is-open')) {
                 closeModal();
             }
         });
 
-        // Public API cho Sào Áo
         window.HNMTShirtFilter = {
             open: openModal,
             close: closeModal,

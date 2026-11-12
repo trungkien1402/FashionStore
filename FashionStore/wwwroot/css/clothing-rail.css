@@ -1989,7 +1989,7 @@ body.show-detail .rail-ticker {
     inset: 0;
     z-index: 99999;
     display: flex;
-    justify-content: flex-end; /* Đặt hoàn toàn ở bên phải */
+    justify-content: flex-end; /* Nằm hoàn toàn ở bên phải */
     pointer-events: none;
     visibility: hidden;
     transition: visibility 0.4s;
@@ -2000,7 +2000,7 @@ body.show-detail .rail-ticker {
     visibility: visible;
 }
 
-/* Subtle Ambient Tint Backdrop (Người dùng vẫn thấy sào đồ và toàn bộ showroom bên trái) */
+/* Subtle Ambient Tint Backdrop */
 .fashion-filter-backdrop {
     position: fixed;
     inset: 0;
@@ -2021,13 +2021,12 @@ body.show-detail .rail-ticker {
     position: fixed;
     top: 0;
     bottom: 0;
-    right: 0; /* Nằm nguyên bên phải */
+    right: 0;
     left: auto;
     height: 100vh;
     height: 100dvh;
     width: 440px;
     max-width: 90vw;
-    /* Nền trong suốt mờ đục chuẩn xác theo capsule Futurist Sneaker Vault */
     background: rgba(26, 28, 34, 0.68);
     backdrop-filter: blur(28px) saturate(180%);
     -webkit-backdrop-filter: blur(28px) saturate(180%);
@@ -2040,7 +2039,7 @@ body.show-detail .rail-ticker {
     box-shadow: -25px 0 80px rgba(0, 0, 0, 0.45), 
                 inset 1px 0 0 rgba(255, 255, 255, 0.12), 
                 inset 0 1px 1px rgba(255, 255, 255, 0.22);
-    transform: translateX(102%); /* Trượt từ bên phải ra */
+    transform: translateX(102%);
     transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     flex-direction: column;
@@ -2055,39 +2054,13 @@ body.show-detail .rail-ticker {
     transform: translateX(0);
 }
 
-/* Sidebar Top Bar */
+/* Sidebar Top Bar Tinh Giản */
 .fashion-sidebar-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 24px 24px 14px 28px;
+    padding: 26px 24px 16px 28px;
     flex-shrink: 0;
-}
-
-.header-text-group {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.fashion-filter-eyebrow {
-    font-size: 10.5px;
-    font-weight: 800;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.65);
-    display: flex;
-    align-items: center;
-    gap: 7px;
-}
-
-.ios-status-indicator {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: #38bdf8;
-    box-shadow: 0 0 10px #38bdf8;
-    display: inline-block;
 }
 
 .fashion-filter-title {
@@ -2196,7 +2169,7 @@ body.show-detail .rail-ticker {
     padding: 0 24px 20px;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 16px;
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
 }
@@ -2210,8 +2183,8 @@ body.show-detail .rail-ticker {
     border-radius: 4px;
 }
 
-/* Các Widget Card mờ đục chuẩn Sneaker Vault */
-.fashion-ios-card {
+/* Các Card Select-from-list & Range Slider */
+.fashion-select-card {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.14);
     border-radius: 20px;
@@ -2225,237 +2198,189 @@ body.show-detail .rail-ticker {
     transition: border-color 0.2s ease;
 }
 
-.fashion-ios-card:hover {
+.fashion-select-card:hover {
     border-color: rgba(255, 255, 255, 0.25);
 }
 
-.fashion-ios-card .section-label {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-}
-
-.section-label .label-title {
+.fashion-card-label {
     font-size: 11.5px;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: rgba(255, 255, 255, 0.95);
+    display: block;
 }
 
-.section-label .label-hint {
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.45);
+/* Select-from-list Custom Dropdown */
+.fashion-select-wrapper {
+    position: relative;
+    width: 100%;
 }
 
-.fashion-pills-row {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    flex-wrap: wrap;
-}
-
-/* Nút Pill hình viên thuốc mờ đục chuẩn */
-.fashion-pill {
-    height: 35px;
-    padding: 0 14px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    color: rgba(255, 255, 255, 0.85);
-    font-size: 12.5px;
+.fashion-select-input {
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 14px;
+    color: #ffffff;
+    font-size: 14px;
     font-weight: 500;
     font-family: inherit;
+    padding: 12px 42px 12px 16px;
+    outline: none;
     cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    white-space: nowrap;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    user-select: none;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
 }
 
-.fashion-pill:hover {
-    background: rgba(255, 255, 255, 0.14);
+.fashion-select-input:hover,
+.fashion-select-input:focus {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.38);
+    box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+}
+
+.fashion-select-input option,
+.fashion-select-input optgroup {
+    background: #1c1e24;
     color: #ffffff;
-    border-color: rgba(255, 255, 255, 0.3);
-    transform: translateY(-1px);
+    font-size: 14px;
+    padding: 6px 10px;
 }
 
-.fashion-pill.is-active {
-    background: rgba(255, 255, 255, 0.22);
-    border-color: rgba(255, 255, 255, 0.48);
-    color: #ffffff;
-    font-weight: 700;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.35);
-    transform: translateY(-1px);
-}
-
-.fashion-pill .color-swatch {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    display: inline-block;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-}
-
-.fashion-pill.is-active .color-swatch {
-    box-shadow: 0 0 0 1.5px #ffffff;
-}
-
-/* Lookbook Mini Stream */
-.fashion-ios-card.preview-card {
-    padding-bottom: 12px;
-}
-
-.preview-header {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+.select-chevron-icon {
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    transform: translateY(-50%);
+    pointer-events: none;
     color: rgba(255, 255, 255, 0.6);
-}
-
-.preview-header strong {
-    color: #38bdf8;
-}
-
-.fashion-preview-strip {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    overflow-x: auto;
-    padding: 4px 2px 8px;
-    scrollbar-width: thin;
-}
-
-.fashion-preview-strip::-webkit-scrollbar {
-    height: 4px;
-}
-
-.fashion-preview-strip::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 4px;
-}
-
-.shirt-mini-card {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 14px;
-    padding: 6px 12px 6px 6px;
-    cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
-}
-
-.shirt-mini-card:hover {
-    transform: translateY(-2px);
-    background: rgba(255, 255, 255, 0.14);
-    border-color: rgba(255, 255, 255, 0.35);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
-}
-
-.mini-thumb {
-    width: 36px;
-    height: 46px;
-    background: rgba(0, 0, 0, 0.25);
-    border-radius: 8px;
-    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.mini-thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.mini-info {
+/* Price Range Slider */
+.price-range-card .price-header-row {
     display: flex;
-    flex-direction: column;
-    gap: 2px;
+    align-items: center;
+    justify-content: space-between;
 }
 
-.mini-name {
-    font-size: 12px;
-    font-weight: 600;
-    color: #ffffff;
-    white-space: nowrap;
-    max-width: 130px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.mini-price {
+.price-badge-display {
+    background: rgba(56, 189, 248, 0.18);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    border-radius: 999px;
+    padding: 3px 10px;
     font-size: 11.5px;
     font-weight: 700;
     color: #38bdf8;
+    letter-spacing: 0.02em;
 }
 
-.preview-empty-state {
-    font-size: 12.5px;
-    color: rgba(255, 255, 255, 0.5);
-    padding: 10px 0;
-    font-style: italic;
+.range-slider-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px 4px 4px;
 }
 
-/* Sticky Bottom Bar */
+.fashion-range-input {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.18);
+    outline: none;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.fashion-range-input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 2px solid #38bdf8;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+    transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.15s;
+}
+
+.fashion-range-input::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+    box-shadow: 0 4px 14px rgba(56, 189, 248, 0.5);
+}
+
+.fashion-range-input::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 2px solid #38bdf8;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+.range-milestones {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10.5px;
+    color: rgba(255, 255, 255, 0.42);
+    font-weight: 500;
+    user-select: none;
+}
+
+/* Sticky Bottom Bar Tinh Gọn */
 .fashion-sidebar-footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    padding: 16px 24px 20px;
-    background: rgba(20, 22, 28, 0.82);
+    padding: 18px 24px 22px;
+    background: rgba(20, 22, 28, 0.85);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-top: 1px solid rgba(255, 255, 255, 0.12);
     flex-shrink: 0;
-    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.35);
 }
 
-.footer-summary {
+.footer-count-box {
     display: flex;
-    flex-direction: column;
-    gap: 2px;
+    align-items: center;
 }
 
-.summary-count {
-    font-size: 13.5px;
+.count-text {
+    font-size: 14px;
     color: #ffffff;
     font-weight: 500;
 }
 
-.summary-count strong {
+.count-text strong {
     font-weight: 800;
     color: #38bdf8;
 }
 
-.summary-sub {
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.45);
-}
-
-.footer-buttons {
+.footer-buttons-group {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
 }
 
-.fashion-reset-btn {
-    height: 40px;
+.sv-reset-pill-btn {
+    height: 38px;
     padding: 0 14px;
     background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 999px;
-    color: rgba(255, 255, 255, 0.75);
+    color: rgba(255, 255, 255, 0.78);
     font-size: 12px;
     font-weight: 600;
     display: inline-flex;
@@ -2465,46 +2390,48 @@ body.show-detail .rail-ticker {
     transition: all 0.2s ease;
 }
 
-.fashion-reset-btn:hover {
+.sv-reset-pill-btn:hover {
     background: rgba(255, 255, 255, 0.14);
     color: #ffffff;
-    border-color: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.32);
 }
 
 /* Nút hành động chính trong suốt mờ đục chuẩn Sneaker Vault Capsule */
-.fashion-apply-cta {
-    height: 42px;
-    padding: 0 20px;
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+.sv-apply-capsule-btn {
+    height: 38px;
+    padding: 0 16px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.24);
     border-radius: 999px;
     color: #ffffff;
-    font-size: 12.5px;
+    font-size: 12px;
     font-weight: 800;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
     display: inline-flex;
     align-items: center;
     gap: 8px;
     cursor: pointer;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-.fashion-apply-cta:hover {
-    transform: translateY(-2px);
-    background: rgba(255, 255, 255, 0.2);
+.sv-apply-capsule-btn:hover {
+    background: rgba(255, 255, 255, 0.16);
     border-color: rgba(255, 255, 255, 0.45);
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45), 0 0 20px rgba(56, 189, 248, 0.25);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
 }
 
-.fashion-apply-cta .badge {
-    background: rgba(56, 189, 248, 0.3);
-    border: 1px solid rgba(56, 189, 248, 0.45);
-    color: #ffffff;
-    font-size: 10.5px;
-    font-weight: 800;
-    padding: 2px 7px;
+.sv-apply-capsule-btn .capsule-badge {
+    background: rgba(56, 189, 248, 0.25);
+    border: 1px solid rgba(56, 189, 248, 0.4);
     border-radius: 999px;
+    padding: 2px 7px;
+    font-size: 10px;
+    font-weight: 800;
+    color: #ffffff;
     letter-spacing: 0.04em;
 }
