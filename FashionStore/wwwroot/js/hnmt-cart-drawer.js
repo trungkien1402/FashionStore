@@ -81,6 +81,7 @@
         // 3. Badge trên _Layout Header (.fs-cart-count)
         document.querySelectorAll('.fs-cart-count').forEach(el => {
             el.textContent = countStr;
+            el.style.display = count > 0 ? 'flex' : 'none';
         });
 
         // 4. Badge trong Drawer Header
