@@ -540,7 +540,7 @@
             b.innerHTML = `
                 <div class="garment-assembly" style="--delay:${i * 70}ms">
                     <div class="garment-turn">
-                        <img class="face front" alt="${p.name}" draggable="false" loading="eager" decoding="async" src="${photo(p, 0)}">
+                        <img class="face front" alt="${p.name}" draggable="false" loading="eager" decoding="async" src="${photo(p, p.variant || 0)}">
                         <img class="face side" alt="" draggable="false" loading="eager" decoding="async" src="${sidePhoto(p)}">
                     </div>
                 </div>`;

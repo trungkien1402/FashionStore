@@ -24,6 +24,21 @@
         return str.trim();
     }
 
+    // Bảng từ khóa nhận diện các gam màu thời trang (tiếng Việt & tiếng Anh)
+    const COLOR_KEYWORDS = {
+        black: ['den', 'black', 'charcoal', 'pitch', 'than chi', 'onyx', 'stealth'],
+        white: ['trang', 'white', 'be', 'kem', 'cream', 'sand', 'ivory', 'ecru', 'alabaster', 'sua'],
+        blue: ['xanh', 'blue', 'indigo', 'denim', 'cham', 'cobalt', 'azure', 'troi'],
+        navy: ['navy', 'muc', 'tram', 'prussian'],
+        gray: ['xam', 'gray', 'grey', 'bac', 'silver', 'acid', 'smoke', 'marl', 'stone', 'da'],
+        green: ['reu', 'green', 'olive', 'rung', 'military', 'safari'],
+        sand: ['cat', 'sand', 'khaki', 'camel', 'nau', 'brown', 'tan'],
+        red: ['do', 'red', 'burgundy', 'vang do', 'terracotta', 'ruou', 'rust'],
+        yellow: ['vang', 'yellow', 'mustard', 'lime'],
+        orange: ['cam', 'orange', 'dat nung', 'terracotta'],
+        purple: ['tim', 'purple', 'violet', 'lilac', 'lavender', 'hoa ca']
+    };
+
     function formatPrice(num) {
         return (num * 10000).toLocaleString('vi-VN') + ' ₫';
     }
@@ -243,15 +258,32 @@
                     return false;
                 }
 
-                // 3. Lọc theo màu sắc (Select dropdown)
+                // 3. Lọc theo màu sắc (Hỗ trợ toàn bộ áo có 2 màu đổi qua lại được)
                 if (selectedColor !== 'all') {
-                    if (item.colorGroup !== selectedColor) {
-                        const colorNames = removeVietnameseTones((item.colors || []).map(c => c[0]).join(' '));
-                        const targetColor = removeVietnameseTones(selectedColor);
-                        if (!colorNames.includes(targetColor)) {
-                            return false;
+                    const keywords = COLOR_KEYWORDS[selectedColor] || [selectedColor];
+                    const colors = item.colors || [];
+                    let matchedVariant = -1;
+
+                    for (let idx = 0; idx < colors.length; idx++) {
+                        const cName = removeVietnameseTones(colors[idx][0] || '');
+                        for (const kw of keywords) {
+                            if (cName.includes(kw)) {
+                                matchedVariant = idx;
+                                break;
+                            }
                         }
+                        if (matchedVariant !== -1) break;
                     }
+
+                    if (matchedVariant !== -1) {
+                        item.variant = matchedVariant;
+                    } else if (item.colorGroup === selectedColor) {
+                        item.variant = 0;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    item.variant = 0;
                 }
 
                 // 4. Lọc theo từ khóa tên hoặc mô tả
@@ -339,6 +371,9 @@
             selectedColor = 'all';
             maxPriceValue = 1500000;
             searchKeyword = '';
+
+            const allShirts = getShirtCatalog();
+            allShirts.forEach(s => { s.variant = 0; });
 
             if (searchInput) searchInput.value = '';
             if (clearBtn) clearBtn.style.display = 'none';
