@@ -8,6 +8,7 @@ using FashionStore.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // MVC
@@ -50,7 +51,8 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
-
+//Shipper
+builder.Services.AddScoped<IShipperService, ShipperService>();
 // Repository
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 

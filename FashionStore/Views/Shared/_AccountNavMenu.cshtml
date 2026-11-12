@@ -2,58 +2,99 @@
     var isAtelier = (ViewData["IsAtelier"] as bool?) ?? false;
     var btnClass = isAtelier ? "at-account-trigger" : "urbn-account-trigger";
     var menuClass = isAtelier ? "at-account-menu" : "urbn-account-menu";
+
+    var isAuthenticated = User.Identity?.IsAuthenticated == true;
+    var isAdmin = User.IsInRole("Admin");
+    var isShipper = User.IsInRole("Shipper");
+    var isCustomer = User.IsInRole("Customer");
 }
 
 <div class="fs-account-dropdown-container @(isAtelier ? "fs-account--atelier" : "fs-account--urbn")">
-    @if (User.Identity?.IsAuthenticated == true)
+
+    @if (isAuthenticated)
     {
-        <button type="button" 
-                class="@btnClass fs-account-btn" 
-                aria-haspopup="true" 
-                aria-expanded="false" 
-                title="Tài khoản: @User.Identity.Name">
+        <button type="button"
+                class="@btnClass fs-account-btn"
+                aria-haspopup="true"
+                aria-expanded="false"
+                title="Tài khoản: @User.Identity?.Name">
             <i class="bi bi-person-fill"></i>
         </button>
 
         <div class="@menuClass fs-account-popover" role="menu" aria-hidden="true">
+
             <div class="fs-menu-header">
                 <span class="fs-menu-label">TÀI KHOẢN &#9670;</span>
-                <span class="fs-menu-name" title="@User.Identity.Name">@(User.Identity.Name ?? "Thành viên")</span>
+                <span class="fs-menu-name" title="@User.Identity?.Name">
+                    @(User.Identity?.Name ?? "Thành viên")
+                </span>
             </div>
-            
+
             <div class="fs-menu-divider"></div>
 
-            <a asp-controller="Orders" asp-action="Index" class="fs-menu-item" role="menuitem">
-                <i class="bi bi-bag-check"></i>
-                <span>Đơn hàng của tôi</span>
-            </a>
-
-            @if (User.IsInRole("Admin"))
+            @* Customer *@
+            @if (isCustomer)
             {
-                <a asp-controller="Admin" asp-action="Index" class="fs-menu-item" role="menuitem">
+                <a asp-controller="Orders"
+                   asp-action="Index"
+                   class="fs-menu-item"
+                   role="menuitem">
+                    <i class="bi bi-bag-check"></i>
+                    <span>Đơn hàng của tôi</span>
+                </a>
+            }
+
+            @* Admin *@
+            @if (isAdmin)
+            {
+                <a asp-controller="Admin"
+                   asp-action="Index"
+                   class="fs-menu-item"
+                   role="menuitem">
                     <i class="bi bi-speedometer2"></i>
                     <span>Trang quản trị Admin</span>
                 </a>
             }
 
+            @* Shipper *@
+            @if (isShipper)
+            {
+                <a asp-controller="Shipper"
+                   asp-action="Index"
+                   class="fs-menu-item"
+                   role="menuitem">
+                    <i class="bi bi-truck"></i>
+                    <span>Quản lý giao hàng</span>
+                </a>
+            }
+
             <div class="fs-menu-divider"></div>
 
-            <form asp-controller="Account" asp-action="Logout" method="post" class="fs-logout-form">
+            <form asp-controller="Account"
+                  asp-action="Logout"
+                  method="post"
+                  class="fs-logout-form">
+
                 @Html.AntiForgeryToken()
-                <button type="submit" class="fs-menu-item fs-menu-logout-btn" role="menuitem">
+
+                <button type="submit"
+                        class="fs-menu-item fs-menu-logout-btn"
+                        role="menuitem">
                     <i class="bi bi-box-arrow-right"></i>
                     <span>Đăng xuất</span>
                 </button>
             </form>
+
         </div>
     }
     else
     {
-        <a asp-controller="Account" 
-           asp-action="Login" 
-           class="@btnClass fs-account-btn" 
+        <a asp-controller="Account"
+           asp-action="Login"
+           class="@btnClass fs-account-btn"
            title="Đăng nhập tài khoản">
             <i class="bi bi-person"></i>
         </a>
     }
+
 </div>
