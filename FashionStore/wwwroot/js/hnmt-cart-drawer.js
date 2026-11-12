@@ -163,6 +163,15 @@
             modal.innerHTML = DRAWER_HTML;
             document.body.appendChild(modal);
         }
+        const isSneakerMode = document.body.classList.contains('is-sneaker-standalone') || 
+                              Boolean(document.getElementById('hnmtSneakerOverlay')?.classList.contains('is-active'));
+        if (isSneakerMode) {
+            modal.classList.add('is-sneaker-cart');
+            modal.classList.remove('is-light-cart');
+        } else {
+            modal.classList.remove('is-sneaker-cart');
+            modal.classList.add('is-light-cart');
+        }
         return modal;
     }
 
@@ -362,6 +371,16 @@
     // Mở Drawer giỏ hàng
     function openDrawer() {
         const modal = ensureCartDOM();
+        const isSneakerMode = document.body.classList.contains('is-sneaker-standalone') || 
+                              Boolean(document.getElementById('hnmtSneakerOverlay')?.classList.contains('is-active'));
+        if (isSneakerMode) {
+            modal.classList.add('is-sneaker-cart');
+            modal.classList.remove('is-light-cart');
+        } else {
+            modal.classList.remove('is-sneaker-cart');
+            modal.classList.add('is-light-cart');
+        }
+
         // Đóng các bộ lọc khác nếu đang mở
         const shirtFilter = document.getElementById('hnmtShirtFilterModal');
         if (shirtFilter) shirtFilter.classList.remove('is-open');
