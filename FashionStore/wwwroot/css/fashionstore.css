@@ -87,112 +87,58 @@ img {
     justify-self: center;
     display: flex;
     align-items: center;
-    gap: 28px;
+    gap: 36px;
     list-style: none;
     margin: 0;
     padding: 0;
 }
 
 .urbn-nav-links a {
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 13.5px;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.6px;
-    color: #111827;
-    text-decoration: none;
-    transition: color 0.2s ease;
+    letter-spacing: 0.5px;
+    color: #000000;
 }
 
 .urbn-nav-links a:hover {
-    color: #4B5563;
+    color: #6B7280;
 }
 
 .urbn-nav-actions {
     justify-self: end;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 20px;
 }
 
 .urbn-nav-icon {
-    width: 36px;
-    height: 36px;
-    min-width: 36px;
-    max-width: 36px;
-    color: #111827;
-    cursor: pointer;
-    background: transparent;
-    border: none;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    border-radius: 50%;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    text-decoration: none;
-}
-
-.urbn-nav-icon:hover {
-    background-color: rgba(0, 0, 0, 0.05);
+    font-size: 18px;
     color: #000000;
-    transform: translateY(-1px);
-}
-
-.urbn-nav-icon svg {
-    width: 18px;
-    height: 18px;
-    stroke-width: 1.5;
-    display: block;
-    flex-shrink: 0;
-}
-
-.urbn-nav-icon .fs-cart-count {
-    position: absolute;
-    top: 1px;
-    right: 1px;
-    min-width: 16px;
-    height: 16px;
-    padding: 0 4px;
-    border-radius: 999px;
-    background: #000000;
-    color: #ffffff;
-    font-size: 9.5px;
-    font-weight: 700;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
-    line-height: 1;
-    border: 1.5px solid #ffffff;
-    box-sizing: border-box;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
-    pointer-events: none;
+    position: relative;
 }
 
 .urbn-nav-pill-btn {
-    margin-left: 8px;
     background: #000000;
     color: #FFFFFF !important;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.3px;
-    padding: 8px 18px;
+    font-size: 13.5px;
+    font-weight: 700;
+    padding: 10px 24px;
     border-radius: 999px;
     border: 1px solid #000000;
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    white-space: nowrap;
+    transition: all 0.2s;
 }
 
 .urbn-nav-pill-btn:hover {
     background: #27272A;
-    border-color: #27272A;
-    transform: translateY(-1px);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
 }
 
 /* ==========================================================================

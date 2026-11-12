@@ -84,12 +84,9 @@
                   '<button type="button" data-col="noir">NOIR UNIT</button>' +
                   '<button type="button" data-col="sunwash">SUN-WASHED</button>' +
                 '</div>' +
-                '<button type="button" class="rail-bag-btn lb-cart-btn" id="lbCart" title="Giỏ hàng">' +
-                  '<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" width="20" height="20" style="display:block;">' +
-                    '<path d="M4 8h16l-1 13H5L4 8Z"/>' +
-                    '<path d="M9 9V6a3 3 0 0 1 6 0v3"/>' +
-                  '</svg>' +
-                  '<span class="rail-bag-count" id="lbBadge">0</span></button>' +
+                '<button type="button" class="lb-icon-btn" id="lbCart" title="Túi đồ">' +
+                  '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>' +
+                  '<span class="lb-badge" id="lbBadge">0</span></button>' +
                 '<button type="button" class="lb-icon-btn" id="lbClose" title="Đóng (Esc)">' +
                   '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>' +
               '</div>' +
@@ -299,8 +296,6 @@
         else if (location.hash === '#lookbook-noir') open('noir');
         else if (location.hash === '#lookbook-sunwash') open('sunwash');
         goTo(active);
-        badge();
-        window.addEventListener('hnmt:cart:updated', badge);
         LOOKS.forEach(function (l) { var im = new Image(); im.src = l.img; });
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();

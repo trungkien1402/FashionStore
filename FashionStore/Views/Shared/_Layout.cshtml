@@ -27,7 +27,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-    <link rel="stylesheet" href="~/css/fashionstore.css?v=luxury_header_v4" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/fashionstore.css?v=signature_cats_v2" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/atelier.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/store3d.css?v=badge_perfect_v20" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/clothing-rail.css?v=spotlight_v2" asp-append-version="true" />
@@ -36,13 +36,13 @@
     @await RenderSectionAsync("Styles", required: false)
 </head>
 
+<body>
+
 @{
     var isHome = string.Equals(ViewContext.RouteData.Values["controller"]?.ToString(), "Home", StringComparison.OrdinalIgnoreCase) &&
                  string.Equals(ViewContext.RouteData.Values["action"]?.ToString(), "Index", StringComparison.OrdinalIgnoreCase);
     var isLookbook = string.Equals(ViewContext.RouteData.Values["action"]?.ToString(), "Lookbook", StringComparison.OrdinalIgnoreCase);
 }
-
-<body class="@(isHome ? "is-home-page" : "") @(isLookbook ? "is-lookbook-page" : "")">
 
     <!-- ============================================================== -->
     <!-- NAVBAR (URBNMIND EXACT: LOGO, CENTER LINKS, ICONS, BUY NOW)    -->
@@ -68,19 +68,18 @@
                 <div class="urbn-nav-actions">
                     <!-- Search Icon -->
                     <button type="button" class="urbn-nav-icon" title="Tìm kiếm nhanh (Phím tắt /)" onclick="if(window.HNMTSpotlightSearch) { window.HNMTSpotlightSearch.open(); } else { document.getElementById('keywordInput')?.focus(); }">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="11" cy="11" r="7.5" />
-                            <path d="m21 21-4.35-4.35" />
-                        </svg>
+                        <i class="bi bi-search"></i>
                     </button>
 
+                    <!-- Wishlist Heart Icon -->
+                    <a href="/Products" class="urbn-nav-icon" title="Yêu thích">
+                        <i class="bi bi-heart"></i>
+                    </a>
+
                     <!-- Cart Trigger -->
-                    <button type="button" id="fsCartDrawerTrigger" class="urbn-nav-icon" title="Giỏ hàng">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M16 9V6.5a4 4 0 0 0-8 0V9" />
-                            <rect x="4" y="8" width="16" height="13" rx="2" />
-                        </svg>
-                        <span class="fs-cart-count" style="@(cartCount > 0 ? "" : "display: none;")">
+                    <button type="button" id="fsCartDrawerTrigger" class="urbn-nav-icon position-relative" title="Giỏ hàng">
+                        <i class="bi bi-cart"></i>
+                        <span class="fs-cart-count" style="position: absolute; top: -6px; right: -8px; background: #000; color: #fff; font-size: 10px; font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
                             @cartCount
                         </span>
                     </button>
@@ -89,19 +88,13 @@
                     @if (User.Identity?.IsAuthenticated == true)
                     {
                         <a asp-controller="Orders" asp-action="Index" class="urbn-nav-icon" title="@User.Identity.Name">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="7" r="4" />
-                                <path d="M5.5 21a8.5 8.5 0 0 1 13 0" />
-                            </svg>
+                            <i class="bi bi-person"></i>
                         </a>
                     }
                     else
                     {
                         <a asp-controller="Account" asp-action="Login" class="urbn-nav-icon" title="Tài khoản">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="7" r="4" />
-                                <path d="M5.5 21a8.5 8.5 0 0 1 13 0" />
-                            </svg>
+                            <i class="bi bi-person"></i>
                         </a>
                     }
 
@@ -205,7 +198,7 @@
     <script src="~/js/store3d.js?v=pants_rail_v25" asp-append-version="true"></script>
     <script src="~/js/clothing-rail.js?v=pants_rail_v25" asp-append-version="true"></script>
     <script src="~/js/sneaker-vault.js?v=uniform_font_v43" asp-append-version="true"></script>
-    <script src="~/js/hnmt-cart-drawer.js?v=cart_v2" asp-append-version="true"></script>
+    <script src="~/js/hnmt-cart-drawer.js?v=cart_v1" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

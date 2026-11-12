@@ -81,7 +81,6 @@
         // 3. Badge trên _Layout Header (.fs-cart-count)
         document.querySelectorAll('.fs-cart-count').forEach(el => {
             el.textContent = countStr;
-            el.style.display = count > 0 ? 'flex' : 'none';
         });
 
         // 4. Badge trong Drawer Header
@@ -116,8 +115,7 @@
                 <div class="hnmt-cart-empty-view" id="hnmtCartEmptyView" style="display: none;">
                     <div class="hnmt-empty-glow-ring">
                         <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M4 8h16l-1 13H5L4 8Z"/>
-                            <path d="M9 9V6a3 3 0 0 1 6 0v3"/>
+                            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>
                         </svg>
                     </div>
                     <h3 class="hnmt-empty-title">Túi đồ của bạn đang trống</h3>
