@@ -30,9 +30,9 @@
                         { top: '93%', left: '49%', itemIndex: 2 }
                     ],
                     items: [
-                        it('nf1-top', 'Áo thun', 'Neo-Future Arc Graphic Tee', 490000, '/images/products/clothes/distressed-graphic-tee.png', SZ_TOP, 'L', 'Đen Than Chì', '#111827'),
-                        it('nf1-pant', 'Quần jeans', 'Quần Jeans Baggy Washed Black', 640000, '/images/pants/cargo-acid-wash-front.png', SZ_PANT, '31', 'Đen Wash', '#374151'),
-                        it('nf1-shoe', 'Sneaker', 'AIR FUTURE III – NEXUS X1', 4900000, '/images/sneakers/air-future-iii.webp', SZ_SHOE, '43', 'WHITE / ACID VOLT', '#84cc16')
+                        it('nf1-top', 'Áo thun', 'Neo-Future Arc Graphic Tee', 490000, '/images/lookbook/thumb/look-n1-top.png', SZ_TOP, 'L', 'Đen Than Chì', '#111827'),
+                        it('nf1-pant', 'Quần jeans', 'Quần Jeans Baggy Washed Black', 640000, '/images/lookbook/thumb/look-n1-pant.png', SZ_PANT, '31', 'Đen Wash', '#374151'),
+                        it('nf1-shoe', 'Sneaker', 'AIR FUTURE III – NEXUS X1', 4900000, '/images/lookbook/thumb/look-n1-shoe.png', SZ_SHOE, '43', 'WHITE / ACID VOLT', '#84cc16')
                     ]
                 },
                 {
@@ -45,9 +45,9 @@
                         { top: '93%', left: '50%', itemIndex: 2 }
                     ],
                     items: [
-                        it('nf2-top', 'Hoodie', 'Technical Zip Hoodie Noir', 890000, '/images/products/clothes/heavyweight-boxy-hoodie.png', SZ_TOP, 'L', 'Đen Tối Giản', '#0f172a'),
-                        it('nf2-pant', 'Quần cargo', 'Quần Parachute Tactical Noir', 680000, '/images/pants/raw-selvedge-black-front.png', SZ_PANT, '31', 'Đen Nhám', '#1e293b'),
-                        it('nf2-shoe', 'Sneaker', 'AIR FUTURE IX – SHADOW RUNNER', 4200000, '/images/sneakers/air-future-ix.webp', SZ_SHOE, '42', 'TRIPLE BLACK', '#000000')
+                        it('nf2-top', 'Hoodie', 'Technical Zip Hoodie Noir', 890000, '/images/lookbook/thumb/look-n2-top.png', SZ_TOP, 'L', 'Đen Tối Giản', '#0f172a'),
+                        it('nf2-pant', 'Quần cargo', 'Quần Parachute Tactical Noir', 680000, '/images/lookbook/thumb/look-n2-pant.png', SZ_PANT, '31', 'Đen Nhám', '#1e293b'),
+                        it('nf2-shoe', 'Sneaker', 'AIR FUTURE IX – SHADOW RUNNER', 4200000, '/images/lookbook/thumb/look-n2-shoe.png', SZ_SHOE, '42', 'TRIPLE BLACK', '#000000')
                     ]
                 },
                 {
@@ -60,9 +60,9 @@
                         { top: '93%', left: '50%', itemIndex: 2 }
                     ],
                     items: [
-                        it('nf3-top', 'Áo thun', 'Acid Charcoal Boxy Tee', 520000, '/images/products/clothes/vintage-washed-boxy-tee.png', SZ_TOP, 'L', 'Xám Loang Than', '#334155'),
-                        it('nf3-pant', 'Quần jeans', 'Quần Jeans Distressed Grey', 590000, '/images/pants/cargo-acid-wash.png', SZ_PANT, '30', 'Xám Chàm Loang', '#475569'),
-                        it('nf3-shoe', 'Sneaker', 'AIR FUTURE V – CYBER OVERDRIVE', 4400000, '/images/sneakers/air-future-v.webp', SZ_SHOE, '41', 'WHITE / BLACK', '#e2e8f0')
+                        it('nf3-top', 'Áo thun', 'Acid Charcoal Boxy Tee', 520000, '/images/lookbook/thumb/look-n3-top.png', SZ_TOP, 'L', 'Xám Loang Than', '#334155'),
+                        it('nf3-pant', 'Quần jeans', 'Quần Jeans Distressed Grey', 590000, '/images/lookbook/thumb/look-n3-pant.png', SZ_PANT, '30', 'Xám Chàm Loang', '#475569'),
+                        it('nf3-shoe', 'Sneaker', 'AIR FUTURE V – CYBER OVERDRIVE', 4400000, '/images/lookbook/thumb/look-n3-shoe.png', SZ_SHOE, '41', 'WHITE / BLACK', '#e2e8f0')
                     ]
                 },
                 {
@@ -75,9 +75,9 @@
                         { top: '93%', left: '50%', itemIndex: 2 }
                     ],
                     items: [
-                        it('nf4-top', 'Áo nỉ', 'Graphic Crewneck Noir', 780000, '/images/products/clothes/fleece-vintage-crewneck.png', SZ_TOP, 'L', 'Đen Tuyền', '#111827'),
-                        it('nf4-pant', 'Quần ống rộng', 'Quần Wide-Leg Navy Trousers', 640000, '/images/pants/wide-leg-denim-front.png', SZ_PANT, '31', 'Navy Đậm', '#1e3a5f'),
-                        it('nf4-shoe', 'Sneaker', 'AIR FUTURE IV – NIGHT TRACK', 4500000, '/images/sneakers/air-future-iv.webp', SZ_SHOE, '42', 'BLACK / ANTHRACITE', '#111111')
+                        it('nf4-top', 'Áo nỉ', 'Graphic Crewneck Noir', 780000, '/images/lookbook/thumb/look-n4-top.png', SZ_TOP, 'L', 'Đen Tuyền', '#111827'),
+                        it('nf4-pant', 'Quần ống rộng', 'Quần Wide-Leg Navy Trousers', 640000, '/images/lookbook/thumb/look-n4-pant.png', SZ_PANT, '31', 'Navy Đậm', '#1e3a5f'),
+                        it('nf4-shoe', 'Sneaker', 'AIR FUTURE IV – NIGHT TRACK', 4500000, '/images/lookbook/thumb/look-n4-shoe.png', SZ_SHOE, '42', 'BLACK / ANTHRACITE', '#111111')
                     ]
                 }
             ]
@@ -98,9 +98,9 @@
                         { top: '94%', left: '50%', itemIndex: 2 }
                     ],
                     items: [
-                        it('re1-top', 'Áo thun', 'Fern Tee – Dương Xỉ Xanh Chàm', 440000, '/images/products/clothes/oversize-streetwear-tee-white.png', SZ_TOP, 'L', 'Trắng Ngà / Prussian', '#1d4ed8'),
-                        it('re1-pant', 'Quần jeans', 'Quần Jeans Ống Rộng Vintage Washed', 540000, '/images/pants/wide-leg-denim.png', SZ_PANT, '31', 'Xanh Vintage (90s Blue)', '#3b82f6'),
-                        it('re1-shoe', 'Sneaker', 'Retro Court Low – Gum Sole', 3600000, '/images/products/shoes/nike-dunk-low-retro.png', SZ_SHOE, '42', 'WHITE / GUM', '#d97706')
+                        it('re1-top', 'Áo thun', 'Fern Tee – Dương Xỉ Xanh Chàm', 440000, '/images/lookbook/thumb/look-e1-top.png', SZ_TOP, 'L', 'Trắng Ngà / Prussian', '#1d4ed8'),
+                        it('re1-pant', 'Quần jeans', 'Quần Jeans Ống Rộng Vintage Washed', 540000, '/images/lookbook/thumb/look-e1-pant.png', SZ_PANT, '31', 'Xanh Vintage (90s Blue)', '#3b82f6'),
+                        it('re1-shoe', 'Sneaker', 'Retro Court Low – Gum Sole', 3600000, '/images/lookbook/thumb/look-e1-shoe.png', SZ_SHOE, '42', 'WHITE / GUM', '#d97706')
                     ]
                 },
                 {
@@ -113,9 +113,9 @@
                         { top: '93%', left: '50%', itemIndex: 2 }
                     ],
                     items: [
-                        it('re2-top', 'Áo thun', 'Heavy Cotton Crewneck Cát', 480000, '/images/products/clothes/sand-crewneck-tee.png', SZ_TOP, 'L', 'Be Cát Thô', '#d6c7b2'),
-                        it('re2-pant', 'Quần jeans', 'Quần Jeans Raw Denim 14oz Chàm Đậm', 740000, '/images/pants/raw-selvedge-black.png', SZ_PANT, '31', 'Chàm Đậm (Deep Indigo)', '#1e1b4b'),
-                        it('re2-shoe', 'Sneaker', 'Suede Skate High – Earth', 2400000, '/images/products/shoes/converse-chuck-70-high.png', SZ_SHOE, '41', 'OATMEAL / GUM', '#b45309')
+                        it('re2-top', 'Áo thun', 'Heavy Cotton Crewneck Cát', 480000, '/images/lookbook/thumb/look-e2-top.png', SZ_TOP, 'L', 'Be Cát Thô', '#d6c7b2'),
+                        it('re2-pant', 'Quần jeans', 'Quần Jeans Raw Denim 14oz Chàm Đậm', 740000, '/images/lookbook/thumb/look-e2-pant.png', SZ_PANT, '31', 'Chàm Đậm (Deep Indigo)', '#1e1b4b'),
+                        it('re2-shoe', 'Sneaker', 'Suede Skate High – Earth', 2400000, '/images/lookbook/thumb/look-e2-shoe.png', SZ_SHOE, '41', 'OATMEAL / GUM', '#b45309')
                     ]
                 },
                 {
@@ -128,9 +128,9 @@
                         { top: '93%', left: '50%', itemIndex: 2 }
                     ],
                     items: [
-                        it('re3-top', 'Áo khoác', 'Boxy Khaki Workwear Overshirt', 690000, '/images/products/clothes/khaki-workwear-overshirt.png', SZ_TOP, 'L', 'Khaki Đất', '#a3825a'),
-                        it('re3-pant', 'Quần xếp ly', 'Quần Pleated Sand Beige', 680000, '/images/pants/pleated-sand-beige-front.png', SZ_PANT, '31', 'Be Cát Tự Nhiên', '#d5c9b6'),
-                        it('re3-shoe', 'Sneaker', 'Retro Low-Top Leather', 2900000, '/images/products/shoes/nike-air-force-1-low.png', SZ_SHOE, '42', 'CHALK WHITE', '#f8fafc')
+                        it('re3-top', 'Áo khoác', 'Boxy Khaki Workwear Overshirt', 690000, '/images/lookbook/thumb/look-e3-top.png', SZ_TOP, 'L', 'Khaki Cát Nắng', '#d3b794'),
+                        it('re3-pant', 'Quần xếp ly', 'Quần Pleated Sand Beige', 680000, '/images/lookbook/thumb/look-e3-pant.png', SZ_PANT, '31', 'Be Cát Tự Nhiên', '#d5c9b6'),
+                        it('re3-shoe', 'Sneaker', 'Retro Low-Top Chalk White Leather', 2900000, '/images/lookbook/thumb/look-e3-shoe.png', SZ_SHOE, '42', 'CHALK WHITE', '#ffffff')
                     ]
                 }
             ]
@@ -174,8 +174,8 @@
         root.innerHTML =
             '<section class="lb-stage" id="lbStage">' +
               '<div class="lb-head">' +
-                '<div class="lb-brand-signature">HNMTSHOP</div>' +
-                '<h1 class="lb-title">' + esc(colData.title) + '</h1>' +
+                '<div class="lb-brand-signature">HnmtShop</div>' +
+                '<div class="lb-brand-collection">BỘ SƯU TẬP • ' + esc(colData.title) + '</div>' +
               '</div>' +
               '<div class="lb-tools">' +
                 '<button type="button" class="lb-bag-btn" id="lbCart" title="Túi đồ">' +

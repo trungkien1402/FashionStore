@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Pacifico&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
 /* ==========================================================================
    HNMT ATELIER — "TRY THE LOOK" 3D TURNTABLE RUNWAY
    Senior Fashion UX/UI: Ultra-Glassmorphism, Micro Hotspot Pins, Weighted Turntable
@@ -57,27 +59,31 @@
     left: 48px;
     z-index: 20;
     pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 .lb-brand-signature {
-    font-family: 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
-    font-style: italic;
-    font-weight: 600;
-    font-size: 28px;
-    letter-spacing: 0.5px;
+    font-family: 'Pacifico', 'Dancing Script', cursive, sans-serif;
+    font-weight: 400;
+    font-size: 38px;
+    letter-spacing: -0.5px;
     color: var(--lb-ink);
-    line-height: 1;
-    margin-bottom: 4px;
-    opacity: 0.92;
+    line-height: 1.05;
+    margin: 0 0 6px 0;
+    text-shadow: 0 2px 12px rgba(255, 255, 255, 0.4);
+}
+.lb-brand-collection {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3.5px;
+    color: var(--lb-mute);
+    line-height: 1.2;
+    text-transform: uppercase;
 }
 .lb-title {
-    font-family: 'Jost', sans-serif;
-    font-size: 42px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-    margin: 0;
-    line-height: 1.05;
-    color: var(--lb-ink);
-    text-transform: uppercase;
+    display: none;
 }
 
 /* Top-Right Navigation Tools (Matching Store/Products exactly) */
