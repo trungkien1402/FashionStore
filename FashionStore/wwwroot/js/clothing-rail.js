@@ -466,10 +466,14 @@
     let modalOpen = false;
     const sizeNames = ['XS', 'S', 'M', 'L', 'XL'];
 
-    // Đảm bảo nút kính lúp tìm kiếm luôn hiện diện ở Header sào
+    // Đảm bảo nút kính lúp tìm kiếm luôn hiện diện ở Header sào (Chỉ chèn vào sào 3D, không chèn vào navbar trang chủ)
     function ensureSearchButton() {
-        const bagBtns = document.querySelectorAll('.rail-bag-btn');
+        // Dọn dẹp nút tìm kiếm sào nếu vô tình lọt vào navbar chính của trang web
+        document.querySelectorAll('.urbn-nav-actions .rail-search-btn, .urbn-header .rail-search-btn').forEach(btn => btn.remove());
+
+        const bagBtns = document.querySelectorAll('.rail-head-right .rail-bag-btn, #railHeadRight .rail-bag-btn, .sv-head-right .rail-bag-btn');
         bagBtns.forEach(bagBtn => {
+            if (bagBtn.closest('.urbn-nav-actions, .urbn-header, .urbn-nav, #urbnHeader')) return;
             if (bagBtn.parentNode && !bagBtn.parentNode.querySelector('.rail-search-btn')) {
                 const btn = document.createElement('button');
                 btn.type = 'button';

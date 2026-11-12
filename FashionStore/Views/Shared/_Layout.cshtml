@@ -36,13 +36,13 @@
     @await RenderSectionAsync("Styles", required: false)
 </head>
 
-<body>
-
 @{
     var isHome = string.Equals(ViewContext.RouteData.Values["controller"]?.ToString(), "Home", StringComparison.OrdinalIgnoreCase) &&
                  string.Equals(ViewContext.RouteData.Values["action"]?.ToString(), "Index", StringComparison.OrdinalIgnoreCase);
     var isLookbook = string.Equals(ViewContext.RouteData.Values["action"]?.ToString(), "Lookbook", StringComparison.OrdinalIgnoreCase);
 }
+
+<body class="@(isHome ? "is-home-page" : "") @(isLookbook ? "is-lookbook-page" : "")">
 
     <!-- ============================================================== -->
     <!-- NAVBAR (URBNMIND EXACT: LOGO, CENTER LINKS, ICONS, BUY NOW)    -->
@@ -71,13 +71,13 @@
                         <i class="bi bi-search"></i>
                     </button>
 
-                    <!-- Cart Trigger (Đồng bộ thiết kế sào đồ áo/quần/giày) -->
-                    <button type="button" id="fsCartDrawerTrigger" class="urbn-nav-icon rail-bag-btn" title="Giỏ hàng" style="display: inline-flex; align-items: center; gap: 8px; background: transparent; border: 0; color: #000000; padding: 0 4px; cursor: pointer;">
-                        <svg fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24" width="19" height="20" style="display: block;">
-                            <path d="M4 8h16l-1 13H5L4 8Z" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M9 9V6a3 3 0 0 1 6 0v3" stroke-linecap="round" stroke-linejoin="round"/>
+                    <!-- Cart Trigger (Đồng bộ chuẩn 1:1 sào đồ áo/quần/giày, nét thẳng liền mạch) -->
+                    <button type="button" id="fsCartDrawerTrigger" class="urbn-nav-icon" title="Giỏ hàng" style="display: inline-flex; align-items: center; gap: 8px; background: transparent; border: 0; color: #000000; padding: 0 4px; cursor: pointer; text-decoration: none;">
+                        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" width="20" height="20" style="display: block; width: 20px; height: 20px; flex-shrink: 0;">
+                            <path d="M4 8h16l-1 13H5L4 8Z" />
+                            <path d="M9 9V6a3 3 0 0 1 6 0v3" />
                         </svg>
-                        <span class="fs-cart-count rail-bag-count" style="width: 22px; height: 22px; min-width: 22px; max-width: 22px; aspect-ratio: 1 / 1; border: 1.5px solid currentColor; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; line-height: 1; text-align: center; background: transparent; color: inherit;">
+                        <span class="fs-cart-count" style="width: 22px; height: 22px; min-width: 22px; max-width: 22px; aspect-ratio: 1 / 1; flex-shrink: 0; border: 1.5px solid currentColor; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; line-height: 1; text-align: center; background: transparent; color: inherit; box-sizing: border-box;">
                             @cartCount
                         </span>
                     </button>

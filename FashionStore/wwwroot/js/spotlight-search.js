@@ -178,6 +178,13 @@
         return items;
     }
 
+    function isHomePageContext() {
+        return document.body.classList.contains('is-home-page') || 
+               window.location.pathname === '/' || 
+               window.location.pathname.toLowerCase().endsWith('/home') || 
+               window.location.pathname.toLowerCase().endsWith('/home/index');
+    }
+
     // Đảm bảo DOM Spotlight Modal có đầy đủ khung lọc đa tiêu chí
     function ensureModalDOM() {
         let modal = document.getElementById('hnmtSpotlightSearchModal');
@@ -278,13 +285,14 @@
         if (!modal) {
             modal = document.createElement('div');
             modal.id = 'hnmtSpotlightSearchModal';
-            modal.className = 'hnmt-spotlight-modal';
+            modal.className = 'hnmt-spotlight-modal' + (isHomePageContext() ? ' hnmt-spotlight-light' : '');
             modal.setAttribute('aria-hidden', 'true');
             modal.innerHTML = modalTemplate;
             document.body.appendChild(modal);
         } else if (!modal.querySelector('#spotlightFilterPanel')) {
             // Thay thế nội dung nếu modal cũ chưa có filter panel
             modal.innerHTML = modalTemplate;
+            if (isHomePageContext()) modal.classList.add('hnmt-spotlight-light');
         }
 
         return modal;
@@ -659,6 +667,12 @@
             renderColorPills();
 
             performSearch();
+
+            if (isHomePageContext()) {
+                modal.classList.add('hnmt-spotlight-light');
+            } else {
+                modal.classList.remove('hnmt-spotlight-light');
+            }
 
             modal.classList.add('is-open');
             modal.setAttribute('aria-hidden', 'false');
