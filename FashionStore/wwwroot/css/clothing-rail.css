@@ -1980,15 +1980,16 @@ body.show-detail .rail-ticker {
 
 
 /* ==============================================================================
-   HNMTSHOP APPLE iOS TRANSLUCENT LIQUID GLASS VERTICAL SIDEBAR (SÀO ÁO / SHIRTS)
-   Thiết kế nguyên chiều dọc bên trái màn hình (Docked Left Vertical Sidebar)
-   Đặc tính: Translucent Frosted Glass, Acrylic Specular Highlights, iOS Squircles
+   HNMTSHOP TRANSLUCENT FROSTED GLASS VERTICAL SIDEBAR (SÀO ÁO // BÊN PHẢI)
+   Vị trí: Toàn bộ mép phải màn hình (Right-Docked Full Height Vertical Sidebar)
+   Chất liệu: Trong suốt mờ đục chuẩn Sneaker Vault Capsule (rgba 0.65 blur 28px)
    ============================================================================== */
 .hnmt-fashion-filter-modal {
     position: fixed;
     inset: 0;
     z-index: 99999;
     display: flex;
+    justify-content: flex-end; /* Đặt hoàn toàn ở bên phải */
     pointer-events: none;
     visibility: hidden;
     transition: visibility 0.4s;
@@ -1999,11 +2000,11 @@ body.show-detail .rail-ticker {
     visibility: visible;
 }
 
-/* Subtle Ambient Tint Backdrop (User still sees the clothing rail on the right) */
+/* Subtle Ambient Tint Backdrop (Người dùng vẫn thấy sào đồ và toàn bộ showroom bên trái) */
 .fashion-filter-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(15, 23, 38, 0.28);
+    background: rgba(10, 12, 16, 0.32);
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
     opacity: 0;
@@ -2015,32 +2016,37 @@ body.show-detail .rail-ticker {
     opacity: 1;
 }
 
-/* The Left Vertical Sidebar */
+/* Thanh Sidebar Dọc Toàn Bộ Mép Phải Màn Hình */
 .fashion-filter-sidebar {
     position: fixed;
     top: 0;
     bottom: 0;
-    left: 0;
+    right: 0; /* Nằm nguyên bên phải */
+    left: auto;
     height: 100vh;
     height: 100dvh;
     width: 440px;
     max-width: 90vw;
-    background: rgba(20, 28, 42, 0.74); /* Iconic iPhone Translucent Glass Tint */
-    backdrop-filter: blur(48px) saturate(210%);
-    -webkit-backdrop-filter: blur(48px) saturate(210%);
-    border-right: 1px solid rgba(255, 255, 255, 0.16);
-    border-top-right-radius: 36px;
-    border-bottom-right-radius: 36px;
-    box-shadow: 28px 0 90px rgba(0, 0, 0, 0.45), 
-                inset -1px 0 0 rgba(255, 255, 255, 0.12), 
-                inset 0 1px 1px rgba(255, 255, 255, 0.25);
-    transform: translateX(-102%);
+    /* Nền trong suốt mờ đục chuẩn xác theo capsule Futurist Sneaker Vault */
+    background: rgba(26, 28, 34, 0.68);
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    border-left: 1px solid rgba(255, 255, 255, 0.18);
+    border-right: none;
+    border-top-left-radius: 32px;
+    border-bottom-left-radius: 32px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    box-shadow: -25px 0 80px rgba(0, 0, 0, 0.45), 
+                inset 1px 0 0 rgba(255, 255, 255, 0.12), 
+                inset 0 1px 1px rgba(255, 255, 255, 0.22);
+    transform: translateX(102%); /* Trượt từ bên phải ra */
     transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     flex-direction: column;
     overflow: hidden;
     color: #ffffff;
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Plus Jakarta Sans', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Space Grotesk', 'Plus Jakarta Sans', sans-serif;
     z-index: 2;
     box-sizing: border-box;
 }
@@ -2069,7 +2075,7 @@ body.show-detail .rail-ticker {
     font-weight: 800;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.65);
     display: flex;
     align-items: center;
     gap: 7px;
@@ -2095,55 +2101,57 @@ body.show-detail .rail-ticker {
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* Apple Circular Frosted Close Button */
+/* Nút đóng tròn mờ đục góc trên */
 .fashion-filter-close {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
     color: rgba(255, 255, 255, 0.85);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.22s ease;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
 .fashion-filter-close:hover {
-    background: rgba(255, 255, 255, 0.24);
+    background: rgba(255, 255, 255, 0.22);
     color: #ffffff;
     transform: scale(1.08);
-    box-shadow: 0 0 16px rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 16px rgba(255, 255, 255, 0.25);
 }
 
-/* Apple Spotlight Search Input Bar */
+/* Thanh tìm kiếm mờ đục hình viên thuốc */
 .fashion-search-bar {
     margin: 0 24px 16px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 16px;
-    padding: 11px 16px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    padding: 11px 18px;
     display: flex;
     align-items: center;
     gap: 12px;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2), 0 4px 16px rgba(0, 0, 0, 0.15);
     transition: all 0.22s ease;
     flex-shrink: 0;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
 }
 
 .fashion-search-bar:focus-within {
-    background: rgba(255, 255, 255, 0.14);
-    border-color: rgba(255, 255, 255, 0.35);
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(56, 189, 248, 0.25);
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.38);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(255, 255, 255, 0.18);
 }
 
 .search-bar-icon {
-    width: 19px;
-    height: 19px;
-    color: rgba(255, 255, 255, 0.55);
+    width: 18px;
+    height: 18px;
+    color: rgba(255, 255, 255, 0.6);
     flex-shrink: 0;
 }
 
@@ -2181,7 +2189,7 @@ body.show-detail .rail-ticker {
     background: rgba(255, 255, 255, 0.3);
 }
 
-/* Scrollable Container for Cards */
+/* Phần nội dung cuộn bên trong */
 .fashion-sidebar-scroll {
     flex: 1;
     overflow-y: auto;
@@ -2198,25 +2206,27 @@ body.show-detail .rail-ticker {
 }
 
 .fashion-sidebar-scroll::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 4px;
 }
 
-/* iOS Widget Frosted Acrylic Cards */
+/* Các Widget Card mờ đục chuẩn Sneaker Vault */
 .fashion-ios-card {
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.14);
     border-radius: 20px;
     padding: 16px 18px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.12);
     display: flex;
     flex-direction: column;
     gap: 10px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     transition: border-color 0.2s ease;
 }
 
 .fashion-ios-card:hover {
-    border-color: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.25);
 }
 
 .fashion-ios-card .section-label {
@@ -2230,7 +2240,7 @@ body.show-detail .rail-ticker {
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: rgba(255, 255, 255, 0.9);
+    color: rgba(255, 255, 255, 0.95);
 }
 
 .section-label .label-hint {
@@ -2245,14 +2255,14 @@ body.show-detail .rail-ticker {
     flex-wrap: wrap;
 }
 
-/* Apple Liquid Glass Pill Buttons */
+/* Nút Pill hình viên thuốc mờ đục chuẩn */
 .fashion-pill {
     height: 35px;
     padding: 0 14px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.13);
-    color: rgba(255, 255, 255, 0.82);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: rgba(255, 255, 255, 0.85);
     font-size: 12.5px;
     font-weight: 500;
     font-family: inherit;
@@ -2267,18 +2277,18 @@ body.show-detail .rail-ticker {
 }
 
 .fashion-pill:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.14);
     color: #ffffff;
-    border-color: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.3);
     transform: translateY(-1px);
 }
 
 .fashion-pill.is-active {
-    background: rgba(255, 255, 255, 0.26);
-    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.48);
     color: #ffffff;
     font-weight: 700;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.35);
     transform: translateY(-1px);
 }
 
@@ -2304,7 +2314,7 @@ body.show-detail .rail-ticker {
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: rgba(255, 255, 255, 0.55);
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .preview-header strong {
@@ -2334,18 +2344,18 @@ body.show-detail .rail-ticker {
     display: flex;
     align-items: center;
     gap: 10px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 14px;
     padding: 6px 12px 6px 6px;
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
 }
 
 .shirt-mini-card:hover {
     transform: translateY(-2px);
-    background: rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.14);
     border-color: rgba(255, 255, 255, 0.35);
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
 }
@@ -2403,10 +2413,10 @@ body.show-detail .rail-ticker {
     justify-content: space-between;
     gap: 12px;
     padding: 16px 24px 20px;
-    background: rgba(15, 22, 34, 0.88);
+    background: rgba(20, 22, 28, 0.82);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
     flex-shrink: 0;
     box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3);
 }
@@ -2442,8 +2452,8 @@ body.show-detail .rail-ticker {
 .fashion-reset-btn {
     height: 40px;
     padding: 0 14px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.16);
     border-radius: 999px;
     color: rgba(255, 255, 255, 0.75);
     font-size: 12px;
@@ -2456,36 +2466,36 @@ body.show-detail .rail-ticker {
 }
 
 .fashion-reset-btn:hover {
-    background: rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.14);
     color: #ffffff;
     border-color: rgba(255, 255, 255, 0.3);
 }
 
-/* Apple Liquid Glass Glow Action CTA */
+/* Nút hành động chính trong suốt mờ đục chuẩn Sneaker Vault Capsule */
 .fashion-apply-cta {
     height: 42px;
     padding: 0 20px;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.12));
-    border: 1px solid rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 999px;
     color: #ffffff;
     font-size: 12.5px;
     font-weight: 800;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
     display: inline-flex;
     align-items: center;
     gap: 8px;
     cursor: pointer;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.3);
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .fashion-apply-cta:hover {
     transform: translateY(-2px);
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.36), rgba(255, 255, 255, 0.18));
-    border-color: rgba(255, 255, 255, 0.5);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45), 0 0 20px rgba(56, 189, 248, 0.3);
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.45);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45), 0 0 20px rgba(56, 189, 248, 0.25);
 }
 
 .fashion-apply-cta .badge {
