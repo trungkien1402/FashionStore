@@ -17,10 +17,10 @@
         noir: {
             id: 'noir',
             themeClass: 'theme-noir',
-            kicker: 'LOOKBOOK SS·26 · RUNWAY 360°',
+            kicker: 'BỘ SƯU TẬP THEO MÙA',
             title: 'NOIR UNIT',
             collectionName: 'NOIR UNIT',
-            subtitle: 'Đen tuyền đường phố Avant-Garde · Tuyển chọn bởi HNMT Atelier',
+            subtitle: 'Đen tuyền đô thị · Phiên bản giới hạn Drop 2026',
             looks: [
                 {
                     id: 'noir-1',
@@ -87,10 +87,10 @@
         sunwash: {
             id: 'sunwash',
             themeClass: 'theme-sunwash',
-            kicker: 'LOOKBOOK SS·26 · RUNWAY 360°',
+            kicker: 'BỘ SƯU TẬP THEO MÙA',
             title: 'SUN-WASHED',
             collectionName: 'SUN-WASHED',
-            subtitle: 'Denim bạc màu & Sắc cát nắng · Tuyển chọn bởi HNMT Atelier',
+            subtitle: 'Denim bạc màu & sắc cát · Phiên bản giới hạn Drop 2026',
             looks: [
                 {
                     id: 'sun-1',
