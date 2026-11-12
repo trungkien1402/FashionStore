@@ -553,6 +553,14 @@
             if (stray) {
                 stray.remove();
             }
+            // Vẫn gắn sự kiện click cho thẻ để điều hướng sang trang Lookbook
+            document.querySelectorAll('[data-open-lookbook], a[href*="#lookbook-"]').forEach(function (el) {
+                el.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    var th = el.dataset.openLookbook || ((el.getAttribute('href') || '').indexOf('sunwash') !== -1 ? 'sunwash' : 'noir');
+                    window.location.href = '/lookbook?theme=' + th;
+                });
+            });
             return;
         }
 

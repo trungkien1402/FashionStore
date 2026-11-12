@@ -304,5 +304,20 @@
         }, 3000);
     };
 
+    // Điều hướng vào Bộ sưu tập theo mùa (Lookbook 3D độc bản)
+    document.addEventListener('click', function (e) {
+        var card = e.target.closest('[data-open-lookbook], a[href*="#lookbook-"], a[href*="/lookbook"]');
+        if (!card) return;
+        var theme = card.dataset.openLookbook;
+        if (!theme) {
+            var href = card.getAttribute('href') || '';
+            if (href.indexOf('sunwash') !== -1) theme = 'sunwash';
+            else if (href.indexOf('noir') !== -1) theme = 'noir';
+        }
+        if (theme) {
+            e.preventDefault();
+            window.location.href = '/lookbook?theme=' + theme;
+        }
+    });
 
 })();
