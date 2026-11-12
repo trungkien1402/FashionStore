@@ -1,7 +1,6 @@
 /**
  * HNMT ATELIER — "TRY THE LOOK" 3D TURNTABLE RUNWAY
- * 1:1 Cinematic Studio Lookbook with 3D Circular Turntable & Drag/Swipe
- * Independent collections (NOIR UNIT / SUN-WASHED), Hotspots without numbers
+ * Senior Fashion UX/UI: Ultra-Glassmorphism, Micro Hotspot Pins, Weighted Turntable
  */
 (function () {
     'use strict';
@@ -18,9 +17,10 @@
         noir: {
             id: 'noir',
             themeClass: 'theme-noir',
-            title: 'Try the Look.',
+            kicker: 'LOOKBOOK SS·26 · RUNWAY 360°',
+            title: 'NOIR UNIT',
             collectionName: 'NOIR UNIT',
-            subtitle: 'Bộ sưu tập Đen Tuyền Đô Thị · Đè chuột và vuốt để xoay vòng tròn outfit.',
+            subtitle: 'Đen tuyền đường phố Avant-Garde · Tuyển chọn bởi HNMT Atelier',
             looks: [
                 {
                     id: 'noir-1',
@@ -87,9 +87,10 @@
         sunwash: {
             id: 'sunwash',
             themeClass: 'theme-sunwash',
-            title: 'Try the Look.',
+            kicker: 'LOOKBOOK SS·26 · RUNWAY 360°',
+            title: 'SUN-WASHED',
             collectionName: 'SUN-WASHED',
-            subtitle: 'Bộ sưu tập Denim Bạc Màu & Sắc Cát · Đè chuột và vuốt để xoay vòng tròn outfit.',
+            subtitle: 'Denim bạc màu & Sắc cát nắng · Tuyển chọn bởi HNMT Atelier',
             looks: [
                 {
                     id: 'sun-1',
@@ -177,38 +178,37 @@
         root.innerHTML =
             '<section class="lb-stage" id="lbStage">' +
               '<div class="lb-head">' +
-                '<h2 class="lb-title">' + esc(colData.title) + '</h2>' +
+                '<p class="lb-kicker">' + esc(colData.kicker) + '</p>' +
+                '<h1 class="lb-title">' + esc(colData.title) + '</h1>' +
                 '<p class="lb-sub">' + esc(colData.subtitle) + '</p>' +
               '</div>' +
               '<div class="lb-tools">' +
-                '<button type="button" class="lb-icon-btn" id="lbCart" title="Túi đồ">' +
-                  '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' +
-                    '<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>' +
-                    '<path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>' +
+                '<button type="button" class="lb-bag-btn" id="lbCart" title="Túi đồ">' +
+                  '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">' +
+                    '<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>' +
                   '</svg>' +
-                  '<span class="lb-badge" id="lbBadge">0</span>' +
+                  '<span class="lb-bag-count" id="lbBadge">0</span>' +
                 '</button>' +
-                '<a href="/" class="lb-icon-btn" id="lbClose" title="Quay lại trang chủ (Esc)">' +
-                  '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">' +
-                    '<path d="M18 6 6 18M6 6l12 12"/>' +
-                  '</svg>' +
+                '<a href="/" class="lb-back-btn" id="lbClose" title="Quay lại trang chủ">' +
+                  '<i class="bi bi-arrow-left"></i>' +
+                  '<span>Quay lại</span>' +
                 '</a>' +
               '</div>' +
               '<div class="lb-runway" id="lbRunway"></div>' +
               '<div class="lb-drag-hint" id="lbHint">' +
                 '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="m14 7 5 5-5 5M10 17l-5-5 5-5"/></svg>' +
-                '<span>Đè chuột và vuốt để xoay vòng tròn</span>' +
+                '<span>Vuốt ngang để xoay 360°</span>' +
               '</div>' +
             '</section>' +
             '<aside class="lb-side">' +
               '<div class="lb-side-head">' +
-                '<h3>In this look</h3>' +
+                '<h3>BỘ PHỐI HIỆN TẠI</h3>' +
                 '<small id="lbCount">3 MÓN</small>' +
               '</div>' +
               '<div class="lb-side-look" id="lbLookName"></div>' +
               '<div class="lb-list" id="lbList"></div>' +
               '<div class="lb-foot">' +
-                '<div class="lb-total"><span>Trọn bộ outfit</span><b id="lbTotal">0 ₫</b></div>' +
+                '<div class="lb-total"><span>Tổng cộng</span><b id="lbTotal">0 ₫</b></div>' +
                 '<button type="button" class="lb-add" id="lbAddAll">' +
                   '<span>Thêm trọn bộ vào túi</span>' +
                   '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>' +
@@ -227,7 +227,7 @@
             m.className = 'lb-model';
             m.dataset.index = i;
 
-            // Hotspot buttons (no numbers!)
+            // Micro-hotspot pins without numbers
             var pinsHtml = look.pins.map(function (pin, k) {
                 var itm = look.items[pin.itemIndex || k];
                 return '<div class="lb-hotspot" data-item="' + (pin.itemIndex || k) + '" style="top:' + pin.top + ';left:' + pin.left + '">' +
@@ -258,8 +258,8 @@
                 });
             });
 
-            // Clicking flanking model rotates to it
-            m.addEventListener('click', function (e) {
+            // Clicking flanking model smoothly rotates to it
+            m.addEventListener('click', function () {
                 if (Math.abs(velocity) < 2 && Math.abs(currentProgress - i) > 0.3) {
                     smoothSnapTo(i);
                 }
@@ -322,12 +322,12 @@
             var shadow = m.querySelector('.lb-model-shadow');
             if (shadow) {
                 shadow.style.transform = 'scale(' + scale.toFixed(3) + ')';
-                shadow.style.opacity = (0.35 * scale).toFixed(2);
+                shadow.style.opacity = (0.32 * scale).toFixed(2);
             }
         });
     }
 
-    // ---------- Gesture Drag / Swipe Engine ----------
+    // ---------- Gesture Drag / Swipe Engine (Smoothly Weighted) ----------
     function initGestures() {
         var hint = root.querySelector('#lbHint');
         function hideHint() {
@@ -352,8 +352,8 @@
             velocity = e.clientX - lastX;
             lastX = e.clientX;
 
-            // Drag sensitivity: 320px drag moves 1 full look
-            currentProgress = startProgress - (dx / 320);
+            // Damping: 680px drag moves 1 full look (smooth, weighted, luxury turntable)
+            currentProgress = startProgress - (dx / 680);
             updateLayout(currentProgress);
         });
 
@@ -362,35 +362,31 @@
             isDragging = false;
             runway.classList.remove('is-dragging');
 
-            // Kinetic inertia momentum snap
-            var target = Math.round(currentProgress - velocity * 0.05);
+            // Refined kinetic momentum snap
+            var target = Math.round(currentProgress - velocity * 0.035);
             smoothSnapTo(target);
         }
 
         window.addEventListener('pointerup', handlePointerUp);
         window.addEventListener('pointercancel', handlePointerUp);
 
-        // Trackpad / Wheel Swipe
+        // Trackpad / Wheel Swipe with debounce
         var wheelLock = 0;
         stage.addEventListener('wheel', function (e) {
             var d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-            if (Math.abs(d) < 20 || Date.now() - wheelLock < 550) return;
+            if (Math.abs(d) < 25 || Date.now() - wheelLock < 650) return;
             wheelLock = Date.now();
             hideHint();
             smoothSnapTo(Math.round(currentProgress) + (d > 0 ? 1 : -1));
         }, { passive: true });
 
-        // Keyboard Arrow Navigation
+        // Keyboard Navigation
         window.addEventListener('keydown', function (e) {
             if (!root.classList.contains('is-open')) return;
             if (e.key === 'ArrowLeft') { smoothSnapTo(Math.round(currentProgress) - 1); hideHint(); }
             else if (e.key === 'ArrowRight') { smoothSnapTo(Math.round(currentProgress) + 1); hideHint(); }
             else if (e.key === 'Escape') {
-                if (window.location.pathname.indexOf('/lookbook') !== -1) {
-                    window.location.href = '/';
-                } else {
-                    root.classList.remove('is-open');
-                }
+                window.location.href = '/';
             }
         });
     }
@@ -401,9 +397,9 @@
         var startP = currentProgress;
         var endP = targetIndex;
         var startTime = performance.now();
-        var duration = 520; // ms
+        var duration = 620; // ms
 
-        // Ease Out Cubic
+        // Smooth cubic-bezier ease out
         function easeOutCubic(t) {
             return (--t) * t * t + 1;
         }
@@ -441,13 +437,12 @@
         }
     }
 
-    // ---------- Sidebar: "In This Look" ----------
+    // ---------- Sidebar: Clean Editorial Layout ----------
     function renderSidebar(idx) {
         var look = activeLooks[idx];
         if (!look) return;
 
-        var colData = COLLECTIONS[currentCollectionKey];
-        root.querySelector('#lbLookName').textContent = 'LOOK ' + pad(idx + 1) + ' · ' + look.name.toUpperCase() + ' · ' + colData.collectionName;
+        root.querySelector('#lbLookName').textContent = 'LOOK ' + pad(idx + 1) + ' · ' + look.name.toUpperCase();
         root.querySelector('#lbCount').textContent = look.items.length + ' MÓN';
 
         list.innerHTML = '';
@@ -578,27 +573,9 @@
                 build(theme || 'noir');
             },
             close: function () {
-                if (window.location.pathname.indexOf('/lookbook') !== -1) {
-                    window.location.href = '/';
-                } else if (root) {
-                    root.classList.remove('is-open');
-                }
+                window.location.href = '/';
             }
         };
-
-        // Listen for data-open-lookbook triggers across pages
-        document.querySelectorAll('[data-open-lookbook]').forEach(function (el) {
-            el.addEventListener('click', function (e) {
-                // If on homepage without full page reload:
-                if (window.location.pathname === '/' || window.location.pathname === '') {
-                    e.preventDefault();
-                    build(el.dataset.openLookbook);
-                    if (window.history.pushState) {
-                        window.history.pushState(null, '', '/lookbook?theme=' + el.dataset.openLookbook);
-                    }
-                }
-            });
-        });
     }
 
     if (document.readyState === 'loading') {

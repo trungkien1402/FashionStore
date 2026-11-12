@@ -1,17 +1,15 @@
 /* ==========================================================================
    HNMT ATELIER — "TRY THE LOOK" 3D TURNTABLE RUNWAY
-   High-end Minimalist Studio · 3D Cylindrical Carousel · Drag/Swipe Gestures
-   Hotspot Buttons without numbers · Glassmorphic "In This Look" Sidebar
+   Senior Fashion UX/UI: Ultra-Glassmorphism, Micro Hotspot Pins, Weighted Turntable
    ========================================================================== */
 
 .lb-wrapper {
     --lb-ink: #111111;
-    --lb-mute: #7c7c77;
-    --lb-line: rgba(17, 17, 17, 0.1);
-    --lb-bg-center: #f2f3f5;
-    --lb-bg-edge: #d8dbe0;
-    --lb-accent: #111111;
-    --lb-glass: rgba(255, 255, 255, 0.72);
+    --lb-mute: #787873;
+    --lb-line: rgba(17, 17, 17, 0.08);
+    --lb-glass-bg: rgba(255, 255, 255, 0.28);
+    --lb-glass-card: rgba(255, 255, 255, 0.52);
+    --lb-glass-border: rgba(255, 255, 255, 0.65);
     position: fixed;
     inset: 0;
     z-index: 10000;
@@ -19,7 +17,6 @@
     flex-direction: row;
     font-family: 'Jost', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     color: var(--lb-ink);
-    background: radial-gradient(ellipse 120% 90% at 50% 36%, var(--lb-bg-center) 0%, var(--lb-bg-edge) 100%);
     opacity: 0;
     overflow: hidden;
     user-select: none;
@@ -28,15 +25,11 @@
 }
 
 .lb-wrapper.theme-noir {
-    --lb-bg-center: #f0f1f3;
-    --lb-bg-edge: #d3d7dc;
-    --lb-accent: #0f172a;
+    background: radial-gradient(ellipse 115% 85% at 50% 36%, #f3f4f6 0%, #e2e5e9 60%, #cbd0d8 100%);
 }
 
 .lb-wrapper.theme-sunwash {
-    --lb-bg-center: #faf6ee;
-    --lb-bg-edge: #ded6c5;
-    --lb-accent: #1c1917;
+    background: radial-gradient(ellipse 115% 85% at 50% 36%, #faf7f0 0%, #ede6d8 60%, #ded5c2 100%);
 }
 
 .lb-wrapper.is-open {
@@ -45,7 +38,7 @@
 }
 
 /* ==========================================================================
-   STAGE (3D CAROUSEL CANVAS)
+   STAGE & 3D PERSPECTIVE
    ========================================================================== */
 .lb-stage {
     position: relative;
@@ -53,11 +46,11 @@
     min-width: 0;
     height: 100%;
     overflow: hidden;
-    perspective: 1200px;
-    perspective-origin: 50% 45%;
+    perspective: 1400px;
+    perspective-origin: 50% 46%;
 }
 
-/* Header Info */
+/* Header Editorial Title (Top-Left) */
 .lb-head {
     position: absolute;
     top: 36px;
@@ -65,73 +58,125 @@
     z-index: 20;
     pointer-events: none;
 }
+.lb-kicker {
+    font-size: 11px;
+    letter-spacing: 2.8px;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--lb-mute);
+    margin: 0 0 6px 0;
+}
 .lb-title {
     font-family: 'Jost', sans-serif;
-    font-size: 42px;
-    font-weight: 500;
-    letter-spacing: -0.8px;
+    font-size: 44px;
+    font-weight: 600;
+    letter-spacing: -1px;
     margin: 0;
     line-height: 1.05;
     color: var(--lb-ink);
+    text-transform: uppercase;
 }
 .lb-sub {
-    margin: 10px 0 0;
+    margin: 8px 0 0;
     font-size: 13px;
     color: var(--lb-mute);
-    letter-spacing: 0.2px;
+    letter-spacing: 0.3px;
     font-weight: 400;
 }
 
-/* Top Right Action Tools */
+/* Top-Right Navigation Tools (Matching Store/Products exactly) */
 .lb-tools {
     position: absolute;
-    top: 32px;
+    top: 36px;
     right: 40px;
     z-index: 25;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
 }
-.lb-icon-btn {
-    position: relative;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    border: 1px solid var(--lb-line);
-    background: var(--lb-glass);
-    color: var(--lb-ink);
-    display: grid;
-    place-items: center;
+
+/* Bag Button matching .rail-bag-btn */
+.lb-bag-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 38px;
+    padding: 0 6px;
+    background: transparent;
+    border: 0;
     cursor: pointer;
-    transition: all .2s cubic-bezier(0.16, 1, 0.3, 1);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    text-decoration: none;
-}
-.lb-icon-btn:hover {
-    background: var(--lb-ink);
-    color: #ffffff;
-    transform: scale(1.05);
-}
-.lb-badge {
-    position: absolute;
-    top: -3px;
-    right: -3px;
-    min-width: 19px;
-    height: 19px;
-    padding: 0 5px;
-    border-radius: 999px;
-    background: var(--lb-ink);
-    color: #ffffff;
-    font-size: 11px;
+    color: var(--lb-ink);
+    font-family: inherit;
+    font-size: 13px;
     font-weight: 600;
-    display: grid;
-    place-items: center;
-    border: 2px solid #ffffff;
+    text-decoration: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.lb-bag-btn:hover {
+    opacity: 0.75;
+    transform: scale(1.04);
+}
+.lb-bag-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke-width: 1.8;
+}
+.lb-bag-count {
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    max-width: 22px;
+    aspect-ratio: 1 / 1;
+    border: 1.5px solid currentColor;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+    box-sizing: border-box;
+}
+
+/* Back Button matching .rail-portal-exit-btn */
+.lb-back-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 38px;
+    padding: 0 20px;
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.45);
+    border: 1.5px solid var(--lb-ink);
+    border-radius: 999px;
+    color: var(--lb-ink);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    text-decoration: none;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.lb-back-btn:hover {
+    background: var(--lb-ink);
+    color: #ffffff;
+    transform: translateX(-2px);
+}
+.lb-back-btn i {
+    font-size: 15px;
+    display: inline-flex;
+    align-items: center;
+    transition: transform 0.25s ease;
+}
+.lb-back-btn:hover i {
+    transform: translateX(-2px);
 }
 
 /* ==========================================================================
-   3D TURNTABLE RUNWAY
+   3D TURNTABLE RUNWAY (WEIGHTED & CINEMATIC)
    ========================================================================== */
 .lb-runway {
     position: absolute;
@@ -144,14 +189,14 @@
     cursor: grabbing !important;
 }
 
-/* Ambient Studio Floor Shadow */
+/* Ambient Floor Shadow Plane */
 .lb-runway::after {
     content: '';
     position: absolute;
-    left: -20%;
-    right: -20%;
+    left: -25%;
+    right: -25%;
     bottom: 0;
-    height: 38%;
+    height: 36%;
     background: radial-gradient(ellipse 65% 55% at 50% 65%, rgba(0, 0, 0, 0.08) 0%, rgba(0,0,0,0.02) 45%, transparent 75%);
     pointer-events: none;
     z-index: 1;
@@ -161,16 +206,16 @@
 .lb-model {
     position: absolute;
     left: 50%;
-    bottom: 8.5vh;
+    bottom: 8vh;
     height: min(72vh, 730px);
     transform-origin: 50% 100%;
     will-change: transform, opacity, filter;
     cursor: pointer;
     z-index: 5;
     pointer-events: auto;
-    transition: transform .65s cubic-bezier(0.16, 1, 0.3, 1),
-                opacity .65s ease,
-                filter .65s ease;
+    transition: transform .7s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity .7s ease,
+                filter .7s ease;
 }
 .lb-runway.is-dragging .lb-model {
     transition: none !important;
@@ -185,14 +230,14 @@
     user-select: none;
 }
 
-/* Ground Contact Shadow beneath shoes */
+/* Contact Floor Shadow under shoes */
 .lb-model-shadow {
     position: absolute;
     left: 12%;
     right: 12%;
     bottom: -1.4%;
     height: 3.6%;
-    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.12) 48%, transparent 72%);
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.32) 0%, rgba(0, 0, 0, 0.1) 48%, transparent 72%);
     filter: blur(6px);
     pointer-events: none;
     z-index: -1;
@@ -200,20 +245,20 @@
 }
 
 /* ==========================================================================
-   HOTSPOT BUTTONS (Minimalist Translucent Ring - NO NUMBERS)
+   LUXURY MICRO HOTSPOTS (Delicate, Non-intrusive, No Obscuring Clothes)
    ========================================================================== */
 .lb-hotspot {
     position: absolute;
     transform: translate(-50%, -50%);
-    width: 32px;
-    height: 32px;
+    width: 24px;
+    height: 24px;
     z-index: 15;
     cursor: pointer;
     display: grid;
     place-items: center;
     opacity: 0;
     pointer-events: none;
-    transition: opacity .4s ease .25s, transform .2s ease;
+    transition: opacity .4s ease .3s, transform .2s ease;
 }
 
 .lb-model.is-center .lb-hotspot {
@@ -221,79 +266,77 @@
     pointer-events: auto;
 }
 
-/* Translucent Frosted Glass Disc */
+/* Delicate Micro-Ring (18px) */
 .lb-hotspot-circle {
     position: relative;
-    width: 26px;
-    height: 26px;
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.78);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1.5px solid rgba(255, 255, 255, 0.95);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18), inset 0 0 6px rgba(255,255,255,0.8);
+    background: rgba(255, 255, 255, 0.35);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1.5px solid rgba(255, 255, 255, 0.85);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18), inset 0 0 4px rgba(255,255,255,0.6);
     display: grid;
     place-items: center;
     transition: all .25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Inner Accent Core Dot */
+/* Center Micro Pearl Dot (4px) */
 .lb-hotspot-dot {
-    width: 7px;
-    height: 7px;
+    width: 5px;
+    height: 5px;
     border-radius: 50%;
-    background: var(--lb-ink);
+    background: #ffffff;
+    box-shadow: 0 0 4px rgba(0,0,0,0.4);
     transition: all .2s;
 }
 
-/* Radar Pulse Wave */
+/* Ultra-Subtle Ambient Radar Pulse */
 .lb-hotspot-radar {
     position: absolute;
     inset: -6px;
     border-radius: 50%;
-    border: 1.5px solid rgba(17, 17, 17, 0.4);
-    animation: lbPulseRadar 2.4s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    animation: lbPulseRadar 3s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
     pointer-events: none;
 }
 @keyframes lbPulseRadar {
-    0% { transform: scale(0.65); opacity: 0.9; }
-    100% { transform: scale(1.9); opacity: 0; }
+    0% { transform: scale(0.6); opacity: 0.9; }
+    100% { transform: scale(2.2); opacity: 0; }
 }
 
 /* Hover & Active Highlight */
 .lb-hotspot:hover .lb-hotspot-circle,
 .lb-hotspot.is-highlighted .lb-hotspot-circle {
-    background: var(--lb-ink);
-    border-color: var(--lb-ink);
-    transform: scale(1.22);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    background: #ffffff;
+    border-color: #ffffff;
+    transform: scale(1.35);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
 }
 .lb-hotspot:hover .lb-hotspot-dot,
 .lb-hotspot.is-highlighted .lb-hotspot-dot {
-    background: #ffffff;
-}
-.lb-hotspot:hover .lb-hotspot-radar,
-.lb-hotspot.is-highlighted .lb-hotspot-radar {
-    border-color: rgba(255, 255, 255, 0.6);
+    background: var(--lb-ink);
 }
 
-/* Popover Tooltip on Hover */
+/* Minimalist Editorial Popover Tag on Hover */
 .lb-hotspot-pop {
     position: absolute;
-    left: 42px;
+    left: 32px;
     top: 50%;
     transform: translateY(-50%) translateX(-6px);
-    padding: 8px 14px;
-    border-radius: 10px;
-    background: rgba(17, 17, 17, 0.92);
+    padding: 7px 14px;
+    border-radius: 8px;
+    background: rgba(17, 17, 17, 0.88);
     color: #ffffff;
     font-size: 12px;
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
     transition: all .25s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
     backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 .lb-hotspot:hover .lb-hotspot-pop,
 .lb-hotspot.is-highlighted .lb-hotspot-pop {
@@ -308,39 +351,37 @@
 .lb-pop-price {
     display: block;
     font-size: 11px;
-    color: rgba(255, 255, 255, 0.7);
-    margin-top: 2px;
+    color: rgba(255, 255, 255, 0.72);
+    margin-top: 1px;
 }
 
-/* ==========================================================================
-   GESTURE CUES & HINTS
-   ========================================================================== */
+/* Floating Gesture Hint */
 .lb-drag-hint {
     position: absolute;
     left: 50%;
-    bottom: 34px;
+    bottom: 30px;
     transform: translateX(-50%);
     z-index: 10;
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 9px 18px;
+    padding: 8px 18px;
     border-radius: 999px;
-    background: var(--lb-glass);
-    border: 1px solid var(--lb-line);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    font-size: 11.5px;
-    font-weight: 500;
-    letter-spacing: 0.8px;
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
     text-transform: uppercase;
     color: var(--lb-mute);
     pointer-events: none;
     transition: opacity .5s ease;
 }
 .lb-drag-hint svg {
-    width: 16px;
-    height: 16px;
+    width: 15px;
+    height: 15px;
     stroke: currentColor;
     animation: lbHintWiggle 2s ease-in-out infinite;
 }
@@ -353,56 +394,57 @@
 }
 
 /* ==========================================================================
-   SIDEBAR: "IN THIS LOOK"
+   SIDEBAR: ULTRA-GLASSMORPHISM (TRONG SUỐT & GỌN GÀNG)
    ========================================================================== */
 .lb-side {
-    width: 400px;
+    width: 390px;
     flex-shrink: 0;
-    background: var(--lb-glass);
-    border-left: 1px solid var(--lb-line);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
+    background: var(--lb-glass-bg);
+    border-left: 1px solid var(--lb-glass-border);
+    backdrop-filter: blur(32px);
+    -webkit-backdrop-filter: blur(32px);
     display: flex;
     flex-direction: column;
     z-index: 30;
     height: 100%;
+    box-shadow: -12px 0 36px rgba(0, 0, 0, 0.03);
 }
 
 .lb-side-head {
-    padding: 36px 30px 14px;
+    padding: 34px 28px 12px;
     display: flex;
     align-items: baseline;
     justify-content: space-between;
 }
 .lb-side-head h3 {
     margin: 0;
-    font-size: 18px;
-    font-weight: 600;
-    letter-spacing: -0.3px;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
     color: var(--lb-ink);
 }
 .lb-side-head small {
     font-size: 11px;
-    letter-spacing: 2px;
+    letter-spacing: 1.8px;
     text-transform: uppercase;
     color: var(--lb-mute);
     font-weight: 600;
 }
 
 .lb-side-look {
-    padding: 0 30px 16px;
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    color: var(--lb-mute);
+    padding: 0 28px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    color: var(--lb-ink);
     border-bottom: 1px solid var(--lb-line);
 }
 
 .lb-list {
     flex: 1;
     overflow-y: auto;
-    padding: 18px 22px;
+    padding: 16px 22px;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -411,33 +453,36 @@
     width: 4px;
 }
 .lb-list::-webkit-scrollbar-thumb {
-    background: rgba(17, 17, 17, 0.15);
+    background: rgba(17, 17, 17, 0.12);
     border-radius: 4px;
 }
 
-/* Item Card */
+/* Glassmorphic Item Card */
 .lb-item {
     display: flex;
     gap: 14px;
     padding: 12px 14px;
-    border: 1px solid var(--lb-line);
-    border-radius: 14px;
-    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid var(--lb-glass-border);
+    border-radius: 16px;
+    background: var(--lb-glass-card);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
     transition: all .25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .lb-item:hover,
 .lb-item.is-highlighted {
     border-color: var(--lb-ink);
-    background: #ffffff;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
     transform: translateY(-1px);
 }
 
 .lb-thumb {
-    width: 82px;
-    height: 98px;
+    width: 78px;
+    height: 94px;
     border-radius: 10px;
-    background: #efeee9;
+    background: rgba(0, 0, 0, 0.03);
     display: grid;
     place-items: center;
     overflow: hidden;
@@ -458,13 +503,13 @@
 }
 .lb-cat {
     font-size: 9.5px;
-    letter-spacing: 1.8px;
+    letter-spacing: 1.6px;
     text-transform: uppercase;
     color: var(--lb-mute);
     font-weight: 600;
 }
 .lb-name {
-    margin: 4px 0 8px;
+    margin: 3px 0 8px;
     font-size: 13.5px;
     font-weight: 600;
     line-height: 1.35;
@@ -478,17 +523,17 @@
 .lb-sizes {
     display: flex;
     flex-wrap: wrap;
-    gap: 5px;
+    gap: 4px;
     margin-bottom: auto;
 }
 .lb-size {
-    min-width: 28px;
-    height: 23px;
-    padding: 0 7px;
+    min-width: 27px;
+    height: 22px;
+    padding: 0 6px;
     border-radius: 6px;
-    border: 1px solid var(--lb-line);
+    border: 1px solid rgba(17, 17, 17, 0.15);
     background: transparent;
-    font: 500 11px/1 'Jost', sans-serif;
+    font: 600 10.5px/1 'Jost', sans-serif;
     color: var(--lb-ink);
     cursor: pointer;
     transition: all .15s;
@@ -503,18 +548,18 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 10px;
+    margin-top: 8px;
 }
 .lb-price {
     font-size: 14.5px;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--lb-ink);
 }
 .lb-plus {
-    width: 30px;
-    height: 30px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
-    border: 1px solid var(--lb-ink);
+    border: 1.5px solid var(--lb-ink);
     background: transparent;
     color: var(--lb-ink);
     font-size: 16px;
@@ -535,43 +580,46 @@
     color: #ffffff;
 }
 
-/* Sidebar Footer (Add Full Look) */
+/* Sidebar Footer (Glassmorphic) */
 .lb-foot {
-    padding: 18px 24px 28px;
-    border-top: 1px solid var(--lb-line);
-    background: rgba(255, 255, 255, 0.4);
+    padding: 16px 24px 24px;
+    border-top: 1px solid var(--lb-glass-border);
+    background: rgba(255, 255, 255, 0.35);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 .lb-total {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    margin-bottom: 14px;
-    font-size: 12px;
+    margin-bottom: 12px;
+    font-size: 11.5px;
     color: var(--lb-mute);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1.2px;
+    font-weight: 600;
 }
 .lb-total b {
     font-size: 21px;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--lb-ink);
     letter-spacing: -0.5px;
 }
 .lb-add {
     width: 100%;
-    height: 52px;
+    height: 50px;
     border: 0;
-    border-radius: 12px;
+    border-radius: 999px;
     background: var(--lb-ink);
     color: #ffffff;
-    font: 600 12.5px/1 'Jost', sans-serif;
+    font: 700 12.5px/1 'Jost', sans-serif;
     letter-spacing: 1.4px;
     text-transform: uppercase;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: 10px;
     transition: all .25s cubic-bezier(0.16, 1, 0.3, 1);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
@@ -592,7 +640,7 @@
         flex-direction: column;
     }
     .lb-stage {
-        height: 58vh;
+        height: 56vh;
         flex: none;
     }
     .lb-head {
@@ -600,7 +648,7 @@
         left: 20px;
     }
     .lb-title {
-        font-size: 28px;
+        font-size: 26px;
     }
     .lb-sub {
         font-size: 11.5px;
@@ -608,27 +656,33 @@
     .lb-tools {
         top: 18px;
         right: 18px;
+        gap: 10px;
+    }
+    .lb-back-btn {
+        height: 34px;
+        padding: 0 14px;
+        font-size: 11.5px;
     }
     .lb-model {
         bottom: 2vh;
-        height: 50vh;
+        height: 48vh;
     }
     .lb-side {
         width: 100%;
-        height: 42vh;
+        height: 44vh;
         border-left: 0;
-        border-top: 1px solid var(--lb-line);
+        border-top: 1px solid var(--lb-glass-border);
     }
     .lb-side-head {
-        padding: 16px 20px 8px;
+        padding: 14px 20px 6px;
     }
     .lb-side-look {
-        padding: 0 20px 10px;
+        padding: 0 20px 8px;
     }
     .lb-list {
         padding: 10px 16px;
     }
     .lb-foot {
-        padding: 12px 16px 18px;
+        padding: 10px 16px 16px;
     }
 }
