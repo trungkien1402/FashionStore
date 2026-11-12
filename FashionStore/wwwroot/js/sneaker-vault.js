@@ -282,10 +282,20 @@
 
     let currentCollectionIndex = 0;
     let filteredSneakers = null;
+    let filteredPageIdx = 0;
+    const ITEMS_PER_GRID = 6;
     let activeFilterLabel = '';
 
     const getAllSneakers = () => SNEAKER_COLLECTIONS.flatMap(c => c.items.map(it => ({ ...it, collectionId: c.id, collectionTitle: c.title })));
     const getSneakers = () => (filteredSneakers !== null ? filteredSneakers : SNEAKER_COLLECTIONS[currentCollectionIndex].items);
+    const getFilteredTotalPages = () => (!filteredSneakers ? 1 : Math.max(1, Math.ceil(filteredSneakers.length / ITEMS_PER_GRID)));
+    const getGridSneakers = () => {
+        if (filteredSneakers !== null) {
+            const start = filteredPageIdx * ITEMS_PER_GRID;
+            return filteredSneakers.slice(start, start + ITEMS_PER_GRID);
+        }
+        return SNEAKER_COLLECTIONS[currentCollectionIndex].items;
+    };
     const getActiveCollection = () => SNEAKER_COLLECTIONS[currentCollectionIndex];
 
     let currentIndex = 0;
@@ -304,18 +314,30 @@
     // --- Cập nhật thanh chuyển đổi bộ sưu tập (Vault Switcher) ---
     function updateVaultSwitcherUI() {
         const isFiltered = filteredSneakers !== null;
-        const currentTitle = isFiltered ? `KẾT QUẢ LỌC [${filteredSneakers.length} ĐÔI]` : getActiveCollection().title;
+        let currentTitle = '';
+        let showArrows = true;
+
+        if (isFiltered) {
+            const totalPages = getFilteredTotalPages();
+            currentTitle = totalPages > 1
+                ? `KẾT QUẢ LỌC ${filteredPageIdx + 1}/${totalPages} [${filteredSneakers.length} ĐÔI]`
+                : `KẾT QUẢ LỌC [${filteredSneakers.length} ĐÔI]`;
+            showArrows = totalPages > 1;
+        } else {
+            currentTitle = getActiveCollection().title;
+            showArrows = true;
+        }
 
         document.querySelectorAll('#svCollectionTitle, .sv-header-title').forEach(el => {
             el.textContent = currentTitle;
         });
 
         document.querySelectorAll('#svPrevCollectionBtn, .sv-vault-arrow:first-child').forEach(btn => {
-            btn.style.display = isFiltered ? 'none' : 'inline-flex';
+            btn.style.display = showArrows ? 'inline-flex' : 'none';
         });
 
         document.querySelectorAll('#svNextCollectionBtn, .sv-vault-arrow:last-child').forEach(btn => {
-            btn.style.display = isFiltered ? 'none' : 'inline-flex';
+            btn.style.display = showArrows ? 'inline-flex' : 'none';
         });
 
         document.querySelectorAll('#svCollectionBadge, .sv-vault-badge').forEach(b => b.remove());
@@ -325,6 +347,7 @@
     function applyFilter(filteredList, label) {
         filteredSneakers = Array.isArray(filteredList) ? filteredList : [];
         activeFilterLabel = label || '';
+        filteredPageIdx = 0;
         currentIndex = 0;
         updateVaultSwitcherUI();
         renderGrid();
@@ -342,6 +365,7 @@
     function resetFilter() {
         filteredSneakers = null;
         activeFilterLabel = '';
+        filteredPageIdx = 0;
         currentIndex = 0;
         updateVaultSwitcherUI();
         renderGrid();
@@ -355,7 +379,11 @@
     function ensureVaultSwitcherInDOM() {
         const headerLefts = document.querySelectorAll('.sv-header-left');
         const isFiltered = filteredSneakers !== null;
-        const currentTitle = isFiltered ? `KẾT QUẢ LỌC [${filteredSneakers.length} ĐÔI]` : getActiveCollection().title;
+        const totalPages = isFiltered ? getFilteredTotalPages() : 1;
+        const showArrows = !isFiltered || totalPages > 1;
+        const currentTitle = isFiltered
+            ? (totalPages > 1 ? `KẾT QUẢ LỌC ${filteredPageIdx + 1}/${totalPages} [${filteredSneakers.length} ĐÔI]` : `KẾT QUẢ LỌC [${filteredSneakers.length} ĐÔI]`)
+            : getActiveCollection().title;
 
         headerLefts.forEach(headerLeft => {
             let switcher = headerLeft.querySelector('.sv-vault-switcher');
@@ -370,9 +398,9 @@
                 prevBtn.type = 'button';
                 prevBtn.className = 'sv-vault-arrow';
                 prevBtn.id = 'svPrevCollectionBtn';
-                prevBtn.setAttribute('aria-label', 'Bộ giày trước');
-                prevBtn.setAttribute('title', 'Bộ sưu tập trước');
-                prevBtn.style.display = isFiltered ? 'none' : 'inline-flex';
+                prevBtn.setAttribute('aria-label', isFiltered ? 'Trang trước' : 'Bộ giày trước');
+                prevBtn.setAttribute('title', isFiltered ? '6 đôi trước' : 'Bộ sưu tập trước');
+                prevBtn.style.display = showArrows ? 'inline-flex' : 'none';
                 prevBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>';
 
                 const colTitle = document.createElement('span');
@@ -384,9 +412,9 @@
                 nextBtn.type = 'button';
                 nextBtn.className = 'sv-vault-arrow';
                 nextBtn.id = 'svNextCollectionBtn';
-                nextBtn.setAttribute('aria-label', 'Bộ giày kế tiếp');
-                nextBtn.setAttribute('title', 'Bộ sưu tập kế tiếp');
-                nextBtn.style.display = isFiltered ? 'none' : 'inline-flex';
+                nextBtn.setAttribute('aria-label', isFiltered ? 'Trang tiếp theo' : 'Bộ giày kế tiếp');
+                nextBtn.setAttribute('title', isFiltered ? '6 đôi tiếp theo' : 'Bộ sưu tập kế tiếp');
+                nextBtn.style.display = showArrows ? 'inline-flex' : 'none';
                 nextBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>';
 
                 switcher.appendChild(prevBtn);
@@ -401,11 +429,11 @@
 
                 prevBtn.onclick = (e) => {
                     e.stopPropagation();
-                    if (filteredSneakers === null) changeCollection(-1);
+                    changeCollection(-1);
                 };
                 nextBtn.onclick = (e) => {
                     e.stopPropagation();
-                    if (filteredSneakers === null) changeCollection(1);
+                    changeCollection(1);
                 };
             } else {
                 const prevBtn = switcher.querySelector('.sv-vault-arrow:first-child, #svPrevCollectionBtn');
@@ -416,28 +444,76 @@
                 if (colTitle) colTitle.textContent = currentTitle;
 
                 if (prevBtn) {
-                    prevBtn.style.display = isFiltered ? 'none' : 'inline-flex';
+                    prevBtn.style.display = showArrows ? 'inline-flex' : 'none';
                     prevBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>';
                     prevBtn.onclick = (e) => {
                         e.stopPropagation();
-                        if (filteredSneakers === null) changeCollection(-1);
+                        changeCollection(-1);
                     };
                 }
                 if (nextBtn) {
-                    nextBtn.style.display = isFiltered ? 'none' : 'inline-flex';
+                    nextBtn.style.display = showArrows ? 'inline-flex' : 'none';
                     nextBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>';
                     nextBtn.onclick = (e) => {
                         e.stopPropagation();
-                        if (filteredSneakers === null) changeCollection(1);
+                        changeCollection(1);
                     };
                 }
             }
         });
     }
 
-    // --- Đổi bộ sưu tập giày (Switch Sneaker Collection / Vault) ---
+    // --- Đổi bộ sưu tập giày hoặc chuyển trang kết quả lọc (6 đôi / trang) ---
     function changeCollection(direction = 1) {
         if (isTransitioning) return;
+
+        if (filteredSneakers !== null) {
+            const totalPages = getFilteredTotalPages();
+            if (totalPages <= 1) return;
+
+            filteredPageIdx = (filteredPageIdx + direction + totalPages) % totalPages;
+
+            const currentTitle = `KẾT QUẢ LỌC ${filteredPageIdx + 1}/${totalPages} [${filteredSneakers.length} ĐÔI]`;
+            const titleEls = document.querySelectorAll('#svCollectionTitle, .sv-header-title');
+            titleEls.forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = direction > 0 ? 'translateX(12px)' : 'translateX(-12px)';
+                setTimeout(() => {
+                    el.textContent = currentTitle;
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateX(0)';
+                }, 160);
+            });
+
+            if (!isSliderView) {
+                // Chế độ Grid: Mờ nhẹ các đôi cũ, lướt ngang và stagger 6 đôi của trang mới
+                const items = $$('.sv-grid-item');
+                items.forEach(it => {
+                    it.style.transition = 'opacity 0.22s ease, transform 0.22s ease';
+                    it.style.opacity = '0';
+                    it.style.transform = direction > 0 ? 'translateX(-24px) scale(0.92)' : 'translateX(24px) scale(0.92)';
+                });
+
+                setTimeout(() => {
+                    renderGrid();
+                    const newItems = $$('.sv-grid-item');
+                    newItems.forEach((it, i) => {
+                        it.style.opacity = '0';
+                        it.style.transform = direction > 0 ? 'translateX(24px) scale(0.92)' : 'translateX(-24px) scale(0.92)';
+                        setTimeout(() => {
+                            it.style.transition = 'opacity 0.35s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1)';
+                            it.style.opacity = '1';
+                            it.style.transform = 'translateX(0) scale(1)';
+                        }, i * 40);
+                    });
+                }, 220);
+            } else {
+                currentIndex = filteredPageIdx * ITEMS_PER_GRID;
+                renderGrid();
+                updateSliderDisplay(direction);
+            }
+            return;
+        }
 
         currentCollectionIndex = (currentCollectionIndex + direction + SNEAKER_COLLECTIONS.length) % SNEAKER_COLLECTIONS.length;
         const col = getActiveCollection();
@@ -540,10 +616,14 @@
         grid.innerHTML = '';
         grid.setAttribute('data-collection', String(currentCollectionIndex));
 
-        getSneakers().forEach((snk, idx) => {
+        const gridSneakers = getGridSneakers();
+        const baseIdx = filteredSneakers !== null ? (filteredPageIdx * ITEMS_PER_GRID) : 0;
+
+        gridSneakers.forEach((snk, i) => {
+            const globalIdx = baseIdx + i;
             const item = document.createElement('div');
             item.className = 'sv-grid-item';
-            item.setAttribute('data-idx', String(idx));
+            item.setAttribute('data-idx', String(globalIdx));
             item.setAttribute('role', 'button');
             item.setAttribute('tabindex', '0');
             item.setAttribute('aria-label', `Xem chi tiết ${snk.model} - ${snk.colorway}`);
@@ -556,7 +636,7 @@
             // Click trực tiếp vào đôi giày để kích hoạt hiệu ứng FLIP mở chi tiết
             item.onclick = function (e) {
                 e.stopPropagation();
-                openSliderView(idx);
+                openSliderView(globalIdx);
             };
             grid.appendChild(item);
         });
@@ -597,7 +677,8 @@
 
         // 1. Tìm phần tử đôi giày vừa được bấm trong Grid
         const gridItems = $$('.sv-grid-item');
-        const clickedItem = gridItems[idx];
+        const pageIdx = filteredSneakers !== null ? (idx % ITEMS_PER_GRID) : idx;
+        const clickedItem = document.querySelector(`.sv-grid-item[data-idx="${idx}"]`) || gridItems[pageIdx];
         const clickedImg = clickedItem ? clickedItem.querySelector('.sv-item-img') : null;
         const clickedShadow = clickedItem ? clickedItem.querySelector('.sv-item-shadow') : null;
 
@@ -789,18 +870,23 @@
         }
 
         const grid = $('#svGrid');
-        if (grid && grid.getAttribute('data-collection') !== String(currentCollectionIndex)) {
+        if (filteredSneakers !== null) {
+            filteredPageIdx = Math.floor(currentIndex / ITEMS_PER_GRID);
+            updateVaultSwitcherUI();
+            renderGrid();
+        } else if (grid && grid.getAttribute('data-collection') !== String(currentCollectionIndex)) {
             renderGrid();
         }
 
         const activeGridItems = $$('.sv-grid-item');
-        const targetItem = activeGridItems[currentIndex] || activeGridItems[0];
+        const targetPageIdx = filteredSneakers !== null ? (currentIndex % ITEMS_PER_GRID) : currentIndex;
+        const targetItem = activeGridItems[targetPageIdx] || activeGridItems[0];
         const targetImg = targetItem ? targetItem.querySelector('.sv-item-img') : null;
         const targetShadow = targetItem ? targetItem.querySelector('.sv-item-shadow') : null;
 
-        // Giữ 5 đôi giày khác mờ nhẹ trong lúc chiếc hero chuẩn bị đáp xuống
+        // Giữ các đôi giày khác mờ nhẹ trong lúc chiếc hero chuẩn bị đáp xuống
         activeGridItems.forEach((it, i) => {
-            if (i !== currentIndex) {
+            if (i !== targetPageIdx) {
                 it.classList.add('is-fading-out');
             }
         });
