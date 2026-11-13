@@ -1,3 +1,4 @@
+using FashionStore.Services.Implementations;
 using System.Security.Claims;
 using System.Text.Json;
 using FashionStore.Data;
@@ -446,6 +447,8 @@ public class OrdersController : Controller
             .AsNoTracking()
             .ToListAsync();
 
+        ViewBag.HasReturnRequest = User.IsInRole("Customer") &&
+            await _context.MerchandiseReturns.AnyAsync(r => r.OrderId == id);
         ViewBag.StatusHistories = histories;
 
         return View(order);
@@ -483,6 +486,39 @@ public class OrdersController : Controller
             : null;
 
         return Json(new { status = shipment.Status.ToString(), isTracking, location });
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "Customer")]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+    public async Task<IActionResult> ReturnRequest(int id)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId)) return Challenge();
+        var order = await _context.Orders.AsNoTracking().Include(o => o.Items)
+            .SingleOrDefaultAsync(o => o.Id == id && o.UserId == userId);
+        if (order == null) return NotFound();
+        var request = await _context.MerchandiseReturns.AsNoTracking()
+            .SingleOrDefaultAsync(r => r.OrderId == id);
+        var eligibility = await ReturnRequests.GetEligibilityAsync(_context, order);
+        return View(new CustomerReturnViewModel(order, request, eligibility.Deadline,
+            eligibility.Policy, eligibility.IneligibleReason));
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "Customer")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SubmitReturn(int id, string? reason, string? evidence)
+    {
+        if (!ModelState.IsValid) return BadRequest();
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId)) return Challenge();
+        var order = await _context.Orders.AsNoTracking()
+            .SingleOrDefaultAsync(o => o.Id == id && o.UserId == userId);
+        if (order == null) return NotFound();
+        var error = await ReturnRequests.SubmitAsync(_context, order, userId, reason, evidence);
+        TempData[error == null ? "Success" : "Error"] = error ?? "Đã gửi yêu cầu trả hàng.";
+        return RedirectToAction(nameof(ReturnRequest), new { id });
     }
 
     // POST: /Orders/CancelOrder

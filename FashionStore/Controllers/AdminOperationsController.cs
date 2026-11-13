@@ -112,49 +112,37 @@ public partial class AdminOperationsController(ApplicationDbContext db) : Contro
     }
 
     [HttpGet]
-    public async Task<IActionResult> Returns(int? id)
+    public async Task<IActionResult> Returns(int? id, ReturnState? status)
     {
+        if (!ModelState.IsValid || status is { } value && !Enum.IsDefined(value))
+            return BadRequest("Trạng thái yêu cầu không hợp lệ.");
+
         ViewBag.OrderId = id;
-        var query = db.MerchandiseReturns.AsNoTracking().Include(r => r.Order).Include(r => r.Events).AsQueryable();
+        ViewBag.ReturnStatus = status;
+        var query = db.MerchandiseReturns.AsNoTracking().Include(r => r.Order)
+            .Include(r => r.Events).AsSplitQuery().AsQueryable();
         if (id.HasValue) query = query.Where(r => r.OrderId == id);
+        if (status.HasValue) query = query.Where(r => r.State == status);
         return View(await query.OrderByDescending(r => r.Id).Take(50).ToListAsync());
     }
 
     [HttpPost]
     public async Task<IActionResult> RequestReturn(int orderId, string? reason, string? evidence)
     {
-        reason = reason?.Trim();
-        evidence = evidence?.Trim();
-        if (reason is null or { Length: 0 or > 500 } || evidence is { Length: > 500 })
-            return Error(nameof(Returns), "Cần lý do hợp lệ và mô tả bằng chứng tối đa 500 ký tự.", orderId);
-
+        if (!ModelState.IsValid) return BadRequest();
         var order = await db.Orders.AsNoTracking().SingleOrDefaultAsync(o => o.Id == orderId);
-        if (order?.Status != OrderStatus.Delivered)
-            return Error(nameof(Returns), "Chỉ tiếp nhận đổi trả với đơn đã giao.", orderId);
-
-        var delivery = await db.OrderStatusHistories.Where(h => h.OrderId == orderId && h.NewStatus == OrderStatus.Delivered)
-            .MaxAsync(h => (DateTime?)h.CreatedAt);
-        var settings = await SalesRules.GetSettingsAsync(db);
-        if (delivery == null || delivery.Value.AddDays(settings.ReturnWindowDays) < DateTime.UtcNow)
-            return Error(nameof(Returns), "Đơn đã quá hạn hoặc thiếu thời điểm giao xác thực.", orderId);
-
-        if (await db.MerchandiseReturns.AnyAsync(r => r.OrderId == orderId))
-            return Error(nameof(Returns), "Đơn đã có yêu cầu đổi trả.", orderId);
-
-        db.MerchandiseReturns.Add(new MerchandiseReturn
-        {
-            OrderId = orderId, Reason = reason, Evidence = evidence,
-            Events = [new ReturnEvent { State = ReturnState.Requested, ActorId = Actor, Note = reason }]
-        });
-        try { await db.SaveChangesAsync(); }
-        catch (DbUpdateException) { return Error(nameof(Returns), "Không lưu được yêu cầu. Tải lại để kiểm tra.", orderId); }
-        return Success(nameof(Returns), "Đã tiếp nhận yêu cầu.", orderId);
+        if (order == null) return NotFound();
+        var error = await ReturnRequests.SubmitAsync(db, order, Actor, reason, evidence);
+        return error == null
+            ? Success(nameof(Returns), "Đã tiếp nhận yêu cầu.", orderId)
+            : Error(nameof(Returns), error, orderId);
     }
 
     [HttpPost]
-    public async Task<IActionResult> UpdateReturn(int id, ReturnState state, string? note, bool restock)
+    public async Task<IActionResult> UpdateReturn(int id, ReturnState state, string? note, bool restock, string? refundReference)
     {
         note = note?.Trim();
+        refundReference = refundReference?.Trim();
         if (!ModelState.IsValid || note is null or { Length: 0 or > 500 })
             return Error(nameof(Returns), "Cần ghi chú tối đa 500 ký tự.");
 
@@ -165,8 +153,10 @@ public partial class AdminOperationsController(ApplicationDbContext db) : Contro
         var allowed = (request.State, state) switch
         {
             (ReturnState.Requested, ReturnState.Approved or ReturnState.Rejected) => true,
-            (ReturnState.Approved, ReturnState.Received) => order.Status == OrderStatus.Delivered,
-            (ReturnState.Received, ReturnState.Refunded) => order.PaymentStatus == PaymentStatus.Paid,
+            (ReturnState.Approved, ReturnState.Received or ReturnState.Rejected) =>
+                order.Status == OrderStatus.Delivered && !order.InventoryRestored,
+            (ReturnState.Received, ReturnState.Refunded) =>
+                order.Status == OrderStatus.Returned && order.PaymentStatus == PaymentStatus.Paid,
             _ => false
         };
         if (!allowed) return Error(nameof(Returns), "Yêu cầu không thể chuyển sang trạng thái đã chọn.", order.Id);
@@ -193,7 +183,11 @@ public partial class AdminOperationsController(ApplicationDbContext db) : Contro
         }
         if (state == ReturnState.Refunded)
         {
+            if (refundReference is null or { Length: 0 or > 100 })
+                return Error(nameof(Returns), "Nhập mã giao dịch hoặc mã chứng từ hoàn tiền thực tế.", order.Id);
             request.RefundAmount = order.TotalAmount;
+            SalesRules.Audit(db, Actor, "ReturnRefundConfirmed", order.OrderCode,
+                $"Số tiền {request.RefundAmount}; chứng từ {refundReference}");
             db.PaymentHistories.Add(new PaymentHistory
             {
                 OrderId = order.Id, Event = "ReturnRefundConfirmed", Amount = request.RefundAmount,
@@ -201,6 +195,7 @@ public partial class AdminOperationsController(ApplicationDbContext db) : Contro
             });
             order.PaymentStatus = PaymentStatus.Refunded;
         }
+        SalesRules.Audit(db, Actor, "ReturnStateChanged", order.OrderCode, $"{request.State} → {state}");
         request.State = state;
         request.Events.Add(new ReturnEvent { State = state, ActorId = Actor, Note = note });
         try { await db.SaveChangesAsync(); }
@@ -209,12 +204,27 @@ public partial class AdminOperationsController(ApplicationDbContext db) : Contro
     }
 
     [HttpGet]
-    public async Task<IActionResult> Promotions() => View(await db.Vouchers.AsNoTracking()
-        .OrderByDescending(v => v.Id).Take(100).ToListAsync());
+    public async Task<IActionResult> Promotions()
+    {
+        var vouchers = await db.Vouchers.AsNoTracking()
+            .OrderByDescending(v => v.Id).Take(100).ToListAsync();
+        var categoryIds = vouchers.Select(v => v.CategoryId).OfType<int>().Distinct().ToList();
+        var productIds = vouchers.Select(v => v.ProductId).OfType<int>().Distinct().ToList();
+        var categories = await db.Categories.AsNoTracking()
+            .Where(c => c.IsActive || categoryIds.Contains(c.Id))
+            .OrderBy(c => c.Name).Select(c => new VoucherOption(c.Id, c.Name, c.IsActive))
+            .ToListAsync();
+        var products = await db.Products.AsNoTracking()
+            .Where(p => p.IsActive || productIds.Contains(p.Id))
+            .OrderBy(p => p.Name).ThenBy(p => p.Id)
+            .Select(p => new VoucherOption(p.Id, p.Name + " · " + p.Category.Name + " · " + p.Slug, p.IsActive))
+            .ToListAsync();
+        return View(new VoucherPage(vouchers, categories, products));
+    }
 
     [HttpPost]
     public async Task<IActionResult> CreateVoucher(string? code, DateOnly start, DateOnly end, bool percentage, decimal value,
-        decimal minimum, decimal? maximum, int totalLimit, int customerLimit, int? categoryId, int? productId)
+        decimal minimum, decimal? maximum, int totalLimit, int customerLimit, string? scope, int? categoryId, int? productId)
     {
         code = code?.Trim().ToUpperInvariant();
         const decimal maxVnd = 999999999999m;
@@ -225,10 +235,17 @@ public partial class AdminOperationsController(ApplicationDbContext db) : Contro
             totalLimit < 1 || customerLimit < 1 || customerLimit > totalLimit)
             return Error(nameof(Promotions), "Kiểm tra mã, thời hạn, giá trị giảm và giới hạn sử dụng.");
 
-        if (categoryId.HasValue && !await db.Categories.AnyAsync(c => c.Id == categoryId) ||
-            productId.HasValue && !await db.Products.AnyAsync(p => p.Id == productId &&
-                (categoryId == null || p.CategoryId == categoryId)))
-            return Error(nameof(Promotions), "Phạm vi sản phẩm hoặc danh mục không hợp lệ.");
+        var validScope = scope switch
+        {
+            "all" => categoryId == null && productId == null,
+            "category" => categoryId.HasValue && productId == null &&
+                await db.Categories.AnyAsync(c => c.Id == categoryId && c.IsActive),
+            "product" => productId.HasValue && categoryId == null &&
+                await db.Products.AnyAsync(p => p.Id == productId && p.IsActive),
+            _ => false
+        };
+        if (!validScope)
+            return Error(nameof(Promotions), "Chọn phạm vi áp dụng và danh mục hoặc sản phẩm đang hoạt động.");
 
         db.Vouchers.Add(new Voucher
         {
@@ -303,30 +320,8 @@ public partial class AdminOperationsController(ApplicationDbContext db) : Contro
     }
 
     [HttpGet]
-    public async Task<IActionResult> Featured() => View(await db.FeaturedProducts.AsNoTracking().Include(f => f.Product)
-        .OrderBy(f => f.Position).ThenBy(f => f.ProductId).Take(100).ToListAsync());
-
-    [HttpPost]
-    public async Task<IActionResult> SetFeatured(int productId, int position, bool remove)
-    {
-        if (!ModelState.IsValid || position < 1 || position > 100)
-            return Error(nameof(Featured), "Kiểm tra mã sản phẩm và vị trí từ 1 đến 100.");
-        var row = await db.FeaturedProducts.SingleOrDefaultAsync(f => f.ProductId == productId);
-        if (remove)
-        {
-            if (row != null) db.FeaturedProducts.Remove(row);
-        }
-        else if (!await db.Products.AnyAsync(p => p.Id == productId && p.IsActive))
-            return Error(nameof(Featured), "Sản phẩm cần tồn tại và đang hiển thị.");
-        else if (row == null)
-            db.FeaturedProducts.Add(new FeaturedProduct { ProductId = productId, Position = position });
-        else
-            row.Position = position;
-
-        SalesRules.Audit(db, Actor, "FeaturedProduct", productId.ToString(), remove ? "Gỡ nổi bật" : $"Vị trí {position}");
-        await db.SaveChangesAsync();
-        return Success(nameof(Featured), "Đã cập nhật sản phẩm nổi bật.");
-    }
+    public IActionResult Featured() =>
+        RedirectToAction(nameof(Analytics), null, null, "best-selling-products");
 
     [HttpGet]
     public async Task<IActionResult> Alerts()
@@ -402,7 +397,24 @@ public partial class AdminOperationsController(ApplicationDbContext db) : Contro
             .Select(g => new { g.Key.Size, g.Key.Color, Units = g.Sum(i => i.Quantity) })
             .OrderByDescending(m => m.Units).ThenBy(m => m.Size).ThenBy(m => m.Color).Take(20)
             .Select(m => new VariantMetric(m.Size, m.Color, m.Units)).ToListAsync();
-        return View(new OperationsAnalytics(report, refunds, vouchers, variants));
+        var ranking = await db.OrderItems.AsNoTracking()
+            .Where(item => item.Order.Status == OrderStatus.Delivered &&
+                item.Order.CreatedAt >= utc && item.Order.CreatedAt < endUtc)
+            .GroupBy(item => new { item.ProductVariant.ProductId, item.ProductVariant.Product.Name })
+            .Select(group => new
+            {
+                group.Key.ProductId,
+                group.Key.Name,
+                Quantity = group.Sum(item => (long)item.Quantity),
+                OrderCount = group.Select(item => item.OrderId).Distinct().Count()
+            })
+            .OrderByDescending(row => row.Quantity)
+            .ThenByDescending(row => row.OrderCount)
+            .ThenBy(row => row.ProductId)
+            .Take(50)
+            .Select(row => new BestSellingProduct(row.ProductId, row.Name, row.Quantity, row.OrderCount))
+            .ToListAsync();
+        return View(new OperationsAnalytics(report, refunds, vouchers, variants, ranking));
     }
 
     [HttpGet, Authorize(Roles = "Admin")]
@@ -427,4 +439,9 @@ public record CustomerSummary(string Id, string Name, string? Email, int Orders,
 public record VoucherMetric(string Code, int Uses, decimal Discount);
 public record VariantMetric(string Size, string Color, int Units);
 public record OperationsAnalytics(FashionStore.Models.ViewModels.AdminDashboardViewModel Report,
-    decimal Refunds, List<VoucherMetric> Vouchers, List<VariantMetric> Variants);
+    decimal Refunds, List<VoucherMetric> Vouchers, List<VariantMetric> Variants, List<BestSellingProduct> BestSellingProducts);
+
+public record BestSellingProduct(int ProductId, string Name, long Quantity, int OrderCount);
+
+public record VoucherOption(int Id, string Label, bool Active);
+public record VoucherPage(List<Voucher> Vouchers, List<VoucherOption> Categories, List<VoucherOption> Products);

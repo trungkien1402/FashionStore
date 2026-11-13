@@ -10,6 +10,43 @@
     <div class="col-md-4"><div class="adm-card p-3"><h2 class="h6 adm-heading">Hoàn tiền đã ghi nhận trong kỳ</h2><strong>@Model.Refunds.ToString("N0") ₫</strong></div></div>
     <div class="col-md-4"><div class="adm-card p-3"><h2 class="h6 adm-heading">Đơn đã giao</h2><strong>@report.DeliveredOrders</strong></div></div>
 </div>
+<section id="best-selling-products" class="mb-4" aria-labelledby="best-selling-heading">
+    <h2 id="best-selling-heading" class="h5 adm-heading">Sản phẩm được mua nhiều nhất</h2>
+    <p class="text-muted small">Top 50 theo số lượng đã giao, tính theo ngày đặt trong kỳ và cộng tất cả size, màu.</p>
+    @if (Model.BestSellingProducts.Count == 0)
+    {
+        <div class="adm-card p-4 text-center">Chưa có sản phẩm nào trong đơn đã giao của kỳ này.</div>
+    }
+    else
+    {
+        <div class="adm-card table-responsive p-0">
+            <table class="adm-table mb-0">
+                <thead>
+                    <tr>
+                        <th scope="col">Hạng</th>
+                        <th scope="col">Sản phẩm</th>
+                        <th scope="col" class="text-end">Số lượng đã giao</th>
+                        <th scope="col" class="text-end">Số đơn đã giao</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (var index = 0; index < Model.BestSellingProducts.Count; index++)
+                    {
+                        var product = Model.BestSellingProducts[index];
+                        <tr>
+                            <td>@(index + 1)</td>
+                            <th scope="row">
+                                <a asp-controller="AdminProducts" asp-action="Edit" asp-route-id="@product.ProductId">@product.Name</a>
+                            </th>
+                            <td class="text-end fw-semibold">@product.Quantity.ToString("N0")</td>
+                            <td class="text-end">@product.OrderCount.ToString("N0")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</section>
 <h2 class="h5 adm-heading">Size và màu bán chạy theo số lượng đã giao</h2>
 <div class="adm-card table-responsive p-0 mb-4"><table class="adm-table mb-0">
 <thead><tr><th>Size</th><th>Màu</th><th>Số lượng</th></tr></thead>

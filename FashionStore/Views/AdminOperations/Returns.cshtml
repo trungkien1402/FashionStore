@@ -3,14 +3,25 @@
 @using FashionStore.Services.Implementations
 @{
     ViewData["Title"] = "Đổi trả";
-    string Label(ReturnState state) => state switch {
-        ReturnState.Requested => "Đã tiếp nhận", ReturnState.Approved => "Đã duyệt",
-        ReturnState.Rejected => "Đã từ chối", ReturnState.Received => "Đã nhận hàng",
-        ReturnState.Refunded => "Đã hoàn tiền", _ => state.ToString()
-    };
+    int? orderId = ViewBag.OrderId;
+
 }
-<header class="adm-dashboard-header mb-4"><h1>Đổi trả</h1></header>
-@if (ViewBag.OrderId is int orderId && Model.Count == 0)
+<header class="adm-dashboard-header adm-overview-header mb-3">
+    <div><h1>Đổi trả</h1><p class="adm-dashboard-period">@Model.Count yêu cầu đang hiển thị</p></div>
+</header>
+<form asp-action="Returns" method="get" class="adm-filter-bar d-flex flex-wrap gap-2 mb-3">
+    <input type="hidden" name="id" value="@ViewBag.OrderId" />
+    <select name="status" aria-label="Trạng thái yêu cầu" class="form-select adm-input-dark w-auto">
+        <option value="">Tất cả trạng thái</option>
+        @foreach (var state in Enum.GetValues<ReturnState>())
+        {
+            <option value="@state" selected="@(ViewBag.ReturnStatus is ReturnState selected && selected == state)">@ReturnRequests.Label(state)</option>
+        }
+    </select>
+    <button class="adm-btn-outline">Lọc</button>
+    <a asp-action="Returns" class="adm-btn-outline">Xem tất cả</a>
+</form>
+@if (orderId.HasValue && ViewBag.ReturnStatus == null && Model.Count == 0)
 {
     <form asp-action="RequestReturn" method="post" class="adm-filter-bar row g-3 mx-0 mb-4">
         <input type="hidden" name="orderId" value="@orderId" />
@@ -19,19 +30,31 @@
         <div class="col-md-auto align-self-end"><button class="adm-btn-atelier">Tiếp nhận</button></div>
     </form>
 }
-@if (Model.Count == 0 && ViewBag.OrderId == null) { <p>Chưa có yêu cầu. Tiếp nhận đổi trả từ trang chi tiết đơn đã giao.</p> }
+@if (Model.Count == 0 && ViewBag.OrderId == null) { <p>Không có yêu cầu phù hợp. Khách có thể gửi yêu cầu từ chi tiết đơn đã giao.</p> }
 @foreach (var row in Model)
 {
-    <section class="adm-card p-3 mb-3">
-        <h2 class="h5 adm-heading"><a asp-controller="AdminOrders" asp-action="Details" asp-route-id="@row.OrderId">@row.Order.OrderCode</a> · @Label(row.State)</h2>
-        <p>@row.Reason</p>
-        @if (!string.IsNullOrEmpty(row.Evidence)) { <p class="text-muted">@row.Evidence</p> }
+    <section class="adm-card adm-return-card mb-3">
+        <header class="adm-return-header">
+            <div>
+                <h2 class="h5 adm-heading mb-1"><a asp-controller="AdminOrders" asp-action="Details" asp-route-id="@row.OrderId">#@row.Order.OrderCode</a></h2>
+                <small class="text-muted">Tiếp nhận @AdminReportService.ToVietnamTime(row.CreatedAt).ToString("dd/MM/yyyy HH:mm") · Toàn bộ đơn</small>
+            </div>
+            <span class="adm-return-state" data-state="@row.State">
+                <i class="bi @(row.State == ReturnState.Refunded ? "bi-check-circle" : row.State == ReturnState.Rejected ? "bi-x-circle" : "bi-clock-history")" aria-hidden="true"></i>
+                @ReturnRequests.Label(row.State)
+            </span>
+        </header>
+        <p><strong>Lý do</strong> @row.Reason</p>
+        @if (!string.IsNullOrEmpty(row.Evidence)) { <p><strong>Bằng chứng</strong> @row.Evidence</p> }
         @if (row.RefundAmount > 0) { <p>Đã hoàn @row.RefundAmount.ToString("N0") ₫</p> }
         @if (row.State is ReturnState.Requested or ReturnState.Approved ||
              row.State == ReturnState.Received && row.Order.PaymentStatus == FashionStore.Models.Enums.PaymentStatus.Paid)
         {
-            <form asp-action="UpdateReturn" asp-route-id="@row.Id" method="post" class="d-flex flex-wrap gap-2 align-items-center mb-3">
-                <input name="note" aria-label="Ghi chú xử lý" placeholder="Ghi chú xử lý" maxlength="500" required class="form-control adm-input-dark w-auto" />
+            <form asp-action="UpdateReturn" asp-route-id="@row.Id" method="post" class="adm-return-action mb-3">
+                <label class="adm-return-note">Ghi chú xử lý
+                    <textarea name="note" rows="2" maxlength="500" required class="form-control adm-input-dark"></textarea>
+                </label>
+                <div class="d-flex flex-wrap align-items-center gap-2">
                 @if (row.State == ReturnState.Requested)
                 {
                     <button name="state" value="Approved" class="adm-btn-atelier">Duyệt</button>
@@ -40,21 +63,39 @@
                 else if (row.State == ReturnState.Approved)
                 {
                     <label><input type="checkbox" name="restock" value="true" /> Hàng đạt kiểm định, nhập lại kho</label>
-                    <button name="state" value="Received" class="adm-btn-atelier">Xác nhận đã nhận hàng</button>
+                    <button name="state" value="Received" class="adm-btn-atelier">Xác nhận đã nhận và kiểm định</button>
+                    <button name="state" value="Rejected" class="adm-btn-outline">Từ chối sau kiểm định</button>
                 }
                 else
                 {
+                    <label>Chứng từ hoàn @row.Order.TotalAmount.ToString("N0") ₫
+                        <input name="refundReference" maxlength="100" required class="form-control adm-input-dark" />
+                    </label>
                     <button name="state" value="Refunded" class="adm-btn-atelier"
                             onclick="return confirm('Bạn đã hoàn đủ tiền cho khách qua phương thức thanh toán thực tế?')">Xác nhận đã hoàn tiền</button>
                 }
+                </div>
             </form>
         }
-        <details><summary>Lịch sử xử lý</summary>
+        <details class="adm-return-history"><summary><i class="bi bi-clock-history" aria-hidden="true"></i> Lịch sử xử lý</summary>
         <ul class="mt-2">
         @foreach (var item in row.Events.OrderBy(e => e.Id))
         {
-            <li>@AdminReportService.ToVietnamTime(item.CreatedAt).ToString("dd/MM/yyyy HH:mm") · @Label(item.State) · @item.Note</li>
+            <li>@AdminReportService.ToVietnamTime(item.CreatedAt).ToString("dd/MM/yyyy HH:mm") · @ReturnRequests.Label(item.State) · @item.Note</li>
         }
         </ul></details>
     </section>
 }
+
+
+<style>
+    .adm-return-card { padding: clamp(1rem, 3vw, 1.5rem); overflow-wrap: anywhere; }
+    .adm-return-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: start; gap: .6rem; margin-bottom: 1rem; }
+    .adm-return-state { display: inline-flex; align-items: center; gap: .4rem; border-radius: .6rem; padding: .4rem .65rem; font-size: .82rem; background: #f5ead8; color: #68471a; }
+    .adm-return-state[data-state="Refunded"] { background: #e4f2e8; color: #205b39; }
+    .adm-return-state[data-state="Rejected"] { background: #f8e6e5; color: #8a2828; }
+    .adm-return-action { display: grid; gap: .7rem; background: var(--adm-surface-hover); border: 1px solid var(--adm-border); border-radius: .65rem; padding: .8rem; }
+    .adm-return-note textarea { margin-top: .25rem; resize: vertical; }
+    .adm-return-history { border-top: 1px solid var(--adm-border); padding-top: .65rem; }
+    .adm-return-history summary { cursor: pointer; font-weight: 600; }
+</style>

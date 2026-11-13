@@ -656,6 +656,16 @@
 
             <!-- RIGHT COLUMN: FINANCIAL BREAKDOWN, VIETQR SCAN, ORDER ACTIONS -->
             <div class="hnmt-side-col">
+                @if (User.IsInRole("Customer") && (Model.Status == OrderStatus.Delivered || ViewBag.HasReturnRequest == true))
+                {
+                    <div class="hnmt-summary-panel">
+                        <a asp-action="ReturnRequest" asp-route-id="@Model.Id" class="hnmt-return-link">
+                            <i class="bi bi-arrow-return-left hnmt-return-icon" aria-hidden="true"></i>
+                            <strong>@(ViewBag.HasReturnRequest == true ? "Theo dõi yêu cầu trả hàng" : "Yêu cầu trả hàng")</strong>
+                            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                }
                 <div class="hnmt-summary-panel">
                     <div class="hnmt-summary-head">
                         <span class="hnmt-summary-eyebrow">HÓA ĐƠN & THANH TOÁN</span>
@@ -1799,6 +1809,9 @@
 /* ==========================================================================
    SIDEBAR: SUMMARY & ACTIONS
    ========================================================================== */
+.hnmt-return-link { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: .65rem; color: inherit; }
+.hnmt-return-icon { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: .55rem; background: #f3eee6; color: #65491f; }
+
 .hnmt-summary-panel {
     background: #FFFFFF;
     border: 1px solid #E5E7EB;

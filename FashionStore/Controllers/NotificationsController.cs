@@ -45,6 +45,19 @@ public class NotificationsController(ApplicationDbContext db) : Controller
                     Url.Action("Details", "Orders", new { id = order.Id })!,
                     $"Đơn hàng #{order.OrderCode}", DateTime.SpecifyKind(order.UpdatedAt, DateTimeKind.Utc)));
             }
+
+            var returns = await db.MerchandiseReturns.AsNoTracking()
+                .Where(r => r.Order.UserId == userId)
+                .Select(r => new
+                {
+                    r.Id, r.OrderId, r.Order.OrderCode, r.State,
+                    UpdatedAt = r.Events.Max(e => (DateTime?)e.CreatedAt) ?? r.CreatedAt
+                })
+                .OrderByDescending(r => r.UpdatedAt).ThenByDescending(r => r.Id).Take(5).ToListAsync(ct);
+            foreach (var request in returns)
+                items.Add(new("return", ReturnRequests.Label(request.State),
+                    Url.Action("ReturnRequest", "Orders", new { id = request.OrderId })!,
+                    $"Trả hàng · #{request.OrderCode}", DateTime.SpecifyKind(request.UpdatedAt, DateTimeKind.Utc)));
         }
 
         if (User.IsInRole("Shipper"))
