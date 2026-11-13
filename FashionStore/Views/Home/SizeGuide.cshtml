@@ -1,43 +1,40 @@
 ﻿@{
-    ViewData["Title"] = "Hướng Dẫn Chọn Size";
+    ViewData["Title"] = "Bảng size";
 }
 
 <section class="sg-page">
 
     <!-- HERO -->
     <section class="sg-hero">
-        <div class="sg-container">
-            <div class="sg-eyebrow">HNMTSHOP · SIZE GUIDE 2026</div>
-            <h1>
-                THE PERFECT FIT.<br />
-                <em>YOUR OWN STYLE.</em>
-            </h1>
-            <p>
-                Tìm kích cỡ phù hợp với cơ thể bạn.
-                Mặc đẹp hơn, thoải mái hơn và tự tin trong mọi chuyển động.
-            </p>
-
-            <a href="#sg-calculator" class="sg-primary-btn">
-                TÌM SIZE CỦA BẠN
-                <i class="bi bi-arrow-down-right"></i>
-            </a>
+        <div class="sg-container sg-hero-row">
+            <div>
+                <h1>Bảng size</h1>
+                <p>Nhập số đo để tìm size quần áo hoặc giày phù hợp.</p>
+            </div>
+            <div class="sg-hero-actions">
+                <a href="#sg-clothing-chart" class="sg-reference-link">Bảng áo</a>
+                <a href="#sg-pants-chart" class="sg-reference-link">Bảng quần</a>
+                <a href="#sg-shoe-chart" class="sg-reference-link">Bảng giày</a>
+            </div>
         </div>
     </section>
 
     <!-- CATEGORY TABS -->
-    <section class="sg-container sg-main" id="sg-calculator">
+    <section class="sg-container sg-main" id="sg-calculator" aria-labelledby="sg-calculator-title">
 
-        <div class="sg-heading">
-            <span>PERSONAL SIZE ASSISTANT</span>
-            <h2>Tìm kích cỡ hoàn hảo</h2>
-            <p>Chọn loại sản phẩm bạn muốn được tư vấn.</p>
-        </div>
+        <div class="sg-calculator-toolbar">
+        <h2 id="sg-calculator-title">Tìm size theo số đo</h2>
 
         <div class="sg-tabs">
             <button type="button" class="sg-tab active"
                     data-target="clothing">
                 <i class="bi bi-person-standing"></i>
-                QUẦN ÁO
+                ÁO
+            </button>
+
+            <button type="button" class="sg-tab" data-target="pants">
+                <i class="bi bi-rulers" aria-hidden="true"></i>
+                QUẦN
             </button>
 
             <button type="button" class="sg-tab"
@@ -46,15 +43,15 @@
                 GIÀY DÉP
             </button>
         </div>
+        </div>
 
         <!-- CLOTHING CALCULATOR -->
         <div class="sg-panel active" id="clothing">
 
             <div class="sg-form-card">
                 <div class="sg-form-intro">
-                    <span>01 / APPAREL</span>
                     <h3>Thông số cơ thể</h3>
-                    <p>Nhập chiều cao và cân nặng để nhận gợi ý size quần áo.</p>
+                    <p>Nhập chiều cao và cân nặng để nhận gợi ý size áo.</p>
                 </div>
 
                 <form id="clothingForm">
@@ -145,12 +142,47 @@
 
         </div>
 
+        <div class="sg-panel" id="pants">
+            <div class="sg-form-card">
+                <div class="sg-form-intro">
+                    <h3>Vòng eo quần</h3>
+                    <p>Nhập số đo và đo vòng eo tại vị trí bạn thường mặc cạp quần.</p>
+                </div>
+                <form id="pantsForm">
+                    <div class="sg-fields">
+                        <div class="sg-field">
+                            <label for="sgPantsHeight">Chiều cao (cm)</label>
+                            <input type="number" id="sgPantsHeight" min="130" max="220" inputmode="numeric" placeholder="Ví dụ: 170" required />
+                        </div>
+                        <div class="sg-field">
+                            <label for="sgPantsWeight">Cân nặng (kg)</label>
+                            <input type="number" id="sgPantsWeight" min="30" max="180" step="0.1" inputmode="decimal" placeholder="Ví dụ: 62" required />
+                        </div>
+                    </div>
+                    <div class="sg-field">
+                        <label for="sgWaist">Vòng eo (inch)</label>
+                        <input type="number" id="sgWaist" inputmode="decimal" min="20" max="65" step="0.1" placeholder="Ví dụ: 30.5" required />
+                    </div>
+                    <button type="submit" class="sg-submit">Gợi ý size quần</button>
+                </form>
+                <div id="pantsResult" class="sg-result" hidden aria-live="polite">
+                    <div class="sg-result-size" id="pantsSize"></div>
+                    <p id="pantsDescription"></p>
+                </div>
+            </div>
+            <aside class="sg-side-note">
+                <h3>Cách đọc size W</h3>
+                <p>W là vòng eo danh nghĩa theo inch. Ví dụ, W30 tương ứng khoảng 30 inch (76,2 cm). Nếu đo bằng cm, chia số đo cho 2,54.</p>
+                <p>Với nhãn W30/L32, L32 là chiều dài ống trong 32 inch.</p>
+                <a href="#sg-pants-chart" class="sg-reference-link">Xem bảng quần</a>
+            </aside>
+        </div>
+
         <!-- SHOES CALCULATOR -->
         <div class="sg-panel" id="shoes">
 
             <div class="sg-form-card">
                 <div class="sg-form-intro">
-                    <span>02 / FOOTWEAR</span>
                     <h3>Đo chiều dài bàn chân</h3>
                     <p>Đo từ gót chân đến đầu ngón chân dài nhất.</p>
                 </div>
@@ -234,15 +266,14 @@
     </section>
 
     <!-- CLOTHING SIZE TABLE -->
-    <section class="sg-chart-section">
+    <section class="sg-chart-section" id="sg-clothing-chart">
         <div class="sg-container">
             <div class="sg-heading">
-                <span>SIZE REFERENCE</span>
-                <h2>Bảng size quần áo</h2>
-                <p>Bảng tham khảo dành cho trang phục form phổ thông.</p>
+                <h2>Bảng size áo</h2>
+                <p>Bảng tham khảo dành cho áo form phổ thông.</p>
             </div>
 
-            <div class="sg-table-wrap">
+            <div class="sg-table-wrap" tabindex="0" role="region" aria-label="Bảng size áo">
                 <table class="sg-table">
                     <thead>
                         <tr>
@@ -252,12 +283,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>XS</td><td>145 – 160</td><td>35 – 45</td></tr>
-                        <tr><td>S</td><td>150 – 165</td><td>40 – 52</td></tr>
-                        <tr><td>M</td><td>160 – 170</td><td>50 – 62</td></tr>
-                        <tr><td>L</td><td>165 – 175</td><td>60 – 72</td></tr>
-                        <tr><td>XL</td><td>170 – 185</td><td>70 – 85</td></tr>
-                        <tr><td>XXL</td><td>175 – 195</td><td>80 – 100</td></tr>
+                        <tr><th scope="row">XS</th><td>145 – 160</td><td>35 – 45</td></tr>
+                        <tr><th scope="row">S</th><td>150 – 165</td><td>40 – 52</td></tr>
+                        <tr><th scope="row">M</th><td>160 – 170</td><td>50 – 62</td></tr>
+                        <tr><th scope="row">L</th><td>165 – 175</td><td>60 – 72</td></tr>
+                        <tr><th scope="row">XL</th><td>170 – 185</td><td>70 – 85</td></tr>
+                        <tr><th scope="row">XXL</th><td>175 – 195</td><td>80 – 100</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -268,16 +299,32 @@
         </div>
     </section>
 
+    <section class="sg-chart-section" id="sg-pants-chart">
+        <div class="sg-container">
+            <div class="sg-heading"><h2>Bảng size quần theo inch</h2><p>Quy đổi vòng eo danh nghĩa. Ưu tiên bảng size của mẫu quần bạn chọn.</p></div>
+            <div class="sg-table-wrap" tabindex="0" role="region" aria-label="Bảng size quần theo inch">
+                <table class="sg-table">
+                    <thead><tr><th scope="col">Size quần</th><th scope="col">Vòng eo (inch)</th><th scope="col">Vòng eo (cm)</th></tr></thead>
+                    <tbody>
+                    @for (var waist = 24; waist <= 44; waist += 2)
+                    {
+                        <tr><th scope="row">W@waist</th><td>@waist</td><td>@((waist * 2.54m).ToString("N1", System.Globalization.CultureInfo.GetCultureInfo("vi-VN")))</td></tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
     <!-- SHOE SIZE TABLE -->
-    <section class="sg-chart-section sg-shoe-chart">
+    <section class="sg-chart-section sg-shoe-chart" id="sg-shoe-chart">
         <div class="sg-container">
             <div class="sg-heading">
-                <span>FOOTWEAR REFERENCE</span>
                 <h2>Bảng quy đổi size giày</h2>
                 <p>Chiều dài bàn chân và size EU tham khảo.</p>
             </div>
 
-            <div class="sg-table-wrap">
+            <div class="sg-table-wrap" tabindex="0" role="region" aria-label="Bảng quy đổi size giày">
                 <table class="sg-table">
                     <thead>
                         <tr>
@@ -286,16 +333,16 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>36</td><td>22.5 – 23.0</td></tr>
-                        <tr><td>37</td><td>23.1 – 23.5</td></tr>
-                        <tr><td>38</td><td>23.6 – 24.0</td></tr>
-                        <tr><td>39</td><td>24.1 – 24.5</td></tr>
-                        <tr><td>40</td><td>24.6 – 25.0</td></tr>
-                        <tr><td>41</td><td>25.1 – 26.0</td></tr>
-                        <tr><td>42</td><td>26.1 – 26.5</td></tr>
-                        <tr><td>43</td><td>26.6 – 27.0</td></tr>
-                        <tr><td>44</td><td>27.1 – 28.0</td></tr>
-                        <tr><td>45</td><td>28.1 – 28.5</td></tr>
+                        <tr><th scope="row">36</th><td>22.5 – 23.0</td></tr>
+                        <tr><th scope="row">37</th><td>23.1 – 23.5</td></tr>
+                        <tr><th scope="row">38</th><td>23.6 – 24.0</td></tr>
+                        <tr><th scope="row">39</th><td>24.1 – 24.5</td></tr>
+                        <tr><th scope="row">40</th><td>24.6 – 25.0</td></tr>
+                        <tr><th scope="row">41</th><td>25.1 – 26.0</td></tr>
+                        <tr><th scope="row">42</th><td>26.1 – 26.5</td></tr>
+                        <tr><th scope="row">43</th><td>26.6 – 27.0</td></tr>
+                        <tr><th scope="row">44</th><td>27.1 – 28.0</td></tr>
+                        <tr><th scope="row">45</th><td>28.1 – 28.5</td></tr>
                     </tbody>
                 </table>
             </div>

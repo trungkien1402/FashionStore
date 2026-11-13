@@ -15,6 +15,21 @@
         });
     });
 
+    const pantsForm = document.getElementById("pantsForm");
+    pantsForm?.addEventListener("submit", event => {
+        event.preventDefault();
+        const height = document.getElementById("sgPantsHeight").valueAsNumber;
+        const weight = document.getElementById("sgPantsWeight").valueAsNumber;
+        const waist = document.getElementById("sgWaist").valueAsNumber;
+        if (![height, weight, waist].every(Number.isFinite)) return;
+
+        const size = Math.ceil(waist);
+        document.getElementById("pantsSize").textContent = `W${size}`;
+        document.getElementById("pantsDescription").textContent =
+            `Số đo của bạn: ${height} cm · ${weight.toLocaleString("vi-VN")} kg · eo ${waist.toLocaleString("vi-VN")} inch. Size W dựa trên vòng eo. Hãy đo chiều dài ống trong và đối chiếu bảng của mẫu quần để chọn chiều dài phù hợp.`;
+        document.getElementById("pantsResult").hidden = false;
+    });
+
     // ==========================================
     // 1. TƯ VẤN SIZE QUẦN ÁO
     // ==========================================

@@ -866,6 +866,9 @@ namespace FashionStore.Migrations
                     b.Property<DateTime>("EndsAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("GameMinimumScore")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 

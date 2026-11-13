@@ -100,6 +100,13 @@
 
             <span asp-validation-for="PaymentMethod" class="hnmt-form-error"></span>
 
+        <div class="hnmt-form-group">
+            <label asp-for="VoucherCode">Mã khuyến mãi</label>
+            <input class="hnmt-input" asp-for="VoucherCode" maxlength="40" autocomplete="off" />
+            <span class="hnmt-form-error" asp-validation-for="VoucherCode"></span>
+            <small>Đơn hàng sẽ áp dụng mức giảm hợp lệ trước khi tạo thanh toán.</small>
+        </div>
+
             <!-- NÚT XÁC NHẬN ĐẶT HÀNG (CHUẨN NÚT PILL ĐEN CỦA TRANG CHỦ) -->
             <button id="placeOrderButton" class="hnmt-btn-submit-order" type="submit">
                 <span>@(Model.PaymentMethod == "VietQR" ? "Đặt hàng và xem mã QR" : "Xác nhận đặt hàng")</span>

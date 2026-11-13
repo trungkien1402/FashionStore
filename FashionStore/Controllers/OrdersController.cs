@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.DataProtection;
 using FashionStore.Services.Implementations;
 using System.Security.Claims;
 using System.Text.Json;
@@ -40,7 +41,7 @@ public class OrdersController : Controller
 
     // GET: /Orders/Checkout
     [HttpGet]
-    public async Task<IActionResult> Checkout()
+    public async Task<IActionResult> Checkout([FromServices] IDataProtectionProvider protection)
     {
         var cart = GetCart();
 
@@ -98,13 +99,25 @@ public class OrdersController : Controller
 
         model.SubTotal = model.CartItems.Sum(x => x.TotalPrice);
 
+        var rewardToken = HttpContext.Session.GetString("StyleGameReward");
+        if (rewardToken != null)
+        {
+            try
+            {
+                var reward = JsonSerializer.Deserialize<StyleReward>(StyleGame.RewardProtector(protection).Unprotect(rewardToken));
+                if (reward != null && reward.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+                    model.VoucherCode = reward.Code;
+            }
+            catch (System.Security.Cryptography.CryptographicException) { }
+        }
+
         return View(model);
     }
 
     // POST: /Orders/Checkout
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Checkout(CheckoutViewModel model)
+    public async Task<IActionResult> Checkout(CheckoutViewModel model, [FromServices] IDataProtectionProvider protection)
     {
         var cart = GetCart();
 
@@ -195,9 +208,38 @@ public class OrdersController : Controller
 
             var shippingFee = DefaultShippingFee;
 
-            if (model.PaymentMethod == "VietQR" && (subTotal + shippingFee <= 0 ||
-                subTotal + shippingFee > 9999999999999m ||
-                decimal.Truncate(subTotal + shippingFee) != subTotal + shippingFee))
+            Voucher? voucher = null;
+            decimal discount = 0;
+            var code = model.VoucherCode?.Trim().ToUpperInvariant();
+            if (!string.IsNullOrEmpty(code))
+            {
+                int? score = null;
+                var token = HttpContext.Session.GetString("StyleGameReward");
+                if (token != null)
+                {
+                    try
+                    {
+                        var reward = JsonSerializer.Deserialize<StyleReward>(StyleGame.RewardProtector(protection).Unprotect(token));
+                        if (reward?.UserId == userId && reward.Code == code)
+                            score = reward.Score;
+                    }
+                    catch (System.Security.Cryptography.CryptographicException) { }
+                }
+                var quantities = cart.GroupBy(item => item.ProductVariantId)
+                    .ToDictionary(group => group.Key, group => group.Sum(item => item.Quantity));
+                (voucher, discount) = await SalesRules.ApplyVoucherAsync(_context, code, userId, subTotal, quantities, variants, score);
+                if (voucher == null)
+                {
+                    await transaction.RollbackAsync();
+                    ModelState.AddModelError(nameof(model.VoucherCode), "Mã chưa đủ điều kiện cho giỏ hàng hoặc đã hết hiệu lực.");
+                    await PopulateCheckoutItemsAsync(model, cart);
+                    return View(model);
+                }
+            }
+
+            var total = subTotal + shippingFee - discount;
+            if (model.PaymentMethod == "VietQR" && (total <= 0 ||
+                total > 9999999999999m || decimal.Truncate(total) != total))
             {
                 await transaction.RollbackAsync();
                 ModelState.AddModelError("", "Số tiền thanh toán phải là số nguyên VND hợp lệ.");
@@ -214,8 +256,8 @@ public class OrdersController : Controller
                 Address = model.Address.Trim(),
                 SubTotal = subTotal,
                 ShippingFee = shippingFee,
-                DiscountAmount = 0,
-                TotalAmount = subTotal + shippingFee,
+                DiscountAmount = discount,
+                TotalAmount = total,
                 Status = OrderStatus.PendingConfirmation,
                 PaymentMethod = model.PaymentMethod == "VietQR" ? PaymentMethod.VietQR : PaymentMethod.COD,
                 PaymentStatus = PaymentStatus.Pending,
@@ -240,6 +282,12 @@ public class OrdersController : Controller
                 variant.StockQuantity -= item.Quantity;
             }
 
+            if (voucher != null)
+                _context.VoucherRedemptions.Add(new VoucherRedemption
+                {
+                    VoucherId = voucher.Id, Order = order, CustomerId = userId
+                });
+
             _context.Orders.Add(order);
 
             _context.PaymentHistories.Add(new PaymentHistory
@@ -263,6 +311,7 @@ public class OrdersController : Controller
             await transaction.CommitAsync();
 
             HttpContext.Session.Remove(CartSessionKey);
+            if (voucher?.GameMinimumScore != null) HttpContext.Session.Remove("StyleGameReward");
 
             return RedirectToAction(order.PaymentMethod == PaymentMethod.VietQR
                 ? nameof(PaymentQR) : nameof(Success), new { id = order.Id });

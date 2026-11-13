@@ -51,6 +51,7 @@ public class Voucher
     [Precision(18, 2)] public decimal Value { get; set; }
     [Precision(18, 2)] public decimal MinimumOrder { get; set; }
     [Precision(18, 2)] public decimal? MaximumDiscount { get; set; }
+    public int? GameMinimumScore { get; set; }
     public int TotalLimit { get; set; }
     public int CustomerLimit { get; set; }
     public int? CategoryId { get; set; }

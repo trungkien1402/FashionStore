@@ -42,6 +42,7 @@
         <link rel="stylesheet" href="~/css/notification-bell.css" asp-append-version="true" />
         <script src="~/js/notification-bell.js" asp-append-version="true" defer></script>
     }
+    <link rel="stylesheet" href="~/css/style-game.css" asp-append-version="true" />
 </head>
 
 <body>
@@ -210,5 +211,18 @@
     <script src="~/js/home-filter.js?v=home_filter_v5" asp-append-version="true"></script>
     <script src="~/js/auth-modal.js?v=auth_v1" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    @if (!string.Equals(ViewContext.RouteData.Values["controller"]?.ToString(), "StyleGame", StringComparison.OrdinalIgnoreCase))
+    {
+        <div class="style-game-float" data-style-game-float hidden>
+            <a asp-controller="StyleGame" asp-action="Index" class="style-game-launcher" draggable="false">
+                <i class="bi bi-gift-fill style-game-gift" aria-hidden="true"></i>
+                <span><strong>Chơi nhận voucher</strong><small>Studio thiết kế</small></span>
+            </a>
+            <button type="button" class="style-game-close" aria-label="Ẩn trò chơi trong một phút" title="Ẩn trong một phút">
+                <i class="bi bi-x-lg" aria-hidden="true"></i>
+            </button>
+        </div>
+        <script src="~/js/style-game-launcher.js" asp-append-version="true" defer></script>
+    }
 </body>
 </html>

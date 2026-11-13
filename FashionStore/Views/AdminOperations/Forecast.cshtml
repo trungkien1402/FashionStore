@@ -1,0 +1,173 @@
+@model FashionStore.Services.Implementations.StockForecastReport
+@using FashionStore.Services.Implementations
+@{ ViewData["Title"] = "Dự báo nhập hàng"; }
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-forecast.css" asp-append-version="true" />
+}
+<div class="forecast-report">
+<header class="adm-dashboard-header adm-overview-header mb-3">
+    <div><h1>Doanh thu và dự báo nhập hàng</h1><p class="adm-dashboard-period">Kế hoạch tháng @Model.TargetMonth.ToString("MM/yyyy")</p></div>
+    <div class="d-flex flex-wrap gap-2">
+        <a asp-action="Analytics" class="adm-btn-outline">Về Phân tích</a>
+        <a asp-action="ExportForecast" class="adm-btn-atelier"><i class="bi bi-file-earmark-pdf" aria-hidden="true"></i> Xuất PDF</a>
+    </div>
+</header>
+
+<div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-3 mb-3">
+    @foreach (var metric in new[] {
+        ("bi-bag", "Giá trị đơn đặt", Model.Recent.Ordered, Model.OrderedChange),
+        ("bi-wallet2", "Đã thanh toán", Model.Recent.Paid, Model.PaidChange),
+        ("bi-truck", "Đã giao", Model.Recent.DeliveredAmount, Model.DeliveredChange),
+        ("bi-arrow-counterclockwise", "Đã hoàn tiền", Model.Recent.Refunded, Model.RefundedChange) })
+    {
+        <div class="col"><div class="adm-card forecast-kpi h-100">
+            <h2 class="h6 adm-heading"><i class="bi @metric.Item1 me-1" aria-hidden="true"></i> @metric.Item2</h2>
+            <strong class="fs-4">@metric.Item3.ToString("N0") ₫</strong>
+            <div class="text-muted small mt-1">@metric.Item4</div>
+        </div></div>
+    }
+</div>
+
+<section class="adm-card p-3 mb-3" aria-labelledby="forecast-trend">
+    <h2 id="forecast-trend" class="h5 adm-heading">Biến động doanh thu</h2>
+    <p class="text-muted small">@StockForecastReport.RevenueBasis</p>
+    <div class="table-responsive">
+        <table class="adm-table mb-0">
+            <thead><tr><th>Kỳ theo ngày đặt</th><th>Tổng đơn</th><th>Đã giao</th><th>Giá trị đặt</th><th>Đã thanh toán</th><th>Đã giao</th><th>Đã hoàn</th></tr></thead>
+            <tbody>
+                @foreach (var period in new[] { (Model.PreviousStart, Model.RecentStart, Model.Previous), (Model.RecentStart, Model.EndExclusive, Model.Recent) })
+                {
+                    <tr>
+                        <th scope="row">@period.Item1.ToString("dd/MM") – @period.Item2.AddDays(-1).ToString("dd/MM")</th>
+                        <td>@period.Item3.Orders</td><td>@period.Item3.DeliveredOrders đơn</td>
+                        <td>@period.Item3.Ordered.ToString("N0") ₫</td><td>@period.Item3.Paid.ToString("N0") ₫</td>
+                        <td>@period.Item3.DeliveredAmount.ToString("N0") ₫</td><td>@period.Item3.Refunded.ToString("N0") ₫</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @if (Model.Daily.Count > 0)
+    {
+        var max = Math.Max(1m, Model.Daily.Max(day => day.Ordered));
+        <details class="forecast-details mt-3" open>
+        <summary>Giá trị theo ngày có đơn đặt <span class="forecast-tag">@Model.Daily.Count ngày</span></summary>
+        <div class="table-responsive">
+            <table class="adm-table mb-0">
+                <thead><tr><th>Ngày</th><th>Giá trị đặt</th><th>Đã thanh toán</th><th>Đã hoàn</th></tr></thead>
+                <tbody>
+                @foreach (var day in Model.Daily)
+                {
+                    <tr><th scope="row">@day.Date.ToString("dd/MM")</th>
+                        <td><strong>@day.Ordered.ToString("N0") ₫</strong><br /><meter class="forecast-meter" min="0" max="@max.ToString(System.Globalization.CultureInfo.InvariantCulture)" value="@day.Ordered.ToString(System.Globalization.CultureInfo.InvariantCulture)" aria-label="Giá trị đặt ngày @day.Date.ToString("dd/MM")"></meter></td>
+                        <td>@day.Paid.ToString("N0") ₫</td><td>@day.Refunded.ToString("N0") ₫</td></tr>
+                }
+                </tbody>
+            </table>
+        </div>
+        </details>
+    }
+    else
+    {
+        <p class="text-muted mt-3 mb-0">Chưa có đơn đặt trong hai kỳ báo cáo.</p>
+    }
+</section>
+
+<div class="row g-3 mb-3">
+    <div class="col-12 col-xl-8">
+        <section class="adm-card p-3 h-100" aria-labelledby="forecast-preferences">
+            <h2 id="forecast-preferences" class="h5 adm-heading"><i class="bi bi-palette me-1" aria-hidden="true"></i> Màu và size khách mua nhiều</h2>
+            <p class="text-muted small">Tối đa 3 màu và 3 size mỗi danh mục, theo số lượng đã giao trong 30 ngày gần nhất.</p>
+            @if (Model.Preferences.Count == 0)
+            {
+                <p class="mb-0">Kỳ này chưa có đơn đã giao để xếp hạng màu và size.</p>
+            }
+            else
+            {
+                <div class="forecast-preferences">
+                    @foreach (var item in Model.Preferences)
+                    {
+                        <article class="forecast-category">
+                            <header><strong>@item.Category</strong><span class="forecast-tag">@item.Units món đã giao</span></header>
+                            <dl>
+                                <div><dt>Màu bán chạy</dt><dd>
+                                    @foreach (var entry in item.Colors)
+                                    {
+                                        <span class="forecast-tag">@entry.Value <strong>@entry.Units</strong></span>
+                                    }
+                                    @if (item.Colors.Count == 0) { <span>Chưa ghi màu</span> }
+                                </dd></div>
+                                <div><dt>Size bán chạy</dt><dd>
+                                    @foreach (var entry in item.Sizes)
+                                    {
+                                        <span class="forecast-tag">@entry.Value <strong>@entry.Units</strong></span>
+                                    }
+                                    @if (item.Sizes.Count == 0) { <span>Chưa ghi size</span> }
+                                </dd></div>
+                            </dl>
+                        </article>
+                    }
+                </div>
+            }
+        </section>
+    </div>
+    <div class="col-12 col-xl-4">
+        <section class="adm-card forecast-season p-3 h-100" aria-labelledby="forecast-season">
+            <h2 id="forecast-season" class="h5 adm-heading"><i class="bi bi-calendar-event me-1" aria-hidden="true"></i> Gợi ý mùa vụ · @Model.TargetMonth.ToString("MM/yyyy")</h2>
+            <p class="fw-semibold mb-2">@Model.SeasonalIdea.Theme</p>
+            <p class="mb-2">@Model.SeasonalIdea.Items</p>
+            <div class="forecast-season-colors"><strong>Màu nên thử</strong>
+                <div class="d-flex flex-wrap gap-2 mt-2">
+                    @foreach (var color in Model.SeasonalIdea.Colors.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        <span class="forecast-tag">@color</span>
+                    }
+                </div>
+            </div>
+            <p class="text-muted small mb-0">@StockForecastReport.SeasonNote</p>
+        </section>
+    </div>
+</div>
+
+<section class="adm-card p-3" aria-labelledby="forecast-replenishment">
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
+        <h2 id="forecast-replenishment" class="h5 adm-heading mb-0">Gợi ý nhập theo SKU</h2>
+        <span class="forecast-tag">@Model.SkusToOrder SKU cần bổ sung</span>
+    </div>
+    <p>@Model.Insight</p>
+    
+    @if (Model.Rows.Count == 0)
+    {
+        <p class="text-muted">Chưa có SKU đang bán với dữ liệu đơn đã giao trong hai kỳ.</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="adm-table mb-0">
+                <thead><tr><th>Sản phẩm / SKU</th><th>Kỳ trước</th><th>Kỳ gần đây</th><th>Tồn</th><th>Dự báo</th><th>Gợi ý nhập</th></tr></thead>
+                <tbody>
+                @foreach (var row in Model.Rows)
+                {
+                    <tr>
+                        <th scope="row">
+                            <a asp-controller="AdminProducts" asp-action="Edit" asp-route-id="@row.ProductId">@row.ProductName</a>
+                            <div class="text-muted small">@row.Sku · @row.Size · @row.Color</div>
+                            @if (row.SparseData) { <small class="forecast-tag">Ít dữ liệu</small> }
+                        </th>
+                        <td>@row.PreviousUnits</td><td>@row.RecentUnits</td><td>@row.Stock</td><td>@row.Expected</td>
+                        <td><span class="forecast-tag @(row.Suggested > 0 ? "forecast-restock" : "forecast-enough")">
+                            @(row.Suggested > 0 ? $"Nhập {row.Suggested:N0}" : "Đủ tồn")
+                        </span></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+    <details class="forecast-details mt-3">
+        <summary>Cách tính dự báo</summary>
+        <p class="small text-muted mt-2 mb-1">@StockForecastReport.Method</p>
+    <p class="small text-muted mb-0">@StockForecastReport.Assumptions</p>
+    </details>
+</section>
+</div>

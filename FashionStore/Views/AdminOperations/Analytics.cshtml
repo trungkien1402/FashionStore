@@ -4,22 +4,37 @@
     var report = Model.Report;
     var cancellationRate = report.TotalOrders == 0 ? 0m : (decimal)report.CancelledOrders / report.TotalOrders;
 }
-<header class="adm-dashboard-header mb-4"><div><h1>Phân tích bán hàng</h1><p class="adm-dashboard-period">@report.StartDate.ToString("dd/MM/yyyy") – @report.EndDate.ToString("dd/MM/yyyy")</p></div></header>
-<div class="row g-3 mb-4">
-    <div class="col-md-4"><div class="adm-card p-3"><h2 class="h6 adm-heading">Tỷ lệ hủy theo ngày đặt</h2><strong>@cancellationRate.ToString("P1")</strong></div></div>
-    <div class="col-md-4"><div class="adm-card p-3"><h2 class="h6 adm-heading">Hoàn tiền đã ghi nhận trong kỳ</h2><strong>@Model.Refunds.ToString("N0") ₫</strong></div></div>
-    <div class="col-md-4"><div class="adm-card p-3"><h2 class="h6 adm-heading">Đơn đã giao</h2><strong>@report.DeliveredOrders</strong></div></div>
+<header class="adm-dashboard-header adm-overview-header mb-3">
+    <div><h1>Phân tích bán hàng</h1><p class="adm-dashboard-period">@report.StartDate.ToString("dd/MM/yyyy") – @report.EndDate.ToString("dd/MM/yyyy") · Giờ Việt Nam</p></div>
+    <a asp-action="Forecast" class="adm-btn-atelier"><i class="bi bi-graph-up" aria-hidden="true"></i> Doanh thu và dự báo nhập hàng</a>
+</header>
+<div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-3 mb-4 adm-kpi-grid">
+    @foreach (var metric in new[] {
+        ("bi-receipt", "Tổng đơn trong kỳ", report.TotalOrders.ToString("N0")),
+        ("bi-truck", "Đơn đã giao", report.DeliveredOrders.ToString("N0")),
+        ("bi-x-circle", "Tỷ lệ hủy theo ngày đặt", cancellationRate.ToString("P1")),
+        ("bi-arrow-counterclockwise", "Hoàn tiền ghi nhận", Model.Refunds.ToString("N0") + " ₫") })
+    {
+        <div class="col">
+            <section class="adm-card adm-kpi-card h-100">
+                <div class="d-flex justify-content-between align-items-start gap-2">
+                    <div><h2 class="h6 adm-heading">@metric.Item2</h2><strong class="adm-kpi-value">@metric.Item3</strong></div>
+                    <span class="adm-kpi-icon gold"><i class="bi @metric.Item1" aria-hidden="true"></i></span>
+                </div>
+            </section>
+        </div>
+    }
 </div>
-<section id="best-selling-products" class="mb-4" aria-labelledby="best-selling-heading">
+<section id="best-selling-products" class="adm-card p-3 mb-3" aria-labelledby="best-selling-heading">
     <h2 id="best-selling-heading" class="h5 adm-heading">Sản phẩm được mua nhiều nhất</h2>
     <p class="text-muted small">Top 50 theo số lượng đã giao, tính theo ngày đặt trong kỳ và cộng tất cả size, màu.</p>
     @if (Model.BestSellingProducts.Count == 0)
     {
-        <div class="adm-card p-4 text-center">Chưa có sản phẩm nào trong đơn đã giao của kỳ này.</div>
+        <div class="p-3 text-muted">Chưa có sản phẩm nào trong đơn đã giao của kỳ này.</div>
     }
     else
     {
-        <div class="adm-card table-responsive p-0">
+        <div class="table-responsive">
             <table class="adm-table mb-0">
                 <thead>
                     <tr>
@@ -47,19 +62,41 @@
         </div>
     }
 </section>
-<h2 class="h5 adm-heading">Size và màu bán chạy theo số lượng đã giao</h2>
-<div class="adm-card table-responsive p-0 mb-4"><table class="adm-table mb-0">
-<thead><tr><th>Size</th><th>Màu</th><th>Số lượng</th></tr></thead>
-<tbody>
-@foreach (var row in Model.Variants) { <tr><td>@row.Size</td><td>@row.Color</td><td>@row.Units</td></tr> }
-@if (Model.Variants.Count == 0) { <tr><td colspan="3">Chưa có dữ liệu.</td></tr> }
-</tbody>
-</table></div>
-<h2 class="h5 adm-heading">Lượt áp dụng mã theo ngày đặt</h2>
-<div class="adm-card table-responsive p-0"><table class="adm-table mb-0">
-<thead><tr><th>Mã</th><th>Lượt áp dụng</th><th>Giá trị giảm</th></tr></thead>
-<tbody>
-@foreach (var row in Model.Vouchers) { <tr><td>@row.Code</td><td>@row.Uses</td><td>@row.Discount.ToString("N0") ₫</td></tr> }
-@if (Model.Vouchers.Count == 0) { <tr><td colspan="3">Chưa có mã giảm giá.</td></tr> }
-</tbody>
-</table></div>
+<div class="row g-3">
+    <div class="col-12 col-xl-6">
+        <section class="adm-card p-3 h-100" aria-labelledby="variant-heading">
+            <h2 id="variant-heading" class="h5 adm-heading">Size và màu bán chạy</h2>
+            <p class="text-muted small">Xếp theo số lượng đã giao.</p>
+            <div class="table-responsive">
+                <table class="adm-table mb-0">
+                    <thead><tr><th scope="col">Size</th><th scope="col">Màu</th><th scope="col" class="text-end">Số lượng</th></tr></thead>
+                    <tbody>
+                        @foreach (var row in Model.Variants)
+                        {
+                            <tr><td>@row.Size</td><td>@row.Color</td><td class="text-end">@row.Units.ToString("N0")</td></tr>
+                        }
+                        @if (Model.Variants.Count == 0) { <tr><td colspan="3" class="text-muted">Kỳ này chưa có biến thể nào đã giao.</td></tr> }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+    <div class="col-12 col-xl-6">
+        <section class="adm-card p-3 h-100" aria-labelledby="voucher-heading">
+            <h2 id="voucher-heading" class="h5 adm-heading">Hiệu quả mã giảm giá</h2>
+            <p class="text-muted small">Lượt áp dụng và tổng giá trị giảm theo ngày đặt.</p>
+            <div class="table-responsive">
+                <table class="adm-table mb-0">
+                    <thead><tr><th scope="col">Mã</th><th scope="col" class="text-end">Lượt áp dụng</th><th scope="col" class="text-end">Giá trị giảm</th></tr></thead>
+                    <tbody>
+                        @foreach (var row in Model.Vouchers)
+                        {
+                            <tr><th scope="row">@row.Code</th><td class="text-end">@row.Uses.ToString("N0")</td><td class="text-end">@row.Discount.ToString("N0") ₫</td></tr>
+                        }
+                        @if (Model.Vouchers.Count == 0) { <tr><td colspan="3" class="text-muted">Chưa có mã giảm giá.</td></tr> }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</div>
