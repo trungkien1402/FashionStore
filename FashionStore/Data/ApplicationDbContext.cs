@@ -33,6 +33,7 @@ public class ApplicationDbContext
     public DbSet<ShipmentHistory> ShipmentHistories => Set<ShipmentHistory>();
 
     public DbSet<ShipmentLocation> ShipmentLocations => Set<ShipmentLocation>();
+    public DbSet<SupportRequest> SupportRequests => Set<SupportRequest>();
 
     public DbSet<StockMovement> StockMovements => Set<StockMovement>();
     public DbSet<MerchandiseReturn> MerchandiseReturns => Set<MerchandiseReturn>();
