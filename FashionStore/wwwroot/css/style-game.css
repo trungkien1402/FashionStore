@@ -1,0 +1,101 @@
+.style-game-float {
+    position: fixed;
+    z-index: 95;
+    right: clamp(.75rem, 2vw, 1.75rem);
+    bottom: max(1.2rem, env(safe-area-inset-bottom));
+}
+.style-game-float[hidden] { display: none; }
+.style-game-launcher {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    padding: .55rem 1rem .55rem .55rem;
+    border: 1px solid #f8ccff;
+    border-radius: 3rem;
+    background: linear-gradient(115deg, #45237c, #9a315e);
+    color: #fff;
+    box-shadow: 0 7px 26px #71275666;
+    text-decoration: none;
+    font: 700 .89rem/1.2 system-ui, sans-serif;
+    touch-action: none;
+    user-select: none;
+    cursor: grab;
+}
+.style-game-launcher:hover { color: #fff; box-shadow: 0 9px 30px #71275699; }
+.style-game-launcher:active { cursor: grabbing; }
+.style-game-gift {
+    display: grid;
+    place-items: center;
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 50%;
+    background: linear-gradient(140deg, #fff2c9, #ffc970);
+    color: #63296c;
+    font-size: 1.1rem;
+}
+.style-game-launcher small { display: block; margin-top: .15rem; color: #ffe5f4; font-size: .7rem; font-weight: 500; }
+.style-game-close {
+    position: absolute;
+    top: -.5rem;
+    right: -.35rem;
+    display: grid;
+    place-items: center;
+    width: 1.65rem;
+    height: 1.65rem;
+    border: 1px solid #e9d8f4;
+    border-radius: 50%;
+    background: #fff;
+    color: #532e68;
+    cursor: pointer;
+    font-size: .65rem;
+}
+.style-game-close:focus-visible { outline: 2px solid #774689; outline-offset: 2px; }
+.style-studio { max-width: 1040px; padding-block: 2rem 4rem; font-family: system-ui,sans-serif; }
+.style-studio-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: .75rem; margin-bottom: 1.2rem; }
+.style-studio-header h1 { font-size: clamp(1.8rem, 5vw, 3.1rem); line-height: 1.1; margin: 0 0 .35rem; letter-spacing: -.045em; }
+.style-studio-header p { margin: 0; color: #624870; }
+.style-studio-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; gap: 1rem; }
+.style-stage { background: radial-gradient(ellipse at 50% 40%,#fcf0ea,#e5d8ee); border-radius: 1.25rem; display: grid; place-items: center; overflow: hidden; }
+.style-stage canvas { display: block; width: min(100%, 420px); height: auto; }
+.style-wardrobe { border: 1px solid #e8dfeb; border-radius: 1.25rem; padding: clamp(.85rem, 2vw, 1.5rem); background: #fff; }
+.style-wardrobe h2 { font-size: 1.2rem; margin-top: 0; }
+.style-options { border: 0; margin: 0 0 .9rem; padding: 0; display: grid; gap: .35rem; grid-template-columns: repeat(3,minmax(0,1fr)); }
+.style-options legend { padding: 0; margin-bottom: .35rem; font-weight: 700; }
+.style-options label { display: grid; cursor: pointer; }
+.style-options input { position: absolute; opacity: 0; }
+.style-options label span { display: grid; align-content: start; justify-items: start; gap: .3rem; padding: .5rem; border: 1px solid #e8dfeb; border-radius: .65rem; font-size: .82rem; }
+.style-options label i { display: block; width: 1rem; height: 1rem; background: var(--swatch); border: 1px solid #0002; border-radius: 50%; }
+.style-options input:checked + span { border-color: #774689; background: #f7edf9; box-shadow: inset 0 0 0 1px #774689; }
+.style-options input:focus-visible + span, .style-game-launcher:focus-visible { outline: 2px solid #774689; outline-offset: 3px; }
+.style-score, .style-secondary { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; padding: .65rem .85rem; border-radius: .7rem; font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; }
+.style-score { background: #502963; color: #fff; border: 1px solid #502963; width: 100%; }
+.style-score:disabled { opacity: .65; }
+.style-secondary { border: 1px solid #decfe4; color: #502963; background: #fff; }
+.style-secondary[hidden] { display: none; }
+.style-result { margin: .85rem 0; background: #f8f2fa; padding: .8rem; border-radius: .7rem; }
+.style-result p { margin: .25rem 0 0; }
+.style-login { display: inline-block; margin-top: .65rem; color: #502963; text-decoration: underline; }
+@media (max-width: 720px) { .style-studio-grid { grid-template-columns: 1fr; } .style-stage canvas { width: min(100%, 255px); } }
+.style-stage { background: radial-gradient(ellipse at 50% 40%, #efe8fa, #c7b9dc); }
+.style-stage canvas { width: min(100%, 600px); touch-action: none; cursor: crosshair; }
+.style-options label i.bi { width: auto; height: auto; border: 0; color: #502963; }
+.studio-controls { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; margin-bottom: 1rem; }
+.studio-controls label { display: grid; gap: .25rem; font-size: .85rem; font-weight: 600; }
+.studio-controls select { min-width: 0; border: 1px solid #decfe4; border-radius: .5rem; padding: .4rem; background: white; font: inherit; }
+.studio-actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: .75rem; }
+@media (max-width: 720px) { .style-stage canvas { width: min(100%, 365px); } }
+
+.studio-palette { min-width: 0; padding: .65rem; margin: 0 0 .85rem; border: 1px solid #e8dfeb; border-radius: .85rem; }
+.studio-palette legend { padding: 0 .35rem; font-size: .86rem; font-weight: 750; letter-spacing: .04em; text-transform: uppercase; }
+.studio-swatches { display: grid; grid-template-columns: repeat(auto-fit, minmax(39px, 1fr)); justify-items: center; gap: .45rem .2rem; }
+.studio-swatch { display: grid; place-items: center; width: 40px; height: 40px; cursor: pointer; }
+.studio-swatch input { position: absolute; opacity: 0; }
+.studio-swatch span {
+    display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%;
+    border: 2px solid white; box-shadow: 0 1px 5px #1a162d44;
+    background: linear-gradient(135deg, #0002 50%, #fff2 50%), var(--swatch);
+}
+.studio-swatch i { visibility: hidden; color: #fff; text-shadow: 0 0 3px #000, 0 0 3px #000; font-size: .9rem; }
+.studio-swatch input:checked + span { outline: 2px solid #632ca0; outline-offset: 2px; }
+.studio-swatch input:checked + span i { visibility: visible; }
+.studio-swatch input:focus-visible + span { outline: 2px dashed #35255b; outline-offset: 4px; }

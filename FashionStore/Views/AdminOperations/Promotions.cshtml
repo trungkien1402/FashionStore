@@ -5,7 +5,7 @@
     var categoryNames = Model.Categories.ToDictionary(c => c.Id, c => c.Label);
     var productNames = Model.Products.ToDictionary(p => p.Id, p => p.Label);
 }
-<header class="adm-dashboard-header mb-4"><h1>Khuyến mãi</h1></header>
+<header class="adm-dashboard-header mb-4"><div><h1>Khuyến mãi</h1><p class="adm-dashboard-period">Gắn mã giảm theo phần trăm với mốc 60, 75 hoặc 90 điểm trong Studio thiết kế.</p></div></header>
 <form asp-action="CreateVoucher" method="post" class="adm-filter-bar row g-3 mx-0 mb-4">
     <div class="col-6 col-lg-3"><label for="code">Mã giảm giá</label><input id="code" name="code" type="text" maxlength="40" required class="form-control adm-input-dark" /></div>
     <div class="col-6 col-lg-3"><label for="start">Từ ngày</label><input id="start" name="start" type="date" required class="form-control adm-input-dark" /></div>
@@ -52,7 +52,7 @@
 </form>
 <div class="adm-card table-responsive p-0">
 <table class="adm-table mb-0">
-<thead><tr><th>Mã</th><th>Thời hạn</th><th>Mức giảm</th><th>Phạm vi</th><th>Giới hạn</th><th>Trạng thái</th><th></th></tr></thead>
+<thead><tr><th>Mã</th><th>Thời hạn</th><th>Mức giảm</th><th>Phạm vi</th><th>Giới hạn</th><th>Trạng thái</th><th>Phần thưởng thiết kế đồ</th><th></th></tr></thead>
 <tbody>
 @foreach (var row in Model.Vouchers)
 {
@@ -71,11 +71,26 @@
                 <span>Toàn bộ cửa hàng</span>
             }
         </td><td>@row.TotalLimit lượt · @row.CustomerLimit mỗi khách</td><td>@(row.IsActive ? "Đang bật" : "Đang tắt")</td>
+        <td>
+            @if (row.IsPercentage)
+            {
+                <form asp-action="SetGameReward" asp-route-id="@row.Id" method="post" class="d-flex gap-2">
+                    <select name="score" class="form-select adm-input-dark" aria-label="Mốc điểm cho mã @row.Code">
+                        <option value="">Mã thông thường</option>
+                        @foreach (var score in new[] { 60, 75, 90 })
+                        {
+                            <option value="@score" selected="@(row.GameMinimumScore == score)">Từ @score điểm</option>
+                        }
+                    </select>
+                    <button class="adm-btn-outline">Lưu</button>
+                </form>
+            }
+        </td>
         <td><form asp-action="SetVoucherActive" asp-route-id="@row.Id" method="post">
             <input type="hidden" name="active" value="@(!row.IsActive)" /><button class="adm-btn-outline">@(row.IsActive ? "Tắt" : "Bật")</button>
         </form></td></tr>
 }
-@if (Model.Vouchers.Count == 0) { <tr><td colspan="7">Chưa có mã giảm giá.</td></tr> }
+@if (Model.Vouchers.Count == 0) { <tr><td colspan="8">Chưa có mã giảm giá.</td></tr> }
 </tbody>
 </table>
 </div>

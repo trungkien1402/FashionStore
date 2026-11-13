@@ -1,0 +1,71 @@
+@using FashionStore.Services.Implementations
+@{
+    ViewData["Title"] = "Studio thiết kế";
+    var images = new[] { "tee.png", "jeans.png", "sneaker.png" };
+}
+<main class="style-studio urbn-container">
+    <header class="style-studio-header">
+        <div><h1>Studio thiết kế</h1><p>Vẽ, trang trí và chấm điểm để mở mã giảm giá.</p></div>
+        <a asp-controller="Products" asp-action="Index" class="style-secondary">Về cửa hàng</a>
+    </header>
+    <div class="style-studio-grid">
+        <section class="style-stage" aria-label="Bàn vẽ sản phẩm">
+            <canvas width="600" height="600" id="styleAvatar" tabindex="0" aria-label="Bàn vẽ. Dùng phím mũi tên để di chuyển, Enter để đặt dấu."></canvas>
+        </section>
+        <section class="style-wardrobe" aria-label="Công cụ thiết kế">
+            <form id="styleGameForm" asp-action="Score" method="post">
+                <input type="hidden" name="round" value="@ViewBag.Round" />
+                <fieldset class="style-options">
+                    <legend>Chọn mẫu trắng</legend>
+                    @for (var i = 0; i < StyleGame.Products.Length; i++)
+                    {
+                        <label><input type="radio" name="product" value="@i" data-image="@Url.Content($"~/images/style-studio/{images[i]}")" checked="@(i == 0)" />
+                            <span>@StyleGame.Products[i]</span></label>
+                    }
+                </fieldset>
+                <fieldset class="style-options">
+                    <legend>Công cụ</legend>
+                    <label><input type="radio" name="tool" value="pen" checked /><span><i class="bi bi-pencil" aria-hidden="true"></i> Bút</span></label>
+                    <label><input type="radio" name="tool" value="eraser" /><span><i class="bi bi-eraser" aria-hidden="true"></i> Tẩy</span></label>
+                    <label><input type="radio" name="tool" value="sticker" /><span><i class="bi bi-stars" aria-hidden="true"></i> Sticker</span></label>
+                </fieldset>
+                <fieldset class="studio-palette">
+                    <legend>Gam màu sắc</legend>
+                    <div class="studio-swatches">
+                        @for (var i = 0; i < StyleGame.Colors.Length; i++)
+                        {
+                            var color = StyleGame.Colors[i];
+                            <label class="studio-swatch" title="@color.Name">
+                                <input type="radio" name="inkColor" value="@i" data-color="@color.Hex"
+                                       aria-label="@color.Name" checked="@(i == 0)" />
+                                <span style="--swatch: @color.Hex"><i class="bi bi-check-lg" aria-hidden="true"></i></span>
+                            </label>
+                        }
+                    </div>
+                </fieldset>
+                <div class="studio-controls">
+                    <label>Sticker
+                        <select id="studioSticker">
+                            @foreach (var sticker in StyleGame.Stickers) { <option>@sticker</option> }
+                        </select>
+                    </label>
+                    <label>Cỡ nét <input id="studioSize" type="range" min="4" max="32" value="12" /></label>
+                </div>
+                <div class="studio-actions">
+                    <button type="button" class="style-secondary" id="studioUndo"><i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i> Hoàn tác</button>
+                    <button type="button" class="style-secondary" id="studioClear">Xóa mẫu vẽ</button>
+                </div>
+                <button type="submit" class="style-score"><i class="bi bi-stars" aria-hidden="true"></i> Chấm điểm thiết kế</button>
+            </form>
+            <div class="style-result" id="styleResult" role="status" hidden></div>
+            <a class="style-secondary" id="styleCartLink" asp-controller="Cart" asp-action="Index" hidden>Vào giỏ hàng dùng mã <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+            @if (User.Identity?.IsAuthenticated != true)
+            {
+                <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Url.Action("Index")" class="style-login">Đăng nhập để nhận mã</a>
+            }
+        </section>
+    </div>
+</main>
+@section Scripts {
+    <script src="~/js/style-game.js" asp-append-version="true"></script>
+}

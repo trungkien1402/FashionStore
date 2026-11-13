@@ -21,6 +21,9 @@ public class CheckoutViewModel
     public string PaymentMethod { get; set; } = "COD";
 
   
+    [StringLength(40)]
+    public string? VoucherCode { get; set; }
+
     public decimal SubTotal { get; set; }
 
     public decimal ShippingFee { get; set; } = 30000;

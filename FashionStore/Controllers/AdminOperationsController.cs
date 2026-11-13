@@ -261,6 +261,21 @@ public partial class AdminOperationsController(ApplicationDbContext db) : Contro
     }
 
     [HttpPost]
+    public async Task<IActionResult> SetGameReward(int id, int? score)
+    {
+        if (!ModelState.IsValid || score is not (null or 60 or 75 or 90))
+            return Error(nameof(Promotions), "Chọn một mốc điểm hợp lệ.");
+        var voucher = await db.Vouchers.SingleOrDefaultAsync(v => v.Id == id);
+        if (voucher == null) return NotFound();
+        if (score.HasValue && !voucher.IsPercentage)
+            return Error(nameof(Promotions), "Phần thưởng thiết kế đồ cần dùng mã giảm theo phần trăm.");
+        SalesRules.Audit(db, Actor, "GameReward", voucher.Code, $"{voucher.GameMinimumScore} → {score}");
+        voucher.GameMinimumScore = score;
+        await db.SaveChangesAsync();
+        return Success(nameof(Promotions), "Đã lưu phần thưởng thiết kế đồ.");
+    }
+
+    [HttpPost]
     public async Task<IActionResult> SetVoucherActive(int id, bool active)
     {
         var voucher = await db.Vouchers.SingleOrDefaultAsync(v => v.Id == id);
@@ -369,6 +384,18 @@ public partial class AdminOperationsController(ApplicationDbContext db) : Contro
         await db.SaveChangesAsync();
         await transaction.CommitAsync();
         return Success(nameof(Staff), "Đã cập nhật vai trò.");
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Forecast(CancellationToken cancellationToken) =>
+        View(await StockForecast.BuildAsync(db, AdminReportService.Today, cancellationToken));
+
+    [HttpGet]
+    public async Task<IActionResult> ExportForecast(CancellationToken cancellationToken)
+    {
+        var report = await StockForecast.BuildAsync(db, AdminReportService.Today, cancellationToken);
+        return File(StockForecastPdf.Create(report), "application/pdf",
+            $"FashionStore_KeHoachNhapHang_{report.TargetMonth:yyyy-MM}.pdf");
     }
 
     [HttpGet]

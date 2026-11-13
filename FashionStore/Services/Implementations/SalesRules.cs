@@ -14,16 +14,17 @@ public static class SalesRules
 
     public static async Task<(Voucher? Voucher, decimal Discount)> ApplyVoucherAsync(
         ApplicationDbContext db, string code, string userId, decimal subtotal,
-        IReadOnlyDictionary<int, int> quantities, IEnumerable<ProductVariant> variants)
+        IReadOnlyDictionary<int, int> quantities, IEnumerable<ProductVariant> variants, int? gameScore = null)
     {
         var now = DateTime.UtcNow;
         var voucher = await db.Vouchers.SingleOrDefaultAsync(v => v.Code == code &&
             v.IsActive && v.StartsAt <= now && v.EndsAt > now);
-        if (voucher == null || subtotal < voucher.MinimumOrder)
+        if (voucher == null || subtotal < voucher.MinimumOrder ||
+            voucher.GameMinimumScore is int minimum && (gameScore == null || gameScore < minimum))
             return (null, 0);
 
         if (await db.VoucherRedemptions.CountAsync(r => r.VoucherId == voucher.Id) >= voucher.TotalLimit ||
-            await db.VoucherRedemptions.CountAsync(r => r.VoucherId == voucher.Id && r.CustomerId == userId) >= voucher.CustomerLimit)
+            await db.VoucherRedemptions.CountAsync(r => r.VoucherId == voucher.Id && r.CustomerId == userId) >= (voucher.GameMinimumScore.HasValue ? 1 : voucher.CustomerLimit))
             return (null, 0);
 
         var eligible = variants.Where(v => (voucher.ProductId == null || voucher.ProductId == v.ProductId) &&

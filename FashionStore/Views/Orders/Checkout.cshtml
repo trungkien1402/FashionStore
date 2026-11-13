@@ -21,6 +21,12 @@
             <label class="pay-method" for="paymentQR"><input type="radio" asp-for="PaymentMethod" value="VietQR" id="paymentQR" /><span><strong>Chuyển khoản VietQR</strong><small>Quét mã điền sẵn số tiền. Cửa hàng kiểm tra và xác nhận thanh toán.</small></span></label>
         </fieldset>
         <span asp-validation-for="PaymentMethod" class="pay-validation"></span>
+        <div class="pay-field">
+            <label asp-for="VoucherCode">Mã khuyến mãi</label>
+            <input asp-for="VoucherCode" maxlength="40" autocomplete="off" />
+            <span asp-validation-for="VoucherCode"></span>
+            <small>Đơn hàng sẽ áp dụng mức giảm hợp lệ trước khi tạo thanh toán.</small>
+        </div>
         <button id="placeOrderButton" class="pay-button" type="submit">@(Model.PaymentMethod == "VietQR" ? "Đặt hàng và xem mã QR" : "Xác nhận đặt hàng")</button>
         <p class="pay-subnote">Vui lòng kiểm tra thông tin trước khi đặt hàng.</p>
     </div>
@@ -29,7 +35,7 @@
         {
             <div class="pay-product"><div class="pay-product-visual"><img src="@item.ImageUrl" alt="@item.ProductName" loading="lazy" /></div><div class="pay-product-info"><strong>@item.ProductName</strong><small>@item.Size · @item.Color · Số lượng @item.Quantity</small><span>@Money(item.TotalPrice)</span></div></div>
         }
-        <div class="pay-rule"></div><dl class="pay-totals"><div><dt>Tạm tính</dt><dd>@Money(Model.SubTotal)</dd></div><div><dt>Phí vận chuyển</dt><dd>@Money(Model.ShippingFee)</dd></div><div class="pay-total"><dt>Tổng cộng</dt><dd>@Money(Model.TotalAmount)</dd></div></dl>
+        <div class="pay-rule"></div><dl class="pay-totals"><div><dt>Tạm tính</dt><dd>@Money(Model.SubTotal)</dd></div><div><dt>Phí vận chuyển</dt><dd>@Money(Model.ShippingFee)</dd></div><div class="pay-total"><dt>Tổng trước giảm giá</dt><dd>@Money(Model.TotalAmount)</dd></div></dl>
         <a class="pay-detail-link" asp-controller="Cart" asp-action="Index">Chỉnh sửa giỏ hàng <span aria-hidden="true">↗</span></a>
     </div><p class="pay-sidebar-note">Mỗi lựa chọn đều xứng đáng được chăm chút. FashionStore sẽ tiếp nhận đơn sau khi bạn xác nhận.</p></aside>
 </form>
