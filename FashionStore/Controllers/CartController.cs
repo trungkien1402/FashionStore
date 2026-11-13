@@ -98,7 +98,7 @@ public class CartController : Controller
                 ProductVariantId = variant.Id,
                 ProductId = variant.ProductId,
                 ProductName = variant.Product.Name,
-                ImageUrl = variant.Product.ImageUrl,
+                ImageUrl = ShowroomCatalog.FrontPhoto(variant.Product, variant.Color),
                 SKU = variant.SKU,
                 Size = variant.Size,
                 Color = variant.Color,
@@ -184,7 +184,7 @@ public class CartController : Controller
                 ProductVariantId = variant.Id,
                 ProductId = variant.ProductId,
                 ProductName = variant.Product.Name,
-                ImageUrl = variant.Product.ImageUrl,
+                ImageUrl = ShowroomCatalog.FrontPhoto(variant.Product, variant.Color),
                 SKU = variant.SKU,
                 Size = variant.Size,
                 Color = variant.Color,
@@ -199,6 +199,7 @@ public class CartController : Controller
         {
             success = true,
             cartCount = cart.Sum(x => x.Quantity),
+            items = MiniCartItems(cart),
             message = $"Đã thêm {variant.Product.Name} ({variant.Size}) vào giỏ hàng!"
         });
     }
@@ -304,20 +305,7 @@ public class CartController : Controller
         return Json(new
         {
             success = true,
-            items = cart.Select(x => new
-            {
-                variantId = x.ProductVariantId,
-                productId = x.ProductId,
-                name = x.ProductName,
-                imageUrl = x.ImageUrl,
-                size = x.Size,
-                color = x.Color,
-                unitPrice = x.UnitPrice,
-                quantity = x.Quantity,
-                lineTotal = x.TotalPrice,
-                unitPriceFormatted = x.UnitPrice.ToString("N0") + " ₫",
-                lineTotalFormatted = x.TotalPrice.ToString("N0") + " ₫"
-            }),
+            items = MiniCartItems(cart),
             totalQuantity = totalQty,
             totalAmount = total,
             totalFormatted = total.ToString("N0") + " ₫",
@@ -328,6 +316,21 @@ public class CartController : Controller
             isFreeship = total >= freeshipThreshold
         });
     }
+
+    private static IEnumerable<object> MiniCartItems(IEnumerable<CartItemViewModel> cart) => cart.Select(x => new
+    {
+        variantId = x.ProductVariantId,
+        productId = x.ProductId,
+        name = x.ProductName,
+        imageUrl = x.ImageUrl,
+        size = x.Size,
+        color = x.Color,
+        unitPrice = x.UnitPrice,
+        quantity = x.Quantity,
+        lineTotal = x.TotalPrice,
+        unitPriceFormatted = x.UnitPrice.ToString("N0") + " ₫",
+        lineTotalFormatted = x.TotalPrice.ToString("N0") + " ₫"
+    });
 
     public class UpdateAjaxDto
     {

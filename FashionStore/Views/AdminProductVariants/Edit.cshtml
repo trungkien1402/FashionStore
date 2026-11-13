@@ -25,6 +25,7 @@
         <div class="adm-form-card">
             <form asp-action="Edit" method="post">
                 @Html.AntiForgeryToken()
+                <p><a asp-controller="AdminOperations" asp-action="Stock" asp-route-id="@Model.Id">Điều chỉnh tồn kho và xem lịch sử</a></p>
                 <input type="hidden" asp-for="Id" />
                 <input type="hidden" asp-for="ProductId" />
 
@@ -82,7 +83,7 @@
                 <div class="row g-3 mb-4">
                     <div class="col-md-6">
                         <label asp-for="StockQuantity" class="adm-form-label">Số lượng tồn kho *</label>
-                        <input asp-for="StockQuantity" type="number" min="0" class="form-control adm-input-dark" />
+                        <input readonly asp-for="StockQuantity" type="number" min="0" class="form-control adm-input-dark" />
                         <span asp-validation-for="StockQuantity" class="text-danger small mt-1 d-block"></span>
                     </div>
 

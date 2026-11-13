@@ -304,5 +304,65 @@
         }, 3000);
     };
 
+    // Điều hướng vào Bộ sưu tập theo mùa (Lookbook 3D độc bản)
+    document.addEventListener('click', function (e) {
+        var card = e.target.closest('[data-open-lookbook], a[href*="#lookbook-"], a[href*="/lookbook"]');
+        if (!card) return;
+        var theme = card.dataset.openLookbook;
+        if (!theme) {
+            var href = card.getAttribute('href') || '';
+            if (href.indexOf('sunwash') !== -1) theme = 'sunwash';
+            else if (href.indexOf('noir') !== -1) theme = 'noir';
+        }
+        if (theme) {
+            e.preventDefault();
+            window.location.href = '/lookbook?theme=' + theme;
+        }
+    });
 
+})();
+
+// ==============================================================================
+// KÍCH HOẠT BỘ LỌC TRANG CHỦ TỪ NÚT KÍNH LÚP TÌM KIẾM (MAGNIFYING GLASS ICON)
+// ==============================================================================
+(function () {
+    const p = window.location.pathname.toLowerCase();
+    const isHome = p === '' || p === '/' || p.endsWith('/home') || p.endsWith('/home/index');
+    if (!isHome) return;
+
+    function ensureHomeFilterLoaded(callback) {
+        if (window.HNMTHomeFilter) {
+            if (callback) callback();
+            return;
+        }
+        let script = document.getElementById('hnmtHomeFilterScript');
+        if (!script) {
+            script = document.createElement('script');
+            script.id = 'hnmtHomeFilterScript';
+            script.src = '/js/home-filter.js?v=hf_v' + Date.now();
+            if (callback) script.onload = callback;
+            document.body.appendChild(script);
+        } else if (callback) {
+            script.addEventListener('load', callback, { once: true });
+        }
+    }
+
+    // Tải trước ngầm để sẵn sàng ngay khi người dùng nhấn
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function () { ensureHomeFilterLoaded(); });
+    } else {
+        ensureHomeFilterLoaded();
+    }
+
+    // Bắt sự kiện click vào nút Kính Lúp (Magnifying Glass)
+    document.addEventListener('click', function (e) {
+        const searchBtn = e.target.closest('#hnmtNavSearchBtn, button.urbn-nav-icon, a.urbn-nav-icon, .bi-search');
+        if (searchBtn && (searchBtn.querySelector('.bi-search') || searchBtn.classList.contains('bi-search') || searchBtn.id === 'hnmtNavSearchBtn')) {
+            e.preventDefault();
+            e.stopPropagation();
+            ensureHomeFilterLoaded(function () {
+                if (window.HNMTHomeFilter) window.HNMTHomeFilter.open();
+            });
+        }
+    }, true);
 })();

@@ -34,12 +34,69 @@ public class ApplicationDbContext
 
     public DbSet<ShipmentLocation> ShipmentLocations => Set<ShipmentLocation>();
 
-    public DbSet<SupportRequest> SupportRequests => Set<SupportRequest>();
+    public DbSet<StockMovement> StockMovements => Set<StockMovement>();
+    public DbSet<MerchandiseReturn> MerchandiseReturns => Set<MerchandiseReturn>();
+    public DbSet<Voucher> Vouchers => Set<Voucher>();
+    public DbSet<VoucherRedemption> VoucherRedemptions => Set<VoucherRedemption>();
+    public DbSet<StoreSettings> StoreSettings => Set<StoreSettings>();
+    public DbSet<AdminAuditEvent> AdminAuditEvents => Set<AdminAuditEvent>();
+
+    public DbSet<ProductReview> ProductReviews => Set<ProductReview>();
+    public DbSet<FeaturedProduct> FeaturedProducts => Set<FeaturedProduct>();
+
+    public string? StockActorId { get; set; }
+    public string StockReason { get; set; } = "Cập nhật tồn kho";
+
+    public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
+        CancellationToken cancellationToken = default)
+    {
+        var pending = ChangeTracker.Entries<StockMovement>().Where(entry => entry.State == EntityState.Added)
+            .Select(entry => entry.Entity.ProductVariant).ToHashSet();
+        var changes = ChangeTracker.Entries<ProductVariant>()
+            .Where(entry => entry.State is EntityState.Added or EntityState.Modified)
+            .Select(entry => new
+            {
+                Variant = entry.Entity,
+                Before = entry.State == EntityState.Added ? 0 : entry.OriginalValues.GetValue<int>(nameof(ProductVariant.StockQuantity)),
+                After = entry.Entity.StockQuantity
+            })
+            .Where(change => change.Before != change.After && !pending.Contains(change.Variant))
+            .ToList();
+        foreach (var change in changes)
+        {
+            if (change.After < 0)
+                throw new InvalidOperationException("Tồn kho không thể âm.");
+
+            StockMovements.Add(new StockMovement
+            {
+                ProductVariant = change.Variant,
+                Before = change.Before,
+                After = change.After,
+                ActorId = StockActorId,
+                Reason = StockReason
+            });
+        }
+
+        return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+    }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
 
+        builder.Entity<FeaturedProduct>().HasOne(f => f.Product).WithMany().HasForeignKey(f => f.ProductId);
+        builder.Entity<FeaturedProduct>().HasIndex(f => f.ProductId).IsUnique();
+        builder.Entity<ProductReview>().HasIndex(r => new { r.ProductId, r.UserId }).IsUnique();
+        builder.Entity<StockMovement>().HasIndex(m => new { m.ProductVariantId, m.CreatedAt });
+        builder.Entity<MerchandiseReturn>().HasIndex(r => r.OrderId).IsUnique();
+        builder.Entity<MerchandiseReturn>().HasOne(r => r.Order).WithMany().OnDelete(DeleteBehavior.Restrict);
+        builder.Entity<Voucher>().HasIndex(v => v.Code).IsUnique();
+        builder.Entity<VoucherRedemption>().HasIndex(r => r.OrderId).IsUnique();
+        builder.Entity<VoucherRedemption>().HasIndex(r => new { r.VoucherId, r.CustomerId });
+        builder.Entity<StoreSettings>().Property(s => s.Id).ValueGeneratedNever();
+        builder.Entity<AdminAuditEvent>().HasIndex(e => e.CreatedAt);
+        builder.Entity<Order>().HasIndex(o => o.CreatedAt);
+        builder.Entity<ProductVariant>().Property(v => v.StockQuantity).IsConcurrencyToken();
         builder.Entity<Order>().Property(o => o.RowVersion).IsRowVersion();
         builder.Entity<PaymentHistory>(entity =>
         {
@@ -55,6 +112,13 @@ public class ApplicationDbContext
         builder.Entity<Product>()
             .Property(x => x.Price)
             .HasPrecision(18, 2);
+
+        builder.Entity<Product>(entity =>
+        {
+            entity.Property(p => p.ShowroomAudience).HasMaxLength(16);
+            entity.Property(p => p.ShowroomKind).HasMaxLength(8);
+            entity.HasIndex(p => new { p.ShowroomAudience, p.ShowroomKind, p.ShowroomSortOrder });
+        });
 
         builder.Entity<ProductVariant>()
             .Property(x => x.Price)

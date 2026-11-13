@@ -112,7 +112,7 @@
         ],
         'cargo': [
             { value: 'all', text: 'Tất cả dáng Quần Cargo Túi Hộp' },
-            { value: 'cargo-olive', text: 'Quần Cargo 8 Túi Streetwear Rêu Khói' },
+            { value: 'cargo-olive', text: 'Quần Cargo Xanh Rêu Bo Gấu' },
             { value: 'cargo-baggy', text: 'Quần Baggy Cargo Jeans Túi Hộp' },
             { value: 'techwear-cargo', text: 'Quần Techwear Cargo Đa Năng' }
         ],
@@ -124,12 +124,9 @@
         ]
     };
 
-    // Lấy toàn bộ danh sách 12 quần từ ClothingRail
+    // Lấy danh mục quần từ ClothingRail
     function getPantsCatalog() {
-        if (window.ClothingRail && Array.isArray(window.ClothingRail.ALL_PANTS_PRODUCTS)) {
-            return window.ClothingRail.ALL_PANTS_PRODUCTS;
-        }
-        return [];
+        return window.ClothingRail?.getAllProducts('quan') || [];
     }
 
     // HTML Template: Right Sidebar mờ đục trong suốt với Select-from-list & Range Slider

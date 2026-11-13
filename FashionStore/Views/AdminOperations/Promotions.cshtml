@@ -1,0 +1,34 @@
+@model List<FashionStore.Models.Entities.Voucher>
+@using FashionStore.Services.Implementations
+@{ ViewData["Title"] = "Khuyến mãi"; }
+<header class="adm-dashboard-header mb-4"><h1>Khuyến mãi</h1></header>
+<form asp-action="CreateVoucher" method="post" class="adm-filter-bar row g-3 mx-0 mb-4">
+    <div class="col-6 col-lg-3"><label for="code">Mã giảm giá</label><input id="code" name="code" type="text" maxlength="40" required class="form-control adm-input-dark" /></div>
+    <div class="col-6 col-lg-3"><label for="start">Từ ngày</label><input id="start" name="start" type="date" required class="form-control adm-input-dark" /></div>
+    <div class="col-6 col-lg-3"><label for="end">Đến hết ngày</label><input id="end" name="end" type="date" required class="form-control adm-input-dark" /></div>
+    <div class="col-6 col-lg-3"><label for="value">Mức giảm</label><input id="value" name="value" type="number" min="1" required class="form-control adm-input-dark" /></div>
+    <div class="col-6 col-lg-3"><label for="minimum">Tối thiểu (₫)</label><input id="minimum" name="minimum" type="number" min="0" value="0" required class="form-control adm-input-dark" /></div>
+    <div class="col-6 col-lg-3"><label for="maximum">Giảm tối đa (₫)</label><input id="maximum" name="maximum" type="number" min="1" class="form-control adm-input-dark" /></div>
+    <div class="col-6 col-lg-3"><label for="totalLimit">Tổng lượt</label><input id="totalLimit" name="totalLimit" type="number" min="1" required class="form-control adm-input-dark" /></div>
+    <div class="col-6 col-lg-3"><label for="customerLimit">Lượt mỗi khách</label><input id="customerLimit" name="customerLimit" type="number" min="1" value="1" required class="form-control adm-input-dark" /></div>
+    <div class="col-6 col-lg-3"><label for="categoryId">ID danh mục (tùy chọn)</label><input id="categoryId" name="categoryId" type="number" min="1" class="form-control adm-input-dark" /></div>
+    <div class="col-6 col-lg-3"><label for="productId">ID sản phẩm (tùy chọn)</label><input id="productId" name="productId" type="number" min="1" class="form-control adm-input-dark" /></div>
+    <div class="col-md-auto align-self-end"><label><input name="percentage" type="checkbox" value="true" /> Mức giảm theo phần trăm</label></div>
+    <div class="col-md-auto align-self-end"><button class="adm-btn-atelier">Tạo mã</button></div>
+</form>
+<div class="adm-card table-responsive p-0">
+<table class="adm-table mb-0">
+<thead><tr><th>Mã</th><th>Thời hạn</th><th>Mức giảm</th><th>Giới hạn</th><th>Trạng thái</th><th></th></tr></thead>
+<tbody>
+@foreach (var row in Model)
+{
+    <tr><td>@row.Code</td><td>@AdminReportService.ToVietnamTime(row.StartsAt).ToString("dd/MM/yyyy") – @AdminReportService.ToVietnamTime(row.EndsAt).AddDays(-1).ToString("dd/MM/yyyy")</td>
+        <td>@row.Value.ToString("N0") @(row.IsPercentage ? "%" : "₫")</td><td>@row.TotalLimit lượt · @row.CustomerLimit mỗi khách</td><td>@(row.IsActive ? "Đang bật" : "Đang tắt")</td>
+        <td><form asp-action="SetVoucherActive" asp-route-id="@row.Id" method="post">
+            <input type="hidden" name="active" value="@(!row.IsActive)" /><button class="adm-btn-outline">@(row.IsActive ? "Tắt" : "Bật")</button>
+        </form></td></tr>
+}
+@if (Model.Count == 0) { <tr><td colspan="6">Chưa có mã giảm giá.</td></tr> }
+</tbody>
+</table>
+</div>

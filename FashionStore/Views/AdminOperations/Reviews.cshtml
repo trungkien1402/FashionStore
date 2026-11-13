@@ -1,0 +1,19 @@
+@model List<FashionStore.Models.Entities.ProductReview>
+@{ ViewData["Title"] = "Đánh giá sản phẩm"; }
+<header class="adm-dashboard-header mb-4"><h1>Đánh giá sản phẩm</h1></header>
+<div class="adm-card table-responsive p-0"><table class="adm-table mb-0">
+<thead><tr><th>Sản phẩm</th><th>Điểm</th><th>Nội dung</th><th>Trạng thái</th><th></th></tr></thead>
+<tbody>
+@foreach (var row in Model)
+{
+    <tr><td>@row.Product.Name</td><td>@row.Rating / 5</td><td class="text-break">@row.Comment</td>
+    <td>@(row.IsVisible ? "Hiển thị" : "Ẩn") @if (row.IsReported) { <span class="text-danger">Có báo cáo</span> }</td><td>
+        <form asp-action="ModerateReview" asp-route-id="@row.Id" method="post" class="d-flex gap-2">
+            <button name="visible" value="true" class="adm-btn-outline">Hiển thị</button>
+            <button name="visible" value="false" class="adm-btn-outline">Ẩn</button>
+        </form>
+    </td></tr>
+}
+@if (Model.Count == 0) { <tr><td colspan="5">Chưa có đánh giá.</td></tr> }
+</tbody>
+</table></div>

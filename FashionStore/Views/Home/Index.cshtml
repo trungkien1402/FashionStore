@@ -345,8 +345,8 @@
             <!-- Bên phải: Ảnh người mẫu full-body -->
             <div>
                 <div class="urbn-model-photo">
-                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1000&q=85"
-                         alt="Bộ sưu tập nam hiện đại HNMTSHOP" />
+                    <img src="~/images/seated-couture-model-v2.webp" asp-append-version="true" loading="lazy" decoding="async"
+                         alt="Người mẫu nữ ngồi nghiêng với áo đen lệch vai, quần âu xám và giày đỏ rượu" style="object-fit:contain" />
                 </div>
             </div>
 
@@ -392,18 +392,18 @@
         <div class="urbn-racks-grid">
 
             <!-- Sào 1: NOIR UNIT -->
-            <a href="#lookbook-noir" class="urbn-rack-card hnmt-lookbook-card" data-open-lookbook="noir" style="background:#e4e5e7">
-                <img src="/images/lookbook/cut/look-n1.png" alt="NOIR UNIT" style="object-fit:contain;object-position:center bottom;padding-top:18px" />
+            <a href="/lookbook?theme=noir" class="urbn-rack-card hnmt-lookbook-card" data-open-lookbook="noir" style="background:#e4e5e7">
+                <img src="~/images/lookbook/noir-unit-poster.webp" alt="" asp-append-version="true" loading="lazy" decoding="async" />
                 <div class="urbn-cat-pill-wrap">
-                    <span class="urbn-cat-pill">NOIR UNIT &bull; ĐEN TUYỀN ĐÔ THỊ</span>
+                    <span class="urbn-cat-pill">Noir Unit</span>
                 </div>
             </a>
 
             <!-- Sào 2: SUN-WASHED -->
-            <a href="#lookbook-sunwash" class="urbn-rack-card hnmt-lookbook-card" data-open-lookbook="sunwash" style="background:#ebe5d8">
-                <img src="/images/lookbook/cut/look-e1.png" alt="SUN-WASHED" style="object-fit:contain;object-position:center bottom;padding-top:18px" />
+            <a href="/lookbook?theme=sunwash" class="urbn-rack-card hnmt-lookbook-card" data-open-lookbook="sunwash" style="background:#ebe5d8">
+                <img src="~/images/lookbook/sun-washed-poster.webp" alt="" asp-append-version="true" loading="lazy" decoding="async" />
                 <div class="urbn-cat-pill-wrap">
-                    <span class="urbn-cat-pill">SUN-WASHED &bull; DENIM BẠC MÀU &amp; SẮC CÁT</span>
+                    <span class="urbn-cat-pill">Sun-Washed</span>
                 </div>
             </a>
 
@@ -496,6 +496,8 @@
     </div>
 </section>
 
-<link rel="stylesheet" href="~/css/lookbook.css?v=cutout_v1" asp-append-version="true" />
-<div id="lookbookRoot" class="lb-wrapper"></div>
-<script src="~/js/lookbook.js?v=cutout_v1" asp-append-version="true"></script>
+@section Scripts {
+    <script src="~/js/home-filter.js?v=home_filter_v1" asp-append-version="true"></script>
+}
+
+

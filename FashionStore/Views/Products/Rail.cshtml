@@ -37,9 +37,9 @@
                         </svg>
                         <span class="rail-bag-count" id="bagCount">0</span>
                     </button>
-                    <a href="/" class="rail-portal-exit-btn" title="Về trang chủ">
-                        <i class="bi bi-arrow-left"></i>
-                        <span>Quay lại</span>
+                    <a href="/" class="rail-portal-exit-btn" title="Về trang chủ" style="text-decoration: none !important;">
+                        <i class="bi bi-arrow-left" style="text-decoration: none !important;"></i>
+                        <span style="text-decoration: none !important;">Quay lại</span>
                     </a>
                 </div>
             </header>
@@ -86,6 +86,11 @@
                 </div>
                 <p class="rail-counter" id="counter"></p>
                 <h2 class="rail-detail-name" id="detailName"></h2>
+                <div class="rail-view-switch" id="viewSwitch" role="tablist" aria-label="Góc nhìn sản phẩm">
+                    <button type="button" class="rail-view-opt is-active" data-view="front" role="tab" aria-selected="true">Side A</button>
+                    <span class="rail-view-sep" aria-hidden="true">|</span>
+                    <button type="button" class="rail-view-opt is-dimmed" data-view="back" role="tab" aria-selected="false">Side B</button>
+                </div>
                 <p class="rail-description" id="description"></p>
                 <div class="rail-price-line">
                     <span id="detailPrice"></span>
@@ -114,6 +119,7 @@
         <aside class="rail-toast" id="toast" role="status" aria-live="polite"></aside>
     </div>
 
+    <partial name="_ShowroomCatalog" />
     <script src="~/js/clothing-rail.js" asp-append-version="true"></script>
 
         <!-- SPOTLIGHT MULTI-CRITERIA QUICK SEARCH MODAL -->

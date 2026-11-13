@@ -1,0 +1,22 @@
+@model List<FashionStore.Models.Entities.ProductVariant>
+@{ ViewData["Title"] = "Kho hàng"; }
+<header class="adm-dashboard-header mb-4"><h1>Kho hàng</h1></header>
+<form asp-action="Inventory" method="get" class="adm-filter-bar d-flex flex-wrap align-items-center gap-3 mb-4">
+    <input name="search" value="@ViewBag.Search" maxlength="100" aria-label="Tìm SKU hoặc sản phẩm" placeholder="SKU hoặc tên sản phẩm" class="form-control adm-input-dark w-auto" />
+    <label><input type="checkbox" name="low" value="true" checked="@(ViewBag.Low == true)" /> Tồn thấp (≤ 5)</label>
+    <button class="adm-btn-atelier">Lọc</button>
+</form>
+<div class="adm-card table-responsive p-0">
+<table class="adm-table mb-0">
+    <thead><tr><th>Sản phẩm</th><th>SKU</th><th>Size</th><th>Màu</th><th>Tồn kho</th><th></th></tr></thead>
+    <tbody>
+    @foreach (var row in Model)
+    {
+        <tr><td>@row.Product.Name</td><td>@row.SKU</td><td>@row.Size</td><td>@row.Color</td><td>@row.StockQuantity</td>
+            <td><a asp-action="Stock" asp-route-id="@row.Id">Xem và điều chỉnh</a></td></tr>
+    }
+    @if (Model.Count == 0) { <tr><td colspan="6">Không có biến thể khớp bộ lọc.</td></tr> }
+    </tbody>
+</table>
+</div>
+<p class="text-muted small mt-2">Hiển thị tối đa 100 biến thể, ưu tiên tồn kho thấp.</p>

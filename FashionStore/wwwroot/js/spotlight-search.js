@@ -92,7 +92,7 @@
         const items = [];
 
         // 1. Quần (Pants)
-        const pants = window.ClothingRail?.ALL_PANTS_PRODUCTS || [];
+        const pants = window.ClothingRail?.getAllProducts('quan') || [];
         pants.forEach((p, pIdx) => {
             const colorNames = (p.colors || []).map(c => c[0]).join(' ');
             items.push({
@@ -115,7 +115,7 @@
         });
 
         // 2. Áo (Shirts & Tops)
-        const shirts = window.ClothingRail?.ALL_SHIRT_PRODUCTS || [];
+        const shirts = window.ClothingRail?.getAllProducts('ao') || [];
         shirts.forEach((p, pIdx) => {
             const colorNames = (p.colors || []).map(c => c[0]).join(' ');
             items.push({
@@ -487,21 +487,26 @@
 
                 card.innerHTML = `
                     <div class="spotlight-thumb-box">
-                        <img src="${item.image}" alt="${item.name}" loading="lazy">
+                        <img loading="lazy">
                     </div>
                     <div class="spotlight-item-info">
                         <div class="spotlight-item-meta">
                             <span class="spotlight-cat-badge ${item.categoryBadgeClass}">${item.categoryName}</span>
                             <span class="spotlight-style-tag">${item.style ? item.style.toUpperCase() : ''}</span>
                         </div>
-                        <div class="spotlight-item-name">${item.name}</div>
-                        <div class="spotlight-item-desc">${item.desc}</div>
+                        <div class="spotlight-item-name"></div>
+                        <div class="spotlight-item-desc"></div>
                     </div>
                     <div class="spotlight-item-price-col">
                         <span class="spotlight-item-price">${item.priceDisplay}</span>
                         <span class="spotlight-action-hint">Xem chi tiết ↵</span>
                     </div>
                 `;
+                const image = card.querySelector('img');
+                image.src = item.image;
+                image.alt = item.name;
+                card.querySelector('.spotlight-item-name').textContent = item.name;
+                card.querySelector('.spotlight-item-desc').textContent = item.desc;
 
                 card.addEventListener('mouseenter', () => {
                     selectedIndex = idx;

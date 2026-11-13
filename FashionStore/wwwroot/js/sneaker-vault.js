@@ -7,300 +7,41 @@
     'use strict';
 
     // --- CÁC BỘ SƯU TẬP GIÀY (SNEAKER COLLECTIONS) CÓ THỂ ĐỔI QUA LẠI BẰNG NÚT BẤM ---
-    const SNEAKER_COLLECTIONS = [
-        {
-            id: 'futurist',
-            title: 'FUTURIST SNEAKER VAULT',
-            items: [
-                {
-                    id: 'snk-01',
-                    model: 'AIR FUTURE IV',
-                    colorway: 'INFRARAY STORM',
-                    themeColor: '#CE1234', // Đỏ Crimson Rực Rỡ
-                    accentColor: '#FF2A55',
-                    price: 5200000,
-                    styleCode: 'HFS-04-STORM',
-                    designer: 'HNMTSHOP × FUTURE LAB',
-                    release: 'DECEMBER 2026',
-                    colorName: 'STORM GREY / INFRARED',
-                    swatches: ['#FFFFFF', '#CE1234', '#1F2024'],
-                    image: '/images/sneakers/air-future-iv.webp?v=center_h_v27'
-                },
-                {
-                    id: 'snk-02',
-                    model: 'AIR FUTURE XI',
-                    colorway: 'HYPER FLUX',
-                    themeColor: '#0077D8', // Xanh Biển Điện Tử
-                    accentColor: '#00E5FF',
-                    price: 5500000,
-                    styleCode: 'HFS-11-FLUX',
-                    designer: 'HNMTSHOP × FUTURE LAB',
-                    release: 'JANUARY 2027',
-                    colorName: 'DEEP BLUE / SONIC BLUE',
-                    swatches: ['#FFFFFF', '#0077D8', '#00E5FF'],
-                    image: '/images/sneakers/air-future-xi.webp?v=center_h_v27'
-                },
-                {
-                    id: 'snk-03',
-                    model: 'AIR FUTURE III',
-                    colorway: 'NEXUS X1',
-                    themeColor: '#4EA819', // Xanh Acid Volt Neon
-                    accentColor: '#8CFF00',
-                    price: 4900000,
-                    styleCode: 'HFS-03-NEXUS',
-                    designer: 'HNMTSHOP × FUTURE LAB',
-                    release: 'FEBRUARY 2027',
-                    colorName: 'WHITE / ACID VOLT / BLACK',
-                    swatches: ['#FFFFFF', '#4EA819', '#15161A'],
-                    image: '/images/sneakers/air-future-iii.webp?v=center_h_v27'
-                },
-                {
-                    id: 'snk-04',
-                    model: 'AIR FUTURE V',
-                    colorway: 'LUNAR CHROME',
-                    themeColor: '#6D3AA6', // Tím Cyberpunk Iridescent
-                    accentColor: '#B666FF',
-                    price: 5800000,
-                    styleCode: 'HFS-05-LUNAR',
-                    designer: 'HNMTSHOP × FUTURE LAB',
-                    release: 'MARCH 2027',
-                    colorName: 'VIOLET CHROME / MIDNIGHT',
-                    swatches: ['#6D3AA6', '#B666FF', '#0D0E12'],
-                    image: '/images/sneakers/air-future-v.webp?v=center_h_v27'
-                },
-                {
-                    id: 'snk-05',
-                    model: 'AIR FUTURE I',
-                    colorway: 'DUNE PHANTOM',
-                    themeColor: '#B9935A', // Vàng Cát Sa Mạc Sang Trọng
-                    accentColor: '#FFD700',
-                    price: 6200000,
-                    styleCode: 'HFS-01-DUNE',
-                    designer: 'HNMTSHOP × FUTURE LAB',
-                    release: 'APRIL 2027',
-                    colorName: 'DESERT SAND / GOLD CHROME',
-                    swatches: ['#F5E6CC', '#B9935A', '#FFD700'],
-                    image: '/images/sneakers/air-future-i.webp?v=center_h_v27'
-                },
-                {
-                    id: 'snk-06',
-                    model: 'AIR FUTURE IX',
-                    colorway: 'VOLT MAGMA',
-                    themeColor: '#1A1B20', // Đen Titan Than Chì Viền Magma
-                    accentColor: '#FF2A2A',
-                    price: 6500000,
-                    styleCode: 'HFS-09-MAGMA',
-                    designer: 'HNMTSHOP × FUTURE LAB',
-                    release: 'MAY 2027',
-                    colorName: 'MAGMA RED / CARBON BLACK',
-                    swatches: ['#FF2A2A', '#2E3038', '#111215'],
-                    image: '/images/sneakers/air-future-ix.webp?v=center_h_v27'
-                }
-            ]
-        },
-        {
-            id: 'cyber',
-            title: 'CYBER VAULT',
-            items: [
-                {
-                    id: 'cp-01',
-                    model: 'CYBER IV',
-                    colorway: 'CYBER TEAL',
-                    themeColor: '#00838F',
-                    accentColor: '#00E5FF',
-                    price: 5400000,
-                    styleCode: 'CP-04-TEAL',
-                    designer: 'HNMTSHOP × CYBER LAB',
-                    release: 'JUNE 2027',
-                    colorName: 'STEALTH WHITE / ELECTRIC TEAL',
-                    swatches: ['#FFFFFF', '#00E5FF', '#1F2024'],
-                    image: '/images/sneakers/cyber/cyber-air-future-iv.webp?v=c2_v1'
-                },
-                {
-                    id: 'cp-02',
-                    model: 'CYBER XI',
-                    colorway: 'NEON MAGENTA',
-                    themeColor: '#AD1457',
-                    accentColor: '#FF007F',
-                    price: 5700000,
-                    styleCode: 'CP-11-MAGENTA',
-                    designer: 'HNMTSHOP × CYBER LAB',
-                    release: 'JULY 2027',
-                    colorName: 'FROST WHITE / NEON PINK',
-                    swatches: ['#FFFFFF', '#AD1457', '#FF007F'],
-                    image: '/images/sneakers/cyber/cyber-air-future-xi.webp?v=c2_v1'
-                },
-                {
-                    id: 'cp-03',
-                    model: 'CYBER III',
-                    colorway: 'SOLAR FLARE',
-                    themeColor: '#E65100',
-                    accentColor: '#FFB300',
-                    price: 5100000,
-                    styleCode: 'CP-03-SOLAR',
-                    designer: 'HNMTSHOP × CYBER LAB',
-                    release: 'AUGUST 2027',
-                    colorName: 'TITANIUM / SOLAR AMBER',
-                    swatches: ['#FFFFFF', '#E65100', '#FFB300'],
-                    image: '/images/sneakers/cyber/cyber-air-future-iii.webp?v=c2_v1'
-                },
-                {
-                    id: 'cp-04',
-                    model: 'CYBER V',
-                    colorway: 'TACTICAL OLIVE',
-                    themeColor: '#33691E',
-                    accentColor: '#C0CA33',
-                    price: 5900000,
-                    styleCode: 'CP-05-OLIVE',
-                    designer: 'HNMTSHOP × CYBER LAB',
-                    release: 'SEPTEMBER 2027',
-                    colorName: 'MILITARY OLIVE / GOLD LIGHT',
-                    swatches: ['#33691E', '#C0CA33', '#1B1C20'],
-                    image: '/images/sneakers/cyber/cyber-air-future-v.webp?v=c2_v1'
-                },
-                {
-                    id: 'cp-05',
-                    model: 'CYBER I',
-                    colorway: 'GLACIER FROST',
-                    themeColor: '#1565C0',
-                    accentColor: '#80D8FF',
-                    price: 6400000,
-                    styleCode: 'CP-01-GLACIER',
-                    designer: 'HNMTSHOP × CYBER LAB',
-                    release: 'OCTOBER 2027',
-                    colorName: 'ICE BLUE / POLAR CHROME',
-                    swatches: ['#E1F5FE', '#1565C0', '#80D8FF'],
-                    image: '/images/sneakers/cyber/cyber-air-future-i.webp?v=c2_v1'
-                },
-                {
-                    id: 'cp-06',
-                    model: 'CYBER IX',
-                    colorway: 'MATRIX EMERALD',
-                    themeColor: '#004D40',
-                    accentColor: '#00E676',
-                    price: 6700000,
-                    styleCode: 'CP-09-MATRIX',
-                    designer: 'HNMTSHOP × CYBER LAB',
-                    release: 'NOVEMBER 2027',
-                    colorName: 'CARBON BLACK / MATRIX NEON',
-                    swatches: ['#00E676', '#004D40', '#0D0E12'],
-                    image: '/images/sneakers/cyber/cyber-air-future-ix.webp?v=c2_v1'
-                }
-            ]
-        },
-        {
-            id: 'chile20',
-            title: 'CHILE 20 VAULT',
-            items: [
-                {
-                    id: 'ch-01',
-                    model: 'CHILE 20 IV',
-                    colorway: 'ROYAL VIOLET',
-                    themeColor: '#4A148C',
-                    accentColor: '#9C27B0',
-                    price: 5600000,
-                    styleCode: 'CH-04-VIOLET',
-                    designer: 'HNMTSHOP × CHILE 20',
-                    release: 'DECEMBER 2027',
-                    colorName: 'METALLIC / ROYAL PURPLE',
-                    swatches: ['#FFFFFF', '#4A148C', '#9C27B0'],
-                    image: '/images/sneakers/chile20/chile-air-future-iv.webp?v=c3_v1'
-                },
-                {
-                    id: 'ch-02',
-                    model: 'CHILE 20 XI',
-                    colorway: 'IMPERIAL GOLD',
-                    themeColor: '#B78103',
-                    accentColor: '#FFD700',
-                    price: 5800000,
-                    styleCode: 'CH-11-GOLD',
-                    designer: 'HNMTSHOP × CHILE 20',
-                    release: 'JANUARY 2028',
-                    colorName: 'PURE WHITE / IMPERIAL GOLD',
-                    swatches: ['#FFFFFF', '#B78103', '#FFD700'],
-                    image: '/images/sneakers/chile20/chile-air-future-xi.webp?v=c3_v1'
-                },
-                {
-                    id: 'ch-03',
-                    model: 'CHILE 20 III',
-                    colorway: 'CRIMSON FURY',
-                    themeColor: '#B71C1C',
-                    accentColor: '#FF1744',
-                    price: 5300000,
-                    styleCode: 'CH-03-FURY',
-                    designer: 'HNMTSHOP × CHILE 20',
-                    release: 'FEBRUARY 2028',
-                    colorName: 'CHILE RED / AIR FURY',
-                    swatches: ['#FFFFFF', '#B71C1C', '#FF1744'],
-                    image: '/images/sneakers/chile20/chile-air-future-iii.webp?v=c3_v1'
-                },
-                {
-                    id: 'ch-04',
-                    model: 'CHILE 20 V',
-                    colorway: 'DEEP TURQUOISE',
-                    themeColor: '#00695C',
-                    accentColor: '#1DE9B6',
-                    price: 6100000,
-                    styleCode: 'CH-05-TURQUOISE',
-                    designer: 'HNMTSHOP × CHILE 20',
-                    release: 'MARCH 2028',
-                    colorName: 'ATLANTIS / TURQUOISE CHROME',
-                    swatches: ['#00695C', '#1DE9B6', '#1A1C20'],
-                    image: '/images/sneakers/chile20/chile-air-future-v.webp?v=c3_v1'
-                },
-                {
-                    id: 'ch-05',
-                    model: 'CHILE 20 I',
-                    colorway: 'SUNSET CLAY',
-                    themeColor: '#BF360C',
-                    accentColor: '#FF6E40',
-                    price: 6500000,
-                    styleCode: 'CH-01-SUNSET',
-                    designer: 'HNMTSHOP × CHILE 20',
-                    release: 'APRIL 2028',
-                    colorName: 'TERRACOTTA / SUNSET GOLD',
-                    swatches: ['#FFCCBC', '#BF360C', '#FF6E40'],
-                    image: '/images/sneakers/chile20/chile-air-future-i.webp?v=c3_v1'
-                },
-                {
-                    id: 'ch-06',
-                    model: 'CHILE 20 IX',
-                    colorway: 'COBALT LASER',
-                    themeColor: '#0D47A1',
-                    accentColor: '#2979FF',
-                    price: 6900000,
-                    styleCode: 'CH-09-COBALT',
-                    designer: 'HNMTSHOP × CHILE 20',
-                    release: 'MAY 2028',
-                    colorName: 'DEEP CARBON / COBALT LASER',
-                    swatches: ['#2979FF', '#0D47A1', '#0A0A0D'],
-                    image: '/images/sneakers/chile20/chile-air-future-ix.webp?v=c3_v1'
-                }
-            ]
-        }
-    ];
-
+    const ITEMS_PER_GRID = 6;
+    const audienceCollections = JSON.parse(document.getElementById("showroomCatalog").textContent).shoes;
+    const audiencePages = Object.fromEntries(Object.entries(audienceCollections).map(([audience, collections]) => [
+        audience,
+        collections.flatMap(collection => {
+            const pageCount = Math.ceil(collection.items.length / ITEMS_PER_GRID);
+            return Array.from({ length: pageCount }, (_, page) => ({
+                ...collection,
+                title: pageCount > 1 ? `${collection.title} ${page + 1}/${pageCount}` : collection.title,
+                items: collection.items.slice(page * ITEMS_PER_GRID, (page + 1) * ITEMS_PER_GRID)
+            }));
+        })
+    ]));
+    const SNEAKER_COLLECTIONS = audiencePages.men;
+    const getAudienceCollections = audience => Object.hasOwn(audiencePages, audience) ? audiencePages[audience] : SNEAKER_COLLECTIONS;
+    let activeCollections = SNEAKER_COLLECTIONS;
     let currentCollectionIndex = 0;
     let filteredSneakers = null;
     let filteredPageIdx = 0;
-    const ITEMS_PER_GRID = 6;
     let activeFilterLabel = '';
 
-    const getAllSneakers = () => SNEAKER_COLLECTIONS.flatMap(c => c.items.map(it => ({ ...it, collectionId: c.id, collectionTitle: c.title })));
+    const getAllSneakers = () => activeCollections.flatMap(c => c.items.map(it => ({ ...it, collectionId: c.id, collectionTitle: c.title })));
     const getFilteredTotalPages = () => (!filteredSneakers ? 1 : Math.max(1, Math.ceil(filteredSneakers.length / ITEMS_PER_GRID)));
     const getSneakers = () => {
         if (filteredSneakers !== null) {
             const start = filteredPageIdx * ITEMS_PER_GRID;
             return filteredSneakers.slice(start, start + ITEMS_PER_GRID);
         }
-        return SNEAKER_COLLECTIONS[currentCollectionIndex].items;
+        return getActiveCollection()?.items || [];
     };
     const getGridSneakers = () => getSneakers();
-    const getActiveCollection = () => SNEAKER_COLLECTIONS[currentCollectionIndex];
+    const getActiveCollection = () => activeCollections[currentCollectionIndex];
 
     let currentIndex = 0;
     let isSliderView = false;
-    let bagCount = 0;
     let isAnimating = false;
     let isTransitioning = false;
 
@@ -325,8 +66,8 @@
                 : `KẾT QUẢ LỌC [${currentCount} ĐÔI]`;
             showArrows = totalPages > 1;
         } else {
-            currentTitle = getActiveCollection().title;
-            showArrows = true;
+            currentTitle = getActiveCollection()?.title || 'TỦ GIÀY';
+            showArrows = activeCollections.length > 1;
         }
 
         document.querySelectorAll('#svCollectionTitle, .sv-header-title').forEach(el => {
@@ -346,7 +87,8 @@
 
     // --- Áp dụng bộ lọc cho Tủ Giày ---
     function applyFilter(filteredList, label) {
-        filteredSneakers = Array.isArray(filteredList) ? filteredList : [];
+        const allowed = new Set(getAllSneakers().map(item => item.id));
+        filteredSneakers = Array.isArray(filteredList) ? filteredList.filter(item => allowed.has(item.id)) : [];
         activeFilterLabel = label || '';
         filteredPageIdx = 0;
         currentIndex = 0;
@@ -381,11 +123,11 @@
         const headerLefts = document.querySelectorAll('.sv-header-left');
         const isFiltered = filteredSneakers !== null;
         const totalPages = isFiltered ? getFilteredTotalPages() : 1;
-        const showArrows = !isFiltered || totalPages > 1;
+        const showArrows = isFiltered ? totalPages > 1 : activeCollections.length > 1;
         const currentCount = isFiltered ? getSneakers().length : 6;
         const currentTitle = isFiltered
             ? (totalPages > 1 ? `KẾT QUẢ LỌC ${filteredPageIdx + 1}/${totalPages} [${currentCount} ĐÔI]` : `KẾT QUẢ LỌC [${currentCount} ĐÔI]`)
-            : getActiveCollection().title;
+            : getActiveCollection()?.title || 'TỦ GIÀY';
 
         headerLefts.forEach(headerLeft => {
             let switcher = headerLeft.querySelector('.sv-vault-switcher');
@@ -467,7 +209,7 @@
 
     // --- Đổi bộ sưu tập giày hoặc chuyển trang kết quả lọc (6 đôi / trang) ---
     function changeCollection(direction = 1) {
-        if (isTransitioning) return;
+        if (isTransitioning || activeCollections.length === 0) return;
 
         if (filteredSneakers !== null) {
             const totalPages = getFilteredTotalPages();
@@ -518,7 +260,7 @@
             return;
         }
 
-        currentCollectionIndex = (currentCollectionIndex + direction + SNEAKER_COLLECTIONS.length) % SNEAKER_COLLECTIONS.length;
+        currentCollectionIndex = (currentCollectionIndex + direction + activeCollections.length) % activeCollections.length;
         const col = getActiveCollection();
 
         // Cập nhật tiêu đề bộ sưu tập với hiệu ứng chuyển động mượt mà
@@ -536,10 +278,7 @@
         // Bỏ hiển thị số thứ tự bộ sưu tập theo yêu cầu của user
         document.querySelectorAll('#svCollectionBadge, .sv-vault-badge').forEach(b => b.remove());
 
-        const activeSneakers = getSneakers();
-        if (currentIndex >= activeSneakers.length) {
-            currentIndex = 0;
-        }
+        currentIndex = 0;
 
         if (!isSliderView) {
             // Chế độ Grid: Mờ nhẹ các đôi cũ, đổi dữ liệu và stagger xuất hiện các đôi mới
@@ -634,10 +373,13 @@
             item.setAttribute('aria-label', `Xem chi tiết ${snk.model} - ${snk.colorway}`);
             item.innerHTML = `
                 <div class="sv-item-image-wrap">
-                    <img src="${snk.image}" alt="${snk.model}" class="sv-item-img" />
+                    <img class="sv-item-img" />
                     <div class="sv-item-shadow"></div>
                 </div>
             `;
+            const image = item.querySelector('.sv-item-img');
+            image.src = snk.image;
+            image.alt = snk.model;
             // Click trực tiếp vào đôi giày để kích hoạt hiệu ứng FLIP mở chi tiết
             item.onclick = function (e) {
                 e.stopPropagation();
@@ -710,7 +452,7 @@
 
         // Ẩn tạm thời typography, specs, controls và hero shadow để chuẩn bị hiệu ứng bay vào
         if (giantTitle) {
-            setGiantTitleText(snk.model);
+            setGiantTitleText(snk);
             giantTitle.style.transition = 'none';
             giantTitle.style.opacity = '0';
             giantTitle.style.transform = 'scale(0.82)';
@@ -971,12 +713,20 @@
     }
 
     // --- Cập nhật tiêu đề khổng lồ phía sau (kích thước đồng nhất cho tất cả các bộ) ---
-    function setGiantTitleText(modelName) {
+    function setGiantTitleText(sneaker) {
         const giantEl = $('#svGiantTitle');
-        if (!giantEl) return;
-        giantEl.textContent = modelName || '';
-        giantEl.style.fontSize = '';
-        giantEl.style.letterSpacing = '';
+        if (!giantEl || !sneaker) return;
+
+        const title = sneaker.backdropTitle || sneaker.model;
+        const words = title.split(' ');
+        const first = words[0];
+        const last = words[words.length - 1];
+        const options = [title, `${first} ${last}`, first, last];
+        const availableWidth = giantEl.parentElement.clientWidth;
+        for (const text of new Set(options)) {
+            giantEl.textContent = text;
+            if (!availableWidth || giantEl.offsetWidth <= availableWidth) return;
+        }
     }
 
     // --- Cập nhật dữ liệu thông số Tech Specs & Swatches (không làm gián đoạn FLIP) ---
@@ -994,7 +744,7 @@
         if (price) price.textContent = formatPrice(snk.price);
         if (colorName) colorName.textContent = snk.colorName;
         if (designer) designer.textContent = snk.designer;
-        if (release) release.textContent = snk.release;
+        if (release) release.textContent = snk.release || '—';
 
         localizeAllLabels();
 
@@ -1036,7 +786,7 @@
 
         if (immediate) {
             if (giantTitle) {
-                setGiantTitleText(snk.model);
+                setGiantTitleText(snk);
                 giantTitle.style.opacity = '0.94';
                 giantTitle.style.transform = 'scale(1)';
             }
@@ -1080,7 +830,7 @@
 
             setTimeout(() => {
                 if (giantTitle) {
-                    setGiantTitleText(snk.model);
+                    setGiantTitleText(snk);
                     giantTitle.style.opacity = '0.94';
                     giantTitle.style.transform = 'scale(1)';
                 }
@@ -1210,13 +960,19 @@
 
         // Render các ô size
         const grid = $('#svSizeGrid');
+        const confirm = $('#svConfirmSizeBtn');
+        const sizes = snk.sizes || SIZES;
+        const stockAt = index => snk.variants[0]?.[index]?.stock || 0;
+        if (!stockAt(sizes.indexOf(selectedSize))) selectedSize = sizes.find((_, index) => stockAt(index)) || '';
+        if (confirm) confirm.disabled = !selectedSize;
         if (grid) {
             grid.innerHTML = '';
-            SIZES.forEach(sz => {
+            sizes.forEach((sz, index) => {
                 const btn = document.createElement('button');
                 btn.type = 'button';
                 btn.className = `sv-size-item ${sz === selectedSize ? 'is-selected' : ''}`;
                 btn.textContent = sz;
+                btn.disabled = !stockAt(index);
                 btn.onclick = (e) => {
                     e.stopPropagation();
                     selectedSize = sz;
@@ -1224,10 +980,12 @@
                     btn.classList.add('is-selected');
                     const confirmText = $('#svConfirmSizeText');
                     if (confirmText) confirmText.textContent = 'XÁC NHẬN';
+                    if (priceEl) priceEl.textContent = formatPrice(snk.variants[0][index].price);
                 };
                 grid.appendChild(btn);
             });
         }
+        if (priceEl && selectedSize) priceEl.textContent = formatPrice(snk.variants[0][sizes.indexOf(selectedSize)].price);
 
         const confirmText = $('#svConfirmSizeText');
         if (confirmText) confirmText.textContent = 'XÁC NHẬN';
@@ -1241,67 +999,29 @@
     }
 
     // Xác nhận thêm vào giỏ hàng kèm size đã chọn
-    function confirmAddToCart() {
+    async function confirmAddToCart() {
+        const shoe = getSneakers()[currentIndex];
+        if (!shoe || !window.HNMTCart) return;
+        const size = selectedSize;
+        const variant = shoe.variants[0]?.[shoe.sizes.indexOf(size)];
+        const confirm = $('#svConfirmSizeBtn');
+        if (!variant?.stock || confirm?.disabled) return;
+
+        if (confirm) confirm.disabled = true;
         closeSizeDrawer();
+        const added = await window.HNMTCart.addItem({
+            name: shoe.name, productId: shoe.productId, variantId: variant.id, quantity: 1
+        });
+        if (confirm) confirm.disabled = false;
+        if (!added || getSneakers()[currentIndex] !== shoe) return;
 
-        bagCount++;
-        const badge = $('#svBagBadge');
-        if (badge) {
-            badge.textContent = bagCount;
-            badge.style.transform = 'scale(1.4)';
-            setTimeout(() => badge.style.transform = 'scale(1)', 250);
-        }
-
-        // Thêm vào giỏ hàng thống nhất Atelier Cart
-        const currentSneaker = (getSneakers() && getSneakers()[currentIndex]) ? getSneakers()[currentIndex] : null;
-        if (currentSneaker && window.HNMTCart) {
-            const sneakerName = (currentSneaker.model && currentSneaker.colorway)
-                ? `${currentSneaker.model} - ${currentSneaker.colorway}`
-                : (currentSneaker.model || 'Giày Sneaker');
-            const sneakerImg = currentSneaker.image || currentSneaker.shoeImg || '';
-            const sneakerPrice = Number(currentSneaker.price || currentSneaker.priceVnd) || 6900000;
-            const sneakerSlug = currentSneaker.styleCode || currentSneaker.id || 'sneaker';
-            const colorDot = (currentSneaker.swatches && currentSneaker.swatches[0]) || currentSneaker.themeColor || currentSneaker.accentColor || '#38bdf8';
-
-            window.HNMTCart.addItem({
-                name: sneakerName,
-                slug: sneakerSlug,
-                price: sneakerPrice,
-                size: selectedSize || 42,
-                color: currentSneaker.colorName || currentSneaker.colorway || '',
-                colorDot: colorDot,
-                imageUrl: sneakerImg,
-                category: 'giay',
-                quantity: 1
-            });
-        }
-
-        // Đã tắt popup thông báo theo yêu cầu
-
-        // Hiệu ứng phản hồi trên nút Thêm vào giỏ: ĐÃ THÊM VÀO GIỎ (SIZE ...)
-        const addBagBtn = $('#svAddBagBtn');
-        if (addBagBtn) {
-            const originalHTML = addBagBtn.innerHTML;
-            addBagBtn.innerHTML = `
-                <span style="display:inline-flex;align-items:center;justify-content:center;gap:6px;">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
-                    ĐÃ THÊM VÀO GIỎ (SIZE ${selectedSize})
-                </span>
-            `;
-            addBagBtn.style.background = '#FFFFFF';
-            addBagBtn.style.color = '#000000';
-            setTimeout(() => {
-                addBagBtn.innerHTML = originalHTML;
-                addBagBtn.style.background = '';
-                addBagBtn.style.color = '';
-            }, 2400);
+        const label = $('#svAddBagBtn span');
+        if (label) {
+            label.textContent = `ĐÃ THÊM VÀO GIỎ (SIZE ${size})`;
+            setTimeout(() => { label.textContent = 'THÊM VÀO GIỎ'; }, 2400);
         }
     }
 
-
-    // --- Thêm vào giỏ hàng: Mở Popup chọn Size kính mờ chuẩn Nike SNKRS ---
     function addToBag() {
         openSizeDrawer();
     }
@@ -1314,6 +1034,12 @@
 
     // --- Bind sự kiện nút bấm & Bàn phím ---
     function bindEvents() {
+        const refreshBackdropTitle = () => {
+            if (isSliderView) setGiantTitleText(getSneakers()[currentIndex]);
+        };
+        window.addEventListener('resize', refreshBackdropTitle);
+        document.fonts?.ready.then(refreshBackdropTitle);
+
         const toggleBtn = $('#svToggleViewBtn');
         if (toggleBtn) {
             toggleBtn.onclick = () => {
@@ -1369,12 +1095,24 @@
     }
 
     // --- Xuất các hàm điều khiển toàn cục cho Showroom 3D ---
-    window.openSneakerShowcase = function () {
+    window.openSneakerShowcase = function (audience = window.HNMTChilePortal?.getAudience?.() || 'men') {
         const overlay = $('#hnmtSneakerOverlay');
         if (overlay) {
+            const collections = getAudienceCollections(audience);
+            if (activeCollections !== collections) {
+                activeCollections = collections;
+                currentCollectionIndex = 0;
+                currentIndex = 0;
+                filteredSneakers = null;
+                filteredPageIdx = 0;
+                activeFilterLabel = '';
+                closeSizeDrawer();
+            }
             overlay.classList.add('is-active');
             ensureVaultSwitcherInDOM();
             localizeAllLabels();
+            renderGrid();
+            updateVaultSwitcherUI();
             closeSliderView(true); // Luôn luôn mở ở trang lưới TẤT CẢ GIÀY theo đúng yêu cầu!
         }
     };
@@ -1383,7 +1121,8 @@
         const overlay = $('#hnmtSneakerOverlay');
         if (overlay) {
             overlay.classList.remove('is-active');
-            closeSliderView();
+            closeSizeDrawer();
+            closeSliderView(true);
         }
         const promptEl = document.querySelector('.hnmt-portal-footer');
         const portalHeaderEl = document.querySelector('.hnmt-portal-header');
@@ -1393,14 +1132,14 @@
 
     window.SneakerVault = {
         openSliderView: function (idx, collectionIdx = 0) {
-            if (typeof collectionIdx === 'number' && SNEAKER_COLLECTIONS[collectionIdx]) {
+            if (typeof collectionIdx === 'number' && activeCollections[collectionIdx]) {
                 currentCollectionIndex = collectionIdx;
             }
             openSliderView(idx);
         },
         getSneakers: () => getSneakers(),
         getAllSneakers: () => getAllSneakers(),
-        getCollections: () => SNEAKER_COLLECTIONS,
+        getCollections: () => getAudienceCollections(window.HNMTChilePortal?.getAudience?.() || 'men'),
         applyFilter: applyFilter,
         resetFilter: resetFilter,
         isFiltered: () => filteredSneakers !== null,
@@ -1460,6 +1199,20 @@
                 updateSliderDataOnly(getSneakers()[currentIndex]);
             }
         }
+
+        // Tự động nhận diện và áp dụng bộ lọc chuyển tiếp từ Trang Chủ
+        try {
+            const pendingJson = sessionStorage.getItem('hnmt_pending_sneaker_filter');
+            if (pendingJson) {
+                sessionStorage.removeItem('hnmt_pending_sneaker_filter');
+                const pending = JSON.parse(pendingJson);
+                if (pending && Array.isArray(pending.filteredProducts) && pending.filteredProducts.length > 0) {
+                    setTimeout(() => {
+                        applyFilter(pending.filteredProducts, pending.label || 'BỘ LỌC TỪ TRANG CHỦ');
+                    }, 220);
+                }
+            }
+        } catch (e) {}
     }
 
     if (document.readyState === 'loading') {

@@ -465,6 +465,10 @@
     filter: drop-shadow(0 14px 10px rgba(44, 49, 82, 0.12));
 }
 
+.face.side.is-mirrored {
+    transform: translateX(-50%) rotateY(-90deg) scaleX(-1);
+}
+
 .slot.active .face.front {
     filter: drop-shadow(0 18px 16px rgba(34, 40, 60, 0.2));
 }
@@ -693,6 +697,64 @@
     letter-spacing: -0.05em;
     margin: 0;
     color: var(--rail-ink);
+}
+
+/* Front / Back View Switcher: Side A | Side B (1:1 Replica from Mockup) */
+.rail-view-switch {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 6px auto 14px;
+    user-select: none;
+    font-size: 14px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+}
+
+.rail-view-switch[hidden] {
+    display: none !important;
+}
+
+.rail-view-opt {
+    background: none;
+    border: none;
+    padding: 2px 6px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.2;
+    cursor: pointer;
+    border-radius: 0;
+    transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+.rail-view-opt.is-active {
+    font-weight: 700;
+    color: #1e2a47;
+    opacity: 1;
+}
+
+.rail-view-opt.is-dimmed {
+    font-weight: 400;
+    color: #b6becb;
+    opacity: 1;
+}
+
+.rail-view-opt:hover:not(.is-active) {
+    color: #64748b;
+}
+
+.rail-view-sep {
+    color: #d6dbe4;
+    font-size: 13px;
+    font-weight: 300;
+    margin: 0 10px;
+    user-select: none;
+    line-height: 1;
+}
+
+.rail-detail-img.is-flipping {
+    opacity: 0.2;
+    transform: scale(0.95);
 }
 
 .rail-description {
@@ -3021,4 +3083,1022 @@ body.show-detail .rail-ticker {
         max-width: 100%;
         border-radius: 0;
     }
+}
+
+/* ==============================================================================
+   LUXURY MONOCHROME ATELIER (LIGHT THEME FOR SHIRT/PANTS FILTERS & CART)
+   Áp dụng cho Sào Áo, Sào Quần, Lookbook và Main Store.
+   Kho Giày (Sneaker Vault) giữ nguyên 100% Dark Glassmorphism.
+   ============================================================================== */
+
+/* 1. BỘ LỌC TÌM KIẾM (SÀO ÁO & SÀO QUẦN) */
+#hnmtShirtFilterModal .fashion-filter-sidebar,
+#hnmtPantsFilterModal .fashion-filter-sidebar,
+.hnmt-fashion-filter-modal.is-light-theme .fashion-filter-sidebar {
+    background: rgba(255, 255, 255, 0.90) !important;
+    backdrop-filter: blur(32px) saturate(190%) !important;
+    -webkit-backdrop-filter: blur(32px) saturate(190%) !important;
+    border-left: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: -20px 0 60px rgba(0, 0, 0, 0.12), 
+                inset 1px 0 0 rgba(255, 255, 255, 0.9) !important;
+    color: #0f172a !important;
+}
+
+#hnmtShirtFilterModal .fashion-filter-backdrop,
+#hnmtPantsFilterModal .fashion-filter-backdrop,
+.hnmt-fashion-filter-modal.is-light-theme .fashion-filter-backdrop {
+    background: rgba(15, 23, 42, 0.38) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+}
+
+#hnmtShirtFilterModal .fashion-filter-title,
+#hnmtPantsFilterModal .fashion-filter-title,
+.hnmt-fashion-filter-modal.is-light-theme .fashion-filter-title {
+    color: #0f172a !important;
+    text-shadow: none !important;
+}
+
+#hnmtShirtFilterModal .fashion-filter-close,
+#hnmtPantsFilterModal .fashion-filter-close,
+.hnmt-fashion-filter-modal.is-light-theme .fashion-filter-close {
+    background: rgba(0, 0, 0, 0.04) !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    color: #0f172a !important;
+}
+
+#hnmtShirtFilterModal .fashion-filter-close:hover,
+#hnmtPantsFilterModal .fashion-filter-close:hover,
+.hnmt-fashion-filter-modal.is-light-theme .fashion-filter-close:hover {
+    background: rgba(0, 0, 0, 0.08) !important;
+    color: #000000 !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Thanh tìm kiếm & Nút Đặt lại */
+#hnmtShirtFilterModal .fashion-search-bar,
+#hnmtPantsFilterModal .fashion-search-bar,
+.hnmt-fashion-filter-modal.is-light-theme .fashion-search-bar {
+    background: rgba(0, 0, 0, 0.03) !important;
+    border: 1px solid rgba(0, 0, 0, 0.09) !important;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+
+#hnmtShirtFilterModal .fashion-search-bar:focus-within,
+#hnmtPantsFilterModal .fashion-search-bar:focus-within,
+.hnmt-fashion-filter-modal.is-light-theme .fashion-search-bar:focus-within {
+    background: #ffffff !important;
+    border-color: #0f172a !important;
+    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.08) !important;
+}
+
+#hnmtShirtFilterModal .search-bar-icon,
+#hnmtPantsFilterModal .search-bar-icon,
+.hnmt-fashion-filter-modal.is-light-theme .search-bar-icon {
+    color: #64748b !important;
+}
+
+#hnmtShirtFilterModal .fashion-search-input,
+#hnmtPantsFilterModal .fashion-search-input,
+.hnmt-fashion-filter-modal.is-light-theme .fashion-search-input {
+    color: #0f172a !important;
+}
+
+#hnmtShirtFilterModal .fashion-search-input::placeholder,
+#hnmtPantsFilterModal .fashion-search-input::placeholder,
+.hnmt-fashion-filter-modal.is-light-theme .fashion-search-input::placeholder {
+    color: #94a3b8 !important;
+}
+
+#hnmtShirtFilterModal .fashion-clear-btn,
+#hnmtPantsFilterModal .fashion-clear-btn,
+.hnmt-fashion-filter-modal.is-light-theme .fashion-clear-btn {
+    background: rgba(0, 0, 0, 0.08) !important;
+    color: #0f172a !important;
+}
+
+#hnmtShirtFilterModal .fashion-reset-filter-btn,
+#hnmtPantsFilterModal .fashion-reset-filter-btn,
+.hnmt-fashion-filter-modal.is-light-theme .fashion-reset-filter-btn {
+    background: rgba(0, 0, 0, 0.03) !important;
+    border: 1px solid rgba(0, 0, 0, 0.09) !important;
+    color: #475569 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03) !important;
+}
+
+#hnmtShirtFilterModal .fashion-reset-filter-btn:hover,
+#hnmtPantsFilterModal .fashion-reset-filter-btn:hover,
+.hnmt-fashion-filter-modal.is-light-theme .fashion-reset-filter-btn:hover {
+    background: rgba(0, 0, 0, 0.07) !important;
+    border-color: rgba(0, 0, 0, 0.2) !important;
+    color: #0f172a !important;
+}
+
+/* Thanh cuộn */
+#hnmtShirtFilterModal .fashion-sidebar-scroll,
+#hnmtPantsFilterModal .fashion-sidebar-scroll,
+.hnmt-fashion-filter-modal.is-light-theme .fashion-sidebar-scroll {
+    scrollbar-color: rgba(0, 0, 0, 0.15) transparent !important;
+}
+
+#hnmtShirtFilterModal .fashion-sidebar-scroll::-webkit-scrollbar-thumb,
+#hnmtPantsFilterModal .fashion-sidebar-scroll::-webkit-scrollbar-thumb,
+.hnmt-fashion-filter-modal.is-light-theme .fashion-sidebar-scroll::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Các Card tiêu chí & Thẻ chọn */
+#hnmtShirtFilterModal .fashion-select-card,
+#hnmtPantsFilterModal .fashion-select-card,
+.hnmt-fashion-filter-modal.is-light-theme .fashion-select-card {
+    background: rgba(255, 255, 255, 0.75) !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+}
+
+#hnmtShirtFilterModal .fashion-select-card:hover,
+#hnmtPantsFilterModal .fashion-select-card:hover,
+.hnmt-fashion-filter-modal.is-light-theme .fashion-select-card:hover {
+    border-color: rgba(0, 0, 0, 0.16) !important;
+}
+
+#hnmtShirtFilterModal .fashion-card-label,
+#hnmtPantsFilterModal .fashion-card-label,
+.hnmt-fashion-filter-modal.is-light-theme .fashion-card-label {
+    color: #0f172a !important;
+}
+
+#hnmtShirtFilterModal .fashion-select-input,
+#hnmtPantsFilterModal .fashion-select-input,
+.hnmt-fashion-filter-modal.is-light-theme .fashion-select-input {
+    background: #f8fafc !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    color: #0f172a !important;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.02) !important;
+}
+
+#hnmtShirtFilterModal .fashion-select-input:hover,
+#hnmtShirtFilterModal .fashion-select-input:focus,
+#hnmtPantsFilterModal .fashion-select-input:hover,
+#hnmtPantsFilterModal .fashion-select-input:focus,
+.hnmt-fashion-filter-modal.is-light-theme .fashion-select-input:hover,
+.hnmt-fashion-filter-modal.is-light-theme .fashion-select-input:focus {
+    background: #ffffff !important;
+    border-color: #0f172a !important;
+    box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.1) !important;
+}
+
+#hnmtShirtFilterModal .fashion-select-input option,
+#hnmtShirtFilterModal .fashion-select-input optgroup,
+#hnmtPantsFilterModal .fashion-select-input option,
+#hnmtPantsFilterModal .fashion-select-input optgroup,
+.hnmt-fashion-filter-modal.is-light-theme .fashion-select-input option,
+.hnmt-fashion-filter-modal.is-light-theme .fashion-select-input optgroup {
+    background: #ffffff !important;
+    color: #0f172a !important;
+}
+
+#hnmtShirtFilterModal .select-chevron-icon,
+#hnmtPantsFilterModal .select-chevron-icon,
+.hnmt-fashion-filter-modal.is-light-theme .select-chevron-icon {
+    color: #64748b !important;
+}
+
+/* Bảng màu Swatches */
+#hnmtShirtFilterModal .fashion-swatches-badge,
+#hnmtPantsFilterModal .fashion-swatches-badge,
+.hnmt-fashion-filter-modal.is-light-theme .fashion-swatches-badge {
+    color: #0284c7 !important;
+    background: rgba(2, 132, 199, 0.08) !important;
+    border: 1px solid rgba(2, 132, 199, 0.22) !important;
+}
+
+#hnmtShirtFilterModal .fashion-swatch-item,
+#hnmtPantsFilterModal .fashion-swatch-item,
+.hnmt-fashion-filter-modal.is-light-theme .fashion-swatch-item {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12) !important;
+}
+
+#hnmtShirtFilterModal .fashion-swatch-item.is-selected,
+#hnmtPantsFilterModal .fashion-swatch-item.is-selected,
+.hnmt-fashion-filter-modal.is-light-theme .fashion-swatch-item.is-selected {
+    box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #0f172a !important;
+}
+
+/* Thanh kéo giá Range Slider */
+#hnmtShirtFilterModal .price-badge-display,
+#hnmtPantsFilterModal .price-badge-display,
+.hnmt-fashion-filter-modal.is-light-theme .price-badge-display {
+    background: rgba(15, 23, 42, 0.06) !important;
+    border: 1px solid rgba(15, 23, 42, 0.12) !important;
+    color: #0f172a !important;
+}
+
+#hnmtShirtFilterModal .fashion-range-input,
+#hnmtPantsFilterModal .fashion-range-input,
+.hnmt-fashion-filter-modal.is-light-theme .fashion-range-input {
+    background: rgba(0, 0, 0, 0.1) !important;
+}
+
+#hnmtShirtFilterModal .fashion-range-input::-webkit-slider-thumb,
+#hnmtPantsFilterModal .fashion-range-input::-webkit-slider-thumb,
+.hnmt-fashion-filter-modal.is-light-theme .fashion-range-input::-webkit-slider-thumb {
+    background: #0f172a !important;
+    border: 2px solid #ffffff !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+}
+
+#hnmtShirtFilterModal .fashion-range-input::-moz-range-thumb,
+#hnmtPantsFilterModal .fashion-range-input::-moz-range-thumb,
+.hnmt-fashion-filter-modal.is-light-theme .fashion-range-input::-moz-range-thumb {
+    background: #0f172a !important;
+    border: 2px solid #ffffff !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+}
+
+#hnmtShirtFilterModal .range-milestones,
+#hnmtPantsFilterModal .range-milestones,
+.hnmt-fashion-filter-modal.is-light-theme .range-milestones {
+    color: #94a3b8 !important;
+}
+
+/* Footer & Nút Áp Dụng Bộ Lọc */
+#hnmtShirtFilterModal .fashion-sidebar-footer,
+#hnmtPantsFilterModal .fashion-sidebar-footer,
+.hnmt-fashion-filter-modal.is-light-theme .fashion-sidebar-footer {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.05) !important;
+}
+
+#hnmtShirtFilterModal .sv-apply-capsule-btn,
+#hnmtPantsFilterModal .sv-apply-capsule-btn,
+.hnmt-fashion-filter-modal.is-light-theme .sv-apply-capsule-btn {
+    background: #0f172a !important;
+    border: 1px solid #0f172a !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.22) !important;
+}
+
+#hnmtShirtFilterModal .sv-apply-capsule-btn:hover,
+#hnmtPantsFilterModal .sv-apply-capsule-btn:hover,
+.hnmt-fashion-filter-modal.is-light-theme .sv-apply-capsule-btn:hover {
+    background: #000000 !important;
+    border-color: #000000 !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28) !important;
+}
+
+#hnmtShirtFilterModal .sv-apply-capsule-btn .capsule-badge,
+#hnmtPantsFilterModal .sv-apply-capsule-btn .capsule-badge,
+.hnmt-fashion-filter-modal.is-light-theme .sv-apply-capsule-btn .capsule-badge {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
+}
+
+
+/* ==============================================================================
+   2. GIỎ HÀNG (LIGHT THEME - ÁP DỤNG CHO SÀO ÁO, QUẦN, MAIN STORE & LOOKBOOK)
+   Kho Giày (Sneaker Vault) hoàn toàn tách biệt dùng Dark Glassmorphism bên dưới.
+   ============================================================================== */
+
+body:not(.is-sneaker-standalone) .hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-cart-sidebar,
+.hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-cart-sidebar {
+    background: rgba(255, 255, 255, 0.90) !important;
+    backdrop-filter: blur(32px) saturate(190%) !important;
+    -webkit-backdrop-filter: blur(32px) saturate(190%) !important;
+    border-left: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: -20px 0 60px rgba(0, 0, 0, 0.12), 
+                inset 1px 0 0 rgba(255, 255, 255, 0.9) !important;
+    color: #0f172a !important;
+}
+
+body:not(.is-sneaker-standalone) .hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-cart-backdrop,
+.hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-cart-backdrop {
+    background: rgba(15, 23, 42, 0.38) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+}
+
+body:not(.is-sneaker-standalone) .hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-cart-header .fashion-filter-title,
+.hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-cart-header .fashion-filter-title {
+    color: #0f172a !important;
+    text-shadow: none !important;
+}
+
+body:not(.is-sneaker-standalone) .hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-cart-header-count,
+.hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-cart-header-count {
+    color: #64748b !important;
+}
+
+body:not(.is-sneaker-standalone) .hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) #hnmtCartCloseBtn,
+.hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) #hnmtCartCloseBtn {
+    background: rgba(0, 0, 0, 0.04) !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    color: #0f172a !important;
+}
+
+body:not(.is-sneaker-standalone) .hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) #hnmtCartCloseBtn:hover,
+.hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) #hnmtCartCloseBtn:hover {
+    background: rgba(0, 0, 0, 0.08) !important;
+    color: #000000 !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Thẻ sản phẩm trong giỏ (Light Theme) */
+body:not(.is-sneaker-standalone) .hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-cart-item-card,
+.hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-cart-item-card {
+    background: #ffffff !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+}
+
+body:not(.is-sneaker-standalone) .hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-cart-item-card:hover,
+.hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-cart-item-card:hover {
+    border-color: rgba(0, 0, 0, 0.18) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+}
+
+body:not(.is-sneaker-standalone) .hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-item-thumb-box,
+.hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-item-thumb-box {
+    background: #f8fafc !important;
+    border: 1px solid rgba(0, 0, 0, 0.06) !important;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+}
+
+body:not(.is-sneaker-standalone) .hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-item-thumb,
+.hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-item-thumb {
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.12)) !important;
+}
+
+body:not(.is-sneaker-standalone) .hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-item-name,
+.hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-item-name {
+    color: #0f172a !important;
+    text-shadow: none !important;
+}
+
+body:not(.is-sneaker-standalone) .hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-meta-pill,
+.hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-meta-pill {
+    background: #f1f5f9 !important;
+    border: 1px solid rgba(0, 0, 0, 0.06) !important;
+    color: #475569 !important;
+}
+
+body:not(.is-sneaker-standalone) .hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-item-remove-btn,
+.hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-item-remove-btn {
+    color: #94a3b8 !important;
+}
+
+body:not(.is-sneaker-standalone) .hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-item-remove-btn:hover,
+.hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-item-remove-btn:hover {
+    background: rgba(239, 68, 68, 0.12) !important;
+    color: #ef4444 !important;
+}
+
+body:not(.is-sneaker-standalone) .hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-item-unit-price,
+.hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-item-unit-price {
+    color: #0284c7 !important;
+}
+
+body:not(.is-sneaker-standalone) .hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-stepper-capsule,
+.hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-stepper-capsule {
+    background: #f1f5f9 !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: none !important;
+}
+
+body:not(.is-sneaker-standalone) .hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-step-btn,
+.hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-step-btn {
+    color: #0f172a !important;
+}
+
+body:not(.is-sneaker-standalone) .hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-step-btn:hover,
+.hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-step-btn:hover {
+    background: rgba(0, 0, 0, 0.08) !important;
+}
+
+body:not(.is-sneaker-standalone) .hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-step-value,
+.hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-step-value {
+    color: #0f172a !important;
+}
+
+/* Footer & Bảng tính tiền Giỏ Hàng (Light Theme) */
+body:not(.is-sneaker-standalone) .hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-cart-footer,
+.hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-cart-footer {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.05) !important;
+}
+
+body:not(.is-sneaker-standalone) .hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-cart-bill-card,
+.hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-cart-bill-card {
+    background: #f8fafc !important;
+    border: 1px solid rgba(0, 0, 0, 0.06) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02) !important;
+}
+
+body:not(.is-sneaker-standalone) .hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-bill-row,
+.hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-bill-row {
+    color: #64748b !important;
+}
+
+body:not(.is-sneaker-standalone) .hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-bill-val,
+.hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-bill-val {
+    color: #0f172a !important;
+}
+
+body:not(.is-sneaker-standalone) .hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-ship-val,
+.hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-ship-val {
+    color: #059669 !important;
+}
+
+body:not(.is-sneaker-standalone) .hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-bill-divider,
+.hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-bill-divider {
+    background: rgba(0, 0, 0, 0.06) !important;
+}
+
+body:not(.is-sneaker-standalone) .hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-bill-row.hnmt-bill-total .hnmt-total-label,
+.hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-bill-row.hnmt-bill-total .hnmt-total-label {
+    color: #0f172a !important;
+}
+
+body:not(.is-sneaker-standalone) .hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-bill-row.hnmt-bill-total .hnmt-total-val,
+.hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-bill-row.hnmt-bill-total .hnmt-total-val {
+    color: #0284c7 !important;
+}
+
+/* Nút Thanh Toán: Dài ngang 100%, phong cách Luxury Apple / Maison */
+body:not(.is-sneaker-standalone) .hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-checkout-capsule-btn,
+.hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-checkout-capsule-btn {
+    background: #0f172a !important;
+    border: 1px solid #0f172a !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.22) !important;
+}
+
+body:not(.is-sneaker-standalone) .hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-checkout-capsule-btn:hover,
+.hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-checkout-capsule-btn:hover {
+    background: #000000 !important;
+    border-color: #000000 !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28) !important;
+}
+
+/* Trạng thái Giỏ Hàng Trống (Light Theme) */
+body:not(.is-sneaker-standalone) .hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-empty-glow-ring,
+.hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-empty-glow-ring {
+    background: rgba(2, 132, 199, 0.08) !important;
+    border-color: rgba(2, 132, 199, 0.25) !important;
+    color: #0284c7 !important;
+    box-shadow: 0 0 20px rgba(2, 132, 199, 0.15) !important;
+}
+
+body:not(.is-sneaker-standalone) .hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-empty-title,
+.hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-empty-title {
+    color: #0f172a !important;
+}
+
+body:not(.is-sneaker-standalone) .hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-empty-desc,
+.hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-empty-desc {
+    color: #64748b !important;
+}
+
+body:not(.is-sneaker-standalone) .hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-empty-explore-btn,
+.hnmt-cart-modal.is-light-cart:not(.is-sneaker-cart) .hnmt-empty-explore-btn {
+    background: #0f172a !important;
+    border-color: #0f172a !important;
+    color: #ffffff !important;
+}
+
+/* ==============================================================================
+   3. GIỎ HÀNG RIÊNG CHO TRANG GIÀY (SNEAKER VAULT - DARK GLASSMORPHISM 100%)
+   Chỉ áp dụng khi mở giỏ hàng ở Trang Giày (Sneaker Vault).
+   Đồng bộ 100% với Modal "Bộ Lọc Tủ Giày": Nền mờ kính xuyên thấu, nút phát sáng.
+   ============================================================================== */
+
+body.is-sneaker-standalone .hnmt-cart-sidebar,
+.hnmt-cart-modal.is-sneaker-cart .hnmt-cart-sidebar,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal .hnmt-cart-sidebar {
+    background: rgba(26, 28, 34, 0.75) !important;
+    backdrop-filter: blur(28px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.18) !important;
+    box-shadow: -25px 0 80px rgba(0, 0, 0, 0.55),
+                inset 1px 0 0 rgba(255, 255, 255, 0.12),
+                inset 0 1px 1px rgba(255, 255, 255, 0.22) !important;
+    color: #ffffff !important;
+}
+
+body.is-sneaker-standalone .hnmt-cart-backdrop,
+.hnmt-cart-modal.is-sneaker-cart .hnmt-cart-backdrop,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal .hnmt-cart-backdrop {
+    background: rgba(0, 0, 0, 0.6) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+}
+
+body.is-sneaker-standalone .hnmt-cart-header .fashion-filter-title,
+.hnmt-cart-modal.is-sneaker-cart .hnmt-cart-header .fashion-filter-title,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal .hnmt-cart-header .fashion-filter-title {
+    color: #ffffff !important;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4) !important;
+}
+
+body.is-sneaker-standalone .hnmt-cart-header-count,
+.hnmt-cart-modal.is-sneaker-cart .hnmt-cart-header-count,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal .hnmt-cart-header-count {
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Nút Đóng Tròn Mờ Kính Đồng Bộ Bộ Lọc Tủ Giày */
+body.is-sneaker-standalone #hnmtCartCloseBtn,
+.hnmt-cart-modal.is-sneaker-cart #hnmtCartCloseBtn,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal #hnmtCartCloseBtn {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    border-radius: 50% !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    box-shadow: none !important;
+}
+
+body.is-sneaker-standalone #hnmtCartCloseBtn:hover,
+.hnmt-cart-modal.is-sneaker-cart #hnmtCartCloseBtn:hover,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal #hnmtCartCloseBtn:hover {
+    background: rgba(255, 255, 255, 0.22) !important;
+    color: #ffffff !important;
+    transform: scale(1.08) !important;
+    box-shadow: 0 0 16px rgba(255, 255, 255, 0.25) !important;
+}
+
+/* Thẻ sản phẩm trong giỏ (Sneaker Dark Glassmorphism) */
+body.is-sneaker-standalone .hnmt-cart-item-card,
+.hnmt-cart-modal.is-sneaker-cart .hnmt-cart-item-card,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal .hnmt-cart-item-card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+    border-radius: 18px !important;
+}
+
+body.is-sneaker-standalone .hnmt-cart-item-card:hover,
+.hnmt-cart-modal.is-sneaker-cart .hnmt-cart-item-card:hover,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal .hnmt-cart-item-card:hover {
+    border-color: rgba(56, 189, 248, 0.45) !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35), 0 0 15px rgba(56, 189, 248, 0.15) !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+}
+
+body.is-sneaker-standalone .hnmt-item-thumb-box,
+.hnmt-cart-modal.is-sneaker-cart .hnmt-item-thumb-box,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal .hnmt-item-thumb-box {
+    background: rgba(0, 0, 0, 0.35) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+    border-radius: 12px !important;
+}
+
+body.is-sneaker-standalone .hnmt-item-thumb,
+.hnmt-cart-modal.is-sneaker-cart .hnmt-item-thumb,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal .hnmt-item-thumb {
+    filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.45)) !important;
+}
+
+body.is-sneaker-standalone .hnmt-item-name,
+.hnmt-cart-modal.is-sneaker-cart .hnmt-item-name,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal .hnmt-item-name {
+    color: #ffffff !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5) !important;
+}
+
+body.is-sneaker-standalone .hnmt-meta-pill,
+.hnmt-cart-modal.is-sneaker-cart .hnmt-meta-pill,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal .hnmt-meta-pill {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+body.is-sneaker-standalone .hnmt-item-remove-btn,
+.hnmt-cart-modal.is-sneaker-cart .hnmt-item-remove-btn,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal .hnmt-item-remove-btn {
+    color: rgba(255, 255, 255, 0.45) !important;
+}
+
+body.is-sneaker-standalone .hnmt-item-remove-btn:hover,
+.hnmt-cart-modal.is-sneaker-cart .hnmt-item-remove-btn:hover,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal .hnmt-item-remove-btn:hover {
+    background: rgba(239, 68, 68, 0.2) !important;
+    color: #f87171 !important;
+}
+
+body.is-sneaker-standalone .hnmt-item-unit-price,
+.hnmt-cart-modal.is-sneaker-cart .hnmt-item-unit-price,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal .hnmt-item-unit-price {
+    color: #38bdf8 !important;
+    text-shadow: 0 0 10px rgba(56, 189, 248, 0.3) !important;
+}
+
+body.is-sneaker-standalone .hnmt-stepper-capsule,
+.hnmt-cart-modal.is-sneaker-cart .hnmt-stepper-capsule,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal .hnmt-stepper-capsule {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    box-shadow: none !important;
+}
+
+body.is-sneaker-standalone .hnmt-step-btn,
+.hnmt-cart-modal.is-sneaker-cart .hnmt-step-btn,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal .hnmt-step-btn {
+    color: #ffffff !important;
+}
+
+body.is-sneaker-standalone .hnmt-step-btn:hover,
+.hnmt-cart-modal.is-sneaker-cart .hnmt-step-btn:hover,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal .hnmt-step-btn:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+}
+
+body.is-sneaker-standalone .hnmt-step-value,
+.hnmt-cart-modal.is-sneaker-cart .hnmt-step-value,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal .hnmt-step-value {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+}
+
+/* Footer & Bảng tính tiền Giỏ Hàng (Sneaker Dark Glassmorphism) */
+body.is-sneaker-standalone .hnmt-cart-footer,
+.hnmt-cart-modal.is-sneaker-cart .hnmt-cart-footer,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal .hnmt-cart-footer {
+    background: rgba(18, 20, 26, 0.85) !important;
+    backdrop-filter: blur(28px) !important;
+    -webkit-backdrop-filter: blur(28px) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.4) !important;
+}
+
+body.is-sneaker-standalone .hnmt-cart-bill-card,
+.hnmt-cart-modal.is-sneaker-cart .hnmt-cart-bill-card,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal .hnmt-cart-bill-card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
+}
+
+body.is-sneaker-standalone .hnmt-bill-row,
+.hnmt-cart-modal.is-sneaker-cart .hnmt-bill-row,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal .hnmt-bill-row {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+body.is-sneaker-standalone .hnmt-bill-val,
+.hnmt-cart-modal.is-sneaker-cart .hnmt-bill-val,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal .hnmt-bill-val {
+    color: #ffffff !important;
+}
+
+body.is-sneaker-standalone .hnmt-ship-val,
+.hnmt-cart-modal.is-sneaker-cart .hnmt-ship-val,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal .hnmt-ship-val {
+    color: #34d399 !important;
+}
+
+body.is-sneaker-standalone .hnmt-bill-divider,
+.hnmt-cart-modal.is-sneaker-cart .hnmt-bill-divider,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal .hnmt-bill-divider {
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+
+body.is-sneaker-standalone .hnmt-bill-row.hnmt-bill-total .hnmt-total-label,
+.hnmt-cart-modal.is-sneaker-cart .hnmt-bill-row.hnmt-bill-total .hnmt-total-label,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal .hnmt-bill-row.hnmt-bill-total .hnmt-total-label {
+    color: #ffffff !important;
+}
+
+body.is-sneaker-standalone .hnmt-bill-row.hnmt-bill-total .hnmt-total-val,
+.hnmt-cart-modal.is-sneaker-cart .hnmt-bill-row.hnmt-bill-total .hnmt-total-val,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal .hnmt-bill-row.hnmt-bill-total .hnmt-total-val {
+    color: #38bdf8 !important;
+    text-shadow: 0 0 15px rgba(56, 189, 248, 0.4) !important;
+}
+
+/* Nút Thanh Toán: Đồng bộ viên thuốc cao cấp */
+body.is-sneaker-standalone .hnmt-checkout-capsule-btn,
+.hnmt-cart-modal.is-sneaker-cart .hnmt-checkout-capsule-btn,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal .hnmt-checkout-capsule-btn {
+    background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.8) !important;
+    color: #090d16 !important;
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.25), 0 0 20px rgba(56, 189, 248, 0.3) !important;
+}
+
+body.is-sneaker-standalone .hnmt-checkout-capsule-btn:hover,
+.hnmt-cart-modal.is-sneaker-cart .hnmt-checkout-capsule-btn:hover,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal .hnmt-checkout-capsule-btn:hover {
+    background: #38bdf8 !important;
+    border-color: #38bdf8 !important;
+    color: #000000 !important;
+    box-shadow: 0 6px 25px rgba(56, 189, 248, 0.5) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Trạng thái Giỏ Hàng Trống (Sneaker Vault) */
+body.is-sneaker-standalone .hnmt-empty-glow-ring,
+.hnmt-cart-modal.is-sneaker-cart .hnmt-empty-glow-ring,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal .hnmt-empty-glow-ring {
+    background: rgba(56, 189, 248, 0.12) !important;
+    border-color: rgba(56, 189, 248, 0.4) !important;
+    color: #38bdf8 !important;
+    box-shadow: 0 0 30px rgba(56, 189, 248, 0.28) !important;
+}
+
+body.is-sneaker-standalone .hnmt-empty-title,
+.hnmt-cart-modal.is-sneaker-cart .hnmt-empty-title,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal .hnmt-empty-title {
+    color: #ffffff !important;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4) !important;
+}
+
+body.is-sneaker-standalone .hnmt-empty-desc,
+.hnmt-cart-modal.is-sneaker-cart .hnmt-empty-desc,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal .hnmt-empty-desc {
+    color: rgba(255, 255, 255, 0.65) !important;
+}
+
+body.is-sneaker-standalone .hnmt-empty-explore-btn,
+.hnmt-cart-modal.is-sneaker-cart .hnmt-empty-explore-btn,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal .hnmt-empty-explore-btn {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    color: #ffffff !important;
+    border-radius: 999px !important;
+    padding: 14px 28px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+}
+
+body.is-sneaker-standalone .hnmt-empty-explore-btn:hover,
+.hnmt-cart-modal.is-sneaker-cart .hnmt-empty-explore-btn:hover,
+body:has(#hnmtSneakerOverlay.is-active) .hnmt-cart-modal .hnmt-empty-explore-btn:hover {
+    background: rgba(255, 255, 255, 0.22) !important;
+    border-color: rgba(255, 255, 255, 0.45) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4), 0 0 15px rgba(255, 255, 255, 0.2) !important;
+}
+
+/* ========================================================================== */
+/* HNMT ATELIER - BỘ LỌC ĐA DANH MỤC TRANG CHỦ & MODAL XÁC NHẬN CHÍNH GIỮA   */
+/* ========================================================================== */
+
+/* Head row với Step Tag */
+.fashion-card-head-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.fashion-card-head-row .fashion-card-label {
+    margin-bottom: 0 !important;
+}
+
+.hnmt-tag-step {
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    padding: 2px 7px;
+    border-radius: 6px;
+    background: #0f172a;
+    color: #ffffff;
+    text-transform: uppercase;
+}
+
+/* 3 Segmented Pills chọn nhanh Danh mục chính */
+.hnmt-cat-segmented-pills {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.hnmt-cat-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 6px;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: #ffffff;
+    color: #475569;
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.hnmt-cat-pill .pill-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #94a3b8;
+    transition: background 0.2s ease;
+}
+
+.hnmt-cat-pill:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+    border-color: rgba(0, 0, 0, 0.15);
+}
+
+.hnmt-cat-pill.is-active {
+    background: #0f172a !important;
+    color: #ffffff !important;
+    border-color: #0f172a !important;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+}
+
+.hnmt-cat-pill.is-active .pill-dot {
+    background: #38bdf8 !important;
+    box-shadow: 0 0 6px #38bdf8;
+}
+
+/* -------------------------------------------------------------------------- */
+/* CENTER CONFIRMATION MODAL (CHUYỂN TIẾP KHÔNG GIAN 3D CANH CHÍNH GIỮA)     */
+/* Thuần chữ dễ đọc, nền trắng trang nhã, đồng bộ 100% với bộ lọc           */
+/* -------------------------------------------------------------------------- */
+.hnmt-center-confirm-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 100050;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    padding: 20px;
+}
+
+.hnmt-center-confirm-backdrop.is-open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.hnmt-center-confirm-card {
+    position: relative;
+    width: 100%;
+    max-width: 440px;
+    background: #ffffff !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    border-radius: 20px !important;
+    padding: 32px 28px 26px !important;
+    text-align: center;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.15), 0 4px 16px rgba(0, 0, 0, 0.06) !important;
+    transform: scale(0.94) translateY(12px);
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+.hnmt-center-confirm-backdrop.is-open .hnmt-center-confirm-card {
+    transform: scale(1) translateY(0);
+}
+
+.hnmt-center-confirm-card .confirm-title {
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    margin: 0 0 12px !important;
+    letter-spacing: -0.02em !important;
+    line-height: 1.35 !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+}
+
+.hnmt-center-confirm-card .confirm-desc {
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+    color: #475569 !important;
+    margin: 0 0 20px !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+}
+
+.hnmt-center-confirm-card .confirm-desc strong {
+    color: #0f172a !important;
+    font-weight: 700 !important;
+}
+
+/* Tags tóm tắt bộ lọc */
+.hnmt-center-confirm-card .confirm-tags-recap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    margin-bottom: 24px;
+    max-height: 110px;
+    overflow-y: auto;
+    padding: 2px;
+}
+
+.hnmt-center-confirm-card .confirm-tag-chip {
+    background: #f1f5f9 !important;
+    border: 1px solid #e2e8f0 !important;
+    padding: 5px 12px !important;
+    border-radius: 100px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    color: #1e293b !important;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Nút bấm hành động của Confirm Modal */
+.hnmt-center-confirm-card .confirm-action-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+.hnmt-center-confirm-card .confirm-btn-secondary {
+    flex: 1;
+    padding: 12px 16px !important;
+    border-radius: 12px !important;
+    background: #f1f5f9 !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #475569 !important;
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+}
+
+.hnmt-center-confirm-card .confirm-btn-secondary:hover {
+    background: #e2e8f0 !important;
+    color: #0f172a !important;
+}
+
+.hnmt-center-confirm-card .confirm-btn-primary {
+    flex: 1.25;
+    padding: 12px 18px !important;
+    border-radius: 12px !important;
+    background: #0f172a !important;
+    color: #ffffff !important;
+    border: none !important;
+    font-size: 13.5px !important;
+    font-weight: 700 !important;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25) !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+}
+
+.hnmt-center-confirm-card .confirm-btn-primary:hover {
+    background: #1e293b !important;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.35) !important;
+}
+
+
+
+
+/* ========================================================================== */
+/* KHỬ GẠCH CHÂN HOÀN TOÀN CHO NÚT QUAY LẠI Ở MỌI SÀO ĐỒ & SNEAKER VAULT     */
+/* ========================================================================== */
+.rail-portal-exit-btn,
+.rail-portal-exit-btn:hover,
+.rail-portal-exit-btn:focus,
+.rail-portal-exit-btn:active,
+.rail-portal-exit-btn:visited,
+.rail-portal-exit-btn span,
+.rail-portal-exit-btn i,
+.sv-exit-btn,
+.sv-exit-btn:hover,
+.sv-exit-btn:focus,
+.sv-exit-btn:active,
+.sv-exit-btn:visited,
+.sv-exit-btn span,
+.sv-exit-btn i,
+#hnmtRackBackToLobbyBtn,
+#svExitBtn,
+#svExitShowroomBtn,
+a.rail-portal-exit-btn,
+a.sv-exit-btn {
+    text-decoration: none !important;
 }

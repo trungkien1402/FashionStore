@@ -85,12 +85,29 @@
     let searchKeyword = '';
     let filteredSneakers = [];
 
-    // Lấy toàn bộ danh sách 18 sneaker từ SneakerVault
+    // Lấy danh mục giày của luồng đang mở
     function getSneakerCatalog() {
         if (window.SneakerVault && typeof window.SneakerVault.getAllSneakers === 'function') {
             return window.SneakerVault.getAllSneakers();
         }
         return [];
+    }
+
+    function matchesSilhouette(item, silhouette) {
+        if (silhouette === 'all') return true;
+        if (item.silhouettes) return item.silhouettes.includes(silhouette);
+
+        const model = removeVietnameseTones(item.model || '');
+        switch (silhouette) {
+            case 'air-future': return model.includes('air future');
+            case 'cyber-series': return model.includes('cyber');
+            case 'chile-series': return model.includes('chile');
+            case 'runners': return item.collectionId === 'futurist' || model.includes('air future');
+            case 'chunky': return item.collectionId === 'cyber' || model.includes('cyber');
+            case 'high-top': return model.includes('ix') || model.includes('viii') || model.includes('xi');
+            case 'low-top': return model.includes('iv') || model.includes('iii') || model.includes('i');
+            default: return false;
+        }
     }
 
     // HTML Template: Right Sidebar mờ đục trong suốt với Select-from-list & Range Slider
@@ -137,9 +154,6 @@
                     <div class="fashion-select-wrapper">
                         <select id="sneakerVaultSelect" class="fashion-select-input">
                             <option value="all">Tất cả bộ sưu tập</option>
-                            <option value="futurist">Futurist Sneaker Vault</option>
-                            <option value="cyber">Cyber Vault</option>
-                            <option value="chile20">Chile 20 Vault</option>
                         </select>
                         <div class="select-chevron-icon" aria-hidden="true">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
@@ -160,6 +174,10 @@
                             <option value="chunky">Giày sneaker đế dày (Chunky)</option>
                             <option value="high-top">Giày sneaker cổ cao (High-Top)</option>
                             <option value="low-top">Giày sneaker cổ thấp (Low-Top)</option>
+                            <option value="heels">Giày cao gót</option>
+                            <option value="flats">Giày bệt / Mary Jane</option>
+                            <option value="boots">Boots</option>
+                            <option value="dress">Giày tây / Loafer</option>
                         </select>
                         <div class="select-chevron-icon" aria-hidden="true">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
@@ -321,19 +339,7 @@
                 }
 
                 // 2. Lọc theo Dòng Giày (Silhouette)
-                if (selectedSilhouette !== 'all') {
-                    const modelName = removeVietnameseTones(item.model || '');
-                    let matchSil = false;
-                    if (selectedSilhouette === 'air-future' && modelName.includes('air future')) matchSil = true;
-                    else if (selectedSilhouette === 'cyber-series' && modelName.includes('cyber')) matchSil = true;
-                    else if (selectedSilhouette === 'chile-series' && modelName.includes('chile')) matchSil = true;
-                    else if (selectedSilhouette === 'runners' && (item.collectionId === 'futurist' || modelName.includes('air future'))) matchSil = true;
-                    else if (selectedSilhouette === 'chunky' && (item.collectionId === 'cyber' || modelName.includes('cyber'))) matchSil = true;
-                    else if (selectedSilhouette === 'high-top' && (modelName.includes('ix') || modelName.includes('viii') || modelName.includes('xi'))) matchSil = true;
-                    else if (selectedSilhouette === 'low-top' && (modelName.includes('iv') || modelName.includes('iii') || modelName.includes('i'))) matchSil = true;
-
-                    if (!matchSil) return false;
-                }
+                if (!matchesSilhouette(item, selectedSilhouette)) return false;
 
                 // 3. Lọc theo giá thanh trượt kéo (Range slider)
                 if (maxPriceValue < 7500000 && item.price > maxPriceValue) {
@@ -426,6 +432,24 @@
         }
 
         function openModal() {
+            const catalog = getSneakerCatalog();
+            if (vaultSelect) {
+                const collections = new Map(catalog.map(item => [item.collectionId, item.collectionTitle]));
+                vaultSelect.replaceChildren(
+                    new Option('Tất cả bộ sưu tập', 'all'),
+                    ...Array.from(collections, ([id, title]) => new Option(title, id))
+                );
+                if (!collections.has(selectedVault)) selectedVault = 'all';
+                vaultSelect.value = selectedVault;
+            }
+            if (silhouetteSelect) {
+                for (const option of silhouetteSelect.options) {
+                    option.hidden = option.value !== 'all' && !catalog.some(item => matchesSilhouette(item, option.value));
+                    if (option.hidden && option.value === selectedSilhouette) selectedSilhouette = 'all';
+                }
+                silhouetteSelect.value = selectedSilhouette;
+            }
+
             // Đóng các modal khác nếu đang mở
             const oldSpotlight = document.getElementById('hnmtSpotlightSearchModal');
             if (oldSpotlight) oldSpotlight.classList.remove('is-open');

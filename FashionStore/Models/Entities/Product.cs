@@ -14,6 +14,14 @@ public class Product
 
     public string ImageUrl { get; set; } = string.Empty;
 
+    public string? ShowroomAudience { get; set; }
+
+    public string? ShowroomKind { get; set; }
+
+    public int ShowroomSortOrder { get; set; }
+
+    public string? ShowroomMetadata { get; set; }
+
     public int CategoryId { get; set; }
 
     public Category Category { get; set; } = null!;

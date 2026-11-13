@@ -6,15 +6,15 @@
 
     string GetBadgeClass(OrderStatus status) => status switch
     {
-        OrderStatus.PendingConfirmation => "pending",
-        OrderStatus.Confirmed => "confirmed",
-        OrderStatus.Processing => "processing",
-        OrderStatus.Shipping => "shipping",
-        OrderStatus.Delivered => "delivered",
-        OrderStatus.Cancelled => "cancelled",
-        OrderStatus.DeliveryFailed => "failed",
-        OrderStatus.Returned => "returned",
-        _ => "pending"
+        OrderStatus.PendingConfirmation => "status-pending",
+        OrderStatus.Confirmed => "status-confirmed",
+        OrderStatus.Processing => "status-processing",
+        OrderStatus.Shipping => "status-shipping",
+        OrderStatus.Delivered => "status-delivered",
+        OrderStatus.Cancelled => "status-cancelled",
+        OrderStatus.DeliveryFailed => "status-failed",
+        OrderStatus.Returned => "status-returned",
+        _ => "status-pending"
     };
 
     string GetStatusText(OrderStatus status) => status switch
@@ -22,7 +22,7 @@
         OrderStatus.PendingConfirmation => "Chờ xác nhận",
         OrderStatus.Confirmed => "Đã xác nhận",
         OrderStatus.Processing => "Đang xử lý kho",
-        OrderStatus.Shipping => "Đang giao hàng",
+        OrderStatus.Shipping => "Đang vận chuyển",
         OrderStatus.Delivered => "Đã nhận hàng",
         OrderStatus.Cancelled => "Đã hủy đơn",
         OrderStatus.DeliveryFailed => "Giao thất bại",
@@ -31,84 +31,113 @@
     };
 }
 
-<div class="fs-page-wrap">
-    <div class="container">
+<div class="hnmt-orders-index-wrapper">
+    <div class="hnmt-orders-container">
         
         <!-- HEADER -->
-        <div class="fs-page-header">
-            <span class="fs-eyebrow">TÀI KHOẢN & LỊCH SỬ MUA SẮM</span>
-            <h1 class="fs-page-title">Đơn hàng của tôi</h1>
-            <p class="fs-page-desc">Theo dõi tiến trình vận chuyển, tình trạng thanh toán và tra cứu hồ sơ các đơn hàng đã đặt.</p>
+        <div class="hnmt-index-header">
+            <span class="hnmt-index-eyebrow">
+                <i class="bi bi-person-badge"></i> TÀI KHOẢN & LỊCH SỬ MUA SẮM
+            </span>
+            <h1 class="hnmt-index-title">Hồ sơ đơn hàng của bạn</h1>
+            <p class="hnmt-index-desc">Theo dõi tiến trình vận chuyển, tình trạng thanh toán và tra cứu thông tin chi tiết từng sản phẩm đã đặt mua.</p>
         </div>
 
         @if (TempData["Success"] != null)
         {
-            <div class="fs-pill-alert success">
-                <i class="bi bi-check-circle-fill fs-5"></i>
-                <span>@TempData["Success"]</span>
+            <div class="hnmt-notice-box success">
+                <i class="bi bi-check-circle-fill"></i>
+                <div class="hnmt-notice-content">
+                    <strong>Thành công!</strong>
+                    <span>@TempData["Success"]</span>
+                </div>
             </div>
         }
 
         @if (TempData["Error"] != null)
         {
-            <div class="fs-pill-alert error">
-                <i class="bi bi-exclamation-triangle-fill fs-5"></i>
-                <span>@TempData["Error"]</span>
+            <div class="hnmt-notice-box error">
+                <i class="bi bi-exclamation-octagon-fill"></i>
+                <div class="hnmt-notice-content">
+                    <strong>Thông báo:</strong>
+                    <span>@TempData["Error"]</span>
+                </div>
             </div>
         }
 
         @if (Model == null || !Model.Any())
         {
-            <div class="text-center py-5 border rounded-4 bg-light my-4">
-                <div class="mb-3 text-muted">
-                    <i class="bi bi-bag-x" style="font-size: 3.5rem; opacity: 0.4;"></i>
+            <div class="hnmt-empty-dossier-card">
+                <div class="hnmt-empty-icon">
+                    <i class="bi bi-bag-x"></i>
                 </div>
-                <h3 class="fw-bold mb-2" style="font-family:'Cormorant Garamond', Georgia, serif; font-size: 28px;">Bạn chưa có đơn hàng nào</h3>
-                <p class="text-muted mb-4 small">Hãy khám phá bộ sưu tập sản phẩm và sắm cho mình những bộ trang phục ấn tượng.</p>
-                <a asp-controller="Products" asp-action="Index" class="fs-btn fs-btn-dark">
-                    MUA SẮM NGAY
+                <h3>Bạn chưa có đơn hàng nào</h3>
+                <p>Khám phá bộ sưu tập thời trang đường phố độc bản của HNMT và sắm cho mình những thiết kế mới nhất.</p>
+                <a asp-controller="Products" asp-action="Index" class="hnmt-index-primary-btn">
+                    <span>Khám phá Store ngay</span>
+                    <i class="bi bi-arrow-right"></i>
                 </a>
             </div>
         }
         else
         {
-            <div class="mb-4">
+            <div class="hnmt-orders-grid">
                 @foreach (var order in Model)
                 {
-                    <div class="fs-order-dossier-card">
-                        <div>
-                            <div class="d-flex align-items-center gap-3 mb-2">
-                                <span class="fs-code-badge">@order.OrderCode</span>
-                                <span class="fs-badge-status @GetBadgeClass(order.Status)">
-                                    <span style="width:6px; height:6px; border-radius:50%; background:currentColor;"></span>
+                    <div class="hnmt-order-card">
+                        <div class="hnmt-order-card-top">
+                            <div class="hnmt-order-id-group">
+                                <span class="hnmt-code-pill font-mono">#@order.OrderCode</span>
+                                <span class="hnmt-order-badge @GetBadgeClass(order.Status)">
+                                    <span class="hnmt-badge-dot"></span>
                                     @GetStatusText(order.Status)
                                 </span>
                             </div>
-                            <div class="text-muted small">
-                                Ngày đặt: <strong class="text-dark">@order.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</strong>
-                                <span class="mx-2">•</span>
-                                PT Thanh toán: <strong>@(order.PaymentMethod == PaymentMethod.VietQR ? "VietQR" : "COD")</strong>
+
+                            <div class="hnmt-order-date">
+                                <i class="bi bi-clock"></i>
+                                <span>@order.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span>
                             </div>
                         </div>
 
-                        <div class="d-flex align-items-center gap-4 flex-wrap">
-                            <div class="text-md-end">
-                                <div class="text-muted small">Tổng tiền</div>
-                                <div class="fw-bold fs-5 text-dark font-monospace">@order.TotalAmount.ToString("N0") đ</div>
+                        <div class="hnmt-order-card-mid">
+                            <div class="hnmt-order-info-line">
+                                <span class="hnmt-label">Sản phẩm:</span>
+                                <span class="hnmt-val font-semibold">
+                                    @(order.Items != null && order.Items.Any() ? $"{order.Items.Sum(i => i.Quantity)} món ({string.Join(", ", order.Items.Take(2).Select(i => i.ProductName))}{(order.Items.Count > 2 ? "..." : "")})" : "Chi tiết kiện hàng")
+                                </span>
                             </div>
 
-                            <div class="d-flex align-items-center gap-2">
-                                <a asp-action="Details" asp-route-id="@order.Id" class="btn btn-dark rounded-pill px-4 py-2 fw-semibold" style="font-size: 13px;">
-                                    Chi tiết <i class="bi bi-chevron-right ms-1"></i>
+                            <div class="hnmt-order-info-line">
+                                <span class="hnmt-label">Phương thức:</span>
+                                <span class="hnmt-val">@(order.PaymentMethod == PaymentMethod.VietQR ? "VietQR 24/7" : "Thanh toán khi nhận hàng (COD)")</span>
+                            </div>
+
+                            <div class="hnmt-order-info-line">
+                                <span class="hnmt-label">Người nhận:</span>
+                                <span class="hnmt-val">@order.ReceiverName • @order.Phone</span>
+                            </div>
+                        </div>
+
+                        <div class="hnmt-order-card-bottom">
+                            <div class="hnmt-order-total-block">
+                                <span class="hnmt-total-label">Tổng thanh toán</span>
+                                <strong class="hnmt-total-price font-mono">@order.TotalAmount.ToString("N0") ₫</strong>
+                            </div>
+
+                            <div class="hnmt-card-actions">
+                                <a asp-action="Details" asp-route-id="@order.Id" class="hnmt-detail-pill-btn">
+                                    <span>Xem chi tiết</span>
+                                    <i class="bi bi-chevron-right"></i>
                                 </a>
 
                                 @if (order.Status == OrderStatus.PendingConfirmation)
                                 {
                                     <form asp-action="CancelOrder" asp-route-id="@order.Id" method="post" class="m-0"
-                                          onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?');">
+                                          onsubmit="return confirm('Bạn có chắc chắn muốn yêu cầu hủy đơn hàng này?');">
                                         @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-outline-danger rounded-pill px-3 py-2 fw-semibold" style="font-size: 13px;">
-                                            Hủy đơn
+                                        <button type="submit" class="hnmt-cancel-mini-btn" title="Hủy đơn này">
+                                            Hủy
                                         </button>
                                     </form>
                                 }
@@ -118,5 +147,277 @@
                 }
             </div>
         }
+
     </div>
 </div>
+
+<style>
+.hnmt-orders-index-wrapper {
+    background-color: #FAFAFA;
+    min-height: 100vh;
+    padding: 40px 0 80px;
+    font-family: var(--urbn-font, 'Plus Jakarta Sans', -apple-system, sans-serif);
+    color: #111827;
+}
+
+.hnmt-orders-container {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.hnmt-index-header {
+    margin-bottom: 32px;
+}
+
+.hnmt-index-eyebrow {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    color: #6B7280;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.hnmt-index-title {
+    font-size: clamp(26px, 3.5vw, 36px);
+    font-weight: 800;
+    color: #000000;
+    letter-spacing: -0.8px;
+    margin: 0 0 10px;
+}
+
+.hnmt-index-desc {
+    font-size: 14.5px;
+    color: #4B5563;
+    max-width: 600px;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.hnmt-orders-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.hnmt-order-card {
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 18px;
+    padding: 24px 28px;
+    box-shadow: 0 2px 12px -2px rgba(0, 0, 0, 0.03);
+    transition: all 0.2s ease;
+}
+
+.hnmt-order-card:hover {
+    border-color: #D1D5DB;
+    box-shadow: 0 6px 20px -4px rgba(0, 0, 0, 0.06);
+    transform: translateY(-1px);
+}
+
+.hnmt-order-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #F3F4F6;
+    margin-bottom: 16px;
+}
+
+.hnmt-order-id-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.hnmt-code-pill {
+    font-size: 14px;
+    font-weight: 800;
+    background: #F3F4F6;
+    color: #111827;
+    padding: 4px 12px;
+    border-radius: 8px;
+    border: 1px solid #E5E7EB;
+}
+
+.hnmt-order-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 14px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 700;
+}
+
+.hnmt-badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.hnmt-order-badge.status-pending { background: #FFFBEB; color: #B45309; border: 1px solid #FDE68A; }
+.hnmt-order-badge.status-confirmed { background: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE; }
+.hnmt-order-badge.status-processing { background: #EEF2FF; color: #4338CA; border: 1px solid #C7D2FE; }
+.hnmt-order-badge.status-shipping { background: #F5F3FF; color: #6D28D9; border: 1px solid #DDD6FE; }
+.hnmt-order-badge.status-delivered { background: #ECFDF5; color: #047857; border: 1px solid #A7F3D0; }
+.hnmt-order-badge.status-cancelled { background: #FEF2F2; color: #B91C1C; border: 1px solid #FECACA; }
+.hnmt-order-badge.status-failed,
+.hnmt-order-badge.status-returned { background: #FFF7ED; color: #C2410C; border: 1px solid #FFEDD5; }
+
+.hnmt-order-date {
+    font-size: 13px;
+    color: #6B7280;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.hnmt-order-card-mid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.hnmt-order-info-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+}
+
+.hnmt-label {
+    color: #6B7280;
+    min-width: 90px;
+}
+
+.hnmt-val {
+    color: #111827;
+}
+
+.font-semibold {
+    font-weight: 600;
+}
+
+.hnmt-order-card-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #F3F4F6;
+}
+
+.hnmt-order-total-block {
+    display: flex;
+    flex-direction: column;
+}
+
+.hnmt-total-label {
+    font-size: 11px;
+    color: #6B7280;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.hnmt-total-price {
+    font-size: 20px;
+    font-weight: 800;
+    color: #000000;
+}
+
+.hnmt-card-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.hnmt-detail-pill-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #000000;
+    color: #FFFFFF !important;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 10px 22px;
+    border-radius: 999px;
+    transition: all 0.2s;
+}
+
+.hnmt-detail-pill-btn:hover {
+    background: #27272A;
+}
+
+.hnmt-cancel-mini-btn {
+    background: #FFFFFF;
+    color: #DC2626;
+    border: 1px solid #FCA5A5;
+    padding: 9px 18px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.hnmt-cancel-mini-btn:hover {
+    background: #FEF2F2;
+    border-color: #DC2626;
+}
+
+/* EMPTY STATE */
+.hnmt-empty-dossier-card {
+    text-align: center;
+    padding: 60px 24px;
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 20px;
+}
+
+.hnmt-empty-icon {
+    font-size: 48px;
+    color: #D1D5DB;
+    margin-bottom: 16px;
+}
+
+.hnmt-empty-dossier-card h3 {
+    font-size: 22px;
+    font-weight: 800;
+    color: #000000;
+    margin: 0 0 8px;
+}
+
+.hnmt-empty-dossier-card p {
+    font-size: 14px;
+    color: #6B7280;
+    max-width: 440px;
+    margin: 0 auto 24px;
+}
+
+.hnmt-index-primary-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #000000;
+    color: #FFFFFF !important;
+    padding: 12px 28px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.font-mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace !important;
+}
+</style>

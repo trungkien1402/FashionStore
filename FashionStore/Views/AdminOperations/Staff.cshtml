@@ -1,0 +1,25 @@
+@model List<FashionStore.Models.Entities.ApplicationUser>
+@{ ViewData["Title"] = "Nhân viên"; var roles = (ILookup<string, string?>)ViewBag.Roles; }
+<header class="adm-dashboard-header mb-4"><h1>Nhân viên</h1></header>
+<div class="adm-card table-responsive p-0"><table class="adm-table mb-0">
+<thead><tr><th>Nhân viên</th><th>Vai trò</th><th>Đổi vai trò vận hành</th></tr></thead>
+<tbody>
+@foreach (var user in Model)
+{
+    <tr><td>@user.FullName</td><td>@string.Join(", ", roles[user.Id])</td><td>
+    @if (!roles[user.Id].Contains("Admin"))
+    {
+        <form asp-action="SetStaffRole" asp-route-id="@user.Id" method="post" class="d-flex gap-2">
+            <select name="role" aria-label="Vai trò mới" class="form-select adm-input-dark">
+                @foreach (var role in new[] { "Manager", "Staff", "Shipper" })
+                {
+                    <option value="@role" selected="@roles[user.Id].Contains(role)">@role</option>
+                }
+            </select>
+            <button class="adm-btn-outline">Lưu</button>
+        </form>
+    }
+    </td></tr>
+}
+</tbody>
+</table></div>

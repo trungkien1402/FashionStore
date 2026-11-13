@@ -1,0 +1,11 @@
+@model FashionStore.Models.Entities.StoreSettings
+@{ ViewData["Title"] = "Cài đặt cửa hàng"; }
+<header class="adm-dashboard-header mb-4"><h1>Cài đặt cửa hàng</h1></header>
+<form asp-action="Settings" method="post" class="adm-form-card">
+    <div class="mb-3"><label asp-for="StoreName">Tên cửa hàng</label><input asp-for="StoreName" required maxlength="100" class="form-control adm-input-dark" /></div>
+    <div class="mb-3"><label asp-for="ShippingFee">Phí giao hàng (₫)</label><input asp-for="ShippingFee" type="number" min="0" required class="form-control adm-input-dark" /></div>
+    <div class="mb-3"><label asp-for="FreeShippingThreshold">Ngưỡng miễn phí giao hàng (₫)</label><input asp-for="FreeShippingThreshold" type="number" min="0" class="form-control adm-input-dark" /></div>
+    <div class="mb-3"><label asp-for="ReturnWindowDays">Số ngày nhận đổi trả</label><input asp-for="ReturnWindowDays" type="number" min="1" max="365" required class="form-control adm-input-dark" /></div>
+    <div class="mb-3"><label asp-for="ReturnPolicy">Chính sách đổi trả</label><textarea asp-for="ReturnPolicy" maxlength="1000" rows="4" class="form-control adm-input-dark"></textarea></div>
+    <button class="adm-btn-atelier">Lưu cài đặt</button>
+</form>

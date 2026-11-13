@@ -57,43 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // 4. Quick Date Filter
-  const form = document.getElementById("admFilterForm");
-  const startInput = document.getElementById("admStartDate");
-  const endInput = document.getElementById("admEndDate");
-
-  window.setAdmQuickDate = function (range) {
-    if (!startInput || !endInput || !form) return;
-
-    const today = new Date();
-    const formatDate = (d) => {
-      const year = d.getFullYear();
-      const month = String(d.getMonth() + 1).padStart(2, "0");
-      const day = String(d.getDate()).padStart(2, "0");
-      return `${year}-${month}-${day}`;
-    };
-
-    endInput.value = formatDate(today);
-
-    if (range === "today") {
-      startInput.value = formatDate(today);
-    } else if (range === "7days") {
-      const d = new Date();
-      d.setDate(d.getDate() - 6);
-      startInput.value = formatDate(d);
-    } else if (range === "month") {
-      const d = new Date(today.getFullYear(), today.getMonth(), 1);
-      startInput.value = formatDate(d);
-    } else if (range === "30days") {
-      const d = new Date();
-      d.setDate(d.getDate() - 29);
-      startInput.value = formatDate(d);
-    }
-
-    form.submit();
-  };
-
-  // 5. Copy Order Code Helper
+  // Copy Order Code Helper
   window.copyAdmText = function (btn, text) {
     if (!navigator.clipboard) return;
     navigator.clipboard.writeText(text).then(() => {
@@ -105,7 +69,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   };
 
-  // 6. 3D Tilt for Product Showroom Cards
+  // 3D Tilt for Product Showroom Cards
   function init3DProductCards() {
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReducedMotion || window.innerWidth < 768) return;

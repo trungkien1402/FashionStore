@@ -1,4 +1,5 @@
 ﻿using FashionStore.Models.Entities;
+using FashionStore.Models.Enums;
 
 namespace FashionStore.Models.ViewModels;
 
@@ -7,14 +8,18 @@ public class AdminDashboardViewModel
     // Thống kê tổng quan
     public int TotalProducts { get; set; }
     public int TotalCategories { get; set; }
+    public decimal OrderedAmount { get; set; }
     public int TotalOrders { get; set; }
     public int PendingOrders { get; set; }
     public int TotalCustomers { get; set; }
 
     // Doanh thu
-    public decimal TotalRevenue { get; set; }
-    public decimal TodayRevenue { get; set; }
-    public decimal MonthlyRevenue { get; set; }
+    public int DeliveredOrders { get; set; }
+    public int CancelledOrders { get; set; }
+    public int PaidOrders { get; set; }
+    public decimal PaidAmount { get; set; }
+    public decimal AveragePaidOrderValue => PaidOrders == 0 ? 0 : PaidAmount / PaidOrders;
+    public const string RevenueDefinition = "Báo cáo theo ngày đặt hàng (giờ Việt Nam) và trạng thái hiện tại. Giá trị đã thanh toán chỉ gồm đơn có trạng thái Paid. Giá trị đã giao gồm đơn Delivered, kể cả đơn đang chờ thu tiền.";
     public decimal RevenueInRange { get; set; }
 
     // Bộ lọc
@@ -60,3 +65,5 @@ public class LowStockProductViewModel
     public string Color { get; set; } = string.Empty;
     public int StockQuantity { get; set; }
 }
+public record AdminReportOrder(string Code, DateTime CreatedAt, OrderStatus Status,
+    PaymentMethod PaymentMethod, PaymentStatus PaymentStatus, decimal TotalAmount);

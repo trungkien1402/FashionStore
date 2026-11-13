@@ -1,67 +1,84 @@
 @model List<FashionStore.Models.Entities.Order>
 @using FashionStore.Models.Enums
+@using FashionStore.Services.Implementations
 
 @{
     ViewData["Title"] = "Hàng đợi Đơn hàng";
-    var selectedStatus = ViewBag.SelectedStatus as OrderStatus?;
-    var pendingCount = Model.Count(o => o.Status == OrderStatus.PendingConfirmation);
 }
 
-<!-- HEADER -->
-<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+<header class="adm-dashboard-header mb-4">
     <div>
-        <div class="d-flex align-items-center gap-2 mb-1">
-            <span style="font-size: 0.68rem; font-weight: 700; letter-spacing: 0.28em; color: var(--adm-gold); text-transform: uppercase;">
-                ORDER FULFILLMENT & DISPATCH
-            </span>
-            <span style="width: 4px; height: 4px; border-radius: 50%; background: var(--adm-gold);"></span>
-            <span class="text-muted small">@Model.Count ĐƠN HÀNG</span>
-        </div>
-        <h2 class="fw-bold mb-0 adm-heading" style="letter-spacing: -0.02em;">Hàng đợi Xử lý Đơn hàng</h2>
+        <h1>Đơn hàng</h1>
+        <p class="adm-dashboard-period">@ViewBag.Count kết quả</p>
     </div>
+</header>
 
-    @if (pendingCount > 0)
-    {
-        <a asp-action="Index" asp-route-status="@((int)OrderStatus.PendingConfirmation)" 
-           class="adm-card p-2 px-3 d-flex align-items-center gap-2 text-decoration-none border-warning" 
-           style="background: rgba(217, 119, 6, 0.08); border-color: rgba(217, 119, 6, 0.3) !important;">
-            <span class="adm-pulse-dot" style="background: var(--adm-amber); box-shadow: 0 0 8px var(--adm-amber);"></span>
-            <span class="small fw-bold text-warning">@pendingCount đơn đang chờ duyệt gấp</span>
-            <i class="bi bi-chevron-right text-warning small"></i>
-        </a>
-    }
-</div>
-
-<!-- QUICK STATUS TABS -->
-<div class="adm-tabs">
-    <a asp-action="Index" class="adm-tab-item @(selectedStatus == null ? "active" : "")">
-        Tất cả đơn (@Model.Count)
-    </a>
-    <a asp-action="Index" asp-route-status="@((int)OrderStatus.PendingConfirmation)" 
-       class="adm-tab-item @(selectedStatus == OrderStatus.PendingConfirmation ? "active" : "")">
-        <i class="bi bi-clock-history me-1 text-warning"></i> Chờ duyệt
-    </a>
-    <a asp-action="Index" asp-route-status="@((int)OrderStatus.Confirmed)" 
-       class="adm-tab-item @(selectedStatus == OrderStatus.Confirmed ? "active" : "")">
-        Đã xác nhận
-    </a>
-    <a asp-action="Index" asp-route-status="@((int)OrderStatus.Processing)" 
-       class="adm-tab-item @(selectedStatus == OrderStatus.Processing ? "active" : "")">
-        Đang xử lý kho
-    </a>
-    <a asp-action="Index" asp-route-status="@((int)OrderStatus.Shipping)" 
-       class="adm-tab-item @(selectedStatus == OrderStatus.Shipping ? "active" : "")">
-        Đang giao
-    </a>
-    <a asp-action="Index" asp-route-status="@((int)OrderStatus.Delivered)" 
-       class="adm-tab-item @(selectedStatus == OrderStatus.Delivered ? "active" : "")">
-        Đã giao thành công
-    </a>
-    <a asp-action="Index" asp-route-status="@((int)OrderStatus.Cancelled)" 
-       class="adm-tab-item @(selectedStatus == OrderStatus.Cancelled ? "active" : "")">
-        Đã hủy
-    </a>
-</div>
+<form asp-action="Index" method="get" class="adm-filter-bar row g-2 mx-0 mb-4">
+    <div class="col-12 col-md-4">
+        <label for="search">Tìm đơn hàng</label>
+        <input id="search" name="search" maxlength="100" value="@ViewBag.Search" placeholder="Mã đơn, người nhận hoặc số điện thoại" class="form-control adm-input-dark" />
+    </div>
+    <div class="col-6 col-md-2">
+        <label for="status">Trạng thái đơn</label>
+        <select id="status" name="status" class="form-select adm-input-dark">
+            <option value="">Tất cả</option>
+            @foreach (var value in Enum.GetValues<OrderStatus>())
+            {
+                <option value="@value" selected="@(ViewBag.SelectedStatus is OrderStatus current && current == value)">@AdminReportService.GetStatusName(value)</option>
+            }
+        </select>
+    </div>
+    <div class="col-6 col-md-2">
+        <label for="paymentStatus">Thanh toán</label>
+        <select id="paymentStatus" name="paymentStatus" class="form-select adm-input-dark">
+            <option value="">Tất cả</option>
+            @foreach (var value in Enum.GetValues<PaymentStatus>())
+            {
+                <option value="@value" selected="@(ViewBag.PaymentStatus is PaymentStatus current && current == value)">@value</option>
+            }
+        </select>
+    </div>
+    <div class="col-6 col-md-2">
+        <label for="paymentMethod">Phương thức</label>
+        <select id="paymentMethod" name="paymentMethod" class="form-select adm-input-dark">
+            <option value="">Tất cả</option>
+            @foreach (var value in Enum.GetValues<PaymentMethod>())
+            {
+                <option value="@value" selected="@(ViewBag.PaymentMethod is PaymentMethod current && current == value)">@value</option>
+            }
+        </select>
+    </div>
+    <div class="col-6 col-md-2">
+        <label for="shipmentStatus">Vận chuyển</label>
+        <select id="shipmentStatus" name="shipmentStatus" class="form-select adm-input-dark">
+            <option value="">Tất cả</option>
+            @foreach (var value in Enum.GetValues<ShipmentStatus>())
+            {
+                <option value="@value" selected="@(ViewBag.ShipmentStatus is ShipmentStatus current && current == value)">@value</option>
+            }
+        </select>
+    </div>
+    <div class="col-6 col-md-2">
+        <label for="from">Từ ngày</label>
+        <input id="from" name="from" type="date" value="@ViewBag.From" class="form-control adm-input-dark" />
+    </div>
+    <div class="col-6 col-md-2">
+        <label for="to">Đến ngày</label>
+        <input id="to" name="to" type="date" value="@ViewBag.To" class="form-control adm-input-dark" />
+    </div>
+    <div class="col-6 col-md-2">
+        <label for="sort">Sắp xếp</label>
+        <select id="sort" name="sort" class="form-select adm-input-dark">
+            <option value="">Mới nhất</option>
+            <option value="oldest" selected="@(ViewBag.Sort == "oldest")">Cũ nhất</option>
+            <option value="amount" selected="@(ViewBag.Sort == "amount")">Tổng tiền giảm dần</option>
+        </select>
+    </div>
+    <div class="col-12 col-md-auto align-self-end d-flex gap-2">
+        <button type="submit" class="adm-btn-atelier">Lọc</button>
+        <a asp-action="Index" class="adm-btn-outline">Đặt lại</a>
+    </div>
+</form>
 
 <!-- ORDERS TABLE -->
 @if (!Model.Any())
@@ -106,8 +123,8 @@ else
                                 </div>
                             </td>
                             <td>
-                                <div class="adm-text-contrast small fw-medium">@order.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")</div>
-                                <div class="text-muted font-monospace" style="font-size: 0.72rem;">@order.CreatedAt.ToLocalTime().ToString("HH:mm:ss")</div>
+                                <div class="adm-text-contrast small fw-medium">@AdminReportService.ToVietnamTime(order.CreatedAt).ToString("dd/MM/yyyy")</div>
+                                <div class="text-muted font-monospace" style="font-size: 0.72rem;">@AdminReportService.ToVietnamTime(order.CreatedAt).ToString("HH:mm:ss")</div>
                             </td>
                             <td>
                                 <div class="fw-bold adm-heading">@order.ReceiverName</div>
@@ -202,4 +219,28 @@ else
             </table>
         </div>
     </div>
+}
+
+
+@if (ViewBag.PageCount > 1)
+{
+    var routes = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+    foreach (var entry in ViewContext.HttpContext.Request.Query)
+    {
+        if (!entry.Key.Equals("page", StringComparison.OrdinalIgnoreCase))
+            routes[entry.Key] = entry.Value.ToString();
+    }
+
+    var page = (int)ViewBag.Page;
+    <nav class="d-flex align-items-center justify-content-center gap-3 mb-4" aria-label="Phân trang đơn hàng">
+        @if (page > 1)
+        {
+            <a asp-action="Index" asp-all-route-data="routes" asp-route-page="@(page - 1)" class="adm-btn-outline">Trang trước</a>
+        }
+        <span>Trang @(page) / @ViewBag.PageCount</span>
+        @if (page < ViewBag.PageCount)
+        {
+            <a asp-action="Index" asp-all-route-data="routes" asp-route-page="@(page + 1)" class="adm-btn-outline">Trang sau</a>
+        }
+    </nav>
 }

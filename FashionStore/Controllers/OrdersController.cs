@@ -86,7 +86,7 @@ public class OrdersController : Controller
                 ProductVariantId = variant.Id,
                 ProductId = variant.ProductId,
                 ProductName = variant.Product.Name,
-                ImageUrl = variant.Product.ImageUrl,
+                ImageUrl = ShowroomCatalog.FrontPhoto(variant.Product, variant.Color),
                 SKU = variant.SKU,
                 Size = variant.Size,
                 Color = variant.Color,
@@ -369,7 +369,7 @@ public class OrdersController : Controller
                     ProductVariantId = variant.Id,
                     ProductId = variant.ProductId,
                     ProductName = variant.Product.Name,
-                    ImageUrl = variant.Product.ImageUrl,
+                    ImageUrl = ShowroomCatalog.FrontPhoto(variant.Product, variant.Color),
                     SKU = variant.SKU,
                     Size = variant.Size,
                     Color = variant.Color,
@@ -408,6 +408,7 @@ public class OrdersController : Controller
             return Challenge();
 
         var orders = await _context.Orders
+            .Include(o => o.Items)
             .Where(o => o.UserId == userId)
             .OrderByDescending(o => o.CreatedAt)
             .AsNoTracking()
@@ -429,6 +430,9 @@ public class OrdersController : Controller
         // Chỉ lấy đơn hàng thuộc khách hàng đang đăng nhập
         var order = await _context.Orders
             .Include(o => o.Items)
+                .ThenInclude(i => i.ProductVariant)
+                    .ThenInclude(v => v.Product)
+            .Include(o => o.Shipments)
             .AsNoTracking()
             .FirstOrDefaultAsync(o => o.Id == id && o.UserId == userId);
 
@@ -445,6 +449,40 @@ public class OrdersController : Controller
         ViewBag.StatusHistories = histories;
 
         return View(order);
+    }
+
+    [HttpGet]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+    public async Task<IActionResult> TrackingLocation(int id, CancellationToken cancellationToken)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId))
+            return Challenge();
+
+        var shipment = await _context.Shipments.AsNoTracking()
+            .Where(s => s.OrderId == id && s.Order.UserId == userId)
+            .OrderByDescending(s => s.CreatedAt).ThenByDescending(s => s.Id)
+            .Select(s => new { s.Id, s.Status, OrderStatus = s.Order.Status })
+            .FirstOrDefaultAsync(cancellationToken);
+        if (shipment == null)
+            return NotFound();
+
+        var isTracking = shipment.Status == ShipmentStatus.InTransit && shipment.OrderStatus == OrderStatus.Shipping;
+        var location = isTracking
+            ? await _context.ShipmentLocations.AsNoTracking()
+                .Where(l => l.ShipmentId == shipment.Id &&
+                    l.Shipment.Status == ShipmentStatus.InTransit &&
+                    l.Shipment.Order.Status == OrderStatus.Shipping)
+                .OrderByDescending(l => l.RecordedAt).ThenByDescending(l => l.Id)
+                .Select(l => new
+                {
+                    l.Latitude, l.Longitude, l.Accuracy,
+                    RecordedAt = DateTime.SpecifyKind(l.RecordedAt, DateTimeKind.Utc)
+                })
+                .FirstOrDefaultAsync(cancellationToken)
+            : null;
+
+        return Json(new { status = shipment.Status.ToString(), isTracking, location });
     }
 
     // POST: /Orders/CancelOrder
