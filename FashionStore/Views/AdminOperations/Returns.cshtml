@@ -1,0 +1,60 @@
+@model List<FashionStore.Models.Entities.MerchandiseReturn>
+@using FashionStore.Models.Entities
+@using FashionStore.Services.Implementations
+@{
+    ViewData["Title"] = "Đổi trả";
+    string Label(ReturnState state) => state switch {
+        ReturnState.Requested => "Đã tiếp nhận", ReturnState.Approved => "Đã duyệt",
+        ReturnState.Rejected => "Đã từ chối", ReturnState.Received => "Đã nhận hàng",
+        ReturnState.Refunded => "Đã hoàn tiền", _ => state.ToString()
+    };
+}
+<header class="adm-dashboard-header mb-4"><h1>Đổi trả</h1></header>
+@if (ViewBag.OrderId is int orderId && Model.Count == 0)
+{
+    <form asp-action="RequestReturn" method="post" class="adm-filter-bar row g-3 mx-0 mb-4">
+        <input type="hidden" name="orderId" value="@orderId" />
+        <div class="col-md-5"><label for="reason">Lý do đổi trả</label><input id="reason" name="reason" maxlength="500" required class="form-control adm-input-dark" /></div>
+        <div class="col-md-5"><label for="evidence">Mô tả bằng chứng</label><input id="evidence" name="evidence" maxlength="500" class="form-control adm-input-dark" /></div>
+        <div class="col-md-auto align-self-end"><button class="adm-btn-atelier">Tiếp nhận</button></div>
+    </form>
+}
+@if (Model.Count == 0 && ViewBag.OrderId == null) { <p>Chưa có yêu cầu. Tiếp nhận đổi trả từ trang chi tiết đơn đã giao.</p> }
+@foreach (var row in Model)
+{
+    <section class="adm-card p-3 mb-3">
+        <h2 class="h5 adm-heading"><a asp-controller="AdminOrders" asp-action="Details" asp-route-id="@row.OrderId">@row.Order.OrderCode</a> · @Label(row.State)</h2>
+        <p>@row.Reason</p>
+        @if (!string.IsNullOrEmpty(row.Evidence)) { <p class="text-muted">@row.Evidence</p> }
+        @if (row.RefundAmount > 0) { <p>Đã hoàn @row.RefundAmount.ToString("N0") ₫</p> }
+        @if (row.State is ReturnState.Requested or ReturnState.Approved ||
+             row.State == ReturnState.Received && row.Order.PaymentStatus == FashionStore.Models.Enums.PaymentStatus.Paid)
+        {
+            <form asp-action="UpdateReturn" asp-route-id="@row.Id" method="post" class="d-flex flex-wrap gap-2 align-items-center mb-3">
+                <input name="note" aria-label="Ghi chú xử lý" placeholder="Ghi chú xử lý" maxlength="500" required class="form-control adm-input-dark w-auto" />
+                @if (row.State == ReturnState.Requested)
+                {
+                    <button name="state" value="Approved" class="adm-btn-atelier">Duyệt</button>
+                    <button name="state" value="Rejected" class="adm-btn-outline">Từ chối</button>
+                }
+                else if (row.State == ReturnState.Approved)
+                {
+                    <label><input type="checkbox" name="restock" value="true" /> Hàng đạt kiểm định, nhập lại kho</label>
+                    <button name="state" value="Received" class="adm-btn-atelier">Xác nhận đã nhận hàng</button>
+                }
+                else
+                {
+                    <button name="state" value="Refunded" class="adm-btn-atelier"
+                            onclick="return confirm('Bạn đã hoàn đủ tiền cho khách qua phương thức thanh toán thực tế?')">Xác nhận đã hoàn tiền</button>
+                }
+            </form>
+        }
+        <details><summary>Lịch sử xử lý</summary>
+        <ul class="mt-2">
+        @foreach (var item in row.Events.OrderBy(e => e.Id))
+        {
+            <li>@AdminReportService.ToVietnamTime(item.CreatedAt).ToString("dd/MM/yyyy HH:mm") · @Label(item.State) · @item.Note</li>
+        }
+        </ul></details>
+    </section>
+}

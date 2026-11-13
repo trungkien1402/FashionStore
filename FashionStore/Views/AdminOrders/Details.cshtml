@@ -58,6 +58,13 @@
     var histories = ViewBag.StatusHistories as List<OrderStatusHistory> ?? new List<OrderStatusHistory>();
 }
 
+@if ((User.IsInRole("Admin") || User.IsInRole("Manager")) && Model.Status is OrderStatus.Delivered or OrderStatus.Returned)
+{
+    <div class="mb-3">
+        <a asp-controller="AdminOperations" asp-action="Returns" asp-route-id="@Model.Id" class="adm-btn-outline">Xử lý đổi trả</a>
+    </div>
+}
+
 <!-- HEADER -->
 <div class="mb-4">
     <a asp-action="Index" class="adm-btn-outline py-1 px-3 mb-3 d-inline-flex" style="font-size: 0.8rem;">
@@ -230,7 +237,7 @@
 
                 <div class="col-md-6 d-flex align-items-center">
                     <!-- PAYMENT ACTION BUTTONS -->
-                    @if (Model.PaymentStatus == PaymentStatus.Pending)
+                    @if ((User.IsInRole("Admin") || User.IsInRole("Manager")) && Model.PaymentStatus is PaymentStatus.Pending or PaymentStatus.Failed)
                     {
                         <div class="d-flex flex-wrap gap-2 w-100">
                             <form asp-action="UpdatePaymentStatus" asp-route-id="@Model.Id" method="post" class="flex-grow-1"
@@ -252,7 +259,7 @@
                             </form>
                         </div>
                     }
-                    else if (Model.PaymentStatus == PaymentStatus.Paid && 
+                    else if ((User.IsInRole("Admin") || User.IsInRole("Manager")) && Model.PaymentStatus == PaymentStatus.Paid &&
                             (Model.Status == OrderStatus.Cancelled || Model.Status == OrderStatus.DeliveryFailed || Model.Status == OrderStatus.Returned))
                     {
                         <form asp-action="UpdatePaymentStatus" asp-route-id="@Model.Id" method="post" class="w-100"

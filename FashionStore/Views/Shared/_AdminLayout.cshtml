@@ -58,17 +58,65 @@
                 <span>Sản phẩm</span>
             </a>
 
-            <a asp-controller="AdminCategories" asp-action="Index"
-               class="adm-nav-link @(currentController == "AdminCategories" ? "active" : "")">
-                <i class="bi bi-tags"></i>
-                <span>Danh mục</span>
-            </a>
+            @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+            {
+                <a asp-controller="AdminCategories" asp-action="Index"
+                   class="adm-nav-link @(currentController == "AdminCategories" ? "active" : "")">
+                    <i class="bi bi-tags"></i>
+                    <span>Danh mục</span>
+                </a>
+            }
 
             <a asp-controller="AdminShipments" asp-action="Index"
                class="adm-nav-link @(currentController == "AdminShipments" ? "active" : "")">
                 <i class="bi bi-truck"></i>
                 <span>Vận chuyển</span>
             </a>
+
+            @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+            {
+                <div class="adm-nav-label">Kinh doanh</div>
+                <a asp-controller="AdminOperations" asp-action="Alerts" class="adm-nav-link">
+                    <i class="bi bi-bell"></i><span>Thông báo</span>
+                </a>
+                <a asp-controller="AdminOperations" asp-action="Featured" class="adm-nav-link">
+                    <i class="bi bi-star"></i><span>Sản phẩm nổi bật</span>
+                </a>
+                <a asp-controller="AdminOperations" asp-action="Reviews" class="adm-nav-link">
+                    <i class="bi bi-chat-square-text"></i><span>Đánh giá</span>
+                </a>
+                <a asp-controller="AdminOperations" asp-action="Import" class="adm-nav-link">
+                    <i class="bi bi-upload"></i><span>Nhập sản phẩm</span>
+                </a>
+                <a asp-controller="AdminOperations" asp-action="Inventory" class="adm-nav-link @(currentController == "AdminOperations" && ViewContext.RouteData.Values["action"]?.ToString() == "Inventory" ? "active" : "")">
+                    <i class="bi bi-boxes"></i><span>Kho hàng</span>
+                </a>
+                <a asp-controller="AdminOperations" asp-action="Customers" class="adm-nav-link @(currentController == "AdminOperations" && ViewContext.RouteData.Values["action"]?.ToString() == "Customers" ? "active" : "")">
+                    <i class="bi bi-people"></i><span>Khách hàng</span>
+                </a>
+                <a asp-controller="AdminOperations" asp-action="Returns" class="adm-nav-link @(currentController == "AdminOperations" && ViewContext.RouteData.Values["action"]?.ToString() == "Returns" ? "active" : "")">
+                    <i class="bi bi-arrow-return-left"></i><span>Đổi trả</span>
+                </a>
+                <a asp-controller="AdminOperations" asp-action="Promotions" class="adm-nav-link @(currentController == "AdminOperations" && ViewContext.RouteData.Values["action"]?.ToString() == "Promotions" ? "active" : "")">
+                    <i class="bi bi-ticket-perforated"></i><span>Khuyến mãi</span>
+                </a>
+                <a asp-controller="AdminOperations" asp-action="Analytics" class="adm-nav-link @(currentController == "AdminOperations" && ViewContext.RouteData.Values["action"]?.ToString() == "Analytics" ? "active" : "")">
+                    <i class="bi bi-bar-chart"></i><span>Phân tích</span>
+                </a>
+            }
+            @if (User.IsInRole("Admin"))
+            {
+                <div class="adm-nav-label">Quản trị</div>
+                <a asp-controller="AdminOperations" asp-action="Staff" class="adm-nav-link">
+                    <i class="bi bi-person-gear"></i><span>Nhân viên</span>
+                </a>
+                <a asp-controller="AdminOperations" asp-action="Settings" class="adm-nav-link @(currentController == "AdminOperations" && ViewContext.RouteData.Values["action"]?.ToString() == "Settings" ? "active" : "")">
+                    <i class="bi bi-gear"></i><span>Cài đặt</span>
+                </a>
+                <a asp-controller="AdminOperations" asp-action="Audit" class="adm-nav-link @(currentController == "AdminOperations" && ViewContext.RouteData.Values["action"]?.ToString() == "Audit" ? "active" : "")">
+                    <i class="bi bi-journal-text"></i><span>Nhật ký</span>
+                </a>
+            }
 
             @if (User.IsInRole("Shipper"))
             {

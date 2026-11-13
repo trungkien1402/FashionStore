@@ -451,6 +451,40 @@ public class OrdersController : Controller
         return View(order);
     }
 
+    [HttpGet]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+    public async Task<IActionResult> TrackingLocation(int id, CancellationToken cancellationToken)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId))
+            return Challenge();
+
+        var shipment = await _context.Shipments.AsNoTracking()
+            .Where(s => s.OrderId == id && s.Order.UserId == userId)
+            .OrderByDescending(s => s.CreatedAt).ThenByDescending(s => s.Id)
+            .Select(s => new { s.Id, s.Status, OrderStatus = s.Order.Status })
+            .FirstOrDefaultAsync(cancellationToken);
+        if (shipment == null)
+            return NotFound();
+
+        var isTracking = shipment.Status == ShipmentStatus.InTransit && shipment.OrderStatus == OrderStatus.Shipping;
+        var location = isTracking
+            ? await _context.ShipmentLocations.AsNoTracking()
+                .Where(l => l.ShipmentId == shipment.Id &&
+                    l.Shipment.Status == ShipmentStatus.InTransit &&
+                    l.Shipment.Order.Status == OrderStatus.Shipping)
+                .OrderByDescending(l => l.RecordedAt).ThenByDescending(l => l.Id)
+                .Select(l => new
+                {
+                    l.Latitude, l.Longitude, l.Accuracy,
+                    RecordedAt = DateTime.SpecifyKind(l.RecordedAt, DateTimeKind.Utc)
+                })
+                .FirstOrDefaultAsync(cancellationToken)
+            : null;
+
+        return Json(new { status = shipment.Status.ToString(), isTracking, location });
+    }
+
     // POST: /Orders/CancelOrder
     // Khách hàng tự hủy đơn khi đơn còn ở trạng thái Chờ xác nhận
     [HttpPost]

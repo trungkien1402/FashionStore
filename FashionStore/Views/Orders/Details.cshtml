@@ -628,7 +628,7 @@
 
                         @if (Model.Shipments != null && Model.Shipments.Any())
                         {
-                            var latestShipment = Model.Shipments.Last();
+                            var latestShipment = Model.Shipments.OrderByDescending(s => s.CreatedAt).ThenByDescending(s => s.Id).First();
                             <div class="hnmt-shipping-cell full-width shipment-info-cell">
                                 <div class="hnmt-shipping-cell-header">
                                     <i class="bi bi-mailbox2"></i>
@@ -641,6 +641,11 @@
                                     <span class="hnmt-shipment-state-badge">
                                         Trạng thái: <strong>@latestShipment.Status</strong>
                                     </span>
+                                </div>
+                                <div class="mt-3" data-order-tracking data-url="@Url.Action("TrackingLocation", "Orders", new { id = Model.Id })">
+                                    <p data-tracking-status role="status">Đang kiểm tra vị trí giao hàng…</p>
+                                    <a data-tracking-map hidden target="_blank" rel="noopener noreferrer">Mở vị trí trên bản đồ</a>
+                                    <p><small data-tracking-time></small></p>
                                 </div>
                             </div>
                         }
@@ -2157,3 +2162,5 @@ function copyOrderCode(code) {
     }
 }
 </script>
+
+<script src="~/js/order-tracking.js" asp-append-version="true" defer></script>

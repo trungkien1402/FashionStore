@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using FashionStore.Services.Implementations;
 using FashionStore.Data;
 using FashionStore.Models.Entities;
 using FashionStore.Models.ViewModels;
@@ -22,41 +24,75 @@ public class AdminProductsController : Controller
     }
 
     // GET: /AdminProducts
-    public async Task<IActionResult> Index(string? keyword, int? categoryId, bool? isActive)
+    public async Task<IActionResult> Index([FromQuery] AdminProductFilter filter)
     {
-        var query = _context.Products
-            .Include(p => p.Category)
-            .Include(p => p.Variants)
-            .AsNoTracking()
-            .AsQueryable();
-
-        if (!string.IsNullOrWhiteSpace(keyword))
+        const int pageSize = 24;
+        filter.Keyword = filter.Keyword?.Trim();
+        filter.Keyword = filter.Keyword?[..Math.Min(filter.Keyword.Length, 100)];
+        if (!ModelState.IsValid || filter.MinPrice > filter.MaxPrice)
         {
-            query = query.Where(p =>
-                p.Name.Contains(keyword) ||
-                p.Slug.Contains(keyword));
+            ModelState.AddModelError(string.Empty, "Kiểm tra lại các bộ lọc và khoảng giá.");
         }
 
-        if (categoryId.HasValue && categoryId.Value > 0)
+        var query = _context.Products.AsNoTracking();
+        if (!string.IsNullOrEmpty(filter.Keyword))
         {
-            query = query.Where(p => p.CategoryId == categoryId.Value);
+            var keyword = filter.Keyword;
+            query = query.Where(p => p.Name.Contains(keyword) || p.Slug.Contains(keyword) ||
+                p.Variants.Any(v => v.SKU.Contains(keyword)));
         }
 
-        if (isActive.HasValue)
+        if (filter.CategoryId.HasValue)
+            query = query.Where(p => p.CategoryId == filter.CategoryId);
+        if (filter.IsActive.HasValue)
+            query = query.Where(p => p.IsActive == filter.IsActive);
+        if (filter.MinPrice.HasValue)
+            query = query.Where(p => p.Price >= filter.MinPrice);
+        if (filter.MaxPrice.HasValue)
+            query = query.Where(p => p.Price <= filter.MaxPrice);
+        if (!string.IsNullOrWhiteSpace(filter.Size) || !string.IsNullOrWhiteSpace(filter.Color))
+            query = query.Where(p => p.Variants.Any(v => v.IsActive &&
+                (filter.Size == null || v.Size == filter.Size) &&
+                (filter.Color == null || v.Color == filter.Color)));
+
+        var rows = query.Select(p => new AdminProductRow
         {
-            query = query.Where(p => p.IsActive == isActive.Value);
-        }
+            Id = p.Id, Name = p.Name, Slug = p.Slug, ImageUrl = p.ImageUrl,
+            CategoryName = p.Category.Name, Price = p.Price, IsActive = p.IsActive,
+            CreatedAt = p.CreatedAt, VariantCount = p.Variants.Count,
+            TotalStock = p.Variants.Where(v => v.IsActive).Sum(v => (long?)v.StockQuantity) ?? 0
+        });
+        rows = filter.Stock switch
+        {
+            "out" => rows.Where(p => p.TotalStock == 0),
+            "low" => rows.Where(p => p.TotalStock > 0 && p.TotalStock <= 5),
+            "available" => rows.Where(p => p.TotalStock > 5),
+            _ => rows
+        };
 
-        var products = await query
-            .OrderByDescending(p => p.CreatedAt)
-            .ToListAsync();
+        if (!ModelState.IsValid)
+            rows = rows.Where(p => false);
 
-        ViewBag.Keyword = keyword;
-        ViewBag.CategoryId = categoryId;
-        ViewBag.Categories = await _context.Categories.AsNoTracking().OrderBy(c => c.Name).ToListAsync();
-        ViewBag.IsActive = isActive;
+        var count = await rows.CountAsync();
+        var pageCount = Math.Max(1, (int)Math.Ceiling(count / (double)pageSize));
+        filter.Page = Math.Clamp(filter.Page, 1, pageCount);
+        var ordered = filter.Sort switch
+        {
+            "price-asc" => rows.OrderBy(p => p.Price),
+            "price-desc" => rows.OrderByDescending(p => p.Price),
+            "name" => rows.OrderBy(p => p.Name),
+            "stock" => rows.OrderBy(p => p.TotalStock),
+            _ => rows.OrderByDescending(p => p.CreatedAt)
+        };
 
-        return View(products);
+        var products = await ordered.ThenBy(p => p.Id)
+            .Skip((filter.Page - 1) * pageSize).Take(pageSize).ToListAsync();
+        var variants = _context.ProductVariants.AsNoTracking().Where(v => v.IsActive);
+        return View(new AdminProductList(
+            filter, products, count, pageCount, await _context.Products.AnyAsync(),
+            await _context.Categories.AsNoTracking().OrderBy(c => c.Name).ToListAsync(),
+            await variants.Select(v => v.Size).Where(s => s != "").Distinct().OrderBy(s => s).ToListAsync(),
+            await variants.Select(v => v.Color).Where(c => c != "").Distinct().OrderBy(c => c).ToListAsync()));
     }
 
     // GET: /AdminProducts/Create
@@ -181,7 +217,10 @@ public class AdminProductsController : Controller
             product.Name = model.Name.Trim();
             product.Slug = await GenerateUniqueSlugAsync(model.Name, product.Id);
             product.Description = model.Description.Trim();
-            product.Price = model.Price;
+            if (product.Price != model.Price)
+            SalesRules.Audit(_context, User.FindFirstValue(ClaimTypes.NameIdentifier),
+                "ProductPrice", product.Id.ToString(), $"{product.Price} → {model.Price}");
+        product.Price = model.Price;
             product.CategoryId = model.CategoryId;
             product.IsActive = model.IsActive;
 

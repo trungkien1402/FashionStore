@@ -1,0 +1,28 @@
+@model FashionStore.Controllers.OperationsAnalytics
+@{
+    ViewData["Title"] = "Phân tích bán hàng";
+    var report = Model.Report;
+    var cancellationRate = report.TotalOrders == 0 ? 0m : (decimal)report.CancelledOrders / report.TotalOrders;
+}
+<header class="adm-dashboard-header mb-4"><div><h1>Phân tích bán hàng</h1><p class="adm-dashboard-period">@report.StartDate.ToString("dd/MM/yyyy") – @report.EndDate.ToString("dd/MM/yyyy")</p></div></header>
+<div class="row g-3 mb-4">
+    <div class="col-md-4"><div class="adm-card p-3"><h2 class="h6 adm-heading">Tỷ lệ hủy theo ngày đặt</h2><strong>@cancellationRate.ToString("P1")</strong></div></div>
+    <div class="col-md-4"><div class="adm-card p-3"><h2 class="h6 adm-heading">Hoàn tiền đã ghi nhận trong kỳ</h2><strong>@Model.Refunds.ToString("N0") ₫</strong></div></div>
+    <div class="col-md-4"><div class="adm-card p-3"><h2 class="h6 adm-heading">Đơn đã giao</h2><strong>@report.DeliveredOrders</strong></div></div>
+</div>
+<h2 class="h5 adm-heading">Size và màu bán chạy theo số lượng đã giao</h2>
+<div class="adm-card table-responsive p-0 mb-4"><table class="adm-table mb-0">
+<thead><tr><th>Size</th><th>Màu</th><th>Số lượng</th></tr></thead>
+<tbody>
+@foreach (var row in Model.Variants) { <tr><td>@row.Size</td><td>@row.Color</td><td>@row.Units</td></tr> }
+@if (Model.Variants.Count == 0) { <tr><td colspan="3">Chưa có dữ liệu.</td></tr> }
+</tbody>
+</table></div>
+<h2 class="h5 adm-heading">Lượt áp dụng mã theo ngày đặt</h2>
+<div class="adm-card table-responsive p-0"><table class="adm-table mb-0">
+<thead><tr><th>Mã</th><th>Lượt áp dụng</th><th>Giá trị giảm</th></tr></thead>
+<tbody>
+@foreach (var row in Model.Vouchers) { <tr><td>@row.Code</td><td>@row.Uses</td><td>@row.Discount.ToString("N0") ₫</td></tr> }
+@if (Model.Vouchers.Count == 0) { <tr><td colspan="3">Chưa có mã giảm giá.</td></tr> }
+</tbody>
+</table></div>
