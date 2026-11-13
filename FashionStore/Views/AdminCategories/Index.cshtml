@@ -1,4 +1,5 @@
 @model List<AdminCategoryListItemViewModel>
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment HostingEnvironment
 
 @{
     ViewData["Title"] = "Quản lý danh mục";
@@ -88,16 +89,20 @@ else
     <div id="admCatGrid" class="adm-lookbook-grid mb-4">
         @foreach (var item in Model)
         {
-            var hasImage = !string.IsNullOrWhiteSpace(item.RepresentativeImageUrl);
+            var coverPath = $"images/category-covers/{item.Category.Slug}.webp";
+            var imageUrl = HostingEnvironment.WebRootFileProvider.GetFileInfo(coverPath).Exists
+                ? Url.Content($"~/{coverPath}")
+                : item.RepresentativeImageUrl;
+            var hasImage = !string.IsNullOrWhiteSpace(imageUrl);
 
             <div class="adm-lookbook-card">
                 <div class="adm-lookbook-banner" style="position: relative; overflow: hidden; height: 140px; @(hasImage ? "background: #121216;" : "background: linear-gradient(135deg, rgba(179, 136, 47, 0.12) 0%, rgba(2, 132, 199, 0.08) 100%);")">
                     @if (hasImage)
                     {
-                        <img src="@item.RepresentativeImageUrl" alt="" loading="lazy"
-                             style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.82; transition: transform 0.4s ease;" 
+                        <img src="@imageUrl" alt="" loading="lazy"
+                             style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;" 
                              onerror="this.style.display='none'" />
-                        <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.65) 100%);"></div>
+                        <div style="position: absolute; inset: 0; background: linear-gradient(180deg, transparent 45%, rgba(0,0,0,0.42) 100%);"></div>
                     }
                     else
                     {

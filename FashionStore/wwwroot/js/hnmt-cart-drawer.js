@@ -553,6 +553,20 @@
         syncAllBadges();
         renderCartItems();
         serverCart('/Cart/GetMiniCart');
+
+        // Tự động mở giỏ hàng nếu URL yêu cầu (?openCart=true hoặc #openCart)
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('openCart') === 'true' || window.location.hash === '#openCart') {
+                setTimeout(() => {
+                    openDrawer();
+                    if (window.history && window.history.replaceState) {
+                        const newUrl = window.location.pathname;
+                        window.history.replaceState({}, document.title, newUrl);
+                    }
+                }, 300);
+            }
+        } catch (e) { }
     }
 
     // Public API

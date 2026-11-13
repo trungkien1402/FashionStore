@@ -37,8 +37,7 @@ public class CartController : Controller
     // GET: /Cart
     public IActionResult Index()
     {
-        var cart = GetCart();
-        return View(cart);
+        return Redirect("/?openCart=true");
     }
 
     // POST: /Cart/Add
