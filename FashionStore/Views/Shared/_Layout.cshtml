@@ -68,7 +68,7 @@
                     <li><a asp-controller="Home" asp-action="Index">TRANG CHỦ</a></li>
                     <li>
                         <a asp-controller="Home" asp-action="SizeGuide">
-                            HƯỚNG DẪN CHỌN SIZE
+                            BẢNG SIZE
                         </a>
                     </li>
                     <li><a asp-controller="Products" asp-action="Index">CỬA HÀNG</a></li>
@@ -81,11 +81,6 @@
                     <button type="button" class="urbn-nav-icon" id="hnmtNavSearchBtn" title="Tìm kiếm & Bộ lọc (Phím tắt /)" onclick="if(window.HNMTHomeFilter && (window.location.pathname === '/' || window.location.pathname.toLowerCase().indexOf('/home') !== -1)) { window.HNMTHomeFilter.open(); } else if(window.HNMTSpotlightSearch) { window.HNMTSpotlightSearch.open(); } else { document.getElementById('keywordInput')?.focus(); }">
                         <i class="bi bi-search"></i>
                     </button>
-
-                    <!-- Wishlist Heart Icon -->
-                    <a href="/Products" class="urbn-nav-icon" title="Yêu thích">
-                        <i class="bi bi-heart"></i>
-                    </a>
 
                     <!-- Cart Trigger -->
                     <button type="button" id="fsCartDrawerTrigger" class="urbn-nav-icon position-relative" title="Giỏ hàng">

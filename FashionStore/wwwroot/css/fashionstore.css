@@ -87,10 +87,10 @@ img {
     justify-self: center;
     display: flex;
     align-items: center;
-    gap: 36px;
+    gap: clamp(16px, 2.2vw, 36px);
     list-style: none;
     margin: 0;
-    padding: 0;
+    padding: 0 clamp(12px, 2vw, 32px) 0 0;
 }
 
 .urbn-nav-links a {
