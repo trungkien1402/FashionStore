@@ -37,8 +37,18 @@ public class AccountController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Register(RegisterViewModel model)
     {
+        var isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest" ||
+                     Request.Headers["Accept"].ToString().Contains("application/json");
+
         if (!ModelState.IsValid)
+        {
+            if (isAjax)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                return Json(new { success = false, message = string.Join(" ", errors) });
+            }
             return View(model);
+        }
 
         var user = new ApplicationUser
         {
@@ -60,6 +70,12 @@ public class AccountController : Controller
             {
                 await _userManager.DeleteAsync(user);
 
+                if (isAjax)
+                {
+                    var errors = roleResult.Errors.Select(e => e.Description).ToList();
+                    return Json(new { success = false, message = string.Join(" ", errors) });
+                }
+
                 foreach (var error in roleResult.Errors)
                     ModelState.AddModelError(string.Empty, error.Description);
 
@@ -69,7 +85,19 @@ public class AccountController : Controller
             await _signInManager.SignInAsync(user, isPersistent: false);
 
             TempData["Success"] = "Đăng ký tài khoản thành công!";
+
+            if (isAjax)
+            {
+                return Json(new { success = true, redirectUrl = Url.Action("Index", "Home") });
+            }
+
             return RedirectToAction("Index", "Home");
+        }
+
+        if (isAjax)
+        {
+            var errors = result.Errors.Select(e => e.Description).ToList();
+            return Json(new { success = false, message = string.Join(" ", errors) });
         }
 
         foreach (var error in result.Errors)
@@ -100,15 +128,28 @@ public class AccountController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login(LoginViewModel model)
     {
+        var isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest" ||
+                     Request.Headers["Accept"].ToString().Contains("application/json");
+
         if (!ModelState.IsValid)
+        {
+            if (isAjax)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                return Json(new { success = false, message = string.Join(" ", errors) });
+            }
             return View(model);
+        }
 
         var user = await _userManager.FindByEmailAsync(model.Email);
 
         if (user == null || !user.IsActive)
         {
-            ModelState.AddModelError(string.Empty,
-                "Email hoặc mật khẩu không chính xác.");
+            var msg = "Email hoặc mật khẩu không chính xác.";
+            if (isAjax)
+                return Json(new { success = false, message = msg });
+
+            ModelState.AddModelError(string.Empty, msg);
             return View(model);
         }
 
@@ -123,6 +164,14 @@ public class AccountController : Controller
         {
             TempData["Success"] = "Đăng nhập thành công!";
 
+            if (isAjax)
+            {
+                var redirectUrl = !string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl)
+                    ? model.ReturnUrl
+                    : Url.Action("Index", "Home");
+                return Json(new { success = true, redirectUrl });
+            }
+
             if (!string.IsNullOrEmpty(model.ReturnUrl) &&
                 Url.IsLocalUrl(model.ReturnUrl))
             {
@@ -132,16 +181,14 @@ public class AccountController : Controller
             return RedirectToAction("Index", "Home");
         }
 
-        if (result.IsLockedOut)
-        {
-            ModelState.AddModelError(string.Empty,
-                "Tài khoản tạm thời bị khóa. Vui lòng thử lại sau.");
-        }
-        else
-        {
-            ModelState.AddModelError(string.Empty,
-                "Email hoặc mật khẩu không chính xác.");
-        }
+        var failMsg = result.IsLockedOut
+            ? "Tài khoản tạm thời bị khóa. Vui lòng thử lại sau."
+            : "Email hoặc mật khẩu không chính xác.";
+
+        if (isAjax)
+            return Json(new { success = false, message = failMsg });
+
+        ModelState.AddModelError(string.Empty, failMsg);
 
         return View(model);
     }

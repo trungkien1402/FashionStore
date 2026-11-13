@@ -89,12 +89,13 @@
     }
     else
     {
-        <a asp-controller="Account"
-           asp-action="Login"
-           class="@btnClass fs-account-btn"
-           title="Đăng nhập tài khoản">
+        <button type="button"
+                class="@btnClass fs-account-btn hnmt-auth-trigger"
+                title="Đăng nhập / Đăng ký tài khoản"
+                data-auth-tab="login"
+                onclick="window.HNMTAuthModal && window.HNMTAuthModal.open('login')">
             <i class="bi bi-person"></i>
-        </a>
+        </button>
     }
 
 </div>

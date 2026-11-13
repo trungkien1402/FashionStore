@@ -480,6 +480,7 @@
         // 5. Tính toán FLIP cho Hero Image với chuyển động bay chậm rãi, điện ảnh
         if (heroImg && startRect) {
             heroImg.classList.remove('is-floating');
+            heroImg.classList.remove('is-pair-view');
             heroImg.src = snk.image;
             heroImg.alt = snk.model;
             heroImg.style.transition = 'none';
@@ -730,7 +731,45 @@
     }
 
     // --- Cập nhật dữ liệu thông số Tech Specs & Swatches (không làm gián đoạn FLIP) ---
+    function renderGallery(snk) {
+        const slider = $('#svStage')?.closest('.sv-slider-container');
+        const hero = $('#svHeroImg');
+        if (!slider || !hero) return;
+        slider.querySelector('.sv-gallery')?.remove();
+        if (!snk.pairImage) return;
+
+        const gallery = document.createElement('div');
+        gallery.className = 'sv-gallery';
+        gallery.setAttribute('role', 'group');
+        gallery.setAttribute('aria-label', 'Góc xem giày');
+        const views = [
+            { src: snk.image, label: 'Một chiếc' },
+            { src: snk.pairImage, label: 'Cả đôi' }
+        ];
+        const buttons = views.map((view, index) => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.setAttribute('aria-label', view.label);
+            button.setAttribute('aria-pressed', String(index === 0));
+            const image = document.createElement('img');
+            image.src = view.src;
+            image.alt = '';
+            button.append(image);
+            button.addEventListener('click', () => {
+                if (isAnimating || isTransitioning) return;
+                hero.src = view.src;
+                hero.alt = snk.model + ' — ' + view.label;
+                hero.classList.toggle('is-pair-view', index === 1);
+                buttons.forEach(other => other.setAttribute('aria-pressed', String(other === button)));
+            });
+            gallery.append(button);
+            return button;
+        });
+        slider.append(gallery);
+    }
+
     function updateSliderDataOnly(snk) {
+        renderGallery(snk);
         const colorwayName = $('#svColorwayName');
         const styleCode = $('#svStyleCode');
         const price = $('#svPrice');
@@ -792,6 +831,7 @@
             }
             if (heroImg) {
                 heroImg.classList.remove('is-floating');
+                heroImg.classList.remove('is-pair-view');
                 heroImg.src = snk.image;
                 heroImg.alt = snk.model;
                 heroImg.style.opacity = '1';
@@ -835,6 +875,7 @@
                     giantTitle.style.transform = 'scale(1)';
                 }
                 if (heroImg) {
+                    heroImg.classList.remove('is-pair-view');
                     heroImg.src = snk.image;
                     heroImg.alt = snk.model;
                     heroImg.style.opacity = '1';

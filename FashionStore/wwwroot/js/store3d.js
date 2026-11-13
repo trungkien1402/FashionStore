@@ -2084,6 +2084,11 @@
     window.HNMTChilePortal = {
         open: openPortal,
         close: closePortal,
-        getAudience: () => isPortalOpen ? showroomAudience : null
+        getAudience: () => isPortalOpen ? showroomAudience : null,
+        setAudience: (aud) => {
+            if (['women', 'girls', 'men', 'boy'].includes(aud)) {
+                showroomAudience = aud;
+            }
+        }
     };
 })();

@@ -1,10 +1,12 @@
 /* ===================================================================
-   HNMTSHOP ATELIER — UNIFIED SINGLE-FRAME LOOKBOOK AUTHENTICATION
-   (Edge-to-Edge Background, Translucent Charcoal Glass Form, Champagne Accents)
-   Applies to both Login and Register views with natural page scrolling
+   HNMTSHOP ATELIER — CONTEMPORARY MINIMALIST AUTHENTICATION
+   (Clean White Studio Card, Deep Ink Accents, Plus Jakarta Sans)
+   Harmonized with Homepage Filter & Center Dialog Architecture
    =================================================================== */
 
-/* Hide Global Header & Footer on Login & Register pages for complete cinematic immersion */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* Hide Global Header & Footer on Login & Register pages for clean focused immersion */
 .urbn-header,
 .urbn-footer-section,
 #fsCartDrawer,
@@ -13,21 +15,17 @@
 }
 
 :root {
-    --atl-bg-dark: #0a0a0c;
-    --atl-gold: #c6a35c;
-    --atl-gold-hover: #d8bd82;
-    --atl-gold-line: rgba(198, 163, 92, 0.35);
-    --atl-gold-glow: rgba(198, 163, 92, 0.2);
-    --atl-ink-light: #f5f2eb;
-    --atl-ink-dim: #c5bfb4;
-    --atl-ink-muted: #9c9588;
-    --atl-card-bg: rgba(13, 13, 18, 0.82);
-    --atl-card-border: rgba(198, 163, 92, 0.38);
-    --atl-input-bg: rgba(255, 255, 255, 0.05);
-    --atl-input-border: rgba(255, 255, 255, 0.16);
-    --atl-serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
-    --atl-sans: "Jost", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    --atl-ease: cubic-bezier(0.16, 0.84, 0.32, 1);
+    --at-font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --at-bg: #f8fafc;
+    --at-card-bg: #ffffff;
+    --at-border: #e2e8f0;
+    --at-border-focus: #0f172a;
+    --at-text-main: #0f172a;
+    --at-text-muted: #64748b;
+    --at-text-dim: #94a3b8;
+    --at-primary: #0f172a;
+    --at-primary-hover: #1e293b;
+    --at-ease: cubic-bezier(0.16, 0.84, 0.32, 1);
 }
 
 /* Box-sizing reset scoped */
@@ -40,248 +38,168 @@
     padding: 0;
 }
 
-/* 1. Fullscreen Single-Frame Container */
+/* 1. Fullscreen Minimal Studio Canvas */
 .at-login-page {
     position: relative;
     width: 100%;
     min-height: 100vh;
     overflow-x: hidden;
     overflow-y: auto;
-    background-color: var(--atl-bg-dark);
-    font-family: var(--atl-sans);
-    color: var(--atl-ink-light);
+    background: radial-gradient(100% 100% at 50% 0%, #ffffff 0%, #f1f5f9 100%);
+    background-color: var(--at-bg);
+    font-family: var(--at-font);
+    color: var(--at-text-main);
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: flex-end;
+    align-items: center;
+    padding: clamp(80px, 11vh, 110px) 20px 48px;
 }
 
-/* 2. Edge-to-Edge Continuous Background Layer (Runway Catwalk Option) */
-.at-bg-layer {
-    position: fixed;
-    inset: 0;
-    z-index: 1;
-    background-image: url('/images/lookbook-atelier-fullscreen.jpg');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: 20% center; /* Framing the male runway model and catwalk perfectly */
-    transition: transform 0.25s var(--atl-ease);
-    will-change: transform;
+/* 2. Permanently Remove Dark Runway Layers & Left Statement */
+.at-bg-layer,
+.at-bg-overlay,
+.at-bg-grain,
+.at-left-statement {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
 }
 
-/* Cinematic Atmospheric Vignette (Clear on runway action, shaded on right for form readability) */
-.at-bg-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 2;
-    background: linear-gradient(
-        90deg,
-        rgba(10, 10, 12, 0.2) 0%,
-        rgba(10, 10, 12, 0.1) 32%,
-        rgba(10, 10, 12, 0.45) 58%,
-        rgba(10, 10, 12, 0.8) 78%,
-        rgba(10, 10, 12, 0.94) 100%
-    );
-    pointer-events: none;
-}
-
-/* Subtle Film Grain Texture (Fixed) */
-.at-bg-grain {
-    position: fixed;
-    inset: 0;
-    z-index: 3;
-    background-image: radial-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 0);
-    background-size: 28px 28px;
-    opacity: 0.5;
-    pointer-events: none;
-}
-
-/* 3. Minimalist Top Bar */
+/* 3. Minimalist Clean Top Bar */
 .at-topbar {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    z-index: 25;
-    padding: clamp(16px, 2.8vw, 28px) clamp(20px, 4vw, 56px);
+    z-index: 50;
+    padding: clamp(14px, 2.4vw, 20px) clamp(20px, 4vw, 56px);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: linear-gradient(180deg, rgba(10, 10, 12, 0.75) 0%, transparent 100%);
-    backdrop-filter: blur(6px);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
 }
 
 .at-brand-link {
     display: inline-flex;
     align-items: center;
-    gap: 12px;
-    text-decoration: none;
-    color: var(--atl-ink-light);
+    gap: 10px;
+    text-decoration: none !important;
+    color: var(--at-text-main);
     transition: opacity 0.2s ease;
 }
 
 .at-brand-link:hover {
-    opacity: 0.88;
+    opacity: 0.8;
 }
 
 .at-diamond {
-    color: var(--atl-gold);
-    font-size: 1.25rem;
-    line-height: 1;
-    filter: drop-shadow(0 0 10px rgba(198, 163, 92, 0.65));
+    display: none !important;
 }
 
 .at-brand-text {
-    font-family: var(--atl-sans);
-    font-size: 0.88rem;
-    font-weight: 700;
-    letter-spacing: 0.36em;
+    font-family: var(--at-font);
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: #ffffff;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+    color: #0f172a;
 }
 
 .at-top-actions {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
 }
 
 .at-top-back {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    font-size: 0.76rem;
+    font-size: 0.82rem;
     font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--atl-ink-dim);
-    text-decoration: none;
-    padding: 7px 16px;
+    letter-spacing: 0.02em;
+    color: #475569;
+    text-decoration: none !important;
+    padding: 8px 18px;
     border-radius: 999px;
-    background: rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(8px);
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
     transition: all 0.2s ease;
 }
 
 .at-top-back:hover {
-    color: #ffffff;
-    border-color: var(--atl-gold);
-    background: rgba(198, 163, 92, 0.15);
+    color: #0f172a;
+    border-color: #cbd5e1;
+    background: #f8fafc;
+    text-decoration: none !important;
 }
 
 .at-top-action-btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-size: 0.76rem;
+    font-size: 0.82rem;
     font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--atl-gold);
-    text-decoration: none;
-    padding: 7px 18px;
+    letter-spacing: 0.04em;
+    color: #0f172a;
+    text-decoration: none !important;
+    padding: 8px 20px;
     border-radius: 999px;
-    border: 1px solid var(--atl-gold-line);
-    background: rgba(198, 163, 92, 0.08);
-    backdrop-filter: blur(8px);
-    transition: all 0.25s ease;
+    border: 1px solid #0f172a;
+    background: transparent;
+    transition: all 0.2s ease;
 }
 
 .at-top-action-btn:hover {
-    background: var(--atl-gold);
-    color: #0a0a0c;
-    box-shadow: 0 0 18px rgba(198, 163, 92, 0.4);
+    background: #0f172a;
+    color: #ffffff !important;
+    text-decoration: none !important;
 }
 
-/* 4. Left Side Editorial Statement (Positioned cleanly on dark runway floor) */
-.at-left-statement {
-    position: fixed;
-    bottom: clamp(32px, 5vh, 60px);
-    left: clamp(24px, 4vw, 56px);
-    z-index: 10;
-    max-width: 380px;
-    pointer-events: none;
-}
-
-.at-stmt-kicker {
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.34em;
-    text-transform: uppercase;
-    color: var(--atl-gold);
-    margin-bottom: 10px;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
-}
-
-.at-stmt-title {
-    font-family: var(--atl-serif);
-    font-size: clamp(2.2rem, 3.5vw, 3.4rem);
-    font-weight: 400;
-    line-height: 1.05;
-    color: #ffffff;
-    margin-bottom: 16px;
-    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.9);
-}
-
-.at-stmt-title em {
-    font-style: italic;
-    font-family: var(--atl-serif);
-    color: var(--atl-gold-hover);
-}
-
-.at-stmt-spec {
-    font-size: 0.74rem;
-    color: var(--atl-ink-dim);
-    letter-spacing: 0.08em;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
-    line-height: 1.4;
-}
-
-/* 5. Translucent Charcoal Form Container */
+/* 4. Minimal Centered Card Container */
 .at-form-container {
     position: relative;
     z-index: 10;
     width: 100%;
     max-width: 440px;
-    margin-right: clamp(24px, 6vw, 100px);
-    padding-top: clamp(80px, 10vh, 105px);
-    padding-bottom: clamp(40px, 6vh, 70px);
     display: flex;
     justify-content: center;
+    margin: 0 auto;
+    padding: 0;
 }
 
 .at-login-card {
     width: 100%;
-    background: var(--atl-card-bg);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border: 1px solid var(--atl-card-border);
-    border-radius: 20px;
-    padding: clamp(28px, 3.8vw, 38px) clamp(22px, 3.2vw, 32px);
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 24px;
+    padding: clamp(32px, 4.5vw, 42px) clamp(24px, 3.8vw, 36px);
     box-shadow: 
-        0 25px 60px rgba(0, 0, 0, 0.75),
-        0 0 28px rgba(198, 163, 92, 0.12),
-        inset 0 0 20px rgba(198, 163, 92, 0.04);
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        0 20px 45px -15px rgba(15, 23, 42, 0.08),
+        0 0 1px 1px rgba(0, 0, 0, 0.02);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
     position: relative;
 }
 
 .at-login-card:hover {
-    border-color: rgba(198, 163, 92, 0.55);
+    border-color: #cbd5e1;
     box-shadow: 
-        0 30px 70px rgba(0, 0, 0, 0.85),
-        0 0 35px rgba(198, 163, 92, 0.2),
-        inset 0 0 25px rgba(198, 163, 92, 0.06);
+        0 25px 55px -15px rgba(15, 23, 42, 0.12),
+        0 0 1px 1px rgba(0, 0, 0, 0.03);
 }
 
 /* Card Header */
 .at-card-kicker {
-    font-size: 0.68rem;
+    font-size: 0.72rem;
     font-weight: 700;
-    letter-spacing: 0.3em;
-    color: var(--atl-gold);
+    letter-spacing: 0.16em;
+    color: #94a3b8;
     text-transform: uppercase;
     margin-bottom: 6px;
     display: flex;
@@ -290,28 +208,29 @@
 }
 
 .at-card-title {
-    font-family: var(--atl-serif);
-    font-size: clamp(2rem, 3vw, 2.35rem);
-    font-weight: 500;
-    color: #ffffff;
-    line-height: 1.15;
+    font-family: var(--at-font);
+    font-size: clamp(1.85rem, 2.6vw, 2.15rem);
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.2;
     margin-bottom: 8px;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.025em;
 }
 
 .at-card-desc {
-    font-size: 0.84rem;
-    line-height: 1.5;
-    color: var(--atl-ink-dim);
-    margin-bottom: 22px;
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: #64748b;
+    margin-bottom: 24px;
+    font-weight: 400;
 }
 
-/* Luxury Social OAuth Grid */
+/* Luxury Social OAuth Grid (Clean Outline Minimal) */
 .at-social-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
-    margin-bottom: 20px;
+    margin-bottom: 22px;
 }
 
 .at-btn-social {
@@ -319,37 +238,38 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 10px 14px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(198, 163, 92, 0.25);
-    color: var(--atl-ink-light);
-    font-size: 0.78rem;
+    padding: 11px 16px;
+    border-radius: 12px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #0f172a;
+    font-size: 0.82rem;
     font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    text-transform: none;
+    letter-spacing: 0;
     cursor: pointer;
-    transition: all 0.25s var(--atl-ease);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    transition: all 0.2s var(--at-ease);
 }
 
 .at-btn-social:hover {
-    background: rgba(198, 163, 92, 0.12);
-    border-color: var(--atl-gold);
-    color: #ffffff;
+    background: #f8fafc;
+    border-color: #cbd5e1;
     transform: translateY(-1px);
 }
 
 .at-btn-social svg {
     width: 16px;
     height: 16px;
+    flex-shrink: 0;
 }
 
-/* Divider with Gold Diamond */
+/* Subtle Hairline Divider */
 .at-divider {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 20px;
+    gap: 14px;
+    margin-bottom: 22px;
 }
 
 .at-divider::before,
@@ -357,42 +277,43 @@
     content: "";
     flex: 1;
     height: 1px;
-    background: rgba(198, 163, 92, 0.2);
+    background: #e2e8f0;
 }
 
 .at-divider span {
-    font-size: 0.68rem;
-    letter-spacing: 0.2em;
-    color: var(--atl-gold);
-    text-transform: uppercase;
-    font-weight: 600;
+    font-size: 0.76rem;
+    letter-spacing: 0.04em;
+    color: #94a3b8;
+    text-transform: lowercase;
+    font-weight: 500;
 }
 
-/* Form Groups & Persistent Uppercase Labels */
+/* Form Groups & Clear High-Contrast Inputs */
 .at-form {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 18px;
 }
 
 .at-input-group {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 6px;
 }
 
 .at-input-label {
     display: block;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--atl-gold);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    color: #334155;
     margin-bottom: 2px;
 }
 
 .at-req {
     color: #ef4444;
+    font-weight: 700;
 }
 
 .at-input-box {
@@ -405,46 +326,50 @@
 .at-input-icon {
     position: absolute;
     left: 14px;
-    color: var(--atl-ink-muted);
+    color: #94a3b8;
     font-size: 1.05rem;
     pointer-events: none;
     transition: color 0.2s ease;
+}
+
+.at-input-box:focus-within .at-input-icon {
+    color: #0f172a;
 }
 
 .at-input-field {
     width: 100%;
     height: 48px;
     padding: 0 14px 0 42px;
-    font-family: var(--atl-sans);
+    font-family: var(--at-font);
     font-size: 0.92rem;
-    color: #ffffff;
-    background: var(--atl-input-bg);
-    border: 1px solid var(--atl-input-border);
-    border-radius: 8px;
+    color: #0f172a;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
     outline: none;
-    transition: all 0.25s ease;
+    transition: all 0.2s ease;
 }
 
 .at-input-field::placeholder {
-    color: rgba(255, 255, 255, 0.35);
+    color: #94a3b8;
     font-size: 0.88rem;
 }
 
 .at-input-field:focus {
-    border-color: var(--atl-gold);
-    background: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 0 0 3px rgba(198, 163, 92, 0.25);
+    border-color: #0f172a;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.08);
 }
 
-/* FIX: Chrome/Edge Autofill ugly light blue box in dark mode */
+/* Autofill styling */
 .at-input-field:-webkit-autofill,
 .at-input-field:-webkit-autofill:hover,
 .at-input-field:-webkit-autofill:focus,
 .at-input-field:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 1000px #13131a inset !important;
-    -webkit-text-fill-color: #f5f2eb !important;
-    caret-color: #f5f2eb !important;
-    border-color: var(--atl-gold) !important;
+    -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+    -webkit-text-fill-color: #0f172a !important;
+    caret-color: #0f172a !important;
+    border-color: #0f172a !important;
     transition: background-color 5000s ease-in-out 0s;
 }
 
@@ -459,7 +384,7 @@
     transform: translateY(-50%);
     background: transparent;
     border: none;
-    color: var(--atl-ink-muted);
+    color: #94a3b8;
     padding: 6px;
     cursor: pointer;
     display: flex;
@@ -470,10 +395,10 @@
 }
 
 .at-password-toggle:hover {
-    color: var(--atl-gold);
+    color: #0f172a;
 }
 
-/* Realtime Password Strength Meter */
+/* Realtime Password Strength Meter (Register View) */
 .at-strength-container {
     margin-top: 6px;
     display: flex;
@@ -485,12 +410,12 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 6px;
-    height: 3px;
+    height: 4px;
 }
 
 .at-strength-bar {
     height: 100%;
-    background: rgba(255, 255, 255, 0.1);
+    background: #e2e8f0;
     border-radius: 2px;
     transition: background-color 0.3s ease;
 }
@@ -499,18 +424,18 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 0.72rem;
-    letter-spacing: 0.05em;
+    font-size: 0.74rem;
+    letter-spacing: 0.02em;
 }
 
 .at-strength-status {
-    color: var(--atl-ink-dim);
+    color: #475569;
     font-weight: 600;
 }
 
 .at-strength-rules {
     font-size: 0.74rem;
-    color: var(--atl-ink-muted);
+    color: #64748b;
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
@@ -525,13 +450,14 @@
 }
 
 .at-strength-rule.met {
-    color: var(--atl-gold-hover);
+    color: #059669;
 }
 
 .at-input-error {
-    font-size: 0.74rem;
-    color: #f87171;
+    font-size: 0.76rem;
+    color: #ef4444;
     margin-top: 2px;
+    font-weight: 500;
 }
 
 /* Options Row: Remember Me & Forgot Password */
@@ -540,7 +466,7 @@
     align-items: center;
     justify-content: space-between;
     margin-top: -2px;
-    font-size: 0.82rem;
+    font-size: 0.84rem;
 }
 
 .at-checkbox-label {
@@ -549,13 +475,14 @@
     gap: 8px;
     cursor: pointer;
     user-select: none;
-    color: var(--atl-ink-dim);
+    color: #475569;
+    font-weight: 500;
 }
 
 .at-checkbox-input {
     width: 16px;
     height: 16px;
-    accent-color: var(--atl-gold);
+    accent-color: #0f172a;
     cursor: pointer;
     border-radius: 4px;
 }
@@ -563,72 +490,73 @@
 .at-forgot-btn {
     background: transparent;
     border: none;
-    color: var(--atl-gold);
-    font-size: 0.82rem;
+    color: #475569;
+    font-size: 0.84rem;
+    font-weight: 500;
     cursor: pointer;
-    text-decoration: underline;
-    text-underline-offset: 3px;
+    text-decoration: none;
     transition: color 0.2s ease;
 }
 
 .at-forgot-btn:hover {
-    color: var(--atl-gold-hover);
+    color: #0f172a;
+    text-decoration: underline;
 }
 
-/* Champagne CTA Button */
+/* Modern Deep Black CTA Button (Matching Modal & Filter CTA) */
 .at-btn-submit {
     width: 100%;
     height: 50px;
-    margin-top: 6px;
-    background: linear-gradient(135deg, #c6a35c 0%, #b3882f 100%);
-    color: #0a0a0c !important;
-    border: 1px solid rgba(198, 163, 92, 0.4);
-    border-radius: 8px;
-    font-family: var(--atl-sans);
-    font-size: 0.86rem;
+    margin-top: 8px;
+    background: #0f172a;
+    color: #ffffff !important;
+    border: none;
+    border-radius: 12px;
+    font-family: var(--at-font);
+    font-size: 0.92rem;
     font-weight: 700;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    box-shadow: 0 4px 16px rgba(198, 163, 92, 0.3);
-    transition: all 0.25s var(--atl-ease);
+    gap: 10px;
+    box-shadow: 0 10px 24px -6px rgba(15, 23, 42, 0.25);
+    transition: all 0.2s var(--at-ease);
 }
 
 .at-btn-submit:hover {
-    background: linear-gradient(135deg, #d8bd82 0%, #c6a35c 100%);
+    background: #1e293b;
     transform: translateY(-1px);
-    box-shadow: 0 6px 22px rgba(198, 163, 92, 0.45);
+    box-shadow: 0 14px 28px -6px rgba(15, 23, 42, 0.35);
 }
 
 .at-btn-submit:active {
-    transform: translateY(1px);
+    transform: translateY(0);
 }
 
 /* Card Footer: Navigation Link */
 .at-card-footer {
-    margin-top: 20px;
+    margin-top: 24px;
     text-align: center;
-    padding-top: 16px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    font-size: 0.82rem;
-    color: var(--atl-ink-muted);
+    padding-top: 20px;
+    border-top: 1px solid #f1f5f9;
+    font-size: 0.86rem;
+    color: #64748b;
 }
 
 .at-footer-link {
-    color: var(--atl-gold);
+    color: #0f172a;
     font-weight: 700;
-    text-decoration: none;
+    text-decoration: none !important;
     margin-left: 6px;
     transition: color 0.2s ease;
 }
 
 .at-footer-link:hover {
-    color: var(--atl-gold-hover);
-    text-decoration: underline;
+    color: #1e293b;
+    text-decoration: underline !important;
 }
 
 /* Security Footnote */
@@ -636,27 +564,29 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    margin-top: 18px;
-    font-size: 0.68rem;
-    letter-spacing: 0.18em;
-    color: var(--atl-ink-muted);
-    text-transform: uppercase;
+    gap: 6px;
+    margin-top: 20px;
+    font-size: 0.74rem;
+    letter-spacing: 0.02em;
+    color: #94a3b8;
+    text-transform: none;
 }
 
 .at-security-note i {
-    color: var(--atl-gold);
+    color: #10b981;
+    font-size: 0.88rem;
 }
 
 /* Validation Alert */
 .at-alert-danger {
-    background: rgba(220, 38, 38, 0.2);
-    border: 1px solid rgba(248, 113, 113, 0.4);
-    color: #fca5a5;
-    padding: 10px 14px;
-    border-radius: 8px;
-    font-size: 0.82rem;
-    margin-bottom: 16px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 0.84rem;
+    margin-bottom: 18px;
+    font-weight: 500;
 }
 
 .at-alert-danger ul {
@@ -665,19 +595,20 @@
     margin: 0;
 }
 
-/* Interactive Forgot Password Modal in Atelier Glass */
+/* Interactive Forgot Password Modal in Contemporary Clean White */
 .at-modal-backdrop {
     position: fixed;
     inset: 0;
     z-index: 2000;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(16px);
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     display: none;
     align-items: center;
     justify-content: center;
     padding: 20px;
     opacity: 0;
-    transition: opacity 0.3s var(--atl-ease);
+    transition: opacity 0.25s var(--at-ease);
 }
 
 .at-modal-backdrop.is-active {
@@ -688,14 +619,14 @@
 .at-modal-box {
     width: 100%;
     max-width: 440px;
-    background: rgba(13, 13, 18, 0.95);
-    border: 1px solid var(--atl-gold-line);
-    border-radius: 18px;
-    padding: 34px 30px;
-    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 30px rgba(198, 163, 92, 0.18);
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 24px;
+    padding: 36px 32px;
+    box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.25);
     position: relative;
-    transform: scale(0.95);
-    transition: transform 0.3s var(--atl-ease);
+    transform: scale(0.96);
+    transition: transform 0.25s var(--at-ease);
 }
 
 .at-modal-backdrop.is-active .at-modal-box {
@@ -706,79 +637,52 @@
     position: absolute;
     top: 18px;
     right: 18px;
-    background: transparent;
+    background: #f1f5f9;
     border: none;
-    color: var(--atl-ink-dim);
-    font-size: 20px;
+    color: #64748b;
+    font-size: 16px;
     cursor: pointer;
     line-height: 1;
-    padding: 4px;
-    border-radius: 4px;
-    transition: color 0.2s;
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
 }
 
 .at-modal-close:hover {
-    color: var(--atl-gold);
+    background: #e2e8f0;
+    color: #0f172a;
 }
 
-/* ===================================================================
-   MOBILE & RESPONSIVE BREAKPOINTS (390px, 768px, 1024px)
-   =================================================================== */
-@media (max-width: 1200px) {
-    .at-left-statement {
-        left: clamp(320px, 28vw, 400px);
-    }
-}
-
-@media (max-width: 1024px) {
-    .at-left-statement {
-        display: none !important;
-    }
-
-    .at-login-page {
-        justify-content: flex-start;
-        align-items: center;
-    }
-
-    .at-form-container {
-        margin-right: 0;
-        max-width: 430px;
-        padding-top: 85px;
-        padding-bottom: 40px;
-    }
-}
-
+/* Responsive Breakpoints */
 @media (max-width: 640px) {
     .at-topbar {
-        padding: 16px 20px;
+        padding: 14px 20px;
     }
 
     .at-brand-text {
-        font-size: 0.8rem;
-        letter-spacing: 0.25em;
+        font-size: 0.92rem;
+        letter-spacing: 0.12em;
     }
 
     .at-top-back span {
         display: none;
     }
 
-    .at-bg-layer {
-        background-position: 22% center;
-    }
-
-    .at-form-container {
-        max-width: calc(100% - 32px);
-        padding-top: 75px;
-        padding-bottom: 30px;
+    .at-login-page {
+        padding: 85px 16px 32px;
     }
 
     .at-login-card {
         padding: 28px 20px 24px;
-        border-radius: 16px;
+        border-radius: 20px;
     }
 
     .at-card-title {
-        font-size: 1.85rem;
+        font-size: 1.75rem;
     }
 
     .at-social-grid {
@@ -786,11 +690,308 @@
     }
 }
 
-/* Reduced Motion */
+/* Accessibility: Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
-    .at-bg-layer,
-    .at-btn-submit {
+    .at-btn-submit,
+    .at-btn-social,
+    .at-modal-box {
         transition: none !important;
         transform: none !important;
     }
+}
+
+/* Luxury Elevated Field styling matching the modal */
+.hnmt-elevated-field {
+    position: relative;
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 8px 16px 7px 16px;
+    margin-bottom: 6px;
+    transition: all 0.2s cubic-bezier(0.16, 0.84, 0.32, 1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    cursor: text;
+}
+
+.hnmt-elevated-field:focus-within {
+    background: #ffffff;
+    border-color: #0f172a;
+    box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.06);
+    transform: translateY(-1px);
+}
+
+.hnmt-field-label {
+    display: block;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: #64748b;
+    line-height: 1;
+    margin-bottom: 4px;
+    pointer-events: none;
+    transition: color 0.2s ease;
+}
+
+.hnmt-elevated-field:focus-within .hnmt-field-label {
+    color: #0f172a;
+    font-weight: 800;
+}
+
+.hnmt-field-body-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.hnmt-field-input {
+    width: 100%;
+    border: none !important;
+    background: transparent !important;
+    outline: none !important;
+    font-size: 14.5px;
+    font-weight: 600;
+    color: #0f172a;
+    font-family: inherit;
+    padding: 0 !important;
+    margin: 0 !important;
+    line-height: 1.3;
+    box-shadow: none !important;
+}
+
+.hnmt-field-input::placeholder {
+    color: #94a3b8;
+    font-weight: 400;
+    font-size: 13.5px;
+}
+
+.hnmt-field-input:-webkit-autofill,
+.hnmt-field-input:-webkit-autofill:hover,
+.hnmt-field-input:-webkit-autofill:focus,
+.hnmt-field-input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+    -webkit-text-fill-color: #0f172a !important;
+    caret-color: #0f172a !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+.hnmt-field-eye-btn {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 4px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+}
+
+.hnmt-field-eye-btn:hover {
+    color: #0f172a;
+}
+
+/* Filter Style External Labels & Input Pills */
+.hnmt-form-group {
+    margin-bottom: 16px;
+    width: 100%;
+}
+
+.hnmt-group-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #0f172a;
+    margin-bottom: 7px;
+    text-align: left;
+    cursor: pointer;
+    line-height: 1.2;
+}
+
+.hnmt-input-pill {
+    position: relative;
+    width: 100%;
+    height: 48px;
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s cubic-bezier(0.16, 0.84, 0.32, 1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+    cursor: text;
+}
+
+.hnmt-input-pill:hover {
+    border-color: #cbd5e1;
+    background: #fafafa;
+}
+
+.hnmt-input-pill:focus-within {
+    border-color: #0f172a !important;
+    background: #ffffff !important;
+    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.08) !important;
+    transform: translateY(-1px);
+}
+
+.hnmt-input-control {
+    width: 100%;
+    flex: 1;
+    height: 100%;
+    border: none !important;
+    background: transparent !important;
+    outline: none !important;
+    font-size: 14px;
+    font-weight: 500;
+    color: #0f172a;
+    font-family: inherit;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    cursor: text;
+}
+
+.hnmt-input-control::placeholder {
+    color: #94a3b8;
+    font-weight: 400;
+    font-size: 13.5px;
+}
+
+.hnmt-input-control:-webkit-autofill,
+.hnmt-input-control:-webkit-autofill:hover,
+.hnmt-input-control:-webkit-autofill:focus,
+.hnmt-input-control:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+    -webkit-text-fill-color: #0f172a !important;
+    caret-color: #0f172a !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+.hnmt-eye-toggle-btn {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 4px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+    flex-shrink: 0;
+}
+
+.hnmt-eye-toggle-btn:hover {
+    color: #0f172a;
+}
+
+/* Minimalist Pure Input Wrap & Button */
+.hnmt-pure-input-wrap {
+    position: relative;
+    width: 100%;
+    height: 48px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    transition: all 0.2s ease;
+    cursor: text;
+}
+
+.hnmt-pure-input-wrap:hover {
+    border-color: #cbd5e1;
+}
+
+.hnmt-pure-input-wrap:focus-within {
+    border-color: #0f172a !important;
+    box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.08) !important;
+}
+
+.hnmt-pure-input {
+    width: 100%;
+    flex: 1;
+    height: 100%;
+    border: none !important;
+    background: transparent !important;
+    outline: none !important;
+    font-size: 14px;
+    font-weight: 400;
+    color: #0f172a;
+    font-family: inherit;
+    padding: 0 !important;
+    margin: 0 !important;
+    cursor: text;
+}
+
+.hnmt-pure-input::placeholder {
+    color: #9ca3af;
+    font-weight: 400;
+    font-size: 14px;
+}
+
+.hnmt-pure-input:-webkit-autofill,
+.hnmt-pure-input:-webkit-autofill:hover,
+.hnmt-pure-input:-webkit-autofill:focus,
+.hnmt-pure-input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+    -webkit-text-fill-color: #0f172a !important;
+    caret-color: #0f172a !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+.hnmt-pure-eye-btn {
+    background: transparent;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 4px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+    flex-shrink: 0;
+}
+
+.hnmt-pure-eye-btn:hover {
+    color: #0f172a;
+}
+
+.hnmt-pure-submit-btn {
+    width: 100%;
+    height: 48px;
+    background: #0f172a;
+    color: #ffffff !important;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    margin-top: 4px;
+}
+
+.hnmt-pure-submit-btn:hover {
+    background: #1e293b;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+}
+
+.hnmt-pure-submit-btn:active {
+    transform: translateY(0);
 }

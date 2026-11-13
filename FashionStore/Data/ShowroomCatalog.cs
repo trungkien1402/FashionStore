@@ -10,7 +10,7 @@ public static class ShowroomCatalog
 {
     public static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
-    private record Photos(string Front, string? Side, string? Back);
+    private record Photos(string Front, string? Side, string? Back, string? Pair = null);
     private record Collection(string Id, string Title, int Order);
     private record Metadata(string[][] Colors, Photos[] Photos, string[] Sizes, JsonObject Details, Collection? Collection);
     private record Entry(string Audience, string Kind, string Slug, string Name, string Description,
@@ -56,15 +56,34 @@ public static class ShowroomCatalog
 
         await using var transaction = await db.Database.BeginTransactionAsync(IsolationLevel.Serializable);
         var productSlugs = (await db.Products.Select(p => p.Slug).ToListAsync()).ToHashSet(StringComparer.OrdinalIgnoreCase);
-        var exclusiveSlugs = entries.Where(entry => IsLookbookOnly(entry.Metadata)).Select(entry => entry.Slug).ToArray();
-        var existingExclusiveProducts = await db.Products.Where(product =>
-            exclusiveSlugs.Contains(product.Slug) && product.ShowroomMetadata != null).ToListAsync();
-        foreach (var product in existingExclusiveProducts)
+        var metadataUpdates = entries.Where(entry => IsLookbookOnly(entry.Metadata) ||
+                (entry.Kind == "giay" && !string.IsNullOrWhiteSpace(entry.Metadata.Photos[0].Pair)))
+            .ToDictionary(entry => entry.Slug, StringComparer.OrdinalIgnoreCase);
+        var updateSlugs = metadataUpdates.Keys.ToArray();
+        var existingProducts = await db.Products.Where(product =>
+            updateSlugs.Contains(product.Slug) && product.ShowroomMetadata != null).ToListAsync();
+        foreach (var product in existingProducts)
         {
             var metadata = JsonSerializer.Deserialize<Metadata>(product.ShowroomMetadata!, JsonOptions);
-            if (metadata != null && !IsLookbookOnly(metadata))
+            if (metadata == null) continue;
+
+            var entry = metadataUpdates[product.Slug];
+            var changed = false;
+            if (IsLookbookOnly(entry.Metadata) && !IsLookbookOnly(metadata))
             {
                 metadata.Details["lookbookOnly"] = true;
+                changed = true;
+            }
+
+            var pair = entry.Metadata.Photos[0].Pair;
+            if (product.ShowroomKind == "giay" && !string.IsNullOrWhiteSpace(pair) && metadata.Photos[0].Pair != pair)
+            {
+                metadata.Photos[0] = metadata.Photos[0] with { Pair = pair };
+                changed = true;
+            }
+
+            if (changed)
+            {
                 product.ShowroomMetadata = JsonSerializer.Serialize(metadata, JsonOptions);
             }
         }
@@ -190,6 +209,7 @@ public static class ShowroomCatalog
             item["id"] = product.Slug;
             item["name"] = product.Name;
             item["image"] = product.ImageUrl;
+            item["pairImage"] = metadata.Photos[0].Pair;
             item["price"] = product.Price;
             item["colorName"] = metadata.Colors[0][0];
         }

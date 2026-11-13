@@ -137,6 +137,661 @@
         }
     };
 
+    var NEW_LOOKS = {
+    "noir": [
+        {
+            "id": "noir-woman-1",
+            "name": "Chrome Motion",
+            "img": "/images/lookbook/cut/noir-woman-1.webp",
+            "pins": [
+                {
+                    "top": "31%",
+                    "left": "50%",
+                    "itemIndex": 0
+                },
+                {
+                    "top": "62%",
+                    "left": "52%",
+                    "itemIndex": 1
+                },
+                {
+                    "top": "94%",
+                    "left": "52%",
+                    "itemIndex": 2
+                }
+            ],
+            "items": [
+                {
+                    "id": "noir-woman-1-top",
+                    "cat": "Áo",
+                    "name": "Black Asymmetric Zip Moto Jacket",
+                    "price": 920000,
+                    "image": "/images/lookbook/thumb/noir-woman-1-top.webp",
+                    "sizes": [
+                        "XS",
+                        "S",
+                        "M",
+                        "L"
+                    ],
+                    "size": "S",
+                    "color": "Đen",
+                    "dot": "#29282b"
+                },
+                {
+                    "id": "noir-woman-1-pant",
+                    "cat": "Quần",
+                    "name": "Charcoal Curved Cargo Trousers",
+                    "price": 720000,
+                    "image": "/images/lookbook/thumb/noir-woman-1-pant.webp",
+                    "sizes": [
+                        "25",
+                        "26",
+                        "27",
+                        "28"
+                    ],
+                    "size": "26",
+                    "color": "Xám than",
+                    "dot": "#45434a"
+                },
+                {
+                    "id": "noir-woman-1-shoe",
+                    "cat": "Giày",
+                    "name": "Black Silver-Buckle Ankle Boots",
+                    "price": 1320000,
+                    "image": "/images/lookbook/thumb/noir-woman-1-shoe.webp",
+                    "sizes": [
+                        "36",
+                        "37",
+                        "38",
+                        "39"
+                    ],
+                    "size": "37",
+                    "color": "Đen",
+                    "dot": "#29282b"
+                }
+            ]
+        },
+        {
+            "id": "noir-woman-2",
+            "name": "Velvet Static",
+            "img": "/images/lookbook/cut/noir-woman-2.webp",
+            "pins": [
+                {
+                    "top": "31%",
+                    "left": "50%",
+                    "itemIndex": 0
+                },
+                {
+                    "top": "62%",
+                    "left": "52%",
+                    "itemIndex": 1
+                },
+                {
+                    "top": "94%",
+                    "left": "52%",
+                    "itemIndex": 2
+                }
+            ],
+            "items": [
+                {
+                    "id": "noir-woman-2-top",
+                    "cat": "Áo",
+                    "name": "Burgundy Velvet Corset-Seam Blazer",
+                    "price": 950000,
+                    "image": "/images/lookbook/thumb/noir-woman-2-top.webp",
+                    "sizes": [
+                        "XS",
+                        "S",
+                        "M",
+                        "L"
+                    ],
+                    "size": "S",
+                    "color": "Đỏ burgundy",
+                    "dot": "#693440"
+                },
+                {
+                    "id": "noir-woman-2-pant",
+                    "cat": "Quần",
+                    "name": "Black Wide Pleated Trousers",
+                    "price": 750000,
+                    "image": "/images/lookbook/thumb/noir-woman-2-pant.webp",
+                    "sizes": [
+                        "25",
+                        "26",
+                        "27",
+                        "28"
+                    ],
+                    "size": "26",
+                    "color": "Đen",
+                    "dot": "#29282b"
+                },
+                {
+                    "id": "noir-woman-2-shoe",
+                    "cat": "Giày",
+                    "name": "Oxblood Pointed Pumps",
+                    "price": 1350000,
+                    "image": "/images/lookbook/thumb/noir-woman-2-shoe.webp",
+                    "sizes": [
+                        "36",
+                        "37",
+                        "38",
+                        "39"
+                    ],
+                    "size": "37",
+                    "color": "Đỏ rượu",
+                    "dot": "#622e38"
+                }
+            ]
+        },
+        {
+            "id": "noir-woman-3",
+            "name": "Night Circuit",
+            "img": "/images/lookbook/cut/noir-woman-3.webp",
+            "pins": [
+                {
+                    "top": "31%",
+                    "left": "50%",
+                    "itemIndex": 0
+                },
+                {
+                    "top": "62%",
+                    "left": "52%",
+                    "itemIndex": 1
+                },
+                {
+                    "top": "94%",
+                    "left": "52%",
+                    "itemIndex": 2
+                }
+            ],
+            "items": [
+                {
+                    "id": "noir-woman-3-top",
+                    "cat": "Áo",
+                    "name": "Silver Cropped Technical Windbreaker",
+                    "price": 980000,
+                    "image": "/images/lookbook/thumb/noir-woman-3-top.webp",
+                    "sizes": [
+                        "XS",
+                        "S",
+                        "M",
+                        "L"
+                    ],
+                    "size": "S",
+                    "color": "Bạc",
+                    "dot": "#a7abb1"
+                },
+                {
+                    "id": "noir-woman-3-pant",
+                    "cat": "Quần",
+                    "name": "Black Ripstop Parachute Trousers",
+                    "price": 780000,
+                    "image": "/images/lookbook/thumb/noir-woman-3-pant.webp",
+                    "sizes": [
+                        "25",
+                        "26",
+                        "27",
+                        "28"
+                    ],
+                    "size": "26",
+                    "color": "Đen",
+                    "dot": "#29282b"
+                },
+                {
+                    "id": "noir-woman-3-shoe",
+                    "cat": "Giày",
+                    "name": "Silver And Black Technical Sneakers",
+                    "price": 1380000,
+                    "image": "/images/lookbook/thumb/noir-woman-3-shoe.webp",
+                    "sizes": [
+                        "36",
+                        "37",
+                        "38",
+                        "39"
+                    ],
+                    "size": "37",
+                    "color": "Bạc",
+                    "dot": "#a7abb1"
+                }
+            ]
+        },
+        {
+            "id": "noir-woman-4",
+            "name": "Ink Structure",
+            "img": "/images/lookbook/cut/noir-woman-4.webp",
+            "pins": [
+                {
+                    "top": "31%",
+                    "left": "50%",
+                    "itemIndex": 0
+                },
+                {
+                    "top": "62%",
+                    "left": "52%",
+                    "itemIndex": 1
+                },
+                {
+                    "top": "94%",
+                    "left": "52%",
+                    "itemIndex": 2
+                }
+            ],
+            "items": [
+                {
+                    "id": "noir-woman-4-top",
+                    "cat": "Áo",
+                    "name": "Black Sculptural Off-Shoulder Jacket",
+                    "price": 1010000,
+                    "image": "/images/lookbook/thumb/noir-woman-4-top.webp",
+                    "sizes": [
+                        "XS",
+                        "S",
+                        "M",
+                        "L"
+                    ],
+                    "size": "S",
+                    "color": "Đen",
+                    "dot": "#29282b"
+                },
+                {
+                    "id": "noir-woman-4-pant",
+                    "cat": "Quần",
+                    "name": "Graphite Pinstripe Flared Trousers",
+                    "price": 810000,
+                    "image": "/images/lookbook/thumb/noir-woman-4-pant.webp",
+                    "sizes": [
+                        "25",
+                        "26",
+                        "27",
+                        "28"
+                    ],
+                    "size": "26",
+                    "color": "Graphite",
+                    "dot": "#48484e"
+                },
+                {
+                    "id": "noir-woman-4-shoe",
+                    "cat": "Giày",
+                    "name": "Black Pointed Leather Boots",
+                    "price": 1410000,
+                    "image": "/images/lookbook/thumb/noir-woman-4-shoe.webp",
+                    "sizes": [
+                        "36",
+                        "37",
+                        "38",
+                        "39"
+                    ],
+                    "size": "37",
+                    "color": "Đen",
+                    "dot": "#29282b"
+                }
+            ]
+        }
+    ],
+    "sunwash": [
+        {
+            "id": "sunwash-woman-1",
+            "name": "Salt Air",
+            "img": "/images/lookbook/cut/sunwash-woman-1.webp",
+            "pins": [
+                {
+                    "top": "31%",
+                    "left": "50%",
+                    "itemIndex": 0
+                },
+                {
+                    "top": "62%",
+                    "left": "52%",
+                    "itemIndex": 1
+                },
+                {
+                    "top": "94%",
+                    "left": "52%",
+                    "itemIndex": 2
+                }
+            ],
+            "items": [
+                {
+                    "id": "sunwash-woman-1-top",
+                    "cat": "Áo",
+                    "name": "Cream Cropped Linen Safari Jacket",
+                    "price": 920000,
+                    "image": "/images/lookbook/thumb/sunwash-woman-1-top.webp",
+                    "sizes": [
+                        "XS",
+                        "S",
+                        "M",
+                        "L"
+                    ],
+                    "size": "S",
+                    "color": "Kem",
+                    "dot": "#e2d3b8"
+                },
+                {
+                    "id": "sunwash-woman-1-pant",
+                    "cat": "Quần",
+                    "name": "Faded Blue Wide Jeans",
+                    "price": 720000,
+                    "image": "/images/lookbook/thumb/sunwash-woman-1-pant.webp",
+                    "sizes": [
+                        "25",
+                        "26",
+                        "27",
+                        "28"
+                    ],
+                    "size": "26",
+                    "color": "Xanh denim bạc",
+                    "dot": "#83a3bc"
+                },
+                {
+                    "id": "sunwash-woman-1-shoe",
+                    "cat": "Giày",
+                    "name": "Cream Woven Flats",
+                    "price": 1320000,
+                    "image": "/images/lookbook/thumb/sunwash-woman-1-shoe.webp",
+                    "sizes": [
+                        "36",
+                        "37",
+                        "38",
+                        "39"
+                    ],
+                    "size": "37",
+                    "color": "Kem",
+                    "dot": "#e2d3b8"
+                }
+            ]
+        },
+        {
+            "id": "sunwash-woman-2",
+            "name": "Terracotta Drift",
+            "img": "/images/lookbook/cut/sunwash-woman-2.webp",
+            "pins": [
+                {
+                    "top": "31%",
+                    "left": "50%",
+                    "itemIndex": 0
+                },
+                {
+                    "top": "62%",
+                    "left": "52%",
+                    "itemIndex": 1
+                },
+                {
+                    "top": "94%",
+                    "left": "52%",
+                    "itemIndex": 2
+                }
+            ],
+            "items": [
+                {
+                    "id": "sunwash-woman-2-top",
+                    "cat": "Áo",
+                    "name": "Terracotta Wrap Blouse",
+                    "price": 950000,
+                    "image": "/images/lookbook/thumb/sunwash-woman-2-top.webp",
+                    "sizes": [
+                        "XS",
+                        "S",
+                        "M",
+                        "L"
+                    ],
+                    "size": "S",
+                    "color": "Đất nung",
+                    "dot": "#ad654c"
+                },
+                {
+                    "id": "sunwash-woman-2-pant",
+                    "cat": "Quần",
+                    "name": "Sand Wide Linen Trousers",
+                    "price": 750000,
+                    "image": "/images/lookbook/thumb/sunwash-woman-2-pant.webp",
+                    "sizes": [
+                        "25",
+                        "26",
+                        "27",
+                        "28"
+                    ],
+                    "size": "26",
+                    "color": "Cát",
+                    "dot": "#c2aa84"
+                },
+                {
+                    "id": "sunwash-woman-2-shoe",
+                    "cat": "Giày",
+                    "name": "Cognac Leather Sandals",
+                    "price": 1350000,
+                    "image": "/images/lookbook/thumb/sunwash-woman-2-shoe.webp",
+                    "sizes": [
+                        "36",
+                        "37",
+                        "38",
+                        "39"
+                    ],
+                    "size": "37",
+                    "color": "Nâu cognac",
+                    "dot": "#925b39"
+                }
+            ]
+        },
+        {
+            "id": "sunwash-woman-3",
+            "name": "Indigo Current",
+            "img": "/images/lookbook/cut/sunwash-woman-3.webp",
+            "pins": [
+                {
+                    "top": "31%",
+                    "left": "50%",
+                    "itemIndex": 0
+                },
+                {
+                    "top": "62%",
+                    "left": "52%",
+                    "itemIndex": 1
+                },
+                {
+                    "top": "94%",
+                    "left": "52%",
+                    "itemIndex": 2
+                }
+            ],
+            "items": [
+                {
+                    "id": "sunwash-woman-3-top",
+                    "cat": "Áo",
+                    "name": "Indigo Cropped Patchwork Denim Jacket",
+                    "price": 980000,
+                    "image": "/images/lookbook/thumb/sunwash-woman-3-top.webp",
+                    "sizes": [
+                        "XS",
+                        "S",
+                        "M",
+                        "L"
+                    ],
+                    "size": "S",
+                    "color": "Chàm",
+                    "dot": "#354769"
+                },
+                {
+                    "id": "sunwash-woman-3-pant",
+                    "cat": "Quần",
+                    "name": "Ivory Barrel Jeans",
+                    "price": 780000,
+                    "image": "/images/lookbook/thumb/sunwash-woman-3-pant.webp",
+                    "sizes": [
+                        "25",
+                        "26",
+                        "27",
+                        "28"
+                    ],
+                    "size": "26",
+                    "color": "Trắng ngà",
+                    "dot": "#e7ddc6"
+                },
+                {
+                    "id": "sunwash-woman-3-shoe",
+                    "cat": "Giày",
+                    "name": "Cream Gum Court Sneakers",
+                    "price": 1380000,
+                    "image": "/images/lookbook/thumb/sunwash-woman-3-shoe.webp",
+                    "sizes": [
+                        "36",
+                        "37",
+                        "38",
+                        "39"
+                    ],
+                    "size": "37",
+                    "color": "Kem",
+                    "dot": "#e2d3b8"
+                }
+            ]
+        },
+        {
+            "id": "sunwash-woman-4",
+            "name": "Golden Hour",
+            "img": "/images/lookbook/cut/sunwash-woman-4.webp",
+            "pins": [
+                {
+                    "top": "31%",
+                    "left": "50%",
+                    "itemIndex": 0
+                },
+                {
+                    "top": "62%",
+                    "left": "52%",
+                    "itemIndex": 1
+                },
+                {
+                    "top": "94%",
+                    "left": "52%",
+                    "itemIndex": 2
+                }
+            ],
+            "items": [
+                {
+                    "id": "sunwash-woman-4-top",
+                    "cat": "Áo",
+                    "name": "Butter Yellow Sculptural Knit Polo",
+                    "price": 1010000,
+                    "image": "/images/lookbook/thumb/sunwash-woman-4-top.webp",
+                    "sizes": [
+                        "XS",
+                        "S",
+                        "M",
+                        "L"
+                    ],
+                    "size": "S",
+                    "color": "Vàng bơ",
+                    "dot": "#dbc783"
+                },
+                {
+                    "id": "sunwash-woman-4-pant",
+                    "cat": "Quần",
+                    "name": "Olive Wide Pleated Trousers",
+                    "price": 810000,
+                    "image": "/images/lookbook/thumb/sunwash-woman-4-pant.webp",
+                    "sizes": [
+                        "25",
+                        "26",
+                        "27",
+                        "28"
+                    ],
+                    "size": "26",
+                    "color": "Olive",
+                    "dot": "#606846"
+                },
+                {
+                    "id": "sunwash-woman-4-shoe",
+                    "cat": "Giày",
+                    "name": "Tan Suede Slingback Pumps",
+                    "price": 1410000,
+                    "image": "/images/lookbook/thumb/sunwash-woman-4-shoe.webp",
+                    "sizes": [
+                        "36",
+                        "37",
+                        "38",
+                        "39"
+                    ],
+                    "size": "37",
+                    "color": "Nâu tan",
+                    "dot": "#ac815c"
+                }
+            ]
+        },
+        {
+            "id": "sunwash-man-4",
+            "name": "Dune Rider",
+            "img": "/images/lookbook/cut/sunwash-man-4.webp",
+            "pins": [
+                {
+                    "top": "31%",
+                    "left": "50%",
+                    "itemIndex": 0
+                },
+                {
+                    "top": "62%",
+                    "left": "52%",
+                    "itemIndex": 1
+                },
+                {
+                    "top": "94%",
+                    "left": "52%",
+                    "itemIndex": 2
+                }
+            ],
+            "items": [
+                {
+                    "id": "sunwash-man-4-top",
+                    "cat": "Áo",
+                    "name": "Oat Boxy Workwear Jacket",
+                    "price": 1010000,
+                    "image": "/images/lookbook/thumb/sunwash-man-4-top.webp",
+                    "sizes": [
+                        "S",
+                        "M",
+                        "L",
+                        "XL"
+                    ],
+                    "size": "M",
+                    "color": "Yến mạch",
+                    "dot": "#c5b69c"
+                },
+                {
+                    "id": "sunwash-man-4-pant",
+                    "cat": "Quần",
+                    "name": "Mid-Blue Straight Jeans",
+                    "price": 810000,
+                    "image": "/images/lookbook/thumb/sunwash-man-4-pant.webp",
+                    "sizes": [
+                        "29",
+                        "30",
+                        "31",
+                        "32"
+                    ],
+                    "size": "30",
+                    "color": "Xanh denim",
+                    "dot": "#68839f"
+                },
+                {
+                    "id": "sunwash-man-4-shoe",
+                    "cat": "Giày",
+                    "name": "Tan Suede Low-Top Sneakers",
+                    "price": 1410000,
+                    "image": "/images/lookbook/thumb/sunwash-man-4-shoe.webp",
+                    "sizes": [
+                        "40",
+                        "41",
+                        "42",
+                        "43"
+                    ],
+                    "size": "41",
+                    "color": "Nâu tan",
+                    "dot": "#ac815c"
+                }
+            ]
+        }
+    ]
+};
+
     var currentCollectionKey = 'noir';
     var activeLooks = [];
     var currentProgress = 0;
@@ -161,7 +816,10 @@
     function build(colKey) {
         currentCollectionKey = (colKey === 'sunwash' ? 'sunwash' : 'noir');
         var colData = COLLECTIONS[currentCollectionKey];
-        activeLooks = colData.looks;
+        var additions = NEW_LOOKS[currentCollectionKey];
+        var women = additions.filter(function (look) { return look.id.includes('-woman-'); });
+        var men = colData.looks.concat(additions.filter(function (look) { return look.id.includes('-man-'); }));
+        activeLooks = men.flatMap(function (look, index) { return [look, women[index]]; });
         bindCatalog();
 
         root = document.getElementById('lookbookRoot');

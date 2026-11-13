@@ -221,7 +221,16 @@
         }
     };
 
+    // Bảng đối tượng / phân khúc khách hàng
+    const AUDIENCES = {
+        men: 'Nam (Men)',
+        women: 'Nữ (Women)',
+        boy: 'Bé Trai (Boys)',
+        girls: 'Bé Gái (Girls)'
+    };
+
     // State hiện tại của bộ lọc trang chủ
+    let currentAudience = 'men'; // 'men' | 'women' | 'boy' | 'girls'
     let currentMasterCategory = 'ao'; // 'ao' | 'quan' | 'giay'
     let currentSubCategory = 'all';
     let currentDetailedStyle = 'all';
@@ -279,6 +288,22 @@
 
             <!-- Vùng cuộn chứa các tầng tiêu chí lọc -->
             <div class="fashion-sidebar-scroll">
+
+                <!-- 0. CHỌN ĐỐI TƯỢNG (NAM / NỮ / BÉ TRAI / BÉ GÁI) -->
+                <div class="fashion-select-card" id="homeAudienceCard">
+                    <label class="fashion-card-label" for="homeAudienceSelect">ĐỐI TƯỢNG</label>
+                    <div class="fashion-select-wrapper">
+                        <select id="homeAudienceSelect" class="fashion-select-input">
+                            <option value="men" selected>Nam (Men's Collection)</option>
+                            <option value="women">Nữ (Women's Collection)</option>
+                            <option value="boy">Bé Trai (Boys Collection)</option>
+                            <option value="girls">Bé Gái (Girls Collection)</option>
+                        </select>
+                        <div class="select-chevron-icon" aria-hidden="true">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- 1. CẤP 1: CHỌN DANH MỤC (ÁO / QUẦN / GIÀY) -->
                 <div class="fashion-select-card" id="homeMasterCatCard">
@@ -370,7 +395,7 @@
         <div class="hnmt-center-confirm-backdrop" id="hnmtHomeConfirmModal" aria-hidden="true">
             <div class="hnmt-center-confirm-card" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
                 <h3 class="confirm-title" id="confirmTitle">Chuyển tiếp đến không gian 3D</h3>
-
+                
                 <p class="confirm-desc" id="confirmDesc">
                     Bạn sắp rời khỏi Không Gian Trang Chủ để bước vào <strong id="confirmTargetName">Sào Áo 3D</strong> với <strong id="confirmCount">40 sản phẩm</strong> phù hợp. Bạn có muốn tiếp tục trải nghiệm?
                 </p>
@@ -421,16 +446,16 @@
         return { drawer, confirmModal };
     }
 
-    // Đọc cơ sở dữ liệu Showroom Catalog
-    function getCatalogData() {
+    // Đọc cơ sở dữ liệu Showroom Catalog theo đối tượng được chọn
+    function getCatalogData(aud = currentAudience) {
         try {
             const el = document.getElementById('showroomCatalog');
             if (!el) return { shirts: [], pants: [], shoes: [] };
             const data = JSON.parse(el.textContent);
-            const audience = 'men';
+            const audience = aud || currentAudience || 'men';
             const shirts = data?.clothing?.[audience]?.ao || [];
             const pants = data?.clothing?.[audience]?.quan || [];
-
+            
             // Giày nằm trong cấu trúc collections
             const shoeCollections = data?.shoes?.[audience] || [];
             const shoes = shoeCollections.flatMap(c => (c.items || []).map(it => ({
@@ -455,6 +480,7 @@
         const resetBtn = document.getElementById('homeResetFilterBtn');
         const searchInput = document.getElementById('homeSearchInput');
         const clearSearchBtn = document.getElementById('homeClearSearchBtn');
+        const audienceSelect = document.getElementById('homeAudienceSelect');
         const masterCatSelect = document.getElementById('homeMasterCatSelect');
         const catPills = document.querySelectorAll('.hnmt-cat-pill');
         const subCatCard = document.getElementById('homeSubCatCard');
@@ -737,6 +763,16 @@
             return count;
         }
 
+        // Chuyển đổi Đối Tượng (Nam / Nữ / Bé Trai / Bé Gái)
+        function switchAudience(newAud) {
+            if (!['men', 'women', 'boy', 'girls'].includes(newAud)) newAud = 'men';
+            currentAudience = newAud;
+            if (audienceSelect && audienceSelect.value !== newAud) {
+                audienceSelect.value = newAud;
+            }
+            computeLiveMatches();
+        }
+
         // Chuyển đổi Master Category
         function switchMasterCategory(newCat) {
             currentMasterCategory = newCat;
@@ -754,8 +790,11 @@
             computeLiveMatches();
         }
 
-        // Mở Drawer Bộ Lọc
-        function openDrawer() {
+        // Mở Drawer Bộ Lọc (hỗ trợ chuyển sẵn đối tượng nếu được truyền)
+        function openDrawer(targetAud) {
+            if (targetAud && ['men', 'women', 'boy', 'girls'].includes(targetAud)) {
+                switchAudience(targetAud);
+            }
             drawer.classList.add('is-open');
             drawer.setAttribute('aria-hidden', 'false');
             document.body.classList.add('fashion-filter-open');
@@ -773,16 +812,16 @@
         function openConfirmModal() {
             closeDrawer();
 
-            // Cập nhật thông tin cho modal xác nhận (thuần chữ, không icon)
-            let targetTitle = 'Sào Áo 3D';
-            let proceedBtnLabel = 'Khám Phá Sào Áo Ngay';
+            const audLabel = AUDIENCES[currentAudience] || 'Nam';
+            let targetTitle = `Sào Áo 3D (${audLabel})`;
+            let proceedBtnLabel = `Khám Phá Sào Áo Ngay`;
 
             if (currentMasterCategory === 'quan') {
-                targetTitle = 'Sào Quần 3D';
-                proceedBtnLabel = 'Khám Phá Sào Quần Ngay';
+                targetTitle = `Sào Quần 3D (${audLabel})`;
+                proceedBtnLabel = `Khám Phá Sào Quần Ngay`;
             } else if (currentMasterCategory === 'giay') {
-                targetTitle = 'Tủ Giày Sneaker Vault';
-                proceedBtnLabel = 'Đến Sneaker Vault Ngay';
+                targetTitle = `Tủ Giày Sneaker Vault (${audLabel})`;
+                proceedBtnLabel = `Đến Sneaker Vault Ngay`;
             }
 
             if (confirmTargetName) confirmTargetName.textContent = targetTitle;
@@ -792,6 +831,12 @@
             // Render các tags tóm tắt bộ lọc (thuần chữ tinh tế, không icon)
             if (confirmTagsRecap) {
                 confirmTagsRecap.innerHTML = '';
+
+                // Chip 0: Đối tượng
+                const audTag = document.createElement('span');
+                audTag.className = 'confirm-tag-chip';
+                audTag.textContent = `Đối tượng: ${audLabel}`;
+                confirmTagsRecap.appendChild(audTag);
 
                 // Chip 1: Danh mục chính
                 const catTag = document.createElement('span');
@@ -858,8 +903,11 @@
         function proceedToExperience() {
             closeConfirmModal();
 
+            const audLabel = AUDIENCES[currentAudience] || 'Nam';
+
             // Đóng gói payload bộ lọc để trang đích nhận diện
             const filterPayload = {
+                audience: currentAudience,
                 category: currentMasterCategory,
                 subCategory: currentSubCategory,
                 detailedStyle: currentDetailedStyle,
@@ -867,23 +915,27 @@
                 maxPrice: Number(priceRange.value),
                 keyword: currentKeyword,
                 filteredProducts: filteredProductList,
-                label: `LỌC TỪ TRANG CHỦ (${filteredProductList.length} MÓN)`
+                label: `LỌC TỪ TRANG CHỦ (${audLabel} - ${filteredProductList.length} MÓN)`
             };
+
+            const audQuery = `&audience=${encodeURIComponent(currentAudience)}`;
 
             if (currentMasterCategory === 'ao') {
                 sessionStorage.setItem('hnmt_pending_rail_filter', JSON.stringify(filterPayload));
-                window.location.href = '/Products/Rail?type=ao';
+                window.location.href = `/Products/Rail?type=ao${audQuery}`;
             } else if (currentMasterCategory === 'quan') {
                 sessionStorage.setItem('hnmt_pending_rail_filter', JSON.stringify(filterPayload));
-                window.location.href = '/Products/Rail?type=quan';
+                window.location.href = `/Products/Rail?type=quan${audQuery}`;
             } else {
                 sessionStorage.setItem('hnmt_pending_sneaker_filter', JSON.stringify(filterPayload));
-                window.location.href = '/Products/Sneakers';
+                window.location.href = `/Products/Sneakers?audience=${encodeURIComponent(currentAudience)}`;
             }
         }
 
         // Đặt lại toàn bộ bộ lọc
         function resetAllFilters() {
+            currentAudience = 'men';
+            if (audienceSelect) audienceSelect.value = 'men';
             currentSubCategory = 'all';
             currentDetailedStyle = 'all';
             currentColor = 'all';
@@ -902,6 +954,12 @@
         if (backdrop) backdrop.addEventListener('click', closeDrawer);
         if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
         if (resetBtn) resetBtn.addEventListener('click', resetAllFilters);
+
+        if (audienceSelect) {
+            audienceSelect.addEventListener('change', (e) => {
+                switchAudience(e.target.value);
+            });
+        }
 
         if (masterCatSelect) {
             masterCatSelect.addEventListener('change', (e) => {
@@ -1004,7 +1062,9 @@
             open: openDrawer,
             close: closeDrawer,
             reset: resetAllFilters,
-            switchCategory: switchMasterCategory
+            switchCategory: switchMasterCategory,
+            switchAudience: switchAudience,
+            getAudience: () => currentAudience
         };
     }
 

@@ -1,7 +1,7 @@
 @model FashionStore.Models.ViewModels.LoginViewModel
 
 @{
-    ViewData["Title"] = "Đăng Nhập — HNMTSHOP Atelier";
+    ViewData["Title"] = "Đăng Nhập — HNMTSHOP";
 }
 
 @section Styles {
@@ -9,16 +9,11 @@
 }
 
 <div class="at-login-page" id="atLoginPage">
-    <!-- Edge-to-Edge Continuous Lookbook Background Layer -->
-    <div class="at-bg-layer" id="atBgLayer" aria-hidden="true"></div>
-    <div class="at-bg-overlay" aria-hidden="true"></div>
-    <div class="at-bg-grain" aria-hidden="true"></div>
 
     <!-- Minimalist Top Navigation -->
     <header class="at-topbar">
         <a asp-controller="Home" asp-action="Index" class="at-brand-link" title="Về trang chủ HNMTSHOP">
-            <span class="at-diamond">&#9670;</span>
-            <span class="at-brand-text">HNMTSHOP ATELIER</span>
+            <span class="at-brand-text">HNMTSHOP</span>
         </a>
 
         <div class="at-top-actions">
@@ -32,33 +27,20 @@
         </div>
     </header>
 
-    <!-- Left Side: Editorial Lookbook Statement (Desktop only) -->
-    <section class="at-left-statement" aria-hidden="true">
-        <div class="at-stmt-kicker">HNMTSHOP ATELIER · LOOKBOOK 2026</div>
-        <h2 class="at-stmt-title">
-            Phong cách<br />
-            <em>bắt đầu từ bạn.</em>
-        </h2>
-        <div class="at-stmt-spec">
-            <span>&#9670; Vật liệu tuyển chọn · Phom dáng đương đại · May đo tinh tế</span>
-        </div>
-    </section>
-
-    <!-- Right Side: Translucent Charcoal Glass Form Card -->
+    <!-- Centered Minimalist Form Card -->
     <main class="at-form-container">
         <div class="at-login-card">
             
             <div class="at-card-kicker">
-                <span>&#9670;</span>
-                <span>TÀI KHOẢN HNMTSHOP</span>
+                <span>TÀI KHOẢN THÀNH VIÊN</span>
             </div>
 
-            <h1 class="at-card-title">Chào mừng trở lại</h1>
+            <h1 class="at-card-title">Đăng Nhập</h1>
             <p class="at-card-desc">
-                Đăng nhập để tiếp tục trải nghiệm không gian thời trang và quản lý đơn hàng của bạn.
+                Chào mừng bạn trở lại. Vui lòng nhập thông tin để tiếp tục trải nghiệm không gian thời trang HNMT.
             </p>
 
-            <!-- Luxury Social OAuth -->
+            <!-- Social OAuth -->
             <div class="at-social-grid">
                 <button type="button" class="at-btn-social" id="btnGoogleLogin" title="Đăng nhập với Google">
                     <svg viewBox="0 0 24 24" width="16" height="16">
@@ -78,9 +60,9 @@
                 </button>
             </div>
 
-            <!-- Divider with Gold Diamond -->
+            <!-- Subtle Divider -->
             <div class="at-divider">
-                <span>&#9670; Hoặc tiếp tục với Email &#9670;</span>
+                <span>hoặc tiếp tục với email</span>
             </div>
 
             <!-- Form -->
@@ -92,42 +74,34 @@
                 <div asp-validation-summary="ModelOnly" class="at-alert-danger" role="alert"></div>
 
                 <!-- Email Field -->
-                <div class="at-input-group">
-                    <label asp-for="Email" class="at-input-label">Email <span class="at-req">*</span></label>
-                    <div class="at-input-box">
-                        <i class="bi bi-envelope at-input-icon"></i>
-                        <input asp-for="Email" 
-                               class="at-input-field" 
-                               placeholder="ten@vidu.vn" 
-                               autocomplete="email" 
-                               required />
-                    </div>
-                    <span asp-validation-for="Email" class="at-input-error"></span>
+                <div class="hnmt-pure-input-wrap">
+                    <input asp-for="Email" 
+                           class="hnmt-pure-input" 
+                           placeholder="Email" 
+                           autocomplete="email" 
+                           required />
                 </div>
+                <span asp-validation-for="Email" class="at-input-error"></span>
 
                 <!-- Password Field with Accessible Toggle -->
-                <div class="at-input-group">
-                    <label asp-for="Password" class="at-input-label">Mật khẩu <span class="at-req">*</span></label>
-                    <div class="at-input-box">
-                        <i class="bi bi-shield-lock at-input-icon"></i>
-                        <input asp-for="Password" 
-                               id="atPasswordInput"
-                               type="password" 
-                               class="at-input-field at-password-input" 
-                               placeholder="Nhập mật khẩu" 
-                               autocomplete="current-password" 
-                               required />
-                        <button type="button" 
-                                id="atTogglePassword" 
-                                class="at-password-toggle"
-                                aria-label="Hiện mật khẩu" 
-                                aria-pressed="false"
-                                title="Hiện hoặc ẩn mật khẩu">
-                            <i class="bi bi-eye" id="atToggleIcon"></i>
-                        </button>
-                    </div>
-                    <span asp-validation-for="Password" class="at-input-error"></span>
+                <div class="hnmt-pure-input-wrap">
+                    <input asp-for="Password" 
+                           id="atPasswordInput"
+                           type="password" 
+                           class="hnmt-pure-input" 
+                           placeholder="Password" 
+                           autocomplete="current-password" 
+                           required />
+                    <button type="button" 
+                            id="atTogglePassword" 
+                            class="hnmt-pure-eye-btn"
+                            aria-label="Hiện mật khẩu" 
+                            aria-pressed="false"
+                            title="Hiện hoặc ẩn mật khẩu">
+                        <i class="bi bi-eye" id="atToggleIcon"></i>
+                    </button>
                 </div>
+                <span asp-validation-for="Password" class="at-input-error"></span>
 
                 <!-- Remember Me & Forgot Password -->
                 <div class="at-options-row">
@@ -138,10 +112,9 @@
                     <button type="button" class="at-forgot-btn" id="btnOpenAtForgotModal">Quên mật khẩu?</button>
                 </div>
 
-                <!-- Champagne Submit Button -->
-                <button type="submit" class="at-btn-submit" id="atSubmitBtn">
-                    <span>Đăng Nhập</span>
-                    <i class="bi bi-arrow-right"></i>
+                <!-- Primary Submit Button -->
+                <button type="submit" class="hnmt-pure-submit-btn" id="atSubmitBtn">
+                    Đăng nhập
                 </button>
             </form>
 
@@ -156,13 +129,13 @@
             <!-- Security Footnote -->
             <div class="at-security-note">
                 <i class="bi bi-shield-check"></i>
-                <span>Bảo Mật Chuẩn Mã Hóa SSL 256-BIT</span>
+                <span>Bảo mật dữ liệu chuẩn mã hóa SSL</span>
             </div>
 
         </div>
     </main>
 
-    <!-- Interactive Forgot Password Modal in Atelier Glass -->
+    <!-- Interactive Forgot Password Modal in Contemporary Clean White -->
     <div class="at-modal-backdrop" id="atForgotModal" role="dialog" aria-modal="true" aria-labelledby="atForgotTitle">
         <div class="at-modal-box">
             <button type="button" class="at-modal-close" id="btnCloseAtForgotModal" aria-label="Đóng cửa sổ">
@@ -170,10 +143,9 @@
             </button>
 
             <div class="at-card-kicker mb-2">
-                <span>&#9670;</span>
                 <span>KHÔI PHỤC TÀI KHOẢN</span>
             </div>
-            <h3 class="at-card-title" id="atForgotTitle" style="font-size: 1.8rem;">Quên Mật Khẩu</h3>
+            <h3 class="at-card-title" id="atForgotTitle" style="font-size: 1.6rem;">Quên Mật Khẩu</h3>
             <p class="at-card-desc">
                 Nhập email đã đăng ký của bạn. Chúng tôi sẽ gửi liên kết bảo mật để thiết lập mật khẩu mới.
             </p>
@@ -187,7 +159,7 @@
                     </div>
                 </div>
 
-                <div id="atForgotAlert" style="display: none; padding: 12px 14px; border-radius: 8px; font-size: 0.82rem; margin-bottom: 16px;"></div>
+                <div id="atForgotAlert" style="display: none; padding: 12px 14px; border-radius: 12px; font-size: 0.84rem; margin-bottom: 16px;"></div>
 
                 <button type="submit" class="at-btn-submit" id="btnAtSendForgot">
                     <span>Gửi Hướng Dẫn Khôi Phục</span>
@@ -270,27 +242,10 @@
                 if (btn) {
                     btn.addEventListener("click", function() {
                         const provider = id.includes("Google") ? "Google" : "Apple";
-                        alert(`[HNMTSHOP ATELIER] Đang kết nối tài khoản ${provider} sang không gian thành viên... (Tính năng OAuth đang ở chế độ thử nghiệm).`);
+                        alert(`[HNMTSHOP] Đang kết nối tài khoản ${provider}... (Tính năng OAuth đang ở chế độ thử nghiệm).`);
                     });
                 }
             });
-
-            // 4. Subtle Parallax for Desktop
-            const bgLayer = document.getElementById("atBgLayer");
-            const page = document.getElementById("atLoginPage");
-            const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-            if (bgLayer && page && !prefersReduced && window.innerWidth > 1024) {
-                page.addEventListener("mousemove", function (e) {
-                    const xPct = (e.clientX / window.innerWidth) - 0.5;
-                    const yPct = (e.clientY / window.innerHeight) - 0.5;
-                    bgLayer.style.transform = `translate3d(${xPct * 12}px, ${yPct * 12}px, 0) scale(1.02)`;
-                });
-
-                page.addEventListener("mouseleave", function () {
-                    bgLayer.style.transform = "translate3d(0, 0, 0) scale(1)";
-                });
-            }
         });
 
         // Forgot password simulated handler
@@ -303,17 +258,17 @@
             if (!email || !alertBox) return;
 
             btn.disabled = true;
-            btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> Đang gửi...`;
+            btn.textContent = "Đang gửi...";
 
             setTimeout(() => {
                 alertBox.style.display = "block";
-                alertBox.style.background = "rgba(198, 163, 92, 0.18)";
-                alertBox.style.border = "1px solid rgba(198, 163, 92, 0.4)";
-                alertBox.style.color = "#f5f2eb";
-                alertBox.innerHTML = `<i class="bi bi-check-circle-fill me-2" style="color: #c6a35c;"></i> Hướng dẫn khôi phục đã được gửi tới <strong>${email}</strong>. Vui lòng kiểm tra hộp thư của bạn!`;
+                alertBox.style.background = "#f0fdf4";
+                alertBox.style.border = "1px solid #bbf7d0";
+                alertBox.style.color = "#15803d";
+                alertBox.innerHTML = `Hướng dẫn khôi phục đã được gửi tới <strong>${email}</strong>. Vui lòng kiểm tra hộp thư của bạn!`;
                 btn.disabled = false;
-                btn.innerHTML = `<span>Đã Gửi Thành Công</span>`;
-            }, 900);
+                btn.textContent = "Đã gửi thành công";
+            }, 700);
         }
     </script>
 }
