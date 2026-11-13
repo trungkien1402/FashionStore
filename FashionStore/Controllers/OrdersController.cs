@@ -1,3 +1,4 @@
+using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.DataProtection;
 using FashionStore.Services.Implementations;
 using System.Security.Claims;
@@ -59,6 +60,7 @@ public class OrdersController : Controller
 
         var model = new CheckoutViewModel
         {
+            CheckoutRequestId = Guid.NewGuid(),
             ReceiverName = user.FullName,
             Phone = user.PhoneNumber ?? string.Empty,
             ShippingFee = DefaultShippingFee,
@@ -99,17 +101,7 @@ public class OrdersController : Controller
 
         model.SubTotal = model.CartItems.Sum(x => x.TotalPrice);
 
-        var rewardToken = HttpContext.Session.GetString("StyleGameReward");
-        if (rewardToken != null)
-        {
-            try
-            {
-                var reward = JsonSerializer.Deserialize<StyleReward>(StyleGame.RewardProtector(protection).Unprotect(rewardToken));
-                if (reward != null && reward.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
-                    model.VoucherCode = reward.Code;
-            }
-            catch (System.Security.Cryptography.CryptographicException) { }
-        }
+        await LoadStudioVoucherAsync(model, protection);
 
         return View(model);
     }
@@ -117,8 +109,16 @@ public class OrdersController : Controller
     // POST: /Orders/Checkout
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Checkout(CheckoutViewModel model, [FromServices] IDataProtectionProvider protection)
+    public async Task<IActionResult> Checkout(CheckoutViewModel model, [FromServices] IDataProtectionProvider protection,
+        [FromServices] VietnamAddresses addresses)
     {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId)) return Challenge();
+        if (model.CheckoutRequestId == Guid.Empty)
+            return BadRequest("Phiên đặt hàng không hợp lệ. Mở lại trang thanh toán.");
+        if (await FindCheckoutOrderAsync(userId, model.CheckoutRequestId) is { } existing)
+            return RedirectToCheckoutOrder(existing);
+
         var cart = GetCart();
 
         if (!cart.Any())
@@ -137,30 +137,65 @@ public class OrdersController : Controller
         if (model.PaymentMethod == "VietQR" && !_payments.IsVietQrReady)
             ModelState.AddModelError(nameof(model.PaymentMethod), "Chưa cấu hình tài khoản nhận VietQR.");
 
+        await LoadStudioVoucherAsync(model, protection);
+
+        var location = addresses.Resolve(model.ProvinceCode, model.WardCode);
+        if (location == null && model.ProvinceCode.HasValue && model.WardCode.HasValue)
+            ModelState.AddModelError(nameof(model.WardCode), "Xã/phường không thuộc tỉnh/thành đã chọn.");
+        var detail = model.Address?.Trim();
+        if (detail is not { Length: >= 5 } || !detail.Any(char.IsLetter))
+            ModelState.AddModelError(nameof(model.Address), "Nhập số nhà, tên đường hoặc thôn/ấp và thông tin nhận hàng cụ thể.");
+
         if (!ModelState.IsValid)
         {
             await PopulateCheckoutItemsAsync(model, cart);
             return View(model);
         }
 
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-        if (string.IsNullOrEmpty(userId))
-            return Challenge();
-
         if (!await _context.Users.AnyAsync(u => u.Id == userId && u.IsActive))
             return Forbid();
 
-        await using var transaction =
-            await _context.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable);
+        var quantities = cart.GroupBy(item => item.ProductVariantId)
+            .ToDictionary(group => group.Key, group => group.Sum(item => item.Quantity));
+        var variantIds = quantities.Keys.Order().ToList();
 
-        try
+        const int maxAttempts = 3;
+        for (var attempt = 1; attempt <= maxAttempts; attempt++)
         {
-            var variantIds = cart.Select(x => x.ProductVariantId)
-                .Distinct()
-                .ToList();
+            try
+            {
+                return await PlaceOrderAsync();
+            }
+            catch (Exception ex) when (IsCheckoutConflict(ex))
+            {
+                _context.ChangeTracker.Clear();
+                if (await FindCheckoutOrderAsync(userId, model.CheckoutRequestId) is { } completed)
+                    return RedirectToCheckoutOrder(completed);
+                if (attempt == maxAttempts)
+                    break;
+                await Task.Delay(Random.Shared.Next(35, 110) * attempt, HttpContext.RequestAborted);
+            }
+        }
 
-            var variants = await _context.ProductVariants
+        ModelState.AddModelError("", "Hệ thống đang bận. Vui lòng thử lại đơn hàng này.");
+        await PopulateCheckoutItemsAsync(model, cart);
+        return View(model);
+
+        async Task<IActionResult> PlaceOrderAsync()
+        {
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            var lockKey = System.Text.Encoding.UTF8.GetBytes($"{userId}:{model.CheckoutRequestId:N}");
+            var lockName = "checkout:" + Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(lockKey));
+            await _context.Database.ExecuteSqlInterpolatedAsync($"""
+                DECLARE @result int;
+                EXEC @result = sp_getapplock @Resource = {lockName}, @LockMode = 'Exclusive',
+                    @LockOwner = 'Transaction', @LockTimeout = 3000;
+                IF @result < 0 THROW 51001, 'Checkout request is busy.', 1;
+                """);
+            if (await FindCheckoutOrderAsync(userId, model.CheckoutRequestId) is { } completed)
+                return RedirectToCheckoutOrder(completed);
+
+            var variants = await _context.ProductVariants.AsNoTracking()
                 .Include(v => v.Product)
                 .Where(v => variantIds.Contains(v.Id))
                 .ToListAsync();
@@ -186,7 +221,7 @@ public class OrdersController : Controller
                     return View(model);
                 }
 
-                if (item.Quantity <= 0 || item.Quantity > variant.StockQuantity)
+                if (item.Quantity <= 0 || quantities[item.ProductVariantId] > variant.StockQuantity)
                 {
                     await transaction.RollbackAsync();
                     ModelState.AddModelError(
@@ -213,21 +248,8 @@ public class OrdersController : Controller
             var code = model.VoucherCode?.Trim().ToUpperInvariant();
             if (!string.IsNullOrEmpty(code))
             {
-                int? score = null;
-                var token = HttpContext.Session.GetString("StyleGameReward");
-                if (token != null)
-                {
-                    try
-                    {
-                        var reward = JsonSerializer.Deserialize<StyleReward>(StyleGame.RewardProtector(protection).Unprotect(token));
-                        if (reward?.UserId == userId && reward.Code == code)
-                            score = reward.Score;
-                    }
-                    catch (System.Security.Cryptography.CryptographicException) { }
-                }
-                var quantities = cart.GroupBy(item => item.ProductVariantId)
-                    .ToDictionary(group => group.Key, group => group.Sum(item => item.Quantity));
-                (voucher, discount) = await SalesRules.ApplyVoucherAsync(_context, code, userId, subTotal, quantities, variants, score);
+                var score = GetRewardScore(protection, userId, code);
+                (voucher, discount) = await SalesRules.ApplyVoucherAsync(_context, code, userId, subTotal, quantities, variants, score, reserve: true);
                 if (voucher == null)
                 {
                     await transaction.RollbackAsync();
@@ -249,11 +271,12 @@ public class OrdersController : Controller
 
             var order = new Order
             {
-                OrderCode = $"FS{DateTime.UtcNow:yyyyMMddHHmmss}{Guid.NewGuid().ToString("N")[..4].ToUpper()}",
+                CheckoutRequestId = model.CheckoutRequestId,
+                OrderCode = $"FS{DateTime.UtcNow:yyyyMMddHHmmss}{Guid.NewGuid().ToString("N")[..12].ToUpperInvariant()}",
                 UserId = userId,
                 ReceiverName = model.ReceiverName.Trim(),
                 Phone = model.Phone.Trim(),
-                Address = model.Address.Trim(),
+                Address = $"{detail}, {location!.Value.Ward}, {location.Value.Province}",
                 SubTotal = subTotal,
                 ShippingFee = shippingFee,
                 DiscountAmount = discount,
@@ -279,7 +302,32 @@ public class OrdersController : Controller
                     Quantity = item.Quantity
                 });
 
-                variant.StockQuantity -= item.Quantity;
+
+            }
+
+            // Lock stock in ascending SKU ID order, and only decrement if the row still has enough stock.
+            foreach (var id in variantIds)
+            {
+                var quantity = quantities[id];
+                var stock = _context.ProductVariants.Where(v => v.Id == id);
+                var updated = await stock.Where(v => v.IsActive && v.Product.IsActive && v.StockQuantity >= quantity)
+                    .ExecuteUpdateAsync(update => update.SetProperty(v => v.StockQuantity, v => v.StockQuantity - quantity));
+
+                if (updated == 0)
+                {
+                    await transaction.RollbackAsync();
+                    var variant = variants.Single(v => v.Id == id);
+                    ModelState.AddModelError("", $"Tồn kho hoặc trạng thái của {variant.Product.Name} ({variant.Size}) vừa thay đổi. Kiểm tra lại giỏ hàng.");
+                    await PopulateCheckoutItemsAsync(model, cart);
+                    return View(model);
+                }
+
+                var remaining = await stock.Select(v => v.StockQuantity).SingleAsync();
+                _context.StockMovements.Add(new StockMovement
+                {
+                    ProductVariantId = id, Before = remaining + quantity, After = remaining,
+                    ActorId = userId, Reason = "Đặt hàng " + order.OrderCode
+                });
             }
 
             if (voucher != null)
@@ -313,21 +361,20 @@ public class OrdersController : Controller
             HttpContext.Session.Remove(CartSessionKey);
             if (voucher?.GameMinimumScore != null) HttpContext.Session.Remove("StyleGameReward");
 
-            return RedirectToAction(order.PaymentMethod == PaymentMethod.VietQR
-                ? nameof(PaymentQR) : nameof(Success), new { id = order.Id });
-        }
-        catch
-        {
-            await transaction.RollbackAsync();
-            _context.ChangeTracker.Clear();
-            ModelState.AddModelError(
-                "",
-                "Đã xảy ra lỗi khi tạo đơn hàng. Vui lòng thử lại.");
-
-            await PopulateCheckoutItemsAsync(model, cart);
-            return View(model);
+            return RedirectToCheckoutOrder(order);
         }
     }
+
+    private Task<Order?> FindCheckoutOrderAsync(string userId, Guid requestId) =>
+        _context.Orders.AsNoTracking().SingleOrDefaultAsync(o =>
+            o.UserId == userId && o.CheckoutRequestId == requestId);
+
+    private IActionResult RedirectToCheckoutOrder(Order order) =>
+        RedirectToAction(order.PaymentMethod == PaymentMethod.VietQR ? nameof(PaymentQR) : nameof(Success),
+            new { id = order.Id });
+
+    private static bool IsCheckoutConflict(Exception error) =>
+        error.GetBaseException() is SqlException { Number: -2 or 1205 or 1222 or 2601 or 2627 or 51001 };
 
     [HttpGet]
     [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
@@ -395,6 +442,73 @@ public class OrdersController : Controller
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         return _context.Orders.AsNoTracking()
             .FirstOrDefaultAsync(o => o.Id == id && o.UserId == userId);
+    }
+
+    [HttpPost, ValidateAntiForgeryToken]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+    public async Task<IActionResult> PreviewVoucher(string? code, [FromServices] IDataProtectionProvider protection)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId)) return Challenge();
+
+        code = code?.Trim().ToUpperInvariant();
+        if (code is null or { Length: 0 or > 40 })
+            return BadRequest("Nhập mã khuyến mãi hợp lệ.");
+
+        var cart = GetCart();
+        var quantities = cart.GroupBy(item => item.ProductVariantId)
+            .ToDictionary(group => group.Key, group => group.Sum(item => item.Quantity));
+        var ids = quantities.Keys.ToList();
+        var variants = await _context.ProductVariants.AsNoTracking().Include(v => v.Product)
+            .Where(v => ids.Contains(v.Id) && v.IsActive && v.Product.IsActive).ToListAsync();
+        if (variants.Count == 0 || variants.Count != ids.Count ||
+            variants.Any(v => quantities[v.Id] <= 0 || quantities[v.Id] > v.StockQuantity))
+            return BadRequest("Giỏ hàng đã thay đổi. Tải lại trang để kiểm tra.");
+
+        var subtotal = variants.Sum(v => v.Price * quantities[v.Id]);
+        var (voucher, discount) = await SalesRules.ApplyVoucherAsync(_context, code, userId, subtotal,
+            quantities, variants, GetRewardScore(protection, userId, code));
+        if (voucher == null)
+            return BadRequest("Mã chưa đủ điều kiện cho giỏ hàng hoặc đã hết hiệu lực.");
+        return Json(new { code, subtotal, shipping = DefaultShippingFee, discount, total = subtotal + DefaultShippingFee - discount });
+    }
+
+    private int? GetRewardScore(IDataProtectionProvider protection, string userId, string code)
+    {
+        var reward = GetStudioReward(protection, userId);
+        return reward != null && reward.Code == code ? reward.Score : null;
+    }
+
+    private StyleReward? GetStudioReward(IDataProtectionProvider protection, string userId)
+    {
+        var token = HttpContext.Session.GetString("StyleGameReward");
+        if (token == null) return null;
+        try
+        {
+            var reward = JsonSerializer.Deserialize<StyleReward>(StyleGame.RewardProtector(protection).Unprotect(token));
+            return reward?.UserId == userId ? reward : null;
+        }
+        catch (System.Security.Cryptography.CryptographicException)
+        {
+            return null;
+        }
+    }
+
+    private async Task LoadStudioVoucherAsync(CheckoutViewModel model, IDataProtectionProvider protection)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null || GetStudioReward(protection, userId) is not { } reward) return;
+
+        var now = DateTime.UtcNow;
+        var voucher = await _context.Vouchers.AsNoTracking().Where(v => v.Code == reward.Code &&
+            v.IsActive && v.IsPercentage && v.GameMinimumScore != null && v.GameMinimumScore <= reward.Score &&
+            v.StartsAt <= now && v.EndsAt > now && v.Redemptions.Count < v.TotalLimit &&
+            !v.Redemptions.Any(redemption => redemption.CustomerId == userId))
+            .Select(v => new { v.Code, v.Value }).FirstOrDefaultAsync();
+
+        if (voucher == null) return;
+        model.StudioVoucherCode = voucher.Code;
+        model.StudioVoucherPercent = voucher.Value;
     }
 
     private async Task PopulateCheckoutItemsAsync(

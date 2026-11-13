@@ -6,6 +6,7 @@ public class Order
 {
     public int Id { get; set; }
 
+    public Guid? CheckoutRequestId { get; set; }
     public string OrderCode { get; set; } = string.Empty;
 
     public string UserId { get; set; } = string.Empty;

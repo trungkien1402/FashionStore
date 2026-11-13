@@ -98,6 +98,8 @@ public class ApplicationDbContext
         builder.Entity<AdminAuditEvent>().HasIndex(e => e.CreatedAt);
         builder.Entity<Order>().HasIndex(o => o.CreatedAt);
         builder.Entity<ProductVariant>().Property(v => v.StockQuantity).IsConcurrencyToken();
+        builder.Entity<Order>().HasIndex(o => new { o.UserId, o.CheckoutRequestId })
+            .IsUnique().HasFilter("[CheckoutRequestId] IS NOT NULL");
         builder.Entity<Order>().Property(o => o.RowVersion).IsRowVersion();
         builder.Entity<PaymentHistory>(entity =>
         {
