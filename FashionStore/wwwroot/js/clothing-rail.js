@@ -9,384 +9,10 @@
     'use strict';
 
     // ==========================================================================
-    // 1. MASTER CATALOG: ÁO (SHIRTS & TOPS) - 15 MẪU ĐỘC BẢN
-    // ==========================================================================
-    const ALL_SHIRT_PRODUCTS = [
-        {
-            name: 'Reach Shirt',
-            slug: 'reach-shirt',
-            price: 68,
-            type: 'sơ mi camp-collar',
-            style: 'shirt',
-            colorGroup: 'white',
-            art: 'hand',
-            desc: 'Thiết kế camp-collar phóng khoáng cùng họa tiết bàn tay vẽ tay nghệ thuật độc bản.',
-            colors: [['Trắng Ngà (White)', '#f8f7f3', '#16171b'], ['Đen Huyền Bí (Black)', '#202125', '#efebda']],
-            stock: [9, 8, 6, 5, 2]
-        },
-        {
-            name: 'Scrawl Tee',
-            slug: 'scrawl-tee',
-            price: 42,
-            type: 'áo thun oversized',
-            style: 'tee',
-            colorGroup: 'black',
-            art: 'scrawl',
-            desc: 'Cotton định lượng cao dáng oversized với những nét cọ ngẫu hứng trừu tượng sống động.',
-            colors: [['Đen & Cam (Black & Orange)', '#1a1b1e', '#ff671f'], ['Trắng Phấn & Xanh Cobalt', '#f2f0e9', '#2456ba']],
-            stock: [6, 6, 5, 2, 0]
-        },
-        {
-            name: 'Blend In Tee',
-            slug: 'blend-in-tee',
-            price: 38,
-            type: 'áo thun graphic',
-            style: 'tee',
-            colorGroup: 'white',
-            art: 'blend',
-            desc: 'Không sinh ra để hòa tan — Tuyên ngôn thời trang phá cách đậm chất cá tính.',
-            colors: [['Kem Tự Nhiên (Cream)', '#efeadb', '#c43236'], ['Đen Đỏ Rực (Black & Red)', '#18191c', '#da353b']],
-            stock: [8, 6, 4, 2, 0]
-        },
-        {
-            name: 'Two Faces Tee',
-            slug: 'two-faces-tee',
-            price: 42,
-            type: 'áo thun vintage',
-            style: 'tee',
-            colorGroup: 'gray',
-            art: 'faces',
-            desc: 'Nghệ thuật vẽ nét liền continuous-line tinh tế trên nền cotton washed phong cách vintage.',
-            colors: [['Xám Tro Vintage (Washed Charcoal)', '#5c5b5c', '#edece5'], ['Nâu Cát Sang Trọng (Sand)', '#ccbba0', '#33353c']],
-            stock: [10, 8, 5, 3, 1]
-        },
-        {
-            name: 'Unbothered Tee',
-            slug: 'unbothered-tee',
-            price: 40,
-            type: 'áo thun dạo phố',
-            style: 'tee',
-            colorGroup: 'green',
-            art: 'unbothered',
-            desc: 'Một chút tự do, một chút phóng khoáng, nổi bật đầy tự tin giữa đám đông.',
-            colors: [['Xanh Rừng Sâu (Forest Green)', '#24483b', '#f0e4bf'], ['Rượu Vang Đỏ (Burgundy)', '#652f42', '#f4dfbe']],
-            stock: [7, 5, 4, 3, 2]
-        },
-        {
-            name: 'Ink Drip Shirt',
-            slug: 'ink-drip-shirt',
-            price: 72,
-            type: 'sơ mi họa tiết',
-            style: 'shirt',
-            colorGroup: 'green',
-            art: 'ink',
-            desc: 'Nét cọ loang mực nghệ thuật lan tỏa trên phom dáng sơ mi relaxed thoải mái và hiện đại.',
-            colors: [['Xanh Rêu Ô-liu (Olive)', '#757a49', '#202125'], ['Trắng Ngà Nét Xanh Navy (Ecru)', '#e5dcc9', '#28345a']],
-            stock: [7, 6, 3, 2, 0]
-        },
-        {
-            name: 'Fern Tee',
-            slug: 'fern-tee',
-            price: 44,
-            type: 'áo thun in thực vật',
-            style: 'tee',
-            colorGroup: 'blue',
-            art: 'fern',
-            desc: 'Kỹ thuật in cyanotype thực vật độc đáo kết hợp cùng chất liệu cotton cao cấp đường phố.',
-            colors: [['Xanh Đậm Hoàng Gia (Prussian Blue)', '#153e78', '#f1f0e7'], ['Đỏ Đất Nung (Rust Terracotta)', '#aa6244', '#eee3c8']],
-            stock: [10, 8, 6, 3, 1]
-        },
-        {
-            name: 'Holding On Crew',
-            slug: 'holding-on-crew',
-            price: 78,
-            type: 'áo nỉ crewneck',
-            style: 'hoodie',
-            colorGroup: 'black',
-            art: 'hands',
-            desc: 'Áo nỉ fleece dệt dày dặn, đường nét thêu xích thủ công chain-stitch tinh xảo.',
-            colors: [['Đen Tối Giản (Black)', '#222326', '#e9e4d4'], ['Xám Tiêu Thêu Đen (Grey Marl)', '#b5b3b0', '#27282d']],
-            stock: [5, 4, 3, 2, 0]
-        },
-        {
-            name: 'Cloud Nine Tee',
-            slug: 'cloud-nine-tee',
-            price: 46,
-            type: 'áo thun cotton lụa',
-            style: 'tee',
-            colorGroup: 'blue',
-            art: 'cloud',
-            desc: 'Cảm hứng bồng bềnh tựa mây trời, chất vải mềm mượt thoáng khí tối đa.',
-            colors: [['Xanh Da Trời (Sky Blue)', '#88b8d8', '#fafafa'], ['Tím Hoa Cà Pastel (Lilac)', '#bdb3dd', '#ffffff']],
-            stock: [10, 9, 5, 4, 2]
-        },
-        {
-            name: 'One of One Tee',
-            slug: 'one-of-one-tee',
-            price: 40,
-            type: 'áo thun độc bản',
-            style: 'tee',
-            colorGroup: 'gray',
-            art: 'fingerprint',
-            desc: 'Dấu ấn độc bản của riêng bạn — Độc nhất, không trùng lặp.',
-            colors: [['Xám Đá Tự Nhiên (Stone)', '#c1b5a2', '#222326'], ['Đen Điểm Xanh Neon (Acid Lime)', '#222326', '#bbdc37']],
-            stock: [8, 7, 5, 4, 2]
-        },
-        {
-            name: 'CYBERPUNK Heavyweight Boxy Tee (300GSM)',
-            slug: 'cyber-boxy-tee',
-            price: 48,
-            type: 'áo thun boxy vai trễ',
-            style: 'tee',
-            colorGroup: 'black',
-            art: 'cyber',
-            desc: 'Áo thun phom Boxy vai trễ dày dặn 300GSM với đồ họa viễn tưởng Cyberpunk Neon phản quang sắc nét.',
-            colors: [['Washed Than Chì (Vintage Charcoal)', '#1f1f21', '#00f0ff'], ['Xám Bạc (Silver Smoke)', '#38393d', '#a3e635']],
-            stock: [12, 15, 10, 6, 2]
-        },
-        {
-            name: 'HNMT Luxury Wool & Leather Varsity Jacket',
-            slug: 'luxury-varsity',
-            price: 89,
-            type: 'áo khoác varsity bóng chày',
-            style: 'jacket',
-            colorGroup: 'blue',
-            art: 'varsity',
-            desc: 'Áo khoác bóng chày thân dạ len cừu phối tay da thật cao cấp, thêu xù Chenille logo HNMT STUDIO.',
-            colors: [['Xanh Navy & Kem (Navy / Cream)', '#121d33', '#f2efe9'], ['Đen Huyền Bí & Trắng (Black / White)', '#111214', '#ffffff']],
-            stock: [5, 8, 6, 3, 0]
-        },
-        {
-            name: 'OVERDRIVE Vintage Motorsport Leather Jacket',
-            slug: 'racing-moto',
-            price: 95,
-            type: 'áo khoác da moto',
-            style: 'jacket',
-            colorGroup: 'black',
-            art: 'racing',
-            desc: 'Áo khoác da đua xe thể thao cổ điển phối 3 mảng màu Tricolor Đen - Kem - Đỏ cùng huy hiệu HNMT GRAND PRIX.',
-            colors: [['Tricolor Race (Đen - Kem - Đỏ)', '#18181b', '#e61922'], ['Stealth Dark (All Black)', '#0a0a0c', '#888888']],
-            stock: [4, 6, 5, 2, 0]
-        },
-        {
-            name: 'CYBER-VOID Heavy Fleece Street Hoodie',
-            slug: 'cyber-hoodie',
-            price: 76,
-            type: 'áo nỉ hoodie mũ trùm',
-            style: 'hoodie',
-            colorGroup: 'black',
-            art: 'cyber',
-            desc: 'Hoodie phom rộng nỉ chân cua định lượng 450GSM cản gió ấm áp cùng nón 2 lớp đứng phom chuẩn streetwear.',
-            colors: [['Đen Tím Cyber (Void Purple)', '#15131e', '#a855f7'], ['Đen Tuyền (Stealth Onyx)', '#0e0e11', '#ffffff']],
-            stock: [8, 10, 7, 4, 1],
-            frontImg: '/clothing-rail/assets/cyber-hoodie-front.webp',
-            sideImg: '/clothing-rail/assets/cyber-hoodie-side.webp'
-        },
-        {
-            name: 'Tactical Safari Utility Cargo Shirt',
-            slug: 'cargo-shirt',
-            price: 65,
-            type: 'sơ mi túi hộp utility',
-            style: 'shirt',
-            colorGroup: 'green',
-            art: 'utility',
-            desc: 'Sơ mi khoác ngoài vải kaki chéo bền bỉ với 4 ngăn túi hộp đa năng, khóa bấm dập logo kim loại chống rỉ.',
-            colors: [['Xanh Rêu Safari (Olive Drab)', '#485338', '#1a1f16'], ['Xám Đá Bụi (Slate Grey)', '#3c4046', '#e0e0e0']],
-            stock: [9, 7, 5, 3, 0],
-            frontImg: '/clothing-rail/assets/cargo-shirt-front.webp',
-            sideImg: '/clothing-rail/assets/cargo-shirt-side.webp'
-        }
-    ];
+    const audienceClothing = JSON.parse(document.getElementById("showroomCatalog").textContent).clothing;
+    const ALL_SHIRT_PRODUCTS = audienceClothing.men.ao;
+    const ALL_PANTS_PRODUCTS = audienceClothing.men.quan;
 
-    // ==========================================================================
-    // 2. MASTER CATALOG: QUẦN (PANTS) - 12 MẪU ĐỘC BẢN
-    // ==========================================================================
-    const ALL_PANTS_PRODUCTS = [
-        {
-            name: 'Quần Baggy Cargo Jeans Acid-Wash Đen Xám',
-            slug: 'acid-cargo',
-            price: 56,
-            type: 'quần cargo jeans',
-            style: 'cargo',
-            colorGroup: 'gray',
-            art: 'cargo',
-            desc: 'Quần jeans túi hộp phom thụng rộng, wash mài xám khói bụi bặm phong cách Y2K và streetwear đương đại.',
-            colors: [['Washed Xám Đen (Vintage Charcoal)', '#25262B'], ['Xám Bạc (Silver Wash)', '#42454F']],
-            sizes: ['28', '29', '30', '31', '32', '34'],
-            stock: [8, 12, 15, 10, 6, 3],
-            frontImg: '/clothing-rail/assets/acid-cargo-front.webp',
-            sideImg: '/clothing-rail/assets/acid-cargo-side.webp'
-        },
-        {
-            name: 'Quần Tây Xếp Ly Ống Rộng May Đo Sand Beige',
-            slug: 'sand-pleated',
-            price: 62,
-            type: 'quần tây may đo',
-            style: 'tay',
-            colorGroup: 'white',
-            art: 'tailored',
-            desc: 'Phom dáng xếp 2 ly cạp cao may đo tinh xảo, chất vải twill rủ mềm mại tạo bước đi thanh thoát chuẩn quiet luxury.',
-            colors: [['Be Cát Tự Nhiên (Sand Beige)', '#D9CDB8'], ['Đen Midnight (Pitch Black)', '#17181C']],
-            sizes: ['28', '29', '30', '31', '32', '34'],
-            stock: [6, 9, 14, 11, 5, 2],
-            frontImg: '/clothing-rail/assets/sand-pleated-front.webp',
-            sideImg: '/clothing-rail/assets/sand-pleated-side.webp'
-        },
-        {
-            name: 'Quần Dù Parachute Tactical Rêu Quân Đội',
-            slug: 'tactical-parachute',
-            price: 58,
-            type: 'quần dù parachute',
-            style: 'parachute',
-            colorGroup: 'green',
-            art: 'parachute',
-            desc: 'Chất liệu vải dù công nghệ trượt nước nhẹ, nhiều ngăn túi khóa bấm kim loại cùng dây rút lai quần biến hóa linh hoạt.',
-            colors: [['Xanh Rêu Quân Đội (Military Olive)', '#4B5320'], ['Đen Stealth (Shadow Black)', '#1B1C20']],
-            sizes: ['28', '29', '30', '31', '32', '34'],
-            stock: [10, 14, 12, 8, 4, 1],
-            frontImg: '/clothing-rail/assets/tactical-parachute-front.webp',
-            sideImg: '/clothing-rail/assets/tactical-parachute-side.webp'
-        },
-        {
-            name: 'Quần Jeans Ống Suông Raw Selvedge Denim',
-            slug: 'raw-selvedge',
-            price: 68,
-            type: 'quần raw denim',
-            style: 'jeans',
-            colorGroup: 'black',
-            art: 'denim',
-            desc: 'Denim 14oz dệt thoi con thoi cổ điển Nhật Bản, giữ phom đứng cá tính cùng viền chỉ đỏ selvedge độc bản khi xắn gấu.',
-            colors: [['Đen Selvedge Chỉ Đỏ (Raw Black)', '#1A1A1E'], ['Chàm Đậm (Deep Indigo)', '#141E30']],
-            sizes: ['28', '29', '30', '31', '32', '34'],
-            stock: [5, 7, 10, 8, 4, 0],
-            frontImg: '/clothing-rail/assets/raw-selvedge-front.webp',
-            sideImg: '/clothing-rail/assets/raw-selvedge-side.webp'
-        },
-        {
-            name: 'Quần Jeans Ống Rộng Vintage Washed Indigo',
-            slug: 'wide-denim',
-            price: 54,
-            type: 'quần jeans ống rộng',
-            style: 'jeans',
-            colorGroup: 'blue',
-            art: 'denim',
-            desc: 'Phom suông rộng phóng khoáng kinh điển thập niên 90, xử lý wash nhẹ tạo độ rủ mềm mại cực kỳ thoải mái vận động.',
-            colors: [['Xanh Vintage Washed (90s Blue)', '#5B7C99'], ['Xanh Khói (Smoky Azure)', '#4A657D']],
-            sizes: ['28', '29', '30', '31', '32', '34'],
-            stock: [9, 11, 16, 12, 7, 3],
-            frontImg: '/clothing-rail/assets/wide-denim-front.webp',
-            sideImg: '/clothing-rail/assets/wide-denim-side.webp'
-        },
-        {
-            name: 'Quần Tây May Đo Cạp Cao Đen Midnight Sartorial',
-            slug: 'tailored-black',
-            price: 65,
-            type: 'quần tây may đo',
-            style: 'tay',
-            colorGroup: 'black',
-            art: 'tailored',
-            desc: 'Thiết kế cạp cao side-adjuster không đỉa lưng lịch lãm phong cách Sartorial, phom đứng chuẩn chỉnh tôn dáng tối đa.',
-            colors: [['Đen Midnight (Pitch Black)', '#17181C'], ['Than Chì (Charcoal)', '#28292E']],
-            sizes: ['28', '29', '30', '31', '32', '34'],
-            stock: [7, 10, 12, 9, 4, 2],
-            frontImg: '/clothing-rail/assets/sand-pleated-front.webp',
-            sideImg: '/clothing-rail/assets/sand-pleated-side.webp'
-        },
-        {
-            name: 'Quần Cargo 8 Túi Streetwear Rêu Khói Urban',
-            slug: 'cargo-olive',
-            price: 59,
-            type: 'quần cargo túi hộp',
-            style: 'cargo',
-            colorGroup: 'green',
-            art: 'cargo',
-            desc: 'Thiết kế túi hộp bất đối xứng cá tính, chất kaki washed chống sờn cùng dây kéo phụ trợ đậm chất Techwear thành thị.',
-            colors: [['Xanh Rêu Khói (Faded Olive)', '#4A523A'], ['Đen Bụi (Dusty Onyx)', '#1E1F22']],
-            sizes: ['28', '29', '30', '31', '32', '34'],
-            stock: [8, 12, 14, 9, 5, 1],
-            frontImg: '/clothing-rail/assets/tactical-parachute-front.webp',
-            sideImg: '/clothing-rail/assets/tactical-parachute-side.webp'
-        },
-        {
-            name: 'Quần Dù Parachute Dây Rút Gấu Đen Stealth City',
-            slug: 'parachute-black',
-            price: 49,
-            type: 'quần dù parachute',
-            style: 'parachute',
-            colorGroup: 'black',
-            art: 'parachute',
-            desc: 'Trọng lượng siêu nhẹ thoáng khí, dây rút bóp gấu biến đổi linh hoạt từ ống suông sang phom jogger năng động.',
-            colors: [['Đen Stealth (Shadow Black)', '#16171A'], ['Trắng Băng (Ice White)', '#E5E7EB']],
-            sizes: ['28', '29', '30', '31', '32', '34'],
-            stock: [11, 15, 18, 13, 6, 2],
-            frontImg: '/clothing-rail/assets/tactical-parachute-front.webp',
-            sideImg: '/clothing-rail/assets/tactical-parachute-side.webp'
-        },
-        {
-            name: 'Quần Jeans Raw Denim 14oz Chàm Cổ Điển Tokyo',
-            slug: 'selvedge-indigo',
-            price: 74,
-            type: 'quần raw denim',
-            style: 'jeans',
-            colorGroup: 'blue',
-            art: 'denim',
-            desc: 'Dòng vải raw mộc nguyên bản giữ nếp tạo fade tự nhiên theo từng bước chuyển động của chủ nhân sau thời gian sử dụng.',
-            colors: [['Chàm Đậm (Deep Indigo)', '#141E30'], ['Xanh Mực Sẫm (Dark Navy)', '#101726']],
-            sizes: ['28', '29', '30', '31', '32', '34'],
-            stock: [5, 8, 10, 7, 3, 0],
-            frontImg: '/clothing-rail/assets/raw-selvedge-front.webp',
-            sideImg: '/clothing-rail/assets/raw-selvedge-side.webp'
-        },
-        {
-            name: 'Quần Tây Ống Suông Xếp Ly Xám Khói Minimalist',
-            slug: 'pleated-grey',
-            price: 64,
-            type: 'quần tây may đo',
-            style: 'tay',
-            colorGroup: 'gray',
-            art: 'tailored',
-            desc: 'Gam xám khói trung tính dễ phối đồ, ly xếp sâu tạo độ phồng tự nhiên thanh lịch khi kết hợp cùng áo thun hoặc sơ mi.',
-            colors: [['Xám Khói (Smoky Grey)', '#4A4C54'], ['Be Sữa (Alabaster)', '#DDD7CD']],
-            sizes: ['28', '29', '30', '31', '32', '34'],
-            stock: [6, 9, 13, 10, 4, 1],
-            frontImg: '/clothing-rail/assets/sand-pleated-front.webp',
-            sideImg: '/clothing-rail/assets/sand-pleated-side.webp'
-        },
-        {
-            name: 'Quần Jeans Baggy Acid-Wash Xám Bạc Skater Y2K',
-            slug: 'acid-skater',
-            price: 58,
-            type: 'quần jeans ống rộng',
-            style: 'jeans',
-            colorGroup: 'gray',
-            art: 'denim',
-            desc: 'Phom baggy thụng skater thập niên 2000, hiệu ứng tẩy acid bạc khói phủ bụi phong trần đầy cuốn hút.',
-            colors: [['Xám Bạc (Silver Wash)', '#474A55'], ['Đen Rửa (Washed Black)', '#232427']],
-            sizes: ['28', '29', '30', '31', '32', '34'],
-            stock: [8, 11, 15, 9, 5, 2],
-            frontImg: '/clothing-rail/assets/acid-cargo-front.webp',
-            sideImg: '/clothing-rail/assets/acid-cargo-side.webp'
-        },
-        {
-            name: 'Quần Chino May Đo Co Giãn Màu Kem Trắng Ivory',
-            slug: 'chino-cream',
-            price: 47,
-            type: 'quần tây may đo',
-            style: 'tay',
-            colorGroup: 'white',
-            art: 'tailored',
-            desc: 'Chất cotton dệt chéo co giãn 4 chiều nhẹ nhàng, thoải mái suốt ngày dài cho phong cách smart-casual hiện đại.',
-            colors: [['Kem Trắng (Ivory Cream)', '#F4EFE6'], ['Xanh Navy Cổ Điển', '#1A2436']],
-            sizes: ['28', '29', '30', '31', '32', '34'],
-            stock: [10, 14, 16, 12, 6, 2],
-            frontImg: '/clothing-rail/assets/sand-pleated-front.webp',
-            sideImg: '/clothing-rail/assets/sand-pleated-side.webp'
-        }
-    ];
-
-    // ==========================================================================
-    // 3. THUẬT TOÁN CHIA SÀO TỰ ĐỘNG (RACK SHARDING // TỐI ĐA 10 MẪU / SÀO)
-    // ==========================================================================
     function chunkProductsIntoRacks(productList, category, isFilterResult = false, filterLabel = '') {
         if (!productList || productList.length === 0) return [];
         const racks = [];
@@ -439,25 +65,28 @@
         return racks;
     }
 
+    function getAllProducts(category, audience = window.HNMTChilePortal?.getAudience?.() || 'men') {
+        const kind = category === 'quan' ? 'quan' : 'ao';
+        if (Object.hasOwn(audienceClothing, audience)) return audienceClothing[audience][kind];
+        return kind === 'quan' ? ALL_PANTS_PRODUCTS : ALL_SHIRT_PRODUCTS;
+    }
+
     const DEFAULT_SHIRT_RACKS = chunkProductsIntoRacks(ALL_SHIRT_PRODUCTS, 'ao', false);
     const DEFAULT_PANTS_RACKS = chunkProductsIntoRacks(ALL_PANTS_PRODUCTS, 'quan', false);
 
     // Trạng thái hiện tại của sào
     let currentCategory = 'ao'; // 'ao' or 'quan'
+    let currentAudience = 'men';
     let currentRacks = DEFAULT_SHIRT_RACKS;
     let currentRackIdx = 0;
-    let products = currentRacks[0].products;
+    let products = currentRacks[0]?.products || [];
     let isFiltered = false;
     let activeFilterLabel = '';
 
-    const photo = (p, variant = 0) => (p.frontImg ? `${p.frontImg}?v=pants_v4` : `/clothing-rail/assets/${p.slug}-${variant ? 'alt' : 'front'}.webp?v=pants_v4`);
-    const sidePhoto = p => (p.sideImg ? `${p.sideImg}?v=pants_v4` : `/clothing-rail/assets/${p.slug}-side.webp?v=pants_v4`);
-    const productsWithBackPhotos = new Set([
-        'reach-shirt', 'scrawl-tee', 'blend-in-tee', 'two-faces-tee', 'unbothered-tee',
-        'ink-drip-shirt', 'fern-tee', 'holding-on-crew', 'cloud-nine-tee', 'one-of-one-tee',
-        'cyber-boxy-tee', 'luxury-varsity', 'racing-moto'
-    ]);
-    const backPhoto = (p, variant = 0) => `/clothing-rail/assets/${p.slug}-${variant ? 'back-alt' : 'back'}.webp`;
+    const photo = (p, variant = 0) => p.photos[variant]?.front || p.frontImg;
+    const sidePhoto = (p, variant = 0) => p.photos[variant]?.side || photo(p, variant);
+    const backPhoto = (p, variant = 0) => p.photos[variant]?.back;
+    const variantForSize = (p, size) => p.variants[p.variant || 0]?.[p.sizes.indexOf(size)];
 
     function formatPrice(num) {
         return (num * 10000).toLocaleString('vi-VN') + ' ₫';
@@ -469,7 +98,6 @@
     let currentViewSide = 'front';
     let detailFlipTimer;
     let selectedSize = '';
-    let bag = 0;
     let detailOpen = false;
     let modalOpen = false;
     const sizeNames = ['XS', 'S', 'M', 'L', 'XL'];
@@ -556,11 +184,15 @@
             b.innerHTML = `
                 <div class="garment-assembly" style="--delay:${i * 70}ms">
                     <div class="garment-turn">
-                        <img class="face front" alt="${p.name}" draggable="false" loading="eager" decoding="async" src="${photo(p, p.variant || 0)}">
-                        <img class="face side" alt="" draggable="false" loading="eager" decoding="async" src="${sidePhoto(p)}">
+                        <img class="face front" draggable="false" loading="eager" decoding="async">
+                        <img class="face side" alt="" draggable="false" loading="eager" decoding="async">
                     </div>
                 </div>`;
 
+            const front = b.querySelector('.face.front');
+            front.alt = p.name;
+            front.src = photo(p, p.variant || 0);
+            b.querySelector('.face.side').src = sidePhoto(p, p.variant || 0);
             b.addEventListener('mouseenter', () => !detailOpen && setActive(i));
             b.addEventListener('focus', () => !detailOpen && setActive(i));
             b.addEventListener('click', () => openDetail(i));
@@ -617,7 +249,16 @@
 
     // Áp dụng cấu hình của sào hiện tại lên giao diện
     function applyRack(currentRack) {
-        if (!currentRack) return;
+        if (!currentRack) {
+            products = [];
+            active = -1;
+            makeRail();
+            for (const id of ['rackPrevBtn', 'rackNextBtn']) {
+                const button = document.getElementById(id);
+                if (button) button.style.display = 'none';
+            }
+            return;
+        }
         products = currentRack.products || [];
 
         const eyebrowEl = $('.rail-eyebrow');
@@ -689,9 +330,14 @@
 
         if (nameEl) nameEl.textContent = p.name;
         if (priceEl) priceEl.textContent = formatPrice(p.price);
-        if (descEl) descEl.textContent = p.desc;
+        if (descEl) {
+            const description = (p.desc || '').trim();
+            const showDescription = Boolean(description) && description !== p.name.trim();
+            descEl.hidden = !showDescription;
+            descEl.textContent = showDescription ? description : '';
+        }
         if (typeEl) typeEl.textContent = p.type ? `// ${p.type.toUpperCase()}` : '// THIẾT KẾ GIỚI HẠN';
-        const hasBackPhoto = productsWithBackPhotos.has(p.slug);
+        const hasBackPhoto = Boolean(backPhoto(p, v));
         if (!hasBackPhoto) currentViewSide = 'front';
 
         const updateDetailImage = () => {
@@ -703,17 +349,9 @@
         };
         updateDetailImage();
 
-        // Render Front / Back View Switcher (Side A · Side B)
         const viewSwitchEl = $('#viewSwitch');
         if (viewSwitchEl) viewSwitchEl.hidden = !hasBackPhoto;
         if (viewSwitchEl && hasBackPhoto) {
-            const optFront = viewSwitchEl.querySelector('[data-view="front"]');
-            const optBack = viewSwitchEl.querySelector('[data-view="back"]');
-            if (optFront) optFront.textContent = 'Side A';
-            if (optBack) optBack.textContent = 'Side B';
-            const sep = viewSwitchEl.querySelector('.rail-view-sep');
-            if (sep) sep.textContent = '|';
-
             const opts = viewSwitchEl.querySelectorAll('.rail-view-opt');
             opts.forEach(opt => {
                 const side = opt.dataset.view;
@@ -741,11 +379,11 @@
             });
         }
 
-        const totalStock = (p.stock || []).reduce((a, b) => a + b, 0);
+        const totalStock = (p.variants[v] || []).reduce((total, variant) => total + (variant?.stock || 0), 0);
         const low = totalStock > 0 && totalStock <= 15;
         const st = $('#stockStatus');
         if (st) {
-            st.textContent = p.upcoming ? 'Ra mắt Thứ Sáu' : low ? 'Sắp hết hàng' : 'Còn hàng';
+            st.textContent = p.upcoming ? 'Ra mắt Thứ Sáu' : !totalStock ? 'Hết hàng' : low ? 'Sắp hết hàng' : 'Còn hàng';
             st.classList.toggle('low', low && !p.upcoming);
         }
 
@@ -760,8 +398,12 @@
                 btn.setAttribute('aria-label', c[0]);
                 btn.onclick = () => {
                     p.variant = idx;
-                    const slotFront = document.querySelector(`.slot[data-idx="${current}"] .face.front`);
+                    if (!variantForSize(p, selectedSize)?.stock) selectedSize = '';
+                    const slot = document.querySelector(`.slot[data-idx="${current}"]`);
+                    const slotFront = slot?.querySelector('.face.front');
                     if (slotFront) slotFront.src = photo(p, idx);
+                    const slotSide = slot?.querySelector('.face.side');
+                    if (slotSide) slotSide.src = sidePhoto(p, idx);
                     renderDetail();
                 };
                 colorsEl.append(btn);
@@ -776,8 +418,9 @@
                 const b = document.createElement('button');
                 b.className = 'rail-size-chip' + (selectedSize === size ? ' selected' : '');
                 b.textContent = size;
-                b.disabled = p.upcoming || (p.stock && p.stock[idx] === 0);
-                b.title = b.disabled ? 'Hết hàng' : `Còn ${p.stock ? p.stock[idx] : 10} sản phẩm`;
+                const stock = p.variants[v]?.[idx]?.stock || 0;
+                b.disabled = p.upcoming || !stock;
+                b.title = b.disabled ? 'Hết hàng' : `Còn ${stock} sản phẩm`;
                 b.onclick = () => {
                     selectedSize = size;
                     renderSizes();
@@ -792,13 +435,12 @@
     function renderSizes() {
         const p = products[current];
         if (!p) return;
-        const currentSizes = p.sizes || sizeNames;
         document.querySelectorAll('.rail-size-chip').forEach(b => {
             b.classList.toggle('selected', b.textContent === selectedSize);
         });
 
-        const sizeIdx = currentSizes.indexOf(selectedSize);
-        const count = (p.stock && sizeIdx >= 0) ? p.stock[sizeIdx] : 0;
+        const variant = variantForSize(p, selectedSize);
+        const count = variant?.stock || 0;
         const hintEl = $('#sizeHint');
         if (hintEl) {
             hintEl.textContent = selectedSize && count <= 2 && count > 0 ? `Chỉ còn ${count} sản phẩm size ${selectedSize}` : '';
@@ -809,9 +451,9 @@
             cartCta.textContent = p.upcoming 
                 ? 'NHẬN THÔNG BÁO KHI RA MẮT' 
                 : selectedSize 
-                    ? `THÊM VÀO GIỎ · ${formatPrice(p.price)}` 
+                    ? `THÊM VÀO GIỎ · ${formatPrice((variant?.price ?? p.price * 10000) / 10000)}`
                     : 'CHỌN KÍCH CỠ';
-            cartCta.disabled = p.upcoming || !selectedSize;
+            cartCta.disabled = p.upcoming || !selectedSize || !count;
         }
     }
 
@@ -843,13 +485,14 @@
         }
     }
 
-    function openClothingRail(category = 'ao') {
+    function openClothingRail(category = 'ao', audience = window.HNMTChilePortal?.getAudience?.() || 'men') {
         currentCategory = (category === 'quan') ? 'quan' : 'ao';
+        currentAudience = audience;
         isFiltered = false;
         activeFilterLabel = '';
         renderActiveFilterBanner(null, null);
 
-        currentRacks = (currentCategory === 'quan') ? DEFAULT_PANTS_RACKS : DEFAULT_SHIRT_RACKS;
+        currentRacks = chunkProductsIntoRacks(getAllProducts(currentCategory, currentAudience), currentCategory);
         currentRackIdx = 0;
 
         const rackOverlayEl = document.getElementById('hnmtRackOverlay');
@@ -868,8 +511,9 @@
 
     // Chọn và phóng to chi tiết một món đồ cụ thể
     function selectProduct(category, slugOrIdx) {
-        if (category && currentCategory !== category) {
-            openClothingRail(category);
+        const audience = window.HNMTChilePortal?.getAudience?.() || 'men';
+        if (currentAudience !== audience || (category && currentCategory !== category)) {
+            openClothingRail(category || currentCategory, audience);
         } else {
             const rackOverlayEl = document.getElementById('hnmtRackOverlay');
             if (rackOverlayEl && !rackOverlayEl.classList.contains('is-active')) {
@@ -909,6 +553,8 @@
             return;
         }
 
+        const catalog = getAllProducts(currentCategory, currentAudience);
+        filteredList = filteredList.filter(product => catalog.some(item => item.slug === product.slug));
         isFiltered = true;
         activeFilterLabel = filterLabel;
 
@@ -957,7 +603,7 @@
         const emptyNotice = stage?.querySelector('.rail-empty-results-box');
         if (emptyNotice) emptyNotice.remove();
 
-        currentRacks = (currentCategory === 'quan') ? DEFAULT_PANTS_RACKS : DEFAULT_SHIRT_RACKS;
+        currentRacks = chunkProductsIntoRacks(getAllProducts(currentCategory, currentAudience), currentCategory);
         currentRackIdx = 0;
         applyRack(currentRacks[0]);
     }
@@ -978,7 +624,7 @@
         resetFilter,
         getCategory: () => currentCategory,
         setCategory: (cat) => { openClothingRail(cat); },
-        getAllProducts: (cat) => (cat === 'quan' ? ALL_PANTS_PRODUCTS : ALL_SHIRT_PRODUCTS),
+        getAllProducts,
         SHIRT_RACKS: DEFAULT_SHIRT_RACKS,
         PANTS_RACKS: DEFAULT_PANTS_RACKS,
         ALL_SHIRT_PRODUCTS,
@@ -996,7 +642,7 @@
                 currentCategory = 'quan';
                 currentRacks = DEFAULT_PANTS_RACKS;
                 currentRackIdx = 0;
-                products = currentRacks[0].products;
+                products = currentRacks[0]?.products || [];
             }
         } catch (e) {}
 
@@ -1050,59 +696,30 @@
         }
 
         if (cartCta) {
-            cartCta.onclick = () => {
+            cartCta.onclick = async () => {
                 const p = products[current];
-                if (!p || p.upcoming) return;
-                if (!selectedSize) {
+                if (!p || p.upcoming || !selectedSize || !window.HNMTCart) return;
+                const size = selectedSize;
+                const variant = variantForSize(p, size);
+                if (!variant?.stock) return;
+
+                cartCta.disabled = true;
+                const added = await window.HNMTCart.addItem({
+                    name: p.name,
+                    productId: p.productId,
+                    variantId: variant.id,
+                    quantity: 1
+                });
+                if (!added || products[current] !== p || selectedSize !== size) {
+                    renderSizes();
                     return;
                 }
 
-                bag++;
-                const bagCount = document.getElementById('bagCount');
-                if (bagCount) {
-                    bagCount.textContent = bag;
-                    bagCount.classList.remove('bump');
-                    void bagCount.offsetWidth;
-                    bagCount.classList.add('bump');
-                }
-
-                const svBag = document.getElementById('svBagBadge');
-                if (svBag) {
-                    svBag.textContent = bag;
-                    svBag.style.transform = 'scale(1.4)';
-                    setTimeout(() => svBag.style.transform = 'scale(1)', 250);
-                }
-
-                // Thêm vào giỏ hàng thống nhất Atelier Cart
-                if (window.HNMTCart) {
-                    const chosenColor = p.colors && p.colors[p.variant || 0] ? p.colors[p.variant || 0] : null;
-                    window.HNMTCart.addItem({
-                        name: p.name,
-                        slug: p.slug,
-                        price: (p.price || 0) * 10000,
-                        size: selectedSize,
-                        color: chosenColor ? chosenColor[0] : '',
-                        colorDot: chosenColor ? chosenColor[1] : '',
-                        imageUrl: photo(p, p.variant || 0),
-                        category: currentCategory === 'quan' ? 'quan' : 'ao',
-                        quantity: 1
-                    });
-                }
-
-                cartCta.innerHTML = `
-                    <span class="rail-btn-feedback">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
-                        ĐÃ THÊM VÀO GIỎ (SIZE ${selectedSize})
-                    </span>
-                `;
+                cartCta.textContent = `ĐÃ THÊM VÀO GIỎ (SIZE ${size})`;
                 cartCta.classList.add('is-added');
-                cartCta.disabled = true;
 
                 setTimeout(() => {
                     cartCta.classList.remove('is-added');
-                    cartCta.disabled = false;
                     renderSizes();
                 }, 2400);
             };

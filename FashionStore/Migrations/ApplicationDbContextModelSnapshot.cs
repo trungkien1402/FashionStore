@@ -354,6 +354,20 @@ namespace FashionStore.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("ShowroomAudience")
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
+
+                    b.Property<string>("ShowroomKind")
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
+
+                    b.Property<string>("ShowroomMetadata")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ShowroomSortOrder")
+                        .HasColumnType("int");
+
                     b.Property<string>("Slug")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -361,6 +375,8 @@ namespace FashionStore.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("ShowroomAudience", "ShowroomKind", "ShowroomSortOrder");
 
                     b.ToTable("Products");
                 });

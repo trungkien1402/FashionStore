@@ -122,10 +122,7 @@
 
     // Lấy toàn bộ danh sách 15 áo từ ClothingRail
     function getShirtCatalog() {
-        if (window.ClothingRail && Array.isArray(window.ClothingRail.ALL_SHIRT_PRODUCTS)) {
-            return window.ClothingRail.ALL_SHIRT_PRODUCTS;
-        }
-        return [];
+        return window.ClothingRail?.getAllProducts('ao') || [];
     }
 
     // HTML Template: Right Sidebar mờ đục trong suốt với Select-from-list & Range Slider
@@ -437,7 +434,7 @@
                     } else if (selectedStyle === 'windbreaker') {
                         if (!itemText.includes('gio') && !itemText.includes('windbreaker')) return false;
                     } else if (selectedStyle === 'blazer') {
-                        if (!itemText.includes('blazer')) return false;
+                        if (!itemText.includes('blazer') && !itemText.includes('vest')) return false;
                     } else if (selectedStyle === 'crewneck') {
                         if (!itemText.includes('crewneck') && !itemText.includes('chui dau') && !itemText.includes('sweatshirt')) return false;
                     } else if (selectedStyle === 'zip-hoodie') {

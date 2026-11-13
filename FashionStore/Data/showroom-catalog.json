@@ -1,0 +1,9153 @@
+[
+  {
+    "audience": "women",
+    "kind": "ao",
+    "slug": "women-linen-blazer",
+    "name": "Blazer Linen Nữ",
+    "description": "",
+    "price": 890000,
+    "order": 0,
+    "metadata": {
+      "colors": [
+        [
+          "Kem",
+          "#ebe1cb"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/women-linen-blazer-front.webp",
+          "side": "/clothing-rail/assets/women-linen-blazer-side.webp",
+          "back": "/clothing-rail/assets/women-linen-blazer-back.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "blazer",
+        "style": "blazer",
+        "colorGroup": "white",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "ao",
+    "slug": "women-silk-cami",
+    "name": "Áo Hai Dây Lụa Nữ",
+    "description": "",
+    "price": 420000,
+    "order": 1,
+    "metadata": {
+      "colors": [
+        [
+          "Champagne",
+          "#d9c096"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/women-silk-cami-front.webp",
+          "side": "/clothing-rail/assets/women-silk-cami-side.webp",
+          "back": "/clothing-rail/assets/women-silk-cami-back.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "áo hai dây",
+        "style": "áo hai dây",
+        "colorGroup": "white",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "ao",
+    "slug": "women-satin-wrap-blouse",
+    "name": "Áo Blouse Lụa Quấn Eo Nữ",
+    "description": "",
+    "price": 590000,
+    "order": 2,
+    "metadata": {
+      "colors": [
+        [
+          "Đỏ rượu",
+          "#713043"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/women-satin-wrap-blouse-front.webp",
+          "side": "/clothing-rail/assets/women-satin-wrap-blouse-side.webp",
+          "back": "/clothing-rail/assets/women-satin-wrap-blouse-back.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "shirt",
+        "style": "shirt",
+        "colorGroup": "red",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "ao",
+    "slug": "women-cropped-tweed-jacket",
+    "name": "Áo Khoác Tweed Cropped Nữ",
+    "description": "",
+    "price": 850000,
+    "order": 3,
+    "metadata": {
+      "colors": [
+        [
+          "Kem",
+          "#e7dbc8"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/women-cropped-tweed-jacket-front.webp",
+          "side": "/clothing-rail/assets/women-cropped-tweed-jacket-side.webp",
+          "back": "/clothing-rail/assets/women-cropped-tweed-jacket-back.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "jacket",
+        "style": "jacket",
+        "colorGroup": "white",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "ao",
+    "slug": "women-linen-vest",
+    "name": "Áo Gile Linen Nữ Màu Kem",
+    "description": "",
+    "price": 590000,
+    "order": 4,
+    "metadata": {
+      "colors": [
+        [
+          "Kem",
+          "#ddd2b8"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/women-linen-vest-front.webp",
+          "side": "/clothing-rail/assets/women-linen-vest-side.webp",
+          "back": "/clothing-rail/assets/women-linen-vest-back.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "jacket",
+        "style": "jacket",
+        "colorGroup": "white",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "ao",
+    "slug": "women-black-knit-cardigan",
+    "name": "Áo Cardigan Đen Viền Kem Nữ",
+    "description": "",
+    "price": 580000,
+    "order": 5,
+    "metadata": {
+      "colors": [
+        [
+          "Đen / Kem",
+          "#27272d"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/women-black-knit-cardigan-front.webp",
+          "side": "/clothing-rail/assets/women-black-knit-cardigan-side.webp",
+          "back": "/clothing-rail/assets/women-black-knit-cardigan-back.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "áo len",
+        "style": "áo len",
+        "colorGroup": "black",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "ao",
+    "slug": "women-terracotta-embroidered-blouse",
+    "name": "Áo Blouse Thêu Hoa Đất Nung Nữ",
+    "description": "",
+    "price": 640000,
+    "order": 6,
+    "metadata": {
+      "colors": [
+        [
+          "Đất nung",
+          "#a5503b"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/women-terracotta-embroidered-blouse-front.webp",
+          "side": "/clothing-rail/assets/women-terracotta-embroidered-blouse-side.webp",
+          "back": "/clothing-rail/assets/women-terracotta-embroidered-blouse-back.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "shirt",
+        "style": "shirt",
+        "colorGroup": "brown",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "ao",
+    "slug": "women-lilac-running-shell",
+    "name": "Áo Khoác Gió Chạy Bộ Lilac Nữ",
+    "description": "",
+    "price": 710000,
+    "order": 7,
+    "metadata": {
+      "colors": [
+        [
+          "Tím lilac",
+          "#aa9acb"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/women-lilac-running-shell-front.webp",
+          "side": "/clothing-rail/assets/women-lilac-running-shell-side.webp",
+          "back": "/clothing-rail/assets/women-lilac-running-shell-back.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "jacket",
+        "style": "jacket",
+        "colorGroup": "purple",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "ao",
+    "slug": "women-sage-cropped-trench",
+    "name": "Áo Trench Cropped Xanh Sage Nữ",
+    "description": "",
+    "price": 920000,
+    "order": 8,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh sage",
+          "#9da58d"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/women-sage-cropped-trench-front.webp",
+          "side": "/clothing-rail/assets/women-sage-cropped-trench-side.webp",
+          "back": "/clothing-rail/assets/women-sage-cropped-trench-back.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "jacket",
+        "style": "jacket",
+        "colorGroup": "green",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "ao",
+    "slug": "women-navy-breton-knit",
+    "name": "Áo Len Breton Sọc Navy Nữ",
+    "description": "",
+    "price": 540000,
+    "order": 9,
+    "metadata": {
+      "colors": [
+        [
+          "Kem / Navy",
+          "#303b58"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/women-navy-breton-knit-front.webp",
+          "side": "/clothing-rail/assets/women-navy-breton-knit-side.webp",
+          "back": "/clothing-rail/assets/women-navy-breton-knit-back.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "áo len",
+        "style": "áo len",
+        "colorGroup": "blue",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "ao",
+    "slug": "women-plum-pleated-blouse",
+    "name": "Áo Blouse Xếp Ly Màu Mận Nữ",
+    "description": "",
+    "price": 620000,
+    "order": 10,
+    "metadata": {
+      "colors": [
+        [
+          "Tím mận",
+          "#674361"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/women-plum-pleated-blouse-front.webp",
+          "side": "/clothing-rail/assets/women-plum-pleated-blouse-side.webp",
+          "back": "/clothing-rail/assets/women-plum-pleated-blouse-back.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "shirt",
+        "style": "shirt",
+        "colorGroup": "purple",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "ao",
+    "slug": "women-hourglass-houndstooth",
+    "name": "Áo Khoác Đồng Hồ Cát Houndstooth Nữ",
+    "description": "",
+    "price": 1090000,
+    "order": 11,
+    "metadata": {
+      "colors": [
+        [
+          "Đen / Trắng",
+          "#5f5c5f"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/women-hourglass-houndstooth-front.webp",
+          "side": "/clothing-rail/assets/women-hourglass-houndstooth-side.webp",
+          "back": "/clothing-rail/assets/women-hourglass-houndstooth-back.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "jacket",
+        "style": "jacket",
+        "colorGroup": "gray",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "ao",
+    "slug": "women-emerald-jacquard-track",
+    "name": "Áo Track Jacquard Xanh Ngọc Nữ",
+    "description": "",
+    "price": 880000,
+    "order": 12,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh ngọc / Đỏ",
+          "#275344"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/women-emerald-jacquard-track-front.webp",
+          "side": "/clothing-rail/assets/women-emerald-jacquard-track-side.webp",
+          "back": "/clothing-rail/assets/women-emerald-jacquard-track-back.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "jacket",
+        "style": "jacket",
+        "colorGroup": "green",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "quan",
+    "slug": "women-wide-trouser",
+    "name": "Quần Tây Nữ Ống Rộng",
+    "description": "",
+    "price": 640000,
+    "order": 0,
+    "metadata": {
+      "colors": [
+        [
+          "Be cát",
+          "#c4ad92"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/women-wide-trouser-front.webp",
+          "side": "/clothing-rail/assets/women-wide-trouser-side.webp",
+          "back": "/clothing-rail/assets/women-wide-trouser-back.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "tay",
+        "style": "tay",
+        "colorGroup": "beige",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "quan",
+    "slug": "women-black-flare-trouser",
+    "name": "Quần Tây Nữ Ống Loe",
+    "description": "",
+    "price": 620000,
+    "order": 1,
+    "metadata": {
+      "colors": [
+        [
+          "Đen",
+          "#26242a"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/women-black-flare-trouser-front.webp",
+          "side": "/clothing-rail/assets/women-black-flare-trouser-side.webp",
+          "back": "/clothing-rail/assets/women-black-flare-trouser-back.webp"
+        }
+      ],
+      "sizes": [
+        "26",
+        "27",
+        "28",
+        "30",
+        "32"
+      ],
+      "details": {
+        "type": "tay",
+        "style": "tay",
+        "colorGroup": "black",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "quan",
+    "slug": "women-ecru-barrel-jeans",
+    "name": "Jeans Barrel Nữ Trắng Ngà",
+    "description": "",
+    "price": 650000,
+    "order": 2,
+    "metadata": {
+      "colors": [
+        [
+          "Trắng ngà",
+          "#ded7c6"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/women-ecru-barrel-jeans-front.webp",
+          "side": "/clothing-rail/assets/women-ecru-barrel-jeans-side.webp",
+          "back": "/clothing-rail/assets/women-ecru-barrel-jeans-back.webp"
+        }
+      ],
+      "sizes": [
+        "26",
+        "27",
+        "28",
+        "30",
+        "32"
+      ],
+      "details": {
+        "type": "jeans",
+        "style": "jeans",
+        "colorGroup": "white",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "quan",
+    "slug": "women-slate-straight-cargo",
+    "name": "Quần Cargo Nữ Ống Suông",
+    "description": "",
+    "price": 590000,
+    "order": 3,
+    "metadata": {
+      "colors": [
+        [
+          "Xám đá",
+          "#66686c"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/women-slate-straight-cargo-front.webp",
+          "side": "/clothing-rail/assets/women-slate-straight-cargo-side.webp",
+          "back": "/clothing-rail/assets/women-slate-straight-cargo-back.webp"
+        }
+      ],
+      "sizes": [
+        "26",
+        "27",
+        "28",
+        "30",
+        "32"
+      ],
+      "details": {
+        "type": "cargo",
+        "style": "cargo",
+        "colorGroup": "gray",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "quan",
+    "slug": "women-charcoal-cigarette",
+    "name": "Quần Tây Cigarette Nữ",
+    "description": "",
+    "price": 620000,
+    "order": 4,
+    "metadata": {
+      "colors": [
+        [
+          "Xám than",
+          "#4b4c51"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/women-charcoal-cigarette-front.webp",
+          "side": "/clothing-rail/assets/women-charcoal-cigarette-side.webp",
+          "back": "/clothing-rail/assets/women-charcoal-cigarette-back.webp"
+        }
+      ],
+      "sizes": [
+        "26",
+        "27",
+        "28",
+        "30",
+        "32"
+      ],
+      "details": {
+        "type": "tay",
+        "style": "tay",
+        "colorGroup": "gray",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "quan",
+    "slug": "women-indigo-palazzo",
+    "name": "Quần Palazzo Denim Nữ",
+    "description": "",
+    "price": 690000,
+    "order": 5,
+    "metadata": {
+      "colors": [
+        [
+          "Chàm đậm",
+          "#304664"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/women-indigo-palazzo-front.webp",
+          "side": "/clothing-rail/assets/women-indigo-palazzo-side.webp",
+          "back": "/clothing-rail/assets/women-indigo-palazzo-back.webp"
+        }
+      ],
+      "sizes": [
+        "26",
+        "27",
+        "28",
+        "30",
+        "32"
+      ],
+      "details": {
+        "type": "jeans",
+        "style": "jeans",
+        "colorGroup": "blue",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "quan",
+    "slug": "women-black-hakama-wide",
+    "name": "Quần Xếp Ly Hakama Nữ",
+    "description": "",
+    "price": 720000,
+    "order": 6,
+    "metadata": {
+      "colors": [
+        [
+          "Đen",
+          "#252630"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/women-black-hakama-wide-front.webp",
+          "side": "/clothing-rail/assets/women-black-hakama-wide-side.webp",
+          "back": "/clothing-rail/assets/women-black-hakama-wide-back.webp"
+        }
+      ],
+      "sizes": [
+        "26",
+        "27",
+        "28",
+        "30",
+        "32"
+      ],
+      "details": {
+        "type": "tay",
+        "style": "tay",
+        "colorGroup": "black",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "quan",
+    "slug": "women-chalk-tennis-track",
+    "name": "Quần Thể Thao Kem Kẻ Navy Nữ",
+    "description": "",
+    "price": 580000,
+    "order": 7,
+    "metadata": {
+      "colors": [
+        [
+          "Kem / Navy",
+          "#ddd8cb"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/women-chalk-tennis-track-front.webp",
+          "side": "/clothing-rail/assets/women-chalk-tennis-track-side.webp",
+          "back": "/clothing-rail/assets/women-chalk-tennis-track-back.webp"
+        }
+      ],
+      "sizes": [
+        "26",
+        "27",
+        "28",
+        "30",
+        "32"
+      ],
+      "details": {
+        "type": "jogger",
+        "style": "jogger",
+        "colorGroup": "white",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "quan",
+    "slug": "women-olive-linen-drawstring",
+    "name": "Quần Linen Rút Dây Xanh Olive Nữ",
+    "description": "",
+    "price": 640000,
+    "order": 8,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh olive",
+          "#666a4a"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/women-olive-linen-drawstring-front.webp",
+          "side": "/clothing-rail/assets/women-olive-linen-drawstring-side.webp",
+          "back": "/clothing-rail/assets/women-olive-linen-drawstring-back.webp"
+        }
+      ],
+      "sizes": [
+        "26",
+        "27",
+        "28",
+        "30",
+        "32"
+      ],
+      "details": {
+        "type": "tay",
+        "style": "tay",
+        "colorGroup": "green",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "quan",
+    "slug": "women-navy-pinstripe-tailored",
+    "name": "Quần Tây Kẻ Sọc Navy Nữ",
+    "description": "",
+    "price": 740000,
+    "order": 9,
+    "metadata": {
+      "colors": [
+        [
+          "Navy",
+          "#30374c"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/women-navy-pinstripe-tailored-front.webp",
+          "side": "/clothing-rail/assets/women-navy-pinstripe-tailored-side.webp",
+          "back": "/clothing-rail/assets/women-navy-pinstripe-tailored-back.webp"
+        }
+      ],
+      "sizes": [
+        "26",
+        "27",
+        "28",
+        "30",
+        "32"
+      ],
+      "details": {
+        "type": "tay",
+        "style": "tay",
+        "colorGroup": "blue",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "quan",
+    "slug": "women-brown-suede-flare",
+    "name": "Quần Ống Loe Nâu Nữ",
+    "description": "",
+    "price": 760000,
+    "order": 10,
+    "metadata": {
+      "colors": [
+        [
+          "Nâu hạt dẻ",
+          "#79563f"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/women-brown-suede-flare-front.webp",
+          "side": "/clothing-rail/assets/women-brown-suede-flare-side.webp",
+          "back": "/clothing-rail/assets/women-brown-suede-flare-back.webp"
+        }
+      ],
+      "sizes": [
+        "26",
+        "27",
+        "28",
+        "30",
+        "32"
+      ],
+      "details": {
+        "type": "tay",
+        "style": "tay",
+        "colorGroup": "brown",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "quan",
+    "slug": "women-burgundy-velvet-flare",
+    "name": "Quần Nhung Ống Loe Đỏ Rượu Nữ",
+    "description": "",
+    "price": 830000,
+    "order": 11,
+    "metadata": {
+      "colors": [
+        [
+          "Đỏ rượu",
+          "#6c243d"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/women-burgundy-velvet-flare-front.webp",
+          "side": "/clothing-rail/assets/women-burgundy-velvet-flare-side.webp",
+          "back": "/clothing-rail/assets/women-burgundy-velvet-flare-back.webp"
+        }
+      ],
+      "sizes": [
+        "26",
+        "27",
+        "28",
+        "30",
+        "32"
+      ],
+      "details": {
+        "type": "tay",
+        "style": "tay",
+        "colorGroup": "burgundy",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "quan",
+    "slug": "women-checkerboard-denim",
+    "name": "Quần Denim Bàn Cờ Nữ",
+    "description": "",
+    "price": 840000,
+    "order": 12,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh denim hai tông",
+          "#59789e"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/women-checkerboard-denim-front.webp",
+          "side": "/clothing-rail/assets/women-checkerboard-denim-side.webp",
+          "back": "/clothing-rail/assets/women-checkerboard-denim-back.webp"
+        }
+      ],
+      "sizes": [
+        "26",
+        "27",
+        "28",
+        "30",
+        "32"
+      ],
+      "details": {
+        "type": "jeans",
+        "style": "jeans",
+        "colorGroup": "blue",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "giay",
+    "slug": "women-platform-sneaker",
+    "name": "PLATFORM LOW — WHITE / BLUSH",
+    "description": "",
+    "price": 1490000,
+    "order": 0,
+    "metadata": {
+      "colors": [
+        [
+          "Trắng / Hồng phấn",
+          "#f5f4ef"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/women-platform-sneaker.webp"
+        }
+      ],
+      "sizes": [
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40"
+      ],
+      "collection": {
+        "id": "women-sneakers",
+        "title": "SNEAKER NỮ",
+        "order": 0
+      },
+      "details": {
+        "model": "PLATFORM LOW",
+        "colorway": "WHITE / BLUSH",
+        "swatches": [
+          "#f5f4ef"
+        ],
+        "themeColor": "#96566b",
+        "accentColor": "#f0c6d1",
+        "styleCode": "W-PLATFORM-LOW",
+        "designer": "HNMTSHOP",
+        "silhouettes": [
+          "low-top"
+        ]
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "giay",
+    "slug": "women-court-rose",
+    "name": "COURT LOW — ROSE / CREAM",
+    "description": "",
+    "price": 1290000,
+    "order": 1,
+    "metadata": {
+      "colors": [
+        [
+          "Hồng phấn / Kem",
+          "#f0c6d1"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/women-court-rose.webp"
+        }
+      ],
+      "sizes": [
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40"
+      ],
+      "collection": {
+        "id": "women-sneakers",
+        "title": "SNEAKER NỮ",
+        "order": 0
+      },
+      "details": {
+        "model": "COURT LOW",
+        "colorway": "ROSE / CREAM",
+        "swatches": [
+          "#f0c6d1"
+        ],
+        "themeColor": "#b4778b",
+        "accentColor": "#f0c6d1",
+        "silhouettes": [
+          "low-top"
+        ],
+        "styleCode": "WOMEN-COURT-ROSE",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "giay",
+    "slug": "women-cloud-runner",
+    "name": "CLOUD RUNNER — SILVER / WHITE",
+    "description": "",
+    "price": 1590000,
+    "order": 2,
+    "metadata": {
+      "colors": [
+        [
+          "Bạc / Trắng",
+          "#c9dbef"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/women-cloud-runner.webp"
+        }
+      ],
+      "sizes": [
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40"
+      ],
+      "collection": {
+        "id": "women-sneakers",
+        "title": "SNEAKER NỮ",
+        "order": 0
+      },
+      "details": {
+        "model": "CLOUD RUNNER",
+        "colorway": "SILVER / WHITE",
+        "swatches": [
+          "#c9dbef"
+        ],
+        "themeColor": "#68768a",
+        "accentColor": "#c9dbef",
+        "silhouettes": [
+          "runners",
+          "low-top"
+        ],
+        "styleCode": "WOMEN-CLOUD-RUNNER",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "giay",
+    "slug": "women-black-pointed-pump",
+    "name": "POINT PUMP — BLACK PATENT",
+    "description": "",
+    "price": 1490000,
+    "order": 0,
+    "metadata": {
+      "colors": [
+        [
+          "Đen bóng",
+          "#aba0aa"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/women-black-pointed-pump.webp"
+        }
+      ],
+      "sizes": [
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40"
+      ],
+      "collection": {
+        "id": "women-heels",
+        "title": "GIÀY CAO GÓT NỮ",
+        "order": 1
+      },
+      "details": {
+        "model": "POINT PUMP",
+        "colorway": "BLACK PATENT",
+        "swatches": [
+          "#aba0aa"
+        ],
+        "themeColor": "#38303a",
+        "accentColor": "#aba0aa",
+        "silhouettes": [
+          "heels"
+        ],
+        "styleCode": "WOMEN-BLACK-POINTED-PUMP",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "giay",
+    "slug": "women-rose-block-sandal",
+    "name": "BLOCK HEEL — DUSTY ROSE",
+    "description": "",
+    "price": 1350000,
+    "order": 1,
+    "metadata": {
+      "colors": [
+        [
+          "Hồng đất",
+          "#efc4cc"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/women-rose-block-sandal.webp"
+        }
+      ],
+      "sizes": [
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40"
+      ],
+      "collection": {
+        "id": "women-heels",
+        "title": "GIÀY CAO GÓT NỮ",
+        "order": 1
+      },
+      "details": {
+        "model": "BLOCK HEEL",
+        "colorway": "DUSTY ROSE",
+        "swatches": [
+          "#efc4cc"
+        ],
+        "themeColor": "#a96b78",
+        "accentColor": "#efc4cc",
+        "silhouettes": [
+          "heels"
+        ],
+        "styleCode": "WOMEN-ROSE-BLOCK-SANDAL",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "giay",
+    "slug": "women-ivory-slingback",
+    "name": "SLINGBACK — IVORY",
+    "description": "",
+    "price": 1390000,
+    "order": 2,
+    "metadata": {
+      "colors": [
+        [
+          "Trắng ngà",
+          "#ebe0cc"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/women-ivory-slingback.webp"
+        }
+      ],
+      "sizes": [
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40"
+      ],
+      "collection": {
+        "id": "women-heels",
+        "title": "GIÀY CAO GÓT NỮ",
+        "order": 1
+      },
+      "details": {
+        "model": "SLINGBACK",
+        "colorway": "IVORY",
+        "swatches": [
+          "#ebe0cc"
+        ],
+        "themeColor": "#a18872",
+        "accentColor": "#ebe0cc",
+        "silhouettes": [
+          "heels"
+        ],
+        "styleCode": "WOMEN-IVORY-SLINGBACK",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "giay",
+    "slug": "women-wine-retro-runner",
+    "name": "VIVA RUN — WINE / CREAM",
+    "description": "",
+    "price": 1490000,
+    "order": 0,
+    "metadata": {
+      "colors": [
+        [
+          "Đỏ rượu / Kem",
+          "#e6c2b0"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/women-wine-retro-runner.webp"
+        }
+      ],
+      "sizes": [
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40"
+      ],
+      "collection": {
+        "id": "women-sport-street",
+        "title": "THỂ THAO & ĐỜI THƯỜNG NỮ",
+        "order": 2
+      },
+      "details": {
+        "model": "VIVA RUN",
+        "colorway": "WINE / CREAM",
+        "swatches": [
+          "#e6c2b0"
+        ],
+        "themeColor": "#874458",
+        "accentColor": "#e6c2b0",
+        "silhouettes": [
+          "runners",
+          "low-top"
+        ],
+        "styleCode": "WOMEN-WINE-RETRO-RUNNER",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "giay",
+    "slug": "women-cognac-penny-loafer",
+    "name": "PENNY — COGNAC",
+    "description": "",
+    "price": 1590000,
+    "order": 1,
+    "metadata": {
+      "colors": [
+        [
+          "Nâu cognac",
+          "#c18c66"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/women-cognac-penny-loafer.webp"
+        }
+      ],
+      "sizes": [
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40"
+      ],
+      "collection": {
+        "id": "women-sport-street",
+        "title": "THỂ THAO & ĐỜI THƯỜNG NỮ",
+        "order": 2
+      },
+      "details": {
+        "model": "PENNY",
+        "colorway": "COGNAC",
+        "swatches": [
+          "#c18c66"
+        ],
+        "themeColor": "#77513a",
+        "accentColor": "#c18c66",
+        "silhouettes": [
+          "dress"
+        ],
+        "styleCode": "WOMEN-COGNAC-PENNY-LOAFER",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "giay",
+    "slug": "women-cream-lug-ankle-boot",
+    "name": "LUG BOOT — CREAM",
+    "description": "",
+    "price": 1790000,
+    "order": 0,
+    "metadata": {
+      "colors": [
+        [
+          "Kem",
+          "#dcd1be"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/women-cream-lug-ankle-boot.webp"
+        }
+      ],
+      "sizes": [
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40"
+      ],
+      "collection": {
+        "id": "women-flats-boots",
+        "title": "GIÀY BỆT & BOOTS NỮ",
+        "order": 3
+      },
+      "details": {
+        "model": "LUG BOOT",
+        "colorway": "CREAM",
+        "swatches": [
+          "#dcd1be"
+        ],
+        "themeColor": "#9d8c79",
+        "accentColor": "#dcd1be",
+        "silhouettes": [
+          "boots"
+        ],
+        "styleCode": "WOMEN-CREAM-LUG-ANKLE-BOOT",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "giay",
+    "slug": "women-burgundy-ballet-mary-jane",
+    "name": "MARY JANE — BURGUNDY",
+    "description": "",
+    "price": 1220000,
+    "order": 1,
+    "metadata": {
+      "colors": [
+        [
+          "Đỏ rượu",
+          "#bc7e8a"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/women-burgundy-ballet-mary-jane.webp"
+        }
+      ],
+      "sizes": [
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40"
+      ],
+      "collection": {
+        "id": "women-flats-boots",
+        "title": "GIÀY BỆT & BOOTS NỮ",
+        "order": 3
+      },
+      "details": {
+        "model": "MARY JANE",
+        "colorway": "BURGUNDY",
+        "swatches": [
+          "#bc7e8a"
+        ],
+        "themeColor": "#824254",
+        "accentColor": "#bc7e8a",
+        "silhouettes": [
+          "flats"
+        ],
+        "styleCode": "WOMEN-BURGUNDY-BALLET-MARY-JANE",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "giay",
+    "slug": "women-split-toe-strap-pump",
+    "name": "SPLIT PUMP — BLACK",
+    "description": "",
+    "price": 1740000,
+    "order": 0,
+    "metadata": {
+      "colors": [
+        [
+          "Đen",
+          "#d0b8af"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/women-split-toe-strap-pump.webp"
+        }
+      ],
+      "sizes": [
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40"
+      ],
+      "collection": {
+        "id": "women-runway-concepts",
+        "title": "RUNWAY CONCEPTS",
+        "order": 4
+      },
+      "details": {
+        "model": "SPLIT PUMP",
+        "colorway": "BLACK",
+        "swatches": [
+          "#d0b8af"
+        ],
+        "themeColor": "#473945",
+        "accentColor": "#d0b8af",
+        "silhouettes": [
+          "heels"
+        ],
+        "styleCode": "WOMEN-SPLIT-TOE-STRAP-PUMP",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "women",
+    "kind": "giay",
+    "slug": "women-stacked-orbit-runner",
+    "name": "ORBIT — IVORY / SILVER",
+    "description": "",
+    "price": 1960000,
+    "order": 1,
+    "metadata": {
+      "colors": [
+        [
+          "Trắng ngà / Bạc",
+          "#d8d0ba"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/women-stacked-orbit-runner.webp"
+        }
+      ],
+      "sizes": [
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40"
+      ],
+      "collection": {
+        "id": "women-runway-concepts",
+        "title": "RUNWAY CONCEPTS",
+        "order": 4
+      },
+      "details": {
+        "model": "ORBIT",
+        "colorway": "IVORY / SILVER",
+        "swatches": [
+          "#d8d0ba"
+        ],
+        "themeColor": "#7e827f",
+        "accentColor": "#d8d0ba",
+        "silhouettes": [
+          "chunky"
+        ],
+        "styleCode": "WOMEN-STACKED-ORBIT-RUNNER",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "ao",
+    "slug": "girls-floral-tee",
+    "name": "Áo Thun Hoa Bé Gái",
+    "description": "",
+    "price": 320000,
+    "order": 0,
+    "metadata": {
+      "colors": [
+        [
+          "Kem",
+          "#eee7dd"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/girls-floral-tee-front.webp",
+          "side": "/clothing-rail/assets/girls-floral-tee-side.webp",
+          "back": "/clothing-rail/assets/girls-floral-tee-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "tee",
+        "style": "tee",
+        "colorGroup": "white",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "ao",
+    "slug": "girls-pastel-knit",
+    "name": "Áo Len Pastel Bé Gái",
+    "description": "",
+    "price": 460000,
+    "order": 1,
+    "metadata": {
+      "colors": [
+        [
+          "Tím lilac",
+          "#c7add3"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/girls-pastel-knit-front.webp",
+          "side": "/clothing-rail/assets/girls-pastel-knit-side.webp",
+          "back": "/clothing-rail/assets/girls-pastel-knit-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "áo len",
+        "style": "áo len",
+        "colorGroup": "purple",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "ao",
+    "slug": "girls-mint-scallop-polo",
+    "name": "Áo Polo Viền Sò Bé Gái",
+    "description": "",
+    "price": 350000,
+    "order": 2,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh bạc hà",
+          "#a8cab9"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/girls-mint-scallop-polo-front.webp",
+          "side": "/clothing-rail/assets/girls-mint-scallop-polo-side.webp",
+          "back": "/clothing-rail/assets/girls-mint-scallop-polo-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "tee",
+        "style": "tee",
+        "colorGroup": "green",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "ao",
+    "slug": "girls-coral-hoodie",
+    "name": "Áo Hoodie San Hô Bé Gái",
+    "description": "",
+    "price": 450000,
+    "order": 3,
+    "metadata": {
+      "colors": [
+        [
+          "Cam san hô",
+          "#e28881"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/girls-coral-hoodie-front.webp",
+          "side": "/clothing-rail/assets/girls-coral-hoodie-side.webp",
+          "back": "/clothing-rail/assets/girls-coral-hoodie-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "hoodie",
+        "style": "hoodie",
+        "colorGroup": "red",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "ao",
+    "slug": "girls-lavender-quilted-vest",
+    "name": "Áo Gile Chần Bông Bé Gái",
+    "description": "",
+    "price": 480000,
+    "order": 4,
+    "metadata": {
+      "colors": [
+        [
+          "Tím lavender",
+          "#b6a0cf"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/girls-lavender-quilted-vest-front.webp",
+          "side": "/clothing-rail/assets/girls-lavender-quilted-vest-side.webp",
+          "back": "/clothing-rail/assets/girls-lavender-quilted-vest-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "jacket",
+        "style": "jacket",
+        "colorGroup": "purple",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "ao",
+    "slug": "girls-cream-ribbon-blouse",
+    "name": "Áo Blouse Nơ Kem Bé Gái",
+    "description": "",
+    "price": 390000,
+    "order": 5,
+    "metadata": {
+      "colors": [
+        [
+          "Kem",
+          "#e3d7bc"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/girls-cream-ribbon-blouse-front.webp",
+          "side": "/clothing-rail/assets/girls-cream-ribbon-blouse-side.webp",
+          "back": "/clothing-rail/assets/girls-cream-ribbon-blouse-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "shirt",
+        "style": "shirt",
+        "colorGroup": "white",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "ao",
+    "slug": "girls-mint-tennis-polo",
+    "name": "Áo Polo Tennis Bạc Hà Bé Gái",
+    "description": "",
+    "price": 370000,
+    "order": 6,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh bạc hà",
+          "#82b5a2"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/girls-mint-tennis-polo-front.webp",
+          "side": "/clothing-rail/assets/girls-mint-tennis-polo-side.webp",
+          "back": "/clothing-rail/assets/girls-mint-tennis-polo-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "tee",
+        "style": "tee",
+        "colorGroup": "green",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "ao",
+    "slug": "girls-sunflower-embroidered-blouse",
+    "name": "Áo Blouse Thêu Hoa Nắng Bé Gái",
+    "description": "",
+    "price": 430000,
+    "order": 7,
+    "metadata": {
+      "colors": [
+        [
+          "Vàng bơ",
+          "#e3c875"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/girls-sunflower-embroidered-blouse-front.webp",
+          "side": "/clothing-rail/assets/girls-sunflower-embroidered-blouse-side.webp",
+          "back": "/clothing-rail/assets/girls-sunflower-embroidered-blouse-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "shirt",
+        "style": "shirt",
+        "colorGroup": "yellow",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "ao",
+    "slug": "girls-sky-denim-puff-jacket",
+    "name": "Áo Khoác Denim Tay Phồng Bé Gái",
+    "description": "",
+    "price": 490000,
+    "order": 8,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh denim nhạt",
+          "#8ba9bf"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/girls-sky-denim-puff-jacket-front.webp",
+          "side": "/clothing-rail/assets/girls-sky-denim-puff-jacket-side.webp",
+          "back": "/clothing-rail/assets/girls-sky-denim-puff-jacket-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "jacket",
+        "style": "jacket",
+        "colorGroup": "blue",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "ao",
+    "slug": "girls-cream-cherry-knit",
+    "name": "Áo Len Thêu Cherry Bé Gái",
+    "description": "",
+    "price": 450000,
+    "order": 9,
+    "metadata": {
+      "colors": [
+        [
+          "Kem",
+          "#e5d9bc"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/girls-cream-cherry-knit-front.webp",
+          "side": "/clothing-rail/assets/girls-cream-cherry-knit-side.webp",
+          "back": "/clothing-rail/assets/girls-cream-cherry-knit-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "áo len",
+        "style": "áo len",
+        "colorGroup": "white",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "ao",
+    "slug": "girls-peach-half-zip-fleece",
+    "name": "Áo Nỉ Khóa Nửa Cam Đào Bé Gái",
+    "description": "",
+    "price": 470000,
+    "order": 10,
+    "metadata": {
+      "colors": [
+        [
+          "Cam đào",
+          "#e6a291"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/girls-peach-half-zip-fleece-front.webp",
+          "side": "/clothing-rail/assets/girls-peach-half-zip-fleece-side.webp",
+          "back": "/clothing-rail/assets/girls-peach-half-zip-fleece-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "hoodie",
+        "style": "hoodie",
+        "colorGroup": "red",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "ao",
+    "slug": "girls-rose-floral-bomber",
+    "name": "Áo Bomber Hoa Jacquard Bé Gái",
+    "description": "",
+    "price": 550000,
+    "order": 11,
+    "metadata": {
+      "colors": [
+        [
+          "Hồng phấn",
+          "#bd8d9b"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/girls-rose-floral-bomber-front.webp",
+          "side": "/clothing-rail/assets/girls-rose-floral-bomber-side.webp",
+          "back": "/clothing-rail/assets/girls-rose-floral-bomber-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "jacket",
+        "style": "jacket",
+        "colorGroup": "pink",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "ao",
+    "slug": "girls-ivory-peplum-jacket",
+    "name": "Áo Khoác Peplum Trắng Ngà Bé Gái",
+    "description": "",
+    "price": 600000,
+    "order": 12,
+    "metadata": {
+      "colors": [
+        [
+          "Trắng ngà",
+          "#ddd1bd"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/girls-ivory-peplum-jacket-front.webp",
+          "side": "/clothing-rail/assets/girls-ivory-peplum-jacket-side.webp",
+          "back": "/clothing-rail/assets/girls-ivory-peplum-jacket-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "jacket",
+        "style": "jacket",
+        "colorGroup": "white",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "quan",
+    "slug": "girls-cargo-jogger",
+    "name": "Quần Cargo Jogger Bé Gái",
+    "description": "",
+    "price": 430000,
+    "order": 0,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh sage",
+          "#acbda9"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/girls-cargo-jogger-front.webp",
+          "side": "/clothing-rail/assets/girls-cargo-jogger-side.webp",
+          "back": "/clothing-rail/assets/girls-cargo-jogger-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "cargo",
+        "style": "cargo",
+        "colorGroup": "green",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "quan",
+    "slug": "girls-lilac-wide-jogger",
+    "name": "Quần Jogger Ống Rộng Bé Gái",
+    "description": "",
+    "price": 380000,
+    "order": 1,
+    "metadata": {
+      "colors": [
+        [
+          "Tím lilac",
+          "#c5aed7"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/girls-lilac-wide-jogger-front.webp",
+          "side": "/clothing-rail/assets/girls-lilac-wide-jogger-side.webp",
+          "back": "/clothing-rail/assets/girls-lilac-wide-jogger-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "jogger",
+        "style": "jogger",
+        "colorGroup": "purple",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "quan",
+    "slug": "girls-light-flare-jeans",
+    "name": "Jeans Ống Loe Bé Gái",
+    "description": "",
+    "price": 450000,
+    "order": 2,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh denim nhạt",
+          "#89abc5"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/girls-light-flare-jeans-front.webp",
+          "side": "/clothing-rail/assets/girls-light-flare-jeans-side.webp",
+          "back": "/clothing-rail/assets/girls-light-flare-jeans-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "jeans",
+        "style": "jeans",
+        "colorGroup": "blue",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "quan",
+    "slug": "girls-cream-pleated-culottes",
+    "name": "Quần Culottes Xếp Ly Bé Gái",
+    "description": "",
+    "price": 410000,
+    "order": 3,
+    "metadata": {
+      "colors": [
+        [
+          "Kem",
+          "#e2d4b7"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/girls-cream-pleated-culottes-front.webp",
+          "side": "/clothing-rail/assets/girls-cream-pleated-culottes-side.webp",
+          "back": "/clothing-rail/assets/girls-cream-pleated-culottes-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "tay",
+        "style": "tay",
+        "colorGroup": "white",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "quan",
+    "slug": "girls-rose-corduroy",
+    "name": "Quần Nhung Tăm Hồng Đất Bé Gái",
+    "description": "",
+    "price": 420000,
+    "order": 4,
+    "metadata": {
+      "colors": [
+        [
+          "Hồng đất",
+          "#b87f86"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/girls-rose-corduroy-front.webp",
+          "side": "/clothing-rail/assets/girls-rose-corduroy-side.webp",
+          "back": "/clothing-rail/assets/girls-rose-corduroy-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "tay",
+        "style": "tay",
+        "colorGroup": "pink",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "quan",
+    "slug": "girls-navy-sailor",
+    "name": "Quần Sailor Navy Bé Gái",
+    "description": "",
+    "price": 440000,
+    "order": 5,
+    "metadata": {
+      "colors": [
+        [
+          "Navy",
+          "#293b58"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/girls-navy-sailor-front.webp",
+          "side": "/clothing-rail/assets/girls-navy-sailor-side.webp",
+          "back": "/clothing-rail/assets/girls-navy-sailor-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "tay",
+        "style": "tay",
+        "colorGroup": "blue",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "quan",
+    "slug": "girls-gingham-tapered",
+    "name": "Quần Cargo Caro Xanh Bé Gái",
+    "description": "",
+    "price": 380000,
+    "order": 6,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh sage / Kem",
+          "#a0b398"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/girls-gingham-tapered-front.webp",
+          "side": "/clothing-rail/assets/girls-gingham-tapered-side.webp",
+          "back": "/clothing-rail/assets/girls-gingham-tapered-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "cargo",
+        "style": "cargo",
+        "colorGroup": "green",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "quan",
+    "slug": "girls-ink-pleated-culotte",
+    "name": "Quần Culotte Xếp Ly Xanh Mực Bé Gái",
+    "description": "",
+    "price": 470000,
+    "order": 7,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh mực",
+          "#3b4766"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/girls-ink-pleated-culotte-front.webp",
+          "side": "/clothing-rail/assets/girls-ink-pleated-culotte-side.webp",
+          "back": "/clothing-rail/assets/girls-ink-pleated-culotte-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "tay",
+        "style": "tay",
+        "colorGroup": "blue",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "quan",
+    "slug": "girls-coral-sport-track",
+    "name": "Quần Thể Thao San Hô Bé Gái",
+    "description": "",
+    "price": 410000,
+    "order": 8,
+    "metadata": {
+      "colors": [
+        [
+          "Cam san hô",
+          "#d98679"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/girls-coral-sport-track-front.webp",
+          "side": "/clothing-rail/assets/girls-coral-sport-track-side.webp",
+          "back": "/clothing-rail/assets/girls-coral-sport-track-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "jogger",
+        "style": "jogger",
+        "colorGroup": "red",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "quan",
+    "slug": "girls-lavender-corduroy-flare",
+    "name": "Quần Nhung Tăm Ống Loe Bé Gái",
+    "description": "",
+    "price": 430000,
+    "order": 9,
+    "metadata": {
+      "colors": [
+        [
+          "Tím lavender",
+          "#b9a4c6"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/girls-lavender-corduroy-flare-front.webp",
+          "side": "/clothing-rail/assets/girls-lavender-corduroy-flare-side.webp",
+          "back": "/clothing-rail/assets/girls-lavender-corduroy-flare-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "tay",
+        "style": "tay",
+        "colorGroup": "purple",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "quan",
+    "slug": "girls-blue-denim-paperbag",
+    "name": "Jeans Cạp Nhún Xanh Bé Gái",
+    "description": "",
+    "price": 460000,
+    "order": 10,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh denim",
+          "#6996b6"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/girls-blue-denim-paperbag-front.webp",
+          "side": "/clothing-rail/assets/girls-blue-denim-paperbag-side.webp",
+          "back": "/clothing-rail/assets/girls-blue-denim-paperbag-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "jeans",
+        "style": "jeans",
+        "colorGroup": "blue",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "quan",
+    "slug": "girls-cream-check-culotte",
+    "name": "Quần Culotte Caro Kem Bé Gái",
+    "description": "",
+    "price": 420000,
+    "order": 11,
+    "metadata": {
+      "colors": [
+        [
+          "Kem / Nâu",
+          "#d8c9b6"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/girls-cream-check-culotte-front.webp",
+          "side": "/clothing-rail/assets/girls-cream-check-culotte-side.webp",
+          "back": "/clothing-rail/assets/girls-cream-check-culotte-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "tay",
+        "style": "tay",
+        "colorGroup": "white",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "quan",
+    "slug": "girls-lilac-check-denim",
+    "name": "Quần Jeans Bàn Cờ Lilac Bé Gái",
+    "description": "",
+    "price": 520000,
+    "order": 12,
+    "metadata": {
+      "colors": [
+        [
+          "Tím lilac / Kem",
+          "#baa2cf"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/girls-lilac-check-denim-front.webp",
+          "side": "/clothing-rail/assets/girls-lilac-check-denim-side.webp",
+          "back": "/clothing-rail/assets/girls-lilac-check-denim-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "jeans",
+        "style": "jeans",
+        "colorGroup": "purple",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "quan",
+    "slug": "girls-mini-houndstooth-culotte",
+    "name": "Quần Culotte Houndstooth Bé Gái",
+    "description": "",
+    "price": 490000,
+    "order": 13,
+    "metadata": {
+      "colors": [
+        [
+          "Đen / Trắng",
+          "#777276"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/girls-mini-houndstooth-culotte-front.webp",
+          "side": "/clothing-rail/assets/girls-mini-houndstooth-culotte-side.webp",
+          "back": "/clothing-rail/assets/girls-mini-houndstooth-culotte-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "tay",
+        "style": "tay",
+        "colorGroup": "gray",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "giay",
+    "slug": "girls-lilac-sneaker",
+    "name": "JUNIOR LOW — LILAC / IVORY",
+    "description": "",
+    "price": 790000,
+    "order": 0,
+    "metadata": {
+      "colors": [
+        [
+          "Tím lilac / Trắng ngà",
+          "#cdb6df"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/girls-lilac-sneaker.webp"
+        }
+      ],
+      "sizes": [
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34"
+      ],
+      "collection": {
+        "id": "girls-sneakers",
+        "title": "GIÀY BÉ GÁI",
+        "order": 0
+      },
+      "details": {
+        "model": "JUNIOR LOW",
+        "colorway": "LILAC / IVORY",
+        "swatches": [
+          "#cdb6df"
+        ],
+        "themeColor": "#745b95",
+        "accentColor": "#d9c5eb",
+        "styleCode": "G-JUNIOR-LOW",
+        "designer": "HNMTSHOP",
+        "silhouettes": [
+          "low-top"
+        ]
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "giay",
+    "slug": "girls-peach-mesh-runner",
+    "name": "JUNIOR RUNNER — PEACH / WHITE",
+    "description": "",
+    "price": 790000,
+    "order": 1,
+    "metadata": {
+      "colors": [
+        [
+          "Cam đào / Trắng",
+          "#f6c8b5"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/girls-peach-mesh-runner.webp"
+        }
+      ],
+      "sizes": [
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34"
+      ],
+      "collection": {
+        "id": "girls-sneakers",
+        "title": "GIÀY BÉ GÁI",
+        "order": 0
+      },
+      "details": {
+        "model": "JUNIOR RUNNER",
+        "colorway": "PEACH / WHITE",
+        "swatches": [
+          "#f6c8b5"
+        ],
+        "themeColor": "#c98575",
+        "accentColor": "#f6c8b5",
+        "silhouettes": [
+          "runners",
+          "low-top"
+        ],
+        "styleCode": "GIRLS-PEACH-MESH-RUNNER",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "giay",
+    "slug": "girls-mint-court",
+    "name": "JUNIOR COURT — MINT / IVORY",
+    "description": "",
+    "price": 820000,
+    "order": 2,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh bạc hà / Kem",
+          "#bde0cc"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/girls-mint-court.webp"
+        }
+      ],
+      "sizes": [
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34"
+      ],
+      "collection": {
+        "id": "girls-sneakers",
+        "title": "GIÀY BÉ GÁI",
+        "order": 0
+      },
+      "details": {
+        "model": "JUNIOR COURT",
+        "colorway": "MINT / IVORY",
+        "swatches": [
+          "#bde0cc"
+        ],
+        "themeColor": "#659685",
+        "accentColor": "#bde0cc",
+        "silhouettes": [
+          "low-top"
+        ],
+        "styleCode": "GIRLS-MINT-COURT",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "giay",
+    "slug": "girls-ruby-mary-jane",
+    "name": "MARY JANE — RUBY",
+    "description": "",
+    "price": 840000,
+    "order": 3,
+    "metadata": {
+      "colors": [
+        [
+          "Đỏ ruby",
+          "#d18b99"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/girls-ruby-mary-jane.webp"
+        }
+      ],
+      "sizes": [
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34"
+      ],
+      "collection": {
+        "id": "girls-sneakers",
+        "title": "GIÀY BÉ GÁI",
+        "order": 0
+      },
+      "details": {
+        "model": "MARY JANE",
+        "colorway": "RUBY",
+        "swatches": [
+          "#d18b99"
+        ],
+        "themeColor": "#8d3449",
+        "accentColor": "#d18b99",
+        "silhouettes": [
+          "flats"
+        ],
+        "styleCode": "GIRLS-RUBY-MARY-JANE",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "giay",
+    "slug": "girls-cream-ballet-flat",
+    "name": "BALLET FLAT — CREAM",
+    "description": "",
+    "price": 780000,
+    "order": 4,
+    "metadata": {
+      "colors": [
+        [
+          "Kem",
+          "#e8d7b8"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/girls-cream-ballet-flat.webp"
+        }
+      ],
+      "sizes": [
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34"
+      ],
+      "collection": {
+        "id": "girls-sneakers",
+        "title": "GIÀY BÉ GÁI",
+        "order": 0
+      },
+      "details": {
+        "model": "BALLET FLAT",
+        "colorway": "CREAM",
+        "swatches": [
+          "#e8d7b8"
+        ],
+        "themeColor": "#a99379",
+        "accentColor": "#e8d7b8",
+        "silhouettes": [
+          "flats"
+        ],
+        "styleCode": "GIRLS-CREAM-BALLET-FLAT",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "giay",
+    "slug": "girls-blue-court-sneaker",
+    "name": "COURT MINI — SKY / WHITE",
+    "description": "",
+    "price": 810000,
+    "order": 0,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh da trời / Trắng",
+          "#bad8e9"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/girls-blue-court-sneaker.webp"
+        }
+      ],
+      "sizes": [
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34"
+      ],
+      "collection": {
+        "id": "girls-sport-street",
+        "title": "THỂ THAO & ĐỜI THƯỜNG BÉ GÁI",
+        "order": 1
+      },
+      "details": {
+        "model": "COURT MINI",
+        "colorway": "SKY / WHITE",
+        "swatches": [
+          "#bad8e9"
+        ],
+        "themeColor": "#6391ac",
+        "accentColor": "#bad8e9",
+        "silhouettes": [
+          "low-top"
+        ],
+        "styleCode": "GIRLS-BLUE-COURT-SNEAKER",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "giay",
+    "slug": "girls-navy-bow-flat",
+    "name": "BOW FLAT — NAVY",
+    "description": "",
+    "price": 780000,
+    "order": 1,
+    "metadata": {
+      "colors": [
+        [
+          "Navy",
+          "#9aa6bd"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/girls-navy-bow-flat.webp"
+        }
+      ],
+      "sizes": [
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34"
+      ],
+      "collection": {
+        "id": "girls-sport-street",
+        "title": "THỂ THAO & ĐỜI THƯỜNG BÉ GÁI",
+        "order": 1
+      },
+      "details": {
+        "model": "BOW FLAT",
+        "colorway": "NAVY",
+        "swatches": [
+          "#9aa6bd"
+        ],
+        "themeColor": "#39475e",
+        "accentColor": "#9aa6bd",
+        "silhouettes": [
+          "flats"
+        ],
+        "styleCode": "GIRLS-NAVY-BOW-FLAT",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "giay",
+    "slug": "girls-lilac-hiking-boot",
+    "name": "MINI HIKER — LILAC",
+    "description": "",
+    "price": 950000,
+    "order": 2,
+    "metadata": {
+      "colors": [
+        [
+          "Tím lilac",
+          "#c8b3d9"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/girls-lilac-hiking-boot.webp"
+        }
+      ],
+      "sizes": [
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34"
+      ],
+      "collection": {
+        "id": "girls-sport-street",
+        "title": "THỂ THAO & ĐỜI THƯỜNG BÉ GÁI",
+        "order": 1
+      },
+      "details": {
+        "model": "MINI HIKER",
+        "colorway": "LILAC",
+        "swatches": [
+          "#c8b3d9"
+        ],
+        "themeColor": "#87729e",
+        "accentColor": "#c8b3d9",
+        "silhouettes": [
+          "boots"
+        ],
+        "styleCode": "GIRLS-LILAC-HIKING-BOOT",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "giay",
+    "slug": "girls-cream-retro-runner",
+    "name": "MINI RUN — CREAM / PEACH",
+    "description": "",
+    "price": 830000,
+    "order": 3,
+    "metadata": {
+      "colors": [
+        [
+          "Kem / Cam đào",
+          "#f0c8b3"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/girls-cream-retro-runner.webp"
+        }
+      ],
+      "sizes": [
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34"
+      ],
+      "collection": {
+        "id": "girls-sport-street",
+        "title": "THỂ THAO & ĐỜI THƯỜNG BÉ GÁI",
+        "order": 1
+      },
+      "details": {
+        "model": "MINI RUN",
+        "colorway": "CREAM / PEACH",
+        "swatches": [
+          "#f0c8b3"
+        ],
+        "themeColor": "#aa836e",
+        "accentColor": "#f0c8b3",
+        "silhouettes": [
+          "runners",
+          "low-top"
+        ],
+        "styleCode": "GIRLS-CREAM-RETRO-RUNNER",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "giay",
+    "slug": "girls-gold-bit-mary-jane",
+    "name": "MINI BIT — OXBLOOD",
+    "description": "",
+    "price": 940000,
+    "order": 0,
+    "metadata": {
+      "colors": [
+        [
+          "Đỏ rượu",
+          "#caa772"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/girls-gold-bit-mary-jane.webp"
+        }
+      ],
+      "sizes": [
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34"
+      ],
+      "collection": {
+        "id": "girls-runway-concepts",
+        "title": "RUNWAY CONCEPTS",
+        "order": 2
+      },
+      "details": {
+        "model": "MINI BIT",
+        "colorway": "OXBLOOD",
+        "swatches": [
+          "#caa772"
+        ],
+        "themeColor": "#673247",
+        "accentColor": "#caa772",
+        "silhouettes": [
+          "flats"
+        ],
+        "styleCode": "GIRLS-GOLD-BIT-MARY-JANE",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "girls",
+    "kind": "giay",
+    "slug": "girls-denim-patch-court",
+    "name": "PATCH COURT — DENIM / IVORY",
+    "description": "",
+    "price": 960000,
+    "order": 1,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh denim / Kem",
+          "#d4c6ad"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/girls-denim-patch-court.webp"
+        }
+      ],
+      "sizes": [
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34"
+      ],
+      "collection": {
+        "id": "girls-runway-concepts",
+        "title": "RUNWAY CONCEPTS",
+        "order": 2
+      },
+      "details": {
+        "model": "PATCH COURT",
+        "colorway": "DENIM / IVORY",
+        "swatches": [
+          "#d4c6ad"
+        ],
+        "themeColor": "#556e99",
+        "accentColor": "#d4c6ad",
+        "silhouettes": [
+          "low-top"
+        ],
+        "styleCode": "GIRLS-DENIM-PATCH-COURT",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "ao",
+    "slug": "reach-shirt",
+    "name": "Reach Shirt",
+    "description": "Thiết kế camp-collar phóng khoáng cùng họa tiết bàn tay vẽ tay nghệ thuật độc bản.",
+    "price": 680000,
+    "order": 0,
+    "metadata": {
+      "colors": [
+        [
+          "Trắng Ngà (White)",
+          "#f8f7f3",
+          "#16171b"
+        ],
+        [
+          "Đen Huyền Bí (Black)",
+          "#202125",
+          "#efebda"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/reach-shirt-front.webp",
+          "side": "/clothing-rail/assets/reach-shirt-side.webp",
+          "back": "/clothing-rail/assets/reach-shirt-back.webp"
+        },
+        {
+          "front": "/clothing-rail/assets/reach-shirt-alt.webp",
+          "side": "/clothing-rail/assets/reach-shirt-side.webp",
+          "back": "/clothing-rail/assets/reach-shirt-back-alt.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "sơ mi camp-collar",
+        "style": "shirt",
+        "colorGroup": "white",
+        "art": "hand",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      9,
+      8,
+      6,
+      5,
+      2
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "ao",
+    "slug": "scrawl-tee",
+    "name": "Scrawl Tee",
+    "description": "Cotton định lượng cao dáng oversized với những nét cọ ngẫu hứng trừu tượng sống động.",
+    "price": 420000,
+    "order": 1,
+    "metadata": {
+      "colors": [
+        [
+          "Đen & Cam (Black & Orange)",
+          "#1a1b1e",
+          "#ff671f"
+        ],
+        [
+          "Trắng Phấn & Xanh Cobalt",
+          "#f2f0e9",
+          "#2456ba"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/scrawl-tee-front.webp",
+          "side": "/clothing-rail/assets/scrawl-tee-side.webp",
+          "back": "/clothing-rail/assets/scrawl-tee-back.webp"
+        },
+        {
+          "front": "/clothing-rail/assets/scrawl-tee-alt.webp",
+          "side": "/clothing-rail/assets/scrawl-tee-side.webp",
+          "back": "/clothing-rail/assets/scrawl-tee-back-alt.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "áo thun oversized",
+        "style": "tee",
+        "colorGroup": "black",
+        "art": "scrawl",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      6,
+      6,
+      5,
+      2,
+      0
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "ao",
+    "slug": "blend-in-tee",
+    "name": "Blend In Tee",
+    "description": "Không sinh ra để hòa tan — Tuyên ngôn thời trang phá cách đậm chất cá tính.",
+    "price": 380000,
+    "order": 2,
+    "metadata": {
+      "colors": [
+        [
+          "Kem Tự Nhiên (Cream)",
+          "#efeadb",
+          "#c43236"
+        ],
+        [
+          "Đen Đỏ Rực (Black & Red)",
+          "#18191c",
+          "#da353b"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/blend-in-tee-front.webp",
+          "side": "/clothing-rail/assets/blend-in-tee-side.webp",
+          "back": "/clothing-rail/assets/blend-in-tee-back.webp"
+        },
+        {
+          "front": "/clothing-rail/assets/blend-in-tee-alt.webp",
+          "side": "/clothing-rail/assets/blend-in-tee-side.webp",
+          "back": "/clothing-rail/assets/blend-in-tee-back-alt.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "áo thun graphic",
+        "style": "tee",
+        "colorGroup": "white",
+        "art": "blend",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      8,
+      6,
+      4,
+      2,
+      0
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "ao",
+    "slug": "two-faces-tee",
+    "name": "Two Faces Tee",
+    "description": "Nghệ thuật vẽ nét liền continuous-line tinh tế trên nền cotton washed phong cách vintage.",
+    "price": 420000,
+    "order": 3,
+    "metadata": {
+      "colors": [
+        [
+          "Xám Tro Vintage (Washed Charcoal)",
+          "#5c5b5c",
+          "#edece5"
+        ],
+        [
+          "Nâu Cát Sang Trọng (Sand)",
+          "#ccbba0",
+          "#33353c"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/two-faces-tee-front.webp",
+          "side": "/clothing-rail/assets/two-faces-tee-side.webp",
+          "back": "/clothing-rail/assets/two-faces-tee-back.webp"
+        },
+        {
+          "front": "/clothing-rail/assets/two-faces-tee-alt.webp",
+          "side": "/clothing-rail/assets/two-faces-tee-side.webp",
+          "back": "/clothing-rail/assets/two-faces-tee-back-alt.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "áo thun vintage",
+        "style": "tee",
+        "colorGroup": "gray",
+        "art": "faces",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      10,
+      8,
+      5,
+      3,
+      1
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "ao",
+    "slug": "unbothered-tee",
+    "name": "Unbothered Tee",
+    "description": "Một chút tự do, một chút phóng khoáng, nổi bật đầy tự tin giữa đám đông.",
+    "price": 400000,
+    "order": 4,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh Rừng Sâu (Forest Green)",
+          "#24483b",
+          "#f0e4bf"
+        ],
+        [
+          "Rượu Vang Đỏ (Burgundy)",
+          "#652f42",
+          "#f4dfbe"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/unbothered-tee-front.webp",
+          "side": "/clothing-rail/assets/unbothered-tee-side.webp",
+          "back": "/clothing-rail/assets/unbothered-tee-back.webp"
+        },
+        {
+          "front": "/clothing-rail/assets/unbothered-tee-alt.webp",
+          "side": "/clothing-rail/assets/unbothered-tee-side.webp",
+          "back": "/clothing-rail/assets/unbothered-tee-back-alt.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "áo thun dạo phố",
+        "style": "tee",
+        "colorGroup": "green",
+        "art": "unbothered",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      7,
+      5,
+      4,
+      3,
+      2
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "ao",
+    "slug": "ink-drip-shirt",
+    "name": "Ink Drip Shirt",
+    "description": "Nét cọ loang mực nghệ thuật lan tỏa trên phom dáng sơ mi relaxed thoải mái và hiện đại.",
+    "price": 720000,
+    "order": 5,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh Rêu Ô-liu (Olive)",
+          "#757a49",
+          "#202125"
+        ],
+        [
+          "Trắng Ngà Nét Xanh Navy (Ecru)",
+          "#e5dcc9",
+          "#28345a"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/ink-drip-shirt-front.webp",
+          "side": "/clothing-rail/assets/ink-drip-shirt-side.webp",
+          "back": "/clothing-rail/assets/ink-drip-shirt-back.webp"
+        },
+        {
+          "front": "/clothing-rail/assets/ink-drip-shirt-alt.webp",
+          "side": "/clothing-rail/assets/ink-drip-shirt-side.webp",
+          "back": "/clothing-rail/assets/ink-drip-shirt-back-alt.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "sơ mi họa tiết",
+        "style": "shirt",
+        "colorGroup": "green",
+        "art": "ink",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      7,
+      6,
+      3,
+      2,
+      0
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "ao",
+    "slug": "fern-tee",
+    "name": "Fern Tee",
+    "description": "Kỹ thuật in cyanotype thực vật độc đáo kết hợp cùng chất liệu cotton cao cấp đường phố.",
+    "price": 440000,
+    "order": 6,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh Đậm Hoàng Gia (Prussian Blue)",
+          "#153e78",
+          "#f1f0e7"
+        ],
+        [
+          "Đỏ Đất Nung (Rust Terracotta)",
+          "#aa6244",
+          "#eee3c8"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/fern-tee-front.webp",
+          "side": "/clothing-rail/assets/fern-tee-side.webp",
+          "back": "/clothing-rail/assets/fern-tee-back.webp"
+        },
+        {
+          "front": "/clothing-rail/assets/fern-tee-alt.webp",
+          "side": "/clothing-rail/assets/fern-tee-side.webp",
+          "back": "/clothing-rail/assets/fern-tee-back-alt.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "áo thun in thực vật",
+        "style": "tee",
+        "colorGroup": "blue",
+        "art": "fern",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      10,
+      8,
+      6,
+      3,
+      1
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "ao",
+    "slug": "holding-on-crew",
+    "name": "Holding On Crew",
+    "description": "Áo nỉ fleece dệt dày dặn, đường nét thêu xích thủ công chain-stitch tinh xảo.",
+    "price": 780000,
+    "order": 7,
+    "metadata": {
+      "colors": [
+        [
+          "Đen Tối Giản (Black)",
+          "#222326",
+          "#e9e4d4"
+        ],
+        [
+          "Xám Tiêu Thêu Đen (Grey Marl)",
+          "#b5b3b0",
+          "#27282d"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/holding-on-crew-front.webp",
+          "side": "/clothing-rail/assets/holding-on-crew-side.webp",
+          "back": "/clothing-rail/assets/holding-on-crew-back.webp"
+        },
+        {
+          "front": "/clothing-rail/assets/holding-on-crew-alt.webp",
+          "side": "/clothing-rail/assets/holding-on-crew-side.webp",
+          "back": "/clothing-rail/assets/holding-on-crew-back-alt.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "áo nỉ crewneck",
+        "style": "hoodie",
+        "colorGroup": "black",
+        "art": "hands",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      5,
+      4,
+      3,
+      2,
+      0
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "ao",
+    "slug": "cloud-nine-tee",
+    "name": "Cloud Nine Tee",
+    "description": "Cảm hứng bồng bềnh tựa mây trời, chất vải mềm mượt thoáng khí tối đa.",
+    "price": 460000,
+    "order": 8,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh Da Trời (Sky Blue)",
+          "#88b8d8",
+          "#fafafa"
+        ],
+        [
+          "Tím Hoa Cà Pastel (Lilac)",
+          "#bdb3dd",
+          "#ffffff"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/cloud-nine-tee-front.webp",
+          "side": "/clothing-rail/assets/cloud-nine-tee-side.webp",
+          "back": "/clothing-rail/assets/cloud-nine-tee-back.webp"
+        },
+        {
+          "front": "/clothing-rail/assets/cloud-nine-tee-alt.webp",
+          "side": "/clothing-rail/assets/cloud-nine-tee-side.webp",
+          "back": "/clothing-rail/assets/cloud-nine-tee-back-alt.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "áo thun cotton lụa",
+        "style": "tee",
+        "colorGroup": "blue",
+        "art": "cloud",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      10,
+      9,
+      5,
+      4,
+      2
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "ao",
+    "slug": "one-of-one-tee",
+    "name": "One of One Tee",
+    "description": "Dấu ấn độc bản của riêng bạn — Độc nhất, không trùng lặp.",
+    "price": 400000,
+    "order": 9,
+    "metadata": {
+      "colors": [
+        [
+          "Xám Đá Tự Nhiên (Stone)",
+          "#c1b5a2",
+          "#222326"
+        ],
+        [
+          "Đen Điểm Xanh Neon (Acid Lime)",
+          "#222326",
+          "#bbdc37"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/one-of-one-tee-front.webp",
+          "side": "/clothing-rail/assets/one-of-one-tee-side.webp",
+          "back": "/clothing-rail/assets/one-of-one-tee-back.webp"
+        },
+        {
+          "front": "/clothing-rail/assets/one-of-one-tee-alt.webp",
+          "side": "/clothing-rail/assets/one-of-one-tee-side.webp",
+          "back": "/clothing-rail/assets/one-of-one-tee-back-alt.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "áo thun độc bản",
+        "style": "tee",
+        "colorGroup": "gray",
+        "art": "fingerprint",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      8,
+      7,
+      5,
+      4,
+      2
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "ao",
+    "slug": "cyber-boxy-tee",
+    "name": "CYBERPUNK Heavyweight Boxy Tee (300GSM)",
+    "description": "Áo thun phom Boxy vai trễ dày dặn 300GSM với đồ họa viễn tưởng Cyberpunk Neon phản quang sắc nét.",
+    "price": 480000,
+    "order": 10,
+    "metadata": {
+      "colors": [
+        [
+          "Washed Than Chì (Vintage Charcoal)",
+          "#1f1f21",
+          "#00f0ff"
+        ],
+        [
+          "Xám Bạc (Silver Smoke)",
+          "#38393d",
+          "#a3e635"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/cyber-boxy-tee-front.webp",
+          "side": "/clothing-rail/assets/cyber-boxy-tee-side.webp",
+          "back": "/clothing-rail/assets/cyber-boxy-tee-back.webp"
+        },
+        {
+          "front": "/clothing-rail/assets/cyber-boxy-tee-alt.webp",
+          "side": "/clothing-rail/assets/cyber-boxy-tee-side.webp",
+          "back": "/clothing-rail/assets/cyber-boxy-tee-back-alt.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "áo thun boxy vai trễ",
+        "style": "tee",
+        "colorGroup": "black",
+        "art": "cyber",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      12,
+      15,
+      10,
+      6,
+      2
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "ao",
+    "slug": "luxury-varsity",
+    "name": "HNMT Luxury Wool & Leather Varsity Jacket",
+    "description": "Áo khoác bóng chày thân dạ len cừu phối tay da thật cao cấp, thêu xù Chenille logo HNMT STUDIO.",
+    "price": 890000,
+    "order": 11,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh Navy & Kem (Navy / Cream)",
+          "#121d33",
+          "#f2efe9"
+        ],
+        [
+          "Đen Huyền Bí & Trắng (Black / White)",
+          "#111214",
+          "#ffffff"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/luxury-varsity-front.webp",
+          "side": "/clothing-rail/assets/luxury-varsity-side.webp",
+          "back": "/clothing-rail/assets/luxury-varsity-back.webp"
+        },
+        {
+          "front": "/clothing-rail/assets/luxury-varsity-alt.webp",
+          "side": "/clothing-rail/assets/luxury-varsity-side.webp",
+          "back": "/clothing-rail/assets/luxury-varsity-back-alt.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "áo khoác varsity bóng chày",
+        "style": "jacket",
+        "colorGroup": "blue",
+        "art": "varsity",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      5,
+      8,
+      6,
+      3,
+      0
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "ao",
+    "slug": "racing-moto",
+    "name": "OVERDRIVE Vintage Motorsport Leather Jacket",
+    "description": "Áo khoác da đua xe thể thao cổ điển phối 3 mảng màu Tricolor Đen - Kem - Đỏ cùng huy hiệu HNMT GRAND PRIX.",
+    "price": 950000,
+    "order": 12,
+    "metadata": {
+      "colors": [
+        [
+          "Tricolor Race (Đen - Kem - Đỏ)",
+          "#18181b",
+          "#e61922"
+        ],
+        [
+          "Stealth Dark (All Black)",
+          "#0a0a0c",
+          "#888888"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/racing-moto-front.webp",
+          "side": "/clothing-rail/assets/racing-moto-side.webp",
+          "back": "/clothing-rail/assets/racing-moto-back.webp"
+        },
+        {
+          "front": "/clothing-rail/assets/racing-moto-alt.webp",
+          "side": "/clothing-rail/assets/racing-moto-side.webp",
+          "back": "/clothing-rail/assets/racing-moto-back-alt.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "áo khoác da moto",
+        "style": "jacket",
+        "colorGroup": "black",
+        "art": "racing",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      5,
+      2,
+      0
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "ao",
+    "slug": "cyber-hoodie",
+    "name": "CYBER-VOID Heavy Fleece Street Hoodie",
+    "description": "Hoodie phom rộng nỉ chân cua định lượng 450GSM cản gió ấm áp cùng nón 2 lớp đứng phom chuẩn streetwear.",
+    "price": 760000,
+    "order": 13,
+    "metadata": {
+      "colors": [
+        [
+          "Đen Tím Cyber (Void Purple)",
+          "#15131e",
+          "#a855f7"
+        ],
+        [
+          "Đen Tuyền (Stealth Onyx)",
+          "#0e0e11",
+          "#ffffff"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/cyber-hoodie-front.webp",
+          "side": "/clothing-rail/assets/cyber-hoodie-side.webp",
+          "back": null
+        },
+        {
+          "front": "/clothing-rail/assets/cyber-hoodie-front.webp",
+          "side": "/clothing-rail/assets/cyber-hoodie-side.webp",
+          "back": null
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "áo nỉ hoodie mũ trùm",
+        "style": "hoodie",
+        "colorGroup": "black",
+        "art": "cyber",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      8,
+      10,
+      7,
+      4,
+      1
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "ao",
+    "slug": "cargo-shirt",
+    "name": "Tactical Safari Utility Cargo Shirt",
+    "description": "Sơ mi khoác ngoài vải kaki chéo bền bỉ với 4 ngăn túi hộp đa năng, khóa bấm dập logo kim loại chống rỉ.",
+    "price": 650000,
+    "order": 14,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh Rêu Safari (Olive Drab)",
+          "#485338",
+          "#1a1f16"
+        ],
+        [
+          "Xám Đá Bụi (Slate Grey)",
+          "#3c4046",
+          "#e0e0e0"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/cargo-shirt-front.webp",
+          "side": "/clothing-rail/assets/cargo-shirt-side.webp",
+          "back": null
+        },
+        {
+          "front": "/clothing-rail/assets/cargo-shirt-front.webp",
+          "side": "/clothing-rail/assets/cargo-shirt-side.webp",
+          "back": null
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "sơ mi túi hộp utility",
+        "style": "shirt",
+        "colorGroup": "green",
+        "art": "utility",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      9,
+      7,
+      5,
+      3,
+      0
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "ao",
+    "slug": "men-indigo-denim-jacket",
+    "name": "Áo Khoác Denim Chàm Nam",
+    "description": "",
+    "price": 790000,
+    "order": 15,
+    "metadata": {
+      "colors": [
+        [
+          "Chàm đậm",
+          "#263b52"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/men-indigo-denim-jacket-front.webp",
+          "side": "/clothing-rail/assets/men-indigo-denim-jacket-side.webp",
+          "back": "/clothing-rail/assets/men-indigo-denim-jacket-back.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "jacket",
+        "style": "jacket",
+        "colorGroup": "blue",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "ao",
+    "slug": "men-cream-rugby-polo",
+    "name": "Áo Rugby Polo Nam Sọc Navy",
+    "description": "",
+    "price": 560000,
+    "order": 16,
+    "metadata": {
+      "colors": [
+        [
+          "Kem / Navy",
+          "#24374e"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/men-cream-rugby-polo-front.webp",
+          "side": "/clothing-rail/assets/men-cream-rugby-polo-side.webp",
+          "back": "/clothing-rail/assets/men-cream-rugby-polo-back.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "tee",
+        "style": "tee",
+        "colorGroup": "blue",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "ao",
+    "slug": "men-charcoal-two-button-suit",
+    "name": "Áo Vest Hai Nút Nam Xám Than",
+    "description": "",
+    "price": 1390000,
+    "order": 17,
+    "metadata": {
+      "colors": [
+        [
+          "Xám than",
+          "#41434b"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/men-charcoal-two-button-suit-front.webp",
+          "side": "/clothing-rail/assets/men-charcoal-two-button-suit-side.webp",
+          "back": "/clothing-rail/assets/men-charcoal-two-button-suit-back.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "jacket",
+        "style": "jacket",
+        "colorGroup": "gray",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "ao",
+    "slug": "men-navy-double-breasted-suit",
+    "name": "Áo Vest Hai Hàng Nút Nam Navy",
+    "description": "",
+    "price": 1590000,
+    "order": 18,
+    "metadata": {
+      "colors": [
+        [
+          "Navy",
+          "#253450"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/men-navy-double-breasted-suit-front.webp",
+          "side": "/clothing-rail/assets/men-navy-double-breasted-suit-side.webp",
+          "back": "/clothing-rail/assets/men-navy-double-breasted-suit-back.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "jacket",
+        "style": "jacket",
+        "colorGroup": "blue",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "ao",
+    "slug": "men-green-track-jacket",
+    "name": "Áo Track Jacket Xanh Lá Nam",
+    "description": "",
+    "price": 760000,
+    "order": 19,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh lá / Vàng",
+          "#28704d"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/men-green-track-jacket-front.webp",
+          "side": "/clothing-rail/assets/men-green-track-jacket-side.webp",
+          "back": "/clothing-rail/assets/men-green-track-jacket-back.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "jacket",
+        "style": "jacket",
+        "colorGroup": "green",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "ao",
+    "slug": "men-indigo-work-kimono",
+    "name": "Áo Khoác Workwear Chàm Nam",
+    "description": "",
+    "price": 890000,
+    "order": 20,
+    "metadata": {
+      "colors": [
+        [
+          "Chàm",
+          "#2c4161"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/men-indigo-work-kimono-front.webp",
+          "side": "/clothing-rail/assets/men-indigo-work-kimono-side.webp",
+          "back": "/clothing-rail/assets/men-indigo-work-kimono-back.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "jacket",
+        "style": "jacket",
+        "colorGroup": "blue",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "ao",
+    "slug": "men-black-wool-overcoat",
+    "name": "Áo Măng Tô Len Đen Nam",
+    "description": "",
+    "price": 1690000,
+    "order": 21,
+    "metadata": {
+      "colors": [
+        [
+          "Đen",
+          "#282930"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/men-black-wool-overcoat-front.webp",
+          "side": "/clothing-rail/assets/men-black-wool-overcoat-side.webp",
+          "back": "/clothing-rail/assets/men-black-wool-overcoat-back.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "jacket",
+        "style": "jacket",
+        "colorGroup": "black",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "ao",
+    "slug": "men-olive-ma1-bomber",
+    "name": "Áo Bomber MA-1 Xanh Olive Nam",
+    "description": "",
+    "price": 920000,
+    "order": 22,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh olive",
+          "#555b3e"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/men-olive-ma1-bomber-front.webp",
+          "side": "/clothing-rail/assets/men-olive-ma1-bomber-side.webp",
+          "back": "/clothing-rail/assets/men-olive-ma1-bomber-back.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "jacket",
+        "style": "jacket",
+        "colorGroup": "green",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "ao",
+    "slug": "men-blue-oxford-shirt",
+    "name": "Áo Sơ Mi Oxford Xanh Nhạt Nam",
+    "description": "",
+    "price": 560000,
+    "order": 23,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh da trời",
+          "#92adc4"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/men-blue-oxford-shirt-front.webp",
+          "side": "/clothing-rail/assets/men-blue-oxford-shirt-side.webp",
+          "back": "/clothing-rail/assets/men-blue-oxford-shirt-back.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "shirt",
+        "style": "shirt",
+        "colorGroup": "blue",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "ao",
+    "slug": "men-navy-contrast-bar-jacket",
+    "name": "Áo Khoác Chiết Eo Navy Nam",
+    "description": "",
+    "price": 1290000,
+    "order": 24,
+    "metadata": {
+      "colors": [
+        [
+          "Navy",
+          "#263650"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/men-navy-contrast-bar-jacket-front.webp",
+          "side": "/clothing-rail/assets/men-navy-contrast-bar-jacket-side.webp",
+          "back": "/clothing-rail/assets/men-navy-contrast-bar-jacket-back.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "jacket",
+        "style": "jacket",
+        "colorGroup": "navy",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "ao",
+    "slug": "men-pixel-denim-jacket",
+    "name": "Áo Khoác Denim Pixel Nam",
+    "description": "",
+    "price": 1150000,
+    "order": 25,
+    "metadata": {
+      "colors": [
+        [
+          "Chàm / Xanh bạc",
+          "#3c5c82"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/men-pixel-denim-jacket-front.webp",
+          "side": "/clothing-rail/assets/men-pixel-denim-jacket-side.webp",
+          "back": "/clothing-rail/assets/men-pixel-denim-jacket-back.webp"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "details": {
+        "type": "jacket",
+        "style": "jacket",
+        "colorGroup": "blue",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "quan",
+    "slug": "acid-wash-baggy-jeans",
+    "name": "Quần Jeans Baggy Đen Wash",
+    "description": "Denim đen wash bạc nhẹ, phom baggy ống rộng với thiết kế năm túi cổ điển.",
+    "price": 560000,
+    "order": 0,
+    "metadata": {
+      "colors": [
+        [
+          "Đen Wash",
+          "#303030"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/acid-wash-baggy-jeans-front.webp",
+          "side": "/clothing-rail/assets/acid-wash-baggy-jeans-side.webp",
+          "back": "/clothing-rail/assets/acid-wash-baggy-jeans-back.webp"
+        }
+      ],
+      "sizes": [
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "34"
+      ],
+      "details": {
+        "type": "quần jeans baggy",
+        "style": "jeans",
+        "colorGroup": "gray",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      8,
+      12,
+      15,
+      10,
+      6,
+      3
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "quan",
+    "slug": "cargo-olive-jogger",
+    "name": "Quần Cargo Xanh Rêu Bo Gấu",
+    "description": "Quần ripstop xanh rêu với túi hộp có nắp ở đùi, ống thu và bo gấu có dây chỉnh.",
+    "price": 590000,
+    "order": 1,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh Rêu Olive",
+          "#4d503c"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/cargo-olive-jogger-front.webp",
+          "side": "/clothing-rail/assets/cargo-olive-jogger-side.webp",
+          "back": "/clothing-rail/assets/cargo-olive-jogger-back.webp"
+        }
+      ],
+      "sizes": [
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "34"
+      ],
+      "details": {
+        "type": "quần cargo túi hộp",
+        "style": "cargo",
+        "colorGroup": "green",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      8,
+      12,
+      14,
+      9,
+      5,
+      1
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "quan",
+    "slug": "men-sand-double-pleat",
+    "name": "Quần Tây Nam Hai Ly Be Cát",
+    "description": "",
+    "price": 680000,
+    "order": 2,
+    "metadata": {
+      "colors": [
+        [
+          "Be cát",
+          "#bda583"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/men-sand-double-pleat-front.webp",
+          "side": "/clothing-rail/assets/men-sand-double-pleat-side.webp",
+          "back": "/clothing-rail/assets/men-sand-double-pleat-back.webp"
+        }
+      ],
+      "sizes": [
+        "28",
+        "30",
+        "31",
+        "32",
+        "34"
+      ],
+      "details": {
+        "type": "tay",
+        "style": "tay",
+        "colorGroup": "beige",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "quan",
+    "slug": "men-indigo-straight-jeans",
+    "name": "Quần Jeans Nam Ống Suông Chàm",
+    "description": "",
+    "price": 650000,
+    "order": 3,
+    "metadata": {
+      "colors": [
+        [
+          "Chàm đậm",
+          "#283950"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/men-indigo-straight-jeans-front.webp",
+          "side": "/clothing-rail/assets/men-indigo-straight-jeans-side.webp",
+          "back": "/clothing-rail/assets/men-indigo-straight-jeans-back.webp"
+        }
+      ],
+      "sizes": [
+        "28",
+        "30",
+        "31",
+        "32",
+        "34"
+      ],
+      "details": {
+        "type": "jeans",
+        "style": "jeans",
+        "colorGroup": "blue",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "quan",
+    "slug": "men-navy-parachute",
+    "name": "Quần Dù Parachute Nam Navy",
+    "description": "",
+    "price": 620000,
+    "order": 4,
+    "metadata": {
+      "colors": [
+        [
+          "Navy",
+          "#29354b"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/men-navy-parachute-front.webp",
+          "side": "/clothing-rail/assets/men-navy-parachute-side.webp",
+          "back": "/clothing-rail/assets/men-navy-parachute-back.webp"
+        }
+      ],
+      "sizes": [
+        "28",
+        "30",
+        "31",
+        "32",
+        "34"
+      ],
+      "details": {
+        "type": "parachute",
+        "style": "parachute",
+        "colorGroup": "blue",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "quan",
+    "slug": "men-charcoal-suit-trouser",
+    "name": "Quần Âu Nam Xám Than",
+    "description": "",
+    "price": 780000,
+    "order": 5,
+    "metadata": {
+      "colors": [
+        [
+          "Xám than",
+          "#41434b"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/men-charcoal-suit-trouser-front.webp",
+          "side": "/clothing-rail/assets/men-charcoal-suit-trouser-side.webp",
+          "back": "/clothing-rail/assets/men-charcoal-suit-trouser-back.webp"
+        }
+      ],
+      "sizes": [
+        "28",
+        "30",
+        "31",
+        "32",
+        "34"
+      ],
+      "details": {
+        "type": "tay",
+        "style": "tay",
+        "colorGroup": "gray",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "quan",
+    "slug": "men-navy-suit-trouser",
+    "name": "Quần Âu Nam Navy",
+    "description": "",
+    "price": 850000,
+    "order": 6,
+    "metadata": {
+      "colors": [
+        [
+          "Navy",
+          "#253450"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/men-navy-suit-trouser-front.webp",
+          "side": "/clothing-rail/assets/men-navy-suit-trouser-side.webp",
+          "back": "/clothing-rail/assets/men-navy-suit-trouser-back.webp"
+        }
+      ],
+      "sizes": [
+        "28",
+        "30",
+        "31",
+        "32",
+        "34"
+      ],
+      "details": {
+        "type": "tay",
+        "style": "tay",
+        "colorGroup": "blue",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "quan",
+    "slug": "men-charcoal-runner-track",
+    "name": "Quần Track Chạy Bộ Xám Than Nam",
+    "description": "",
+    "price": 590000,
+    "order": 7,
+    "metadata": {
+      "colors": [
+        [
+          "Xám than",
+          "#40444d"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/men-charcoal-runner-track-front.webp",
+          "side": "/clothing-rail/assets/men-charcoal-runner-track-side.webp",
+          "back": "/clothing-rail/assets/men-charcoal-runner-track-back.webp"
+        }
+      ],
+      "sizes": [
+        "28",
+        "30",
+        "31",
+        "32",
+        "34"
+      ],
+      "details": {
+        "type": "jogger",
+        "style": "jogger",
+        "colorGroup": "gray",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "quan",
+    "slug": "men-taupe-euro-chino",
+    "name": "Quần Chino Taupe Nam",
+    "description": "",
+    "price": 690000,
+    "order": 8,
+    "metadata": {
+      "colors": [
+        [
+          "Nâu taupe",
+          "#a08d78"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/men-taupe-euro-chino-front.webp",
+          "side": "/clothing-rail/assets/men-taupe-euro-chino-side.webp",
+          "back": "/clothing-rail/assets/men-taupe-euro-chino-back.webp"
+        }
+      ],
+      "sizes": [
+        "28",
+        "30",
+        "31",
+        "32",
+        "34"
+      ],
+      "details": {
+        "type": "tay",
+        "style": "tay",
+        "colorGroup": "beige",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "quan",
+    "slug": "men-black-tapered-pleat",
+    "name": "Quần Tây Nam Xếp Ly Ống Thu",
+    "description": "",
+    "price": 720000,
+    "order": 9,
+    "metadata": {
+      "colors": [
+        [
+          "Đen",
+          "#292a30"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/men-black-tapered-pleat-front.webp",
+          "side": "/clothing-rail/assets/men-black-tapered-pleat-side.webp",
+          "back": "/clothing-rail/assets/men-black-tapered-pleat-back.webp"
+        }
+      ],
+      "sizes": [
+        "28",
+        "30",
+        "31",
+        "32",
+        "34"
+      ],
+      "details": {
+        "type": "tay",
+        "style": "tay",
+        "colorGroup": "black",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "quan",
+    "slug": "men-ecru-carpenter-denim",
+    "name": "Quần Jeans Carpenter Trắng Ngà Nam",
+    "description": "",
+    "price": 770000,
+    "order": 10,
+    "metadata": {
+      "colors": [
+        [
+          "Trắng ngà",
+          "#ded4bf"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/men-ecru-carpenter-denim-front.webp",
+          "side": "/clothing-rail/assets/men-ecru-carpenter-denim-side.webp",
+          "back": "/clothing-rail/assets/men-ecru-carpenter-denim-back.webp"
+        }
+      ],
+      "sizes": [
+        "28",
+        "30",
+        "31",
+        "32",
+        "34"
+      ],
+      "details": {
+        "type": "jeans",
+        "style": "jeans",
+        "colorGroup": "white",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "quan",
+    "slug": "men-olive-tech-cargo",
+    "name": "Quần Cargo Techwear Xanh Olive Nam",
+    "description": "",
+    "price": 720000,
+    "order": 11,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh olive",
+          "#4c5441"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/men-olive-tech-cargo-front.webp",
+          "side": "/clothing-rail/assets/men-olive-tech-cargo-side.webp",
+          "back": "/clothing-rail/assets/men-olive-tech-cargo-back.webp"
+        }
+      ],
+      "sizes": [
+        "28",
+        "30",
+        "31",
+        "32",
+        "34"
+      ],
+      "details": {
+        "type": "cargo",
+        "style": "cargo",
+        "colorGroup": "green",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "quan",
+    "slug": "men-forest-jacquard-track",
+    "name": "Quần Track Jacquard Xanh Rừng Nam",
+    "description": "",
+    "price": 790000,
+    "order": 12,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh rừng / Đỏ",
+          "#314c3b"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/men-forest-jacquard-track-front.webp",
+          "side": "/clothing-rail/assets/men-forest-jacquard-track-side.webp",
+          "back": "/clothing-rail/assets/men-forest-jacquard-track-back.webp"
+        }
+      ],
+      "sizes": [
+        "28",
+        "30",
+        "31",
+        "32",
+        "34"
+      ],
+      "details": {
+        "type": "jogger",
+        "style": "jogger",
+        "colorGroup": "green",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "quan",
+    "slug": "men-runway-oversize-tailored",
+    "name": "Quần Tây Runway Ống Rộng Nam",
+    "description": "",
+    "price": 930000,
+    "order": 13,
+    "metadata": {
+      "colors": [
+        [
+          "Xám than",
+          "#474750"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/men-runway-oversize-tailored-front.webp",
+          "side": "/clothing-rail/assets/men-runway-oversize-tailored-side.webp",
+          "back": "/clothing-rail/assets/men-runway-oversize-tailored-back.webp"
+        }
+      ],
+      "sizes": [
+        "28",
+        "30",
+        "31",
+        "32",
+        "34"
+      ],
+      "details": {
+        "type": "tay",
+        "style": "tay",
+        "colorGroup": "gray",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "giay",
+    "slug": "snk-01",
+    "name": "AIR FUTURE IV — INFRARAY STORM",
+    "description": "",
+    "price": 5200000,
+    "order": 0,
+    "metadata": {
+      "colors": [
+        [
+          "STORM GREY / INFRARED",
+          "#FFFFFF"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/air-future-iv.webp"
+        }
+      ],
+      "sizes": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44"
+      ],
+      "collection": {
+        "id": "futurist",
+        "title": "FUTURIST SNEAKER VAULT",
+        "order": 0
+      },
+      "details": {
+        "model": "AIR FUTURE IV",
+        "colorway": "INFRARAY STORM",
+        "swatches": [
+          "#FFFFFF",
+          "#CE1234",
+          "#1F2024"
+        ],
+        "themeColor": "#CE1234",
+        "accentColor": "#FF2A55",
+        "styleCode": "HFS-04-STORM",
+        "designer": "HNMTSHOP × FUTURE LAB",
+        "release": "DECEMBER 2026"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "giay",
+    "slug": "snk-02",
+    "name": "AIR FUTURE XI — HYPER FLUX",
+    "description": "",
+    "price": 5500000,
+    "order": 1,
+    "metadata": {
+      "colors": [
+        [
+          "DEEP BLUE / SONIC BLUE",
+          "#FFFFFF"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/air-future-xi.webp"
+        }
+      ],
+      "sizes": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44"
+      ],
+      "collection": {
+        "id": "futurist",
+        "title": "FUTURIST SNEAKER VAULT",
+        "order": 0
+      },
+      "details": {
+        "model": "AIR FUTURE XI",
+        "colorway": "HYPER FLUX",
+        "swatches": [
+          "#FFFFFF",
+          "#0077D8",
+          "#00E5FF"
+        ],
+        "themeColor": "#0077D8",
+        "accentColor": "#00E5FF",
+        "styleCode": "HFS-11-FLUX",
+        "designer": "HNMTSHOP × FUTURE LAB",
+        "release": "JANUARY 2027"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "giay",
+    "slug": "snk-03",
+    "name": "AIR FUTURE III — NEXUS X1",
+    "description": "",
+    "price": 4900000,
+    "order": 2,
+    "metadata": {
+      "colors": [
+        [
+          "WHITE / ACID VOLT / BLACK",
+          "#FFFFFF"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/air-future-iii.webp"
+        }
+      ],
+      "sizes": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44"
+      ],
+      "collection": {
+        "id": "futurist",
+        "title": "FUTURIST SNEAKER VAULT",
+        "order": 0
+      },
+      "details": {
+        "model": "AIR FUTURE III",
+        "colorway": "NEXUS X1",
+        "swatches": [
+          "#FFFFFF",
+          "#4EA819",
+          "#15161A"
+        ],
+        "themeColor": "#4EA819",
+        "accentColor": "#8CFF00",
+        "styleCode": "HFS-03-NEXUS",
+        "designer": "HNMTSHOP × FUTURE LAB",
+        "release": "FEBRUARY 2027"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "giay",
+    "slug": "snk-04",
+    "name": "AIR FUTURE V — LUNAR CHROME",
+    "description": "",
+    "price": 5800000,
+    "order": 3,
+    "metadata": {
+      "colors": [
+        [
+          "VIOLET CHROME / MIDNIGHT",
+          "#6D3AA6"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/air-future-v.webp"
+        }
+      ],
+      "sizes": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44"
+      ],
+      "collection": {
+        "id": "futurist",
+        "title": "FUTURIST SNEAKER VAULT",
+        "order": 0
+      },
+      "details": {
+        "model": "AIR FUTURE V",
+        "colorway": "LUNAR CHROME",
+        "swatches": [
+          "#6D3AA6",
+          "#B666FF",
+          "#0D0E12"
+        ],
+        "themeColor": "#6D3AA6",
+        "accentColor": "#B666FF",
+        "styleCode": "HFS-05-LUNAR",
+        "designer": "HNMTSHOP × FUTURE LAB",
+        "release": "MARCH 2027"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "giay",
+    "slug": "snk-05",
+    "name": "AIR FUTURE I — DUNE PHANTOM",
+    "description": "",
+    "price": 6200000,
+    "order": 4,
+    "metadata": {
+      "colors": [
+        [
+          "DESERT SAND / GOLD CHROME",
+          "#F5E6CC"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/air-future-i.webp"
+        }
+      ],
+      "sizes": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44"
+      ],
+      "collection": {
+        "id": "futurist",
+        "title": "FUTURIST SNEAKER VAULT",
+        "order": 0
+      },
+      "details": {
+        "model": "AIR FUTURE I",
+        "colorway": "DUNE PHANTOM",
+        "swatches": [
+          "#F5E6CC",
+          "#B9935A",
+          "#FFD700"
+        ],
+        "themeColor": "#B9935A",
+        "accentColor": "#FFD700",
+        "styleCode": "HFS-01-DUNE",
+        "designer": "HNMTSHOP × FUTURE LAB",
+        "release": "APRIL 2027"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "giay",
+    "slug": "snk-06",
+    "name": "AIR FUTURE IX — VOLT MAGMA",
+    "description": "",
+    "price": 6500000,
+    "order": 5,
+    "metadata": {
+      "colors": [
+        [
+          "MAGMA RED / CARBON BLACK",
+          "#FF2A2A"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/air-future-ix.webp"
+        }
+      ],
+      "sizes": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44"
+      ],
+      "collection": {
+        "id": "futurist",
+        "title": "FUTURIST SNEAKER VAULT",
+        "order": 0
+      },
+      "details": {
+        "model": "AIR FUTURE IX",
+        "colorway": "VOLT MAGMA",
+        "swatches": [
+          "#FF2A2A",
+          "#2E3038",
+          "#111215"
+        ],
+        "themeColor": "#1A1B20",
+        "accentColor": "#FF2A2A",
+        "styleCode": "HFS-09-MAGMA",
+        "designer": "HNMTSHOP × FUTURE LAB",
+        "release": "MAY 2027"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "giay",
+    "slug": "cp-01",
+    "name": "CYBER IV — CYBER TEAL",
+    "description": "",
+    "price": 5400000,
+    "order": 0,
+    "metadata": {
+      "colors": [
+        [
+          "STEALTH WHITE / ELECTRIC TEAL",
+          "#FFFFFF"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/cyber/cyber-air-future-iv.webp"
+        }
+      ],
+      "sizes": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44"
+      ],
+      "collection": {
+        "id": "cyber",
+        "title": "CYBER VAULT",
+        "order": 1
+      },
+      "details": {
+        "model": "CYBER IV",
+        "colorway": "CYBER TEAL",
+        "swatches": [
+          "#FFFFFF",
+          "#00E5FF",
+          "#1F2024"
+        ],
+        "themeColor": "#00838F",
+        "accentColor": "#00E5FF",
+        "styleCode": "CP-04-TEAL",
+        "designer": "HNMTSHOP × CYBER LAB",
+        "release": "JUNE 2027"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "giay",
+    "slug": "cp-02",
+    "name": "CYBER XI — NEON MAGENTA",
+    "description": "",
+    "price": 5700000,
+    "order": 1,
+    "metadata": {
+      "colors": [
+        [
+          "FROST WHITE / NEON PINK",
+          "#FFFFFF"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/cyber/cyber-air-future-xi.webp"
+        }
+      ],
+      "sizes": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44"
+      ],
+      "collection": {
+        "id": "cyber",
+        "title": "CYBER VAULT",
+        "order": 1
+      },
+      "details": {
+        "model": "CYBER XI",
+        "colorway": "NEON MAGENTA",
+        "swatches": [
+          "#FFFFFF",
+          "#AD1457",
+          "#FF007F"
+        ],
+        "themeColor": "#AD1457",
+        "accentColor": "#FF007F",
+        "styleCode": "CP-11-MAGENTA",
+        "designer": "HNMTSHOP × CYBER LAB",
+        "release": "JULY 2027"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "giay",
+    "slug": "cp-03",
+    "name": "CYBER III — SOLAR FLARE",
+    "description": "",
+    "price": 5100000,
+    "order": 2,
+    "metadata": {
+      "colors": [
+        [
+          "TITANIUM / SOLAR AMBER",
+          "#FFFFFF"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/cyber/cyber-air-future-iii.webp"
+        }
+      ],
+      "sizes": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44"
+      ],
+      "collection": {
+        "id": "cyber",
+        "title": "CYBER VAULT",
+        "order": 1
+      },
+      "details": {
+        "model": "CYBER III",
+        "colorway": "SOLAR FLARE",
+        "swatches": [
+          "#FFFFFF",
+          "#E65100",
+          "#FFB300"
+        ],
+        "themeColor": "#E65100",
+        "accentColor": "#FFB300",
+        "styleCode": "CP-03-SOLAR",
+        "designer": "HNMTSHOP × CYBER LAB",
+        "release": "AUGUST 2027"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "giay",
+    "slug": "cp-04",
+    "name": "CYBER V — TACTICAL OLIVE",
+    "description": "",
+    "price": 5900000,
+    "order": 3,
+    "metadata": {
+      "colors": [
+        [
+          "MILITARY OLIVE / GOLD LIGHT",
+          "#33691E"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/cyber/cyber-air-future-v.webp"
+        }
+      ],
+      "sizes": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44"
+      ],
+      "collection": {
+        "id": "cyber",
+        "title": "CYBER VAULT",
+        "order": 1
+      },
+      "details": {
+        "model": "CYBER V",
+        "colorway": "TACTICAL OLIVE",
+        "swatches": [
+          "#33691E",
+          "#C0CA33",
+          "#1B1C20"
+        ],
+        "themeColor": "#33691E",
+        "accentColor": "#C0CA33",
+        "styleCode": "CP-05-OLIVE",
+        "designer": "HNMTSHOP × CYBER LAB",
+        "release": "SEPTEMBER 2027"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "giay",
+    "slug": "cp-05",
+    "name": "CYBER I — GLACIER FROST",
+    "description": "",
+    "price": 6400000,
+    "order": 4,
+    "metadata": {
+      "colors": [
+        [
+          "ICE BLUE / POLAR CHROME",
+          "#E1F5FE"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/cyber/cyber-air-future-i.webp"
+        }
+      ],
+      "sizes": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44"
+      ],
+      "collection": {
+        "id": "cyber",
+        "title": "CYBER VAULT",
+        "order": 1
+      },
+      "details": {
+        "model": "CYBER I",
+        "colorway": "GLACIER FROST",
+        "swatches": [
+          "#E1F5FE",
+          "#1565C0",
+          "#80D8FF"
+        ],
+        "themeColor": "#1565C0",
+        "accentColor": "#80D8FF",
+        "styleCode": "CP-01-GLACIER",
+        "designer": "HNMTSHOP × CYBER LAB",
+        "release": "OCTOBER 2027"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "giay",
+    "slug": "cp-06",
+    "name": "CYBER IX — MATRIX EMERALD",
+    "description": "",
+    "price": 6700000,
+    "order": 5,
+    "metadata": {
+      "colors": [
+        [
+          "CARBON BLACK / MATRIX NEON",
+          "#00E676"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/cyber/cyber-air-future-ix.webp"
+        }
+      ],
+      "sizes": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44"
+      ],
+      "collection": {
+        "id": "cyber",
+        "title": "CYBER VAULT",
+        "order": 1
+      },
+      "details": {
+        "model": "CYBER IX",
+        "colorway": "MATRIX EMERALD",
+        "swatches": [
+          "#00E676",
+          "#004D40",
+          "#0D0E12"
+        ],
+        "themeColor": "#004D40",
+        "accentColor": "#00E676",
+        "styleCode": "CP-09-MATRIX",
+        "designer": "HNMTSHOP × CYBER LAB",
+        "release": "NOVEMBER 2027"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "giay",
+    "slug": "ch-01",
+    "name": "CHILE 20 IV — ROYAL VIOLET",
+    "description": "",
+    "price": 5600000,
+    "order": 0,
+    "metadata": {
+      "colors": [
+        [
+          "METALLIC / ROYAL PURPLE",
+          "#FFFFFF"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/chile20/chile-air-future-iv.webp"
+        }
+      ],
+      "sizes": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44"
+      ],
+      "collection": {
+        "id": "chile20",
+        "title": "CHILE 20 VAULT",
+        "order": 2
+      },
+      "details": {
+        "model": "CHILE 20 IV",
+        "colorway": "ROYAL VIOLET",
+        "swatches": [
+          "#FFFFFF",
+          "#4A148C",
+          "#9C27B0"
+        ],
+        "themeColor": "#4A148C",
+        "accentColor": "#9C27B0",
+        "styleCode": "CH-04-VIOLET",
+        "designer": "HNMTSHOP × CHILE 20",
+        "release": "DECEMBER 2027"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "giay",
+    "slug": "ch-02",
+    "name": "CHILE 20 XI — IMPERIAL GOLD",
+    "description": "",
+    "price": 5800000,
+    "order": 1,
+    "metadata": {
+      "colors": [
+        [
+          "PURE WHITE / IMPERIAL GOLD",
+          "#FFFFFF"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/chile20/chile-air-future-xi.webp"
+        }
+      ],
+      "sizes": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44"
+      ],
+      "collection": {
+        "id": "chile20",
+        "title": "CHILE 20 VAULT",
+        "order": 2
+      },
+      "details": {
+        "model": "CHILE 20 XI",
+        "colorway": "IMPERIAL GOLD",
+        "swatches": [
+          "#FFFFFF",
+          "#B78103",
+          "#FFD700"
+        ],
+        "themeColor": "#B78103",
+        "accentColor": "#FFD700",
+        "styleCode": "CH-11-GOLD",
+        "designer": "HNMTSHOP × CHILE 20",
+        "release": "JANUARY 2028"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "giay",
+    "slug": "ch-03",
+    "name": "CHILE 20 III — CRIMSON FURY",
+    "description": "",
+    "price": 5300000,
+    "order": 2,
+    "metadata": {
+      "colors": [
+        [
+          "CHILE RED / AIR FURY",
+          "#FFFFFF"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/chile20/chile-air-future-iii.webp"
+        }
+      ],
+      "sizes": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44"
+      ],
+      "collection": {
+        "id": "chile20",
+        "title": "CHILE 20 VAULT",
+        "order": 2
+      },
+      "details": {
+        "model": "CHILE 20 III",
+        "colorway": "CRIMSON FURY",
+        "swatches": [
+          "#FFFFFF",
+          "#B71C1C",
+          "#FF1744"
+        ],
+        "themeColor": "#B71C1C",
+        "accentColor": "#FF1744",
+        "styleCode": "CH-03-FURY",
+        "designer": "HNMTSHOP × CHILE 20",
+        "release": "FEBRUARY 2028"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "giay",
+    "slug": "ch-04",
+    "name": "CHILE 20 V — DEEP TURQUOISE",
+    "description": "",
+    "price": 6100000,
+    "order": 3,
+    "metadata": {
+      "colors": [
+        [
+          "ATLANTIS / TURQUOISE CHROME",
+          "#00695C"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/chile20/chile-air-future-v.webp"
+        }
+      ],
+      "sizes": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44"
+      ],
+      "collection": {
+        "id": "chile20",
+        "title": "CHILE 20 VAULT",
+        "order": 2
+      },
+      "details": {
+        "model": "CHILE 20 V",
+        "colorway": "DEEP TURQUOISE",
+        "swatches": [
+          "#00695C",
+          "#1DE9B6",
+          "#1A1C20"
+        ],
+        "themeColor": "#00695C",
+        "accentColor": "#1DE9B6",
+        "styleCode": "CH-05-TURQUOISE",
+        "designer": "HNMTSHOP × CHILE 20",
+        "release": "MARCH 2028"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "giay",
+    "slug": "ch-05",
+    "name": "CHILE 20 I — SUNSET CLAY",
+    "description": "",
+    "price": 6500000,
+    "order": 4,
+    "metadata": {
+      "colors": [
+        [
+          "TERRACOTTA / SUNSET GOLD",
+          "#FFCCBC"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/chile20/chile-air-future-i.webp"
+        }
+      ],
+      "sizes": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44"
+      ],
+      "collection": {
+        "id": "chile20",
+        "title": "CHILE 20 VAULT",
+        "order": 2
+      },
+      "details": {
+        "model": "CHILE 20 I",
+        "colorway": "SUNSET CLAY",
+        "swatches": [
+          "#FFCCBC",
+          "#BF360C",
+          "#FF6E40"
+        ],
+        "themeColor": "#BF360C",
+        "accentColor": "#FF6E40",
+        "styleCode": "CH-01-SUNSET",
+        "designer": "HNMTSHOP × CHILE 20",
+        "release": "APRIL 2028"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "giay",
+    "slug": "ch-06",
+    "name": "CHILE 20 IX — COBALT LASER",
+    "description": "",
+    "price": 6900000,
+    "order": 5,
+    "metadata": {
+      "colors": [
+        [
+          "DEEP CARBON / COBALT LASER",
+          "#2979FF"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/chile20/chile-air-future-ix.webp"
+        }
+      ],
+      "sizes": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44"
+      ],
+      "collection": {
+        "id": "chile20",
+        "title": "CHILE 20 VAULT",
+        "order": 2
+      },
+      "details": {
+        "model": "CHILE 20 IX",
+        "colorway": "COBALT LASER",
+        "swatches": [
+          "#2979FF",
+          "#0D47A1",
+          "#0A0A0D"
+        ],
+        "themeColor": "#0D47A1",
+        "accentColor": "#2979FF",
+        "styleCode": "CH-09-COBALT",
+        "designer": "HNMTSHOP × CHILE 20",
+        "release": "MAY 2028"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "giay",
+    "slug": "men-carbon-trail",
+    "name": "CARBON TRAIL — BLACK / AMBER",
+    "description": "",
+    "price": 2390000,
+    "order": 0,
+    "metadata": {
+      "colors": [
+        [
+          "Đen / Hổ phách",
+          "#e39d43"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/men-carbon-trail.webp"
+        }
+      ],
+      "sizes": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44"
+      ],
+      "collection": {
+        "id": "men-new-arrivals",
+        "title": "SNEAKER NAM MỚI",
+        "order": 3
+      },
+      "details": {
+        "model": "CARBON TRAIL",
+        "colorway": "BLACK / AMBER",
+        "swatches": [
+          "#e39d43"
+        ],
+        "themeColor": "#474239",
+        "accentColor": "#e39d43",
+        "silhouettes": [
+          "runners",
+          "low-top"
+        ],
+        "styleCode": "MEN-CARBON-TRAIL",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "giay",
+    "slug": "men-chalk-court",
+    "name": "CHALK COURT — CHALK / NAVY",
+    "description": "",
+    "price": 2190000,
+    "order": 1,
+    "metadata": {
+      "colors": [
+        [
+          "Trắng ngà / Navy",
+          "#e8e0d4"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/men-chalk-court.webp"
+        }
+      ],
+      "sizes": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44"
+      ],
+      "collection": {
+        "id": "men-new-arrivals",
+        "title": "SNEAKER NAM MỚI",
+        "order": 3
+      },
+      "details": {
+        "model": "CHALK COURT",
+        "colorway": "CHALK / NAVY",
+        "swatches": [
+          "#e8e0d4"
+        ],
+        "themeColor": "#34496b",
+        "accentColor": "#e8e0d4",
+        "silhouettes": [
+          "low-top"
+        ],
+        "styleCode": "MEN-CHALK-COURT",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "giay",
+    "slug": "men-black-chelsea-boot",
+    "name": "CHELSEA — BLACK LEATHER",
+    "description": "",
+    "price": 2690000,
+    "order": 0,
+    "metadata": {
+      "colors": [
+        [
+          "Đen",
+          "#9e9699"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/men-black-chelsea-boot.webp"
+        }
+      ],
+      "sizes": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44"
+      ],
+      "collection": {
+        "id": "men-formal-shoes",
+        "title": "GIÀY TÂY & CHELSEA BOOTS",
+        "order": 4
+      },
+      "details": {
+        "model": "CHELSEA",
+        "colorway": "BLACK LEATHER",
+        "swatches": [
+          "#9e9699"
+        ],
+        "themeColor": "#29272b",
+        "accentColor": "#9e9699",
+        "silhouettes": [
+          "boots"
+        ],
+        "styleCode": "MEN-BLACK-CHELSEA-BOOT",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "giay",
+    "slug": "men-tan-suede-chelsea",
+    "name": "CHELSEA — TOBACCO SUEDE",
+    "description": "",
+    "price": 2590000,
+    "order": 1,
+    "metadata": {
+      "colors": [
+        [
+          "Nâu thuốc lá",
+          "#c69370"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/men-tan-suede-chelsea.webp"
+        }
+      ],
+      "sizes": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44"
+      ],
+      "collection": {
+        "id": "men-formal-shoes",
+        "title": "GIÀY TÂY & CHELSEA BOOTS",
+        "order": 4
+      },
+      "details": {
+        "model": "CHELSEA",
+        "colorway": "TOBACCO SUEDE",
+        "swatches": [
+          "#c69370"
+        ],
+        "themeColor": "#79503a",
+        "accentColor": "#c69370",
+        "silhouettes": [
+          "boots"
+        ],
+        "styleCode": "MEN-TAN-SUEDE-CHELSEA",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "giay",
+    "slug": "men-black-cap-toe-oxford",
+    "name": "OXFORD — BLACK CALF",
+    "description": "",
+    "price": 2290000,
+    "order": 2,
+    "metadata": {
+      "colors": [
+        [
+          "Đen",
+          "#a2a2b0"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/men-black-cap-toe-oxford.webp"
+        }
+      ],
+      "sizes": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44"
+      ],
+      "collection": {
+        "id": "men-formal-shoes",
+        "title": "GIÀY TÂY & CHELSEA BOOTS",
+        "order": 4
+      },
+      "details": {
+        "model": "OXFORD",
+        "colorway": "BLACK CALF",
+        "swatches": [
+          "#a2a2b0"
+        ],
+        "themeColor": "#31313a",
+        "accentColor": "#a2a2b0",
+        "silhouettes": [
+          "dress"
+        ],
+        "styleCode": "MEN-BLACK-CAP-TOE-OXFORD",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "giay",
+    "slug": "men-oxblood-derby",
+    "name": "DERBY — OXBLOOD",
+    "description": "",
+    "price": 2290000,
+    "order": 3,
+    "metadata": {
+      "colors": [
+        [
+          "Đỏ rượu",
+          "#a76c71"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/men-oxblood-derby.webp"
+        }
+      ],
+      "sizes": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44"
+      ],
+      "collection": {
+        "id": "men-formal-shoes",
+        "title": "GIÀY TÂY & CHELSEA BOOTS",
+        "order": 4
+      },
+      "details": {
+        "model": "DERBY",
+        "colorway": "OXBLOOD",
+        "swatches": [
+          "#a76c71"
+        ],
+        "themeColor": "#523138",
+        "accentColor": "#a76c71",
+        "silhouettes": [
+          "dress"
+        ],
+        "styleCode": "MEN-OXBLOOD-DERBY",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "giay",
+    "slug": "men-brown-chukka-boot",
+    "name": "CHUKKA — DARK BROWN",
+    "description": "",
+    "price": 2590000,
+    "order": 4,
+    "metadata": {
+      "colors": [
+        [
+          "Nâu đậm",
+          "#b58d6a"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/men-brown-chukka-boot.webp"
+        }
+      ],
+      "sizes": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44"
+      ],
+      "collection": {
+        "id": "men-formal-shoes",
+        "title": "GIÀY TÂY & CHELSEA BOOTS",
+        "order": 4
+      },
+      "details": {
+        "model": "CHUKKA",
+        "colorway": "DARK BROWN",
+        "swatches": [
+          "#b58d6a"
+        ],
+        "themeColor": "#66503d",
+        "accentColor": "#b58d6a",
+        "silhouettes": [
+          "boots"
+        ],
+        "styleCode": "MEN-BROWN-CHUKKA-BOOT",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "giay",
+    "slug": "men-green-football-trainer",
+    "name": "FUTSAL — GREEN / GOLD",
+    "description": "",
+    "price": 1890000,
+    "order": 0,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh lá / Vàng",
+          "#dfbb56"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/men-green-football-trainer.webp"
+        }
+      ],
+      "sizes": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44"
+      ],
+      "collection": {
+        "id": "men-sport-street",
+        "title": "THỂ THAO NAM",
+        "order": 5
+      },
+      "details": {
+        "model": "FUTSAL",
+        "colorway": "GREEN / GOLD",
+        "swatches": [
+          "#dfbb56"
+        ],
+        "themeColor": "#2a6146",
+        "accentColor": "#dfbb56",
+        "silhouettes": [
+          "low-top"
+        ],
+        "styleCode": "MEN-GREEN-FOOTBALL-TRAINER",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "giay",
+    "slug": "men-stone-road-runner",
+    "name": "ROAD RUN — STONE / BLACK",
+    "description": "",
+    "price": 2190000,
+    "order": 1,
+    "metadata": {
+      "colors": [
+        [
+          "Xám đá / Đen",
+          "#d9d4c9"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/men-stone-road-runner.webp"
+        }
+      ],
+      "sizes": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44"
+      ],
+      "collection": {
+        "id": "men-sport-street",
+        "title": "THỂ THAO NAM",
+        "order": 5
+      },
+      "details": {
+        "model": "ROAD RUN",
+        "colorway": "STONE / BLACK",
+        "swatches": [
+          "#d9d4c9"
+        ],
+        "themeColor": "#646068",
+        "accentColor": "#d9d4c9",
+        "silhouettes": [
+          "runners",
+          "low-top"
+        ],
+        "styleCode": "MEN-STONE-ROAD-RUNNER",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "giay",
+    "slug": "men-brass-bit-loafer",
+    "name": "BRASS BIT — BLACK",
+    "description": "",
+    "price": 1870000,
+    "order": 0,
+    "metadata": {
+      "colors": [
+        [
+          "Đen",
+          "#bd9c68"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/men-brass-bit-loafer.webp"
+        }
+      ],
+      "sizes": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44"
+      ],
+      "collection": {
+        "id": "men-runway-concepts",
+        "title": "RUNWAY CONCEPTS",
+        "order": 6
+      },
+      "details": {
+        "model": "BRASS BIT",
+        "colorway": "BLACK",
+        "swatches": [
+          "#bd9c68"
+        ],
+        "themeColor": "#363136",
+        "accentColor": "#bd9c68",
+        "silhouettes": [
+          "dress"
+        ],
+        "styleCode": "MEN-BRASS-BIT-LOAFER",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "men",
+    "kind": "giay",
+    "slug": "men-denim-basket-trainer",
+    "name": "DENIM COURT — INDIGO / IVORY",
+    "description": "",
+    "price": 2150000,
+    "order": 1,
+    "metadata": {
+      "colors": [
+        [
+          "Chàm / Kem",
+          "#d7d4bf"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/men-denim-basket-trainer.webp"
+        }
+      ],
+      "sizes": [
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44"
+      ],
+      "collection": {
+        "id": "men-runway-concepts",
+        "title": "RUNWAY CONCEPTS",
+        "order": 6
+      },
+      "details": {
+        "model": "DENIM COURT",
+        "colorway": "INDIGO / IVORY",
+        "swatches": [
+          "#d7d4bf"
+        ],
+        "themeColor": "#3b5478",
+        "accentColor": "#d7d4bf",
+        "silhouettes": [
+          "low-top"
+        ],
+        "styleCode": "MEN-DENIM-BASKET-TRAINER",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "ao",
+    "slug": "boy-denim-overshirt",
+    "name": "Áo Khoác Denim Bé Trai",
+    "description": "",
+    "price": 520000,
+    "order": 0,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh denim",
+          "#406383"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/boy-denim-overshirt-front.webp",
+          "side": "/clothing-rail/assets/boy-denim-overshirt-side.webp",
+          "back": "/clothing-rail/assets/boy-denim-overshirt-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "jacket",
+        "style": "jacket",
+        "colorGroup": "blue",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "ao",
+    "slug": "boy-college-hoodie",
+    "name": "Áo Hoodie College Bé Trai",
+    "description": "",
+    "price": 460000,
+    "order": 1,
+    "metadata": {
+      "colors": [
+        [
+          "Xám",
+          "#9a9999"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/boy-college-hoodie-front.webp",
+          "side": "/clothing-rail/assets/boy-college-hoodie-side.webp",
+          "back": "/clothing-rail/assets/boy-college-hoodie-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "hoodie",
+        "style": "hoodie",
+        "colorGroup": "gray",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "ao",
+    "slug": "boy-navy-baseball-jacket",
+    "name": "Áo Khoác Bóng Chày Bé Trai",
+    "description": "",
+    "price": 540000,
+    "order": 2,
+    "metadata": {
+      "colors": [
+        [
+          "Navy / Kem",
+          "#2c3952"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/boy-navy-baseball-jacket-front.webp",
+          "side": "/clothing-rail/assets/boy-navy-baseball-jacket-side.webp",
+          "back": "/clothing-rail/assets/boy-navy-baseball-jacket-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "jacket",
+        "style": "jacket",
+        "colorGroup": "blue",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "ao",
+    "slug": "boy-striped-ringer-tee",
+    "name": "Áo Thun Sọc Ringer Bé Trai",
+    "description": "",
+    "price": 320000,
+    "order": 3,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh rêu / Kem",
+          "#727a54"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/boy-striped-ringer-tee-front.webp",
+          "side": "/clothing-rail/assets/boy-striped-ringer-tee-side.webp",
+          "back": "/clothing-rail/assets/boy-striped-ringer-tee-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "tee",
+        "style": "tee",
+        "colorGroup": "green",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "ao",
+    "slug": "boy-navy-school-blazer",
+    "name": "Áo Blazer Navy Bé Trai",
+    "description": "",
+    "price": 590000,
+    "order": 4,
+    "metadata": {
+      "colors": [
+        [
+          "Navy",
+          "#273754"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/boy-navy-school-blazer-front.webp",
+          "side": "/clothing-rail/assets/boy-navy-school-blazer-side.webp",
+          "back": "/clothing-rail/assets/boy-navy-school-blazer-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "jacket",
+        "style": "jacket",
+        "colorGroup": "blue",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "ao",
+    "slug": "boy-cream-oxford-shirt",
+    "name": "Áo Sơ Mi Oxford Kem Bé Trai",
+    "description": "",
+    "price": 390000,
+    "order": 5,
+    "metadata": {
+      "colors": [
+        [
+          "Kem",
+          "#e2d9c3"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/boy-cream-oxford-shirt-front.webp",
+          "side": "/clothing-rail/assets/boy-cream-oxford-shirt-side.webp",
+          "back": "/clothing-rail/assets/boy-cream-oxford-shirt-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "shirt",
+        "style": "shirt",
+        "colorGroup": "white",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "ao",
+    "slug": "boy-gold-football-jersey",
+    "name": "Áo Bóng Đá Vàng Bé Trai",
+    "description": "",
+    "price": 390000,
+    "order": 6,
+    "metadata": {
+      "colors": [
+        [
+          "Vàng / Xanh lá",
+          "#edc948"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/boy-gold-football-jersey-front.webp",
+          "side": "/clothing-rail/assets/boy-gold-football-jersey-side.webp",
+          "back": "/clothing-rail/assets/boy-gold-football-jersey-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "tee",
+        "style": "tee",
+        "colorGroup": "yellow",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "ao",
+    "slug": "boy-navy-coach-jacket",
+    "name": "Áo Coach Jacket Navy Bé Trai",
+    "description": "",
+    "price": 540000,
+    "order": 7,
+    "metadata": {
+      "colors": [
+        [
+          "Navy",
+          "#293a57"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/boy-navy-coach-jacket-front.webp",
+          "side": "/clothing-rail/assets/boy-navy-coach-jacket-side.webp",
+          "back": "/clothing-rail/assets/boy-navy-coach-jacket-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "jacket",
+        "style": "jacket",
+        "colorGroup": "blue",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "ao",
+    "slug": "boy-red-plaid-flannel",
+    "name": "Áo Sơ Mi Flannel Caro Đỏ Bé Trai",
+    "description": "",
+    "price": 450000,
+    "order": 8,
+    "metadata": {
+      "colors": [
+        [
+          "Đỏ / Đen",
+          "#8c3437"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/boy-red-plaid-flannel-front.webp",
+          "side": "/clothing-rail/assets/boy-red-plaid-flannel-side.webp",
+          "back": "/clothing-rail/assets/boy-red-plaid-flannel-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "shirt",
+        "style": "shirt",
+        "colorGroup": "red",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "ao",
+    "slug": "boy-sand-fleece-zip",
+    "name": "Áo Khoác Fleece Kem Bé Trai",
+    "description": "",
+    "price": 490000,
+    "order": 9,
+    "metadata": {
+      "colors": [
+        [
+          "Kem",
+          "#e3d7bc"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/boy-sand-fleece-zip-front.webp",
+          "side": "/clothing-rail/assets/boy-sand-fleece-zip-side.webp",
+          "back": "/clothing-rail/assets/boy-sand-fleece-zip-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "hoodie",
+        "style": "hoodie",
+        "colorGroup": "white",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "ao",
+    "slug": "boy-blue-puffer-vest",
+    "name": "Áo Gile Puffer Xanh Bé Trai",
+    "description": "",
+    "price": 520000,
+    "order": 10,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh cobalt",
+          "#4266a1"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/boy-blue-puffer-vest-front.webp",
+          "side": "/clothing-rail/assets/boy-blue-puffer-vest-side.webp",
+          "back": "/clothing-rail/assets/boy-blue-puffer-vest-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "jacket",
+        "style": "jacket",
+        "colorGroup": "blue",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "ao",
+    "slug": "boy-checkerboard-varsity",
+    "name": "Áo Varsity Denim Bàn Cờ Bé Trai",
+    "description": "",
+    "price": 640000,
+    "order": 11,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh denim hai tông",
+          "#566d87"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/boy-checkerboard-varsity-front.webp",
+          "side": "/clothing-rail/assets/boy-checkerboard-varsity-side.webp",
+          "back": "/clothing-rail/assets/boy-checkerboard-varsity-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "jacket",
+        "style": "jacket",
+        "colorGroup": "blue",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "ao",
+    "slug": "boy-garnet-track-jacket",
+    "name": "Áo Track Đỏ Garnet Bé Trai",
+    "description": "",
+    "price": 570000,
+    "order": 12,
+    "metadata": {
+      "colors": [
+        [
+          "Đỏ garnet / Kem",
+          "#80384b"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/boy-garnet-track-jacket-front.webp",
+          "side": "/clothing-rail/assets/boy-garnet-track-jacket-side.webp",
+          "back": "/clothing-rail/assets/boy-garnet-track-jacket-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "jacket",
+        "style": "jacket",
+        "colorGroup": "burgundy",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "quan",
+    "slug": "boy-relaxed-jeans",
+    "name": "Quần Jeans Relaxed Bé Trai",
+    "description": "",
+    "price": 450000,
+    "order": 0,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh denim",
+          "#52799c"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/boy-relaxed-jeans-front.webp",
+          "side": "/clothing-rail/assets/boy-relaxed-jeans-side.webp",
+          "back": "/clothing-rail/assets/boy-relaxed-jeans-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "jeans",
+        "style": "jeans",
+        "colorGroup": "blue",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "quan",
+    "slug": "boy-olive-ripstop-cargo",
+    "name": "Quần Cargo Ripstop Bé Trai",
+    "description": "",
+    "price": 430000,
+    "order": 1,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh olive",
+          "#6d7452"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/boy-olive-ripstop-cargo-front.webp",
+          "side": "/clothing-rail/assets/boy-olive-ripstop-cargo-side.webp",
+          "back": "/clothing-rail/assets/boy-olive-ripstop-cargo-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "cargo",
+        "style": "cargo",
+        "colorGroup": "green",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "quan",
+    "slug": "boy-charcoal-track-jogger",
+    "name": "Quần Jogger Thể Thao Bé Trai",
+    "description": "",
+    "price": 390000,
+    "order": 2,
+    "metadata": {
+      "colors": [
+        [
+          "Xám than",
+          "#45464b"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/boy-charcoal-track-jogger-front.webp",
+          "side": "/clothing-rail/assets/boy-charcoal-track-jogger-side.webp",
+          "back": "/clothing-rail/assets/boy-charcoal-track-jogger-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "jogger",
+        "style": "jogger",
+        "colorGroup": "gray",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "quan",
+    "slug": "boy-sand-chino",
+    "name": "Quần Chino Ống Suông Bé Trai",
+    "description": "",
+    "price": 440000,
+    "order": 3,
+    "metadata": {
+      "colors": [
+        [
+          "Be cát",
+          "#bda783"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/boy-sand-chino-front.webp",
+          "side": "/clothing-rail/assets/boy-sand-chino-side.webp",
+          "back": "/clothing-rail/assets/boy-sand-chino-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "tay",
+        "style": "tay",
+        "colorGroup": "beige",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "quan",
+    "slug": "boy-navy-school-trouser",
+    "name": "Quần Tây Navy Bé Trai",
+    "description": "",
+    "price": 450000,
+    "order": 4,
+    "metadata": {
+      "colors": [
+        [
+          "Navy",
+          "#283750"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/boy-navy-school-trouser-front.webp",
+          "side": "/clothing-rail/assets/boy-navy-school-trouser-side.webp",
+          "back": "/clothing-rail/assets/boy-navy-school-trouser-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "tay",
+        "style": "tay",
+        "colorGroup": "blue",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "quan",
+    "slug": "boy-brown-corduroy",
+    "name": "Quần Nhung Tăm Nâu Bé Trai",
+    "description": "",
+    "price": 430000,
+    "order": 5,
+    "metadata": {
+      "colors": [
+        [
+          "Nâu đất",
+          "#86694e"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/boy-brown-corduroy-front.webp",
+          "side": "/clothing-rail/assets/boy-brown-corduroy-side.webp",
+          "back": "/clothing-rail/assets/boy-brown-corduroy-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "tay",
+        "style": "tay",
+        "colorGroup": "brown",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "quan",
+    "slug": "boy-gray-denim",
+    "name": "Quần Jeans Xám Bé Trai",
+    "description": "",
+    "price": 450000,
+    "order": 6,
+    "metadata": {
+      "colors": [
+        [
+          "Xám wash",
+          "#70737b"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/boy-gray-denim-front.webp",
+          "side": "/clothing-rail/assets/boy-gray-denim-side.webp",
+          "back": "/clothing-rail/assets/boy-gray-denim-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "jeans",
+        "style": "jeans",
+        "colorGroup": "gray",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "quan",
+    "slug": "boy-sand-utility-crop",
+    "name": "Quần Utility Lửng Be Bé Trai",
+    "description": "",
+    "price": 460000,
+    "order": 7,
+    "metadata": {
+      "colors": [
+        [
+          "Be cát",
+          "#b9a58a"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/boy-sand-utility-crop-front.webp",
+          "side": "/clothing-rail/assets/boy-sand-utility-crop-side.webp",
+          "back": "/clothing-rail/assets/boy-sand-utility-crop-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "cargo",
+        "style": "cargo",
+        "colorGroup": "beige",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "quan",
+    "slug": "boy-forest-sport-track",
+    "name": "Quần Thể Thao Xanh Rừng Bé Trai",
+    "description": "",
+    "price": 430000,
+    "order": 8,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh rừng / Kem",
+          "#42604f"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/boy-forest-sport-track-front.webp",
+          "side": "/clothing-rail/assets/boy-forest-sport-track-side.webp",
+          "back": "/clothing-rail/assets/boy-forest-sport-track-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "jogger",
+        "style": "jogger",
+        "colorGroup": "green",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "quan",
+    "slug": "boy-black-denim-carpenter",
+    "name": "Jeans Carpenter Đen Bé Trai",
+    "description": "",
+    "price": 480000,
+    "order": 9,
+    "metadata": {
+      "colors": [
+        [
+          "Đen wash",
+          "#3d3e41"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/boy-black-denim-carpenter-front.webp",
+          "side": "/clothing-rail/assets/boy-black-denim-carpenter-side.webp",
+          "back": "/clothing-rail/assets/boy-black-denim-carpenter-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "jeans",
+        "style": "jeans",
+        "colorGroup": "black",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "quan",
+    "slug": "boy-blue-ripstop-jogger",
+    "name": "Quần Jogger Ripstop Xanh Bé Trai",
+    "description": "",
+    "price": 440000,
+    "order": 10,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh thép",
+          "#557185"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/boy-blue-ripstop-jogger-front.webp",
+          "side": "/clothing-rail/assets/boy-blue-ripstop-jogger-side.webp",
+          "back": "/clothing-rail/assets/boy-blue-ripstop-jogger-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "jogger",
+        "style": "jogger",
+        "colorGroup": "blue",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "quan",
+    "slug": "boy-brown-wide-chino",
+    "name": "Quần Chino Nâu Ống Rộng Bé Trai",
+    "description": "",
+    "price": 450000,
+    "order": 11,
+    "metadata": {
+      "colors": [
+        [
+          "Nâu",
+          "#886b53"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/boy-brown-wide-chino-front.webp",
+          "side": "/clothing-rail/assets/boy-brown-wide-chino-side.webp",
+          "back": "/clothing-rail/assets/boy-brown-wide-chino-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "tay",
+        "style": "tay",
+        "colorGroup": "brown",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "quan",
+    "slug": "boy-ink-patchwork-denim",
+    "name": "Quần Jeans Chắp Vải Xanh Mực Bé Trai",
+    "description": "",
+    "price": 550000,
+    "order": 12,
+    "metadata": {
+      "colors": [
+        [
+          "Xanh mực",
+          "#3e587b"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/boy-ink-patchwork-denim-front.webp",
+          "side": "/clothing-rail/assets/boy-ink-patchwork-denim-side.webp",
+          "back": "/clothing-rail/assets/boy-ink-patchwork-denim-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "jeans",
+        "style": "jeans",
+        "colorGroup": "blue",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "quan",
+    "slug": "boy-tailored-wide-check",
+    "name": "Quần Tây Caro Ống Rộng Bé Trai",
+    "description": "",
+    "price": 520000,
+    "order": 13,
+    "metadata": {
+      "colors": [
+        [
+          "Xám caro",
+          "#66656c"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/clothing-rail/assets/boy-tailored-wide-check-front.webp",
+          "side": "/clothing-rail/assets/boy-tailored-wide-check-side.webp",
+          "back": "/clothing-rail/assets/boy-tailored-wide-check-back.webp"
+        }
+      ],
+      "sizes": [
+        "110",
+        "120",
+        "130",
+        "140",
+        "150"
+      ],
+      "details": {
+        "type": "tay",
+        "style": "tay",
+        "colorGroup": "gray",
+        "upcoming": false
+      }
+    },
+    "stock": [
+      4,
+      6,
+      8,
+      6,
+      4
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "giay",
+    "slug": "boy-skater-sneaker",
+    "name": "JUNIOR SKATE HIGH — BLACK / WHITE",
+    "description": "",
+    "price": 890000,
+    "order": 0,
+    "metadata": {
+      "colors": [
+        [
+          "Đen / Trắng",
+          "#252525"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/boy-skater-sneaker.webp"
+        }
+      ],
+      "sizes": [
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35"
+      ],
+      "collection": {
+        "id": "boy-sneakers",
+        "title": "GIÀY BÉ TRAI",
+        "order": 0
+      },
+      "details": {
+        "model": "JUNIOR SKATE HIGH",
+        "colorway": "BLACK / WHITE",
+        "swatches": [
+          "#252525"
+        ],
+        "themeColor": "#383d4a",
+        "accentColor": "#aab2c1",
+        "backdropTitle": "SKATE HIGH",
+        "styleCode": "B-SKATE-HIGH",
+        "designer": "HNMTSHOP",
+        "silhouettes": [
+          "high-top"
+        ]
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "giay",
+    "slug": "boy-navy-court",
+    "name": "JUNIOR COURT — NAVY / GUM",
+    "description": "",
+    "price": 850000,
+    "order": 1,
+    "metadata": {
+      "colors": [
+        [
+          "Navy / Nâu gum",
+          "#c49262"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/boy-navy-court.webp"
+        }
+      ],
+      "sizes": [
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35"
+      ],
+      "collection": {
+        "id": "boy-sneakers",
+        "title": "GIÀY BÉ TRAI",
+        "order": 0
+      },
+      "details": {
+        "model": "JUNIOR COURT",
+        "colorway": "NAVY / GUM",
+        "swatches": [
+          "#c49262"
+        ],
+        "themeColor": "#354c70",
+        "accentColor": "#c49262",
+        "silhouettes": [
+          "low-top"
+        ],
+        "styleCode": "BOY-NAVY-COURT",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "giay",
+    "slug": "boy-volt-runner",
+    "name": "JUNIOR RUNNER — GRAY / VOLT",
+    "description": "",
+    "price": 890000,
+    "order": 2,
+    "metadata": {
+      "colors": [
+        [
+          "Xám / Xanh volt",
+          "#b4d84b"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/boy-volt-runner.webp"
+        }
+      ],
+      "sizes": [
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35"
+      ],
+      "collection": {
+        "id": "boy-sneakers",
+        "title": "GIÀY BÉ TRAI",
+        "order": 0
+      },
+      "details": {
+        "model": "JUNIOR RUNNER",
+        "colorway": "GRAY / VOLT",
+        "swatches": [
+          "#b4d84b"
+        ],
+        "themeColor": "#505a66",
+        "accentColor": "#b4d84b",
+        "silhouettes": [
+          "runners",
+          "low-top"
+        ],
+        "styleCode": "BOY-VOLT-RUNNER",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "giay",
+    "slug": "boy-brown-penny-loafer",
+    "name": "PENNY LOAFER — COCOA",
+    "description": "",
+    "price": 920000,
+    "order": 3,
+    "metadata": {
+      "colors": [
+        [
+          "Nâu cocoa",
+          "#b28b76"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/boy-brown-penny-loafer.webp"
+        }
+      ],
+      "sizes": [
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35"
+      ],
+      "collection": {
+        "id": "boy-sneakers",
+        "title": "GIÀY BÉ TRAI",
+        "order": 0
+      },
+      "details": {
+        "model": "PENNY LOAFER",
+        "colorway": "COCOA",
+        "swatches": [
+          "#b28b76"
+        ],
+        "themeColor": "#634237",
+        "accentColor": "#b28b76",
+        "silhouettes": [
+          "dress"
+        ],
+        "styleCode": "BOY-BROWN-PENNY-LOAFER",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "giay",
+    "slug": "boy-black-lace-boot",
+    "name": "JUNIOR BOOT — BLACK",
+    "description": "",
+    "price": 990000,
+    "order": 4,
+    "metadata": {
+      "colors": [
+        [
+          "Đen",
+          "#8e8f96"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/boy-black-lace-boot.webp"
+        }
+      ],
+      "sizes": [
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35"
+      ],
+      "collection": {
+        "id": "boy-sneakers",
+        "title": "GIÀY BÉ TRAI",
+        "order": 0
+      },
+      "details": {
+        "model": "JUNIOR BOOT",
+        "colorway": "BLACK",
+        "swatches": [
+          "#8e8f96"
+        ],
+        "themeColor": "#353539",
+        "accentColor": "#8e8f96",
+        "silhouettes": [
+          "boots"
+        ],
+        "styleCode": "BOY-BLACK-LACE-BOOT",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "giay",
+    "slug": "boy-yellow-futsal-trainer",
+    "name": "FUTSAL MINI — GOLD / GREEN",
+    "description": "",
+    "price": 910000,
+    "order": 0,
+    "metadata": {
+      "colors": [
+        [
+          "Vàng / Xanh lá",
+          "#e1b942"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/boy-yellow-futsal-trainer.webp"
+        }
+      ],
+      "sizes": [
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35"
+      ],
+      "collection": {
+        "id": "boy-sport-street",
+        "title": "THỂ THAO & ĐỜI THƯỜNG BÉ TRAI",
+        "order": 1
+      },
+      "details": {
+        "model": "FUTSAL MINI",
+        "colorway": "GOLD / GREEN",
+        "swatches": [
+          "#e1b942"
+        ],
+        "themeColor": "#bd9440",
+        "accentColor": "#e1b942",
+        "silhouettes": [
+          "low-top"
+        ],
+        "styleCode": "BOY-YELLOW-FUTSAL-TRAINER",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "giay",
+    "slug": "boy-stone-retro-court",
+    "name": "COURT 80 — STONE / NAVY",
+    "description": "",
+    "price": 890000,
+    "order": 1,
+    "metadata": {
+      "colors": [
+        [
+          "Be đá / Navy",
+          "#c8c3b8"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/boy-stone-retro-court.webp"
+        }
+      ],
+      "sizes": [
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35"
+      ],
+      "collection": {
+        "id": "boy-sport-street",
+        "title": "THỂ THAO & ĐỜI THƯỜNG BÉ TRAI",
+        "order": 1
+      },
+      "details": {
+        "model": "COURT 80",
+        "colorway": "STONE / NAVY",
+        "swatches": [
+          "#c8c3b8"
+        ],
+        "themeColor": "#536480",
+        "accentColor": "#c8c3b8",
+        "silhouettes": [
+          "low-top"
+        ],
+        "styleCode": "BOY-STONE-RETRO-COURT",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "giay",
+    "slug": "boy-red-canvas-high",
+    "name": "CANVAS HIGH — RED / WHITE",
+    "description": "",
+    "price": 880000,
+    "order": 2,
+    "metadata": {
+      "colors": [
+        [
+          "Đỏ / Trắng",
+          "#dd9b9d"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/boy-red-canvas-high.webp"
+        }
+      ],
+      "sizes": [
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35"
+      ],
+      "collection": {
+        "id": "boy-sport-street",
+        "title": "THỂ THAO & ĐỜI THƯỜNG BÉ TRAI",
+        "order": 1
+      },
+      "details": {
+        "model": "CANVAS HIGH",
+        "colorway": "RED / WHITE",
+        "swatches": [
+          "#dd9b9d"
+        ],
+        "themeColor": "#943d47",
+        "accentColor": "#dd9b9d",
+        "silhouettes": [
+          "high-top"
+        ],
+        "styleCode": "BOY-RED-CANVAS-HIGH",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "giay",
+    "slug": "boy-navy-hiking-boot",
+    "name": "MINI TRAIL — NAVY",
+    "description": "",
+    "price": 980000,
+    "order": 3,
+    "metadata": {
+      "colors": [
+        [
+          "Navy",
+          "#8799ad"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/boy-navy-hiking-boot.webp"
+        }
+      ],
+      "sizes": [
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35"
+      ],
+      "collection": {
+        "id": "boy-sport-street",
+        "title": "THỂ THAO & ĐỜI THƯỜNG BÉ TRAI",
+        "order": 1
+      },
+      "details": {
+        "model": "MINI TRAIL",
+        "colorway": "NAVY",
+        "swatches": [
+          "#8799ad"
+        ],
+        "themeColor": "#34455e",
+        "accentColor": "#8799ad",
+        "silhouettes": [
+          "boots"
+        ],
+        "styleCode": "BOY-NAVY-HIKING-BOOT",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "giay",
+    "slug": "boy-canvas-window-high",
+    "name": "WINDOW HIGH — BLACK / CREAM",
+    "description": "",
+    "price": 1050000,
+    "order": 0,
+    "metadata": {
+      "colors": [
+        [
+          "Đen / Kem",
+          "#d7cabb"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/boy-canvas-window-high.webp"
+        }
+      ],
+      "sizes": [
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35"
+      ],
+      "collection": {
+        "id": "boy-runway-concepts",
+        "title": "RUNWAY CONCEPTS",
+        "order": 2
+      },
+      "details": {
+        "model": "WINDOW HIGH",
+        "colorway": "BLACK / CREAM",
+        "swatches": [
+          "#d7cabb"
+        ],
+        "themeColor": "#46414c",
+        "accentColor": "#d7cabb",
+        "silhouettes": [
+          "high-top"
+        ],
+        "styleCode": "BOY-CANVAS-WINDOW-HIGH",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  {
+    "audience": "boy",
+    "kind": "giay",
+    "slug": "boy-mini-stack-sneaker",
+    "name": "MINI STACK — GRAY / VOLT",
+    "description": "",
+    "price": 1050000,
+    "order": 1,
+    "metadata": {
+      "colors": [
+        [
+          "Xám / Xanh volt",
+          "#b2cb6a"
+        ]
+      ],
+      "photos": [
+        {
+          "front": "/images/sneakers/boy-mini-stack-sneaker.webp"
+        }
+      ],
+      "sizes": [
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35"
+      ],
+      "collection": {
+        "id": "boy-runway-concepts",
+        "title": "RUNWAY CONCEPTS",
+        "order": 2
+      },
+      "details": {
+        "model": "MINI STACK",
+        "colorway": "GRAY / VOLT",
+        "swatches": [
+          "#b2cb6a"
+        ],
+        "themeColor": "#4e5560",
+        "accentColor": "#b2cb6a",
+        "silhouettes": [
+          "chunky"
+        ],
+        "styleCode": "BOY-MINI-STACK-SNEAKER",
+        "designer": "HNMTSHOP"
+      }
+    },
+    "stock": [
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8,
+      8
+    ]
+  }
+]

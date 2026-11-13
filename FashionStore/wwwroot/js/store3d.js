@@ -30,6 +30,7 @@
     let scene, camera, renderer;
     let animId = null;
     let isPortalOpen = false;
+    let showroomAudience = 'men';
 
     // 3D Objects, Reflections & Shader Uniforms
     const itemWrappers = [];
@@ -1355,8 +1356,9 @@
     }
 
     // --- Mở / Đóng Showroom với hiệu ứng Zoom-Out từ cột giữa chuẩn video 1107.mp4 ---
-    function openPortal() {
+    function openPortal(audience = 'men') {
         if (!portalEl) return;
+        showroomAudience = ['women', 'girls', 'men', 'boy'].includes(audience) ? audience : 'men';
         isPortalOpen = true;
 
         portalEl.classList.add('is-active');
@@ -1465,7 +1467,8 @@
 
             e.preventDefault();
             e.stopPropagation();
-            openPortal();
+            const audience = (block.dataset.category || block.dataset.categoryTitle || '').toLowerCase();
+            openPortal(audience);
         }, true);
     }
     // ==============================================================================
@@ -1753,9 +1756,9 @@
             rackOverlayEl.setAttribute('aria-hidden', 'false');
         }
         if (window.ClothingRail && typeof window.ClothingRail.openClothingRail === 'function') {
-            window.ClothingRail.openClothingRail(category);
+            window.ClothingRail.openClothingRail(category, showroomAudience);
         } else if (typeof window.openClothingRail === 'function') {
-            window.openClothingRail(category);
+            window.openClothingRail(category, showroomAudience);
         } else if (category === 'quan' && typeof window.open3DPantsRack === 'function') {
             window.open3DPantsRack();
         }
@@ -1854,7 +1857,7 @@
                 });
 
                 if (buyNow) {
-                    setTimeout(() => { window.location.href = '/Cart'; }, 400);
+                    setTimeout(() => { window.location.href = '/Orders/Checkout'; }, 400);
                 }
             }
         } catch (err) {
@@ -2021,6 +2024,7 @@
 
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && isPortalOpen) {
+                if (document.getElementById('hnmtSneakerOverlay')?.classList.contains('is-active')) return;
                 if (isRackModeActive) close3DClothesRack();
                 else closePortal();
             }
@@ -2043,7 +2047,7 @@
         if (portalHeaderEl) portalHeaderEl.style.display = 'none';
 
         if (typeof window.openSneakerShowcase === 'function') {
-            window.openSneakerShowcase();
+            window.openSneakerShowcase(showroomAudience);
         } else {
             const overlay = document.getElementById('hnmtSneakerOverlay');
             if (overlay) overlay.classList.add('is-active');
@@ -2077,5 +2081,9 @@
     window.openPantsRailFrom3D = openPantsRailFrom3D;
     window.closePantsRailFrom3D = closePantsRailFrom3D;
 
-    window.HNMTChilePortal = { open: openPortal, close: closePortal };
+    window.HNMTChilePortal = {
+        open: openPortal,
+        close: closePortal,
+        getAudience: () => isPortalOpen ? showroomAudience : null
+    };
 })();

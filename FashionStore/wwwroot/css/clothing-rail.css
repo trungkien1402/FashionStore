@@ -695,56 +695,57 @@
     color: var(--rail-ink);
 }
 
-/* Front / Back View Switcher: Side A | Side B (1:1 Replica) */
+/* Front / Back View Switcher: Side A | Side B (1:1 Replica from Mockup) */
 .rail-view-switch {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin: 8px auto 10px;
+    margin: 6px auto 14px;
     user-select: none;
-    font-size: 13.5px;
+    font-size: 14px;
+    line-height: 1.2;
     letter-spacing: -0.01em;
 }
 
 .rail-view-switch[hidden] {
-    display: none;
+    display: none !important;
 }
 
 .rail-view-opt {
     background: none;
     border: none;
-    padding: 2px 4px;
-    font-family: inherit;
-    font-size: 13.5px;
+    padding: 2px 6px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.2;
     cursor: pointer;
     border-radius: 0;
-    transition: opacity 0.2s ease, color 0.2s ease;
+    transition: color 0.2s ease, opacity 0.2s ease;
 }
 
 .rail-view-opt.is-active {
     font-weight: 700;
-    color: var(--rail-ink, #182244);
+    color: #1e2a47;
     opacity: 1;
 }
 
 .rail-view-opt.is-dimmed {
     font-weight: 400;
-    color: var(--rail-muted, #8b92a4);
-    opacity: 0.55;
+    color: #b6becb;
+    opacity: 1;
 }
 
 .rail-view-opt:hover:not(.is-active) {
-    opacity: 0.85;
-    color: var(--rail-ink, #182244);
+    color: #64748b;
 }
 
 .rail-view-sep {
-    color: #cfd3de;
+    color: #d6dbe4;
     font-size: 13px;
     font-weight: 300;
-    margin: 0 8px;
+    margin: 0 10px;
     user-select: none;
-    opacity: 0.65;
+    line-height: 1;
 }
 
 .rail-detail-img.is-flipping {

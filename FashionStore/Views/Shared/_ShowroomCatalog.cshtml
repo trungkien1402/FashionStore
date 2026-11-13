@@ -1,0 +1,8 @@
+@using System.Text.Json
+@using FashionStore.Data
+@inject ApplicationDbContext Database
+@{
+    var catalog = await ShowroomCatalog.ReadAsync(Database);
+    var json = JsonSerializer.Serialize(catalog, ShowroomCatalog.JsonOptions);
+}
+<script id="showroomCatalog" type="application/json">@Html.Raw(json)</script>

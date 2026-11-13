@@ -40,6 +40,43 @@
     }
 
     let cartItems = loadLocalCart();
+    let serverItems = [];
+    let serverQueue = Promise.resolve();
+    const allCartItems = () => [...serverItems, ...cartItems];
+    const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g,
+        char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+
+    function serverCart(path, body, open = false) {
+        const action = async () => {
+            try {
+                const response = await fetch(path, body ? {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                } : { cache: 'no-store' });
+                const data = await response.json();
+                if (!response.ok || !data.success) throw new Error(data.message || 'Không thể cập nhật giỏ hàng.');
+                serverItems = data.items.map(item => ({ ...item, id: `sql-${item.variantId}`, price: item.unitPrice }));
+                const notice = document.getElementById('hnmtCartError');
+                if (notice) notice.hidden = true;
+                if (open) openDrawer(false);
+                else renderCartItems();
+                return true;
+            } catch (error) {
+                if (body) {
+                    openDrawer(false);
+                    const notice = document.getElementById('hnmtCartError');
+                    if (notice) {
+                        notice.textContent = error.message || 'Không thể cập nhật giỏ hàng.';
+                        notice.hidden = false;
+                    }
+                }
+                return false;
+            }
+        };
+        serverQueue = serverQueue.then(action);
+        return serverQueue;
+    }
 
     // Định dạng tiền tệ VNĐ
     function formatMoney(amount) {
@@ -48,12 +85,12 @@
 
     // Tính tổng số lượng món
     function calculateTotalCount() {
-        return cartItems.reduce((sum, item) => sum + (Number(item.quantity) || 1), 0);
+        return allCartItems().reduce((sum, item) => sum + (Number(item.quantity) || 1), 0);
     }
 
     // Tính tổng tiền sản phẩm
     function calculateTotalPrice() {
-        return cartItems.reduce((sum, item) => sum + ((Number(item.price) || 0) * (Number(item.quantity) || 1)), 0);
+        return allCartItems().reduce((sum, item) => sum + ((Number(item.price) || 0) * (Number(item.quantity) || 1)), 0);
     }
 
     // Cập nhật tất cả các Badge số lượng trên toàn bộ giao diện web
@@ -107,6 +144,7 @@
 
             <!-- 2. Danh sách sản phẩm trong giỏ (Scrollable Area) -->
             <div class="fashion-sidebar-scroll hnmt-cart-body" id="hnmtCartBody">
+                <p id="hnmtCartError" role="status" hidden></p>
                 <div class="hnmt-cart-items-list" id="hnmtCartItemsList">
                     <!-- Danh sách Cart Item Render bằng JavaScript -->
                 </div>
@@ -198,7 +236,7 @@
 
         // Render từng item thành card đồng bộ phong cách .fashion-select-card
         listEl.innerHTML = '';
-        cartItems.forEach(item => {
+        allCartItems().forEach(item => {
             const card = document.createElement('div');
             card.className = 'hnmt-cart-item-card';
             card.setAttribute('data-id', item.id);
@@ -211,11 +249,11 @@
 
             card.innerHTML = `
                 <div class="hnmt-item-thumb-box">
-                    <img src="${thumbImg}" alt="${item.name || 'Sản phẩm'}" class="hnmt-item-thumb" onerror="this.src='${defaultFallback}'">
+                    <img src="${escapeHtml(thumbImg)}" alt="${escapeHtml(item.name || 'Sản phẩm')}" class="hnmt-item-thumb" onerror="this.onerror=null;this.src='${defaultFallback}'">
                 </div>
                 <div class="hnmt-item-details">
                     <div class="hnmt-item-top">
-                        <h4 class="hnmt-item-name" title="${item.name}">${item.name}</h4>
+                        <h4 class="hnmt-item-name" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</h4>
                         <button type="button" class="hnmt-item-remove-btn" title="Xóa món này khỏi giỏ" aria-label="Xóa">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -225,11 +263,11 @@
                     </div>
 
                     <div class="hnmt-item-meta">
-                        ${item.size ? `<span class="hnmt-meta-pill">Size ${item.size}</span>` : ''}
+                        ${item.size ? `<span class="hnmt-meta-pill">Size ${escapeHtml(item.size)}</span>` : ''}
                         ${item.color ? `
-                            <span class="hnmt-meta-pill" title="${item.color}">
-                                ${item.colorDot ? `<span class="hnmt-color-swatch-dot" style="background:${item.colorDot}"></span>` : ''}
-                                <span>${item.color}</span>
+                            <span class="hnmt-meta-pill" title="${escapeHtml(item.color)}">
+                                ${item.colorDot ? `<span class="hnmt-color-swatch-dot" style="background:${escapeHtml(item.colorDot)}"></span>` : ''}
+                                <span>${escapeHtml(item.color)}</span>
                             </span>
                         ` : ''}
                     </div>
@@ -249,7 +287,7 @@
                                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                                 `}
                             </button>
-                            <span class="hnmt-step-value">${item.quantity}</span>
+                            <span class="hnmt-step-value">${Number(item.quantity) || 1}</span>
                             <button type="button" class="hnmt-step-btn hnmt-step-plus" aria-label="Tăng số lượng" title="Tăng">
                                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                             </button>
@@ -306,6 +344,14 @@
     // Thêm sản phẩm vào giỏ
     function addItem(product) {
         if (!product || !product.name) return;
+        if (product.productId && (product.variantId || product.size)) {
+            return serverCart('/Cart/AddAjax', {
+                productId: product.productId,
+                variantId: product.variantId,
+                size: product.size,
+                quantity: product.quantity || 1
+            }, true);
+        }
 
         const pSlug = product.slug || product.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
         const pSize = product.size || 'M';
@@ -331,10 +377,13 @@
         saveLocalCart(cartItems);
         syncAllBadges();
         openDrawer();
+        return true;
     }
 
     // Xóa sản phẩm khỏi giỏ
     function removeItem(id) {
+        const serverItem = serverItems.find(item => item.id === id);
+        if (serverItem) return serverCart('/Cart/UpdateAjax', { variantId: serverItem.variantId, delta: -serverItem.quantity });
         const card = document.querySelector(`.hnmt-cart-item-card[data-id="${id}"]`);
         if (card) {
             card.classList.add('is-removing');
@@ -354,6 +403,8 @@
 
     // Cập nhật số lượng (+1 hoặc -1)
     function updateQuantity(id, delta) {
+        const serverItem = serverItems.find(item => item.id === id);
+        if (serverItem) return serverCart('/Cart/UpdateAjax', { variantId: serverItem.variantId, delta });
         const item = cartItems.find(x => x.id === id);
         if (!item) return;
 
@@ -369,7 +420,7 @@
     }
 
     // Mở Drawer giỏ hàng
-    function openDrawer() {
+    function openDrawer(refresh = true) {
         const modal = ensureCartDOM();
         const isSneakerMode = document.body.classList.contains('is-sneaker-standalone') || 
                               Boolean(document.getElementById('hnmtSneakerOverlay')?.classList.contains('is-active'));
@@ -397,6 +448,7 @@
         renderCartItems();
         modal.classList.add('is-open');
         modal.setAttribute('aria-hidden', 'false');
+        if (refresh) serverCart('/Cart/GetMiniCart');
     }
 
     // Đóng Drawer giỏ hàng
@@ -463,7 +515,8 @@
         }
 
         if (checkoutBtn) {
-            checkoutBtn.addEventListener('click', () => {
+            checkoutBtn.addEventListener('click', async () => {
+                await serverQueue;
                 window.location.href = '/Orders/Checkout';
             });
         }
@@ -482,6 +535,7 @@
         // Đồng bộ badge ban đầu
         syncAllBadges();
         renderCartItems();
+        serverCart('/Cart/GetMiniCart');
     }
 
     // Public API
@@ -492,7 +546,7 @@
         addItem: addItem,
         removeItem: removeItem,
         updateQuantity: updateQuantity,
-        getItems: () => cartItems,
+        getItems: allCartItems,
         getCount: calculateTotalCount,
         getTotal: calculateTotalPrice,
         syncBadges: syncAllBadges,

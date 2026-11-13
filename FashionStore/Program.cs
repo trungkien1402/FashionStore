@@ -10,7 +10,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 
-var builder = WebApplication.CreateBuilder(args);
+const string replaceCatalogOption = "--replace-showroom-catalog";
+var replaceCatalog = args.Contains(replaceCatalogOption, StringComparer.Ordinal);
+var builder = WebApplication.CreateBuilder(args.Where(arg => arg != replaceCatalogOption).ToArray());
 
 // MVC
 builder.Services.AddControllersWithViews();
@@ -65,6 +67,16 @@ builder.Services.Configure<VietQrOptions>(builder.Configuration.GetSection("Viet
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 
 var app = builder.Build();
+
+if (replaceCatalog)
+{
+    await using var scope = app.Services.CreateAsyncScope();
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await db.Database.MigrateAsync();
+    var result = await ShowroomCatalog.ImportAsync(db, replaceLegacy: true);
+    Console.WriteLine($"Showroom catalog: {result.Added} products added, {result.Removed} legacy products removed.");
+    return;
+}
 
 // Khởi tạo dữ liệu mẫu (chỉ gọi một lần)
 await SeedData.InitializeAsync(app.Services);

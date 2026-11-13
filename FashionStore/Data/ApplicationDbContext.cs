@@ -54,6 +54,13 @@ public class ApplicationDbContext
             .Property(x => x.Price)
             .HasPrecision(18, 2);
 
+        builder.Entity<Product>(entity =>
+        {
+            entity.Property(p => p.ShowroomAudience).HasMaxLength(16);
+            entity.Property(p => p.ShowroomKind).HasMaxLength(8);
+            entity.HasIndex(p => new { p.ShowroomAudience, p.ShowroomKind, p.ShowroomSortOrder });
+        });
+
         builder.Entity<ProductVariant>()
             .Property(x => x.Price)
             .HasPrecision(18, 2);
