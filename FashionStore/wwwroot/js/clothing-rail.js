@@ -637,7 +637,7 @@
     function init() {
         try {
             const urlParams = new URLSearchParams(window.location.search);
-            const catParam = urlParams.get('category') || urlParams.get('cat');
+            const catParam = urlParams.get('category') || urlParams.get('cat') || urlParams.get('type');
             if (catParam === 'quan') {
                 currentCategory = 'quan';
                 currentRacks = DEFAULT_PANTS_RACKS;
@@ -765,6 +765,20 @@
         }
 
         applyRack(currentRacks[0]);
+
+        // Tự động nhận diện và áp dụng bộ lọc chuyển tiếp từ Trang Chủ
+        try {
+            const pendingJson = sessionStorage.getItem('hnmt_pending_rail_filter');
+            if (pendingJson) {
+                sessionStorage.removeItem('hnmt_pending_rail_filter');
+                const pending = JSON.parse(pendingJson);
+                if (pending && Array.isArray(pending.filteredProducts) && pending.filteredProducts.length > 0) {
+                    setTimeout(() => {
+                        window.ClothingRail.applyFilter(pending.filteredProducts, pending.label || 'BỘ LỌC TỪ TRANG CHỦ');
+                    }, 220);
+                }
+            }
+        } catch (e) {}
     }
 
     if (document.readyState === 'loading') {

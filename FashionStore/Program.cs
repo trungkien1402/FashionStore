@@ -11,8 +11,10 @@ using Microsoft.EntityFrameworkCore;
 
 
 const string replaceCatalogOption = "--replace-showroom-catalog";
+const string importCatalogOption = "--import-showroom-catalog";
 var replaceCatalog = args.Contains(replaceCatalogOption, StringComparer.Ordinal);
-var builder = WebApplication.CreateBuilder(args.Where(arg => arg != replaceCatalogOption).ToArray());
+var importCatalog = args.Contains(importCatalogOption, StringComparer.Ordinal);
+var builder = WebApplication.CreateBuilder(args.Where(arg => arg != replaceCatalogOption && arg != importCatalogOption).ToArray());
 
 // MVC
 builder.Services.AddControllersWithViews();
@@ -68,12 +70,12 @@ builder.Services.AddScoped<IPaymentService, PaymentService>();
 
 var app = builder.Build();
 
-if (replaceCatalog)
+if (replaceCatalog || importCatalog)
 {
     await using var scope = app.Services.CreateAsyncScope();
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     await db.Database.MigrateAsync();
-    var result = await ShowroomCatalog.ImportAsync(db, replaceLegacy: true);
+    var result = await ShowroomCatalog.ImportAsync(db, replaceLegacy: replaceCatalog);
     Console.WriteLine($"Showroom catalog: {result.Added} products added, {result.Removed} legacy products removed.");
     return;
 }

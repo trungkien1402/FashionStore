@@ -191,6 +191,35 @@
         </aside>
     `;
 
+    function isSneakerContext() {
+        return document.body.classList.contains('is-sneaker-standalone') ||
+               window.location.pathname.toLowerCase().includes('/products/sneakers') ||
+               Boolean(document.getElementById('hnmtSneakerOverlay')?.classList.contains('is-active'));
+    }
+
+    function applyCartTheme(modal) {
+        if (!modal) modal = document.getElementById('hnmtCartDrawerModal');
+        if (!modal) return;
+        const isSneaker = isSneakerContext();
+        if (isSneaker) {
+            modal.classList.add('is-sneaker-cart');
+            modal.classList.remove('is-light-cart');
+        } else {
+            modal.classList.remove('is-sneaker-cart');
+            modal.classList.add('is-light-cart');
+        }
+
+        const emptyDesc = modal.querySelector('.hnmt-empty-desc');
+        const exploreBtn = modal.querySelector('#hnmtCartExploreBtn');
+        if (isSneaker) {
+            if (emptyDesc) emptyDesc.textContent = 'Hãy khám phá và chọn những đôi sneakers độc bản trong Tủ Giày của HNMT Sneaker Vault.';
+            if (exploreBtn) exploreBtn.textContent = 'Khám Phá Tủ Giày';
+        } else {
+            if (emptyDesc) emptyDesc.textContent = 'Hãy khám phá và chọn những thiết kế độc bản trong các sào đồ của HNMT Atelier.';
+            if (exploreBtn) exploreBtn.textContent = 'Khám Phá Sào Đồ';
+        }
+    }
+
     function ensureCartDOM() {
         let modal = document.getElementById('hnmtCartDrawerModal');
         if (!modal) {
@@ -201,15 +230,7 @@
             modal.innerHTML = DRAWER_HTML;
             document.body.appendChild(modal);
         }
-        const isSneakerMode = document.body.classList.contains('is-sneaker-standalone') || 
-                              Boolean(document.getElementById('hnmtSneakerOverlay')?.classList.contains('is-active'));
-        if (isSneakerMode) {
-            modal.classList.add('is-sneaker-cart');
-            modal.classList.remove('is-light-cart');
-        } else {
-            modal.classList.remove('is-sneaker-cart');
-            modal.classList.add('is-light-cart');
-        }
+        applyCartTheme(modal);
         return modal;
     }
 
@@ -219,6 +240,7 @@
         const emptyEl = document.getElementById('hnmtCartEmptyView');
         const footerEl = document.getElementById('hnmtCartFooter');
         if (!listEl) return;
+        applyCartTheme();
 
         const count = calculateTotalCount();
         const total = calculateTotalPrice();
@@ -422,15 +444,7 @@
     // Mở Drawer giỏ hàng
     function openDrawer(refresh = true) {
         const modal = ensureCartDOM();
-        const isSneakerMode = document.body.classList.contains('is-sneaker-standalone') || 
-                              Boolean(document.getElementById('hnmtSneakerOverlay')?.classList.contains('is-active'));
-        if (isSneakerMode) {
-            modal.classList.add('is-sneaker-cart');
-            modal.classList.remove('is-light-cart');
-        } else {
-            modal.classList.remove('is-sneaker-cart');
-            modal.classList.add('is-light-cart');
-        }
+        applyCartTheme(modal);
 
         // Đóng các bộ lọc khác nếu đang mở
         const shirtFilter = document.getElementById('hnmtShirtFilterModal');
@@ -508,7 +522,10 @@
         if (exploreBtn) {
             exploreBtn.addEventListener('click', () => {
                 closeDrawer();
-                if (typeof window.open3DClothesRack === 'function') {
+                if (isSneakerContext()) {
+                    const grid = document.getElementById('svGrid') || document.getElementById('svApp');
+                    if (grid) grid.scrollIntoView({ behavior: 'smooth' });
+                } else if (typeof window.open3DClothesRack === 'function') {
                     window.open3DClothesRack('ao');
                 }
             });

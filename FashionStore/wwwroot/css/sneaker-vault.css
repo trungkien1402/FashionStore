@@ -1018,3 +1018,14 @@
     box-shadow: none !important;
     opacity: 0.75;
 }
+
+/* Khử gạch chân nút Quay lại */
+.sv-exit-btn,
+.sv-exit-btn:hover,
+.sv-exit-btn:focus,
+.sv-exit-btn:visited,
+.sv-exit-btn span,
+.sv-exit-btn i,
+a.sv-exit-btn {
+    text-decoration: none !important;
+}

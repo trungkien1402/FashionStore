@@ -7,14 +7,25 @@
     'use strict';
 
     // --- CÁC BỘ SƯU TẬP GIÀY (SNEAKER COLLECTIONS) CÓ THỂ ĐỔI QUA LẠI BẰNG NÚT BẤM ---
+    const ITEMS_PER_GRID = 6;
     const audienceCollections = JSON.parse(document.getElementById("showroomCatalog").textContent).shoes;
-    const SNEAKER_COLLECTIONS = audienceCollections.men;
-    const getAudienceCollections = audience => Object.hasOwn(audienceCollections, audience) ? audienceCollections[audience] : SNEAKER_COLLECTIONS;
+    const audiencePages = Object.fromEntries(Object.entries(audienceCollections).map(([audience, collections]) => [
+        audience,
+        collections.flatMap(collection => {
+            const pageCount = Math.ceil(collection.items.length / ITEMS_PER_GRID);
+            return Array.from({ length: pageCount }, (_, page) => ({
+                ...collection,
+                title: pageCount > 1 ? `${collection.title} ${page + 1}/${pageCount}` : collection.title,
+                items: collection.items.slice(page * ITEMS_PER_GRID, (page + 1) * ITEMS_PER_GRID)
+            }));
+        })
+    ]));
+    const SNEAKER_COLLECTIONS = audiencePages.men;
+    const getAudienceCollections = audience => Object.hasOwn(audiencePages, audience) ? audiencePages[audience] : SNEAKER_COLLECTIONS;
     let activeCollections = SNEAKER_COLLECTIONS;
     let currentCollectionIndex = 0;
     let filteredSneakers = null;
     let filteredPageIdx = 0;
-    const ITEMS_PER_GRID = 6;
     let activeFilterLabel = '';
 
     const getAllSneakers = () => activeCollections.flatMap(c => c.items.map(it => ({ ...it, collectionId: c.id, collectionTitle: c.title })));
@@ -267,10 +278,7 @@
         // Bỏ hiển thị số thứ tự bộ sưu tập theo yêu cầu của user
         document.querySelectorAll('#svCollectionBadge, .sv-vault-badge').forEach(b => b.remove());
 
-        const activeSneakers = getSneakers();
-        if (currentIndex >= activeSneakers.length) {
-            currentIndex = 0;
-        }
+        currentIndex = 0;
 
         if (!isSliderView) {
             // Chế độ Grid: Mờ nhẹ các đôi cũ, đổi dữ liệu và stagger xuất hiện các đôi mới
@@ -1191,6 +1199,20 @@
                 updateSliderDataOnly(getSneakers()[currentIndex]);
             }
         }
+
+        // Tự động nhận diện và áp dụng bộ lọc chuyển tiếp từ Trang Chủ
+        try {
+            const pendingJson = sessionStorage.getItem('hnmt_pending_sneaker_filter');
+            if (pendingJson) {
+                sessionStorage.removeItem('hnmt_pending_sneaker_filter');
+                const pending = JSON.parse(pendingJson);
+                if (pending && Array.isArray(pending.filteredProducts) && pending.filteredProducts.length > 0) {
+                    setTimeout(() => {
+                        applyFilter(pending.filteredProducts, pending.label || 'BỘ LỌC TỪ TRANG CHỦ');
+                    }, 220);
+                }
+            }
+        } catch (e) {}
     }
 
     if (document.readyState === 'loading') {

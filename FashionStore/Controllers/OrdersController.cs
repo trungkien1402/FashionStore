@@ -408,6 +408,7 @@ public class OrdersController : Controller
             return Challenge();
 
         var orders = await _context.Orders
+            .Include(o => o.Items)
             .Where(o => o.UserId == userId)
             .OrderByDescending(o => o.CreatedAt)
             .AsNoTracking()
@@ -429,6 +430,9 @@ public class OrdersController : Controller
         // Chỉ lấy đơn hàng thuộc khách hàng đang đăng nhập
         var order = await _context.Orders
             .Include(o => o.Items)
+                .ThenInclude(i => i.ProductVariant)
+                    .ThenInclude(v => v.Product)
+            .Include(o => o.Shipments)
             .AsNoTracking()
             .FirstOrDefaultAsync(o => o.Id == id && o.UserId == userId);
 

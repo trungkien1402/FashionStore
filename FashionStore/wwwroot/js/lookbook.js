@@ -162,6 +162,7 @@
         currentCollectionKey = (colKey === 'sunwash' ? 'sunwash' : 'noir');
         var colData = COLLECTIONS[currentCollectionKey];
         activeLooks = colData.looks;
+        bindCatalog();
 
         root = document.getElementById('lookbookRoot');
         if (!root) {
@@ -433,7 +434,8 @@
         var total = 0;
 
         look.items.forEach(function (item, k) {
-            total += item.price;
+            var price = getVariant(item)?.price ?? item.price;
+            total += price;
             var el = document.createElement('div');
             el.className = 'lb-item';
             el.innerHTML =
@@ -443,12 +445,12 @@
                   '<div class="lb-name" title="' + esc(item.name) + '">' + esc(item.name) + '</div>' +
                   '<div class="lb-sizes">' +
                     item.sizes.map(function (s) {
-                        return '<button type="button" class="lb-size' + (s === item.size ? ' active' : '') + '" data-s="' + s + '">' + s + '</button>';
+                        return '<button type="button" class="lb-size' + (s === item.size ? ' active' : '') + '" data-s="' + esc(s) + '"' + (getVariant(item, s)?.stock > 0 ? '' : ' disabled') + '>' + esc(s) + '</button>';
                     }).join('') +
                   '</div>' +
                   '<div class="lb-row">' +
-                    '<span class="lb-price">' + money(item.price) + '</span>' +
-                    '<button type="button" class="lb-plus" title="Thêm vào túi">+</button>' +
+                    '<span class="lb-price">' + money(price) + '</span>' +
+                    '<button type="button" class="lb-plus" title="Thêm vào túi"' + (getVariant(item)?.stock > 0 ? '' : ' disabled') + '>+</button>' +
                   '</div>' +
                 '</div>';
 
@@ -459,18 +461,20 @@
             el.querySelectorAll('.lb-size').forEach(function (btn) {
                 btn.addEventListener('click', function () {
                     item.size = btn.dataset.s;
-                    el.querySelectorAll('.lb-size').forEach(function (x) { x.classList.toggle('active', x === btn); });
+                    renderSidebar(idx);
                 });
             });
 
             // Single item Add to Cart
             var plusBtn = el.querySelector('.lb-plus');
-            plusBtn.addEventListener('click', function () {
-                addToCart(item);
+            plusBtn.addEventListener('click', async function () {
+                plusBtn.disabled = true;
+                var added = await addToCart(item);
+                plusBtn.disabled = false;
+                if (!added) return;
                 plusBtn.classList.add('is-added');
                 plusBtn.textContent = '✓';
                 updateBadge();
-                if (window.HNMTCart) window.HNMTCart.open();
                 setTimeout(function () {
                     plusBtn.classList.remove('is-added');
                     plusBtn.textContent = '+';
@@ -481,6 +485,28 @@
         });
 
         root.querySelector('#lbTotal').textContent = money(total);
+        root.querySelector('#lbAddAll').disabled = look.items.some(function (item) { return !(getVariant(item)?.stock > 0); });
+    }
+
+    function bindCatalog() {
+        var catalogEl = document.getElementById('showroomCatalog');
+        if (!catalogEl) return;
+        var catalog = JSON.parse(catalogEl.textContent);
+        var linkedSlugs = { 'nf1-shoe': 'snk-03', 're1-top': 'fern-tee' };
+        activeLooks.forEach(function (look) {
+            look.items.forEach(function (item) {
+                item.product = catalog.lookbook?.[linkedSlugs[item.id] || 'lookbook-' + item.id];
+                var selected = getVariant(item);
+                if (!selected?.stock) {
+                    item.size = item.sizes.find(function (size) { return getVariant(item, size)?.stock > 0; }) || item.size;
+                }
+            });
+        });
+    }
+
+    function getVariant(item, size) {
+        var product = item.product;
+        return product?.variants[0]?.[product.sizes.indexOf(size || item.size)];
     }
 
     // ---------- Cart Integration ----------
@@ -492,34 +518,29 @@
     }
 
     function addToCart(item) {
-        if (!window.HNMTCart) return;
-        window.HNMTCart.addItem({
-            slug: item.id,
-            id: item.id,
+        var variant = getVariant(item);
+        if (!variant?.stock) return false;
+        return window.HNMTCart?.addItem({
             name: item.name,
-            price: item.price,
-            image: item.image,
-            size: item.size,
-            color: item.color,
-            colorDot: item.dot,
+            productId: item.product.productId,
+            variantId: variant.id,
             quantity: 1
         });
     }
 
-    function addAll() {
-        if (!window.HNMTCart) return;
+    async function addAll() {
         var btn = root.querySelector('#lbAddAll');
         var look = activeLooks[activeIndex];
-        look.items.forEach(addToCart);
-        updateBadge();
-
-        btn.classList.add('done');
-        btn.querySelector('span').textContent = 'Đã thêm trọn bộ outfit';
-        setTimeout(function () {
-            btn.classList.remove('done');
-            btn.querySelector('span').textContent = 'Thêm trọn bộ vào túi';
-            window.HNMTCart.open();
-        }, 500);
+        var selected = look.items.map(function (item) { return { ...item }; });
+        btn.disabled = true;
+        try {
+            for (var item of selected) {
+                if (!await addToCart(item)) return;
+            }
+            updateBadge();
+        } finally {
+            btn.disabled = activeLooks[activeIndex].items.some(function (item) { return !(getVariant(item)?.stock > 0); });
+        }
     }
 
     // ---------- Initialization ----------

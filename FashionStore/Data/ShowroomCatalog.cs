@@ -56,6 +56,19 @@ public static class ShowroomCatalog
 
         await using var transaction = await db.Database.BeginTransactionAsync(IsolationLevel.Serializable);
         var productSlugs = (await db.Products.Select(p => p.Slug).ToListAsync()).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var exclusiveSlugs = entries.Where(entry => IsLookbookOnly(entry.Metadata)).Select(entry => entry.Slug).ToArray();
+        var existingExclusiveProducts = await db.Products.Where(product =>
+            exclusiveSlugs.Contains(product.Slug) && product.ShowroomMetadata != null).ToListAsync();
+        foreach (var product in existingExclusiveProducts)
+        {
+            var metadata = JsonSerializer.Deserialize<Metadata>(product.ShowroomMetadata!, JsonOptions);
+            if (metadata != null && !IsLookbookOnly(metadata))
+            {
+                metadata.Details["lookbookOnly"] = true;
+                product.ShowroomMetadata = JsonSerializer.Serialize(metadata, JsonOptions);
+            }
+        }
+
         var categories = await db.Categories.ToListAsync();
         int added = 0;
         foreach (var entry in entries.Where(entry => productSlugs.Add(entry.Slug)))
@@ -131,6 +144,10 @@ public static class ShowroomCatalog
             Metadata: JsonSerializer.Deserialize<Metadata>(product.ShowroomMetadata!, JsonOptions)!
         )).ToList();
 
+        var lookbook = entries.Where(row => IsLookbookOnly(row.Metadata))
+            .ToDictionary(row => row.Product.Slug, row => BuildItem(row.Product, row.Metadata));
+        entries.RemoveAll(row => lookbook.ContainsKey(row.Product.Slug));
+
         var clothing = Audiences.ToDictionary(audience => audience,
             audience => new[] { "ao", "quan" }.ToDictionary(kind => kind,
                 kind => entries.Where(row => row.Product.ShowroomAudience == audience && row.Product.ShowroomKind == kind)
@@ -143,8 +160,10 @@ public static class ShowroomCatalog
                 .Select(group => new { group.Key.Id, group.Key.Title, Items = group.Select(row => BuildItem(row.Product, row.Metadata)).ToList() })
                 .ToList());
 
-        return new { Clothing = clothing, Shoes = shoes };
+        return new { Clothing = clothing, Shoes = shoes, Lookbook = lookbook };
     }
+
+    private static bool IsLookbookOnly(Metadata metadata) => metadata.Details["lookbookOnly"]?.GetValue<bool>() == true;
 
     public static string FrontPhoto(Product product, string color)
     {

@@ -72,8 +72,8 @@
 
                 <!-- Nav Actions -->
                 <div class="urbn-nav-actions">
-                    <!-- Search Icon -->
-                    <button type="button" class="urbn-nav-icon" title="Tìm kiếm nhanh (Phím tắt /)" onclick="if(window.HNMTSpotlightSearch) { window.HNMTSpotlightSearch.open(); } else { document.getElementById('keywordInput')?.focus(); }">
+                    <!-- Search Icon (Kính Lúp) -->
+                    <button type="button" class="urbn-nav-icon" id="hnmtNavSearchBtn" title="Tìm kiếm & Bộ lọc (Phím tắt /)" onclick="if(window.HNMTHomeFilter && (window.location.pathname === '/' || window.location.pathname.toLowerCase().indexOf('/home') !== -1)) { window.HNMTHomeFilter.open(); } else if(window.HNMTSpotlightSearch) { window.HNMTSpotlightSearch.open(); } else { document.getElementById('keywordInput')?.focus(); }">
                         <i class="bi bi-search"></i>
                     </button>
 
@@ -196,6 +196,10 @@
     <script src="~/js/sneaker-vault.js?v=uniform_font_v43" asp-append-version="true"></script>
     <script src="~/js/account-dropdown.js" asp-append-version="true"></script>
     <script src="~/js/hnmt-cart-drawer.js?v=cart_v1" asp-append-version="true"></script>
+    @if (isHome)
+    {
+        <script src="~/js/home-filter.js" asp-append-version="true"></script>
+    }
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

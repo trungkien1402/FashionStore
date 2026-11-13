@@ -57,19 +57,46 @@
   const fillEl    = document.getElementById("atLoaderFill");
   const pctEl     = document.getElementById("atLoaderPct");
 
+  let hasSeenIntro = false;
+  try {
+    hasSeenIntro = sessionStorage.getItem("hnmt_atelier_intro_seen") === "1";
+  } catch (e) {}
+
+  if (hasSeenIntro && loaderEl) {
+    loaderEl.classList.add("is-done");
+    loaderEl.style.display = "none";
+  }
+
   function preload(onEnough) {
     let loaded = 0;
     let started = false;
 
+    // Nếu đã xem intro rồi: bắt đầu trải nghiệm ngay khi frame đầu tiên sẵn sàng
+    if (hasSeenIntro) {
+      const firstImg = new Image();
+      firstImg.onload = firstImg.onerror = () => {
+        images[0] = firstImg;
+        render();
+        if (!started) {
+          started = true;
+          onEnough();
+        }
+      };
+      firstImg.src = framePath(1);
+    }
+
     for (let i = 0; i < FRAME_COUNT; i++) {
+      if (hasSeenIntro && i === 0) continue;
       const img = new Image();
       img.decoding = "async";
       img.onload = img.onerror = () => {
         loaded++;
         const p = loaded / FRAME_COUNT;
         const pct = Math.round(p * 100);
-        if (fillEl) fillEl.style.width = pct + "%";
-        if (pctEl) pctEl.textContent = pct;
+        if (!hasSeenIntro) {
+          if (fillEl) fillEl.style.width = pct + "%";
+          if (pctEl) pctEl.textContent = pct;
+        }
 
         // First frame ready -> paint immediately so no black flash
         if (i === 0) render();
@@ -77,10 +104,18 @@
         // Start experience once we have comfortable buffer (40 frames)
         if (!started && (loaded >= 40 || p === 1)) {
           started = true;
+          try {
+            sessionStorage.setItem("hnmt_atelier_intro_seen", "1");
+          } catch (e) {}
           onEnough();
         }
-        if (p === 1 && loaderEl) {
-          loaderEl.classList.add("is-done");
+        if (p === 1) {
+          try {
+            sessionStorage.setItem("hnmt_atelier_intro_seen", "1");
+          } catch (e) {}
+          if (loaderEl) {
+            loaderEl.classList.add("is-done");
+          }
         }
       };
       img.src = framePath(i + 1);

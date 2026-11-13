@@ -438,7 +438,8 @@ img {
 }
 
 /* Nhãn chữ ký Calligraphy Nghệ Thuật - Đồng nhất với Cửa Hàng */
-.urbn-cat-card .urbn-cat-pill {
+.urbn-cat-card .urbn-cat-pill,
+.hnmt-lookbook-card .urbn-cat-pill {
     display: inline-block;
     background: none !important;
     border: none !important;
@@ -459,42 +460,14 @@ img {
     white-space: nowrap;
 }
 
-.urbn-cat-card:hover .urbn-cat-pill {
+.urbn-cat-card:hover .urbn-cat-pill,
+.hnmt-lookbook-card:hover .urbn-cat-pill {
     background: transparent !important;
     border-color: transparent !important;
     box-shadow: none !important;
     color: #FFFFFF !important;
     transform: translateY(-4px) scale(1.1) !important;
     text-shadow: 0 4px 16px rgba(0, 0, 0, 0.95), 0 0 14px rgba(255, 255, 255, 0.6) !important;
-}
-
-/* Các nhãn pill khác (nếu dùng cho sào bộ sưu tập) */
-.urbn-rack-card .urbn-cat-pill {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: #FFFFFF;
-    color: #111111;
-    font-size: 12px;
-    font-weight: 800;
-    letter-spacing: 1.2px;
-    padding: 8px 26px;
-    border-radius: 999px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-    text-transform: uppercase;
-    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    transform: translateY(0);
-    pointer-events: auto;
-    white-space: nowrap;
-    border: 1px solid rgba(0, 0, 0, 0.06);
-}
-
-.urbn-rack-card:hover .urbn-cat-pill {
-    background: #000000;
-    color: #FFFFFF;
-    border-color: #000000;
-    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
-    transform: translateY(-3px);
 }
 
 /* ==========================================================================
