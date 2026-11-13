@@ -52,10 +52,18 @@
     <form asp-controller="Admin" asp-action="Index" method="get" id="admFilterForm" class="adm-overview-filter-form">
         <div class="adm-overview-presets" role="group" aria-label="Khoảng ngày nhanh">
             <span class="text-muted small fw-semibold">Khoảng nhanh</span>
-            <a asp-action="Index" asp-route-startDate="@today.ToString("yyyy-MM-dd")" asp-route-endDate="@today.ToString("yyyy-MM-dd")" class="adm-quick-pill">Hôm nay</a>
-            <a asp-action="Index" asp-route-startDate="@today.AddDays(-6).ToString("yyyy-MM-dd")" asp-route-endDate="@today.ToString("yyyy-MM-dd")" class="adm-quick-pill">7 ngày qua</a>
-            <a asp-action="Index" asp-route-startDate="@today.AddDays(1 - today.Day).ToString("yyyy-MM-dd")" asp-route-endDate="@today.ToString("yyyy-MM-dd")" class="adm-quick-pill">Tháng này</a>
-            <a asp-action="Index" asp-route-startDate="@today.AddDays(-29).ToString("yyyy-MM-dd")" asp-route-endDate="@today.ToString("yyyy-MM-dd")" class="adm-quick-pill">30 ngày qua</a>
+            @{
+                var curStart = Model.StartDate.ToString("yyyy-MM-dd");
+                var curEnd = Model.EndDate.ToString("yyyy-MM-dd");
+                var todayStr = today.ToString("yyyy-MM-dd");
+                var d7Str = today.AddDays(-6).ToString("yyyy-MM-dd");
+                var monthStr = today.AddDays(1 - today.Day).ToString("yyyy-MM-dd");
+                var d30Str = today.AddDays(-29).ToString("yyyy-MM-dd");
+            }
+            <a asp-action="Index" asp-route-startDate="@todayStr" asp-route-endDate="@todayStr" class="adm-quick-pill @(curStart == todayStr && curEnd == todayStr ? "active" : "")">Hôm nay</a>
+            <a asp-action="Index" asp-route-startDate="@d7Str" asp-route-endDate="@todayStr" class="adm-quick-pill @(curStart == d7Str && curEnd == todayStr ? "active" : "")">7 ngày qua</a>
+            <a asp-action="Index" asp-route-startDate="@monthStr" asp-route-endDate="@todayStr" class="adm-quick-pill @(curStart == monthStr && curEnd == todayStr ? "active" : "")">Tháng này</a>
+            <a asp-action="Index" asp-route-startDate="@d30Str" asp-route-endDate="@todayStr" class="adm-quick-pill @(curStart == d30Str && curEnd == todayStr ? "active" : "")">30 ngày qua</a>
         </div>
 
         <div class="adm-overview-dates">

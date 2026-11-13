@@ -34,21 +34,23 @@
 </header>
 
 <!-- FILTER BAR -->
-<div class="adm-filter-bar mb-3">
-    <form asp-action="Index" method="get" class="row g-2 align-items-center">
-        <div class="col-md-4">
+<div class="adm-filter-bar mb-4">
+    <form asp-action="Index" method="get" class="row g-3">
+        <div class="col-md-5">
+            <label class="d-none d-md-block">Tìm kiếm sản phẩm</label>
             <div class="input-group">
-                <span class="input-group-text border-end-0" style="background: var(--adm-surface); border-color: var(--adm-border); color: var(--adm-ink-muted);">
+                <span class="input-group-text">
                     <i class="bi bi-search"></i>
                 </span>
                 <input type="text" name="keyword" maxlength="100" aria-label="Tên, slug hoặc SKU" value="@keyword"
-                       class="form-control adm-input-dark border-start-0" 
-                       placeholder="Tên, slug hoặc SKU" />
+                       class="form-control" 
+                       placeholder="Tìm theo tên sản phẩm, slug hoặc SKU..." />
             </div>
         </div>
 
-        <div class="col-md-3">
-            <select name="categoryId" class="form-select adm-input-dark">
+        <div class="col-md-4">
+            <label class="d-none d-md-block">Danh mục</label>
+            <select name="categoryId" class="form-select">
                 <option value="">Tất cả danh mục</option>
                 @foreach (var cat in categories)
                 {
@@ -58,26 +60,28 @@
         </div>
 
         <div class="col-md-3">
-            <select name="isActive" class="form-select adm-input-dark">
+            <label class="d-none d-md-block">Trạng thái</label>
+            <select name="isActive" class="form-select">
                 <option value="">Tất cả trạng thái hiển thị</option>
                 <option value="true" selected="@(isActive == true)">Đang hiển thị trên Shop</option>
                 <option value="false" selected="@(isActive == false)">Đã ẩn tạm thời</option>
             </select>
         </div>
 
-        <div asp-validation-summary="All" class="text-danger"></div>
+        <div asp-validation-summary="All" class="text-danger col-12 my-0"></div>
+
         <div class="col-6 col-md-2">
             <label for="minPrice">Giá từ (₫)</label>
-            <input id="minPrice" name="minPrice" type="number" min="0" step="0.01" class="form-control adm-input-dark" value="@filter.RouteValues(1)["minPrice"]" />
+            <input id="minPrice" name="minPrice" type="number" min="0" step="0.01" class="form-control" placeholder="0" value="@filter.RouteValues(1)["minPrice"]" />
         </div>
         <div class="col-6 col-md-2">
             <label for="maxPrice">Giá đến (₫)</label>
-            <input id="maxPrice" name="maxPrice" type="number" min="0" step="0.01" class="form-control adm-input-dark" value="@filter.RouteValues(1)["maxPrice"]" />
+            <input id="maxPrice" name="maxPrice" type="number" min="0" step="0.01" class="form-control" placeholder="Tối đa" value="@filter.RouteValues(1)["maxPrice"]" />
         </div>
         <div class="col-6 col-md-2">
             <label for="size">Size</label>
-            <select id="size" name="size" class="form-select adm-input-dark">
-                <option value="">Tất cả</option>
+            <select id="size" name="size" class="form-select">
+                <option value="">Tất cả size</option>
                 @foreach (var item in Model.Sizes)
                 {
                     <option value="@item" selected="@(filter.Size == item)">@item</option>
@@ -86,8 +90,8 @@
         </div>
         <div class="col-6 col-md-2">
             <label for="color">Màu</label>
-            <select id="color" name="color" class="form-select adm-input-dark">
-                <option value="">Tất cả</option>
+            <select id="color" name="color" class="form-select">
+                <option value="">Tất cả màu</option>
                 @foreach (var item in Model.Colors)
                 {
                     <option value="@item" selected="@(filter.Color == item)">@item</option>
@@ -95,33 +99,26 @@
             </select>
         </div>
         <div class="col-6 col-md-2">
-            <label for="stock">Tồn kho</label>
-            <select id="stock" name="stock" class="form-select adm-input-dark">
-                <option value="">Tất cả</option>
-                @foreach (var item in new[] { ("out", "Hết hàng"), ("low", "Sắp hết (1–5)"), ("available", "Còn trên 5") })
-                {
-                    <option value="@item.Item1" selected="@(filter.Stock == item.Item1)">@item.Item2</option>
-                }
-            </select>
-        </div>
-        <div class="col-6 col-md-2">
             <label for="sort">Sắp xếp</label>
-            <select id="sort" name="sort" class="form-select adm-input-dark">
+            <select id="sort" name="sort" class="form-select">
                 <option value="">Mới nhất</option>
-                @foreach (var item in new[] { ("price-asc", "Giá tăng"), ("price-desc", "Giá giảm"), ("name", "Tên"), ("stock", "Tồn kho tăng") })
+                @foreach (var item in new[] { ("price-asc", "Giá tăng dần"), ("price-desc", "Giá giảm dần"), ("name", "Tên A-Z"), ("stock", "Tồn kho tăng") })
                 {
                     <option value="@item.Item1" selected="@(filter.Sort == item.Item1)">@item.Item2</option>
                 }
             </select>
         </div>
-        <div class="col-md-2 d-flex gap-2">
-            <button type="submit" class="btn adm-btn-atelier py-2 px-3 flex-grow-1 justify-content-center">
-                <i class="bi bi-funnel"></i> Lọc
-            </button>
+        <div class="col-12 col-md-2 d-flex flex-column justify-content-end">
+            <label class="d-none d-md-block invisible">Thao tác</label>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn adm-btn-atelier flex-grow-1 justify-content-center">
+                    <i class="bi bi-funnel"></i> Lọc
+                </button>
 
-            <a asp-action="Index" class="btn adm-btn-outline py-2 px-3" title="Đặt lại bộ lọc">
-                <i class="bi bi-arrow-counterclockwise"></i>
-            </a>
+                <a asp-action="Index" class="btn adm-btn-outline" title="Đặt lại bộ lọc">
+                    <i class="bi bi-arrow-counterclockwise"></i>
+                </a>
+            </div>
         </div>
     </form>
 </div>

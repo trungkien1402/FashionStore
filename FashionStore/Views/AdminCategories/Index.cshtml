@@ -31,19 +31,19 @@
 <!-- FILTER BAR -->
 <div class="adm-filter-bar mb-4">
     <form asp-action="Index" method="get" class="row g-2 align-items-center">
-        <div class="col-md-4">
+        <div class="col-md-5">
             <div class="input-group">
-                <span class="input-group-text border-end-0" style="background: var(--adm-surface); border-color: var(--adm-border); color: var(--adm-ink-muted);">
+                <span class="input-group-text">
                     <i class="bi bi-search"></i>
                 </span>
                 <input type="text" name="keyword" maxlength="100" aria-label="Tên hoặc slug danh mục" value="@ViewBag.Keyword"
-                       class="form-control adm-input-dark border-start-0" 
-                       placeholder="Tìm kiếm danh mục, slug..." />
+                       class="form-control" 
+                       placeholder="Tìm kiếm danh mục theo tên, slug..." />
             </div>
         </div>
 
         <div class="col-md-3">
-            <select name="status" aria-label="Trạng thái danh mục" class="form-select adm-input-dark">
+            <select name="status" aria-label="Trạng thái danh mục" class="form-select">
                 <option value="">Tất cả trạng thái hiển thị</option>
                 <option value="active" selected="@(ViewBag.Status == "active")">Đang bật</option>
                 <option value="inactive" selected="@(ViewBag.Status == "inactive")">Đang tắt</option>
@@ -51,19 +51,19 @@
         </div>
 
         <div class="col-md-2">
-            <select name="sort" class="form-select adm-input-dark" aria-label="Sắp xếp danh mục">
+            <select name="sort" class="form-select" aria-label="Sắp xếp danh mục">
                 <option value="">Tên A–Z</option>
                 <option value="name-desc" selected="@(ViewBag.Sort == "name-desc")">Tên Z–A</option>
                 <option value="products" selected="@(ViewBag.Sort == "products")">Nhiều sản phẩm nhất</option>
             </select>
         </div>
 
-        <div class="col-md-3 d-flex gap-2">
-            <button type="submit" class="btn adm-btn-atelier py-2 px-3">
+        <div class="col-md-2 d-flex gap-2">
+            <button type="submit" class="btn adm-btn-atelier flex-grow-1 justify-content-center">
                 <i class="bi bi-funnel"></i> Lọc
             </button>
 
-            <a asp-action="Index" class="btn adm-btn-outline py-2 px-3" title="Đặt lại bộ lọc">
+            <a asp-action="Index" class="btn adm-btn-outline" title="Đặt lại bộ lọc">
                 <i class="bi bi-arrow-counterclockwise"></i>
             </a>
         </div>

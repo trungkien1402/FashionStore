@@ -53,19 +53,19 @@
 <!-- FILTER BAR -->
 <div class="adm-filter-bar mb-4">
     <form asp-action="Index" method="get" class="row g-2 align-items-center">
-        <div class="col-md-5">
+        <div class="col-md-6">
             <div class="input-group">
-                <span class="input-group-text border-end-0" style="background: var(--adm-surface); border-color: var(--adm-border); color: var(--adm-ink-muted);">
+                <span class="input-group-text">
                     <i class="bi bi-search"></i>
                 </span>
                 <input type="text" name="search" maxlength="100" aria-label="Tìm vận đơn" value="@search"
-                       class="form-control adm-input-dark border-start-0" 
+                       class="form-control" 
                        placeholder="Tìm mã vận đơn, mã đơn, tên shipper, SĐT..." />
             </div>
         </div>
 
         <div class="col-md-4">
-            <select name="status" class="form-select adm-input-dark">
+            <select name="status" class="form-select">
                 <option value="">Tất cả trạng thái vận chuyển</option>
                 @foreach (ShipmentStatus st in Enum.GetValues(typeof(ShipmentStatus)))
                 {
@@ -74,12 +74,12 @@
             </select>
         </div>
 
-        <div class="col-md-3 d-flex gap-2">
-            <button type="submit" class="btn adm-btn-atelier py-2 px-3">
+        <div class="col-md-2 d-flex gap-2">
+            <button type="submit" class="btn adm-btn-atelier flex-grow-1 justify-content-center">
                 <i class="bi bi-funnel"></i> Lọc
             </button>
 
-            <a asp-action="Index" class="btn adm-btn-outline py-2 px-3" title="Đặt lại bộ lọc">
+            <a asp-action="Index" class="btn adm-btn-outline" title="Đặt lại bộ lọc">
                 <i class="bi bi-arrow-counterclockwise"></i>
             </a>
         </div>
