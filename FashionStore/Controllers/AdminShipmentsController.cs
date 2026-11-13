@@ -1,3 +1,4 @@
+using FashionStore.Services;
 using System.Security.Claims;
 using FashionStore.Data;
 using FashionStore.Models.Entities;
@@ -11,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FashionStore.Controllers;
 
-[Authorize(Roles = "Admin,Manager,Staff")]
+[Authorize(Roles = AccessRoles.BackOffice)]
 public class AdminShipmentsController : Controller
 {
     private readonly ApplicationDbContext _context;
@@ -26,7 +27,7 @@ public class AdminShipmentsController : Controller
     }
 
     // GET: /AdminShipments
-    public async Task<IActionResult> Index(ShipmentStatus? status, string? search)
+    public async Task<IActionResult> Index(ShipmentStatus? status, string? search, int page = 1)
     {
         var query = _context.Shipments
             .Include(s => s.Order)
@@ -43,6 +44,7 @@ public class AdminShipmentsController : Controller
         if (!string.IsNullOrWhiteSpace(search))
         {
             var s = search.Trim();
+            s = s[..Math.Min(s.Length, 100)];
             query = query.Where(x =>
                 x.TrackingCode.Contains(s) ||
                 x.Order.OrderCode.Contains(s) ||
@@ -55,7 +57,15 @@ public class AdminShipmentsController : Controller
         ViewBag.SelectedStatus = status;
         ViewBag.Search = search;
 
-        var shipments = await query.ToListAsync();
+        const int pageSize = 30;
+        var count = await query.CountAsync();
+        var pageCount = Math.Max(1, (count + pageSize - 1) / pageSize);
+        page = Math.Clamp(page, 1, pageCount);
+        ViewBag.Count = count;
+        ViewBag.Page = page;
+        ViewBag.PageCount = pageCount;
+        var shipments = await query.OrderByDescending(s => s.CreatedAt).ThenByDescending(s => s.Id)
+            .Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
         return View(shipments);
     }
 
@@ -91,10 +101,7 @@ public class AdminShipmentsController : Controller
         if (order == null)
             return NotFound();
 
-        // Không tạo vận đơn cho đơn đã hủy hoặc đã giao hoàn thành
-        if (order.Status == OrderStatus.Cancelled ||
-            order.Status == OrderStatus.Delivered ||
-            order.Status == OrderStatus.Returned)
+        if (order.Status is not (OrderStatus.Confirmed or OrderStatus.Processing or OrderStatus.Shipping))
         {
             TempData["Error"] = $"Đơn hàng đang ở trạng thái {order.Status}, không thể tạo lượt giao hàng.";
             return RedirectToAction("Details", "AdminOrders", new { id = orderId });
@@ -156,7 +163,7 @@ public class AdminShipmentsController : Controller
         }
 
         var shipper = await _userManager.FindByIdAsync(model.ShipperId);
-        if (shipper == null || !shipper.IsActive)
+        if (shipper == null || !shipper.IsActive || !await _userManager.IsInRoleAsync(shipper, "Shipper"))
         {
             ModelState.AddModelError(nameof(model.ShipperId), "Shipper được chọn không tồn tại hoặc đã bị khóa.");
             var shippers = await _userManager.GetUsersInRoleAsync("Shipper");
@@ -168,9 +175,19 @@ public class AdminShipmentsController : Controller
             return View(model);
         }
 
-        await using var transaction = await _context.Database.BeginTransactionAsync();
+        await using var transaction = await _context.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable);
         try
         {
+            await _context.Entry(order).ReloadAsync();
+            if (_context.Entry(order).State == EntityState.Detached ||
+                order.Status is not (OrderStatus.Confirmed or OrderStatus.Processing or OrderStatus.Shipping) ||
+                order.InventoryRestored ||
+                await _context.Shipments.AnyAsync(s => s.OrderId == order.Id))
+            {
+                TempData["Error"] = "Đơn chưa sẵn sàng giao hoặc đã có vận đơn. Mở vận đơn hiện có để xử lý.";
+                return RedirectToAction("Details", "AdminOrders", new { id = model.OrderId });
+            }
+
             var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var now = DateTime.UtcNow;
 
@@ -233,10 +250,10 @@ public class AdminShipmentsController : Controller
             TempData["Success"] = $"Đã tạo lượt giao hàng thành công! Mã vận đơn: {trackingCode}";
             return RedirectToAction(nameof(Details), new { id = shipment.Id });
         }
-        catch (Exception ex)
+        catch (DbUpdateException)
         {
             await transaction.RollbackAsync();
-            ModelState.AddModelError("", $"Lỗi khi tạo lượt giao hàng: {ex.Message}");
+            ModelState.AddModelError("", "Không thể tạo vận đơn. Tải lại đơn và thử lại.");
             var shippers = await _userManager.GetUsersInRoleAsync("Shipper");
             model.AvailableShippers = shippers.Where(u => u.IsActive).Select(u => new SelectListItem
             {

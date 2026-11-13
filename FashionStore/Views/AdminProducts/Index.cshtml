@@ -1,26 +1,17 @@
-@model List<FashionStore.Models.Entities.Product>
+@model FashionStore.Models.ViewModels.AdminProductList
 
 @{
     ViewData["Title"] = "Showroom Sản phẩm";
-    var keyword = ViewBag.Keyword as string;
-    bool? isActive = ViewBag.IsActive as bool?;
-    int? categoryId = ViewBag.CategoryId as int?;
-    var categories = ViewBag.Categories as List<FashionStore.Models.Entities.Category> ?? new List<FashionStore.Models.Entities.Category>();
-    var activeCategory = categories.FirstOrDefault(c => c.Id == categoryId);
+    var filter = Model.Filter;
+    var keyword = filter.Keyword;
+    var isActive = filter.IsActive;
+    var categoryId = filter.CategoryId;
+    var categories = Model.Categories;
+    var canManageVariants = User.IsInRole("Admin") || User.IsInRole("Manager");
 }
 
-<!-- HEADER -->
-<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
-    <div>
-        <div class="d-flex align-items-center gap-2 mb-1">
-            <span style="font-size: 0.68rem; font-weight: 700; letter-spacing: 0.28em; color: var(--adm-gold); text-transform: uppercase;">
-                ATELIER SHOWROOM CATALOGUE
-            </span>
-            <span style="width: 4px; height: 4px; border-radius: 50%; background: var(--adm-gold);"></span>
-            <span class="text-muted small">@Model.Count SẢN PHẨM</span>
-        </div>
-        <h2 class="fw-bold mb-0 adm-heading" style="letter-spacing: -0.02em;">Quản lý Sản phẩm & Biến thể</h2>
-    </div>
+<header class="adm-dashboard-header mb-4">
+    <div><h1>Sản phẩm và biến thể</h1><p class="adm-dashboard-period">@Model.Count sản phẩm</p></div>
 
     <div class="d-flex align-items-center gap-3">
         <!-- VIEW MODE SWITCHER WITH ARIA-PRESSED -->
@@ -40,7 +31,7 @@
             <span>Thêm sản phẩm</span>
         </a>
     </div>
-</div>
+</header>
 
 <!-- FILTER BAR -->
 <div class="adm-filter-bar mb-3">
@@ -50,9 +41,9 @@
                 <span class="input-group-text border-end-0" style="background: var(--adm-surface); border-color: var(--adm-border); color: var(--adm-ink-muted);">
                     <i class="bi bi-search"></i>
                 </span>
-                <input type="text" name="keyword" value="@keyword"
+                <input type="text" name="keyword" maxlength="100" aria-label="Tên, slug hoặc SKU" value="@keyword"
                        class="form-control adm-input-dark border-start-0" 
-                       placeholder="Tìm kiếm theo tên sản phẩm, slug..." />
+                       placeholder="Tên, slug hoặc SKU" />
             </div>
         </div>
 
@@ -74,6 +65,55 @@
             </select>
         </div>
 
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="col-6 col-md-2">
+            <label for="minPrice">Giá từ (₫)</label>
+            <input id="minPrice" name="minPrice" type="number" min="0" step="0.01" class="form-control adm-input-dark" value="@filter.RouteValues(1)["minPrice"]" />
+        </div>
+        <div class="col-6 col-md-2">
+            <label for="maxPrice">Giá đến (₫)</label>
+            <input id="maxPrice" name="maxPrice" type="number" min="0" step="0.01" class="form-control adm-input-dark" value="@filter.RouteValues(1)["maxPrice"]" />
+        </div>
+        <div class="col-6 col-md-2">
+            <label for="size">Size</label>
+            <select id="size" name="size" class="form-select adm-input-dark">
+                <option value="">Tất cả</option>
+                @foreach (var item in Model.Sizes)
+                {
+                    <option value="@item" selected="@(filter.Size == item)">@item</option>
+                }
+            </select>
+        </div>
+        <div class="col-6 col-md-2">
+            <label for="color">Màu</label>
+            <select id="color" name="color" class="form-select adm-input-dark">
+                <option value="">Tất cả</option>
+                @foreach (var item in Model.Colors)
+                {
+                    <option value="@item" selected="@(filter.Color == item)">@item</option>
+                }
+            </select>
+        </div>
+        <div class="col-6 col-md-2">
+            <label for="stock">Tồn kho</label>
+            <select id="stock" name="stock" class="form-select adm-input-dark">
+                <option value="">Tất cả</option>
+                @foreach (var item in new[] { ("out", "Hết hàng"), ("low", "Sắp hết (1–5)"), ("available", "Còn trên 5") })
+                {
+                    <option value="@item.Item1" selected="@(filter.Stock == item.Item1)">@item.Item2</option>
+                }
+            </select>
+        </div>
+        <div class="col-6 col-md-2">
+            <label for="sort">Sắp xếp</label>
+            <select id="sort" name="sort" class="form-select adm-input-dark">
+                <option value="">Mới nhất</option>
+                @foreach (var item in new[] { ("price-asc", "Giá tăng"), ("price-desc", "Giá giảm"), ("name", "Tên"), ("stock", "Tồn kho tăng") })
+                {
+                    <option value="@item.Item1" selected="@(filter.Sort == item.Item1)">@item.Item2</option>
+                }
+            </select>
+        </div>
         <div class="col-md-2 d-flex gap-2">
             <button type="submit" class="btn adm-btn-atelier py-2 px-3 flex-grow-1 justify-content-center">
                 <i class="bi bi-funnel"></i> Lọc
@@ -86,33 +126,13 @@
     </form>
 </div>
 
-<!-- ACTIVE CATEGORY FILTER BADGE (ALLOWS INDEPENDENT CLEARING) -->
-@if (activeCategory != null)
-{
-    <div class="d-flex align-items-center gap-2 mb-4 p-2 px-3 rounded-2" style="background: rgba(179, 136, 47, 0.1); border: 1px solid var(--adm-border-glow); width: fit-content;">
-        <i class="bi bi-tag-fill" style="color: var(--adm-gold);"></i>
-        <span class="small text-muted">Đang lọc theo danh mục:</span>
-        <strong class="adm-heading small">@activeCategory.Name</strong>
-        <a asp-action="Index" asp-route-keyword="@keyword" asp-route-isActive="@isActive"
-           class="btn btn-sm btn-outline-secondary p-0 px-2 ms-2 text-decoration-none" style="font-size: 0.75rem;" title="Xóa riêng bộ lọc danh mục này">
-            <i class="bi bi-x-lg me-1"></i> Xóa lọc
-        </a>
-    </div>
-}
-
-@if (!Model.Any())
+@if (!Model.Products.Any())
 {
     <div class="adm-card text-center py-5">
         <i class="bi bi-box-seam fs-1 text-muted d-block mb-3"></i>
-        <h5 class="fw-bold adm-heading">Chưa có sản phẩm phù hợp</h5>
+        <h5 class="fw-bold adm-heading">@(Model.HasProducts ? "Không có sản phẩm khớp bộ lọc" : "Chưa có sản phẩm")</h5>
         <p class="text-muted small">Thử thay đổi điều kiện lọc hoặc xóa bộ lọc danh mục để hiển thị đầy đủ sản phẩm.</p>
         <div class="d-flex justify-content-center gap-2 mt-2">
-            @if (activeCategory != null)
-            {
-                <a asp-action="Index" asp-route-keyword="@keyword" asp-route-isActive="@isActive" class="btn adm-btn-outline">
-                    Xóa lọc danh mục "@activeCategory.Name"
-                </a>
-            }
             <a asp-action="Create" class="btn adm-btn-atelier">
                 <i class="bi bi-plus-lg me-1"></i> Thêm sản phẩm ngay
             </a>
@@ -123,12 +143,11 @@ else
 {
     <!-- 1. GRID VIEW MODE (Showroom Product Cards) -->
     <div id="admViewGrid" class="adm-products-grid mb-4">
-        @foreach (var product in Model)
+        @foreach (var product in Model.Products)
         {
-            var variants = product.Variants?.ToList() ?? new List<FashionStore.Models.Entities.ProductVariant>();
-            var totalStock = variants.Sum(v => v.StockQuantity);
+            var totalStock = product.TotalStock;
             var isLowStock = totalStock <= 5 && totalStock > 0;
-            var isOutOfStock = totalStock == 0 && variants.Any();
+            var isOutOfStock = totalStock == 0 && (product.VariantCount > 0);
 
             <div class="adm-product-card-wrap">
                 <div class="adm-product-card-3d">
@@ -141,7 +160,7 @@ else
 
                         <div class="position-absolute top-0 start-0 m-2">
                             <span class="badge" style="background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(8px); color: #fff; font-size: 0.72rem; border: 1px solid rgba(255,255,255,0.15);">
-                                @(product.Category?.Name ?? "Chưa phân loại")
+                                @(product.CategoryName ?? "Chưa phân loại")
                             </span>
                         </div>
 
@@ -178,7 +197,7 @@ else
 
                                 <div class="text-end">
                                     <div class="text-muted" style="font-size: 0.68rem; text-transform: uppercase;">Tồn kho</div>
-                                    @if (!variants.Any())
+                                    @if (!(product.VariantCount > 0))
                                     {
                                         <span class="text-muted small" style="font-size: 0.75rem;">Chưa có size</span>
                                     }
@@ -200,10 +219,13 @@ else
 
                         <!-- ACTIONS ROW: VARIANTS BUTTON PROMINENT -->
                         <div class="pt-2 border-top border-secondary border-opacity-10 d-flex justify-content-between align-items-center gap-2">
-                            <a asp-controller="AdminProductVariants" asp-action="Index" asp-route-productId="@product.Id"
+                            @if (canManageVariants)
+                            {
+                                <a asp-controller="AdminProductVariants" asp-action="Index" asp-route-productId="@product.Id"
                                class="btn btn-sm adm-btn-outline flex-grow-1 py-1" style="font-size: 0.78rem;" title="Quản lý size, màu, tồn kho">
-                                <i class="bi bi-layers me-1 text-warning"></i> Biến thể (@variants.Count)
+                                <i class="bi bi-layers me-1 text-warning"></i> Biến thể (@product.VariantCount)
                             </a>
+                            }
 
                             <div class="d-flex gap-1">
                                 <a asp-action="Edit" asp-route-id="@product.Id"
@@ -211,11 +233,10 @@ else
                                     <i class="bi bi-pencil"></i>
                                 </a>
 
-                                <form asp-action="Delete" asp-route-id="@product.Id" method="post" class="d-inline"
-                                      onsubmit="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');">
+                                <form asp-action="ToggleActive" asp-route-id="@product.Id" method="post" class="d-inline">
                                     @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-sm btn-outline-danger py-1 px-2" style="font-size: 0.78rem;" title="Xóa">
-                                        <i class="bi bi-trash"></i>
+                                    <button type="submit" class="btn btn-sm btn-outline-danger py-1 px-2" style="font-size: 0.78rem;" title="Đổi trạng thái hiển thị" aria-label="Đổi trạng thái hiển thị">
+                                        <i class="bi bi-eye"></i>
                                     </button>
                                 </form>
                             </div>
@@ -241,10 +262,9 @@ else
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var product in Model)
+                    @foreach (var product in Model.Products)
                     {
-                        var variants = product.Variants?.ToList() ?? new List<FashionStore.Models.Entities.ProductVariant>();
-                        var totalStock = variants.Sum(v => v.StockQuantity);
+                        var totalStock = product.TotalStock;
 
                         <tr>
                             <td class="ps-4">
@@ -261,20 +281,20 @@ else
                             </td>
                             <td>
                                 <span class="badge" style="background: var(--adm-surface-hover); color: var(--adm-ink); border: 1px solid var(--adm-border);">
-                                    @(product.Category?.Name ?? "Chưa phân loại")
+                                    @(product.CategoryName ?? "Chưa phân loại")
                                 </span>
                             </td>
                             <td class="fw-bold" style="color: var(--adm-gold);">
                                 @product.Price.ToString("N0") ₫
                             </td>
                             <td>
-                                <div><strong class="adm-text-contrast">@variants.Count</strong> phân loại</div>
+                                <div><strong class="adm-text-contrast">@product.VariantCount</strong> phân loại</div>
                                 <div class="text-muted small">Tổng tồn: <span class="fw-semibold">@totalStock</span></div>
                             </td>
                             <td>
                                 @if (product.IsActive)
                                 {
-                                    <span class="adm-pill adm-pill-emerald">Đang bán</span>
+                                    <span class="adm-pill adm-pill-emerald">Hiển thị</span>
                                 }
                                 else
                                 {
@@ -283,21 +303,23 @@ else
                             </td>
                             <td class="text-end pe-4">
                                 <div class="d-inline-flex gap-1">
-                                    <a asp-controller="AdminProductVariants" asp-action="Index" asp-route-productId="@product.Id"
+                                    @if (canManageVariants)
+                                    {
+                                        <a asp-controller="AdminProductVariants" asp-action="Index" asp-route-productId="@product.Id"
                                        class="btn btn-sm adm-btn-outline py-1 px-2" style="font-size: 0.75rem;" title="Quản lý biến thể">
                                         <i class="bi bi-layers text-warning"></i>
                                     </a>
+                                    }
 
                                     <a asp-action="Edit" asp-route-id="@product.Id"
                                        class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem;" title="Sửa">
                                         <i class="bi bi-pencil"></i>
                                     </a>
 
-                                    <form asp-action="Delete" asp-route-id="@product.Id" method="post" class="d-inline"
-                                          onsubmit="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');">
+                                    <form asp-action="ToggleActive" asp-route-id="@product.Id" method="post" class="d-inline">
                                         @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-sm btn-outline-danger py-1 px-2" style="font-size: 0.75rem;" title="Xóa">
-                                            <i class="bi bi-trash"></i>
+                                        <button type="submit" class="btn btn-sm btn-outline-danger py-1 px-2" style="font-size: 0.75rem;" title="Đổi trạng thái hiển thị" aria-label="Đổi trạng thái hiển thị">
+                                            <i class="bi bi-eye"></i>
                                         </button>
                                     </form>
                                 </div>
@@ -308,4 +330,19 @@ else
             </table>
         </div>
     </div>
+}
+
+@if (Model.PageCount > 1)
+{
+    <nav class="d-flex align-items-center justify-content-center gap-3 mb-4" aria-label="Phân trang sản phẩm">
+        @if (filter.Page > 1)
+        {
+            <a asp-action="Index" asp-all-route-data="filter.RouteValues(filter.Page - 1)" class="adm-btn-outline">Trang trước</a>
+        }
+        <span>Trang @filter.Page / @Model.PageCount</span>
+        @if (filter.Page < Model.PageCount)
+        {
+            <a asp-action="Index" asp-all-route-data="filter.RouteValues(filter.Page + 1)" class="adm-btn-outline">Trang sau</a>
+        }
+    </nav>
 }

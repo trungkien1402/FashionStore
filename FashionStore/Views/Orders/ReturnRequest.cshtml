@@ -1,0 +1,120 @@
+@model CustomerReturnViewModel
+@using FashionStore.Services.Implementations
+@{
+    ViewData["Title"] = "Trả hàng và hoàn tiền";
+}
+<main class="urbn-container fs-return-page">
+    <a asp-action="Details" asp-route-id="@Model.Order.Id" class="fs-return-back"><i class="bi bi-arrow-left" aria-hidden="true"></i> Chi tiết đơn hàng</a>
+    <header class="fs-return-header">
+        <h1>Trả hàng và hoàn tiền</h1>
+        <p>Đơn hàng #@Model.Order.OrderCode</p>
+    </header>
+
+    @if (TempData["Error"] is string error) { <p class="fs-return-message fs-return-error" role="alert">@error</p> }
+    @if (TempData["Success"] is string success) { <p class="fs-return-message" role="status">@success</p> }
+
+    <div class="fs-return-grid">
+    <section class="fs-return-card" aria-label="Yêu cầu trả hàng">
+        @if (Model.Request is { } request)
+        {
+            <div class="fs-return-state" data-state="@request.State">
+                <i class="bi @(request.State == ReturnState.Refunded ? "bi-check-circle" : request.State == ReturnState.Rejected ? "bi-x-circle" : "bi-arrow-return-left")" aria-hidden="true"></i>
+                <h2>@ReturnRequests.Label(request.State)</h2>
+            </div>
+            @if (request.State != ReturnState.Rejected)
+            {
+                var steps = new[] { ReturnState.Requested, ReturnState.Approved, ReturnState.Received, ReturnState.Refunded };
+                var labels = new[] { "Gửi yêu cầu", "Duyệt", "Kiểm định", "Hoàn tiền" };
+                var current = Array.IndexOf(steps, request.State);
+                <ol class="fs-return-steps" aria-label="Tiến độ trả hàng">
+                    @for (var i = 0; i < steps.Length; i++)
+                    {
+                        <li class="@(i <= current ? "is-reached" : "")" aria-current="@(i == current ? "step" : null)">
+                            <span aria-hidden="true">@(i < current ? "✓" : (i + 1).ToString())</span>@labels[i]
+                        </li>
+                    }
+                </ol>
+            }
+            <p>Ngày gửi @AdminReportService.ToVietnamTime(request.CreatedAt).ToString("dd/MM/yyyy HH:mm")</p>
+            <p><strong>Lý do đã gửi</strong> @request.Reason</p>
+            @if (request.State == ReturnState.Approved)
+            {
+                <p>Giữ sản phẩm và phụ kiện đi kèm. Liên hệ cửa hàng để xác nhận cách gửi lại hàng.</p>
+                <a asp-controller="Home" asp-action="Contact">Liên hệ cửa hàng</a>
+            }
+            else if (request.State == ReturnState.Refunded)
+            {
+                <p><strong>Đã hoàn @request.RefundAmount.ToString("N0") ₫</strong></p>
+            }
+            else if (request.State == ReturnState.Rejected)
+            {
+                <a asp-controller="Home" asp-action="Contact">Liên hệ cửa hàng để được giải đáp</a>
+            }
+        }
+        else
+        {
+            <h2>Gửi yêu cầu trả hàng</h2>
+            @if (Model.IneligibleReason != null)
+            {
+                <p>@Model.IneligibleReason</p>
+            }
+            else
+            {
+                <p>Yêu cầu áp dụng cho toàn bộ đơn. Cửa hàng sẽ duyệt, nhận và kiểm định hàng trước khi hoàn tiền.</p>
+                <form asp-action="SubmitReturn" asp-route-id="@Model.Order.Id" method="post">
+                    <label for="reason">Lý do trả hàng</label>
+                    <textarea id="reason" name="reason" rows="3" placeholder="Ví dụ: Sản phẩm nhận được khác với đơn đặt" required maxlength="500"></textarea>
+                    <label for="evidence">Mô tả tình trạng hoặc bằng chứng (tùy chọn)</label>
+                    <textarea id="evidence" name="evidence" rows="3" maxlength="500"></textarea>
+                    <button type="submit" class="urbn-nav-pill-btn">Gửi yêu cầu</button>
+                </form>
+            }
+        }
+    </section>
+    <aside class="fs-return-card fs-return-order" aria-labelledby="return-order-heading">
+        <h2 id="return-order-heading"><i class="bi bi-bag" aria-hidden="true"></i> Sản phẩm trong đơn</h2>
+        <ul>
+            @foreach (var item in Model.Order.Items)
+            {
+                <li><div><strong>@item.ProductName</strong><small>@item.Size · @item.Color</small></div><span>× @item.Quantity</span></li>
+            }
+        </ul>
+        <p class="fs-return-total"><span>Tổng tiền đơn hàng</span><strong>@Model.Order.TotalAmount.ToString("N0") ₫</strong></p>
+        @if (Model.Deadline is DateTime deadline && Model.Request == null)
+        {
+            <p class="fs-return-deadline"><i class="bi bi-calendar-event" aria-hidden="true"></i> Hạn gửi @AdminReportService.ToVietnamTime(deadline).ToString("dd/MM/yyyy HH:mm") (giờ Việt Nam)</p>
+        }
+        @if (!string.IsNullOrWhiteSpace(Model.Policy)) { <p class="fs-return-policy">@Model.Policy</p> }
+    </aside>
+    </div>
+</main>
+
+<style>
+    .fs-return-page { max-width: 1120px; padding-block: 2rem 3rem; color: #191817; }
+    .fs-return-back { display: inline-flex; align-items: center; gap: .5rem; font-size: .9rem; }
+    .fs-return-header { margin: 1.25rem 0; }
+    .fs-return-header h1 { margin: 0 0 .25rem; font-size: clamp(1.65rem, 4vw, 2.5rem); }
+    .fs-return-header p, .fs-return-order small { color: #625e58; }
+    .fs-return-grid { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); align-items: start; gap: 1rem; }
+    .fs-return-card { background: #fff; border: 1px solid #e7e4df; border-radius: .85rem; padding: clamp(1rem, 3vw, 1.5rem); overflow-wrap: anywhere; }
+    .fs-return-card h2 { font-size: 1.1rem; margin: 0 0 .75rem; }
+    .fs-return-card label { font-weight: 600; }
+    .fs-return-card textarea { display: block; width: 100%; box-sizing: border-box; margin: .35rem 0 1rem; border: 1px solid #b9b4ac; border-radius: .5rem; padding: .65rem; font: inherit; resize: vertical; }
+    .fs-return-card textarea:focus-visible { outline: 2px solid #805e32; outline-offset: 2px; }
+    .fs-return-policy { white-space: pre-wrap; }
+    .fs-return-state, .fs-return-message { display: flex; align-items: center; gap: .6rem; padding: .7rem .85rem; border-radius: .55rem; background: #f3eee6; color: #65491f; margin-bottom: 1rem; }
+    .fs-return-state h2 { margin: 0; }
+    .fs-return-state[data-state="Refunded"] { background: #e8f4ec; color: #225e3b; }
+    .fs-return-error, .fs-return-state[data-state="Rejected"] { background: #faeaea; color: #8e2626; }
+    .fs-return-steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .35rem; padding: 0; list-style: none; margin: 0 0 1.25rem; }
+    .fs-return-steps li { display: grid; justify-items: center; gap: .25rem; text-align: center; font-size: .78rem; color: #625e58; }
+    .fs-return-steps span { display: grid; place-items: center; width: 1.65rem; height: 1.65rem; border-radius: 50%; background: #efeeec; }
+    .fs-return-steps .is-reached span { background: #805e32; color: #fff; }
+    .fs-return-steps [aria-current="step"] { font-weight: 700; color: #191817; }
+    .fs-return-order ul { padding: 0; margin: 0; list-style: none; }
+    .fs-return-order li, .fs-return-total { display: flex; justify-content: space-between; gap: .6rem; border-top: 1px solid #eeeae5; padding: .65rem 0; }
+    .fs-return-order small { display: block; }
+    .fs-return-total strong, .fs-return-order li > span { white-space: nowrap; }
+    .fs-return-deadline { color: #65491f; font-size: .88rem; }
+    @@media (max-width: 760px) { .fs-return-grid { grid-template-columns: 1fr; } }
+</style>

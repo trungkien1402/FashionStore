@@ -37,6 +37,11 @@
     <link rel="stylesheet" href="~/css/auth-modal.css?v=auth_v1" asp-append-version="true" />
 
     @await RenderSectionAsync("Styles", required: false)
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <link rel="stylesheet" href="~/css/notification-bell.css" asp-append-version="true" />
+        <script src="~/js/notification-bell.js" asp-append-version="true" defer></script>
+    }
 </head>
 
 <body>
@@ -64,11 +69,11 @@
                     <li><a asp-controller="Home" asp-action="Index">TRANG CHỦ</a></li>
                     <li>
                         <a asp-controller="Home" asp-action="SizeGuide">
-                            HƯỚNG DẪN CHỌN SIZE
+                            BẢNG SIZE
                         </a>
                     </li>
                     <li><a asp-controller="Products" asp-action="Index">CỬA HÀNG</a></li>
-                    <li><a href="#contact">LIÊN HỆ</a></li>
+                    <li><a asp-controller="Home" asp-action="Contact">LIÊN HỆ</a></li>
                 </ul>
 
                 <!-- Nav Actions -->
@@ -78,11 +83,6 @@
                         <i class="bi bi-search"></i>
                     </button>
 
-                    <!-- Wishlist Heart Icon -->
-                    <a href="/Products" class="urbn-nav-icon" title="Yêu thích">
-                        <i class="bi bi-heart"></i>
-                    </a>
-
                     <!-- Cart Trigger -->
                     <button type="button" id="fsCartDrawerTrigger" class="urbn-nav-icon position-relative" title="Giỏ hàng">
                         <i class="bi bi-cart"></i>
@@ -90,6 +90,8 @@
                             @cartCount
                         </span>
                     </button>
+
+                <partial name="_NotificationBell" view-data='@new ViewDataDictionary(ViewData) { { "BellButtonClass", "urbn-nav-icon" } }' />
 
                     <!-- User Account Dropdown -->
                     <partial name="_AccountNavMenu" view-data='@new ViewDataDictionary(ViewData) { { "IsAtelier", false } }' />
@@ -143,10 +145,10 @@
                     <div class="urbn-footer-col">
                         <h5>Thông Tin</h5>
                         <ul>
-                            <li><a href="#">Về HNMTSHOP</a></li>
-                            <li><a href="#">Hệ Thống Cửa Hàng</a></li>
-                            <li><a href="#">Nhà Đầu Tư</a></li>
-                            <li><a href="/Products">Sản Phẩm Mới</a></li>
+                            <li><a asp-controller="Home" asp-action="Lookbook">Về HNMTSHOP</a></li>
+                            <li><a href="/contact#stores">Hệ Thống Cửa Hàng</a></li>
+                            <li><a href="/contact?subject=H%E1%BB%A3p+t%C3%A1c+kinh+doanh#contactForm">Hợp Tác & Đầu Tư</a></li>
+                            <li><a asp-controller="Products" asp-action="Index">Sản Phẩm Mới</a></li>
                         </ul>
                     </div>
 
@@ -154,19 +156,24 @@
                     <div class="urbn-footer-col">
                         <h5>Trung Tâm Trợ Giúp</h5>
                         <ul>
-                            <li><a href="#">Câu Hỏi Thường Gặp</a></li>
-                            <li><a href="#">Điều Khoản Dịch Vụ</a></li>
-                            <li><a href="#">Chính Sách Bảo Mật</a></li>
-                            <li><a href="#">Chính Sách Đổi Trả</a></li>
+                            <li><a href="/contact#faq">Câu Hỏi Thường Gặp</a></li>
+                            <li><a href="/contact#faq-returns">Chính Sách Đổi Trả</a></li>
+                            <li><a href="/contact#faq-terms">Điều Khoản Dịch Vụ</a></li>
+                            <li><a href="/contact#faq-privacy">Chính Sách Bảo Mật</a></li>
                         </ul>
                     </div>
 
                     <!-- Col 4: Contact Us -->
                     <div class="urbn-footer-col urbn-footer-contact">
                         <h5>Liên Hệ</h5>
-                        <p>hotro@hnmtshop.vn</p>
-                        <p>+84 988 776 655</p>
-                        <p style="font-size: 13px; color: #9CA3AF; margin-top: 8px;">Hà Nội & TP. Hồ Chí Minh, Việt Nam</p>
+                        <p><a href="mailto:hotro@hnmtshop.vn" style="color: inherit; text-decoration: none;">hotro@hnmtshop.vn</a></p>
+                        <p><a href="tel:+84988776655" style="color: inherit; text-decoration: none;">+84 988 776 655</a></p>
+                        <p style="font-size: 13px; color: #9CA3AF; margin-top: 8px;">
+                            <a href="/contact#stores" style="color: #9CA3AF; text-decoration: underline;">Hà Nội & TP. Hồ Chí Minh &rarr;</a>
+                        </p>
+                        <p style="margin-top: 10px;">
+                            <a href="/contact#contactForm" style="color: #fff; text-decoration: underline; font-size: 13px; font-weight: 600;">Gửi yêu cầu hỗ trợ trực tuyến &rarr;</a>
+                        </p>
                     </div>
 
                 </div>

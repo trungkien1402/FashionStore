@@ -1,0 +1,16 @@
+@model List<FashionStore.Models.Entities.Order>
+@using FashionStore.Services.Implementations
+@{ ViewData["Title"] = "Lịch sử mua hàng"; }
+<header class="adm-dashboard-header mb-4"><div><h1>@ViewBag.Name</h1><p class="adm-dashboard-period">Lịch sử mua hàng</p></div><a asp-action="Customers" class="adm-btn-outline">Về danh sách khách hàng</a></header>
+<div class="adm-card table-responsive p-0">
+<table class="adm-table mb-0">
+<thead><tr><th>Mã đơn</th><th>Ngày đặt</th><th>Trạng thái</th><th>Tổng tiền</th></tr></thead>
+<tbody>
+@foreach (var row in Model)
+{
+    <tr><td><a asp-controller="AdminOrders" asp-action="Details" asp-route-id="@row.Id">@row.OrderCode</a></td><td>@AdminReportService.ToVietnamTime(row.CreatedAt).ToString("dd/MM/yyyy HH:mm")</td><td>@AdminReportService.GetStatusName(row.Status)</td><td>@row.TotalAmount.ToString("N0") ₫</td></tr>
+}
+@if (Model.Count == 0) { <tr><td colspan="4">Khách hàng chưa có đơn.</td></tr> }
+</tbody>
+</table>
+</div>

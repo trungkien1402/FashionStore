@@ -1,3 +1,4 @@
+using FashionStore.Services.Implementations;
 using System.Security.Claims;
 using System.Text.Json;
 using FashionStore.Data;
@@ -446,9 +447,78 @@ public class OrdersController : Controller
             .AsNoTracking()
             .ToListAsync();
 
+        ViewBag.HasReturnRequest = User.IsInRole("Customer") &&
+            await _context.MerchandiseReturns.AnyAsync(r => r.OrderId == id);
         ViewBag.StatusHistories = histories;
 
         return View(order);
+    }
+
+    [HttpGet]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+    public async Task<IActionResult> TrackingLocation(int id, CancellationToken cancellationToken)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId))
+            return Challenge();
+
+        var shipment = await _context.Shipments.AsNoTracking()
+            .Where(s => s.OrderId == id && s.Order.UserId == userId)
+            .OrderByDescending(s => s.CreatedAt).ThenByDescending(s => s.Id)
+            .Select(s => new { s.Id, s.Status, OrderStatus = s.Order.Status })
+            .FirstOrDefaultAsync(cancellationToken);
+        if (shipment == null)
+            return NotFound();
+
+        var isTracking = shipment.Status == ShipmentStatus.InTransit && shipment.OrderStatus == OrderStatus.Shipping;
+        var location = isTracking
+            ? await _context.ShipmentLocations.AsNoTracking()
+                .Where(l => l.ShipmentId == shipment.Id &&
+                    l.Shipment.Status == ShipmentStatus.InTransit &&
+                    l.Shipment.Order.Status == OrderStatus.Shipping)
+                .OrderByDescending(l => l.RecordedAt).ThenByDescending(l => l.Id)
+                .Select(l => new
+                {
+                    l.Latitude, l.Longitude, l.Accuracy,
+                    RecordedAt = DateTime.SpecifyKind(l.RecordedAt, DateTimeKind.Utc)
+                })
+                .FirstOrDefaultAsync(cancellationToken)
+            : null;
+
+        return Json(new { status = shipment.Status.ToString(), isTracking, location });
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "Customer")]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+    public async Task<IActionResult> ReturnRequest(int id)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId)) return Challenge();
+        var order = await _context.Orders.AsNoTracking().Include(o => o.Items)
+            .SingleOrDefaultAsync(o => o.Id == id && o.UserId == userId);
+        if (order == null) return NotFound();
+        var request = await _context.MerchandiseReturns.AsNoTracking()
+            .SingleOrDefaultAsync(r => r.OrderId == id);
+        var eligibility = await ReturnRequests.GetEligibilityAsync(_context, order);
+        return View(new CustomerReturnViewModel(order, request, eligibility.Deadline,
+            eligibility.Policy, eligibility.IneligibleReason));
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "Customer")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SubmitReturn(int id, string? reason, string? evidence)
+    {
+        if (!ModelState.IsValid) return BadRequest();
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId)) return Challenge();
+        var order = await _context.Orders.AsNoTracking()
+            .SingleOrDefaultAsync(o => o.Id == id && o.UserId == userId);
+        if (order == null) return NotFound();
+        var error = await ReturnRequests.SubmitAsync(_context, order, userId, reason, evidence);
+        TempData[error == null ? "Success" : "Error"] = error ?? "Đã gửi yêu cầu trả hàng.";
+        return RedirectToAction(nameof(ReturnRequest), new { id });
     }
 
     // POST: /Orders/CancelOrder
@@ -533,20 +603,20 @@ public class OrdersController : Controller
             return RedirectToAction("Index", "Home");
         }
 
-        var cleanCode = orderCode.Trim().Replace("#", "").Replace("FS", "", StringComparison.OrdinalIgnoreCase);
-        if (int.TryParse(cleanCode, out int orderId))
-        {
-            var exists = await _context.Orders.AnyAsync(o => o.Id == orderId);
-            if (exists)
-            {
-                if (User.Identity?.IsAuthenticated == true)
-                {
-                    return RedirectToAction(nameof(Details), new { id = orderId });
-                }
-                TempData["Success"] = $"Đơn hàng #{orderId} tồn tại trong hệ thống. Vui lòng đăng nhập để xem chi tiết đầy đủ.";
-                return RedirectToAction("Login", "Account");
-            }
-        }
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId))
+            return Challenge();
+
+        var code = orderCode.Trim().TrimStart('#');
+        var numericCode = code.StartsWith("FS", StringComparison.OrdinalIgnoreCase) ? code[2..] : code;
+        var hasId = int.TryParse(numericCode, out var orderId);
+        var id = await _context.Orders.AsNoTracking()
+            .Where(o => o.UserId == userId && (o.OrderCode == code || (hasId && o.Id == orderId)))
+            .OrderByDescending(o => o.OrderCode == code)
+            .Select(o => (int?)o.Id)
+            .FirstOrDefaultAsync();
+        if (id.HasValue)
+            return RedirectToAction(nameof(Details), new { id });
 
         TempData["Error"] = $"Không tìm thấy đơn hàng với mã '{orderCode}'.";
         return RedirectToAction("Index", "Home");

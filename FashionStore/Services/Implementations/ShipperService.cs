@@ -148,6 +148,16 @@ public class ShipperService : IShipperService
                         {
                             if (order.PaymentStatus != PaymentStatus.Paid)
                             {
+                                _context.PaymentHistories.Add(new PaymentHistory
+                                {
+                                    OrderId = order.Id,
+                                    Event = "CodCollected",
+                                    OldStatus = order.PaymentStatus,
+                                    NewStatus = PaymentStatus.Paid,
+                                    Amount = order.TotalAmount,
+                                    ActorUserId = shipperId,
+                                    CreatedAt = now
+                                });
                                 order.PaymentStatus = PaymentStatus.Paid;
                             }
 
@@ -211,6 +221,8 @@ public class ShipperService : IShipperService
                 }
             }
 
+            _context.StockActorId = shipperId;
+            _context.StockReason = "Cập nhật vận đơn " + shipment.TrackingCode;
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
 

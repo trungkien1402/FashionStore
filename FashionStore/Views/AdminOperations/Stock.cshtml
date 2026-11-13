@@ -1,0 +1,26 @@
+@model FashionStore.Models.Entities.ProductVariant
+@using FashionStore.Models.Entities
+@using FashionStore.Services.Implementations
+@{ ViewData["Title"] = "Điều chỉnh tồn kho"; }
+<header class="adm-dashboard-header mb-4">
+    <div><h1>@Model.Product.Name</h1><p class="adm-dashboard-period">@Model.SKU · @Model.Size · @Model.Color</p></div>
+    <a asp-action="Inventory" class="adm-btn-outline">Về kho hàng</a>
+</header>
+<form asp-action="AdjustStock" asp-route-id="@Model.Id" method="post" class="adm-filter-bar row g-3 mx-0 mb-4">
+    <input type="hidden" name="expected" value="@Model.StockQuantity" />
+    <div class="col-md-3"><label for="quantity">Số tồn sau kiểm đếm</label><input id="quantity" name="quantity" type="number" min="0" value="@Model.StockQuantity" required class="form-control adm-input-dark" /></div>
+    <div class="col-md-6"><label for="reason">Lý do</label><input id="reason" name="reason" maxlength="250" required class="form-control adm-input-dark" /></div>
+    <div class="col-md-auto align-self-end"><button class="adm-btn-atelier">Lưu tồn kho</button></div>
+</form>
+<h2 class="adm-heading h5">Lịch sử nhập, xuất và điều chỉnh</h2>
+<div class="adm-card table-responsive p-0">
+<table class="adm-table mb-0">
+<thead><tr><th>Thời điểm</th><th>Trước</th><th>Sau</th><th>Lý do</th><th>Mã người thao tác</th></tr></thead>
+<tbody>
+@foreach (var row in (List<StockMovement>)ViewBag.History)
+{
+    <tr><td>@AdminReportService.ToVietnamTime(row.CreatedAt).ToString("dd/MM/yyyy HH:mm")</td><td>@row.Before</td><td>@row.After</td><td>@row.Reason</td><td>@row.ActorId</td></tr>
+}
+</tbody>
+</table>
+</div>

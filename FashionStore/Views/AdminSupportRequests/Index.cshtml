@@ -1,0 +1,176 @@
+@model List<FashionStore.Models.Entities.SupportRequest>
+@using FashionStore.Models.Enums
+
+@{
+    ViewData["Title"] = "Quản lý Yêu cầu Hỗ trợ & Liên hệ";
+    var selectedStatus = ViewBag.SelectedStatus as SupportRequestStatus?;
+    var searchKeyword = ViewBag.SearchKeyword as string;
+    var countPending = (int)(ViewBag.CountPending ?? 0);
+}
+
+<!-- HEADER -->
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div>
+        <div class="d-flex align-items-center gap-2 mb-1">
+            <span style="font-size: 0.68rem; font-weight: 700; letter-spacing: 0.28em; color: var(--adm-gold); text-transform: uppercase;">
+                CUSTOMER SUPPORT & INQUIRIES
+            </span>
+            <span style="width: 4px; height: 4px; border-radius: 50%; background: var(--adm-gold);"></span>
+            <span class="text-muted small">@Model.Count YÊU CẦU</span>
+        </div>
+        <h2 class="fw-bold mb-0 adm-heading" style="letter-spacing: -0.02em;">Yêu cầu Hỗ trợ & Phản hồi Khách hàng</h2>
+    </div>
+
+    @if (countPending > 0)
+    {
+        <a asp-action="Index" asp-route-status="@((int)SupportRequestStatus.Pending)" 
+           class="adm-card p-2 px-3 d-flex align-items-center gap-2 text-decoration-none border-warning" 
+           style="background: rgba(217, 119, 6, 0.08); border-color: rgba(217, 119, 6, 0.3) !important;">
+            <span class="adm-pulse-dot" style="background: var(--adm-amber); box-shadow: 0 0 8px var(--adm-amber);"></span>
+            <span class="small fw-bold text-warning">@countPending yêu cầu mới cần xử lý</span>
+            <i class="bi bi-chevron-right text-warning small"></i>
+        </a>
+    }
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<!-- SEARCH & FILTER BAR -->
+<div class="adm-card p-3 mb-4">
+    <form method="get" asp-action="Index" class="row g-2 align-items-center">
+        @if (selectedStatus.HasValue)
+        {
+            <input type="hidden" name="status" value="@((int)selectedStatus.Value)" />
+        }
+        <div class="col-md-5">
+            <div class="input-group">
+                <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-search text-muted"></i></span>
+                <input type="text" name="search" class="form-control border-start-0" 
+                       placeholder="Tìm theo tên, email, SĐT, mã đơn..." value="@searchKeyword" />
+            </div>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-dark px-3 fw-bold">Tìm kiếm</button>
+            @if (!string.IsNullOrWhiteSpace(searchKeyword) || selectedStatus.HasValue)
+            {
+                <a asp-action="Index" class="btn btn-outline-secondary px-3 ms-1">Đặt lại</a>
+            }
+        </div>
+    </form>
+</div>
+
+<!-- QUICK STATUS TABS -->
+<div class="adm-tabs mb-4">
+    <a asp-action="Index" asp-route-search="@searchKeyword" class="adm-tab-item @(selectedStatus == null ? "active" : "")">
+        Tất cả (@( (int)ViewBag.CountPending + (int)ViewBag.CountInProgress + (int)ViewBag.CountResolved + (int)ViewBag.CountClosed ))
+    </a>
+    <a asp-action="Index" asp-route-status="@((int)SupportRequestStatus.Pending)" asp-route-search="@searchKeyword"
+       class="adm-tab-item @(selectedStatus == SupportRequestStatus.Pending ? "active" : "")">
+        <i class="bi bi-clock-history me-1 text-warning"></i> Chờ xử lý (@ViewBag.CountPending)
+    </a>
+    <a asp-action="Index" asp-route-status="@((int)SupportRequestStatus.InProgress)" asp-route-search="@searchKeyword"
+       class="adm-tab-item @(selectedStatus == SupportRequestStatus.InProgress ? "active" : "")">
+        <i class="bi bi-gear-wide-connected me-1 text-primary"></i> Đang xử lý (@ViewBag.CountInProgress)
+    </a>
+    <a asp-action="Index" asp-route-status="@((int)SupportRequestStatus.Resolved)" asp-route-search="@searchKeyword"
+       class="adm-tab-item @(selectedStatus == SupportRequestStatus.Resolved ? "active" : "")">
+        <i class="bi bi-check-circle-fill me-1 text-success"></i> Đã giải quyết (@ViewBag.CountResolved)
+    </a>
+    <a asp-action="Index" asp-route-status="@((int)SupportRequestStatus.Closed)" asp-route-search="@searchKeyword"
+       class="adm-tab-item @(selectedStatus == SupportRequestStatus.Closed ? "active" : "")">
+        <i class="bi bi-x-circle-fill me-1 text-secondary"></i> Đã đóng (@ViewBag.CountClosed)
+    </a>
+</div>
+
+<!-- SUPPORT REQUESTS TABLE -->
+@if (!Model.Any())
+{
+    <div class="adm-card text-center py-5">
+        <i class="bi bi-inbox fs-1 text-muted d-block mb-3"></i>
+        <h5 class="fw-bold">Không có yêu cầu hỗ trợ nào</h5>
+        <p class="text-muted small mb-0">Hiện chưa có tin nhắn nào phù hợp với bộ lọc hiện tại.</p>
+    </div>
+}
+else
+{
+    <div class="adm-card overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 70px;">ID</th>
+                        <th>Khách hàng</th>
+                        <th>Chủ đề liên hệ</th>
+                        <th>Mã đơn</th>
+                        <th>Thời gian gửi</th>
+                        <th>Trạng thái</th>
+                        <th class="text-end" style="width: 120px;">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td><span class="badge bg-light text-dark border">#@item.Id</span></td>
+                            <td>
+                                <div class="fw-bold">@item.FullName</div>
+                                <div class="small text-muted">
+                                    <i class="bi bi-telephone me-1"></i>@item.PhoneNumber &nbsp;|&nbsp; 
+                                    <i class="bi bi-envelope me-1"></i>@item.Email
+                                </div>
+                            </td>
+                            <td>
+                                <span class="fw-semibold">@item.Subject</span>
+                                <div class="small text-muted text-truncate" style="max-width: 250px;">
+                                    @item.Message
+                                </div>
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.OrderCode))
+                                {
+                                    <span class="badge bg-light text-primary border">@item.OrderCode</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small">-</span>
+                                }
+                            </td>
+                            <td>
+                                <div>@item.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")</div>
+                                <small class="text-muted">@item.CreatedAt.ToLocalTime().ToString("HH:mm")</small>
+                            </td>
+                            <td>
+                                @switch (item.Status)
+                                {
+                                    case SupportRequestStatus.Pending:
+                                        <span class="badge bg-warning text-dark"><i class="bi bi-clock me-1"></i>Chờ xử lý</span>
+                                        break;
+                                    case SupportRequestStatus.InProgress:
+                                        <span class="badge bg-primary"><i class="bi bi-gear me-1"></i>Đang xử lý</span>
+                                        break;
+                                    case SupportRequestStatus.Resolved:
+                                        <span class="badge bg-success"><i class="bi bi-check2 me-1"></i>Đã giải quyết</span>
+                                        break;
+                                    case SupportRequestStatus.Closed:
+                                        <span class="badge bg-secondary"><i class="bi bi-x me-1"></i>Đã đóng</span>
+                                        break;
+                                }
+                            </td>
+                            <td class="text-end">
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-dark">
+                                    Chi tiết <i class="bi bi-chevron-right ms-1"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

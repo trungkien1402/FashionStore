@@ -4,7 +4,7 @@
     var menuClass = isAtelier ? "at-account-menu" : "urbn-account-menu";
 
     var isAuthenticated = User.Identity?.IsAuthenticated == true;
-    var isAdmin = User.IsInRole("Admin");
+    var canUseBackOffice = FashionStore.Services.AccessRoles.CanUseBackOffice(User);
     var isShipper = User.IsInRole("Shipper");
     var isCustomer = User.IsInRole("Customer");
 }
@@ -44,15 +44,15 @@
                 </a>
             }
 
-            @* Admin *@
-            @if (isAdmin)
+            @* Back office *@
+            @if (canUseBackOffice)
             {
                 <a asp-controller="Admin"
                    asp-action="Index"
                    class="fs-menu-item"
                    role="menuitem">
                     <i class="bi bi-speedometer2"></i>
-                    <span>Trang quản trị Admin</span>
+                    <span>Quản trị cửa hàng</span>
                 </a>
             }
 

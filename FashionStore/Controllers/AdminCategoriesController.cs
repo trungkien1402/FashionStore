@@ -1,3 +1,4 @@
+using FashionStore.Services;
 
 using System.Globalization;
 using System.Text;
@@ -10,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FashionStore.Controllers;
 
-[Authorize(Roles = "Admin,Manager")]
+[Authorize(Roles = AccessRoles.Management)]
 public class AdminCategoriesController : Controller
 {
     private readonly ApplicationDbContext _context;
@@ -21,7 +22,7 @@ public class AdminCategoriesController : Controller
     }
 
     // GET: /AdminCategories
-    public async Task<IActionResult> Index(string? keyword, string? status)
+    public async Task<IActionResult> Index(string? keyword, string? status, string? sort = null, int page = 1)
     {
         var query = _context.Categories
             .AsNoTracking()
@@ -31,7 +32,8 @@ public class AdminCategoriesController : Controller
         if (!string.IsNullOrWhiteSpace(keyword))
         {
             keyword = keyword.Trim();
-            query = query.Where(c => c.Name.Contains(keyword));
+            keyword = keyword[..Math.Min(keyword.Length, 100)];
+            query = query.Where(c => c.Name.Contains(keyword) || c.Slug.Contains(keyword));
         }
 
         // Lọc theo trạng thái
@@ -44,21 +46,45 @@ public class AdminCategoriesController : Controller
             query = query.Where(c => !c.IsActive);
         }
 
-        // Lấy danh sách danh mục và số lượng sản phẩm
-        var categories = await query
-            .OrderBy(c => c.Name)
+        const int pageSize = 24;
+        var count = await query.CountAsync();
+        var pageCount = Math.Max(1, (int)Math.Ceiling(count / (double)pageSize));
+        page = Math.Clamp(page, 1, pageCount);
+        var ordered = sort switch
+        {
+            "name-desc" => query.OrderByDescending(c => c.Name),
+            "products" => query.OrderByDescending(c => c.Products.Count()).ThenBy(c => c.Name),
+            _ => query.OrderBy(c => c.Name)
+        };
+
+        var categories = await ordered.ThenBy(c => c.Id)
+            .Skip((page - 1) * pageSize).Take(pageSize)
             .Select(c => new AdminCategoryListItemViewModel
             {
                 Category = c,
                 ProductCount = c.Products.Count(),
+                ActiveProductCount = c.Products.Count(p => p.IsActive),
                 RepresentativeImageUrl = c.Products
                     .Where(p => !string.IsNullOrEmpty(p.ImageUrl))
-                    .OrderByDescending(p => p.CreatedAt)
+                    .OrderByDescending(p => p.IsActive)
+                    .ThenByDescending(p => p.CreatedAt)
+                    .ThenByDescending(p => p.Id)
                     .Select(p => p.ImageUrl)
                     .FirstOrDefault()
             })
             .ToListAsync();
 
+        var totals = await _context.Categories.AsNoTracking()
+            .GroupBy(c => c.IsActive)
+            .Select(group => new { IsActive = group.Key, Count = group.Count() })
+            .ToListAsync();
+        ViewBag.TotalCategories = totals.Sum(group => group.Count);
+        ViewBag.ActiveCategories = totals.Where(group => group.IsActive).Sum(group => group.Count);
+        ViewBag.InactiveCategories = totals.Where(group => !group.IsActive).Sum(group => group.Count);
+        ViewBag.ResultCount = count;
+        ViewBag.Page = page;
+        ViewBag.PageCount = pageCount;
+        ViewBag.Sort = sort;
         ViewBag.Keyword = keyword;
         ViewBag.Status = status;
 
@@ -222,7 +248,7 @@ public class AdminCategoriesController : Controller
     // POST: /AdminCategories/ToggleActive/5
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToggleActive(int id)
+    public async Task<IActionResult> ToggleActive(int id, bool isActive, string? keyword, string? status, string? sort, int page = 1)
     {
         var category = await _context.Categories
             .FirstOrDefaultAsync(c => c.Id == id);
@@ -232,15 +258,15 @@ public class AdminCategoriesController : Controller
             return NotFound();
         }
 
-        category.IsActive = !category.IsActive;
+        category.IsActive = isActive;
 
         await _context.SaveChangesAsync();
 
         TempData["Success"] = category.IsActive
-            ? "Đã hiển thị danh mục."
-            : "Đã ẩn danh mục.";
+            ? "Đã bật danh mục."
+            : "Đã tắt danh mục.";
 
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction(nameof(Index), new { keyword, status, sort, page });
     }
 
     // Chuyển tên tiếng Việt thành slug không dấu

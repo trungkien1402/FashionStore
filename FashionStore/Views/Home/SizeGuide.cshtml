@@ -92,11 +92,35 @@
 
                 <div id="clothingResult" class="sg-result" hidden
                      aria-live="polite">
-                    <span>YOUR RECOMMENDED SIZE</span>
+                    <span id="clothingEyebrow">YOUR RECOMMENDED SIZE</span>
                     <div class="sg-result-size" id="clothingSize">M</div>
                     <h4 id="clothingTitle">Size phù hợp với bạn</h4>
                     <p id="clothingDescription"></p>
-                    <div class="sg-result-note">
+
+                    <!-- CSKH SUPPORT BOX KHI SỐ ĐO KHÔNG PHÙ HỢP -->
+                    <div id="clothingSupportBox" class="sg-support-box" hidden>
+                        <div class="sg-support-header">
+                            <div class="sg-support-icon">
+                                <i class="bi bi-headset"></i>
+                            </div>
+                            <div>
+                                <h5>Cần hỗ trợ riêng từ chuyên viên CSKH</h5>
+                                <p>Số đo của bạn cần được tư vấn kỹ lưỡng để chọn trang phục có form dáng vừa vặn và thoải mái nhất.</p>
+                            </div>
+                        </div>
+                        <div class="sg-support-actions">
+                            <a id="clothingContactBtn" href="/contact" class="sg-support-btn sg-support-btn-primary">
+                                <i class="bi bi-chat-dots-fill"></i>
+                                Gửi yêu cầu tư vấn size
+                            </a>
+                            <a href="tel:+84988776655" class="sg-support-btn sg-support-btn-outline">
+                                <i class="bi bi-telephone-fill"></i>
+                                Hotline: 0988 776 655
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="sg-result-note" id="clothingNote">
                         <i class="bi bi-info-circle"></i>
                         Đây là kích cỡ tham khảo. Hãy đối chiếu bảng số đo
                         riêng của sản phẩm trước khi đặt hàng.
@@ -154,11 +178,35 @@
 
                 <div id="shoeResult" class="sg-result" hidden
                      aria-live="polite">
-                    <span>YOUR RECOMMENDED SHOE SIZE</span>
+                    <span id="shoeEyebrow">YOUR RECOMMENDED SHOE SIZE</span>
                     <div class="sg-result-size" id="shoeSize">40</div>
-                    <h4>Size giày EU tham khảo</h4>
+                    <h4 id="shoeTitle">Size giày EU tham khảo</h4>
                     <p id="shoeDescription"></p>
-                    <div class="sg-result-note">
+
+                    <!-- CSKH SUPPORT BOX KHI SỐ ĐO GIÀY KHÔNG PHÙ HỢP -->
+                    <div id="shoeSupportBox" class="sg-support-box" hidden>
+                        <div class="sg-support-header">
+                            <div class="sg-support-icon">
+                                <i class="bi bi-headset"></i>
+                            </div>
+                            <div>
+                                <h5>Cần hỗ trợ tư vấn size giày đặc biệt</h5>
+                                <p>Số đo bàn chân của bạn nằm ngoài dải size thông thường. Hãy liên hệ CSKH để nhân viên gợi ý mẫu giày form rộng hoặc ngoại cỡ.</p>
+                            </div>
+                        </div>
+                        <div class="sg-support-actions">
+                            <a id="shoeContactBtn" href="/contact" class="sg-support-btn sg-support-btn-primary">
+                                <i class="bi bi-chat-dots-fill"></i>
+                                Gửi yêu cầu tư vấn size giày
+                            </a>
+                            <a href="tel:+84988776655" class="sg-support-btn sg-support-btn-outline">
+                                <i class="bi bi-telephone-fill"></i>
+                                Hotline: 0988 776 655
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="sg-result-note" id="shoeNote">
                         <i class="bi bi-info-circle"></i>
                         Kết quả phụ thuộc vào form giày và bảng size
                         của từng thương hiệu.

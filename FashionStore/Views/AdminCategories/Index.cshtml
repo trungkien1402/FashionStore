@@ -1,28 +1,18 @@
 @model List<AdminCategoryListItemViewModel>
 
 @{
-    ViewData["Title"] = "Quản lý Bộ sưu tập";
+    ViewData["Title"] = "Quản lý danh mục";
 }
 
-<!-- HEADER -->
-<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
-    <div>
-        <div class="d-flex align-items-center gap-2 mb-1">
-            <span style="font-size: 0.68rem; font-weight: 700; letter-spacing: 0.28em; color: var(--adm-gold); text-transform: uppercase;">
-                ATELIER COLLECTIONS & ARCHIVE
-            </span>
-            <span style="width: 4px; height: 4px; border-radius: 50%; background: var(--adm-gold);"></span>
-            <span class="text-muted small">@Model.Count BỘ SƯU TẬP</span>
-        </div>
-        <h2 class="fw-bold mb-0 adm-heading" style="letter-spacing: -0.02em;">Quản lý Danh mục Bộ sưu tập</h2>
-    </div>
+<header class="adm-dashboard-header mb-4">
+    <div><h1>Danh mục</h1><p class="adm-dashboard-period">@ViewBag.TotalCategories danh mục · @ViewBag.ActiveCategories đang bật · @ViewBag.InactiveCategories đang tắt</p></div>
 
     <div class="d-flex align-items-center gap-3">
         <!-- VIEW SWITCHER -->
         <div class="adm-view-switcher">
             <button type="button" class="adm-view-btn active" id="admBtnCatGrid" onclick="toggleCatView('grid')" aria-pressed="true">
                 <i class="bi bi-grid-fill"></i>
-                <span class="d-none d-sm-inline">Lookbook</span>
+                <span class="d-none d-sm-inline">Lưới ảnh</span>
             </button>
             <button type="button" class="adm-view-btn" id="admBtnCatTable" onclick="toggleCatView('table')" aria-pressed="false">
                 <i class="bi bi-list-ul"></i>
@@ -35,27 +25,35 @@
             <span>Thêm danh mục</span>
         </a>
     </div>
-</div>
+</header>
 
 <!-- FILTER BAR -->
 <div class="adm-filter-bar mb-4">
     <form asp-action="Index" method="get" class="row g-2 align-items-center">
-        <div class="col-md-5">
+        <div class="col-md-4">
             <div class="input-group">
                 <span class="input-group-text border-end-0" style="background: var(--adm-surface); border-color: var(--adm-border); color: var(--adm-ink-muted);">
                     <i class="bi bi-search"></i>
                 </span>
-                <input type="text" name="keyword" value="@ViewBag.Keyword"
+                <input type="text" name="keyword" maxlength="100" aria-label="Tên hoặc slug danh mục" value="@ViewBag.Keyword"
                        class="form-control adm-input-dark border-start-0" 
                        placeholder="Tìm kiếm danh mục, slug..." />
             </div>
         </div>
 
-        <div class="col-md-4">
-            <select name="status" class="form-select adm-input-dark">
+        <div class="col-md-3">
+            <select name="status" aria-label="Trạng thái danh mục" class="form-select adm-input-dark">
                 <option value="">Tất cả trạng thái hiển thị</option>
-                <option value="active" selected="@(ViewBag.Status == "active")">Đang hiển thị trên Shop</option>
-                <option value="inactive" selected="@(ViewBag.Status == "inactive")">Đang ẩn</option>
+                <option value="active" selected="@(ViewBag.Status == "active")">Đang bật</option>
+                <option value="inactive" selected="@(ViewBag.Status == "inactive")">Đang tắt</option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <select name="sort" class="form-select adm-input-dark" aria-label="Sắp xếp danh mục">
+                <option value="">Tên A–Z</option>
+                <option value="name-desc" selected="@(ViewBag.Sort == "name-desc")">Tên Z–A</option>
+                <option value="products" selected="@(ViewBag.Sort == "products")">Nhiều sản phẩm nhất</option>
             </select>
         </div>
 
@@ -71,12 +69,14 @@
     </form>
 </div>
 
+<p class="small text-muted">@ViewBag.ResultCount danh mục khớp bộ lọc</p>
+
 @if (!Model.Any())
 {
     <div class="adm-card text-center py-5">
         <i class="bi bi-tags fs-1 text-muted d-block mb-3"></i>
-        <h5 class="fw-bold adm-heading">Chưa có danh mục nào phù hợp</h5>
-        <p class="text-muted small">Thử thay đổi điều kiện lọc hoặc tạo một danh mục bộ sưu tập mới.</p>
+        <h5 class="fw-bold adm-heading">@(ViewBag.TotalCategories == 0 ? "Chưa có danh mục" : "Không có danh mục khớp bộ lọc")</h5>
+        <p class="text-muted small">Thử thay đổi điều kiện lọc hoặc tạo một danh mục mới.</p>
         <a asp-action="Create" class="btn adm-btn-atelier mt-2">
             <i class="bi bi-plus-lg me-1"></i> Thêm danh mục mới
         </a>
@@ -94,7 +94,7 @@ else
                 <div class="adm-lookbook-banner" style="position: relative; overflow: hidden; height: 140px; @(hasImage ? "background: #121216;" : "background: linear-gradient(135deg, rgba(179, 136, 47, 0.12) 0%, rgba(2, 132, 199, 0.08) 100%);")">
                     @if (hasImage)
                     {
-                        <img src="@item.RepresentativeImageUrl" alt="@item.Category.Name" 
+                        <img src="@item.RepresentativeImageUrl" alt="" loading="lazy"
                              style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.82; transition: transform 0.4s ease;" 
                              onerror="this.style.display='none'" />
                         <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.65) 100%);"></div>
@@ -109,11 +109,11 @@ else
                     <div class="position-absolute top-0 end-0 m-2" style="z-index: 2;">
                         @if (item.Category.IsActive)
                         {
-                            <span class="adm-pill adm-pill-emerald shadow-sm">Hiển thị</span>
+                            <span class="adm-pill adm-pill-emerald shadow-sm">Đang bật</span>
                         }
                         else
                         {
-                            <span class="adm-pill adm-pill-faint shadow-sm">Đã ẩn</span>
+                            <span class="adm-pill adm-pill-faint shadow-sm">Đang tắt</span>
                         }
                     </div>
 
@@ -131,14 +131,13 @@ else
                     <div>
                         <h5 class="fw-bold adm-heading mb-1" style="font-size: 1.05rem;">@item.Category.Name</h5>
                         <div class="font-monospace text-muted small mb-3" style="font-size: 0.75rem;">
-                            slug: @item.Category.Slug
+                            @item.Category.Slug
                         </div>
                     </div>
 
                     <div>
-                        <div class="p-2 rounded-2 mb-3 d-flex justify-content-between align-items-center" style="background: var(--adm-surface-hover); border: 1px solid var(--adm-border);">
-                            <span class="text-muted small">Sản phẩm liên kết:</span>
-                            <span class="fw-bold adm-heading">@item.ProductCount sản phẩm</span>
+                        <div class="p-2 rounded-2 mb-3" style="background: var(--adm-surface-hover); border: 1px solid var(--adm-border);">
+                            <partial name="_ProductCounts" model="item" />
                         </div>
 
                         <div class="pt-2 border-top border-secondary border-opacity-10 d-flex justify-content-between align-items-center">
@@ -154,11 +153,13 @@ else
                                     <i class="bi bi-pencil"></i>
                                 </a>
 
-                                <form asp-action="Delete" asp-route-id="@item.Category.Id" method="post" class="d-inline"
-                                      onsubmit="return confirm('Bạn có chắc chắn muốn xóa danh mục @item.Category.Name?');">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-sm btn-outline-danger py-1 px-2" style="font-size: 0.78rem;" title="Xóa">
-                                        <i class="bi bi-trash"></i>
+                                <form asp-action="ToggleActive" asp-route-id="@item.Category.Id"
+                                      asp-route-keyword="@ViewBag.Keyword" asp-route-status="@ViewBag.Status"
+                                      asp-route-sort="@ViewBag.Sort" asp-route-page="@ViewBag.Page" method="post">
+                                    <input type="hidden" name="isActive" value="@((!item.Category.IsActive).ToString())" />
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary"
+                                            aria-label="@(item.Category.IsActive ? $"Tắt danh mục {item.Category.Name}" : $"Bật danh mục {item.Category.Name}")">
+                                        @(item.Category.IsActive ? "Tắt" : "Bật")
                                     </button>
                                 </form>
                             </div>
@@ -198,18 +199,16 @@ else
                                 <span class="font-monospace text-muted small">@item.Category.Slug</span>
                             </td>
                             <td>
-                                <a asp-controller="AdminProducts" asp-action="Index" asp-route-categoryId="@item.Category.Id" class="text-decoration-none">
-                                    <strong class="adm-text-contrast">@item.ProductCount</strong> sản phẩm
-                                </a>
+                                <partial name="_ProductCounts" model="item" />
                             </td>
                             <td>
                                 @if (item.Category.IsActive)
                                 {
-                                    <span class="adm-pill adm-pill-emerald">Đang hiển thị</span>
+                                    <span class="adm-pill adm-pill-emerald">Đang bật</span>
                                 }
                                 else
                                 {
-                                    <span class="adm-pill adm-pill-faint">Đang ẩn</span>
+                                    <span class="adm-pill adm-pill-faint">Đang tắt</span>
                                 }
                             </td>
                             <td class="text-end pe-4">
@@ -224,11 +223,13 @@ else
                                         <i class="bi bi-pencil"></i>
                                     </a>
 
-                                    <form asp-action="Delete" asp-route-id="@item.Category.Id" method="post" class="d-inline"
-                                          onsubmit="return confirm('Bạn có chắc chắn muốn xóa danh mục @item.Category.Name?');">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-sm btn-outline-danger py-1 px-2" style="font-size: 0.75rem;" title="Xóa">
-                                            <i class="bi bi-trash"></i>
+                                    <form asp-action="ToggleActive" asp-route-id="@item.Category.Id"
+                                          asp-route-keyword="@ViewBag.Keyword" asp-route-status="@ViewBag.Status"
+                                          asp-route-sort="@ViewBag.Sort" asp-route-page="@ViewBag.Page" method="post">
+                                        <input type="hidden" name="isActive" value="@((!item.Category.IsActive).ToString())" />
+                                        <button type="submit" class="btn btn-sm btn-outline-secondary"
+                                                aria-label="@(item.Category.IsActive ? $"Tắt danh mục {item.Category.Name}" : $"Bật danh mục {item.Category.Name}")">
+                                            @(item.Category.IsActive ? "Tắt" : "Bật")
                                         </button>
                                     </form>
                                 </div>
@@ -239,6 +240,24 @@ else
             </table>
         </div>
     </div>
+}
+
+@if (ViewBag.PageCount > 1)
+{
+    var currentPage = (int)ViewBag.Page;
+    <nav class="d-flex align-items-center justify-content-center gap-3 mb-4" aria-label="Phân trang danh mục">
+        @if (currentPage > 1)
+        {
+            <a asp-action="Index" asp-route-keyword="@ViewBag.Keyword" asp-route-status="@ViewBag.Status"
+               asp-route-sort="@ViewBag.Sort" asp-route-page="@(currentPage - 1)" class="adm-btn-outline">Trang trước</a>
+        }
+        <span>Trang @currentPage / @ViewBag.PageCount</span>
+        @if (currentPage < ViewBag.PageCount)
+        {
+            <a asp-action="Index" asp-route-keyword="@ViewBag.Keyword" asp-route-status="@ViewBag.Status"
+               asp-route-sort="@ViewBag.Sort" asp-route-page="@(currentPage + 1)" class="adm-btn-outline">Trang sau</a>
+        }
+    </nav>
 }
 
 @section Scripts {
@@ -275,7 +294,7 @@ else
             localStorage.setItem('hnmt_adm_cat_view', mode);
         }
 
-        const savedCatMode = localStorage.getItem('hnmt_adm_cat_view') || 'grid';
+        const savedCatMode = localStorage.getItem('hnmt_adm_cat_view') || 'table';
         toggleCatView(savedCatMode);
     </script>
 }

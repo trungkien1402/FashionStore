@@ -1,3 +1,6 @@
+using FashionStore.Services;
+using System.Security.Claims;
+using FashionStore.Services.Implementations;
 ﻿using FashionStore.Data;
 using FashionStore.Models.Entities;
 using FashionStore.Models.ViewModels;
@@ -7,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FashionStore.Controllers;
 
-[Authorize(Roles = "Admin,Manager")]
+[Authorize(Roles = AccessRoles.Management)]
 public class AdminProductVariantsController : Controller
 {
     private readonly ApplicationDbContext _context;
@@ -66,7 +69,7 @@ public class AdminProductVariantsController : Controller
     public async Task<IActionResult> Create(ProductVariantViewModel model)
     {
         if (await _context.ProductVariants.AnyAsync(
-                v => v.SKU == model.SKU.Trim()))
+                v => v.SKU == (model.SKU ?? "").Trim()))
         {
             ModelState.AddModelError(nameof(model.SKU), "SKU này đã tồn tại.");
         }
@@ -83,7 +86,7 @@ public class AdminProductVariantsController : Controller
         var variant = new ProductVariant
         {
             ProductId = model.ProductId,
-            SKU = model.SKU.Trim(),
+            SKU = (model.SKU ?? "").Trim(),
             Size = model.Size.Trim(),
             Color = model.Color.Trim(),
             Price = model.Price,
@@ -91,6 +94,8 @@ public class AdminProductVariantsController : Controller
             IsActive = model.IsActive
         };
 
+        _context.StockActorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        _context.StockReason = "Tạo biến thể " + variant.SKU;
         _context.ProductVariants.Add(variant);
         await _context.SaveChangesAsync();
 
@@ -135,7 +140,7 @@ public class AdminProductVariantsController : Controller
             return NotFound();
 
         if (await _context.ProductVariants.AnyAsync(v =>
-                v.SKU == model.SKU.Trim() && v.Id != model.Id))
+                v.SKU == (model.SKU ?? "").Trim() && v.Id != model.Id))
         {
             ModelState.AddModelError(nameof(model.SKU), "SKU này đã tồn tại.");
         }
@@ -143,11 +148,13 @@ public class AdminProductVariantsController : Controller
         if (!ModelState.IsValid)
             return View(model);
 
-        variant.SKU = model.SKU.Trim();
+        variant.SKU = (model.SKU ?? "").Trim();
         variant.Size = model.Size.Trim();
         variant.Color = model.Color.Trim();
+        if (variant.Price != model.Price)
+            SalesRules.Audit(_context, User.FindFirstValue(ClaimTypes.NameIdentifier),
+                "VariantPrice", variant.Id.ToString(), $"{variant.Price} → {model.Price}");
         variant.Price = model.Price;
-        variant.StockQuantity = model.StockQuantity;
         variant.IsActive = model.IsActive;
 
         await _context.SaveChangesAsync();
