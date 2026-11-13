@@ -231,6 +231,9 @@ namespace FashionStore.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("CheckoutRequestId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -294,7 +297,9 @@ namespace FashionStore.Migrations
                     b.HasIndex("OrderCode")
                         .IsUnique();
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId", "CheckoutRequestId")
+                        .IsUnique()
+                        .HasFilter("[CheckoutRequestId] IS NOT NULL");
 
                     b.ToTable("Orders");
                 });

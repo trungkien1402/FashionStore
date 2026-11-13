@@ -31,6 +31,7 @@
 
 <form id="checkoutForm" asp-controller="Orders" asp-action="Checkout" method="post" class="hnmt-checkout-layout">
     @Html.AntiForgeryToken()
+    <input asp-for="CheckoutRequestId" type="hidden" />
 
     <!-- CỘT TRÁI: FORM ĐIỀN THÔNG TIN & PHƯƠNG THỨC THANH TOÁN -->
     <div class="hnmt-checkout-main">
@@ -58,8 +59,26 @@
             </div>
 
             <div class="hnmt-form-group mb-0">
+                <label asp-for="ProvinceCode" class="hnmt-form-label">Tỉnh / Thành phố *</label>
+                <div class="checkout-select">
+                    <select asp-for="ProvinceCode" class="hnmt-form-control" required
+                            data-selected="@Model.ProvinceCode" data-address-url="@Url.Content("~/js/vietnam-addresses.json")">
+                        <option value="">Chọn tỉnh/thành</option>
+                    </select>
+                    <span class="checkout-chevron" aria-hidden="true"></span>
+                </div>
+                <span asp-validation-for="ProvinceCode" class="hnmt-form-error"></span>
+                <label asp-for="WardCode" class="hnmt-form-label">Xã / Phường / Đặc khu *</label>
+                <div class="checkout-select">
+                    <select asp-for="WardCode" class="hnmt-form-control" required data-selected="@Model.WardCode">
+                        <option value="">Chọn xã/phường</option>
+                    </select>
+                    <span class="checkout-chevron" aria-hidden="true"></span>
+                </div>
+                <span asp-validation-for="WardCode" class="hnmt-form-error"></span>
+                <p id="checkoutAddressStatus" class="hnmt-form-error" role="status"></p>
                 <label asp-for="Address" class="hnmt-form-label">Địa chỉ nhận hàng chi tiết <span class="text-danger">*</span></label>
-                <textarea asp-for="Address" class="hnmt-form-control" autocomplete="shipping street-address" rows="3" placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố..." required maxlength="300"></textarea>
+                <textarea asp-for="Address" class="hnmt-form-control" autocomplete="shipping street-address" rows="3" placeholder="Số nhà, tên đường hoặc thôn/ấp, căn hộ (nếu có)" required minlength="5" maxlength="180"></textarea>
                 <span asp-validation-for="Address" class="hnmt-form-error"></span>
             </div>
         </div>
@@ -100,12 +119,27 @@
 
             <span asp-validation-for="PaymentMethod" class="hnmt-form-error"></span>
 
-        <div class="hnmt-form-group">
-            <label asp-for="VoucherCode">Mã khuyến mãi</label>
-            <input class="hnmt-input" asp-for="VoucherCode" maxlength="40" autocomplete="off" />
-            <span class="hnmt-form-error" asp-validation-for="VoucherCode"></span>
-            <small>Đơn hàng sẽ áp dụng mức giảm hợp lệ trước khi tạo thanh toán.</small>
-        </div>
+            <div class="hnmt-form-group checkout-voucher">
+                @if (Model.StudioVoucherCode is { } studioCode)
+                {
+                    <div class="checkout-studio-reward">
+                        <i class="bi bi-gift" aria-hidden="true"></i>
+                        <div><strong>Voucher từ Studio</strong><small>@studioCode · Giảm @Model.StudioVoucherPercent.ToString("0.##")%</small></div>
+                        <button type="button" id="chooseStudioVoucher" data-code="@studioCode">Chọn mã</button>
+                    </div>
+                }
+                else
+                {
+                    <p class="checkout-studio-empty">Chưa có voucher Studio để chọn. <a asp-controller="StyleGame" asp-action="Index">Chơi nhận mã</a></p>
+                }
+                <label asp-for="VoucherCode" class="hnmt-form-label">Mã khuyến mãi</label>
+                <div class="checkout-voucher-controls">
+                    <input class="hnmt-form-control" asp-for="VoucherCode" maxlength="40" autocomplete="off" placeholder="Nhập mã hoặc dùng mã từ Studio" />
+                    <button type="button" id="applyCheckoutVoucher" data-url="@Url.Action("PreviewVoucher")">Áp dụng</button>
+                </div>
+                <span class="hnmt-form-error" asp-validation-for="VoucherCode"></span>
+                <p id="checkoutVoucherStatus" role="status"></p>
+            </div>
 
             <!-- NÚT XÁC NHẬN ĐẶT HÀNG (CHUẨN NÚT PILL ĐEN CỦA TRANG CHỦ) -->
             <button id="placeOrderButton" class="hnmt-btn-submit-order" type="submit">
@@ -162,13 +196,16 @@
             <div class="hnmt-summary-calc">
                 <div class="hnmt-calc-row">
                     <span class="hnmt-calc-label">Tạm tính tiền hàng</span>
-                    <span class="hnmt-calc-val">@Money(Model.SubTotal)</span>
+                    <span id="checkoutSubtotal" class="hnmt-calc-val">@Money(Model.SubTotal)</span>
                 </div>
                 <div class="hnmt-calc-row">
                     <span class="hnmt-calc-label">Phí vận chuyển</span>
                     <span class="hnmt-calc-val">
                         @(Model.ShippingFee > 0 ? Money(Model.ShippingFee) : "Miễn phí")
                     </span>
+                </div>
+                <div class="hnmt-calc-row" id="checkoutDiscountRow" hidden>
+                    <span class="hnmt-calc-label">Giảm giá</span><span id="checkoutDiscount" class="hnmt-calc-val"></span>
                 </div>
             </div>
 
@@ -180,7 +217,7 @@
                     <div class="hnmt-total-label">TỔNG THANH TOÁN</div>
                     <div class="hnmt-vat-note">Đã bao gồm thuế VAT</div>
                 </div>
-                <div class="hnmt-total-amount">@Money(Model.TotalAmount)</div>
+                <div class="hnmt-total-amount"><span id="checkoutTotal">@Money(Model.TotalAmount)</span></div>
             </div>
 
             <!-- LINK QUAY LẠI CHỈNH SỬA GIỎ HÀNG -->
@@ -208,3 +245,21 @@
     <partial name="_ValidationScriptsPartial" />
     <script src="~/js/checkout.js" asp-append-version="true"></script>
 }
+
+<style>
+    .checkout-voucher-controls { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .checkout-voucher-controls input { flex: 1 1 10rem; min-width: 0; }
+    .checkout-voucher-controls button { border: 1px solid #152034; border-radius: .65rem; background: #152034; color: white; padding: .55rem .9rem; cursor: pointer; }
+    #checkoutDiscountRow[hidden] { display: none; }
+    #checkoutVoucherStatus:empty, #checkoutAddressStatus:empty { display: none; }
+    .checkout-select { position: relative; margin-bottom: .75rem; }
+    .checkout-select select { appearance: none; padding-inline-end: 3rem; margin-bottom: 0; }
+    .checkout-chevron { position: absolute; right: .85rem; top: 50%; transform: translateY(-50%); width: 1.65rem; height: 1.65rem; display: grid; place-items: center; border-radius: .45rem; background: #edf1f7; color: #33435b; pointer-events: none; }
+    .checkout-chevron::before { content: ""; width: .42rem; height: .42rem; border: solid currentColor; border-width: 0 1.5px 1.5px 0; transform: translateY(-.1rem) rotate(45deg); }
+    .checkout-studio-reward { display: flex; align-items: center; flex-wrap: wrap; gap: .65rem; padding: .75rem; margin-bottom: .8rem; border: 1px solid #e5d8f0; border-radius: .75rem; background: #f9f4fc; color: #382044; }
+    .checkout-studio-reward > i { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: .5rem; background: #eddef6; }
+    .checkout-studio-reward > div { flex: 1 1 8rem; overflow-wrap: anywhere; }
+    .checkout-studio-reward small { display: block; }
+    .checkout-studio-reward button { background: #fff; border: 1px solid #bda4cb; border-radius: .55rem; color: inherit; padding: .4rem .7rem; cursor: pointer; }
+    .checkout-studio-empty { font-size: .85rem; margin-bottom: .65rem; }
+</style>

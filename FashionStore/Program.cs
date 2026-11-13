@@ -68,6 +68,7 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.Configure<VietQrOptions>(builder.Configuration.GetSection("VietQR"));
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<AdminReportService>();
+builder.Services.AddSingleton<VietnamAddresses>();
 
 var app = builder.Build();
 

@@ -14,10 +14,14 @@ public static class SalesRules
 
     public static async Task<(Voucher? Voucher, decimal Discount)> ApplyVoucherAsync(
         ApplicationDbContext db, string code, string userId, decimal subtotal,
-        IReadOnlyDictionary<int, int> quantities, IEnumerable<ProductVariant> variants, int? gameScore = null)
+        IReadOnlyDictionary<int, int> quantities, IEnumerable<ProductVariant> variants, int? gameScore = null, bool reserve = false)
     {
         var now = DateTime.UtcNow;
-        var voucher = await db.Vouchers.SingleOrDefaultAsync(v => v.Code == code &&
+        // Checkout holds a write-intent lock on this voucher until the redemption commits.
+        var vouchers = reserve
+            ? db.Vouchers.FromSqlInterpolated($"SELECT * FROM [Vouchers] WITH (UPDLOCK, ROWLOCK) WHERE [Code] = {code}")
+            : db.Vouchers.AsNoTracking().Where(v => v.Code == code);
+        var voucher = await vouchers.AsNoTracking().SingleOrDefaultAsync(v =>
             v.IsActive && v.StartsAt <= now && v.EndsAt > now);
         if (voucher == null || subtotal < voucher.MinimumOrder ||
             voucher.GameMinimumScore is int minimum && (gameScore == null || gameScore < minimum))
