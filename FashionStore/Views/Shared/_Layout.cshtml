@@ -36,6 +36,11 @@
     <link rel="stylesheet" href="~/css/sneaker-vault.css?v=uniform_font_v43" asp-append-version="true" />
 
     @await RenderSectionAsync("Styles", required: false)
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <link rel="stylesheet" href="~/css/notification-bell.css" asp-append-version="true" />
+        <script src="~/js/notification-bell.js" asp-append-version="true" defer></script>
+    }
 </head>
 
 <body>
@@ -89,6 +94,8 @@
                             @cartCount
                         </span>
                     </button>
+
+                <partial name="_NotificationBell" view-data='@new ViewDataDictionary(ViewData) { { "BellButtonClass", "urbn-nav-icon" } }' />
 
                     <!-- User Account Dropdown -->
                     <partial name="_AccountNavMenu" view-data='@new ViewDataDictionary(ViewData) { { "IsAtelier", false } }' />

@@ -1,3 +1,4 @@
+using FashionStore.Services;
 
 using FashionStore.Data;
 using FashionStore.Services.Interfaces;
@@ -11,7 +12,7 @@ using System.Security.Claims;
 
 namespace FashionStore.Controllers;
 
-[Authorize(Roles = "Admin,Manager,Staff")]
+[Authorize(Roles = AccessRoles.BackOffice)]
 public class AdminOrdersController : Controller
 {
     private readonly ApplicationDbContext _context;
@@ -291,7 +292,7 @@ public class AdminOrdersController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = "Admin,Manager")]
+    [Authorize(Roles = AccessRoles.Management)]
     public async Task<IActionResult> UpdatePaymentStatus(int id, PaymentStatus newStatus)
     {
         if (!ModelState.IsValid || !Enum.IsDefined(newStatus))
@@ -315,7 +316,7 @@ public class AdminOrdersController : Controller
 
     [HttpGet]
     [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-    [Authorize(Roles = "Admin,Manager")]
+    [Authorize(Roles = AccessRoles.Management)]
     public async Task<IActionResult> PaymentHistory(int id)
     {
         if (!await _context.Orders.AnyAsync(o => o.Id == id)) return NotFound();

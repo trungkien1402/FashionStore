@@ -1,3 +1,4 @@
+using FashionStore.Services;
 using System.Security.Claims;
 using FashionStore.Services.Implementations;
 using FashionStore.Data;
@@ -9,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FashionStore.Controllers;
 
-[Authorize(Roles = "Admin,Manager,Staff")]
+[Authorize(Roles = AccessRoles.BackOffice)]
 public class AdminProductsController : Controller
 {
     private readonly ApplicationDbContext _context;

@@ -567,20 +567,20 @@ public class OrdersController : Controller
             return RedirectToAction("Index", "Home");
         }
 
-        var cleanCode = orderCode.Trim().Replace("#", "").Replace("FS", "", StringComparison.OrdinalIgnoreCase);
-        if (int.TryParse(cleanCode, out int orderId))
-        {
-            var exists = await _context.Orders.AnyAsync(o => o.Id == orderId);
-            if (exists)
-            {
-                if (User.Identity?.IsAuthenticated == true)
-                {
-                    return RedirectToAction(nameof(Details), new { id = orderId });
-                }
-                TempData["Success"] = $"Đơn hàng #{orderId} tồn tại trong hệ thống. Vui lòng đăng nhập để xem chi tiết đầy đủ.";
-                return RedirectToAction("Login", "Account");
-            }
-        }
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId))
+            return Challenge();
+
+        var code = orderCode.Trim().TrimStart('#');
+        var numericCode = code.StartsWith("FS", StringComparison.OrdinalIgnoreCase) ? code[2..] : code;
+        var hasId = int.TryParse(numericCode, out var orderId);
+        var id = await _context.Orders.AsNoTracking()
+            .Where(o => o.UserId == userId && (o.OrderCode == code || (hasId && o.Id == orderId)))
+            .OrderByDescending(o => o.OrderCode == code)
+            .Select(o => (int?)o.Id)
+            .FirstOrDefaultAsync();
+        if (id.HasValue)
+            return RedirectToAction(nameof(Details), new { id });
 
         TempData["Error"] = $"Không tìm thấy đơn hàng với mã '{orderCode}'.";
         return RedirectToAction("Index", "Home");

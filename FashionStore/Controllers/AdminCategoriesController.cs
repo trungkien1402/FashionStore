@@ -1,3 +1,4 @@
+using FashionStore.Services;
 
 using System.Globalization;
 using System.Text;
@@ -10,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FashionStore.Controllers;
 
-[Authorize(Roles = "Admin,Manager")]
+[Authorize(Roles = AccessRoles.Management)]
 public class AdminCategoriesController : Controller
 {
     private readonly ApplicationDbContext _context;

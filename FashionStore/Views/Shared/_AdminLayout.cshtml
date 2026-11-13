@@ -16,6 +16,11 @@
     <link rel="stylesheet" href="~/css/admin-atelier.css" asp-append-version="true" />
 
     @await RenderSectionAsync("Styles", required: false)
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <link rel="stylesheet" href="~/css/notification-bell.css" asp-append-version="true" />
+        <script src="~/js/notification-bell.js" asp-append-version="true" defer></script>
+    }
 </head>
 
 <body class="adm-body">
@@ -58,7 +63,7 @@
                 <span>Sản phẩm</span>
             </a>
 
-            @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+            @if (FashionStore.Services.AccessRoles.CanManage(User))
             {
                 <a asp-controller="AdminCategories" asp-action="Index"
                    class="adm-nav-link @(currentController == "AdminCategories" ? "active" : "")">
@@ -73,7 +78,7 @@
                 <span>Vận chuyển</span>
             </a>
 
-            @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+            @if (FashionStore.Services.AccessRoles.CanManage(User))
             {
                 <div class="adm-nav-label">Kinh doanh</div>
                 <a asp-controller="AdminOperations" asp-action="Alerts" class="adm-nav-link">
@@ -171,6 +176,8 @@
             </div>
 
             <div class="d-flex align-items-center gap-3">
+                <partial name="_NotificationBell" view-data='@new ViewDataDictionary(ViewData) { { "BellButtonClass", "adm-btn-outline" } }' />
+
                 <!-- THEME SWITCHER (SÁNG / TỐI) -->
                 <button type="button" class="btn adm-btn-outline py-1 px-3" id="admThemeToggle" title="Chuyển đổi giao diện Sáng / Tối">
                     <i class="bi bi-sun-fill text-warning" id="admThemeIcon"></i>

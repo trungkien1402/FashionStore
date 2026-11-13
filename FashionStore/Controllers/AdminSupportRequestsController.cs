@@ -1,3 +1,4 @@
+using FashionStore.Services;
 using FashionStore.Data;
 using FashionStore.Models.Entities;
 using FashionStore.Models.Enums;
@@ -7,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FashionStore.Controllers;
 
-[Authorize(Roles = "Admin,Manager,Staff")]
+[Authorize(Roles = AccessRoles.BackOffice)]
 public class AdminSupportRequestsController : Controller
 {
     private readonly ApplicationDbContext _context;

@@ -1,3 +1,4 @@
+using FashionStore.Services;
 using System.Security.Claims;
 using FashionStore.Data;
 using FashionStore.Models.Entities;
@@ -9,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FashionStore.Controllers;
 
-[Authorize(Roles = "Admin,Manager")]
+[Authorize(Roles = AccessRoles.Management)]
 [AutoValidateAntiforgeryToken]
 public partial class AdminOperationsController(ApplicationDbContext db) : Controller
 {

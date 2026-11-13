@@ -1,10 +1,11 @@
+using FashionStore.Services;
 using FashionStore.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FashionStore.Controllers;
 
-[Authorize(Roles = "Admin,Manager,Staff")]
+[Authorize(Roles = AccessRoles.BackOffice)]
 public class AdminController(AdminReportService reports, ILogger<AdminController> logger) : Controller
 {
     [HttpGet]
