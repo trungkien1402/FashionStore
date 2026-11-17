@@ -81,9 +81,16 @@ public class ApplicationDbContext
         return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
 
+    public DbSet<SupportConversation> SupportConversations => Set<SupportConversation>();
+    public DbSet<SupportChatMessage> SupportChatMessages => Set<SupportChatMessage>();
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+        builder.Entity<SupportConversation>().HasIndex(c => c.CustomerId).IsUnique();
+        builder.Entity<SupportConversation>().HasIndex(c => new { c.IsClosed, c.NeedsReply, c.UpdatedAt });
+        builder.Entity<SupportChatMessage>().HasIndex(m => new { m.ConversationId, m.Id });
+
 
         builder.Entity<FeaturedProduct>().HasOne(f => f.Product).WithMany().HasForeignKey(f => f.ProductId);
         builder.Entity<FeaturedProduct>().HasIndex(f => f.ProductId).IsUnique();

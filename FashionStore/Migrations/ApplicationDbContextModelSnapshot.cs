@@ -785,6 +785,72 @@ namespace FashionStore.Migrations
                     b.ToTable("StoreSettings");
                 });
 
+            modelBuilder.Entity("FashionStore.Models.Entities.SupportChatMessage", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("AuthorId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ConversationId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("FromStaff")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConversationId", "Id");
+
+                    b.ToTable("SupportChatMessages");
+                });
+
+            modelBuilder.Entity("FashionStore.Models.Entities.SupportConversation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CustomerId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("IsClosed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("NeedsReply")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId")
+                        .IsUnique();
+
+                    b.HasIndex("IsClosed", "NeedsReply", "UpdatedAt");
+
+                    b.ToTable("SupportConversations");
+                });
+
             modelBuilder.Entity("FashionStore.Models.Entities.SupportRequest", b =>
                 {
                     b.Property<int>("Id")
@@ -1260,6 +1326,28 @@ namespace FashionStore.Migrations
                     b.Navigation("ProductVariant");
                 });
 
+            modelBuilder.Entity("FashionStore.Models.Entities.SupportChatMessage", b =>
+                {
+                    b.HasOne("FashionStore.Models.Entities.SupportConversation", "Conversation")
+                        .WithMany("Messages")
+                        .HasForeignKey("ConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Conversation");
+                });
+
+            modelBuilder.Entity("FashionStore.Models.Entities.SupportConversation", b =>
+                {
+                    b.HasOne("FashionStore.Models.Entities.ApplicationUser", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
             modelBuilder.Entity("FashionStore.Models.Entities.SupportRequest", b =>
                 {
                     b.HasOne("FashionStore.Models.Entities.ApplicationUser", "User")
@@ -1365,6 +1453,11 @@ namespace FashionStore.Migrations
                     b.Navigation("Histories");
 
                     b.Navigation("Locations");
+                });
+
+            modelBuilder.Entity("FashionStore.Models.Entities.SupportConversation", b =>
+                {
+                    b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("FashionStore.Models.Entities.Voucher", b =>
