@@ -14,7 +14,7 @@ public static class ShowroomCatalog
     private record Collection(string Id, string Title, int Order);
     private record Metadata(string[][] Colors, Photos[] Photos, string[] Sizes, JsonObject Details, Collection? Collection);
     private record Entry(string Audience, string Kind, string Slug, string Name, string Description,
-        decimal Price, int Order, Metadata Metadata, int[] Stock);
+        decimal Price, int Order, Metadata Metadata, int[] Stock, string? AdminCategory = null);
 
     private static readonly string[] Audiences = ["women", "girls", "men", "boy"];
 
@@ -38,6 +38,15 @@ public static class ShowroomCatalog
         ["giay"] = ("showroom-giay", "Giày showroom")
     };
 
+    private static readonly Dictionary<string, (string Kind, string Name)> AdminCategories = new()
+    {
+        ["ao-khoac-varsity"] = ("ao", "Áo Khoác & Outerwear"),
+        ["ao-thun-streetwear"] = ("ao", "Áo Thun & Graphic Tees"),
+        ["hoodie-sweater"] = ("ao", "Hoodies & Sweaters"),
+        ["quan-baggy-cargo"] = ("quan", "Quần Streetwear & Cargo"),
+        ["giay-sneaker-streetwear"] = ("giay", "Sneakers & Streetwear Shoes")
+    };
+
     public static async Task<(int Added, int Removed)> ImportAsync(ApplicationDbContext db, bool replaceLegacy = false)
     {
         using var source = typeof(ShowroomCatalog).Assembly.GetManifestResourceStream("FashionStore.Data.showroom-catalog.json")
@@ -46,6 +55,7 @@ public static class ShowroomCatalog
             ?? throw new InvalidOperationException("Danh mục showroom trống.");
         if (entries.Length == 0 || entries.Select(item => item.Slug).Distinct(StringComparer.OrdinalIgnoreCase).Count() != entries.Length ||
             entries.Any(item => !Audiences.Contains(item.Audience) || !CategoryByKind.ContainsKey(item.Kind) ||
+                (item.AdminCategory != null && (!AdminCategories.TryGetValue(item.AdminCategory, out var admin) || admin.Kind != item.Kind)) ||
                 item.Metadata.Colors.Length == 0 || item.Metadata.Colors.Length != item.Metadata.Photos.Length ||
                 item.Metadata.Sizes.Length == 0 || item.Metadata.Sizes.Length != item.Stock.Length || item.Price <= 0 ||
                 item.Metadata.Photos.Any(photo => string.IsNullOrWhiteSpace(photo.Front)) ||
@@ -56,18 +66,37 @@ public static class ShowroomCatalog
 
         await using var transaction = await db.Database.BeginTransactionAsync(IsolationLevel.Serializable);
         var productSlugs = (await db.Products.Select(p => p.Slug).ToListAsync()).ToHashSet(StringComparer.OrdinalIgnoreCase);
-        var metadataUpdates = entries.Where(entry => IsLookbookOnly(entry.Metadata) ||
+        var categories = await db.Categories.ToListAsync();
+        Category ResolveCategory(Entry entry)
+        {
+            var (slug, name) = entry.AdminCategory is { } key
+                ? (key, AdminCategories[key].Name)
+                : CategoryByKind[entry.Kind];
+            var category = categories.FirstOrDefault(item => item.Slug == slug);
+            if (category != null) return category;
+            category = new Category { Slug = slug, Name = name };
+            categories.Add(category);
+            return category;
+        }
+
+        var metadataUpdates = entries.Where(entry => entry.AdminCategory != null || IsLookbookOnly(entry.Metadata) ||
                 (entry.Kind == "giay" && !string.IsNullOrWhiteSpace(entry.Metadata.Photos[0].Pair)))
             .ToDictionary(entry => entry.Slug, StringComparer.OrdinalIgnoreCase);
         var updateSlugs = metadataUpdates.Keys.ToArray();
         var existingProducts = await db.Products.Where(product =>
-            updateSlugs.Contains(product.Slug) && product.ShowroomMetadata != null).ToListAsync();
+            updateSlugs.Contains(product.Slug) && product.ShowroomMetadata != null)
+            .Include(product => product.Category).ToListAsync();
         foreach (var product in existingProducts)
         {
             var metadata = JsonSerializer.Deserialize<Metadata>(product.ShowroomMetadata!, JsonOptions);
             if (metadata == null) continue;
 
             var entry = metadataUpdates[product.Slug];
+            if (entry.AdminCategory != null && product.Category.Slug == CategoryByKind[entry.Kind].Slug)
+            {
+                product.Category = ResolveCategory(entry);
+            }
+
             var changed = false;
             if (IsLookbookOnly(entry.Metadata) && !IsLookbookOnly(metadata))
             {
@@ -88,18 +117,9 @@ public static class ShowroomCatalog
             }
         }
 
-        var categories = await db.Categories.ToListAsync();
         int added = 0;
         foreach (var entry in entries.Where(entry => productSlugs.Add(entry.Slug)))
         {
-            var categoryInfo = CategoryByKind[entry.Kind];
-            var category = categories.FirstOrDefault(item => item.Slug == categoryInfo.Slug);
-            if (category == null)
-            {
-                category = new Category { Slug = categoryInfo.Slug, Name = categoryInfo.Name };
-                categories.Add(category);
-            }
-
             var product = new Product
             {
                 Name = entry.Name,
@@ -107,7 +127,7 @@ public static class ShowroomCatalog
                 Description = entry.Description,
                 Price = entry.Price,
                 ImageUrl = entry.Metadata.Photos[0].Front,
-                Category = category,
+                Category = ResolveCategory(entry),
                 ShowroomAudience = entry.Audience,
                 ShowroomKind = entry.Kind,
                 ShowroomSortOrder = entry.Order,

@@ -274,8 +274,8 @@
 
         const capTitleEl = $('#captionTitle');
         const capDetailEl = $('#captionDetail');
-        if (capTitleEl && currentRack.captionHeading) capTitleEl.textContent = currentRack.captionHeading;
-        if (capDetailEl && currentRack.captionDetail) capDetailEl.textContent = currentRack.captionDetail;
+        if (capTitleEl) capTitleEl.textContent = currentRack.captionHeading || '';
+        if (capDetailEl) capDetailEl.textContent = currentRack.captionDetail || '';
 
         // Quản lý hiển thị nút chuyển sào: Hiện khi số sào > 1, ẩn khi chỉ có 1 sào
         const prevRackBtn = $('#rackPrevBtn');
@@ -511,7 +511,7 @@
 
     // Chọn và phóng to chi tiết một món đồ cụ thể
     function selectProduct(category, slugOrIdx) {
-        const audience = window.HNMTChilePortal?.getAudience?.() || 'men';
+        const audience = window.HNMTChilePortal?.getAudience?.() || currentAudience;
         if (currentAudience !== audience || (category && currentCategory !== category)) {
             openClothingRail(category || currentCategory, audience);
         } else {
@@ -554,7 +554,8 @@
         }
 
         const catalog = getAllProducts(currentCategory, currentAudience);
-        filteredList = filteredList.filter(product => catalog.some(item => item.slug === product.slug));
+        const slugs = new Set(filteredList.map(product => product.slug));
+        filteredList = catalog.filter(item => slugs.has(item.slug));
         isFiltered = true;
         activeFilterLabel = filterLabel;
 
@@ -623,6 +624,7 @@
         applyFilter,
         resetFilter,
         getCategory: () => currentCategory,
+        getAudience: () => currentAudience,
         setCategory: (cat) => { openClothingRail(cat); },
         getAllProducts,
         SHIRT_RACKS: DEFAULT_SHIRT_RACKS,
@@ -635,16 +637,15 @@
     // 6. KHỞI TẠO EVENT LISTENERS & DOM
     // ==========================================================================
     function init() {
-        try {
-            const urlParams = new URLSearchParams(window.location.search);
-            const catParam = urlParams.get('category') || urlParams.get('cat') || urlParams.get('type');
-            if (catParam === 'quan') {
-                currentCategory = 'quan';
-                currentRacks = DEFAULT_PANTS_RACKS;
-                currentRackIdx = 0;
-                products = currentRacks[0]?.products || [];
-            }
-        } catch (e) {}
+        const standalone = document.querySelector('.hnmt-clothing-rail-wrap.is-standalone');
+        if (standalone) {
+            const params = new URLSearchParams(window.location.search);
+            const kind = params.get('category') || params.get('cat') || params.get('type');
+            const audience = params.get('audience');
+            currentCategory = kind === 'quan' ? 'quan' : 'ao';
+            if (Object.hasOwn(audienceClothing, audience)) currentAudience = audience;
+            currentRacks = chunkProductsIntoRacks(getAllProducts(currentCategory, currentAudience), currentCategory);
+        }
 
         ensureSearchButton();
         setInterval(ensureSearchButton, 600);
@@ -768,14 +769,12 @@
 
         // Tự động nhận diện và áp dụng bộ lọc chuyển tiếp từ Trang Chủ
         try {
-            const pendingJson = sessionStorage.getItem('hnmt_pending_rail_filter');
+            const pendingJson = standalone && sessionStorage.getItem('hnmt_pending_rail_filter');
             if (pendingJson) {
                 sessionStorage.removeItem('hnmt_pending_rail_filter');
                 const pending = JSON.parse(pendingJson);
-                if (pending && Array.isArray(pending.filteredProducts) && pending.filteredProducts.length > 0) {
-                    setTimeout(() => {
-                        window.ClothingRail.applyFilter(pending.filteredProducts, pending.label || 'BỘ LỌC TỪ TRANG CHỦ');
-                    }, 220);
+                if (pending?.audience === currentAudience && pending.category === currentCategory && Array.isArray(pending.filteredProducts)) {
+                    applyFilter(pending.filteredProducts, pending.label || 'BỘ LỌC TỪ TRANG CHỦ');
                 }
             }
         } catch (e) {}

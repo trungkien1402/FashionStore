@@ -1,0 +1,170 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1128" height="876" viewBox="0 0 1128 876" role="img" aria-label="Sơ đồ ERD rút gọn của FashionStore">
+<defs><style>text{font-family:Segoe UI,Arial,sans-serif;fill:#172b40}.field{font-family:Consolas,monospace;font-size:15px}.badge{font-size:11px;font-weight:700}.count{font-size:13px;font-weight:700;fill:#345773}.caption{fill:#496478}</style></defs>
+<rect width="1128" height="876" fill="#f4f7fb"/>
+<text x="45" y="48" font-size="30" font-weight="700">Sơ đồ cơ sở dữ liệu FashionStore</text>
+<text x="45" y="75" font-size="15" class="caption">ERD rút gọn · SQL Server</text>
+<path d="M 335 151 H 419" fill="none" stroke="#6a8ba3" stroke-width="1.75"/>
+<text class="count" x="352" y="144">1</text>
+<text class="count" x="398" y="144">0..*</text>
+<path d="M 709 151 H 793" fill="none" stroke="#6a8ba3" stroke-width="1.75"/>
+<text class="count" x="725" y="144">1</text>
+<text class="count" x="772" y="144">0..*</text>
+<path d="M 335 402 H 419" fill="none" stroke="#6a8ba3" stroke-width="1.75"/>
+<text class="count" x="352" y="395">1</text>
+<text class="count" x="398" y="395">0..*</text>
+<path d="M 709 402 H 793" fill="none" stroke="#6a8ba3" stroke-width="1.75"/>
+<text class="count" x="725" y="395">1</text>
+<text class="count" x="772" y="395">0..*</text>
+<path d="M 938 310 V 355" fill="none" stroke="#6a8ba3" stroke-width="1.75"/>
+<text class="count" x="951" y="323">1</text>
+<text class="count" x="951" y="346">0..*</text>
+<path d="M 130 492 V 650" fill="none" stroke="#6a8ba3" stroke-width="1.75"/>
+<text class="count" x="143" y="507">1</text>
+<text class="count" x="143" y="641">0..*</text>
+<path d="M 475 561 V 600 H 255 V 650" fill="none" stroke="#6a8ba3" stroke-width="1.75"/>
+<text class="count" x="488" y="575">1</text>
+<text class="count" x="268" y="641">0..*</text>
+<path d="M 564 561 V 650" fill="none" stroke="#6a8ba3" stroke-width="1.75"/>
+<text class="count" x="577" y="575">1</text>
+<text class="count" x="577" y="641">0..*</text>
+<path d="M 655 561 V 600 H 935 V 650" fill="none" stroke="#6a8ba3" stroke-width="1.75"/>
+<text class="count" x="668" y="575">1</text>
+<text class="count" x="948" y="641">0..1</text>
+<rect x="45" y="104" width="290" height="114" rx="10" fill="#ffffff" stroke="#9ab1c5"/>
+<rect x="45" y="104" width="290" height="56" rx="10" fill="#e4eef8"/>
+<rect x="45" y="150" width="290" height="10" fill="#e4eef8"/>
+<path d="M 45 160 h 290" stroke="#b2c7d8"/>
+<text x="61" y="127" font-size="17" font-weight="700">Categories</text>
+<text x="61" y="148" font-size="13" class="caption">Danh mục</text>
+<text class="field" x="61" y="180">Id</text>
+<rect x="285" y="167" width="34" height="18" rx="4" fill="#d8eafa"/>
+<text class="badge" text-anchor="middle" x="302" y="180">PK</text>
+<text class="field" x="61" y="203">Name</text>
+<rect x="419" y="104" width="290" height="160" rx="10" fill="#ffffff" stroke="#9ab1c5"/>
+<rect x="419" y="104" width="290" height="56" rx="10" fill="#e4eef8"/>
+<rect x="419" y="150" width="290" height="10" fill="#e4eef8"/>
+<path d="M 419 160 h 290" stroke="#b2c7d8"/>
+<text x="435" y="127" font-size="17" font-weight="700">Products</text>
+<text x="435" y="148" font-size="13" class="caption">Sản phẩm</text>
+<text class="field" x="435" y="180">Id</text>
+<rect x="659" y="167" width="34" height="18" rx="4" fill="#d8eafa"/>
+<text class="badge" text-anchor="middle" x="676" y="180">PK</text>
+<text class="field" x="435" y="203">CategoryId</text>
+<rect x="659" y="190" width="34" height="18" rx="4" fill="#e4e7fb"/>
+<text class="badge" text-anchor="middle" x="676" y="203">FK</text>
+<text class="field" x="435" y="226">Name</text>
+<text class="field" x="435" y="249">Price</text>
+<rect x="793" y="104" width="290" height="206" rx="10" fill="#ffffff" stroke="#9ab1c5"/>
+<rect x="793" y="104" width="290" height="56" rx="10" fill="#e4eef8"/>
+<rect x="793" y="150" width="290" height="10" fill="#e4eef8"/>
+<path d="M 793 160 h 290" stroke="#b2c7d8"/>
+<text x="809" y="127" font-size="17" font-weight="700">ProductVariants</text>
+<text x="809" y="148" font-size="13" class="caption">Biến thể sản phẩm</text>
+<text class="field" x="809" y="180">Id</text>
+<rect x="1033" y="167" width="34" height="18" rx="4" fill="#d8eafa"/>
+<text class="badge" text-anchor="middle" x="1050" y="180">PK</text>
+<text class="field" x="809" y="203">ProductId</text>
+<rect x="1033" y="190" width="34" height="18" rx="4" fill="#e4e7fb"/>
+<text class="badge" text-anchor="middle" x="1050" y="203">FK</text>
+<text class="field" x="809" y="226">SKU</text>
+<rect x="1033" y="213" width="34" height="18" rx="4" fill="#f8edd5"/>
+<text class="badge" text-anchor="middle" x="1050" y="226">UK</text>
+<text class="field" x="809" y="249">Size</text>
+<text class="field" x="809" y="272">Color</text>
+<text class="field" x="809" y="295">StockQuantity</text>
+<rect x="45" y="355" width="290" height="137" rx="10" fill="#ffffff" stroke="#9ab1c5"/>
+<rect x="45" y="355" width="290" height="56" rx="10" fill="#e4eef8"/>
+<rect x="45" y="401" width="290" height="10" fill="#e4eef8"/>
+<path d="M 45 411 h 290" stroke="#b2c7d8"/>
+<text x="61" y="378" font-size="17" font-weight="700">AspNetUsers</text>
+<text x="61" y="399" font-size="13" class="caption">Tài khoản</text>
+<text class="field" x="61" y="431">Id</text>
+<rect x="285" y="418" width="34" height="18" rx="4" fill="#d8eafa"/>
+<text class="badge" text-anchor="middle" x="302" y="431">PK</text>
+<text class="field" x="61" y="454">FullName</text>
+<text class="field" x="61" y="477">Email</text>
+<rect x="419" y="355" width="290" height="206" rx="10" fill="#ffffff" stroke="#9ab1c5"/>
+<rect x="419" y="355" width="290" height="56" rx="10" fill="#e4eef8"/>
+<rect x="419" y="401" width="290" height="10" fill="#e4eef8"/>
+<path d="M 419 411 h 290" stroke="#b2c7d8"/>
+<text x="435" y="378" font-size="17" font-weight="700">Orders</text>
+<text x="435" y="399" font-size="13" class="caption">Đơn hàng</text>
+<text class="field" x="435" y="431">Id</text>
+<rect x="659" y="418" width="34" height="18" rx="4" fill="#d8eafa"/>
+<text class="badge" text-anchor="middle" x="676" y="431">PK</text>
+<text class="field" x="435" y="454">UserId</text>
+<rect x="659" y="441" width="34" height="18" rx="4" fill="#e4e7fb"/>
+<text class="badge" text-anchor="middle" x="676" y="454">FK</text>
+<text class="field" x="435" y="477">OrderCode</text>
+<rect x="659" y="464" width="34" height="18" rx="4" fill="#f8edd5"/>
+<text class="badge" text-anchor="middle" x="676" y="477">UK</text>
+<text class="field" x="435" y="500">Status</text>
+<text class="field" x="435" y="523">PaymentStatus</text>
+<text class="field" x="435" y="546">TotalAmount</text>
+<rect x="793" y="355" width="290" height="183" rx="10" fill="#ffffff" stroke="#9ab1c5"/>
+<rect x="793" y="355" width="290" height="56" rx="10" fill="#e4eef8"/>
+<rect x="793" y="401" width="290" height="10" fill="#e4eef8"/>
+<path d="M 793 411 h 290" stroke="#b2c7d8"/>
+<text x="809" y="378" font-size="17" font-weight="700">OrderItems</text>
+<text x="809" y="399" font-size="13" class="caption">Chi tiết đơn hàng</text>
+<text class="field" x="809" y="431">Id</text>
+<rect x="1033" y="418" width="34" height="18" rx="4" fill="#d8eafa"/>
+<text class="badge" text-anchor="middle" x="1050" y="431">PK</text>
+<text class="field" x="809" y="454">OrderId</text>
+<rect x="1033" y="441" width="34" height="18" rx="4" fill="#e4e7fb"/>
+<text class="badge" text-anchor="middle" x="1050" y="454">FK</text>
+<text class="field" x="809" y="477">ProductVariantId</text>
+<rect x="1033" y="464" width="34" height="18" rx="4" fill="#e4e7fb"/>
+<text class="badge" text-anchor="middle" x="1050" y="477">FK</text>
+<text class="field" x="809" y="500">Quantity</text>
+<text class="field" x="809" y="523">UnitPrice</text>
+<rect x="45" y="650" width="290" height="183" rx="10" fill="#ffffff" stroke="#9ab1c5"/>
+<rect x="45" y="650" width="290" height="56" rx="10" fill="#e4eef8"/>
+<rect x="45" y="696" width="290" height="10" fill="#e4eef8"/>
+<path d="M 45 706 h 290" stroke="#b2c7d8"/>
+<text x="61" y="673" font-size="17" font-weight="700">Shipments</text>
+<text x="61" y="694" font-size="13" class="caption">Giao hàng</text>
+<text class="field" x="61" y="726">Id</text>
+<rect x="285" y="713" width="34" height="18" rx="4" fill="#d8eafa"/>
+<text class="badge" text-anchor="middle" x="302" y="726">PK</text>
+<text class="field" x="61" y="749">OrderId</text>
+<rect x="285" y="736" width="34" height="18" rx="4" fill="#e4e7fb"/>
+<text class="badge" text-anchor="middle" x="302" y="749">FK</text>
+<text class="field" x="61" y="772">ShipperId</text>
+<rect x="285" y="759" width="34" height="18" rx="4" fill="#e4e7fb"/>
+<text class="badge" text-anchor="middle" x="302" y="772">FK</text>
+<text class="field" x="61" y="795">TrackingCode</text>
+<rect x="285" y="782" width="34" height="18" rx="4" fill="#f8edd5"/>
+<text class="badge" text-anchor="middle" x="302" y="795">UK</text>
+<text class="field" x="61" y="818">Status</text>
+<rect x="419" y="650" width="290" height="183" rx="10" fill="#ffffff" stroke="#9ab1c5"/>
+<rect x="419" y="650" width="290" height="56" rx="10" fill="#e4eef8"/>
+<rect x="419" y="696" width="290" height="10" fill="#e4eef8"/>
+<path d="M 419 706 h 290" stroke="#b2c7d8"/>
+<text x="435" y="673" font-size="17" font-weight="700">PaymentHistories</text>
+<text x="435" y="694" font-size="13" class="caption">Lịch sử thanh toán</text>
+<text class="field" x="435" y="726">Id</text>
+<rect x="659" y="713" width="34" height="18" rx="4" fill="#d8eafa"/>
+<text class="badge" text-anchor="middle" x="676" y="726">PK</text>
+<text class="field" x="435" y="749">OrderId</text>
+<rect x="659" y="736" width="34" height="18" rx="4" fill="#e4e7fb"/>
+<text class="badge" text-anchor="middle" x="676" y="749">FK</text>
+<text class="field" x="435" y="772">Event</text>
+<text class="field" x="435" y="795">Amount</text>
+<text class="field" x="435" y="818">NewStatus</text>
+<rect x="793" y="650" width="290" height="160" rx="10" fill="#ffffff" stroke="#9ab1c5"/>
+<rect x="793" y="650" width="290" height="56" rx="10" fill="#e4eef8"/>
+<rect x="793" y="696" width="290" height="10" fill="#e4eef8"/>
+<path d="M 793 706 h 290" stroke="#b2c7d8"/>
+<text x="809" y="673" font-size="17" font-weight="700">MerchandiseReturns</text>
+<text x="809" y="694" font-size="13" class="caption">Đổi trả</text>
+<text class="field" x="809" y="726">Id</text>
+<rect x="1033" y="713" width="34" height="18" rx="4" fill="#d8eafa"/>
+<text class="badge" text-anchor="middle" x="1050" y="726">PK</text>
+<text class="field" x="809" y="749">OrderId</text>
+<rect x="1033" y="736" width="34" height="18" rx="4" fill="#e4e7fb"/>
+<text class="badge" text-anchor="middle" x="1050" y="749">FK</text>
+<text class="field" x="809" y="772">State</text>
+<text class="field" x="809" y="795">RefundAmount</text>
+<text x="45" y="854" font-size="13" class="caption">PK: khóa chính · FK: khóa ngoại · UK: duy nhất · 0..*: không hoặc nhiều · 0..1: không hoặc một</text>
+</svg>

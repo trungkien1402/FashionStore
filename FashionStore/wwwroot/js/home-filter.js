@@ -69,159 +69,6 @@
     ];
 
     // Cấp 2: Danh mục con (Sub-Category)
-    const SUBCATEGORIES = {
-        ao: [
-            { value: 'all', label: 'Tất cả loại áo' },
-            { value: 'tee', label: 'Áo Thun (T-Shirt)' },
-            { value: 'polo', label: 'Áo Polo Thể Thao' },
-            { value: 'shirt', label: 'Áo Sơ Mi (Shirt)' },
-            { value: 'hoodie', label: 'Áo Nỉ & Hoodie' },
-            { value: 'jacket', label: 'Áo Khoác (Jackets / Bomber)' }
-        ],
-        quan: [
-            { value: 'all', label: 'Tất cả loại quần' },
-            { value: 'jean', label: 'Quần Jean / Denim' },
-            { value: 'cargo', label: 'Quần Cargo Túi Hộp' },
-            { value: 'kaki', label: 'Quần Kaki / Chino' },
-            { value: 'tay', label: 'Quần Tây / Trousers' },
-            { value: 'short', label: 'Quần Short Dạo Phố' },
-            { value: 'sweatpants', label: 'Quần Nỉ / Sweatpants' }
-        ],
-        giay: [
-            { value: 'all', label: 'Tất cả dòng giày' },
-            { value: 'runner', label: 'Dòng Retro Runner' },
-            { value: 'high-top', label: 'Dòng High-Top Cổ Cao' },
-            { value: 'low-top', label: 'Dòng Low-Top Classic' },
-            { value: 'chunky', label: 'Dòng Chunky / Skate' },
-            { value: 'slip-on', label: 'Dòng Slip-On / Minimalist' }
-        ]
-    };
-
-    // Cấp 3: Kiểu dáng chi tiết (Fit / Silhouette)
-    const DETAILED_STYLES = {
-        ao: {
-            'all': [
-                { value: 'all', label: 'Tất cả kiểu dáng áo' },
-                { value: 'boxy', label: 'Boxy Fit (Cắt ngang thời thượng)' },
-                { value: 'oversized', label: 'Oversized (Form rộng phóng khoáng)' },
-                { value: 'drop-shoulder', label: 'Drop-Shoulder (Vai trễ Streetwear)' },
-                { value: 'regular', label: 'Regular Fit (Vừa vặn tiêu chuẩn)' },
-                { value: 'slim', label: 'Slim Fit (Ôm nhẹ tôn dáng)' }
-            ],
-            'tee': [
-                { value: 'all', label: 'Tất cả form áo thun' },
-                { value: 'boxy', label: 'Boxy Fit 280-320 GSM' },
-                { value: 'oversized', label: 'Oversized Graphic Tee' },
-                { value: 'drop-shoulder', label: 'Drop-Shoulder Basic' },
-                { value: 'regular', label: 'Regular Fit Cổ Tròn' }
-            ],
-            'polo': [
-                { value: 'all', label: 'Tất cả form polo' },
-                { value: 'regular', label: 'Polo Cổ Bẻ Regular Fit' },
-                { value: 'oversized', label: 'Polo Boxy Cổ V Retro' },
-                { value: 'zip', label: 'Polo Khoá Zip Hiện Đại' }
-            ],
-            'shirt': [
-                { value: 'all', label: 'Tất cả kiểu sơ mi' },
-                { value: 'oversized', label: 'Sơ Mi Form Rộng Unisex' },
-                { value: 'cuban', label: 'Sơ Mi Cổ V / Cuban Collar' },
-                { value: 'denim', label: 'Sơ Mi Denim / Jean' }
-            ],
-            'hoodie': [
-                { value: 'all', label: 'Tất cả kiểu nỉ & hoodie' },
-                { value: 'boxy-hoodie', label: 'Hoodie Boxy Mũ Dày 2 Lớp' },
-                { value: 'sweater', label: 'Sweater Cổ Tròn Nỉ Chân Cua' },
-                { value: 'zip-hoodie', label: 'Zip Hoodie Khoá Kéo Tiện Dụng' }
-            ],
-            'jacket': [
-                { value: 'all', label: 'Tất cả kiểu áo khoác' },
-                { value: 'bomber', label: 'Bomber Jacket Lót Gió' },
-                { value: 'varsity', label: 'Varsity Jacket Bóng Chày' },
-                { value: 'windbreaker', label: 'Áo Gió Chống Nước (Windbreaker)' }
-            ]
-        },
-        quan: {
-            'all': [
-                { value: 'all', label: 'Tất cả form dáng quần' },
-                { value: 'baggy', label: 'Baggy Rộng Thoải Mái' },
-                { value: 'wide-leg', label: 'Wide-Leg (Ống Rộng Thời Thượng)' },
-                { value: 'straight', label: 'Straight (Ống Suông Thanh Lịch)' },
-                { value: 'flare', label: 'Flare (Ống Loe Retro)' },
-                { value: 'slim', label: 'Slim Fit (Ống Đứng Vừa Vặn)' }
-            ],
-            'jean': [
-                { value: 'all', label: 'Tất cả form quần jean' },
-                { value: 'baggy', label: 'Baggy Denim Cổ Điển' },
-                { value: 'wide-leg', label: 'Wide-Leg Jean Ống Rộng' },
-                { value: 'straight', label: 'Straight Jean Ống Suông' },
-                { value: 'ripped', label: 'Ripped Jean Rách Gối Bụi Bặm' }
-            ],
-            'cargo': [
-                { value: 'all', label: 'Tất cả form cargo' },
-                { value: 'wide-leg', label: 'Cargo 6 Túi Ống Rộng' },
-                { value: 'parachute', label: 'Parachute Pants Dây Rút Gấu' },
-                { value: 'tactical', label: 'Tactical Cargo Khóa Chống Nước' }
-            ],
-            'kaki': [
-                { value: 'all', label: 'Tất cả form kaki' },
-                { value: 'straight', label: 'Kaki Ống Suông Basic' },
-                { value: 'chino', label: 'Chino Slim Fit Đa Dụng' },
-                { value: 'pleated', label: 'Kaki Xếp Ly Tinh Tế' }
-            ],
-            'tay': [
-                { value: 'all', label: 'Tất cả kiểu quần tây' },
-                { value: 'wide-leg', label: 'Quần Tây Ống Rộng Xếp Ly Đôi' },
-                { value: 'straight', label: 'Quần Tây Ống Suông Công Sở' },
-                { value: 'slim', label: 'Quần Tây Slim Tapered Co Giãn' }
-            ],
-            'short': [
-                { value: 'all', label: 'Tất cả kiểu quần short' },
-                { value: 'denim-short', label: 'Short Jean Rách Gấu' },
-                { value: 'kaki-short', label: 'Short Kaki Trên Gối' },
-                { value: 'cargo-short', label: 'Short Cargo Túi Hộp' }
-            ],
-            'sweatpants': [
-                { value: 'all', label: 'Tất cả form quần nỉ' },
-                { value: 'baggy-sweat', label: 'Sweatpants Ống Rộng Dây Rút' },
-                { value: 'jogger', label: 'Jogger Bo Gấu Năng Động' }
-            ]
-        },
-        giay: {
-            'all': [
-                { value: 'all', label: 'Tất cả phiên bản giày' },
-                { value: 'collab', label: 'Phiên Bản Giới Hạn / Collab' },
-                { value: 'leather', label: 'Chất Liệu Da Trơn (Full Leather)' },
-                { value: 'suede', label: 'Chất Liệu Da Lộn (Premium Suede)' },
-                { value: 'mesh', label: 'Vải Lưới Thoáng Khí (Air Mesh)' }
-            ],
-            'runner': [
-                { value: 'all', label: 'Tất cả mẫu Retro Runner' },
-                { value: 'vintage-70s', label: 'Vintage 70s Runner Đế Răng Cưa' },
-                { value: 'tech-runner', label: 'Modern Tech Runner Đệm Khí' }
-            ],
-            'high-top': [
-                { value: 'all', label: 'Tất cả mẫu cổ cao' },
-                { value: 'basketball', label: 'Retro Basketball Cổ Cao' },
-                { value: 'canvas-high', label: 'Canvas High-Top Bền Bỉ' }
-            ],
-            'low-top': [
-                { value: 'all', label: 'Tất cả mẫu cổ thấp' },
-                { value: 'court-classic', label: 'Court Classic Trắng Thanh Lịch' },
-                { value: 'suede-low', label: 'Suede Low-Top Cá Tính' }
-            ],
-            'chunky': [
-                { value: 'all', label: 'Tất cả mẫu Chunky & Skate' },
-                { value: 'dad-shoe', label: 'Dad Shoe Đế Hầm Hố' },
-                { value: 'fat-tongue', label: 'Skate Lưỡi Gà Dày Cổ Điển' }
-            ],
-            'slip-on': [
-                { value: 'all', label: 'Tất cả mẫu Slip-on' },
-                { value: 'minimal', label: 'Minimalist Da Trơn Không Dây' }
-            ]
-        }
-    };
-
-    // Bảng đối tượng / phân khúc khách hàng
     const AUDIENCES = {
         men: 'Nam (Men)',
         women: 'Nữ (Women)',
@@ -507,9 +354,14 @@
         const confirmStayBtn = document.getElementById('confirmStayBtn');
         const confirmProceedBtn = document.getElementById('confirmProceedBtn');
 
+        function productsFor(kind) {
+            const catalog = getCatalogData();
+            return catalog[{ ao: 'shirts', quan: 'pants', giay: 'shoes' }[kind]];
+        }
+
         // Populate Sub-Category Select theo Master Category
         function populateSubCategories(cat, preserve = false) {
-            const list = SUBCATEGORIES[cat] || [];
+            const list = [{value: 'all', label: 'Tất cả phân loại'}, ...window.ShowroomFilterOptions.categories(productsFor(cat), cat)];
             const prevVal = preserve ? subCatSelect.value : 'all';
             subCatSelect.innerHTML = '';
 
@@ -538,8 +390,7 @@
 
         // Populate Detailed Styles theo Sub-Category
         function populateDetailedStyles(cat, subCat, preserve = false) {
-            const stylesByCat = DETAILED_STYLES[cat] || {};
-            const list = stylesByCat[subCat] || stylesByCat['all'] || [];
+            const list = [{value: 'all', label: 'Tất cả kiểu dáng'}, ...window.ShowroomFilterOptions.styles(productsFor(cat), cat, subCat)];
             const prevVal = preserve ? detailedStyleSelect.value : 'all';
             detailedStyleSelect.innerHTML = '';
 
@@ -665,48 +516,8 @@
             const maxPrice = Number(priceRange.value);
 
             filteredProductList = sourceList.filter(item => {
-                // 1. Phân loại Cấp 2 (Subcategory)
-                if (currentSubCategory !== 'all') {
-                    const itemType = removeVietnameseTones(item.type || '').toLowerCase();
-                    const itemName = removeVietnameseTones(item.name || '').toLowerCase();
-                    const itemSlug = (item.slug || '').toLowerCase();
-                    const itemCat = (item.category || '').toLowerCase();
-                    const itemCollection = (item.collectionTitle || '').toLowerCase();
-
-                    const matchSub = itemType.includes(currentSubCategory) ||
-                                     itemName.includes(currentSubCategory) ||
-                                     itemSlug.includes(currentSubCategory) ||
-                                     itemCat.includes(currentSubCategory) ||
-                                     itemCollection.includes(currentSubCategory);
-
-                    if (!matchSub) {
-                        // Thử các alias riêng cho áo/quần/giày
-                        if (currentMasterCategory === 'ao') {
-                            if (currentSubCategory === 'tee' && !(itemType.includes('tee') || itemName.includes('thun') || itemName.includes('tee'))) return false;
-                            if (currentSubCategory === 'polo' && !(itemType.includes('polo') || itemName.includes('polo'))) return false;
-                            if (currentSubCategory === 'shirt' && !(itemType.includes('shirt') || itemName.includes('so mi'))) return false;
-                            if (currentSubCategory === 'hoodie' && !(itemType.includes('hoodie') || itemType.includes('sweater') || itemName.includes('hoodie') || itemName.includes('ni'))) return false;
-                            if (currentSubCategory === 'jacket' && !(itemType.includes('jacket') || itemType.includes('bomber') || itemName.includes('khoac'))) return false;
-                        } else if (currentMasterCategory === 'quan') {
-                            if (currentSubCategory === 'jean' && !(itemType.includes('jean') || itemType.includes('denim') || itemName.includes('jean'))) return false;
-                            if (currentSubCategory === 'cargo' && !(itemType.includes('cargo') || itemName.includes('cargo') || itemName.includes('tui hop'))) return false;
-                            if (currentSubCategory === 'kaki' && !(itemType.includes('kaki') || itemType.includes('chino') || itemName.includes('kaki'))) return false;
-                            if (currentSubCategory === 'tay' && !(itemType.includes('tay') || itemType.includes('trouser') || itemName.includes('tay'))) return false;
-                            if (currentSubCategory === 'short' && !(itemType.includes('short') || itemName.includes('short') || itemName.includes('dui'))) return false;
-                        }
-                    }
-                }
-
-                // 2. Kiểu dáng Cấp 3 (Detailed Style)
-                if (currentDetailedStyle !== 'all') {
-                    const itemText = removeVietnameseTones(`${item.name || ''} ${item.desc || ''} ${item.type || ''}`).toLowerCase();
-                    const styleQuery = removeVietnameseTones(currentDetailedStyle).replace(/-/g, ' ');
-                    if (!itemText.includes(styleQuery) && !itemText.includes(currentDetailedStyle)) {
-                        // Nới lỏng kiểm tra: nếu không khớp tuyệt đối nhưng đúng form
-                        const looseCheck = currentDetailedStyle.split('-').some(token => token.length > 2 && itemText.includes(token));
-                        if (!looseCheck) return false;
-                    }
-                }
+                if (!window.ShowroomFilterOptions.matchesCategory(item, currentMasterCategory, currentSubCategory) ||
+                    !window.ShowroomFilterOptions.matchesStyle(item, currentMasterCategory, currentDetailedStyle)) return false;
 
                 // 3. Mức giá
                 let itemPriceVND = 0;
@@ -723,12 +534,12 @@
                 if (currentColor !== 'all') {
                     const colorKeywords = COLOR_KEYWORDS[currentColor] || [currentColor];
                     let hasColor = false;
-                    const combinedInfo = removeVietnameseTones(`${item.name || ''} ${item.desc || ''}`).toLowerCase();
+                    const combinedInfo = removeVietnameseTones(`${item.name || ''} ${item.desc || ''} ${item.colorName || ''}`).toLowerCase();
 
                     // Kiểm tra mảng variants/colors nếu có
                     if (Array.isArray(item.colors)) {
                         for (const col of item.colors) {
-                            const cName = removeVietnameseTones(typeof col === 'string' ? col : (col.name || '')).toLowerCase();
+                            const cName = removeVietnameseTones(typeof col === 'string' ? col : (Array.isArray(col) ? col[0] : col.name || '')).toLowerCase();
                             if (colorKeywords.some(kw => cName.includes(kw))) {
                                 hasColor = true;
                                 break;
@@ -767,6 +578,7 @@
         function switchAudience(newAud) {
             if (!['men', 'women', 'boy', 'girls'].includes(newAud)) newAud = 'men';
             currentAudience = newAud;
+            populateSubCategories(currentMasterCategory, true);
             if (audienceSelect && audienceSelect.value !== newAud) {
                 audienceSelect.value = newAud;
             }

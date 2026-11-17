@@ -99,9 +99,6 @@
                         <input type="checkbox" name="RememberMe" value="true" class="hnmt-auth-checkbox" checked />
                         <span>Ghi nhớ đăng nhập</span>
                     </label>
-                    <button type="button" class="hnmt-auth-link-btn" onclick="window.HNMTAuthModal.showForgot()">
-                        Quên mật khẩu?
-                    </button>
                 </div>
 
                 <!-- Submit Button -->
@@ -208,37 +205,6 @@
                 <button type="button" class="hnmt-auth-switch-link" onclick="window.HNMTAuthModal.switchTab('login')">
                     Đăng nhập ngay &rarr;
                 </button>
-            </div>
-        </div>
-
-        <!-- ================= VIEW 3: FORGOT PASSWORD ================= -->
-        <div class="hnmt-auth-view" id="authViewForgot">
-            <button type="button" class="hnmt-auth-back-nav" onclick="window.HNMTAuthModal.switchTab('login')">
-                <i class="bi bi-arrow-left"></i>
-                <span>Quay lại Đăng nhập</span>
-            </button>
-
-            <div class="hnmt-auth-forgot-box">
-                <h3 class="hnmt-auth-forgot-title">Khôi phục mật khẩu</h3>
-                <p class="hnmt-auth-forgot-desc">
-                    Nhập email đã đăng ký của bạn để nhận hướng dẫn thiết lập mật khẩu mới.
-                </p>
-
-                <form id="hnmtForgotForm" onsubmit="window.HNMTAuthModal.handleForgotSubmit(event)">
-                    <div class="hnmt-pure-input-wrap">
-                        <input type="email" 
-                               id="forgotEmailInput" 
-                               class="hnmt-pure-input" 
-                               placeholder="Email" 
-                               required />
-                    </div>
-
-                    <div id="forgotSuccessAlert" style="display: none; padding: 12px 16px; border-radius: 6px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 13px; margin: 12px 0;"></div>
-
-                    <button type="submit" class="hnmt-pure-submit-btn mt-3" id="forgotSubmitBtn">
-                        Gửi liên kết khôi phục
-                    </button>
-                </form>
             </div>
         </div>
 

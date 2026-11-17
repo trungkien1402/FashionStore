@@ -1,0 +1,246 @@
+@* 
+    HNMTSHOP — MINIMALIST CONTEMPORARY INLINE AUTHENTICATION MODAL
+    Exact reference design: Clean placeholder text, 6px radius, uniform spacing, flat submit button
+*@
+
+<div class="hnmt-auth-backdrop" id="hnmtAuthBackdrop" role="dialog" aria-modal="true" aria-hidden="true" style="display: none;">
+    <div class="hnmt-auth-card" id="hnmtAuthCard">
+        
+        <!-- Close Button -->
+        <button type="button" class="hnmt-auth-close-btn" id="hnmtAuthCloseBtn" aria-label="Đóng bảng đăng nhập">
+            <i class="bi bi-x-lg"></i>
+        </button>
+
+        <!-- Header -->
+        <div class="hnmt-auth-header">
+            <h2 class="hnmt-auth-title" id="hnmtAuthTitle">Đăng nhập</h2>
+            <p class="hnmt-auth-sub" id="hnmtAuthSub">Chào mừng bạn trở lại với HNMTSHOP.</p>
+        </div>
+
+        <!-- Segmented Tab Switcher (Đăng Nhập / Đăng Ký) -->
+        <div class="hnmt-auth-tabs-wrap" id="hnmtAuthTabsWrap">
+            <div class="hnmt-auth-tabs">
+                <button type="button" class="hnmt-auth-tab is-active" id="tabBtnLogin" onclick="window.HNMTAuthModal.switchTab('login')">
+                    Đăng nhập
+                </button>
+                <button type="button" class="hnmt-auth-tab" id="tabBtnRegister" onclick="window.HNMTAuthModal.switchTab('register')">
+                    Đăng ký
+                </button>
+            </div>
+        </div>
+
+        <!-- Inline Alert Error Banner -->
+        <div class="hnmt-auth-alert" id="hnmtAuthAlert" style="display: none;">
+            <i class="bi bi-exclamation-circle-fill"></i>
+            <span id="hnmtAuthAlertText"></span>
+        </div>
+
+        <!-- ================= VIEW 1: LOGIN ================= -->
+        <div class="hnmt-auth-view is-active" id="authViewLogin">
+            
+            <!-- Social OAuth -->
+            <div class="hnmt-social-grid">
+                <button type="button" class="hnmt-social-btn" onclick="window.HNMTAuthModal.socialLogin('Google')">
+                    <svg viewBox="0 0 24 24" width="16" height="16">
+                        <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"/>
+                        <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5.1 3.7-8.8z"/>
+                        <path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.8s.2-2.1.4-2.8L1.9 6.3C.7 8.7 0 10.3 0 12s.7 3.3 1.9 5.7l3.7-2.9z"/>
+                        <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2-6.4-4.8L1.9 16.4C3.7 20.4 7.5 23 12 23z"/>
+                    </svg>
+                    <span>Google</span>
+                </button>
+                <button type="button" class="hnmt-social-btn" onclick="window.HNMTAuthModal.socialLogin('Apple')">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                        <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.63-.77 1.06-1.84.94-2.91-.91.04-2.02.61-2.67 1.38-.58.68-1.09 1.77-.95 2.81 1.02.08 2.05-.51 2.68-1.28z"/>
+                    </svg>
+                    <span>Apple ID</span>
+                </button>
+            </div>
+
+            <div class="hnmt-auth-divider">
+                <span>hoặc tiếp tục với email</span>
+            </div>
+
+            <form id="hnmtLoginForm" onsubmit="window.HNMTAuthModal.handleLoginSubmit(event)" novalidate>
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="ReturnUrl" id="loginReturnUrl" value="" />
+
+                <!-- Input: Email -->
+                <div class="hnmt-pure-input-wrap">
+                    <input type="email" 
+                           id="loginEmailInput" 
+                           name="Email" 
+                           class="hnmt-pure-input" 
+                           placeholder="Email" 
+                           autocomplete="email" 
+                           required />
+                </div>
+
+                <!-- Input: Password -->
+                <div class="hnmt-pure-input-wrap">
+                    <input type="password" 
+                           id="loginPasswordInput" 
+                           name="Password" 
+                           class="hnmt-pure-input" 
+                           placeholder="Password" 
+                           autocomplete="current-password" 
+                           required />
+                    <button type="button" 
+                            class="hnmt-pure-eye-btn" 
+                            onclick="window.HNMTAuthModal.togglePass('loginPasswordInput', this)" 
+                            aria-label="Hiện/Ẩn mật khẩu">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+
+                <!-- Row: Remember & Forgot -->
+                <div class="hnmt-auth-options-row">
+                    <label class="hnmt-auth-checkbox-label">
+                        <input type="checkbox" name="RememberMe" value="true" class="hnmt-auth-checkbox" checked />
+                        <span>Ghi nhớ đăng nhập</span>
+                    </label>
+                    <button type="button" class="hnmt-auth-link-btn" onclick="window.HNMTAuthModal.showForgot()">
+                        Quên mật khẩu?
+                    </button>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="hnmt-pure-submit-btn" id="loginSubmitBtn">
+                    Đăng nhập
+                </button>
+            </form>
+
+            <div class="hnmt-auth-switch-footer">
+                <span>Chưa có tài khoản?</span>
+                <button type="button" class="hnmt-auth-switch-link" onclick="window.HNMTAuthModal.switchTab('register')">
+                    Đăng ký ngay &rarr;
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= VIEW 2: REGISTER ================= -->
+        <div class="hnmt-auth-view" id="authViewRegister">
+            
+            <div class="hnmt-social-grid">
+                <button type="button" class="hnmt-social-btn" onclick="window.HNMTAuthModal.socialLogin('Google')">
+                    <svg viewBox="0 0 24 24" width="16" height="16">
+                        <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"/>
+                        <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5.1 3.7-8.8z"/>
+                        <path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.8s.2-2.1.4-2.8L1.9 6.3C.7 8.7 0 10.3 0 12s.7 3.3 1.9 5.7l3.7-2.9z"/>
+                        <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2-6.4-4.8L1.9 16.4C3.7 20.4 7.5 23 12 23z"/>
+                    </svg>
+                    <span>Google</span>
+                </button>
+                <button type="button" class="hnmt-social-btn" onclick="window.HNMTAuthModal.socialLogin('Apple')">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                        <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.63-.77 1.06-1.84.94-2.91-.91.04-2.02.61-2.67 1.38-.58.68-1.09 1.77-.95 2.81 1.02.08 2.05-.51 2.68-1.28z"/>
+                    </svg>
+                    <span>Apple ID</span>
+                </button>
+            </div>
+
+            <div class="hnmt-auth-divider">
+                <span>hoặc đăng ký bằng email</span>
+            </div>
+
+            <form id="hnmtRegisterForm" onsubmit="window.HNMTAuthModal.handleRegisterSubmit(event)" novalidate>
+                @Html.AntiForgeryToken()
+
+                <div class="hnmt-pure-input-wrap">
+                    <input type="text" 
+                           id="regFullName" 
+                           name="FullName" 
+                           class="hnmt-pure-input" 
+                           placeholder="Họ và tên" 
+                           autocomplete="name" 
+                           required />
+                </div>
+
+                <div class="hnmt-pure-input-wrap">
+                    <input type="email" 
+                           id="regEmail" 
+                           name="Email" 
+                           class="hnmt-pure-input" 
+                           placeholder="Email" 
+                           autocomplete="email" 
+                           required />
+                </div>
+
+                <div class="hnmt-pure-input-wrap">
+                    <input type="password" 
+                           id="regPassword" 
+                           name="Password" 
+                           class="hnmt-pure-input" 
+                           placeholder="Mật khẩu (tối thiểu 8 ký tự)" 
+                           autocomplete="new-password" 
+                           required />
+                    <button type="button" 
+                            class="hnmt-pure-eye-btn" 
+                            onclick="window.HNMTAuthModal.togglePass('regPassword', this)" 
+                            aria-label="Hiện/Ẩn mật khẩu">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+
+                <div class="hnmt-pure-input-wrap">
+                    <input type="password" 
+                           id="regConfirmPassword" 
+                           name="ConfirmPassword" 
+                           class="hnmt-pure-input" 
+                           placeholder="Xác nhận mật khẩu" 
+                           autocomplete="new-password" 
+                           required />
+                    <button type="button" 
+                            class="hnmt-pure-eye-btn" 
+                            onclick="window.HNMTAuthModal.togglePass('regConfirmPassword', this)" 
+                            aria-label="Hiện/Ẩn mật khẩu">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+
+                <button type="submit" class="hnmt-pure-submit-btn" id="regSubmitBtn">
+                    Tạo tài khoản
+                </button>
+            </form>
+
+            <div class="hnmt-auth-switch-footer">
+                <span>Đã có tài khoản?</span>
+                <button type="button" class="hnmt-auth-switch-link" onclick="window.HNMTAuthModal.switchTab('login')">
+                    Đăng nhập ngay &rarr;
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= VIEW 3: FORGOT PASSWORD ================= -->
+        <div class="hnmt-auth-view" id="authViewForgot">
+            <button type="button" class="hnmt-auth-back-nav" onclick="window.HNMTAuthModal.switchTab('login')">
+                <i class="bi bi-arrow-left"></i>
+                <span>Quay lại Đăng nhập</span>
+            </button>
+
+            <div class="hnmt-auth-forgot-box">
+                <h3 class="hnmt-auth-forgot-title">Khôi phục mật khẩu</h3>
+                <p class="hnmt-auth-forgot-desc">
+                    Nhập email đã đăng ký của bạn để nhận hướng dẫn thiết lập mật khẩu mới.
+                </p>
+
+                <form id="hnmtForgotForm" onsubmit="window.HNMTAuthModal.handleForgotSubmit(event)">
+                    <div class="hnmt-pure-input-wrap">
+                        <input type="email" 
+                               id="forgotEmailInput" 
+                               class="hnmt-pure-input" 
+                               placeholder="Email" 
+                               required />
+                    </div>
+
+                    <div id="forgotSuccessAlert" style="display: none; padding: 12px 16px; border-radius: 6px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 13px; margin: 12px 0;"></div>
+
+                    <button type="submit" class="hnmt-pure-submit-btn mt-3" id="forgotSubmitBtn">
+                        Gửi liên kết khôi phục
+                    </button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>

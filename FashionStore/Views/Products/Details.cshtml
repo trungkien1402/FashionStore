@@ -1,442 +1,683 @@
-@model Product
+@model ProductDetailsViewModel
+@using System.Text.Json
 
 @{
-    ViewData["Title"] = Model.Name;
-    var variants = Model.Variants?
+    var product = Model.Product;
+    ViewData["Title"] = product.Name + " — HNMTSHOP";
+
+    var sizeOrder = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
+    {
+        ["XXS"] = 1, ["XS"] = 2, ["S"] = 3, ["M"] = 4, ["L"] = 5, ["XL"] = 6, ["XXL"] = 7, ["2XL"] = 7, ["3XL"] = 8
+    };
+
+    int GetSizeRank(string? s)
+    {
+        if (string.IsNullOrWhiteSpace(s)) return 999;
+        if (sizeOrder.TryGetValue(s.Trim(), out var rank)) return rank;
+        if (int.TryParse(s.Trim(), out var num)) return 100 + num;
+        return 500;
+    }
+
+    // Parse ShowroomMetadata for color hexes & front/back photos
+    var colorHexMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+    var colorPhotos = new List<(string Front, string? Back)>();
+    var metaColorNames = new List<string>();
+
+    if (!string.IsNullOrWhiteSpace(product.ShowroomMetadata))
+    {
+        try
+        {
+            using var doc = JsonDocument.Parse(product.ShowroomMetadata);
+            var root = doc.RootElement;
+
+            if (root.TryGetProperty("colors", out var colorsEl) && colorsEl.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var c in colorsEl.EnumerateArray())
+                {
+                    if (c.ValueKind == JsonValueKind.Array && c.GetArrayLength() >= 2)
+                    {
+                        var cName = c[0].GetString() ?? "";
+                        var cHex = c[1].GetString() ?? "#111827";
+                        if (!string.IsNullOrWhiteSpace(cName))
+                        {
+                            colorHexMap[cName] = cHex;
+                            metaColorNames.Add(cName);
+                        }
+                    }
+                }
+            }
+
+            if (root.TryGetProperty("photos", out var photosEl) && photosEl.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var p in photosEl.EnumerateArray())
+                {
+                    var f = p.TryGetProperty("front", out var fEl) ? fEl.GetString() : null;
+                    var b = p.TryGetProperty("back", out var bEl) ? bEl.GetString() : null;
+                    if (!string.IsNullOrWhiteSpace(f))
+                    {
+                        colorPhotos.Add((f!, string.IsNullOrWhiteSpace(b) ? null : b));
+                    }
+                }
+            }
+        }
+        catch { }
+    }
+
+    int GetColorRank(string? colorName)
+    {
+        if (string.IsNullOrWhiteSpace(colorName)) return 999;
+        var idx = metaColorNames.FindIndex(m => string.Equals(m, colorName, StringComparison.OrdinalIgnoreCase));
+        return idx >= 0 ? idx : 999;
+    }
+
+    var variants = product.Variants?
         .Where(v => v.IsActive)
-        .OrderBy(v => v.Size)
+        .OrderBy(v => GetColorRank(v.Color))
+        .ThenBy(v => v.Color)
+        .ThenBy(v => GetSizeRank(v.Size))
+        .ThenBy(v => v.Size)
         .ToList() ?? new List<ProductVariant>();
+
+    var distinctColors = variants
+        .Select(v => v.Color)
+        .Where(c => !string.IsNullOrWhiteSpace(c))
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .OrderBy(GetColorRank)
+        .ToList();
+
+    var initialFront = colorPhotos.Count > 0 ? colorPhotos[0].Front : product.ImageUrl;
+    var initialBack = colorPhotos.Count > 0 ? colorPhotos[0].Back : null;
+    var totalStock = variants.Sum(v => v.StockQuantity);
+    var roundedStars = (int)Math.Round(Model.AverageRating, MidpointRounding.AwayFromZero);
 }
 
-<link rel="stylesheet" href="~/css/virtual-tryon.css" asp-append-version="true" />
+@section Styles {
+    <link rel="stylesheet" href="~/css/product-details.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/virtual-tryon.css" asp-append-version="true" />
+}
 
-<div class="container py-5">
-    <div class="row g-5">
+<div class="hnmt-pdp-shell">
+    <div class="hnmt-pdp-container">
 
-        <!-- Hình ảnh -->
-        <div class="col-lg-6">
-            <div class="product-detail-image">
-                <img src="@Model.ImageUrl"
-                     alt="@Model.Name"
-                     class="img-fluid w-100"
-                     onerror="this.src='https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800'" />
+        <!-- BREADCRUMB -->
+        <nav class="hnmt-pdp-breadcrumb" aria-label="Điều hướng">
+            <a asp-controller="Home" asp-action="Index">Trang chủ</a>
+            <span class="sep">/</span>
+            <a asp-controller="Products" asp-action="Index">Cửa hàng</a>
+            @if (product.Category != null)
+            {
+                <span class="sep">/</span>
+                <a asp-controller="Products" asp-action="Index" asp-route-categoryId="@product.CategoryId">@product.Category.Name</a>
+            }
+            <span class="sep">/</span>
+            <span class="current">@product.Name</span>
+        </nav>
+
+        <!-- ============================================================== -->
+        <!-- PART 1: PRODUCT SHOWCASE HERO                                  -->
+        <!-- ============================================================== -->
+        <div class="hnmt-pdp-hero">
+
+            <!-- LEFT: GALLERY STUDIO -->
+            <div class="hnmt-pdp-gallery">
+                <div class="hnmt-pdp-stage">
+                    <span class="hnmt-pdp-badge-top">
+                        <i class="bi bi-patch-check-fill"></i> HNMTSHOP STUDIO
+                    </span>
+
+                    <img id="pdpMainImage"
+                         src="@initialFront"
+                         alt="@product.Name"
+                         class="hnmt-pdp-main-img"
+                         onerror="this.src='https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800'" />
+
+                    <div class="hnmt-pdp-side-switch" id="pdpSideSwitch" @(string.IsNullOrEmpty(initialBack) ? "hidden" : "")>
+                        <button type="button" class="hnmt-pdp-side-btn is-active" data-side="front">Side A</button>
+                        <span class="hnmt-pdp-side-sep">|</span>
+                        <button type="button" class="hnmt-pdp-side-btn is-dimmed" data-side="back">Side B</button>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <!-- Thông tin sản phẩm -->
-        <div class="col-lg-6">
-            <div class="product-detail-info">
+            <!-- RIGHT: PRODUCT INFO & BUY BOX -->
+            <div class="hnmt-pdp-info">
+                <p class="hnmt-pdp-category">@(product.Category?.Name ?? "Bộ sưu tập giới hạn")</p>
+                <h1 class="hnmt-pdp-title">@product.Name</h1>
 
-                <p class="text-muted text-uppercase small mb-2">
-                    @(Model.Category?.Name ?? "Thời trang")
-                </p>
-
-                <h1 class="mb-3">@Model.Name</h1>
-
-                <h3 class="mb-4">
-                    @Model.Price.ToString("N0") ₫
-                </h3>
-
-                <div class="product-description mb-4">
-                    @Model.Description
+                <div class="hnmt-pdp-rating-bar">
+                    <div class="hnmt-pdp-stars-inline" aria-label="@Model.AverageRating.ToString("0.0") trên 5 sao">
+                        @for (int s = 1; s <= 5; s++)
+                        {
+                            <i class="bi bi-star-fill @(s <= (Model.ReviewCount > 0 ? roundedStars : 5) ? "" : "empty")"></i>
+                        }
+                    </div>
+                    <a href="#product-reviews" class="hnmt-pdp-rating-link">
+                        @if (Model.ReviewCount > 0)
+                        {
+                            <span>@Model.AverageRating.ToString("0.0") (@Model.ReviewCount đánh giá từ người mua)</span>
+                        }
+                        else
+                        {
+                            <span>Xem đánh giá sản phẩm</span>
+                        }
+                    </a>
+                    <span id="pdpStockBadge" class="hnmt-pdp-stock-pill @(totalStock > 0 ? "" : "out")">
+                        @(totalStock > 0 ? $"Còn hàng ({totalStock})" : "Tạm hết hàng")
+                    </span>
                 </div>
 
-                <!-- NÚT PHÒNG THỬ ĐỒ ẢO AI (ANYWEAR STUDIO) -->
-                <div class="mb-4 p-3 rounded-3" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(15, 23, 42, 0.03)); border: 1px dashed rgba(245, 158, 11, 0.4);">
-                    <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="badge bg-warning text-dark fw-bold px-2 py-1">
-                            <i class="bi bi-stars me-1"></i> AI POWERED
-                        </span>
-                        <small class="text-muted">Công nghệ AnyWear Live Studio</small>
-                    </div>
-                    <button type="button"
-                            class="fs-btn-tryon w-100 py-3"
-                            data-bs-toggle="modal"
-                            data-bs-target="#tryOnModal">
-                        <i class="bi bi-magic sparkle fs-5"></i>
-                        <span class="fs-6">PHÒNG THỬ ĐỒ ẢO (VIRTUAL TRY-ON)</span>
-                    </button>
-                    <div class="d-flex align-items-center justify-content-between text-muted small mt-2 px-1">
-                        <span><i class="bi bi-camera-video me-1 text-warning"></i> Thử trực tiếp qua Camera</span>
-                        <span><i class="bi bi-rulers me-1 text-warning"></i> Gợi ý Size AI chuẩn xác</span>
-                    </div>
+                <div class="hnmt-pdp-price-row">
+                    <span id="selectedPrice" class="hnmt-pdp-price">@product.Price.ToString("N0") ₫</span>
                 </div>
 
+                @if (!string.IsNullOrWhiteSpace(product.Description))
+                {
+                    <p class="hnmt-pdp-desc">@product.Description</p>
+                }
 
                 @if (TempData["CartError"] != null)
                 {
-                    <div class="alert alert-danger">
-                        @TempData["CartError"]
+                    <div class="hnmt-review-flash error">
+                        <i class="bi bi-exclamation-circle-fill"></i>
+                        <span>@TempData["CartError"]</span>
                     </div>
                 }
 
                 @if (variants.Any())
                 {
-                    <form asp-controller="Cart"
-                          asp-action="Add"
-                          method="post">
-
+                    <form id="pdpCartForm" asp-controller="Cart" asp-action="Add" method="post">
                         @Html.AntiForgeryToken()
+                        <input type="hidden" name="productId" value="@product.Id" />
+                        <input type="hidden" name="variantId" id="variantIdInput" value="@variants.First().Id" />
 
-                        <input type="hidden"
-                               name="productId"
-                               value="@Model.Id" />
+                        @if (distinctColors.Count > 0)
+                        {
+                            <div class="hnmt-pdp-field">
+                                <div class="hnmt-pdp-label-row">
+                                    <span class="hnmt-pdp-label">Màu sắc</span>
+                                    <span class="hnmt-pdp-label-val" id="selectedColorLabel">@distinctColors[0]</span>
+                                </div>
+                                <div class="hnmt-pdp-color-list" id="pdpColorList">
+                                    @for (int cIdx = 0; cIdx < distinctColors.Count; cIdx++)
+                                    {
+                                        var cName = distinctColors[cIdx];
+                                        var hex = colorHexMap.TryGetValue(cName, out var foundHex) ? foundHex : "#1f2937";
+                                        var photoFront = cIdx < colorPhotos.Count ? colorPhotos[cIdx].Front : product.ImageUrl;
+                                        var photoBack = cIdx < colorPhotos.Count ? (colorPhotos[cIdx].Back ?? "") : "";
+                                        <button type="button"
+                                                class="hnmt-pdp-color-chip @(cIdx == 0 ? "is-active" : "")"
+                                                data-color="@cName"
+                                                data-front="@photoFront"
+                                                data-back="@photoBack">
+                                            <span class="hnmt-pdp-swatch-dot" style="background-color: @hex;"></span>
+                                            <span>@cName</span>
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+                        }
 
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold">
-                                Chọn phân loại
-                            </label>
-
-                            <select name="variantId"
-                                    id="variantSelect"
-                                    class="form-select"
-                                    required>
-                                @foreach (var variant in variants)
-                                {
-                                    <option value="@variant.Id"
-                                            data-price="@variant.Price"
-                                            data-stock="@variant.StockQuantity"
-                                            data-size="@variant.Size"
-                                            data-color="@variant.Color"
-                                            disabled="@(variant.StockQuantity <= 0)">
-                                        Size @variant.Size - @variant.Color
-                                        @(variant.StockQuantity <= 0 ? "(Hết hàng)" : "")
-                                    </option>
-                                }
-                            </select>
+                        <div class="hnmt-pdp-field">
+                            <div class="hnmt-pdp-label-row">
+                                <span class="hnmt-pdp-label">Kích cỡ</span>
+                                <span class="hnmt-pdp-label-val">Tồn kho: <strong id="selectedStock">--</strong></span>
+                            </div>
+                            <div class="hnmt-pdp-size-list" id="pdpSizeList"></div>
                         </div>
 
-                        <div class="mb-3">
-                            <p class="mb-1">
-                                Giá:
-                                <strong id="selectedPrice">
-                                    @Model.Price.ToString("N0") ₫
-                                </strong>
-                            </p>
+                        <div class="hnmt-pdp-buy-row">
+                            <div class="hnmt-pdp-qty-box">
+                                <button type="button" class="hnmt-pdp-qty-btn" id="qtyMinusBtn" aria-label="Giảm số lượng">−</button>
+                                <input type="number" name="quantity" id="quantityInput" class="hnmt-pdp-qty-input" value="1" min="1" max="20" required />
+                                <button type="button" class="hnmt-pdp-qty-btn" id="qtyPlusBtn" aria-label="Tăng số lượng">+</button>
+                            </div>
 
-                            <p class="text-muted">
-                                Tồn kho:
-                                <span id="selectedStock">--</span>
-                            </p>
+                            <button type="submit" id="addToCartButton" class="hnmt-pdp-add-btn">
+                                <i class="bi bi-bag-plus"></i>
+                                <span>THÊM VÀO GIỎ HÀNG</span>
+                            </button>
                         </div>
-
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold">
-                                Số lượng
-                            </label>
-
-                            <input type="number"
-                                   name="quantity"
-                                   id="quantityInput"
-                                   class="form-control"
-                                   value="1"
-                                   min="1"
-                                   max="20"
-                                   required />
-                        </div>
-
-                        <button type="submit"
-                                id="addToCartButton"
-                                class="fs-btn fs-btn-dark w-100">
-                            THÊM VÀO GIỎ HÀNG
-                        </button>
                     </form>
                 }
                 else
                 {
-                    <div class="alert alert-warning">
-                        Sản phẩm hiện chưa có phân loại để đặt hàng.
+                    <div class="hnmt-review-flash error">
+                        <i class="bi bi-info-circle-fill"></i>
+                        <span>Sản phẩm hiện đang cập nhật phân loại kích cỡ.</span>
                     </div>
                 }
 
+                <!-- VIRTUAL TRY-ON BANNER -->
+                <div class="hnmt-pdp-tryon-card">
+                    <div class="hnmt-pdp-tryon-text">
+                        <strong><i class="bi bi-stars"></i> Phòng thử đồ ảo AI (AnyWear Studio)</strong>
+                        <span>Ướm thử trực tiếp qua Camera & nhận gợi ý Size chuẩn theo vóc dáng</span>
+                    </div>
+                    <button type="button" class="hnmt-pdp-tryon-btn" id="openTryOnBtn">
+                        <i class="bi bi-magic"></i> Thử đồ ngay
+                    </button>
+                </div>
+
+                <!-- PERKS -->
+                <div class="hnmt-pdp-perks">
+                    <div class="hnmt-pdp-perk">
+                        <i class="bi bi-truck"></i>
+                        <span>Freeship đơn từ 500K</span>
+                    </div>
+                    <div class="hnmt-pdp-perk">
+                        <i class="bi bi-arrow-repeat"></i>
+                        <span>Đổi trả trong 30 ngày</span>
+                    </div>
+                    <div class="hnmt-pdp-perk">
+                        <i class="bi bi-shield-check"></i>
+                        <span>Chính hãng HNMTSHOP</span>
+                    </div>
+                </div>
             </div>
+
         </div>
+
+        <!-- ============================================================== -->
+        <!-- PART 2: CUSTOMER REVIEWS & RATING STUDIO (#product-reviews)    -->
+        <!-- ============================================================== -->
+        <section id="product-reviews" class="hnmt-reviews-section" aria-labelledby="product-reviews-title">
+
+            <div class="hnmt-reviews-header">
+                <div>
+                    <div class="hnmt-reviews-eyebrow">
+                        <i class="bi bi-patch-check-fill"></i> VERIFIED BUYER REVIEWS
+                    </div>
+                    <h2 id="product-reviews-title" class="hnmt-reviews-title">Đánh giá từ khách hàng đã mua</h2>
+                </div>
+                <div class="hnmt-reviews-verified-note">
+                    <i class="bi bi-shield-lock-fill"></i>
+                    <span>100% đánh giá từ đơn hàng đã giao thành công</span>
+                </div>
+            </div>
+
+            @if (TempData["ReviewNotice"] is string reviewNotice)
+            {
+                <div class="hnmt-review-flash" role="status">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span>@reviewNotice</span>
+                </div>
+            }
+
+            <div class="hnmt-reviews-grid">
+
+                <!-- LEFT: RATING SUMMARY & WRITE REVIEW -->
+                <div class="hnmt-reviews-left">
+
+                    <!-- SCORE SUMMARY CARD -->
+                    <div class="hnmt-score-card">
+                        <div class="hnmt-score-top">
+                            <div class="hnmt-score-big">
+                                @(Model.ReviewCount > 0 ? Model.AverageRating.ToString("0.0") : "5.0")
+                            </div>
+                            <div class="hnmt-score-meta">
+                                <div class="hnmt-score-stars">
+                                    @for (int s = 1; s <= 5; s++)
+                                    {
+                                        <i class="bi bi-star-fill @(s <= (Model.ReviewCount > 0 ? roundedStars : 5) ? "" : "empty")"></i>
+                                    }
+                                </div>
+                                <span class="hnmt-score-count">
+                                    @(Model.ReviewCount > 0 ? $"Dựa trên {Model.ReviewCount} lượt đánh giá thực tế" : "Chưa có lượt đánh giá nào")
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="hnmt-breakdown-list">
+                            @for (int star = 5; star >= 1; star--)
+                            {
+                                var count = Model.RatingBreakdown.TryGetValue(star, out var c) ? c : 0;
+                                var pct = Model.ReviewCount > 0 ? (int)Math.Round(count * 100.0 / Model.ReviewCount) : 0;
+                                <div class="hnmt-breakdown-row">
+                                    <span class="hnmt-breakdown-label">@star <i class="bi bi-star-fill"></i></span>
+                                    <div class="hnmt-breakdown-track">
+                                        <div class="hnmt-breakdown-fill" style="width: @(pct)%;"></div>
+                                    </div>
+                                    <span class="hnmt-breakdown-num">@count</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- WRITE REVIEW OR STATUS CALLOUT -->
+                    @if (Model.HasReviewed)
+                    {
+                        <div class="hnmt-review-status-box">
+                            <div class="hnmt-review-status-icon done">
+                                <i class="bi bi-check2-circle"></i>
+                            </div>
+                            <div>
+                                <h4>Cảm ơn bạn đã đánh giá!</h4>
+                                <p>Nhận xét của bạn đã được ghi nhận và giúp cộng đồng HNMTSHOP chọn được sản phẩm ưng ý hơn.</p>
+                            </div>
+                        </div>
+                    }
+                    else if (Model.HasDeliveredPurchase)
+                    {
+                        <form asp-action="SubmitReview"
+                              asp-route-id="@product.Id"
+                              asp-fragment="product-reviews"
+                              method="post"
+                              class="hnmt-write-card"
+                              id="writeReviewForm">
+                            @Html.AntiForgeryToken()
+
+                            <h3 class="hnmt-write-title">Chia sẻ cảm nhận của bạn</h3>
+                            <p class="hnmt-write-sub">Bạn đã mua và nhận thành công sản phẩm này. Hãy chấm điểm chất lượng nhé!</p>
+
+                            <!-- INTERACTIVE 5-STAR PICKER -->
+                            <div class="hnmt-star-picker-wrap">
+                                <input type="hidden" name="Input.Rating" id="ratingValueInput" value="@(Model.Input.Rating is >= 1 and <= 5 ? Model.Input.Rating : 5)" />
+                                <div class="hnmt-star-picker" id="interactiveStarPicker" role="radiogroup" aria-label="Chọn số sao đánh giá">
+                                    @for (int star = 1; star <= 5; star++)
+                                    {
+                                        <button type="button"
+                                                class="hnmt-star-pick-btn is-lit"
+                                                data-star="@star"
+                                                aria-label="@star sao">
+                                            <i class="bi bi-star-fill"></i>
+                                        </button>
+                                    }
+                                </div>
+                                <div class="hnmt-star-mood" id="starMoodLabel">Tuyệt vời — Rất hài lòng!</div>
+                                <span asp-validation-for="Input.Rating" style="color: #dc2626; font-size: 12.5px; display: block;"></span>
+                            </div>
+
+                            <!-- QUICK SUGGESTION TAGS -->
+                            <div class="hnmt-quick-tags" aria-label="Gợi ý nhanh">
+                                <button type="button" class="hnmt-quick-chip" data-phrase="Chất vải dày dặn, mặc rất mát.">+ Chất vải đẹp</button>
+                                <button type="button" class="hnmt-quick-chip" data-phrase="Form áo lên dáng chuẩn như hình.">+ Form chuẩn đẹp</button>
+                                <button type="button" class="hnmt-quick-chip" data-phrase="Màu sắc thực tế sắc nét, đúng mô tả.">+ Màu giống hình</button>
+                                <button type="button" class="hnmt-quick-chip" data-phrase="Đóng gói chỉn chu, giao hàng nhanh.">+ Đóng gói kỹ</button>
+                            </div>
+
+                            <!-- COMMENT TEXTAREA -->
+                            <div>
+                                <textarea name="Input.Comment"
+                                          id="reviewCommentInput"
+                                          class="hnmt-review-textarea"
+                                          rows="4"
+                                          maxlength="1000"
+                                          placeholder="Chia sẻ trải nghiệm thực tế của bạn về chất liệu vải, độ vừa vặn kích cỡ, màu sắc..."
+                                          required>@Model.Input.Comment</textarea>
+                                <span asp-validation-for="Input.Comment" style="color: #dc2626; font-size: 12.5px; display: block;"></span>
+                                <div class="hnmt-char-counter">
+                                    <span>Tối đa 1000 ký tự</span>
+                                    <span id="reviewCharCount">0 / 1000</span>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="hnmt-submit-review-btn">
+                                <i class="bi bi-send-fill"></i>
+                                <span>GỬI ĐÁNH GIÁ</span>
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="hnmt-review-status-box">
+                            <div class="hnmt-review-status-icon">
+                                <i class="bi bi-bag-check"></i>
+                            </div>
+                            <div>
+                                <h4>Dành riêng cho khách đã nhận hàng</h4>
+                                <p>
+                                    Bạn có thể gửi đánh giá ngay sau khi đơn hàng chứa sản phẩm này được giao thành công.
+                                    @if (User.Identity?.IsAuthenticated != true)
+                                    {
+                                        <br />
+                                        <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@($"/Products/Details/{product.Id}#product-reviews")" style="color: #111827; font-weight: 700; text-decoration: underline;">Đăng nhập tài khoản mua hàng &rarr;</a>
+                                    }
+                                    else
+                                    {
+                                        <br />
+                                        <a asp-controller="Orders" asp-action="Index" style="color: #111827; font-weight: 700; text-decoration: underline;">Kiểm tra đơn hàng của tôi &rarr;</a>
+                                    }
+                                </p>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+
+                <!-- RIGHT: FILTER BAR & VERIFIED REVIEW LIST -->
+                <div class="hnmt-reviews-right">
+
+                    @if (Model.ReviewCount > 0)
+                    {
+                        <div class="hnmt-review-filters" id="reviewStarFilters">
+                            <button type="button" class="hnmt-filter-pill is-active" data-filter="all">Tất cả (@Model.Reviews.Count)</button>
+                            @for (int star = 5; star >= 1; star--)
+                            {
+                                var starInFeed = Model.Reviews.Count(r => r.Rating == star);
+                                if (starInFeed > 0)
+                                {
+                                    <button type="button" class="hnmt-filter-pill" data-filter="@star">@star Sao (@starInFeed)</button>
+                                }
+                            }
+                        </div>
+
+                        <ul class="hnmt-review-list" id="reviewFeedList">
+                            @foreach (var review in Model.Reviews)
+                            {
+                                var reviewerName = Model.ReviewerNames.TryGetValue(review.UserId, out var rName) ? rName : "Khách hàng HNMTSHOP";
+                                var initial = !string.IsNullOrWhiteSpace(reviewerName) ? reviewerName.Trim()[0].ToString().ToUpper() : "K";
+                                Model.PurchasedSpecs.TryGetValue(review.UserId, out var specText);
+
+                                <li class="hnmt-review-card" data-rating="@review.Rating">
+                                    <div class="hnmt-review-card-top">
+                                        <div class="hnmt-reviewer">
+                                            <div class="hnmt-reviewer-avatar">@initial</div>
+                                            <div>
+                                                <div class="hnmt-reviewer-name-row">
+                                                    <span class="hnmt-reviewer-name">@reviewerName</span>
+                                                    <span class="hnmt-verified-pill">
+                                                        <i class="bi bi-check-circle-fill"></i> Đã mua hàng
+                                                    </span>
+                                                </div>
+                                                <div class="hnmt-review-submeta">
+                                                    <span class="hnmt-review-stars" aria-label="@review.Rating trên 5 sao">
+                                                        @for (int s = 1; s <= 5; s++)
+                                                        {
+                                                            <i class="bi bi-star-fill @(s <= review.Rating ? "" : "empty")"></i>
+                                                        }
+                                                    </span>
+                                                    @if (!string.IsNullOrWhiteSpace(specText))
+                                                    {
+                                                        <span>&bull;</span>
+                                                        <span>Phân loại: <strong>@specText</strong></span>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <time class="hnmt-review-date" datetime="@review.CreatedAt.ToString("yyyy-MM-dd")">
+                                            @review.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")
+                                        </time>
+                                    </div>
+
+                                    <p class="hnmt-review-comment">@review.Comment</p>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <div class="hnmt-reviews-empty">
+                            <div class="hnmt-reviews-empty-icon">
+                                <i class="bi bi-stars"></i>
+                            </div>
+                            <h3>Chưa có đánh giá nào cho @product.Name</h3>
+                            <p>Hãy đặt mua và trở thành khách hàng đầu tiên chia sẻ cảm nhận thực tế về sản phẩm thiết kế này.</p>
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+        </section>
+
     </div>
 </div>
-
 
 <!-- ========================================== -->
 <!-- MODAL PHÒNG THỬ ĐỒ ẢO AI (ANYWEAR STUDIO)   -->
 <!-- ========================================== -->
-<div class="modal fade tryon-modal"
+<div class="tryon-modal"
      id="tryOnModal"
      tabindex="-1"
+     role="dialog"
      aria-labelledby="tryOnModalLabel"
-     aria-hidden="true"
-     data-bs-backdrop="static">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
+     aria-hidden="true">
+    <div class="modal-dialog">
         <div class="modal-content">
 
-            <!-- Modal Header -->
             <div class="modal-header">
                 <div class="modal-title" id="tryOnModalLabel">
-                    <i class="bi bi-magic text-warning fs-5"></i>
-                    <span>FashionStore AI Virtual Try-On</span>
+                    <i class="bi bi-magic"></i>
+                    <span>HNMTSHOP AI Virtual Try-On</span>
                     <span class="badge">ANYWEAR LIVE</span>
                 </div>
-                <button type="button"
-                        class="btn-close btn-close-white"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                <button type="button" class="btn-close-custom" id="closeTryOnBtn" aria-label="Đóng">
+                    <i class="bi bi-x-lg"></i>
+                </button>
             </div>
 
-            <!-- Modal Navigation Tabs -->
             <ul class="nav tryon-nav-tabs" id="tryonTabs" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active"
-                            id="tab-live-camera"
-                            data-bs-toggle="tab"
-                            data-bs-target="#tab-live-pane"
-                            type="button"
-                            role="tab">
-                        <i class="bi bi-camera-video-fill"></i>
-                        1. Camera Trực tiếp
+                    <button class="nav-link active" id="tab-live-camera" data-tryon-target="#tab-live-pane" type="button" role="tab">
+                        <i class="bi bi-camera-video-fill"></i> 1. Camera Trực tiếp
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link"
-                            id="tab-photo-mode"
-                            data-bs-toggle="tab"
-                            data-bs-target="#tab-photo-pane"
-                            type="button"
-                            role="tab">
-                        <i class="bi bi-image"></i>
-                        2. Tải ảnh của bạn / Chọn người mẫu
+                    <button class="nav-link" id="tab-photo-mode" data-tryon-target="#tab-photo-pane" type="button" role="tab">
+                        <i class="bi bi-image"></i> 2. Tải ảnh / Chọn người mẫu
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link"
-                            id="tab-size-advisor"
-                            data-bs-toggle="tab"
-                            data-bs-target="#tab-size-pane"
-                            type="button"
-                            role="tab">
-                        <i class="bi bi-rulers"></i>
-                        3. AI Tư vấn Size chuẩn
+                    <button class="nav-link" id="tab-size-advisor" data-tryon-target="#tab-size-pane" type="button" role="tab">
+                        <i class="bi bi-rulers"></i> 3. AI Tư vấn Size chuẩn
                     </button>
                 </li>
             </ul>
 
-            <!-- Modal Body -->
-            <div class="modal-body p-4">
-                <div class="row g-4">
-
-                    <!-- CỘT TRÁI: KHUNG THỬ ĐỒ (STAGE) -->
-                    <div class="col-lg-8">
-                        <div id="tryonCameraNotice" style="display:none;"></div>
-
-                        <div class="tryon-stage" id="tryonStage">
-
-                            <!-- Laser quét cơ thể AI -->
-                            <div class="tryon-laser-scanner" id="tryonLaserScanner"></div>
-
-                            <!-- Live Camera Video -->
-                            <video id="tryonVideoFeed"
-                                   class="tryon-video-feed"
-                                   autoplay
-                                   playsinline
-                                   muted></video>
-
-                            <!-- Photo Feed (Dùng khi chọn người mẫu hoặc tải ảnh) -->
-                            <img id="tryonPhotoFeed"
-                                 class="tryon-photo-feed"
-                                 src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80"
-                                 alt="Model Fit"
-                                 style="display: none;" />
-
-                            <!-- Khung căn chỉnh tư thế -->
-                            <div class="tryon-body-guide">
-                                <div class="guide-text">
-                                    <i class="bi bi-person-bounding-box me-1"></i>
-                                    Đứng thẳng cách camera 1.5m - 2m
-                                </div>
+            <div class="tryon-grid">
+                <div>
+                    <div id="tryonCameraNotice" style="display:none;"></div>
+                    <div class="tryon-stage" id="tryonStage">
+                        <div class="tryon-laser-scanner" id="tryonLaserScanner"></div>
+                        <video id="tryonVideoFeed" class="tryon-video-feed" autoplay playsinline muted></video>
+                        <img id="tryonPhotoFeed" class="tryon-photo-feed" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80" alt="Model Fit" style="display: none;" />
+                        <div class="tryon-body-guide">
+                            <div class="guide-text">
+                                <i class="bi bi-person-bounding-box"></i> Đứng thẳng cách camera 1.5m - 2m
                             </div>
-
-                            <!-- Layer trang phục ướm thử (Kéo thả, phóng to thu nhỏ) -->
-                            <div class="tryon-garment-layer"
-                                 id="tryonGarmentLayer"
-                                 style="width: 290px; height: 350px;">
-                                <img id="tryonGarmentImg"
-                                     src="@Model.ImageUrl"
-                                     alt="@Model.Name"
-                                     onerror="this.src='https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800'" />
-                            </div>
-
-                            <!-- HUD Thanh điều khiển nhanh góc dưới màn hình -->
-                            <div class="tryon-hud-controls">
-                                <button type="button"
-                                        class="tryon-hud-btn"
-                                        id="tryonResetBtn"
-                                        title="Đặt lại vị trí ban đầu">
-                                    <i class="bi bi-arrow-counterclockwise"></i>
-                                </button>
-                                <button type="button"
-                                        class="tryon-hud-btn"
-                                        id="tryonScanBtn"
-                                        title="AI Quét dáng tự động căn chỉnh">
-                                    <i class="bi bi-magic"></i>
-                                </button>
-                                <button type="button"
-                                        class="tryon-hud-btn text-warning"
-                                        id="tryonSnapshotBtn"
-                                        title="Chụp ảnh lưu lại dáng">
-                                    <i class="bi bi-camera-fill"></i>
-                                </button>
-                            </div>
-
                         </div>
-
-                        <!-- Gallery ảnh đã chụp -->
-                        <div class="mt-3">
-                            <div class="d-flex align-items-center justify-content-between mb-2">
-                                <small class="text-muted">
-                                    <i class="bi bi-collection-play me-1"></i>
-                                    Ảnh thử đồ đã chụp (Bấm để tải về):
-                                </small>
-                            </div>
-                            <div class="tryon-snapshots" id="tryonSnapshotsGallery"></div>
+                        <div class="tryon-garment-layer" id="tryonGarmentLayer" style="width: 290px; height: 350px;">
+                            <img id="tryonGarmentImg" src="@initialFront" alt="@product.Name" />
                         </div>
-
+                        <div class="tryon-hud-controls">
+                            <button type="button" class="tryon-hud-btn" id="tryonResetBtn" title="Đặt lại vị trí ban đầu"><i class="bi bi-arrow-counterclockwise"></i></button>
+                            <button type="button" class="tryon-hud-btn" id="tryonScanBtn" title="AI Quét dáng tự động căn chỉnh"><i class="bi bi-magic"></i></button>
+                            <button type="button" class="tryon-hud-btn" id="tryonSnapshotBtn" title="Chụp ảnh lưu lại dáng"><i class="bi bi-camera-fill"></i></button>
+                        </div>
                     </div>
+                    <div style="margin-top: 12px;">
+                        <small style="color: #9ca3af;"><i class="bi bi-collection-play"></i> Ảnh thử đồ đã chụp (Bấm để tải về):</small>
+                        <div class="tryon-snapshots" id="tryonSnapshotsGallery"></div>
+                    </div>
+                </div>
 
-                    <!-- CỘT PHẢI: BẢNG ĐIỀU KHIỂN & CÔNG CỤ -->
-                    <div class="col-lg-4">
-                        <div class="tab-content h-100">
-
-                            <!-- Tab Pane 1: Điều khiển Camera & Căn chỉnh trang phục -->
-                            <div class="tab-pane fade show active h-100" id="tab-live-pane" role="tabpanel">
-                                <div class="tryon-sidebar">
-                                    <div>
-                                        <div class="tryon-tool-title">ĐANG THỬ SẢN PHẨM</div>
-                                        <h6 class="text-white mb-1">@Model.Name</h6>
-                                        <p class="text-warning fw-bold mb-3">@Model.Price.ToString("N0") ₫</p>
-                                    </div>
-
-                                    <hr class="border-secondary my-1" />
-
-                                    <div class="tryon-tool-title">ĐIỀU CHỈNH KÍCH CỠ & VỊ TRÍ</div>
-                                    <p class="small text-muted mb-2">
-                                        💡 <em>Mẹo: Bạn có thể rê chuột hoặc chạm tay trực tiếp lên áo để di chuyển!</em>
-                                    </p>
-
-                                    <!-- Sliders -->
-                                    <div class="tryon-slider-group mb-2">
-                                        <div class="tryon-slider-label">
-                                            <span>Thu phóng (Size)</span>
-                                            <span class="text-warning">Kéo để vừa người</span>
-                                        </div>
-                                        <input type="range" class="tryon-range" id="tryonScaleRange" min="0.6" max="1.8" step="0.05" value="1" />
-                                    </div>
-
-                                    <div class="tryon-slider-group mb-2">
-                                        <div class="tryon-slider-label">
-                                            <span>Độ rõ nét / Trong suốt</span>
-                                        </div>
-                                        <input type="range" class="tryon-range" id="tryonOpacityRange" min="0.5" max="1" step="0.05" value="0.95" />
-                                    </div>
-
-                                    <div class="tryon-slider-group mb-3">
-                                        <div class="tryon-slider-label">
-                                            <span>Góc xoay</span>
-                                        </div>
-                                        <input type="range" class="tryon-range" id="tryonRotateRange" min="-30" max="30" step="2" value="0" />
-                                    </div>
-
-                                    <button type="button"
-                                            class="btn btn-warning w-100 fw-bold py-2 mt-auto"
-                                            data-bs-dismiss="modal">
-                                        <i class="bi bi-cart-check me-2"></i>
-                                        Ưng Ý! Chốt Mua Sản Phẩm
-                                    </button>
-                                </div>
+                <div>
+                    <div id="tab-live-pane" class="tab-pane active" role="tabpanel">
+                        <div class="tryon-sidebar">
+                            <div>
+                                <div class="tryon-tool-title">ĐANG THỬ SẢN PHẨM</div>
+                                <h6 style="color: #fff; margin: 4px 0;">@product.Name</h6>
+                                <p style="color: #fbbf24; font-weight: 700; margin-bottom: 14px;">@product.Price.ToString("N0") ₫</p>
                             </div>
-
-                            <!-- Tab Pane 2: Tải ảnh hoặc chọn Người mẫu -->
-                            <div class="tab-pane fade h-100" id="tab-photo-pane" role="tabpanel">
-                                <div class="tryon-sidebar">
-                                    <div class="tryon-tool-title">TẢI ẢNH CỦA BẠN</div>
-                                    <label class="btn btn-outline-warning w-100 mb-3 text-start py-2">
-                                        <i class="bi bi-cloud-arrow-up me-2"></i> Tải ảnh toàn thân lên...
-                                        <input type="file" id="tryonPhotoUpload" accept="image/*" style="display:none;" />
-                                    </label>
-
-                                    <div class="tryon-tool-title">HOẶC CHỌN NGƯỜI MẪU DÁNG CHUẨN</div>
-                                    <div class="sample-models-grid mb-3">
-                                        <div class="sample-model-thumb active"
-                                             data-model-img="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80">
-                                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80" alt="Nữ 1m65" />
-                                        </div>
-                                        <div class="sample-model-thumb"
-                                             data-model-img="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80">
-                                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80" alt="Nam 1m75" />
-                                        </div>
-                                        <div class="sample-model-thumb"
-                                             data-model-img="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=800&q=80">
-                                            <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=300&q=80" alt="Nữ 1m60" />
-                                        </div>
-                                        <div class="sample-model-thumb"
-                                             data-model-img="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=80">
-                                            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80" alt="Nam 1m80" />
-                                        </div>
-                                    </div>
-
-                                    <div class="small text-muted mt-auto">
-                                        <em>Tip: Sau khi chọn ảnh, bạn có thể bấm nút <strong class="text-warning">"AI Tự động căn dáng"</strong> ở góc dưới để áo khớp ngay vào mẫu!</em>
-                                    </div>
-                                </div>
+                            <div class="tryon-tool-title">ĐIỀU CHỈNH KÍCH CỠ & VỊ TRÍ</div>
+                            <div class="tryon-slider-group">
+                                <div class="tryon-slider-label"><span>Thu phóng (Size)</span></div>
+                                <input type="range" class="tryon-range" id="tryonScaleRange" min="0.6" max="1.8" step="0.05" value="1" />
                             </div>
-
-                            <!-- Tab Pane 3: AI Tư vấn Size -->
-                            <div class="tab-pane fade h-100" id="tab-size-pane" role="tabpanel">
-                                <div class="tryon-sidebar">
-                                    <div class="tryon-tool-title">AI TƯ VẤN SIZE THEO VÓC DÁNG</div>
-
-                                    <div class="mb-2">
-                                        <label class="form-label small text-muted mb-1">Chiều cao của bạn (cm)</label>
-                                        <input type="number" class="form-control form-control-sm bg-dark text-white border-secondary" id="advisorHeight" placeholder="Ví dụ: 170" value="168" />
-                                    </div>
-
-                                    <div class="mb-2">
-                                        <label class="form-label small text-muted mb-1">Cân nặng của bạn (kg)</label>
-                                        <input type="number" class="form-control form-control-sm bg-dark text-white border-secondary" id="advisorWeight" placeholder="Ví dụ: 62" value="60" />
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label small text-muted mb-1">Gu mặc đồ mong muốn</label>
-                                        <select class="form-select form-select-sm bg-dark text-white border-secondary" id="advisorFit">
-                                            <option value="regular">Vừa vặn tiêu chuẩn (Regular)</option>
-                                            <option value="loose">Rộng rãi thoải mái (Oversize)</option>
-                                            <option value="slim">Ôm sát tôn dáng (Slimfit)</option>
-                                        </select>
-                                    </div>
-
-                                    <button type="button" class="btn btn-warning btn-sm w-100 fw-bold py-2 mb-3" id="advisorCalcBtn">
-                                        <i class="bi bi-cpu me-1"></i> Tính Toán Size Phù Hợp
-                                    </button>
-
-                                    <!-- Kết quả tư vấn -->
-                                    <div class="tryon-size-advisor-card" id="advisorResultCard" style="display:none;">
-                                        <div class="small text-muted">KẾT QUẢ PHÂN TÍCH AI:</div>
-                                        <div class="d-flex align-items-center justify-content-between my-2">
-                                            <span class="tryon-size-badge" id="recommendedSize">Size M</span>
-                                            <span class="badge bg-success" id="recommendAccuracy">Độ chuẩn 98%</span>
-                                        </div>
-                                        <p class="small text-muted mb-3">
-                                            Form dáng tối ưu cho chiều cao & cân nặng của bạn.
-                                        </p>
-                                        <button type="button"
-                                                class="btn btn-outline-warning btn-sm w-100"
-                                                id="applyRecommendedSizeBtn">
-                                            <i class="bi bi-check2-circle me-1"></i>
-                                            Áp Dụng Size Này & Đóng
-                                        </button>
-                                    </div>
-                                </div>
+                            <div class="tryon-slider-group">
+                                <div class="tryon-slider-label"><span>Độ rõ nét</span></div>
+                                <input type="range" class="tryon-range" id="tryonOpacityRange" min="0.5" max="1" step="0.05" value="0.95" />
                             </div>
-
+                            <div class="tryon-slider-group">
+                                <div class="tryon-slider-label"><span>Góc xoay</span></div>
+                                <input type="range" class="tryon-range" id="tryonRotateRange" min="-30" max="30" step="2" value="0" />
+                            </div>
+                            <button type="button" class="hnmt-pdp-tryon-btn" style="width: 100%; justify-content: center; margin-top: 16px;" id="doneTryOnBtn">
+                                <i class="bi bi-cart-check"></i> Ưng Ý! Quay lại chọn Size
+                            </button>
                         </div>
                     </div>
 
+                    <div id="tab-photo-pane" class="tab-pane" role="tabpanel">
+                        <div class="tryon-sidebar">
+                            <div class="tryon-tool-title">TẢI ẢNH CỦA BẠN</div>
+                            <label class="hnmt-pdp-tryon-btn" style="width: 100%; justify-content: center; margin-bottom: 16px; cursor: pointer;">
+                                <i class="bi bi-cloud-arrow-up"></i> Tải ảnh toàn thân lên...
+                                <input type="file" id="tryonPhotoUpload" accept="image/*" style="display:none;" />
+                            </label>
+                            <div class="tryon-tool-title">HOẶC CHỌN NGƯỜI MẪU</div>
+                            <div class="sample-models-grid">
+                                <div class="sample-model-thumb active" data-model-img="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80">
+                                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80" alt="Mẫu 1" />
+                                </div>
+                                <div class="sample-model-thumb" data-model-img="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80">
+                                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80" alt="Mẫu 2" />
+                                </div>
+                                <div class="sample-model-thumb" data-model-img="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=800&q=80">
+                                    <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=300&q=80" alt="Mẫu 3" />
+                                </div>
+                                <div class="sample-model-thumb" data-model-img="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=80">
+                                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80" alt="Mẫu 4" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-size-pane" class="tab-pane" role="tabpanel">
+                        <div class="tryon-sidebar">
+                            <div class="tryon-tool-title">AI TƯ VẤN SIZE THEO VÓC DÁNG</div>
+                            <div style="margin-bottom: 10px;">
+                                <label style="font-size: 12px; color: #9ca3af; display: block; margin-bottom: 4px;">Chiều cao (cm)</label>
+                                <input type="number" id="advisorHeight" value="168" style="width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid #374151; background: #111827; color: #fff;" />
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <label style="font-size: 12px; color: #9ca3af; display: block; margin-bottom: 4px;">Cân nặng (kg)</label>
+                                <input type="number" id="advisorWeight" value="60" style="width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid #374151; background: #111827; color: #fff;" />
+                            </div>
+                            <div style="margin-bottom: 14px;">
+                                <label style="font-size: 12px; color: #9ca3af; display: block; margin-bottom: 4px;">Gu mặc đồ</label>
+                                <select id="advisorFit" style="width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid #374151; background: #111827; color: #fff;">
+                                    <option value="regular">Vừa vặn tiêu chuẩn (Regular)</option>
+                                    <option value="loose">Rộng rãi thoải mái (Oversize)</option>
+                                    <option value="slim">Ôm gọn tôn dáng (Slimfit)</option>
+                                </select>
+                            </div>
+                            <button type="button" class="hnmt-pdp-tryon-btn" style="width: 100%; justify-content: center; margin-bottom: 12px;" id="advisorCalcBtn">
+                                <i class="bi bi-cpu"></i> Tính toán Size phù hợp
+                            </button>
+                            <div class="tryon-size-advisor-card" id="advisorResultCard" style="display:none;">
+                                <div style="font-size: 12px; color: #9ca3af;">KẾT QUẢ AI:</div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin: 8px 0;">
+                                    <span class="tryon-size-badge" id="recommendedSize">Size M</span>
+                                    <span id="recommendAccuracy" style="color: #10b981; font-size: 12px; font-weight: 700;">Độ chuẩn 98%</span>
+                                </div>
+                                <button type="button" class="hnmt-pdp-tryon-btn" style="width: 100%; justify-content: center;" id="applyRecommendedSizeBtn">
+                                    Áp dụng Size này
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -446,57 +687,277 @@
 
 @section Scripts {
     <script src="~/js/virtual-tryon.js" asp-append-version="true"></script>
-
     <script>
-        const variantSelect = document.getElementById("variantSelect");
-        const priceElement = document.getElementById("selectedPrice");
-        const stockElement = document.getElementById("selectedStock");
-        const quantityInput = document.getElementById("quantityInput");
-        const addButton = document.getElementById("addToCartButton");
+        (() => {
+            const allVariants = @Html.Raw(JsonSerializer.Serialize(variants.Select(v => new {
+                id = v.Id,
+                size = v.Size,
+                color = v.Color,
+                price = v.Price,
+                stock = v.StockQuantity
+            })));
 
-        function updateVariantInfo() {
-            if (!variantSelect) return;
+            const mainImg = document.getElementById('pdpMainImage');
+            const sideSwitch = document.getElementById('pdpSideSwitch');
+            const colorList = document.getElementById('pdpColorList');
+            const sizeList = document.getElementById('pdpSizeList');
+            const variantIdInput = document.getElementById('variantIdInput');
+            const priceEl = document.getElementById('selectedPrice');
+            const stockEl = document.getElementById('selectedStock');
+            const colorLabelEl = document.getElementById('selectedColorLabel');
+            const qtyInput = document.getElementById('quantityInput');
+            const addBtn = document.getElementById('addToCartButton');
 
-            const option = variantSelect.options[variantSelect.selectedIndex];
+            let currentFront = mainImg ? mainImg.getAttribute('src') : '';
+            let currentBack = '@(initialBack ?? "")';
+            let currentSide = 'front';
+            let activeColor = allVariants.length > 0 ? allVariants[0].color : '';
+            let activeVariant = allVariants.find(v => v.stock > 0) || allVariants[0] || null;
+            if (activeVariant) activeColor = activeVariant.color;
 
-            if (!option || !option.value) return;
-
-            const price = Number(option.dataset.price);
-            const stock = Number(option.dataset.stock);
-
-            priceElement.textContent =
-                price.toLocaleString("vi-VN") + " ₫";
-
-            stockElement.textContent = stock;
-
-            quantityInput.max = Math.min(stock, 20);
-
-            if (stock <= 0) {
-                quantityInput.value = 0;
-                addButton.disabled = true;
-                addButton.textContent = "HẾT HÀNG";
-            } else {
-                quantityInput.value = 1;
-                addButton.disabled = false;
-                addButton.textContent = "THÊM VÀO GIỎ HÀNG";
+            function setMainImage(src) {
+                if (!mainImg || !src) return;
+                mainImg.classList.add('is-switching');
+                setTimeout(() => {
+                    mainImg.src = src;
+                    mainImg.classList.remove('is-switching');
+                }, 140);
             }
-        }
 
-        if (variantSelect) {
-            variantSelect.addEventListener("change", updateVariantInfo);
-            updateVariantInfo();
-        }
+            function syncSideButtons() {
+                if (!sideSwitch) return;
+                sideSwitch.hidden = !currentBack;
+                if (!currentBack) currentSide = 'front';
+                sideSwitch.querySelectorAll('.hnmt-pdp-side-btn').forEach(btn => {
+                    const isAct = btn.dataset.side === currentSide;
+                    btn.classList.toggle('is-active', isAct);
+                    btn.classList.toggle('is-dimmed', !isAct);
+                });
+            }
 
-        if (quantityInput) {
-            quantityInput.addEventListener("change", function() {
-                const max = Number(this.max);
-                let value = Number(this.value);
+            if (sideSwitch) {
+                sideSwitch.querySelectorAll('.hnmt-pdp-side-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const target = btn.dataset.side;
+                        if (target === currentSide) return;
+                        if (target === 'back' && !currentBack) return;
+                        currentSide = target;
+                        syncSideButtons();
+                        setMainImage(currentSide === 'back' ? currentBack : currentFront);
+                    });
+                });
+            }
 
-                if (value < 1) value = 1;
-                if (value > max) value = max;
+            function renderSizesForColor(colorName) {
+                if (!sizeList) return;
+                sizeList.innerHTML = '';
+                const matching = colorName
+                    ? allVariants.filter(v => v.color.toLowerCase() === colorName.toLowerCase())
+                    : allVariants;
 
-                this.value = value;
+                if (!activeVariant || (colorName && activeVariant.color.toLowerCase() !== colorName.toLowerCase())) {
+                    activeVariant = matching.find(v => v.stock > 0) || matching[0] || null;
+                }
+
+                matching.forEach(v => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'hnmt-pdp-size-btn' + (activeVariant && activeVariant.id === v.id ? ' is-active' : '');
+                    btn.textContent = v.size;
+                    btn.disabled = v.stock <= 0;
+                    btn.addEventListener('click', () => {
+                        activeVariant = v;
+                        renderSizesForColor(colorName);
+                        updateVariantUI();
+                    });
+                    sizeList.appendChild(btn);
+                });
+
+                updateVariantUI();
+            }
+
+            function updateVariantUI() {
+                if (!activeVariant) return;
+                if (variantIdInput) variantIdInput.value = activeVariant.id;
+                if (priceEl) priceEl.textContent = Number(activeVariant.price).toLocaleString('vi-VN') + ' ₫';
+                if (stockEl) stockEl.textContent = activeVariant.stock > 0 ? `${activeVariant.stock} sản phẩm` : 'Hết hàng';
+                if (colorLabelEl && activeColor) colorLabelEl.textContent = activeColor;
+
+                if (qtyInput && addBtn) {
+                    const max = Math.min(activeVariant.stock, 20);
+                    qtyInput.max = Math.max(max, 1);
+                    if (activeVariant.stock <= 0) {
+                        addBtn.disabled = true;
+                        addBtn.innerHTML = '<i class="bi bi-x-circle"></i><span>TẠM HẾT HÀNG</span>';
+                    } else {
+                        if (Number(qtyInput.value) > max) qtyInput.value = max;
+                        if (Number(qtyInput.value) < 1) qtyInput.value = 1;
+                        addBtn.disabled = false;
+                        addBtn.innerHTML = '<i class="bi bi-bag-plus"></i><span>THÊM VÀO GIỎ HÀNG</span>';
+                    }
+                }
+            }
+
+            if (colorList) {
+                const chips = colorList.querySelectorAll('.hnmt-pdp-color-chip');
+                chips.forEach(chip => {
+                    if (activeColor && chip.dataset.color.toLowerCase() === activeColor.toLowerCase()) {
+                        chips.forEach(c => c.classList.remove('is-active'));
+                        chip.classList.add('is-active');
+                        currentFront = chip.dataset.front || currentFront;
+                        currentBack = chip.dataset.back || '';
+                        if (mainImg && currentFront) mainImg.src = currentFront;
+                    }
+
+                    chip.addEventListener('click', () => {
+                        chips.forEach(c => c.classList.remove('is-active'));
+                        chip.classList.add('is-active');
+                        activeColor = chip.dataset.color;
+                        currentFront = chip.dataset.front || currentFront;
+                        currentBack = chip.dataset.back || '';
+                        currentSide = 'front';
+                        syncSideButtons();
+                        setMainImage(currentFront);
+                        renderSizesForColor(activeColor);
+                    });
+                });
+            }
+
+            syncSideButtons();
+            renderSizesForColor(activeColor);
+
+            // Quantity +/- stepper
+            const minusBtn = document.getElementById('qtyMinusBtn');
+            const plusBtn = document.getElementById('qtyPlusBtn');
+            if (minusBtn && qtyInput) {
+                minusBtn.addEventListener('click', () => {
+                    const v = Math.max(1, (parseInt(qtyInput.value, 10) || 1) - 1);
+                    qtyInput.value = v;
+                });
+            }
+            if (plusBtn && qtyInput) {
+                plusBtn.addEventListener('click', () => {
+                    const max = parseInt(qtyInput.max, 10) || 20;
+                    const v = Math.min(max, (parseInt(qtyInput.value, 10) || 1) + 1);
+                    qtyInput.value = v;
+                });
+            }
+
+            // Interactive 5-Star Review Picker
+            const starPicker = document.getElementById('interactiveStarPicker');
+            const ratingInput = document.getElementById('ratingValueInput');
+            const moodLabel = document.getElementById('starMoodLabel');
+            const moods = {
+                5: 'Tuyệt vời — Rất hài lòng!',
+                4: 'Hài lòng — Chất lượng tốt',
+                3: 'Bình thường — Đúng mô tả',
+                2: 'Tạm ổn — Cần cải thiện thêm',
+                1: 'Không hài lòng'
+            };
+
+            function paintStars(val) {
+                if (!starPicker) return;
+                starPicker.querySelectorAll('.hnmt-star-pick-btn').forEach(btn => {
+                    const s = parseInt(btn.dataset.star, 10);
+                    btn.classList.toggle('is-lit', s <= val);
+                });
+                if (moodLabel) moodLabel.textContent = moods[val] || '';
+            }
+
+            if (starPicker && ratingInput) {
+                let selectedRating = parseInt(ratingInput.value, 10) || 5;
+                paintStars(selectedRating);
+
+                starPicker.querySelectorAll('.hnmt-star-pick-btn').forEach(btn => {
+                    const s = parseInt(btn.dataset.star, 10);
+                    btn.addEventListener('mouseenter', () => paintStars(s));
+                    btn.addEventListener('click', () => {
+                        selectedRating = s;
+                        ratingInput.value = s;
+                        paintStars(s);
+                    });
+                });
+
+                starPicker.addEventListener('mouseleave', () => paintStars(selectedRating));
+            }
+
+            // Quick Review Phrase Chips & Character Counter
+            const commentBox = document.getElementById('reviewCommentInput');
+            const charCount = document.getElementById('reviewCharCount');
+            function updateCharCount() {
+                if (commentBox && charCount) {
+                    charCount.textContent = `${commentBox.value.length} / 1000`;
+                }
+            }
+            if (commentBox) {
+                commentBox.addEventListener('input', updateCharCount);
+                updateCharCount();
+            }
+
+            document.querySelectorAll('.hnmt-quick-chip').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    if (!commentBox) return;
+                    const phrase = chip.dataset.phrase || '';
+                    if (!commentBox.value.includes(phrase)) {
+                        commentBox.value = (commentBox.value.trim() ? commentBox.value.trim() + ' ' : '') + phrase;
+                        commentBox.focus();
+                        updateCharCount();
+                    }
+                });
             });
-        }
+
+            // Client-side Star Filter Pills
+            const filterContainer = document.getElementById('reviewStarFilters');
+            const reviewCards = document.querySelectorAll('#reviewFeedList .hnmt-review-card');
+            if (filterContainer && reviewCards.length > 0) {
+                filterContainer.querySelectorAll('.hnmt-filter-pill').forEach(pill => {
+                    pill.addEventListener('click', () => {
+                        filterContainer.querySelectorAll('.hnmt-filter-pill').forEach(p => p.classList.remove('is-active'));
+                        pill.classList.add('is-active');
+                        const f = pill.dataset.filter;
+                        reviewCards.forEach(card => {
+                            card.style.display = (f === 'all' || card.dataset.rating === f) ? '' : 'none';
+                        });
+                    });
+                });
+            }
+
+            // Standalone Virtual Try-On Modal Controller
+            const tryOnModal = document.getElementById('tryOnModal');
+            const openTryOnBtn = document.getElementById('openTryOnBtn');
+            const closeTryOnBtn = document.getElementById('closeTryOnBtn');
+            const doneTryOnBtn = document.getElementById('doneTryOnBtn');
+
+            function closeTryOn() {
+                if (!tryOnModal) return;
+                tryOnModal.classList.remove('is-open');
+                tryOnModal.setAttribute('aria-hidden', 'true');
+                tryOnModal.dispatchEvent(new CustomEvent('hidden.bs.modal'));
+            }
+
+            if (openTryOnBtn && tryOnModal) {
+                openTryOnBtn.addEventListener('click', () => {
+                    const garmentImg = document.getElementById('tryonGarmentImg');
+                    if (garmentImg && currentFront) garmentImg.src = currentFront;
+                    tryOnModal.classList.add('is-open');
+                    tryOnModal.setAttribute('aria-hidden', 'false');
+                    const liveTab = document.getElementById('tab-live-camera');
+                    if (liveTab) liveTab.dispatchEvent(new CustomEvent('shown.bs.tab'));
+                });
+            }
+            if (closeTryOnBtn) closeTryOnBtn.addEventListener('click', closeTryOn);
+            if (doneTryOnBtn) doneTryOnBtn.addEventListener('click', closeTryOn);
+
+            document.querySelectorAll('[data-tryon-target]').forEach(tabBtn => {
+                tabBtn.addEventListener('click', () => {
+                    document.querySelectorAll('[data-tryon-target]').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('#tryOnModal .tab-pane').forEach(p => p.classList.remove('active'));
+                    tabBtn.classList.add('active');
+                    const pane = document.querySelector(tabBtn.dataset.tryonTarget);
+                    if (pane) pane.classList.add('active');
+                    tabBtn.dispatchEvent(new CustomEvent('shown.bs.tab'));
+                });
+            });
+        })();
     </script>
 }

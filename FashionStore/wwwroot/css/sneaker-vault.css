@@ -31,7 +31,8 @@
     font-family: 'Montserrat', -apple-system, sans-serif;
 }
 
-#hnmtSneakerOverlay.is-active {
+#hnmtSneakerOverlay.is-active,
+#hnmtSneakerOverlay.is-standalone {
     display: block !important;
     opacity: 1 !important;
     visibility: visible !important;

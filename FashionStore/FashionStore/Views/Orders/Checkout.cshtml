@@ -1,132 +1,203 @@
-﻿@model CheckoutViewModel
-
+@model CheckoutViewModel
+@using System.Globalization
 @{
-    ViewData["Title"] = "Thanh toán";
+    Layout = "_PaymentLayout";
+    ViewData["Title"] = "Thông tin đặt hàng";
+    string Money(decimal amount) => amount.ToString("N0", CultureInfo.GetCultureInfo("vi-VN")) + " ₫";
 }
 
-<div class="container py-5">
-    <div class="mb-5">
-        <p class="text-muted text-uppercase small">FashionStore</p>
-        <h1>Thông tin đặt hàng</h1>
-        <p class="text-muted">Vui lòng kiểm tra thông tin giao hàng của bạn.</p>
+<!-- TIẾN TRÌNH ĐẶT HÀNG (3 BƯỚC HIỆN ĐẠI CHUẨN WEB) -->
+<nav class="hnmt-pay-steps" aria-label="Tiến trình đặt hàng">
+    <div class="hnmt-pay-step is-active" aria-current="step">
+        <span class="hnmt-step-num">01</span>
+        <span class="hnmt-step-name">Thông tin nhận hàng</span>
     </div>
+    <span class="hnmt-pay-step-line"></span>
+    <div class="hnmt-pay-step">
+        <span class="hnmt-step-num">02</span>
+        <span class="hnmt-step-name">Thanh toán</span>
+    </div>
+    <span class="hnmt-pay-step-line"></span>
+    <div class="hnmt-pay-step">
+        <span class="hnmt-step-num">03</span>
+        <span class="hnmt-step-name">Hoàn tất</span>
+    </div>
+</nav>
 
-    <form asp-controller="Orders" asp-action="Checkout" method="post">
-        @Html.AntiForgeryToken()
+<div class="hnmt-pay-heading">
+    <h1 class="hnmt-pay-title">Xác nhận đặt hàng</h1>
+    <p class="hnmt-pay-subtitle">Kiểm tra thông tin giao nhận và phương thức thanh toán để hoàn tất đơn hàng.</p>
+</div>
 
-        <div asp-validation-summary="ModelOnly"
-             class="alert alert-danger"></div>
+<form id="checkoutForm" asp-controller="Orders" asp-action="Checkout" method="post" class="hnmt-checkout-layout">
+    @Html.AntiForgeryToken()
 
-        <div class="row g-5">
-            <div class="col-lg-7">
-                <h4 class="mb-4">Thông tin người nhận</h4>
+    <!-- CỘT TRÁI: FORM ĐIỀN THÔNG TIN & PHƯƠNG THỨC THANH TOÁN -->
+    <div class="hnmt-checkout-main">
+        <div asp-validation-summary="ModelOnly" class="hnmt-alert-danger" role="alert"></div>
 
-                <div class="mb-3">
-                    <label asp-for="ReceiverName" class="form-label">
-                        Họ và tên người nhận
-                    </label>
-                    <input asp-for="ReceiverName" class="form-control" />
-                    <span asp-validation-for="ReceiverName"
-                          class="text-danger"></span>
+        <!-- CARD 1: THÔNG TIN NGƯỜI NHẬN -->
+        <div class="hnmt-checkout-card">
+            <div class="hnmt-card-header-clean">
+                <div>
+                    <h2 class="hnmt-card-title-clean">Thông tin người nhận</h2>
+                    <p class="hnmt-card-sub-clean">Địa chỉ và số điện thoại dùng để giao kiện hàng tận tay bạn.</p>
                 </div>
-
-                <div class="mb-3">
-                    <label asp-for="Phone" class="form-label">
-                        Số điện thoại
-                    </label>
-                    <input asp-for="Phone" class="form-control" />
-                    <span asp-validation-for="Phone"
-                          class="text-danger"></span>
-                </div>
-
-                <div class="mb-4">
-                    <label asp-for="Address" class="form-label">
-                        Địa chỉ giao hàng
-                    </label>
-                    <textarea asp-for="Address"
-                              class="form-control"
-                              rows="3"
-                              placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố"></textarea>
-                    <span asp-validation-for="Address"
-                          class="text-danger"></span>
-                </div>
-
-                <h4 class="mb-3">Phương thức thanh toán</h4>
-
-                <div class="border p-3 mb-4">
-                    <label class="d-flex align-items-center gap-3">
-                        <input type="radio"
-                               asp-for="PaymentMethod"
-                               value="COD"
-                               checked />
-                        <span>
-                            <strong>Thanh toán khi nhận hàng (COD)</strong>
-                            <br />
-                            <small class="text-muted">
-                                Thanh toán trực tiếp cho nhân viên giao hàng.
-                            </small>
-                        </span>
-                    </label>
-                </div>
-
-                <button type="submit" class="fs-btn fs-btn-dark w-100">
-                    XÁC NHẬN ĐẶT HÀNG
-                </button>
             </div>
 
-            <div class="col-lg-5">
-                <div class="border p-4">
-                    <h4 class="mb-4">Đơn hàng của bạn</h4>
+            <div class="hnmt-form-group">
+                <label asp-for="ReceiverName" class="hnmt-form-label">Họ và tên người nhận <span class="text-danger">*</span></label>
+                <input asp-for="ReceiverName" class="hnmt-form-control" autocomplete="shipping name" placeholder="Ví dụ: Nguyễn Văn A" required maxlength="100" />
+                <span asp-validation-for="ReceiverName" class="hnmt-form-error"></span>
+            </div>
 
-                    @foreach (var item in Model.CartItems)
-                    {
-                        <div class="d-flex gap-3 mb-3">
-                            <img src="@item.ImageUrl"
-                                 alt="@item.ProductName"
-                                 style="width:75px;height:90px;object-fit:cover;"
-                                 onerror="this.src='https://placehold.co/75x90?text=Product'" />
+            <div class="hnmt-form-group">
+                <label asp-for="Phone" class="hnmt-form-label">Số điện thoại liên hệ <span class="text-danger">*</span></label>
+                <input asp-for="Phone" class="hnmt-form-control" type="tel" autocomplete="shipping tel" placeholder="Ví dụ: 0912 345 678" required />
+                <span asp-validation-for="Phone" class="hnmt-form-error"></span>
+            </div>
 
-                            <div class="flex-grow-1">
-                                <strong>@item.ProductName</strong>
-                                <div class="small text-muted">
-                                    Size @item.Size - @item.Color
-                                </div>
-                                <div class="small text-muted">
-                                    Số lượng: @item.Quantity
-                                </div>
-                                <div>
-                                    @item.TotalPrice.ToString("N0") ₫
-                                </div>
-                            </div>
-                        </div>
-                    }
-
-                    <hr />
-
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Tạm tính</span>
-                        <span>@Model.SubTotal.ToString("N0") ₫</span>
-                    </div>
-
-                    <div class="d-flex justify-content-between mb-3">
-                        <span>Phí vận chuyển</span>
-                        <span>@Model.ShippingFee.ToString("N0") ₫</span>
-                    </div>
-
-                    <hr />
-
-                    <div class="d-flex justify-content-between">
-                        <strong>Tổng thanh toán</strong>
-                        <strong class="fs-5">
-                            @Model.TotalAmount.ToString("N0") ₫
-                        </strong>
-                    </div>
-                </div>
+            <div class="hnmt-form-group mb-0">
+                <label asp-for="Address" class="hnmt-form-label">Địa chỉ nhận hàng chi tiết <span class="text-danger">*</span></label>
+                <textarea asp-for="Address" class="hnmt-form-control" autocomplete="shipping street-address" rows="3" placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố..." required maxlength="300"></textarea>
+                <span asp-validation-for="Address" class="hnmt-form-error"></span>
             </div>
         </div>
-    </form>
-</div>
+
+        <!-- CARD 2: PHƯƠNG THỨC THANH TOÁN -->
+        <div class="hnmt-checkout-card">
+            <div class="hnmt-card-header-clean">
+                <div>
+                    <h2 class="hnmt-card-title-clean">Phương thức thanh toán</h2>
+                    <p class="hnmt-card-sub-clean">Chọn hình thức thanh toán thuận tiện nhất cho bạn.</p>
+                </div>
+            </div>
+
+            <fieldset class="hnmt-payment-methods">
+                <!-- COD Option -->
+                <label class="hnmt-payment-option" for="paymentCOD">
+                    <input type="radio" asp-for="PaymentMethod" value="COD" id="paymentCOD" class="hnmt-payment-radio" />
+                    <div class="hnmt-option-body">
+                        <div class="hnmt-option-top">
+                            <span class="hnmt-option-title">Thanh toán khi nhận hàng (COD)</span>
+                        </div>
+                        <p class="hnmt-option-desc">Thanh toán bằng tiền mặt trực tiếp cho nhân viên giao hàng sau khi nhận và kiểm tra kiện hàng.</p>
+                    </div>
+                </label>
+
+                <!-- VietQR Option -->
+                <label class="hnmt-payment-option" for="paymentQR">
+                    <input type="radio" asp-for="PaymentMethod" value="VietQR" id="paymentQR" class="hnmt-payment-radio" />
+                    <div class="hnmt-option-body">
+                        <div class="hnmt-option-top">
+                            <span class="hnmt-option-title">Chuyển khoản VietQR 24/7</span>
+                            <span class="hnmt-badge-recommended">Khuyên dùng</span>
+                        </div>
+                        <p class="hnmt-option-desc">Quét mã QR tự động điền chính xác số tiền & nội dung đơn hàng. Đơn được kích hoạt xử lý ngay lập tức.</p>
+                    </div>
+                </label>
+            </fieldset>
+
+            <span asp-validation-for="PaymentMethod" class="hnmt-form-error"></span>
+
+            <!-- NÚT XÁC NHẬN ĐẶT HÀNG (CHUẨN NÚT PILL ĐEN CỦA TRANG CHỦ) -->
+            <button id="placeOrderButton" class="hnmt-btn-submit-order" type="submit">
+                <span>@(Model.PaymentMethod == "VietQR" ? "Đặt hàng và xem mã QR" : "Xác nhận đặt hàng")</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+            </button>
+
+            <div class="hnmt-checkout-guarantee">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+                <span>Đơn hàng được bảo vệ chính sách đổi trả miễn phí trong 15 ngày.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- CỘT PHẢI: TÓM TẮT ĐƠN HÀNG (SIDEBAR STICKY) -->
+    <aside class="hnmt-checkout-sidebar">
+        <div class="hnmt-summary-card">
+            <div class="hnmt-summary-header">
+                <h3 class="hnmt-summary-title">Đơn hàng của bạn</h3>
+                <span class="hnmt-summary-count">@Model.CartItems.Sum(x => x.Quantity) món</span>
+            </div>
+
+            <!-- DANH SÁCH SẢN PHẨM TRONG GIỎ -->
+            <div class="hnmt-summary-items-list">
+                @foreach (var item in Model.CartItems)
+                {
+                    <div class="hnmt-summary-item pay-product">
+                        <div class="hnmt-item-thumb">
+                            <img src="@item.ImageUrl" alt="@item.ProductName" loading="lazy" onerror="this.onerror=null;this.src='/clothing-rail/assets/reach-shirt-front.webp';" />
+                        </div>
+                        <div class="hnmt-item-details">
+                            <h4 class="hnmt-item-name">@item.ProductName</h4>
+                            <div class="hnmt-item-specs">
+                                <span>Size: <strong>@item.Size</strong></span>
+                                <span class="hnmt-spec-dot">·</span>
+                                <span>Màu: <strong>@item.Color</strong></span>
+                                <span class="hnmt-spec-dot">·</span>
+                                <span>SL: <strong>@item.Quantity</strong></span>
+                            </div>
+                            <div class="hnmt-item-price">@Money(item.TotalPrice)</div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="hnmt-summary-divider"></div>
+
+            <!-- TÍNH TOÁN TIỀN HÀNG -->
+            <div class="hnmt-summary-calc">
+                <div class="hnmt-calc-row">
+                    <span class="hnmt-calc-label">Tạm tính tiền hàng</span>
+                    <span class="hnmt-calc-val">@Money(Model.SubTotal)</span>
+                </div>
+                <div class="hnmt-calc-row">
+                    <span class="hnmt-calc-label">Phí vận chuyển</span>
+                    <span class="hnmt-calc-val">
+                        @(Model.ShippingFee > 0 ? Money(Model.ShippingFee) : "Miễn phí")
+                    </span>
+                </div>
+            </div>
+
+            <div class="hnmt-summary-divider"></div>
+
+            <!-- TỔNG THANH TOÁN -->
+            <div class="hnmt-summary-grand-total">
+                <div>
+                    <div class="hnmt-total-label">TỔNG THANH TOÁN</div>
+                    <div class="hnmt-vat-note">Đã bao gồm thuế VAT</div>
+                </div>
+                <div class="hnmt-total-amount">@Money(Model.TotalAmount)</div>
+            </div>
+
+            <!-- LINK QUAY LẠI CHỈNH SỬA GIỎ HÀNG -->
+            <a class="hnmt-edit-cart-link" href="/?openCart=true">
+                <span>Chỉnh sửa giỏ hàng</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="7" y1="17" x2="17" y2="7"></line>
+                    <polyline points="7 7 17 7 17 17"></polyline>
+                </svg>
+            </a>
+        </div>
+
+        <div class="hnmt-sidebar-help-box">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <span>Cần hỗ trợ đặt hàng? Gọi ngay hotline <strong>1900 8888</strong></span>
+        </div>
+    </aside>
+</form>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/checkout.js" asp-append-version="true"></script>
 }
