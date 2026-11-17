@@ -94,20 +94,7 @@
     }
 
     function matchesSilhouette(item, silhouette) {
-        if (silhouette === 'all') return true;
-        if (item.silhouettes) return item.silhouettes.includes(silhouette);
-
-        const model = removeVietnameseTones(item.model || '');
-        switch (silhouette) {
-            case 'air-future': return model.includes('air future');
-            case 'cyber-series': return model.includes('cyber');
-            case 'chile-series': return model.includes('chile');
-            case 'runners': return item.collectionId === 'futurist' || model.includes('air future');
-            case 'chunky': return item.collectionId === 'cyber' || model.includes('cyber');
-            case 'high-top': return model.includes('ix') || model.includes('viii') || model.includes('xi');
-            case 'low-top': return model.includes('iv') || model.includes('iii') || model.includes('i');
-            default: return false;
-        }
+        return window.ShowroomFilterOptions.matchesCategory(item, 'giay', silhouette);
     }
 
     // HTML Template: Right Sidebar mờ đục trong suốt với Select-from-list & Range Slider
@@ -167,17 +154,6 @@
                     <div class="fashion-select-wrapper">
                         <select id="sneakerSilhouetteSelect" class="fashion-select-input">
                             <option value="all">Tất cả dòng giày</option>
-                            <option value="air-future">Air Future Series</option>
-                            <option value="cyber-series">Cyber Series</option>
-                            <option value="chile-series">Chile 20 Series</option>
-                            <option value="runners">Giày chạy bộ (Runners)</option>
-                            <option value="chunky">Giày sneaker đế dày (Chunky)</option>
-                            <option value="high-top">Giày sneaker cổ cao (High-Top)</option>
-                            <option value="low-top">Giày sneaker cổ thấp (Low-Top)</option>
-                            <option value="heels">Giày cao gót</option>
-                            <option value="flats">Giày bệt / Mary Jane</option>
-                            <option value="boots">Boots</option>
-                            <option value="dress">Giày tây / Loafer</option>
                         </select>
                         <div class="select-chevron-icon" aria-hidden="true">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
@@ -431,6 +407,17 @@
             }
         }
 
+        function refreshSilhouettes() {
+            const catalog = getSneakerCatalog().filter(item => selectedVault === 'all' || item.collectionId === selectedVault);
+            const categories = window.ShowroomFilterOptions.categories(catalog, 'giay');
+            if (!categories.some(option => option.value === selectedSilhouette)) selectedSilhouette = 'all';
+            silhouetteSelect.replaceChildren(
+                new Option('Tất cả dòng giày', 'all'),
+                ...categories.map(({ value, label }) => new Option(label, value))
+            );
+            silhouetteSelect.value = selectedSilhouette;
+        }
+
         function openModal() {
             const catalog = getSneakerCatalog();
             if (vaultSelect) {
@@ -442,13 +429,7 @@
                 if (!collections.has(selectedVault)) selectedVault = 'all';
                 vaultSelect.value = selectedVault;
             }
-            if (silhouetteSelect) {
-                for (const option of silhouetteSelect.options) {
-                    option.hidden = option.value !== 'all' && !catalog.some(item => matchesSilhouette(item, option.value));
-                    if (option.hidden && option.value === selectedSilhouette) selectedSilhouette = 'all';
-                }
-                silhouetteSelect.value = selectedSilhouette;
-            }
+            refreshSilhouettes();
 
             // Đóng các modal khác nếu đang mở
             const oldSpotlight = document.getElementById('hnmtSpotlightSearchModal');
@@ -478,6 +459,7 @@
 
         function resetAllFilters() {
             selectedVault = 'all';
+            refreshSilhouettes();
             selectedSilhouette = 'all';
             selectedColor = 'all';
             maxPriceValue = 7500000;
@@ -538,6 +520,7 @@
         if (vaultSelect) {
             vaultSelect.addEventListener('change', (e) => {
                 selectedVault = e.target.value;
+                refreshSilhouettes();
                 performFilter();
             });
         }

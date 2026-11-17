@@ -131,7 +131,6 @@
 
             const viewLogin = document.getElementById("authViewLogin");
             const viewRegister = document.getElementById("authViewRegister");
-            const viewForgot = document.getElementById("authViewForgot");
 
             const title = document.getElementById("hnmtAuthTitle");
             const sub = document.getElementById("hnmtAuthSub");
@@ -143,7 +142,6 @@
                 tabRegister?.classList.add("is-active");
 
                 viewLogin?.classList.remove("is-active");
-                viewForgot?.classList.remove("is-active");
                 viewRegister?.classList.add("is-active");
 
                 if (title) title.textContent = "Tạo Tài Khoản";
@@ -153,37 +151,10 @@
                 tabRegister?.classList.remove("is-active");
 
                 viewRegister?.classList.remove("is-active");
-                viewForgot?.classList.remove("is-active");
                 viewLogin?.classList.add("is-active");
 
                 if (title) title.textContent = "Đăng Nhập";
                 if (sub) sub.textContent = "Chào mừng bạn trở lại với không gian thời trang HNMT.";
-            }
-        },
-
-        showForgot() {
-            this.hideAlert();
-            const tabsWrap = document.getElementById("hnmtAuthTabsWrap");
-            const viewLogin = document.getElementById("authViewLogin");
-            const viewRegister = document.getElementById("authViewRegister");
-            const viewForgot = document.getElementById("authViewForgot");
-
-            const title = document.getElementById("hnmtAuthTitle");
-            const sub = document.getElementById("hnmtAuthSub");
-
-            if (tabsWrap) tabsWrap.style.display = "none";
-            viewLogin?.classList.remove("is-active");
-            viewRegister?.classList.remove("is-active");
-            viewForgot?.classList.add("is-active");
-
-            if (title) title.textContent = "Khôi Phục Mật Khẩu";
-            if (sub) sub.textContent = "Thiết lập lại quyền truy cập tài khoản thời trang của bạn.";
-
-            // Pre-fill email from login field if user already typed it
-            const loginEmail = document.getElementById("loginEmailInput")?.value;
-            const forgotEmail = document.getElementById("forgotEmailInput");
-            if (loginEmail && forgotEmail) {
-                forgotEmail.value = loginEmail;
             }
         },
 
@@ -346,27 +317,6 @@
                     submitBtn.textContent = originalContent || "Tạo tài khoản";
                 }
             }
-        },
-
-        handleForgotSubmit(e) {
-            e.preventDefault();
-            const emailInput = document.getElementById("forgotEmailInput");
-            const successBox = document.getElementById("forgotSuccessAlert");
-            const submitBtn = document.getElementById("forgotSubmitBtn");
-
-            if (!emailInput?.value) return;
-
-            submitBtn.disabled = true;
-            submitBtn.textContent = "Đang gửi...";
-
-            setTimeout(() => {
-                if (successBox) {
-                    successBox.style.display = "block";
-                    successBox.innerHTML = `Hướng dẫn khôi phục mật khẩu đã được gửi tới <strong>${emailInput.value}</strong>.`;
-                }
-                submitBtn.disabled = false;
-                submitBtn.textContent = "Đã gửi thành công";
-            }, 700);
         },
 
         socialLogin(provider) {

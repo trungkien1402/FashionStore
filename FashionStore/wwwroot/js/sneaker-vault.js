@@ -15,6 +15,7 @@
             const pageCount = Math.ceil(collection.items.length / ITEMS_PER_GRID);
             return Array.from({ length: pageCount }, (_, page) => ({
                 ...collection,
+                collectionTitle: collection.title,
                 title: pageCount > 1 ? `${collection.title} ${page + 1}/${pageCount}` : collection.title,
                 items: collection.items.slice(page * ITEMS_PER_GRID, (page + 1) * ITEMS_PER_GRID)
             }));
@@ -28,7 +29,7 @@
     let filteredPageIdx = 0;
     let activeFilterLabel = '';
 
-    const getAllSneakers = () => activeCollections.flatMap(c => c.items.map(it => ({ ...it, collectionId: c.id, collectionTitle: c.title })));
+    const getAllSneakers = () => activeCollections.flatMap(c => c.items.map(it => ({ ...it, collectionId: c.id, collectionTitle: c.collectionTitle })));
     const getFilteredTotalPages = () => (!filteredSneakers ? 1 : Math.max(1, Math.ceil(filteredSneakers.length / ITEMS_PER_GRID)));
     const getSneakers = () => {
         if (filteredSneakers !== null) {
@@ -1221,6 +1222,10 @@
 
     // Tự khởi chạy an toàn
     function init() {
+        const standalone = document.body.classList.contains('is-sneaker-standalone');
+        const audience = standalone ? new URLSearchParams(window.location.search).get('audience') || 'men' : 'men';
+        if (standalone) activeCollections = getAudienceCollections(audience);
+
         ensureSneakerSearchButton();
         setInterval(ensureSneakerSearchButton, 600);
         ensureVaultSwitcherInDOM();
@@ -1243,14 +1248,12 @@
 
         // Tự động nhận diện và áp dụng bộ lọc chuyển tiếp từ Trang Chủ
         try {
-            const pendingJson = sessionStorage.getItem('hnmt_pending_sneaker_filter');
+            const pendingJson = standalone && sessionStorage.getItem('hnmt_pending_sneaker_filter');
             if (pendingJson) {
                 sessionStorage.removeItem('hnmt_pending_sneaker_filter');
                 const pending = JSON.parse(pendingJson);
-                if (pending && Array.isArray(pending.filteredProducts) && pending.filteredProducts.length > 0) {
-                    setTimeout(() => {
-                        applyFilter(pending.filteredProducts, pending.label || 'BỘ LỌC TỪ TRANG CHỦ');
-                    }, 220);
+                if (pending?.audience === audience && pending.category === 'giay' && Array.isArray(pending.filteredProducts)) {
+                    applyFilter(pending.filteredProducts, pending.label || 'BỘ LỌC TỪ TRANG CHỦ');
                 }
             }
         } catch (e) {}

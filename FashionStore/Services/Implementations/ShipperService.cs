@@ -54,6 +54,8 @@ public class ShipperService : IShipperService
             .AsNoTracking()
             .Include(s => s.Order)
                 .ThenInclude(o => o.Items)
+                    .ThenInclude(i => i.ProductVariant)
+                        .ThenInclude(v => v.Product)
             .Include(s => s.Histories)
                 .ThenInclude(h => h.ChangedByUser)
             .FirstOrDefaultAsync(s =>

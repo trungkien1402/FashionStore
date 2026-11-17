@@ -306,6 +306,23 @@
 ===================================================== */
 
 /* COD HERO */
+.shp-details-page {
+    overflow-wrap: anywhere;
+}
+
+.shp-details-page .shp-details-title {
+    color: var(--shp-navy);
+    font-size: clamp(1.375rem, 3vw, 2rem);
+    line-height: 1.25;
+}
+
+.shp-details-page .btn-primary,
+.shp-details-page .btn-success,
+.shp-details-page .btn-danger,
+.shp-details-page .btn-dark {
+    color: #fff;
+}
+
 .shp-details-page .bg-danger-subtle {
     background: #fff1f2 !important;
     border-color: #fecdd3 !important;

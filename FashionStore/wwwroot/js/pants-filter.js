@@ -85,48 +85,8 @@
     let filteredPants = [];
 
     // Từ điển kiểu dáng chi tiết phân cấp theo phân loại quần
-    const PANTS_SUBSTYLES = {
-        'all': [
-            { value: 'all', text: '— Vui lòng chọn loại quần trước —' }
-        ],
-        'jeans': [
-            { value: 'all', text: 'Tất cả dáng Quần Jeans & Denim' },
-            { value: 'acid-cargo', text: 'Quần Baggy Jeans Acid-Wash (Y2K / Skater)' },
-            { value: 'wide-denim', text: 'Quần Jeans Ống Rộng (Wide-Leg Denim)' },
-            { value: 'raw-selvedge', text: 'Quần Raw Selvedge Denim 14oz Cổ Điển' },
-            { value: 'distressed-denim', text: 'Quần Jeans Rách / Mài Vintage' }
-        ],
-        'tay': [
-            { value: 'all', text: 'Tất cả dáng Quần Tây May Đo' },
-            { value: 'sand-pleated', text: 'Quần Tây Xếp 2 Ly Cạp Cao (Quiet Luxury)' },
-            { value: 'tailored-black', text: 'Quần Tây Cạp Cao Sartorial Side-Adjuster' },
-            { value: 'pleated-grey', text: 'Quần Tây Ống Suông Xếp Ly Minimalist' },
-            { value: 'chino-cream', text: 'Quần Chino May Đo Co Giãn Smart-Casual' },
-            { value: 'flannel-trousers', text: 'Quần Tây Flannel Thu Đông' }
-        ],
-        'parachute': [
-            { value: 'all', text: 'Tất cả dáng Quần Dù Parachute' },
-            { value: 'tactical-parachute', text: 'Quần Dù Parachute Tactical Rêu Quân Đội' },
-            { value: 'parachute-black', text: 'Quần Dù Parachute Dây Rút Gấu City' },
-            { value: 'windpants', text: 'Quần Gió Thể Thao / Trackpants' }
-        ],
-        'cargo': [
-            { value: 'all', text: 'Tất cả dáng Quần Cargo Túi Hộp' },
-            { value: 'cargo-olive', text: 'Quần Cargo Xanh Rêu Bo Gấu' },
-            { value: 'cargo-baggy', text: 'Quần Baggy Cargo Jeans Túi Hộp' },
-            { value: 'techwear-cargo', text: 'Quần Techwear Cargo Đa Năng' }
-        ],
-        'shorts': [
-            { value: 'all', text: 'Tất cả dáng Quần Shorts & Bo Gấu' },
-            { value: 'jogger', text: 'Quần Sweatpants Nỉ Bo Gấu (Jogger)' },
-            { value: 'shorts', text: 'Quần Short Dù Thể Thao (Nylon Shorts)' },
-            { value: 'bermuda', text: 'Quần Bermuda Denim Shorts' }
-        ]
-    };
-
-    // Lấy danh mục quần từ ClothingRail
     function getPantsCatalog() {
-        return window.ClothingRail?.getAllProducts('quan') || [];
+        return window.ClothingRail?.getAllProducts('quan', window.ClothingRail.getAudience()) || [];
     }
 
     // HTML Template: Right Sidebar mờ đục trong suốt với Select-from-list & Range Slider
@@ -173,11 +133,6 @@
                     <div class="fashion-select-wrapper">
                         <select id="pantsCategorySelect" class="fashion-select-input">
                             <option value="all">Tất cả loại quần</option>
-                            <option value="jeans">Quần Jeans & Denim</option>
-                            <option value="tay">Quần Tây May Đo (Tailored)</option>
-                            <option value="parachute">Quần Dù Parachute & Tactical</option>
-                            <option value="cargo">Quần Cargo Túi Hộp</option>
-                            <option value="shorts">Quần Shorts & Bo Gấu</option>
                         </select>
                         <div class="select-chevron-icon" aria-hidden="true">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
@@ -296,11 +251,11 @@
             subStyleSelect.disabled = false;
             if (subStyleCard) subStyleCard.classList.remove('is-disabled');
 
-            const list = PANTS_SUBSTYLES[cat] || [];
+            const list = [{value: 'all', label: 'Tất cả kiểu dáng'}, ...window.ShowroomFilterOptions.styles(getPantsCatalog(), 'quan', cat)];
             list.forEach(entry => {
                 const opt = document.createElement('option');
                 opt.value = entry.value;
-                opt.textContent = entry.text;
+                opt.textContent = entry.label;
                 subStyleSelect.appendChild(opt);
             });
 
@@ -394,58 +349,8 @@
             const normalizedKeyword = removeVietnameseTones(searchKeyword);
 
             filteredPants = allPants.filter(item => {
-                // 1. Lọc theo Phân Loại Quần (Category)
-                if (selectedCategory !== 'all') {
-                    const itemStyle = (item.style || '').toLowerCase();
-                    const itemType = removeVietnameseTones(item.type || '');
-                    let matchCat = false;
-
-                    if (selectedCategory === 'jeans') {
-                        if (itemStyle === 'jeans' || itemType.includes('jeans') || itemType.includes('denim')) matchCat = true;
-                    } else if (selectedCategory === 'tay') {
-                        if (itemStyle === 'tay' || itemType.includes('tay') || itemType.includes('chino')) matchCat = true;
-                    } else if (selectedCategory === 'parachute') {
-                        if (itemStyle === 'parachute' || itemType.includes('du') || itemType.includes('parachute')) matchCat = true;
-                    } else if (selectedCategory === 'cargo') {
-                        if (itemStyle === 'cargo' || itemType.includes('cargo')) matchCat = true;
-                    } else if (selectedCategory === 'shorts') {
-                        if (itemStyle === 'shorts' || itemType.includes('short') || itemType.includes('jogger')) matchCat = true;
-                    } else if (itemStyle === selectedCategory) {
-                        matchCat = true;
-                    }
-
-                    if (!matchCat) return false;
-                }
-
-                // 2. Lọc theo Kiểu Dáng Chi Tiết (Sub-Style)
-                if (selectedStyle !== 'all') {
-                    const itemStyle = (item.style || '').toLowerCase();
-                    const itemSlug = (item.slug || '').toLowerCase();
-                    const itemName = removeVietnameseTones(item.name || '');
-                    const itemType = removeVietnameseTones(item.type || '');
-                    const itemDesc = removeVietnameseTones(item.desc || '');
-                    const itemText = `${itemSlug} ${itemName} ${itemType} ${itemDesc}`;
-                    const target = removeVietnameseTones(selectedStyle);
-
-                    let matchStyle = false;
-                    if (selectedStyle === 'jeans' && (itemStyle === 'jeans' || itemType.includes('jeans') || itemType.includes('denim'))) matchStyle = true;
-                    else if (selectedStyle === 'tay' && (itemStyle === 'tay' || itemType.includes('tay') || itemType.includes('chino') || itemDesc.includes('xep ly'))) matchStyle = true;
-                    else if (selectedStyle === 'parachute' && (itemStyle === 'parachute' || itemType.includes('du') || itemType.includes('parachute'))) matchStyle = true;
-                    else if (selectedStyle === 'cargo' && (itemStyle === 'cargo' || itemType.includes('cargo') || itemDesc.includes('tui hop'))) matchStyle = true;
-                    else if (selectedStyle === 'acid-cargo' && (itemSlug.includes('acid') || itemText.includes('acid'))) matchStyle = true;
-                    else if (selectedStyle === 'wide-denim' && (itemSlug.includes('wide') || itemText.includes('ong rong'))) matchStyle = true;
-                    else if (selectedStyle === 'raw-selvedge' && (itemSlug.includes('selvedge') || itemText.includes('selvedge') || itemText.includes('raw'))) matchStyle = true;
-                    else if (selectedStyle === 'sand-pleated' && (itemSlug.includes('sand') || itemText.includes('sand') || itemText.includes('2 ly'))) matchStyle = true;
-                    else if (selectedStyle === 'tailored-black' && (itemSlug.includes('tailored') || itemText.includes('sartorial') || itemText.includes('cap cao'))) matchStyle = true;
-                    else if (selectedStyle === 'pleated-grey' && (itemSlug.includes('pleated') || itemText.includes('ong suong') || itemText.includes('xam khoi'))) matchStyle = true;
-                    else if (selectedStyle === 'chino-cream' && (itemSlug.includes('chino') || itemText.includes('chino'))) matchStyle = true;
-                    else if (selectedStyle === 'tactical-parachute' && (itemSlug.includes('tactical') || itemText.includes('tactical') || itemText.includes('reu quan doi'))) matchStyle = true;
-                    else if (selectedStyle === 'parachute-black' && (itemSlug.includes('parachute-black') || itemText.includes('day rut') || itemText.includes('city'))) matchStyle = true;
-                    else if (selectedStyle === 'cargo-olive' && (itemSlug.includes('cargo-olive') || itemText.includes('8 tui') || itemText.includes('reu khoi'))) matchStyle = true;
-                    else if (itemSlug === selectedStyle || itemStyle === selectedStyle || itemText.includes(target)) matchStyle = true;
-
-                    if (!matchStyle) return false;
-                }
+                if (!window.ShowroomFilterOptions.matchesCategory(item, 'quan', selectedCategory) ||
+                    !window.ShowroomFilterOptions.matchesStyle(item, 'quan', selectedStyle)) return false;
 
                 // 3. Lọc theo giá thanh trượt kéo (Range slider)
                 const itemPriceVND = item.price * 10000;
@@ -543,6 +448,15 @@
         }
 
         function openModal() {
+            const categories = window.ShowroomFilterOptions.categories(getPantsCatalog(), 'quan');
+            categorySelect.replaceChildren(
+                new Option('Tất cả loại quần', 'all'),
+                ...categories.map(({ value, label }) => new Option(label, value))
+            );
+            if (!categories.some(option => option.value === selectedCategory)) selectedCategory = 'all';
+            categorySelect.value = selectedCategory;
+            populateSubStyleSelect(selectedCategory, true);
+
             // Đóng các modal khác nếu đang mở
             const oldSpotlight = document.getElementById('hnmtSpotlightSearchModal');
             if (oldSpotlight) oldSpotlight.classList.remove('is-open');

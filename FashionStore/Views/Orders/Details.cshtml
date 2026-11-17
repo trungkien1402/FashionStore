@@ -366,6 +366,14 @@
                                         <span class="hnmt-dot-sep">·</span>
                                         <span>Số lượng: <strong>@item.Quantity</strong></span>
                                     </div>
+                                    @if (Model.Status == OrderStatus.Delivered && User.IsInRole("Customer") &&
+                                         item.ProductVariant?.Product is { IsActive: true } reviewProduct)
+                                    {
+                                        <a asp-controller="Products" asp-action="Details" asp-route-id="@reviewProduct.Id"
+                                           asp-fragment="product-reviews" class="d-inline-block mt-2">
+                                            Đánh giá sản phẩm
+                                        </a>
+                                    }
                                 </div>
                             </article>
                         }
