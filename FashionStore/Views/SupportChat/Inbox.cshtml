@@ -1,0 +1,31 @@
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Chat hỗ trợ";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/support-chat.css" asp-append-version="true" />
+}
+<header class="adm-dashboard-header adm-overview-header mb-3">
+    <div><h1>Chat hỗ trợ</h1><p class="adm-dashboard-period">Tin nhắn từ khách hàng</p></div>
+</header>
+<div class="support-inbox" data-support-chat data-queue="@Url.Action("Queue")" data-thread="@Url.Action("Thread")" data-close="@Url.Action("Close")">
+    <nav class="support-queue adm-card" aria-label="Cuộc trò chuyện">
+        <h2>Hộp thư</h2>
+        <div data-chat-queue></div>
+    </nav>
+    <section class="support-room adm-card" aria-label="Nội dung cuộc trò chuyện">
+        <header class="support-chat-head">
+            <strong data-chat-title>Chọn một cuộc trò chuyện</strong>
+            <button type="button" data-chat-close-thread hidden>Đóng yêu cầu</button>
+        </header>
+        <partial name="_SupportChatMessages" />
+        <form asp-action="Reply" method="post" class="support-compose" hidden novalidate>
+            <label class="visually-hidden" for="supportReply">Tin nhắn trả lời</label>
+            <textarea id="supportReply" name="message" rows="2" maxlength="1000" required placeholder="Nhập nội dung trả lời…"></textarea>
+            <button type="submit" aria-label="Gửi trả lời"><i class="bi bi-send-fill" aria-hidden="true"></i></button>
+        </form>
+    </section>
+</div>
+@section Scripts {
+    <script src="~/js/support-chat.js" asp-append-version="true"></script>
+}
