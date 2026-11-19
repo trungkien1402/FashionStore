@@ -24,9 +24,8 @@ public class AdminCategoriesController : Controller
     // GET: /AdminCategories
     public async Task<IActionResult> Index(string? keyword, string? status, string? sort = null, int page = 1)
     {
-        var query = _context.Categories
-            .AsNoTracking()
-            .AsQueryable();
+        var listedCategories = _context.ListedAdminCategories();
+        var query = listedCategories;
 
         // Tìm kiếm theo tên danh mục
         if (!string.IsNullOrWhiteSpace(keyword))
@@ -64,6 +63,12 @@ public class AdminCategoriesController : Controller
                 Category = c,
                 ProductCount = c.Products.Count(),
                 ActiveProductCount = c.Products.Count(p => p.IsActive),
+                ProductImageUrls = c.Products
+                    .Where(p => p.IsActive && !string.IsNullOrEmpty(p.ImageUrl))
+                    .OrderBy(p => p.Id)
+                    .Select(p => p.ImageUrl)
+                    .Take(4)
+                    .ToList(),
                 RepresentativeImageUrl = c.Products
                     .Where(p => !string.IsNullOrEmpty(p.ImageUrl))
                     .OrderByDescending(p => p.IsActive)
@@ -74,7 +79,7 @@ public class AdminCategoriesController : Controller
             })
             .ToListAsync();
 
-        var totals = await _context.Categories.AsNoTracking()
+        var totals = await listedCategories
             .GroupBy(c => c.IsActive)
             .Select(group => new { IsActive = group.Key, Count = group.Count() })
             .ToListAsync();

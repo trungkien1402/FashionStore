@@ -17,6 +17,12 @@ public class ApplicationDbContext
 
     public DbSet<Category> Categories => Set<Category>();
 
+    public IQueryable<Category> ListedAdminCategories() =>
+        Categories.AsNoTracking()
+            .Where(category => category.Slug != "showroom-ao" &&
+                category.Slug != "showroom-quan" && category.Slug != "showroom-giay" &&
+                (!ShowroomCatalog.FormerShoeCategorySlugs.Contains(category.Slug) || category.Products.Any()));
+
     public DbSet<ProductVariant> ProductVariants
         => Set<ProductVariant>();
 

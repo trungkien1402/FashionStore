@@ -89,10 +89,16 @@ else
     <div id="admCatGrid" class="adm-lookbook-grid mb-4">
         @foreach (var item in Model)
         {
-            var coverPath = $"images/category-covers/{item.Category.Slug}.webp";
+            var coverPath = $"images/category-covers/{item.Category.Slug}.png";
+            if (!HostingEnvironment.WebRootFileProvider.GetFileInfo(coverPath).Exists)
+            {
+                coverPath = $"images/category-covers/{item.Category.Slug}.webp";
+            }
             var imageUrl = HostingEnvironment.WebRootFileProvider.GetFileInfo(coverPath).Exists
                 ? Url.Content($"~/{coverPath}")
-                : item.RepresentativeImageUrl;
+                : item.Category.Slug.StartsWith("giay-", StringComparison.Ordinal)
+                    ? null
+                    : item.RepresentativeImageUrl;
             var hasImage = !string.IsNullOrWhiteSpace(imageUrl);
 
             <div class="adm-lookbook-card">
@@ -141,6 +147,17 @@ else
                     </div>
 
                     <div>
+                        @if (item.ProductImageUrls.Count > 0)
+                        {
+                            <a asp-controller="AdminProducts" asp-action="Index" asp-route-categoryId="@item.Category.Id"
+                               class="d-flex flex-wrap gap-2 mb-3" aria-label="Xem sản phẩm trong @item.Category.Name">
+                                @foreach (var productImageUrl in item.ProductImageUrls)
+                                {
+                                    <img src="@productImageUrl" alt="" loading="lazy" width="44" height="52"
+                                         class="rounded border" style="object-fit: contain; background: var(--adm-surface-hover);" />
+                                }
+                            </a>
+                        }
                         <div class="p-2 rounded-2 mb-3" style="background: var(--adm-surface-hover); border: 1px solid var(--adm-border);">
                             <partial name="_ProductCounts" model="item" />
                         </div>

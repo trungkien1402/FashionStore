@@ -91,7 +91,7 @@ public class AdminProductsController : Controller
         var variants = _context.ProductVariants.AsNoTracking().Where(v => v.IsActive);
         return View(new AdminProductList(
             filter, products, count, pageCount, await _context.Products.AnyAsync(),
-            await _context.Categories.AsNoTracking().OrderBy(c => c.Name).ToListAsync(),
+            await _context.ListedAdminCategories().OrderBy(c => c.Name).ThenBy(c => c.Id).ToListAsync(),
             await variants.Select(v => v.Size).Where(s => s != "").Distinct().OrderBy(s => s).ToListAsync(),
             await variants.Select(v => v.Color).Where(c => c != "").Distinct().OrderBy(c => c).ToListAsync()));
     }
@@ -274,7 +274,7 @@ public class AdminProductsController : Controller
 
     private async Task LoadCategoriesAsync()
     {
-        ViewBag.Categories = await _context.Categories
+        ViewBag.Categories = await _context.ListedAdminCategories()
             .Where(c => c.IsActive)
             .OrderBy(c => c.Name)
             .AsNoTracking()

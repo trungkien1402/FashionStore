@@ -77,8 +77,8 @@
     };
 
     // State hiện tại của bộ lọc trang chủ
-    let currentAudience = 'men'; // 'men' | 'women' | 'boy' | 'girls'
-    let currentMasterCategory = 'ao'; // 'ao' | 'quan' | 'giay'
+    let currentAudience = 'all';
+    let currentMasterCategory = 'all';
     let currentSubCategory = 'all';
     let currentDetailedStyle = 'all';
     let currentColor = 'all';
@@ -88,6 +88,7 @@
 
     // Cấu hình thanh trượt giá theo danh mục
     const PRICE_CONFIGS = {
+        all: { min: 200000, max: 6000000, step: 50000, defaultVal: 6000000, milestones: ['200k', '1.5M', '3M', '4.5M', 'Tối đa'] },
         ao: { min: 200000, max: 1500000, step: 50000, defaultVal: 1500000, milestones: ['200k', '500k', '800k', '1.1M', 'Tối đa'] },
         quan: { min: 250000, max: 1500000, step: 50000, defaultVal: 1500000, milestones: ['250k', '500k', '800k', '1.2M', 'Tối đa'] },
         giay: { min: 1000000, max: 6000000, step: 200000, defaultVal: 6000000, milestones: ['1M', '2M', '3.5M', '5M', 'Tối đa'] }
@@ -119,7 +120,7 @@
                         <circle cx="11" cy="11" r="7"/>
                         <path d="m20 20-4.35-4.35"/>
                     </svg>
-                    <input type="text" id="homeSearchInput" class="fashion-search-input" placeholder="Tìm tên đồ, chất liệu, họa tiết..." autocomplete="off" spellcheck="false">
+                    <input type="text" id="homeSearchInput" class="fashion-search-input" placeholder="Tìm theo tên sản phẩm, chất liệu..." autocomplete="off" spellcheck="false">
                     <button type="button" id="homeClearSearchBtn" class="fashion-clear-btn" style="display:none;" title="Xóa từ khóa">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     </button>
@@ -141,7 +142,8 @@
                     <label class="fashion-card-label" for="homeAudienceSelect">ĐỐI TƯỢNG</label>
                     <div class="fashion-select-wrapper">
                         <select id="homeAudienceSelect" class="fashion-select-input">
-                            <option value="men" selected>Nam (Men's Collection)</option>
+                            <option value="all" selected>Tất cả đối tượng</option>
+                            <option value="men">Nam (Men's Collection)</option>
                             <option value="women">Nữ (Women's Collection)</option>
                             <option value="boy">Bé Trai (Boys Collection)</option>
                             <option value="girls">Bé Gái (Girls Collection)</option>
@@ -157,7 +159,8 @@
                     <label class="fashion-card-label" for="homeMasterCatSelect">CHỌN DANH MỤC</label>
                     <div class="fashion-select-wrapper">
                         <select id="homeMasterCatSelect" class="fashion-select-input">
-                            <option value="ao" selected>Áo (Tops Collection)</option>
+                            <option value="all" selected>Tất cả danh mục</option>
+                            <option value="ao">Áo (Tops Collection)</option>
                             <option value="quan">Quần (Pants Collection)</option>
                             <option value="giay">Giày (Sneaker Vault)</option>
                         </select>
@@ -242,6 +245,7 @@
         <div class="hnmt-center-confirm-backdrop" id="hnmtHomeConfirmModal" aria-hidden="true">
             <div class="hnmt-center-confirm-card" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
                 <h3 class="confirm-title" id="confirmTitle">Chuyển tiếp đến không gian 3D</h3>
+                <div id="homeMatchingProducts" style="max-height: 45vh; overflow: auto;"></div>
                 
                 <p class="confirm-desc" id="confirmDesc">
                     Bạn sắp rời khỏi Không Gian Trang Chủ để bước vào <strong id="confirmTargetName">Sào Áo 3D</strong> với <strong id="confirmCount">40 sản phẩm</strong> phù hợp. Bạn có muốn tiếp tục trải nghiệm?
@@ -299,18 +303,17 @@
             const el = document.getElementById('showroomCatalog');
             if (!el) return { shirts: [], pants: [], shoes: [] };
             const data = JSON.parse(el.textContent);
-            const audience = aud || currentAudience || 'men';
-            const shirts = data?.clothing?.[audience]?.ao || [];
-            const pants = data?.clothing?.[audience]?.quan || [];
-            
-            // Giày nằm trong cấu trúc collections
-            const shoeCollections = data?.shoes?.[audience] || [];
+            const audiences = aud === 'all' ? Object.keys(AUDIENCES) : [aud];
+            const extra = currentKeyword.trim() ? Object.values(data.lookbook || {}).filter(item => audiences.includes(item.audience)) : [];
+            const shirts = audiences.flatMap(audience => data?.clothing?.[audience]?.ao || []);
+            const pants = audiences.flatMap(audience => data?.clothing?.[audience]?.quan || []);
+            const shoeCollections = audiences.flatMap(audience => data?.shoes?.[audience] || []);
             const shoes = shoeCollections.flatMap(c => (c.items || []).map(it => ({
-                ...it,
-                collectionId: c.id,
-                collectionTitle: c.title
+                ...it, collectionId: c.id, collectionTitle: c.title
             })));
-
+            shirts.push(...extra.filter(item => item.kind === 'ao'));
+            pants.push(...extra.filter(item => item.kind === 'quan'));
+            shoes.push(...extra.filter(item => item.kind === 'giay'));
             return { shirts, pants, shoes };
         } catch (e) {
             console.warn('Lỗi đọc catalog cho Home Filter:', e);
@@ -361,7 +364,7 @@
 
         // Populate Sub-Category Select theo Master Category
         function populateSubCategories(cat, preserve = false) {
-            const list = [{value: 'all', label: 'Tất cả phân loại'}, ...window.ShowroomFilterOptions.categories(productsFor(cat), cat)];
+            const list = [{value: 'all', label: 'Tất cả phân loại'}, ...(cat === 'all' ? [] : window.ShowroomFilterOptions.categories(productsFor(cat), cat))];
             const prevVal = preserve ? subCatSelect.value : 'all';
             subCatSelect.innerHTML = '';
 
@@ -380,17 +383,19 @@
                 currentSubCategory = 'all';
             }
 
-            // Cập nhật nhãn
-            if (cat === 'ao') subCatLabel.textContent = 'PHÂN LOẠI ÁO';
+            subCatSelect.disabled = cat === 'all';
+            detailedStyleSelect.disabled = cat === 'all';
+            if (cat === 'all') subCatLabel.textContent = 'PHÂN LOẠI';
+            else if (cat === 'ao') subCatLabel.textContent = 'PHÂN LOẠI ÁO';
             else if (cat === 'quan') subCatLabel.textContent = 'PHÂN LOẠI QUẦN';
             else subCatLabel.textContent = 'DÒNG GIÀY (SNEAKERS)';
 
-            populateDetailedStyles(cat, currentSubCategory, false);
+            populateDetailedStyles(cat, currentSubCategory, preserve);
         }
 
         // Populate Detailed Styles theo Sub-Category
         function populateDetailedStyles(cat, subCat, preserve = false) {
-            const list = [{value: 'all', label: 'Tất cả kiểu dáng'}, ...window.ShowroomFilterOptions.styles(productsFor(cat), cat, subCat)];
+            const list = [{value: 'all', label: 'Tất cả kiểu dáng'}, ...(cat === 'all' ? [] : window.ShowroomFilterOptions.styles(productsFor(cat), cat, subCat))];
             const prevVal = preserve ? detailedStyleSelect.value : 'all';
             detailedStyleSelect.innerHTML = '';
 
@@ -410,7 +415,8 @@
             }
 
             // Cập nhật nhãn
-            if (cat === 'ao') detailedStyleLabel.textContent = 'KIỂU DÁNG CHI TIẾT (ÁO)';
+            if (cat === 'all') detailedStyleLabel.textContent = 'KIỂU DÁNG';
+            else if (cat === 'ao') detailedStyleLabel.textContent = 'KIỂU DÁNG CHI TIẾT (ÁO)';
             else if (cat === 'quan') detailedStyleLabel.textContent = 'FORM DÁNG CHI TIẾT (QUẦN)';
             else detailedStyleLabel.textContent = 'PHIÊN BẢN CHI TIẾT (GIÀY)';
         }
@@ -497,31 +503,22 @@
         // Thuật toán Lọc Live Sản Phẩm
         function computeLiveMatches() {
             const catalog = getCatalogData();
-            let sourceList = [];
-            let itemUnit = 'món';
-
-            if (currentMasterCategory === 'ao') {
-                sourceList = catalog.shirts;
-                itemUnit = 'áo';
-            } else if (currentMasterCategory === 'quan') {
-                sourceList = catalog.pants;
-                itemUnit = 'quần';
-            } else {
-                sourceList = catalog.shoes;
-                itemUnit = 'đôi giày';
-            }
+            const kinds = { ao: catalog.shirts, quan: catalog.pants, giay: catalog.shoes };
+            const selectedKinds = currentMasterCategory === 'all' ? Object.keys(kinds) : [currentMasterCategory];
+            const sourceList = selectedKinds.flatMap(kind => kinds[kind].map(item => ({ item, kind })));
+            const itemUnit = { ao: 'áo', quan: 'quần', giay: 'đôi giày' }[currentMasterCategory] || 'sản phẩm';
 
             const normalizedKeyword = removeVietnameseTones(currentKeyword.trim());
             const conf = PRICE_CONFIGS[currentMasterCategory] || PRICE_CONFIGS.ao;
             const maxPrice = Number(priceRange.value);
 
-            filteredProductList = sourceList.filter(item => {
-                if (!window.ShowroomFilterOptions.matchesCategory(item, currentMasterCategory, currentSubCategory) ||
-                    !window.ShowroomFilterOptions.matchesStyle(item, currentMasterCategory, currentDetailedStyle)) return false;
+            filteredProductList = sourceList.filter(({ item, kind }) => {
+                if (!window.ShowroomFilterOptions.matchesCategory(item, kind, currentSubCategory) ||
+                    !window.ShowroomFilterOptions.matchesStyle(item, kind, currentDetailedStyle)) return false;
 
                 // 3. Mức giá
                 let itemPriceVND = 0;
-                if (currentMasterCategory === 'giay') {
+                if (kind === 'giay') {
                     itemPriceVND = Number(item.price || 0);
                 } else {
                     itemPriceVND = Number(item.price || 0) * 10000;
@@ -557,13 +554,13 @@
                 // 5. Từ khóa tìm kiếm
                 if (normalizedKeyword) {
                     const searchCorpus = removeVietnameseTones(`${item.name || ''} ${item.desc || ''} ${item.type || ''} ${item.sku || ''}`).toLowerCase();
-                    if (!searchCorpus.includes(normalizedKeyword)) {
+                    if (!normalizedKeyword.split(/\s+/).every(word => searchCorpus.includes(word))) {
                         return false;
                     }
                 }
 
                 return true;
-            });
+            }).map(({ item }) => item);
 
             // Cập nhật số lượng trên nút Áp Dụng
             const count = filteredProductList.length;
@@ -576,7 +573,7 @@
 
         // Chuyển đổi Đối Tượng (Nam / Nữ / Bé Trai / Bé Gái)
         function switchAudience(newAud) {
-            if (!['men', 'women', 'boy', 'girls'].includes(newAud)) newAud = 'men';
+            if (newAud !== 'all' && !Object.hasOwn(AUDIENCES, newAud)) newAud = 'all';
             currentAudience = newAud;
             populateSubCategories(currentMasterCategory, true);
             if (audienceSelect && audienceSelect.value !== newAud) {
@@ -594,7 +591,8 @@
             if (titleEl) {
                 if (newCat === 'ao') titleEl.textContent = 'Bộ Lọc Sào Áo';
                 else if (newCat === 'quan') titleEl.textContent = 'Bộ Lọc Sào Quần';
-                else titleEl.textContent = 'Bộ Lọc Tủ Giày';
+                else if (newCat === 'giay') titleEl.textContent = 'Bộ Lọc Tủ Giày';
+                else titleEl.textContent = 'Bộ Lọc Thời Trang';
             }
 
             populateSubCategories(newCat, false);
@@ -624,7 +622,28 @@
         function openConfirmModal() {
             closeDrawer();
 
-            const audLabel = AUDIENCES[currentAudience] || 'Nam';
+            const audLabel = AUDIENCES[currentAudience] || 'Tất cả';
+            const showProducts = !!currentKeyword.trim() || currentAudience === 'all' || currentMasterCategory === 'all';
+            const list = document.getElementById('homeMatchingProducts');
+            list.replaceChildren();
+            document.getElementById('confirmTitle').textContent = showProducts ? 'Kết quả tìm kiếm' : 'Chuyển tiếp đến không gian 3D';
+            document.getElementById('confirmDesc').style.display = showProducts ? 'none' : '';
+            confirmProceedBtn.style.display = showProducts ? 'none' : '';
+            if (showProducts) {
+                const links = document.createElement('ul');
+                for (const product of filteredProductList) {
+                    if (!Number.isSafeInteger(product.productId) || product.productId <= 0) continue;
+                    const row = document.createElement('li');
+                    const link = document.createElement('a');
+                    link.href = '/Products/Details/' + product.productId;
+                    link.textContent = product.name;
+                    row.appendChild(link);
+                    links.appendChild(row);
+                }
+                const count = document.createElement('p');
+                count.textContent = links.childElementCount + ' sản phẩm phù hợp';
+                list.append(count, links);
+            }
             let targetTitle = `Sào Áo 3D (${audLabel})`;
             let proceedBtnLabel = `Khám Phá Sào Áo Ngay`;
 
@@ -653,7 +672,7 @@
                 // Chip 1: Danh mục chính
                 const catTag = document.createElement('span');
                 catTag.className = 'confirm-tag-chip';
-                catTag.textContent = currentMasterCategory === 'ao' ? 'Áo' : (currentMasterCategory === 'quan' ? 'Quần' : 'Giày Sneaker');
+                catTag.textContent = ({ ao: 'Áo', quan: 'Quần', giay: 'Giày' })[currentMasterCategory] || 'Tất cả danh mục';
                 confirmTagsRecap.appendChild(catTag);
 
                 // Chip 2: Phân loại phụ (nếu có chọn)
@@ -746,8 +765,9 @@
 
         // Đặt lại toàn bộ bộ lọc
         function resetAllFilters() {
-            currentAudience = 'men';
-            if (audienceSelect) audienceSelect.value = 'men';
+            currentAudience = 'all';
+            if (audienceSelect) audienceSelect.value = 'all';
+            switchMasterCategory('all');
             currentSubCategory = 'all';
             currentDetailedStyle = 'all';
             currentColor = 'all';
@@ -809,8 +829,12 @@
         }
 
         if (searchInput) {
+            searchInput.addEventListener('keydown', event => {
+                if (event.key === 'Enter' && !event.isComposing) openConfirmModal();
+            });
             searchInput.addEventListener('input', (e) => {
                 currentKeyword = e.target.value;
+                populateSubCategories(currentMasterCategory, true);
                 if (clearSearchBtn) {
                     clearSearchBtn.style.display = currentKeyword.length > 0 ? 'block' : 'none';
                 }
@@ -821,6 +845,7 @@
         if (clearSearchBtn) {
             clearSearchBtn.addEventListener('click', () => {
                 currentKeyword = '';
+                populateSubCategories(currentMasterCategory, true);
                 searchInput.value = '';
                 clearSearchBtn.style.display = 'none';
                 computeLiveMatches();

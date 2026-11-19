@@ -86,7 +86,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "ao-thun-streetwear"
   },
   {
     "audience": "women",
@@ -130,7 +131,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "ao-so-mi-blouse"
   },
   {
     "audience": "women",
@@ -309,7 +311,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "ao-so-mi-blouse"
   },
   {
     "audience": "women",
@@ -488,7 +491,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "ao-so-mi-blouse"
   },
   {
     "audience": "women",
@@ -622,7 +626,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "women",
@@ -666,7 +671,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "women",
@@ -710,7 +716,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "women",
@@ -799,7 +806,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "women",
@@ -843,7 +851,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "women",
@@ -887,7 +896,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "women",
@@ -932,7 +942,7 @@
       6,
       4
     ],
-    "adminCategory": "quan-baggy-cargo"
+    "adminCategory": "quan-jogger-the-thao"
   },
   {
     "audience": "women",
@@ -976,7 +986,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "women",
@@ -1020,7 +1031,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "women",
@@ -1064,7 +1076,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "women",
@@ -1108,7 +1121,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "women",
@@ -1152,7 +1166,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "women",
@@ -1211,7 +1226,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "women",
@@ -1270,7 +1285,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "women",
@@ -1330,7 +1345,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "women",
@@ -1388,7 +1403,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-cao-got"
   },
   {
     "audience": "women",
@@ -1446,7 +1462,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-cao-got"
   },
   {
     "audience": "women",
@@ -1504,7 +1521,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-cao-got"
   },
   {
     "audience": "women",
@@ -1564,7 +1582,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "women",
@@ -1622,7 +1640,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-luoi"
   },
   {
     "audience": "women",
@@ -1680,7 +1699,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-boots"
   },
   {
     "audience": "women",
@@ -1738,7 +1758,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-bet"
   },
   {
     "audience": "women",
@@ -1796,7 +1817,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-cao-got"
   },
   {
     "audience": "women",
@@ -1855,7 +1877,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "girls",
@@ -1990,7 +2012,7 @@
       6,
       4
     ],
-    "adminCategory": "ao-thun-streetwear"
+    "adminCategory": "ao-polo"
   },
   {
     "audience": "girls",
@@ -2124,7 +2146,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "ao-so-mi-blouse"
   },
   {
     "audience": "girls",
@@ -2169,7 +2192,7 @@
       6,
       4
     ],
-    "adminCategory": "ao-thun-streetwear"
+    "adminCategory": "ao-polo"
   },
   {
     "audience": "girls",
@@ -2213,7 +2236,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "ao-so-mi-blouse"
   },
   {
     "audience": "girls",
@@ -2528,7 +2552,7 @@
       6,
       4
     ],
-    "adminCategory": "quan-baggy-cargo"
+    "adminCategory": "quan-jogger-the-thao"
   },
   {
     "audience": "girls",
@@ -2572,7 +2596,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "girls",
@@ -2616,7 +2641,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "girls",
@@ -2660,7 +2686,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "girls",
@@ -2704,7 +2731,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "girls",
@@ -2793,7 +2821,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "girls",
@@ -2838,7 +2867,7 @@
       6,
       4
     ],
-    "adminCategory": "quan-baggy-cargo"
+    "adminCategory": "quan-jogger-the-thao"
   },
   {
     "audience": "girls",
@@ -2882,7 +2911,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "girls",
@@ -2926,7 +2956,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "girls",
@@ -2970,7 +3001,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "girls",
@@ -3014,7 +3046,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "girls",
@@ -3058,7 +3091,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "girls",
@@ -3121,7 +3155,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "girls",
@@ -3185,7 +3219,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "girls",
@@ -3248,7 +3282,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "girls",
@@ -3310,7 +3344,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-bet"
   },
   {
     "audience": "girls",
@@ -3372,7 +3407,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-bet"
   },
   {
     "audience": "girls",
@@ -3435,7 +3471,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "girls",
@@ -3497,7 +3533,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-bet"
   },
   {
     "audience": "girls",
@@ -3559,7 +3596,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-boots"
   },
   {
     "audience": "girls",
@@ -3623,7 +3661,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "girls",
@@ -3685,7 +3723,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-bet"
   },
   {
     "audience": "girls",
@@ -3748,7 +3787,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -3804,7 +3843,8 @@
       6,
       5,
       2
-    ]
+    ],
+    "adminCategory": "ao-so-mi-blouse"
   },
   {
     "audience": "men",
@@ -4088,7 +4128,8 @@
       3,
       2,
       0
-    ]
+    ],
+    "adminCategory": "ao-so-mi-blouse"
   },
   {
     "audience": "men",
@@ -4601,7 +4642,8 @@
       5,
       3,
       0
-    ]
+    ],
+    "adminCategory": "ao-so-mi-blouse"
   },
   {
     "audience": "men",
@@ -4691,7 +4733,7 @@
       6,
       4
     ],
-    "adminCategory": "ao-thun-streetwear"
+    "adminCategory": "ao-polo"
   },
   {
     "audience": "men",
@@ -5005,7 +5047,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "ao-so-mi-blouse"
   },
   {
     "audience": "men",
@@ -5142,7 +5185,7 @@
       6,
       3
     ],
-    "adminCategory": "quan-baggy-cargo"
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "men",
@@ -5233,7 +5276,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "men",
@@ -5277,7 +5321,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "men",
@@ -5366,7 +5411,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "men",
@@ -5410,7 +5456,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "men",
@@ -5455,7 +5502,7 @@
       6,
       4
     ],
-    "adminCategory": "quan-baggy-cargo"
+    "adminCategory": "quan-jogger-the-thao"
   },
   {
     "audience": "men",
@@ -5499,7 +5546,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "men",
@@ -5543,7 +5591,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "men",
@@ -5588,7 +5637,7 @@
       6,
       4
     ],
-    "adminCategory": "quan-baggy-cargo"
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "men",
@@ -5678,7 +5727,7 @@
       6,
       4
     ],
-    "adminCategory": "quan-baggy-cargo"
+    "adminCategory": "quan-jogger-the-thao"
   },
   {
     "audience": "men",
@@ -5722,7 +5771,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "men",
@@ -5781,7 +5831,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -5840,7 +5890,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -5899,7 +5949,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -5958,7 +6008,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -6017,7 +6067,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -6076,7 +6126,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -6135,7 +6185,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -6194,7 +6244,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -6253,7 +6303,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -6312,7 +6362,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -6371,7 +6421,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -6430,7 +6480,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -6489,7 +6539,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -6548,7 +6598,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -6607,7 +6657,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -6666,7 +6716,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -6725,7 +6775,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -6784,7 +6834,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -6844,7 +6894,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -6903,7 +6953,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -6961,7 +7011,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-boots"
   },
   {
     "audience": "men",
@@ -7019,7 +7070,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-boots"
   },
   {
     "audience": "men",
@@ -7077,7 +7129,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-tay"
   },
   {
     "audience": "men",
@@ -7135,7 +7188,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-tay"
   },
   {
     "audience": "men",
@@ -7193,7 +7247,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-boots"
   },
   {
     "audience": "men",
@@ -7252,7 +7307,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -7312,7 +7367,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -7370,7 +7425,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-luoi"
   },
   {
     "audience": "men",
@@ -7429,7 +7485,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "boy",
@@ -7698,7 +7754,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "ao-so-mi-blouse"
   },
   {
     "audience": "boy",
@@ -7832,7 +7889,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "ao-so-mi-blouse"
   },
   {
     "audience": "boy",
@@ -8056,7 +8114,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "boy",
@@ -8146,7 +8205,7 @@
       6,
       4
     ],
-    "adminCategory": "quan-baggy-cargo"
+    "adminCategory": "quan-jogger-the-thao"
   },
   {
     "audience": "boy",
@@ -8190,7 +8249,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "boy",
@@ -8234,7 +8294,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "boy",
@@ -8278,7 +8339,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "boy",
@@ -8322,7 +8384,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "boy",
@@ -8412,7 +8475,7 @@
       6,
       4
     ],
-    "adminCategory": "quan-baggy-cargo"
+    "adminCategory": "quan-jogger-the-thao"
   },
   {
     "audience": "boy",
@@ -8457,7 +8520,7 @@
       6,
       4
     ],
-    "adminCategory": "quan-baggy-cargo"
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "boy",
@@ -8502,7 +8565,7 @@
       6,
       4
     ],
-    "adminCategory": "quan-baggy-cargo"
+    "adminCategory": "quan-jogger-the-thao"
   },
   {
     "audience": "boy",
@@ -8546,7 +8609,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "boy",
@@ -8590,7 +8654,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "boy",
@@ -8634,7 +8699,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "boy",
@@ -8698,7 +8764,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "boy",
@@ -8761,7 +8827,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "boy",
@@ -8825,7 +8891,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "boy",
@@ -8887,7 +8953,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-luoi"
   },
   {
     "audience": "boy",
@@ -8949,7 +9016,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-boots"
   },
   {
     "audience": "boy",
@@ -9012,7 +9080,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "boy",
@@ -9075,7 +9143,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "boy",
@@ -9138,7 +9206,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "boy",
@@ -9200,7 +9268,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-boots"
   },
   {
     "audience": "boy",
@@ -9263,7 +9332,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "boy",
@@ -9326,7 +9395,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "women",
@@ -9371,7 +9440,7 @@
       7,
       4
     ],
-    "adminCategory": "ao-thun-streetwear"
+    "adminCategory": "ao-polo"
   },
   {
     "audience": "women",
@@ -9415,7 +9484,8 @@
       9,
       7,
       4
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "girls",
@@ -9460,7 +9530,7 @@
       7,
       4
     ],
-    "adminCategory": "ao-thun-streetwear"
+    "adminCategory": "ao-polo"
   },
   {
     "audience": "girls",
@@ -9504,7 +9574,8 @@
       9,
       7,
       4
-    ]
+    ],
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "men",
@@ -9549,7 +9620,7 @@
       7,
       4
     ],
-    "adminCategory": "ao-thun-streetwear"
+    "adminCategory": "ao-polo"
   },
   {
     "audience": "men",
@@ -9641,7 +9712,7 @@
       7,
       4
     ],
-    "adminCategory": "ao-thun-streetwear"
+    "adminCategory": "ao-polo"
   },
   {
     "audience": "boy",
@@ -9745,7 +9816,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "giay-boots"
   },
   {
     "audience": "women",
@@ -9804,7 +9876,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "giay-cao-got"
   },
   {
     "audience": "girls",
@@ -9868,7 +9941,7 @@
       4,
       4
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "boy",
@@ -9932,7 +10005,7 @@
       4,
       4
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "women",
@@ -10024,7 +10097,7 @@
       6,
       4
     ],
-    "adminCategory": "quan-baggy-cargo"
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "boy",
@@ -10158,7 +10231,8 @@
       8,
       8,
       6
-    ]
+    ],
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "men",
@@ -10247,7 +10321,8 @@
       8,
       8,
       6
-    ]
+    ],
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "boy",
@@ -10352,7 +10427,7 @@
       6,
       4
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "women",
@@ -10412,7 +10487,7 @@
       6,
       4
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "girls",
@@ -10476,7 +10551,7 @@
       4,
       4
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "boy",
@@ -10540,7 +10615,7 @@
       4,
       4
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "women",
@@ -10584,7 +10659,8 @@
       8,
       8,
       6
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "men",
@@ -10719,7 +10795,7 @@
       8,
       6
     ],
-    "adminCategory": "quan-baggy-cargo"
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "women",
@@ -10810,7 +10886,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "girls",
@@ -11037,7 +11114,7 @@
       8,
       6
     ],
-    "adminCategory": "quan-baggy-cargo"
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "boy",
@@ -11141,7 +11218,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "giay-cao-got"
   },
   {
     "audience": "men",
@@ -11200,7 +11278,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "giay-boots"
   },
   {
     "audience": "girls",
@@ -11264,7 +11343,7 @@
       4,
       4
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "boy",
@@ -11328,7 +11407,7 @@
       4,
       4
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "women",
@@ -11463,7 +11542,7 @@
       8,
       6
     ],
-    "adminCategory": "quan-baggy-cargo"
+    "adminCategory": "quan-jogger-the-thao"
   },
   {
     "audience": "boy",
@@ -11508,7 +11587,7 @@
       8,
       6
     ],
-    "adminCategory": "quan-baggy-cargo"
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "women",
@@ -11597,7 +11676,8 @@
       8,
       8,
       6
-    ]
+    ],
+    "adminCategory": "ao-polo"
   },
   {
     "audience": "girls",
@@ -11687,7 +11767,7 @@
       8,
       6
     ],
-    "adminCategory": "quan-baggy-cargo"
+    "adminCategory": "quan-short"
   },
   {
     "audience": "women",
@@ -11778,7 +11858,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "boy",
@@ -11928,7 +12009,7 @@
       6,
       4
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -11987,7 +12068,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "giay-luoi"
   },
   {
     "audience": "girls",
@@ -12050,7 +12132,8 @@
       4,
       4,
       4
-    ]
+    ],
+    "adminCategory": "giay-bet"
   },
   {
     "audience": "boy",
@@ -12114,7 +12197,7 @@
       4,
       4
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "women",
@@ -12158,7 +12241,8 @@
       8,
       8,
       6
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "men",
@@ -12352,7 +12436,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "giay-cao-got"
   },
   {
     "audience": "men",
@@ -12412,7 +12497,7 @@
       6,
       4
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "girls",
@@ -12475,7 +12560,8 @@
       4,
       4,
       4
-    ]
+    ],
+    "adminCategory": "giay-bet"
   },
   {
     "audience": "boy",
@@ -12539,7 +12625,7 @@
       4,
       4
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "women",
@@ -12631,7 +12717,7 @@
       6,
       4
     ],
-    "adminCategory": "quan-baggy-cargo"
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "girls",
@@ -12675,7 +12761,8 @@
       8,
       8,
       6
-    ]
+    ],
+    "adminCategory": "ao-polo"
   },
   {
     "audience": "boy",
@@ -12720,7 +12807,7 @@
       8,
       6
     ],
-    "adminCategory": "quan-baggy-cargo"
+    "adminCategory": "quan-jogger-the-thao"
   },
   {
     "audience": "women",
@@ -12764,7 +12851,8 @@
       8,
       8,
       6
-    ]
+    ],
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "girls",
@@ -12898,7 +12986,8 @@
       8,
       8,
       6
-    ]
+    ],
+    "adminCategory": "ao-polo"
   },
   {
     "audience": "women",
@@ -12958,7 +13047,7 @@
       6,
       4
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -13017,7 +13106,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "giay-luoi"
   },
   {
     "audience": "girls",
@@ -13081,7 +13171,7 @@
       4,
       4
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "boy",
@@ -13145,7 +13235,7 @@
       4,
       4
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "women",
@@ -13237,7 +13327,7 @@
       6,
       4
     ],
-    "adminCategory": "quan-baggy-cargo"
+    "adminCategory": "quan-jogger-the-thao"
   },
   {
     "audience": "girls",
@@ -13372,7 +13462,7 @@
       8,
       6
     ],
-    "adminCategory": "quan-baggy-cargo"
+    "adminCategory": "quan-jogger-the-thao"
   },
   {
     "audience": "men",
@@ -13461,7 +13551,8 @@
       8,
       8,
       6
-    ]
+    ],
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "boy",
@@ -13565,7 +13656,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "giay-cao-got"
   },
   {
     "audience": "men",
@@ -13625,7 +13717,7 @@
       6,
       4
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "girls",
@@ -13688,7 +13780,8 @@
       4,
       4,
       4
-    ]
+    ],
+    "adminCategory": "giay-bet"
   },
   {
     "audience": "boy",
@@ -13752,7 +13845,7 @@
       4,
       4
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "women",
@@ -13934,7 +14027,7 @@
       8,
       6
     ],
-    "adminCategory": "quan-baggy-cargo"
+    "adminCategory": "quan-jogger-the-thao"
   },
   {
     "audience": "women",
@@ -13979,7 +14072,7 @@
       8,
       6
     ],
-    "adminCategory": "quan-baggy-cargo"
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "men",
@@ -14205,7 +14298,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "girls",
@@ -14354,7 +14448,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "giay-bet"
   },
   {
     "audience": "men",
@@ -14414,7 +14509,7 @@
       6,
       4
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "girls",
@@ -14477,7 +14572,8 @@
       4,
       4,
       4
-    ]
+    ],
+    "adminCategory": "giay-bet"
   },
   {
     "audience": "boy",
@@ -14541,7 +14637,7 @@
       4,
       4
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "women",
@@ -14585,7 +14681,8 @@
       8,
       8,
       6
-    ]
+    ],
+    "adminCategory": "ao-so-mi-blouse"
   },
   {
     "audience": "men",
@@ -14677,7 +14774,7 @@
       8,
       6
     ],
-    "adminCategory": "quan-baggy-cargo"
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "boy",
@@ -14721,7 +14818,8 @@
       8,
       8,
       6
-    ]
+    ],
+    "adminCategory": "ao-polo"
   },
   {
     "audience": "women",
@@ -14780,7 +14878,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "giay-boots"
   },
   {
     "audience": "men",
@@ -14839,7 +14938,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "giay-luoi"
   },
   {
     "audience": "girls",
@@ -14902,7 +15002,8 @@
       4,
       4,
       4
-    ]
+    ],
+    "adminCategory": "giay-bet"
   },
   {
     "audience": "boy",
@@ -14966,7 +15067,7 @@
       4,
       4
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "women",
@@ -15010,7 +15111,8 @@
       8,
       8,
       6
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "men",
@@ -15204,7 +15306,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "giay-cao-got"
   },
   {
     "audience": "men",
@@ -15263,7 +15366,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "giay-boots"
   },
   {
     "audience": "girls",
@@ -15327,7 +15431,7 @@
       4,
       4
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "boy",
@@ -15390,7 +15494,8 @@
       4,
       4,
       4
-    ]
+    ],
+    "adminCategory": "giay-boots"
   },
   {
     "audience": "women",
@@ -15481,7 +15586,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "girls",
@@ -15571,7 +15677,7 @@
       8,
       6
     ],
-    "adminCategory": "quan-baggy-cargo"
+    "adminCategory": "quan-jogger-the-thao"
   },
   {
     "audience": "men",
@@ -15660,7 +15766,8 @@
       8,
       8,
       6
-    ]
+    ],
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "girls",
@@ -15750,7 +15857,7 @@
       8,
       6
     ],
-    "adminCategory": "ao-khoac-varsity"
+    "adminCategory": "ao-so-mi-blouse"
   },
   {
     "audience": "women",
@@ -15809,7 +15916,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "giay-cao-got"
   },
   {
     "audience": "men",
@@ -15869,7 +15977,7 @@
       6,
       4
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "girls",
@@ -15932,7 +16040,8 @@
       4,
       4,
       4
-    ]
+    ],
+    "adminCategory": "giay-bet"
   },
   {
     "audience": "boy",
@@ -15996,7 +16105,7 @@
       4,
       4
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "women",
@@ -16087,7 +16196,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "girls",
@@ -16131,7 +16241,8 @@
       8,
       8,
       6
-    ]
+    ],
+    "adminCategory": "ao-polo"
   },
   {
     "audience": "boy",
@@ -16268,7 +16379,7 @@
       6,
       4
     ],
-    "adminCategory": "quan-baggy-cargo"
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "girls",
@@ -16357,7 +16468,8 @@
       8,
       8,
       6
-    ]
+    ],
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "women",
@@ -16401,7 +16513,8 @@
       8,
       8,
       6
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "men",
@@ -16445,7 +16558,8 @@
       8,
       8,
       6
-    ]
+    ],
+    "adminCategory": "ao-polo"
   },
   {
     "audience": "girls",
@@ -16489,7 +16603,8 @@
       8,
       8,
       6
-    ]
+    ],
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "boy",
@@ -16626,7 +16741,7 @@
       6,
       4
     ],
-    "adminCategory": "quan-baggy-cargo"
+    "adminCategory": "quan-jogger-the-thao"
   },
   {
     "audience": "girls",
@@ -16715,7 +16830,8 @@
       8,
       8,
       6
-    ]
+    ],
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "women",
@@ -16849,7 +16965,8 @@
       8,
       8,
       6
-    ]
+    ],
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "boy",
@@ -16893,7 +17010,8 @@
       8,
       8,
       6
-    ]
+    ],
+    "adminCategory": "ao-polo"
   },
   {
     "audience": "women",
@@ -16984,7 +17102,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "girls",
@@ -17029,7 +17148,7 @@
       8,
       6
     ],
-    "adminCategory": "hoodie-sweater"
+    "adminCategory": "ao-polo"
   },
   {
     "audience": "boy",
@@ -17074,7 +17193,7 @@
       8,
       6
     ],
-    "adminCategory": "quan-baggy-cargo"
+    "adminCategory": "quan-jogger-the-thao"
   },
   {
     "audience": "women",
@@ -17209,7 +17328,7 @@
       8,
       6
     ],
-    "adminCategory": "quan-baggy-cargo"
+    "adminCategory": "quan-jogger-the-thao"
   },
   {
     "audience": "boy",
@@ -17253,7 +17372,8 @@
       8,
       8,
       6
-    ]
+    ],
+    "adminCategory": "ao-polo"
   },
   {
     "audience": "women",
@@ -17345,7 +17465,7 @@
       6,
       4
     ],
-    "adminCategory": "quan-baggy-cargo"
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "girls",
@@ -17479,7 +17599,8 @@
       8,
       8,
       6
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "men",
@@ -17523,7 +17644,8 @@
       8,
       8,
       6
-    ]
+    ],
+    "adminCategory": "ao-polo"
   },
   {
     "audience": "girls",
@@ -17567,7 +17689,8 @@
       8,
       8,
       6
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "boy",
@@ -17656,7 +17779,8 @@
       8,
       8,
       6
-    ]
+    ],
+    "adminCategory": "ao-so-mi-blouse"
   },
   {
     "audience": "men",
@@ -17702,7 +17826,8 @@
       8,
       6,
       4
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "girls",
@@ -17868,7 +17993,7 @@
       8,
       8
     ],
-    "adminCategory": "quan-baggy-cargo"
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "men",
@@ -17987,7 +18112,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -18062,7 +18187,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "men",
@@ -18105,7 +18231,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -18180,7 +18306,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "men",
@@ -18223,7 +18350,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -18260,7 +18387,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "men",
@@ -18303,7 +18431,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -18378,7 +18506,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "men",
@@ -18421,7 +18550,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -18459,7 +18588,7 @@
       8,
       8
     ],
-    "adminCategory": "ao-khoac-varsity"
+    "adminCategory": "ao-so-mi-blouse"
   },
   {
     "audience": "men",
@@ -18496,7 +18625,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "men",
@@ -18538,7 +18668,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "women",
@@ -18597,7 +18728,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "women",
@@ -18656,7 +18787,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "women",
@@ -18715,7 +18846,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "women",
@@ -18773,7 +18904,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-cao-got"
   },
   {
     "audience": "women",
@@ -18831,7 +18963,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-cao-got"
   },
   {
     "audience": "women",
@@ -18889,7 +19022,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-cao-got"
   },
   {
     "audience": "women",
@@ -18948,7 +19082,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "women",
@@ -19007,7 +19141,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "women",
@@ -19066,7 +19200,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "women",
@@ -19125,7 +19259,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "women",
@@ -19183,7 +19317,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-boots"
   },
   {
     "audience": "women",
@@ -19241,7 +19376,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-bet"
   },
   {
     "audience": "women",
@@ -19299,7 +19435,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-boots"
   },
   {
     "audience": "women",
@@ -19357,7 +19494,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-luoi"
   },
   {
     "audience": "women",
@@ -19415,7 +19553,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-cao-got"
   },
   {
     "audience": "women",
@@ -19473,7 +19612,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-cao-got"
   },
   {
     "audience": "women",
@@ -19531,7 +19671,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-boots"
   },
   {
     "audience": "women",
@@ -19590,7 +19731,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "women",
@@ -19649,7 +19790,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "girls",
@@ -19711,7 +19852,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-cao-got"
   },
   {
     "audience": "girls",
@@ -19774,7 +19916,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "girls",
@@ -19837,7 +19979,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "girls",
@@ -19900,7 +20042,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "girls",
@@ -19962,7 +20104,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-bet"
   },
   {
     "audience": "girls",
@@ -20024,7 +20167,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-cao-got"
   },
   {
     "audience": "girls",
@@ -20086,7 +20230,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-boots"
   },
   {
     "audience": "girls",
@@ -20148,7 +20293,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-bet"
   },
   {
     "audience": "men",
@@ -20206,7 +20352,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-cao-got"
   },
   {
     "audience": "men",
@@ -20264,7 +20411,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-cao-got"
   },
   {
     "audience": "men",
@@ -20322,7 +20470,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-cao-got"
   },
   {
     "audience": "men",
@@ -20381,7 +20530,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -20440,7 +20589,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -20498,7 +20647,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-tay"
   },
   {
     "audience": "men",
@@ -20557,7 +20707,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -20616,7 +20766,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -20675,7 +20825,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -20734,7 +20884,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -20792,7 +20942,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-boots"
   },
   {
     "audience": "men",
@@ -20850,7 +21001,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-luoi"
   },
   {
     "audience": "men",
@@ -20909,7 +21061,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -20968,7 +21120,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "men",
@@ -21027,7 +21179,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "boy",
@@ -21090,7 +21242,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "boy",
@@ -21153,7 +21305,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "boy",
@@ -21216,7 +21368,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "boy",
@@ -21279,7 +21431,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "boy",
@@ -21342,7 +21494,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "boy",
@@ -21405,7 +21557,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "boy",
@@ -21467,7 +21619,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-cao-got"
   },
   {
     "audience": "boy",
@@ -21530,7 +21683,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "women",
@@ -21648,7 +21801,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-boots"
   },
   {
     "audience": "women",
@@ -21723,7 +21877,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "women",
@@ -21765,7 +21920,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-cao-got"
   },
   {
     "audience": "women",
@@ -21883,7 +22039,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "women",
@@ -21958,7 +22115,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "women",
@@ -22000,7 +22158,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-boots"
   },
   {
     "audience": "women",
@@ -22075,7 +22234,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "women",
@@ -22117,7 +22277,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-bet"
   },
   {
     "audience": "women",
@@ -22154,7 +22315,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "ao-so-mi-blouse"
   },
   {
     "audience": "women",
@@ -22191,7 +22353,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "women",
@@ -22233,7 +22396,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-sandal"
   },
   {
     "audience": "women",
@@ -22308,7 +22472,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "women",
@@ -22351,7 +22516,7 @@
       8,
       8
     ],
-    "adminCategory": "giay-sneaker-streetwear"
+    "adminCategory": "giay-the-thao"
   },
   {
     "audience": "women",
@@ -22388,7 +22553,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "ao-polo"
   },
   {
     "audience": "women",
@@ -22425,7 +22591,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "quan-tay-chino"
   },
   {
     "audience": "women",
@@ -22467,7 +22634,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-cao-got"
   },
   {
     "audience": "men",
@@ -22542,7 +22710,8 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "quan-jeans"
   },
   {
     "audience": "men",
@@ -22584,6 +22753,7 @@
       8,
       8,
       8
-    ]
+    ],
+    "adminCategory": "giay-the-thao"
   }
 ]
