@@ -249,6 +249,12 @@ public class OrdersController : Controller
             if (!string.IsNullOrEmpty(code))
             {
                 var score = GetRewardScore(protection, userId, code);
+
+                // =========================================================================================
+                // [BÀI TOÁN 3: XỬ LÝ TRANH CHẤP GIẬT MÃ GIẢM GIÁ (VOUCHER FLASH SALE)]
+                // reserve: true sẽ kích hoạt cơ chế khóa UPDLOCK trong SQL Server để ngăn 2 người tranh dùng 1 mã cuối cùng.
+                // Nếu mã đã bị người khác dùng hết số lượng trước đó 1 mili-giây -> voucher = null -> Rollback ngay!
+                // =========================================================================================
                 (voucher, discount) = await SalesRules.ApplyVoucherAsync(_context, code, userId, subTotal, quantities, variants, score, reserve: true);
                 if (voucher == null)
                 {
