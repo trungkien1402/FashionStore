@@ -40,12 +40,112 @@ public static class ShowroomCatalog
 
     private static readonly Dictionary<string, (string Kind, string Name)> AdminCategories = new()
     {
+        ["giay-hnmtshop"] = ("giay", "Giày HNMTSHOP"),
+        ["giay-lookbook"] = ("giay", "Giày Lookbook"),
+        ["giay-the-thao"] = ("giay", "Giày Thể Thao"),
+        ["giay-cao-got"] = ("giay", "Giày Cao Gót"),
+        ["giay-boots"] = ("giay", "Boots"),
+        ["giay-tay"] = ("giay", "Giày Tây"),
+        ["giay-luoi"] = ("giay", "Giày Lười"),
+        ["giay-bet"] = ("giay", "Giày Bệt"),
+        ["giay-sandal"] = ("giay", "Sandal"),
+        ["giay-future-lab"] = ("giay", "Giày HNMTSHOP × FUTURE LAB"),
+        ["giay-cyber-lab"] = ("giay", "Giày HNMTSHOP × CYBER LAB"),
+        ["giay-chile-20"] = ("giay", "Giày HNMTSHOP × CHILE 20"),
+        ["giay-nike"] = ("giay", "Giày Nike"),
+        ["giay-jordan"] = ("giay", "Giày Jordan"),
+        ["giay-adidas"] = ("giay", "Giày Adidas"),
+        ["giay-new-balance"] = ("giay", "Giày New Balance"),
+        ["giay-converse"] = ("giay", "Giày Converse"),
+        ["giay-balenciaga"] = ("giay", "Giày Balenciaga"),
+        ["giay-rick-owens"] = ("giay", "Giày Rick Owens"),
+        ["ao-so-mi-blouse"] = ("ao", "Áo Sơ Mi & Blouse"),
+        ["ao-polo"] = ("ao", "Áo Polo"),
+        ["quan-jeans"] = ("quan", "Quần Jeans & Denim"),
+        ["quan-tay-chino"] = ("quan", "Quần Tây & Chino"),
+        ["quan-short"] = ("quan", "Quần Short"),
+        ["quan-jogger-the-thao"] = ("quan", "Quần Jogger & Thể Thao"),
         ["ao-khoac-varsity"] = ("ao", "Áo Khoác & Outerwear"),
         ["ao-thun-streetwear"] = ("ao", "Áo Thun & Graphic Tees"),
         ["hoodie-sweater"] = ("ao", "Hoodies & Sweaters"),
         ["quan-baggy-cargo"] = ("quan", "Quần Streetwear & Cargo"),
         ["giay-sneaker-streetwear"] = ("giay", "Sneakers & Streetwear Shoes")
     };
+
+    public static readonly string[] FormerShoeCategorySlugs =
+    [
+        "giay-lookbook", "giay-hnmtshop", "giay-future-lab", "giay-cyber-lab", "giay-chile-20",
+        "giay-nike", "giay-jordan", "giay-adidas", "giay-new-balance", "giay-converse",
+        "giay-balenciaga", "giay-rick-owens", "giay-sneaker-streetwear"
+    ];
+
+    public static async Task ReconcileCategoriesAsync(ApplicationDbContext db)
+    {
+        using var source = typeof(ShowroomCatalog).Assembly.GetManifestResourceStream("FashionStore.Data.showroom-catalog.json")
+            ?? throw new InvalidOperationException("Không tìm thấy danh mục showroom.");
+        var entries = await JsonSerializer.DeserializeAsync<Entry[]>(source, JsonOptions)
+            ?? throw new InvalidOperationException("Danh mục showroom trống.");
+        var assignments = entries.Where(entry => entry.AdminCategory != null)
+            .ToDictionary(entry => entry.Slug, entry => entry.AdminCategory!, StringComparer.OrdinalIgnoreCase);
+        await using var transaction = await db.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+        const string reconciliation = "CatalogShoeTypesV1";
+        if (await db.AdminAuditEvents.AnyAsync(item => item.Action == reconciliation))
+        {
+            await transaction.CommitAsync();
+            return;
+        }
+        if (await db.AdminAuditEvents.AnyAsync(item => item.Action == "CatalogCategories20261119"))
+        {
+            assignments = assignments.Where(item => AdminCategories[item.Value].Kind == "giay")
+                .ToDictionary(item => item.Key, item => item.Value, StringComparer.OrdinalIgnoreCase);
+        }
+
+        assignments.TryAdd("air-jordan-1-retro-high-og-chicago", "giay-the-thao");
+        assignments.TryAdd("travis-scott-air-jordan-1-low-mocha", "giay-the-thao");
+        assignments.TryAdd("nike-dunk-low-retro-panda", "giay-the-thao");
+        assignments.TryAdd("nike-air-force-1-07-low-triple-white", "giay-the-thao");
+        assignments.TryAdd("adidas-forum-84-low-vintage", "giay-the-thao");
+        assignments.TryAdd("yeezy-boost-350-v2-onyx", "giay-the-thao");
+        assignments.TryAdd("new-balance-550-retro-white-green", "giay-the-thao");
+        assignments.TryAdd("converse-chuck-70-high-heritage-black", "giay-the-thao");
+        assignments.TryAdd("balenciaga-triple-s-clear-sole", "giay-the-thao");
+        assignments.TryAdd("rick-owens-geobasket-high-top", "giay-the-thao");
+        foreach (var entry in entries.Where(entry => entry.AdminCategory == "quan-jogger-the-thao"))
+            assignments[entry.Slug] = "quan-jogger-the-thao";
+        if (await db.AdminAuditEvents.AnyAsync(item => item.Action == "CatalogShoeBrandsV1" || item.Action == "CatalogCategoryImagesV1"))
+        {
+            assignments = assignments.Where(item => AdminCategories[item.Value].Kind == "giay" || item.Value == "quan-jogger-the-thao")
+                .ToDictionary(item => item.Key, item => item.Value, StringComparer.OrdinalIgnoreCase);
+        }
+        var slugs = assignments.Keys.ToArray();
+        var categories = await db.Categories.ToListAsync();
+        var products = await db.Products.Include(product => product.Category)
+            .Where(product => slugs.Contains(product.Slug)).ToListAsync();
+        foreach (var product in products)
+        {
+            var targetSlug = assignments[product.Slug];
+            if (product.Category.Slug == targetSlug ||
+                (!AdminCategories.ContainsKey(product.Category.Slug) &&
+                 !CategoryByKind.Values.Any(category => category.Slug == product.Category.Slug)))
+                continue;
+
+            var target = categories.FirstOrDefault(category => category.Slug == targetSlug);
+            if (target == null)
+            {
+                target = new Category { Slug = targetSlug, Name = AdminCategories[targetSlug].Name };
+                categories.Add(target);
+            }
+            product.Category = target;
+        }
+        db.AdminAuditEvents.Add(new AdminAuditEvent
+        {
+            Action = reconciliation,
+            Target = "ShowroomCatalog",
+            Detail = "Phân loại giày mẫu theo kiểu giày."
+        });
+        await db.SaveChangesAsync();
+        await transaction.CommitAsync();
+    }
 
     public static async Task<(int Added, int Removed)> ImportAsync(ApplicationDbContext db, bool replaceLegacy = false)
     {
@@ -92,7 +192,9 @@ public static class ShowroomCatalog
             if (metadata == null) continue;
 
             var entry = metadataUpdates[product.Slug];
-            if (entry.AdminCategory != null && product.Category.Slug == CategoryByKind[entry.Kind].Slug)
+            if (entry.AdminCategory != null &&
+                (product.Category.Slug == CategoryByKind[entry.Kind].Slug ||
+                 AdminCategories.ContainsKey(product.Category.Slug)))
             {
                 product.Category = ResolveCategory(entry);
             }
@@ -221,6 +323,8 @@ public static class ShowroomCatalog
             var variant = product.Variants.OrderBy(v => v.Id).FirstOrDefault(v => v.Color == color[0] && v.Size == size);
             return variant == null ? null : new { variant.Id, Stock = variant.StockQuantity, variant.Price };
         }).ToArray()).ToArray();
+        item["audience"] = product.ShowroomAudience;
+        item["kind"] = product.ShowroomKind;
         item["productId"] = product.Id;
         item["sizes"] = JsonSerializer.SerializeToNode(metadata.Sizes, JsonOptions);
         item["variants"] = JsonSerializer.SerializeToNode(variants, JsonOptions);

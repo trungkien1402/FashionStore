@@ -9,4 +9,5 @@ public class AdminCategoryListItemViewModel
     public int ActiveProductCount { get; set; }
     public int InactiveProductCount => ProductCount - ActiveProductCount;
     public string? RepresentativeImageUrl { get; set; }
+    public List<string> ProductImageUrls { get; set; } = [];
 }
