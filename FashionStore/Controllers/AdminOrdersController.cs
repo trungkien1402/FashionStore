@@ -29,6 +29,8 @@ public class AdminOrdersController : Controller
         PaymentMethod? paymentMethod, ShipmentStatus? shipmentStatus, string? search,
         DateOnly? from, DateOnly? to, string? sort, int page = 1)
     {
+        await TryExpireAllPendingVietQrOrdersAsync();
+
         if (!ModelState.IsValid || from > to || from < new DateOnly(1900, 1, 1) || to == DateOnly.MaxValue ||
             status is { } os && !Enum.IsDefined(os) ||
             paymentStatus is { } ps && !Enum.IsDefined(ps) ||
@@ -326,5 +328,66 @@ public class AdminOrdersController : Controller
                 newStatus = h.NewStatus.ToString(), h.Amount, h.ActorUserId, h.CreatedAt })
             .ToListAsync();
         return Json(histories);
+    }
+
+    // =========================================================================================
+    // [BÀI TOÁN 2 (PHÍA ADMIN): TỰ ĐỘNG QUÉT VÀ HỦY ĐƠN VIETQR QUÁ 15 PHÚT KHI ADMIN MỞ TRANG]
+    // Quét toàn bộ đơn VietQR chưa thanh toán quá 15 phút -> Chuyển sang mục "Đã hủy" và hoàn lại kho.
+    // =========================================================================================
+    private async Task TryExpireAllPendingVietQrOrdersAsync()
+    {
+        var cutoff = DateTime.UtcNow.AddMinutes(-15);
+        var expiredOrders = await _context.Orders
+            .Include(o => o.Items)
+            .Where(o => o.PaymentMethod == PaymentMethod.VietQR &&
+                        o.PaymentStatus == PaymentStatus.Pending &&
+                        !o.TransferReportedAt.HasValue &&
+                        o.Status != OrderStatus.Cancelled &&
+                        o.CreatedAt <= cutoff)
+            .Take(50)
+            .ToListAsync();
+
+        if (expiredOrders.Count == 0) return;
+
+        foreach (var order in expiredOrders)
+        {
+            if (!order.InventoryRestored)
+            {
+                foreach (var item in order.Items)
+                {
+                    var variant = await _context.ProductVariants
+                        .FirstOrDefaultAsync(v => v.Id == item.ProductVariantId);
+                    if (variant != null)
+                        variant.StockQuantity += item.Quantity;
+                }
+                order.InventoryRestored = true;
+            }
+
+            var oldStatus = order.Status;
+            order.Status = OrderStatus.Cancelled;
+            order.PaymentStatus = PaymentStatus.Failed;
+
+            _context.OrderStatusHistories.Add(new OrderStatusHistory
+            {
+                OrderId = order.Id,
+                OldStatus = oldStatus,
+                NewStatus = OrderStatus.Cancelled,
+                ChangedByUserId = order.UserId,
+                Note = "Đơn hàng tự động hủy do quá hạn thanh toán VietQR (15 phút).",
+                CreatedAt = DateTime.UtcNow
+            });
+
+            _context.PaymentHistories.Add(new PaymentHistory
+            {
+                OrderId = order.Id,
+                Event = "PaymentExpired",
+                OldStatus = PaymentStatus.Pending,
+                NewStatus = PaymentStatus.Failed,
+                Amount = order.TotalAmount,
+                ActorUserId = order.UserId
+            });
+        }
+
+        await _context.SaveChangesAsync();
     }
 }

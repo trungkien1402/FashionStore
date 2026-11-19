@@ -75,7 +75,7 @@ public static class SeedData
             await userManager.AddToRoleAsync(shipper, "Shipper");
         }
 
-        if (!await db.Products.AnyAsync())
+        if (!await db.Products.AnyAsync(p => p.ShowroomMetadata != null))
         {
             await ShowroomCatalog.ImportAsync(db);
         }

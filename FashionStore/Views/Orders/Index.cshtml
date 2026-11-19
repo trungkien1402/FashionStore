@@ -161,6 +161,14 @@
                     var localDate = order.CreatedAt.ToLocalTime();
                     var dateIso = localDate.ToString("yyyy-MM-dd");
 
+                    var nowUtc = DateTime.UtcNow;
+                    var isPendingVietQr = order.PaymentMethod == PaymentMethod.VietQR && 
+                                          order.PaymentStatus == PaymentStatus.Pending && 
+                                          !order.TransferReportedAt.HasValue && 
+                                          order.Status != OrderStatus.Cancelled;
+                    var webExpireSec = isPendingVietQr ? Math.Max(0, (int)(order.CreatedAt.AddMinutes(10) - nowUtc).TotalSeconds) : 0;
+                    var actualExpireSec = isPendingVietQr ? Math.Max(0, (int)(order.CreatedAt.AddMinutes(15) - nowUtc).TotalSeconds) : 0;
+
                     // Gom chuỗi tìm kiếm không dấu/lowercase để tra cứu nhanh kể cả khi tóm tắt ẩn bớt
                     var searchWords = $"{order.OrderCode} {string.Join(" ", order.Items?.Select(i => $"{i.ProductName} {i.Size} {i.Color}") ?? Array.Empty<string>())}".ToLower();
 
@@ -181,6 +189,32 @@
                             </div>
 
                             <div class="hnmt-header-right">
+                                @if (isPendingVietQr)
+                                {
+                                    <div class="hnmt-qr-countdown-tag" data-qr-countdown data-web-sec="@webExpireSec" data-actual-sec="@actualExpireSec">
+                                        @if (webExpireSec > 0)
+                                        {
+                                            <span class="hnmt-qr-pill is-active" title="Mã QR thanh toán đang có hiệu lực trong 10 phút">
+                                                <span class="hnmt-status-dot"></span>
+                                                <span>QR hiệu lực: <strong class="qr-timer">@(TimeSpan.FromSeconds(webExpireSec).ToString(@"mm\:ss"))</strong></span>
+                                            </span>
+                                        }
+                                        else if (actualExpireSec > 0)
+                                        {
+                                            <span class="hnmt-qr-pill is-grace" title="Đã hết 10 phút quét QR. Vùng đệm 5 phút để hệ thống đối soát nhận tiền.">
+                                                <span class="hnmt-status-dot"></span>
+                                                <span>Vùng đệm 5p: <strong class="qr-timer">@(TimeSpan.FromSeconds(actualExpireSec).ToString(@"mm\:ss"))</strong></span>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="hnmt-qr-pill is-expired">
+                                                <span>Mã QR hết hạn</span>
+                                            </span>
+                                        }
+                                    </div>
+                                    <span class="hnmt-header-sep">•</span>
+                                }
                                 <span class="hnmt-order-method">@paymentText</span>
                                 <span class="hnmt-header-sep">•</span>
                                 <time class="hnmt-order-datetime">
@@ -225,6 +259,20 @@
                             </div>
 
                             <div class="hnmt-action-group">
+                                @if (isPendingVietQr && actualExpireSec > 0)
+                                {
+                                    <a asp-action="PaymentQR" asp-route-id="@order.Id" class="hnmt-btn-pay-now @(webExpireSec <= 0 ? "is-grace" : "")" title="Mở trang quét mã thanh toán">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+                                            <rect x="3" y="3" width="7" height="7"></rect>
+                                            <rect x="14" y="3" width="7" height="7"></rect>
+                                            <rect x="3" y="14" width="7" height="7"></rect>
+                                            <path d="M14 14h3v3h-3z"></path>
+                                            <path d="M20 14v6h-6"></path>
+                                        </svg>
+                                        <span>@(webExpireSec > 0 ? "Quét mã thanh toán" : "Báo đã chuyển khoản")</span>
+                                    </a>
+                                }
+
                                 <a asp-action="Details" asp-route-id="@order.Id" class="hnmt-btn-view">
                                     <span>Xem chi tiết</span>
                                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
@@ -840,6 +888,106 @@
     border-color: #F87171;
 }
 
+/* NÚT THANH TOÁN VIETQR NGAY */
+.hnmt-btn-pay-now {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #16A34A;
+    color: #FFFFFF !important;
+    text-decoration: none !important;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 8px 16px;
+    border-radius: 999px;
+    transition: all 0.15s ease;
+    border: 1px solid #16A34A;
+    font-family: inherit;
+    box-shadow: 0 2px 6px rgba(22, 163, 74, 0.25);
+}
+
+.hnmt-btn-pay-now:hover {
+    background: #15803D;
+    border-color: #15803D;
+    color: #FFFFFF !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(22, 163, 74, 0.35);
+}
+
+.hnmt-btn-pay-now.is-grace {
+    background: #D97706;
+    border-color: #D97706;
+    box-shadow: 0 2px 6px rgba(217, 119, 6, 0.25);
+}
+
+.hnmt-btn-pay-now.is-grace:hover {
+    background: #B45309;
+    border-color: #B45309;
+}
+
+/* HUY HIỆU ĐẾM NGƯỢC QR TRÊN CARD */
+.hnmt-qr-countdown-tag {
+    display: inline-flex;
+    align-items: center;
+}
+
+.hnmt-qr-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 2.5px 9px;
+    border-radius: 999px;
+    line-height: 1.4;
+}
+
+.hnmt-qr-pill.is-active {
+    background: #DCFCE7;
+    color: #15803D;
+    border: 1px solid #BBF7D0;
+}
+
+.hnmt-qr-pill.is-active .hnmt-status-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #16A34A;
+    animation: hnmtPulseGreen 1.8s infinite;
+}
+
+.hnmt-qr-pill.is-grace {
+    background: #FEF3C7;
+    color: #B45309;
+    border: 1px solid #FDE68A;
+}
+
+.hnmt-qr-pill.is-grace .hnmt-status-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #D97706;
+    animation: hnmtPulseAmber 1.8s infinite;
+}
+
+.hnmt-qr-pill.is-expired {
+    background: #FEE2E2;
+    color: #991B1B;
+    border: 1px solid #FECACA;
+}
+
+@@keyframes hnmtPulseGreen {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.35; transform: scale(0.85); }
+}
+
+@@keyframes hnmtPulseAmber {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.35; transform: scale(0.85); }
+}
+
 /* 7. EMPTY / NO RESULTS */
 .hnmt-filter-no-results {
     text-align: center;
@@ -1130,6 +1278,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (resetBtn) {
         resetBtn.addEventListener('click', window.resetAllOrderFilters);
+    }
+
+    // ĐỒNG HỒ ĐẾM NGƯỢC THỜI GIAN THỰC CHO MÃ VIETQR
+    const qrCounters = document.querySelectorAll('[data-qr-countdown]');
+    if (qrCounters.length > 0) {
+        setInterval(() => {
+            qrCounters.forEach(el => {
+                let webSec = parseInt(el.getAttribute('data-web-sec'), 10) || 0;
+                let actualSec = parseInt(el.getAttribute('data-actual-sec'), 10) || 0;
+
+                if (actualSec <= 0) {
+                    el.innerHTML = '<span class="hnmt-qr-pill is-expired"><span>Mã QR hết hạn</span></span>';
+                    return;
+                }
+
+                if (webSec > 0) {
+                    webSec--;
+                    el.setAttribute('data-web-sec', webSec);
+                    const timer = el.querySelector('.qr-timer');
+                    if (timer) {
+                        const m = String(Math.floor(webSec / 60)).padStart(2, '0');
+                        const s = String(webSec % 60).padStart(2, '0');
+                        timer.textContent = `${m}:${s}`;
+                    }
+                } else if (actualSec > 0) {
+                    actualSec--;
+                    el.setAttribute('data-actual-sec', actualSec);
+                    let gracePill = el.querySelector('.hnmt-qr-pill.is-grace');
+                    if (!gracePill) {
+                        el.innerHTML = '<span class="hnmt-qr-pill is-grace"><span class="hnmt-status-dot"></span><span>Vùng đệm 5p: <strong class="qr-timer"></strong></span></span>';
+                        gracePill = el.querySelector('.hnmt-qr-pill.is-grace');
+                    }
+                    const timer = el.querySelector('.qr-timer');
+                    if (timer) {
+                        const m = String(Math.floor(actualSec / 60)).padStart(2, '0');
+                        const s = String(actualSec % 60).padStart(2, '0');
+                        timer.textContent = `${m}:${s}`;
+                    }
+                }
+            });
+        }, 1000);
     }
 });
 </script>

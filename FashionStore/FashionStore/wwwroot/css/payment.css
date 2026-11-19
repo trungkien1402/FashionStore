@@ -794,11 +794,147 @@
 }
 
 .pay-qr-corners {
+    position: relative;
     padding: 14px;
     border: 1px solid var(--hnmt-line);
     border-radius: 14px;
     background: #FFFFFF;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.pay-countdown-banner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #F1F5F9;
+    border: 1px solid var(--hnmt-line);
+    border-radius: 12px;
+    padding: 10px 16px;
+    margin: 4px 0 16px;
+    transition: all 0.3s ease;
+}
+
+.pay-countdown-banner.is-warning {
+    background: #FFFBEB;
+    border-color: #FDE68A;
+}
+
+.pay-countdown-banner.is-warning .pay-countdown-icon {
+    color: #D97706;
+}
+
+.pay-countdown-banner.is-warning .pay-countdown-time {
+    color: #B45309;
+    border-color: #FCD34D;
+}
+
+.pay-countdown-banner.is-expired {
+    background: #FEF2F2;
+    border-color: #FECACA;
+}
+
+.pay-countdown-banner.is-expired .pay-countdown-icon {
+    color: #DC2626;
+}
+
+.pay-countdown-banner.is-expired .pay-countdown-time {
+    color: #DC2626;
+    border-color: #FCA5A5;
+}
+
+.pay-countdown-icon {
+    font-size: 20px;
+    color: var(--hnmt-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pay-countdown-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex: 1;
+}
+
+.pay-countdown-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--hnmt-slate);
+}
+
+.pay-countdown-time {
+    font-family: 'SF Mono', Consolas, Monaco, monospace;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--hnmt-ink);
+    letter-spacing: 0.04em;
+    background: #FFFFFF;
+    padding: 3px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.pay-qr-overlay {
+    position: absolute;
+    inset: 14px;
+    background: rgba(15, 23, 42, 0.88);
+    backdrop-filter: blur(6px);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #FFFFFF;
+    text-align: center;
+    padding: 20px;
+    z-index: 5;
+    animation: fadeIn 0.3s ease;
+}
+
+.pay-qr-overlay i {
+    font-size: 34px;
+    color: #F87171;
+    margin-bottom: 8px;
+}
+
+.pay-qr-overlay strong {
+    font-size: 14px;
+    letter-spacing: 0.05em;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+
+.pay-qr-overlay small {
+    font-size: 11px;
+    color: #CBD5E1;
+}
+
+.pay-grace-alert {
+    background: #FFFBEB;
+    border: 1px solid #FCD34D;
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    animation: fadeIn 0.3s ease;
+}
+
+.pay-grace-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    color: #B45309;
+    margin-bottom: 5px;
+}
+
+.pay-grace-alert p {
+    font-size: 12px;
+    color: #78350F;
+    margin: 0;
+    line-height: 1.5;
 }
 
 .pay-qr-corners img {

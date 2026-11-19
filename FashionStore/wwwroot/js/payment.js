@@ -8,8 +8,83 @@
     let stopped = page.dataset.canPay !== "true";
     let reported = page.dataset.reported === "true";
     let timer;
+    let countdownInterval;
     let checking = false;
     let reporting = false;
+
+    let webSeconds = parseInt(page.dataset.webSeconds, 10);
+    let actualSeconds = parseInt(page.dataset.actualSeconds, 10);
+    if (isNaN(webSeconds)) webSeconds = 600;
+    if (isNaN(actualSeconds)) actualSeconds = 900;
+
+    const countdownBanner = document.getElementById("payCountdownBanner");
+    const countdownTime = document.getElementById("payCountdownTime");
+    const countdownLabel = document.getElementById("payCountdownLabel");
+    const qrOverlay = document.getElementById("payQrOverlay");
+    const graceAlert = document.getElementById("payGraceAlert");
+
+    function formatTime(totalSec) {
+        const m = Math.floor(totalSec / 60);
+        const s = totalSec % 60;
+        return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+    }
+
+    function initCountdown() {
+        if (countdownTime) countdownTime.textContent = formatTime(Math.max(0, webSeconds));
+
+        if (actualSeconds <= 0) {
+            closePayment("Mã thanh toán đã hết hạn (quá 15 phút). Đơn hàng đã bị hủy tự động. Vui lòng đặt đơn hàng mới.");
+            return;
+        }
+
+        if (webSeconds <= 0) {
+            if (countdownBanner) {
+                countdownBanner.classList.add("is-expired");
+            }
+            if (countdownLabel) countdownLabel.textContent = "Hạn quét mã QR:";
+            if (qrOverlay) qrOverlay.classList.remove("d-none");
+            if (graceAlert) graceAlert.classList.remove("d-none");
+        } else if (webSeconds <= 120 && countdownBanner) {
+            countdownBanner.classList.add("is-warning");
+        }
+
+        countdownInterval = setInterval(tickCountdown, 1000);
+    }
+
+    function tickCountdown() {
+        if (stopped) {
+            clearInterval(countdownInterval);
+            return;
+        }
+
+        if (webSeconds > 0) {
+            webSeconds--;
+            if (countdownTime) countdownTime.textContent = formatTime(webSeconds);
+
+            if (webSeconds <= 120 && countdownBanner) {
+                countdownBanner.classList.add("is-warning");
+            }
+        } else {
+            // Đã hết 10 phút hiển thị QR trên web!
+            if (countdownTime) countdownTime.textContent = "00:00";
+            if (countdownBanner) {
+                countdownBanner.classList.remove("is-warning");
+                countdownBanner.classList.add("is-expired");
+            }
+            if (countdownLabel) countdownLabel.textContent = "Hạn quét mã QR:";
+            if (qrOverlay) qrOverlay.classList.remove("d-none");
+            if (graceAlert) graceAlert.classList.remove("d-none");
+        }
+
+        if (actualSeconds > 0) {
+            actualSeconds--;
+        } else {
+            // Đã hết 15 phút thực tế của hệ thống -> vô hiệu hóa hoàn toàn đơn hàng!
+            clearInterval(countdownInterval);
+            closePayment("Mã thanh toán đã hết hạn (quá 15 phút). Đơn hàng đã bị hủy tự động. Vui lòng đặt đơn hàng mới.");
+            return;
+        }
+    }
 
     function announce(message) {
         if (statusText && statusText.textContent !== message) statusText.textContent = message;
@@ -34,6 +109,7 @@
     function closePayment(message) {
         stopped = true;
         clearTimeout(timer);
+        clearInterval(countdownInterval);
         const controls = document.getElementById("paymentControlsContainer");
         if (controls) controls.classList.add("d-none");
         document.getElementById("paymentClosed")?.classList.remove("d-none");
@@ -67,8 +143,8 @@
             }
             const data = await readJson(response);
             // Order eligibility takes precedence, even when the payment is still Pending.
-            if (["Cancelled", "Returned", "DeliveryFailed"].includes(data.orderStatus)) {
-                closePayment("Đơn hàng không còn nhận thanh toán. Vui lòng không chuyển tiền. Nếu đã chuyển, hãy giữ biên lai và liên hệ cửa hàng để đối soát.");
+            if (data.isExpired || ["Cancelled", "Returned", "DeliveryFailed"].includes(data.orderStatus)) {
+                closePayment("Mã thanh toán đã hết hạn hoặc đơn hàng không còn nhận thanh toán. Vui lòng quay lại xem chi tiết đơn hàng.");
                 return;
             }
             if (data.isPaid || data.paymentStatus === "Paid") {
@@ -165,8 +241,15 @@
     });
 
     syncReportButton();
-    if (!stopped) checkStatus();
-    window.addEventListener("pagehide", () => { stopped = true; clearTimeout(timer); });
+    if (!stopped) {
+        initCountdown();
+        checkStatus();
+    }
+    window.addEventListener("pagehide", () => {
+        stopped = true;
+        clearTimeout(timer);
+        clearInterval(countdownInterval);
+    });
     window.addEventListener("pageshow", event => {
         if (event.persisted) window.location.reload();
     });

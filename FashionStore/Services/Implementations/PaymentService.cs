@@ -24,8 +24,10 @@ public class PaymentService(ApplicationDbContext db, IOptions<VietQrOptions> opt
             throw new InvalidOperationException("Số tiền VietQR phải là số nguyên VND hợp lệ.");
 
         var bank = options.Value;
+        var isExpired = !order.TransferReportedAt.HasValue && DateTime.UtcNow >= order.CreatedAt.AddMinutes(15);
         var canPay = order.PaymentStatus == PaymentStatus.Pending &&
-            order.Status is not (OrderStatus.Cancelled or OrderStatus.Returned or OrderStatus.DeliveryFailed);
+            order.Status is not (OrderStatus.Cancelled or OrderStatus.Returned or OrderStatus.DeliveryFailed) &&
+            !isExpired;
         var amount = order.TotalAmount.ToString("0", CultureInfo.InvariantCulture);
         var qrUrl = canPay
             ? $"https://img.vietqr.io/image/{bank.BankId}-{bank.AccountNo}-{bank.Template}.svg" +
@@ -43,8 +45,9 @@ public class PaymentService(ApplicationDbContext db, IOptions<VietQrOptions> opt
         var order = await db.Orders.SingleOrDefaultAsync(o => o.Id == orderId && o.UserId == userId);
         if (order == null) return new(false, "Không tìm thấy đơn hàng.");
         if (order.PaymentMethod != PaymentMethod.VietQR || order.PaymentStatus != PaymentStatus.Pending ||
-            order.Status is OrderStatus.Cancelled or OrderStatus.Returned or OrderStatus.DeliveryFailed)
-            return new(false, "Đơn hàng không còn nhận thông báo chuyển khoản.");
+            order.Status is OrderStatus.Cancelled or OrderStatus.Returned or OrderStatus.DeliveryFailed ||
+            DateTime.UtcNow >= order.CreatedAt.AddMinutes(15))
+            return new(false, "Mã thanh toán đơn hàng đã hết hạn (quá 15 phút) hoặc không còn nhận thông báo chuyển khoản.");
         if (order.TransferReportedAt.HasValue)
             return new(true, "Cửa hàng đã nhận thông báo trước đó.", true);
 

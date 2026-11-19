@@ -101,12 +101,15 @@
         // First frame ready -> paint immediately so no black flash
         if (i === 0) render();
 
-        // Start experience once we have comfortable buffer (40 frames)
-        if (!started && (loaded >= 40 || p === 1)) {
+        // Start experience once we have comfortable buffer (30 frames)
+        if (!started && (loaded >= 30 || p === 1)) {
           started = true;
           try {
             sessionStorage.setItem("hnmt_atelier_intro_seen", "1");
           } catch (e) {}
+          if (loaderEl) {
+            loaderEl.classList.add("is-done");
+          }
           onEnough();
         }
         if (p === 1) {
@@ -121,6 +124,18 @@
       img.src = framePath(i + 1);
       images[i] = img;
     }
+
+    // Safety fallback: không bao giờ để màn hình loading treo quá 3.5s
+    setTimeout(() => {
+      if (!started) {
+        started = true;
+        try { sessionStorage.setItem("hnmt_atelier_intro_seen", "1"); } catch (e) {}
+        if (loaderEl) loaderEl.classList.add("is-done");
+        onEnough();
+      } else if (loaderEl && !loaderEl.classList.contains("is-done")) {
+        loaderEl.classList.add("is-done");
+      }
+    }, 3500);
   }
 
   /* ---------- Build the scroll experience --------------------------- */

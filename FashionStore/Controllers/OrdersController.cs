@@ -305,23 +305,34 @@ public class OrdersController : Controller
 
             }
 
-            // Lock stock in ascending SKU ID order, and only decrement if the row still has enough stock.
+            // =========================================================================================
+            // [BÀI TOÁN 1: XỬ LÝ 10 NGƯỜI MUA 1 MÓN CÙNG LÚC - ATOMIC ROW-LOCK SQL SERVER]
+            // Cơ chế: Transaction + Exclusive Row Lock + Điều kiện WHERE StockQuantity >= quantity.
+            // Nếu 10 người cùng bấm mua 1 món tồn kho = 1:
+            // - Người nhanh nhất (chạm DB đầu tiên): Trừ kho từ 1 -> 0 thành công (updated = 1).
+            // - 9 người còn lại: Lúc này StockQuantity đã = 0, lệnh UPDATE ảnh hưởng 0 dòng (updated == 0).
+            //   Hệ thống lập tức ROLLBACK giao dịch và báo lỗi hết hàng, không bao giờ bị âm kho!
+            // =========================================================================================
             foreach (var id in variantIds)
             {
                 var quantity = quantities[id];
                 var stock = _context.ProductVariants.Where(v => v.Id == id);
+
+                // --- [PHẦN CỐT LÕI GIẢI QUYẾT TRANH CHẤP 10 NGƯỜI]: Atomic Update trực tiếp dưới DB ---
                 var updated = await stock.Where(v => v.IsActive && v.Product.IsActive && v.StockQuantity >= quantity)
                     .ExecuteUpdateAsync(update => update.SetProperty(v => v.StockQuantity, v => v.StockQuantity - quantity));
 
+                // --- [NẾU TRANH MUA THẤT BẠI]: Người khác đã mua trước, updated = 0 -> HỦY GIAO DỊCH NGAY ---
                 if (updated == 0)
                 {
-                    await transaction.RollbackAsync();
+                    await transaction.RollbackAsync(); // Hủy toàn bộ thao tác, không tạo đơn rác
                     var variant = variants.Single(v => v.Id == id);
                     ModelState.AddModelError("", $"Tồn kho hoặc trạng thái của {variant.Product.Name} ({variant.Size}) vừa thay đổi. Kiểm tra lại giỏ hàng.");
                     await PopulateCheckoutItemsAsync(model, cart);
                     return View(model);
                 }
 
+                // Ghi lịch sử biến động kho (Audit Trail: trước bao nhiêu, sau bao nhiêu, đơn nào)
                 var remaining = await stock.Select(v => v.StockQuantity).SingleAsync();
                 _context.StockMovements.Add(new StockMovement
                 {
@@ -330,21 +341,28 @@ public class OrdersController : Controller
                 });
             }
 
+            // =========================================================================================
+            // [CÁC PHẦN DƯỚI ĐÂY LÀ NGHIỆP VỤ TẠO ĐƠN THƯỜNG]: Không thuộc bài toán tranh chấp
+            // =========================================================================================
+
+            // Áp dụng và khóa mã giảm giá (Voucher)
             if (voucher != null)
                 _context.VoucherRedemptions.Add(new VoucherRedemption
                 {
                     VoucherId = voucher.Id, Order = order, CustomerId = userId
                 });
 
+            // Lưu bản ghi đơn hàng
             _context.Orders.Add(order);
 
+            // Ghi nhận lịch sử thanh toán ban đầu (Pending - Chưa thanh toán)
             _context.PaymentHistories.Add(new PaymentHistory
             {
                 Order = order, Event = "Created", OldStatus = PaymentStatus.Pending,
                 NewStatus = PaymentStatus.Pending, Amount = order.TotalAmount, ActorUserId = userId
             });
 
-            // Lưu lịch sử đầu tiên khi khách đặt hàng
+            // Ghi lịch sử trạng thái đơn hàng (Chờ xác nhận)
             _context.OrderStatusHistories.Add(new OrderStatusHistory
             {
                 Order = order,
@@ -355,9 +373,11 @@ public class OrdersController : Controller
                 CreatedAt = DateTime.UtcNow
             });
 
+            // Lưu tất cả và chốt Transaction
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
 
+            // Dọn dẹp giỏ hàng trong Session sau khi mua thành công
             HttpContext.Session.Remove(CartSessionKey);
             if (voucher?.GameMinimumScore != null) HttpContext.Session.Remove("StyleGameReward");
 
@@ -380,12 +400,16 @@ public class OrdersController : Controller
     [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public async Task<IActionResult> PaymentQR(int id)
     {
+        await TryExpireVietQrOrderAsync(id);
         var order = await OwnOrderAsync(id);
         if (order == null) return NotFound();
         if (order.PaymentMethod != PaymentMethod.VietQR) return BadRequest();
         if (order.PaymentStatus != PaymentStatus.Pending ||
             order.Status is OrderStatus.Cancelled or OrderStatus.Returned or OrderStatus.DeliveryFailed)
+        {
+            TempData["ErrorMessage"] = "Mã thanh toán đơn hàng đã hết hạn hoặc trạng thái đơn hàng đã thay đổi.";
             return RedirectToAction(nameof(Details), new { id });
+        }
         if (order.TransferReportedAt.HasValue)
             return RedirectToAction(nameof(Success), new { id });
         try
@@ -396,6 +420,13 @@ public class OrdersController : Controller
             ViewBag.AccountNo = info.AccountNo;
             ViewBag.AccountName = info.AccountName;
             ViewBag.PaymentInfo = info;
+
+            var now = DateTime.UtcNow;
+            var webExpireAt = order.CreatedAt.AddMinutes(10);
+            var actualExpireAt = order.CreatedAt.AddMinutes(15);
+            ViewBag.RemainingWebSeconds = Math.Max(0, (int)(webExpireAt - now).TotalSeconds);
+            ViewBag.RemainingActualSeconds = Math.Max(0, (int)(actualExpireAt - now).TotalSeconds);
+
             return View(order);
         }
         catch (InvalidOperationException ex) { return Problem(ex.Message, statusCode: 503); }
@@ -416,12 +447,14 @@ public class OrdersController : Controller
     [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public async Task<IActionResult> CheckPaymentStatus(int orderId)
     {
+        var expired = await TryExpireVietQrOrderAsync(orderId);
         var order = await OwnOrderAsync(orderId);
         if (order == null) return NotFound();
         return Json(new
         {
             orderId = order.Id, paymentStatus = order.PaymentStatus.ToString(),
             isPaid = order.PaymentStatus == PaymentStatus.Paid,
+            isExpired = expired || order.Status == OrderStatus.Cancelled,
             transferReported = order.TransferReportedAt.HasValue,
             orderStatus = order.Status.ToString(), confirmationMode = "Manual"
         });
@@ -432,9 +465,81 @@ public class OrdersController : Controller
     public async Task<IActionResult> ReportTransfer(int orderId)
     {
         if (await OwnOrderAsync(orderId) == null) return NotFound();
+        if (await TryExpireVietQrOrderAsync(orderId))
+        {
+            return Conflict(new PaymentResult(false, "Mã thanh toán đã hết hạn (quá 15 phút). Đơn hàng đã bị hủy tự động."));
+        }
         var result = await _payments.ReportTransferAsync(orderId,
             User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         return result.Success ? Json(result) : Conflict(result);
+    }
+
+    // =========================================================================================
+    // [BÀI TOÁN 2: XỬ LÝ HẾT HẠN 15 PHÚT VIETQR - TỰ ĐỘNG HỦY ĐƠN & HOÀN TRẢ LẠI KHO SẢN PHẨM]
+    // Cơ chế: 
+    // - Khách hàng có 10 phút quét mã QR hiển thị trên Web (kèm 5 phút vùng đệm an toàn).
+    // - Sau tròn 15 phút từ lúc đặt (order.CreatedAt.AddMinutes(15)), nếu chưa thanh toán:
+    //   1. Tự động chuyển trạng thái đơn sang Cancelled (Đã hủy).
+    //   2. Tự động cộng lại số lượng tồn kho (variant.StockQuantity += item.Quantity).
+    //   3. Ghi lịch sử đơn hàng và vô hiệu hóa mã thanh toán để người khác có thể mua món đồ đó.
+    // =========================================================================================
+    private async Task<bool> TryExpireVietQrOrderAsync(int orderId)
+    {
+        var order = await _context.Orders
+            .Include(o => o.Items)
+            .FirstOrDefaultAsync(o => o.Id == orderId);
+
+        if (order == null) return false;
+
+        if (order.PaymentMethod == PaymentMethod.VietQR &&
+            order.PaymentStatus == PaymentStatus.Pending &&
+            !order.TransferReportedAt.HasValue &&
+            order.Status != OrderStatus.Cancelled &&
+            DateTime.UtcNow >= order.CreatedAt.AddMinutes(15))
+        {
+            // --- [GIẢI BÀI TOÁN: CHƯA THANH TOÁN THÌ ĐỒ CÒN HAY MẤT?] ---
+            // Nếu quá 15 phút chưa trả tiền -> Tự động HOÀN KHO (+StockQuantity) để người khác mua!
+            if (!order.InventoryRestored)
+            {
+                foreach (var item in order.Items)
+                {
+                    var variant = await _context.ProductVariants
+                        .FirstOrDefaultAsync(v => v.Id == item.ProductVariantId);
+                    if (variant != null)
+                        variant.StockQuantity += item.Quantity; // Nhả hàng trả lại kho
+                }
+                order.InventoryRestored = true;
+            }
+
+            var oldStatus = order.Status;
+            order.Status = OrderStatus.Cancelled;
+            order.PaymentStatus = PaymentStatus.Failed;
+
+            _context.OrderStatusHistories.Add(new OrderStatusHistory
+            {
+                OrderId = order.Id,
+                OldStatus = oldStatus,
+                NewStatus = OrderStatus.Cancelled,
+                ChangedByUserId = order.UserId,
+                Note = "Đơn hàng tự động hủy do quá hạn thanh toán VietQR (15 phút).",
+                CreatedAt = DateTime.UtcNow
+            });
+
+            _context.PaymentHistories.Add(new PaymentHistory
+            {
+                OrderId = order.Id,
+                Event = "PaymentExpired",
+                OldStatus = PaymentStatus.Pending,
+                NewStatus = PaymentStatus.Failed,
+                Amount = order.TotalAmount,
+                ActorUserId = order.UserId
+            });
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        return false;
     }
 
     private Task<Order?> OwnOrderAsync(int id)
@@ -591,6 +696,8 @@ public class OrdersController : Controller
         if (string.IsNullOrEmpty(userId))
             return Challenge();
 
+        await TryExpireVietQrOrderAsync(id);
+
         // Chỉ lấy đơn hàng thuộc khách hàng đang đăng nhập
         var order = await _context.Orders
             .Include(o => o.Items)
@@ -715,14 +822,14 @@ public class OrdersController : Controller
 
             if (!order.InventoryRestored)
             {
-                // Hoàn lại số lượng tồn kho
+                // [HOÀN LẠI KHO KHI HỦY ĐƠN]: Trả lại số lượng tồn kho cho sản phẩm
                 foreach (var item in order.Items)
                 {
                     var variant = await _context.ProductVariants
                         .FirstOrDefaultAsync(v => v.Id == item.ProductVariantId);
 
                     if (variant != null)
-                        variant.StockQuantity += item.Quantity;
+                        variant.StockQuantity += item.Quantity; // Cộng lại kho
                 }
 
                 order.InventoryRestored = true;

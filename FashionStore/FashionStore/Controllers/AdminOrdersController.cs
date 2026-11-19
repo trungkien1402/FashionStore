@@ -1,5 +1,8 @@
-﻿
+using FashionStore.Services;
+
 using FashionStore.Data;
+using FashionStore.Services.Interfaces;
+using FashionStore.Services.Implementations;
 using FashionStore.Models.Entities;
 using FashionStore.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
@@ -9,34 +12,83 @@ using System.Security.Claims;
 
 namespace FashionStore.Controllers;
 
-[Authorize(Roles = "Admin,Manager,Staff")]
+[Authorize(Roles = AccessRoles.BackOffice)]
 public class AdminOrdersController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly IPaymentService _payments;
 
-    public AdminOrdersController(ApplicationDbContext context)
+    public AdminOrdersController(ApplicationDbContext context, IPaymentService payments)
     {
         _context = context;
+        _payments = payments;
     }
 
     // GET: /AdminOrders
-    public async Task<IActionResult> Index(OrderStatus? status)
+    public async Task<IActionResult> Index(OrderStatus? status, PaymentStatus? paymentStatus,
+        PaymentMethod? paymentMethod, ShipmentStatus? shipmentStatus, string? search,
+        DateOnly? from, DateOnly? to, string? sort, int page = 1)
     {
-        var query = _context.Orders
-            .AsNoTracking()
-            .OrderByDescending(o => o.CreatedAt)
-            .AsQueryable();
+        await TryExpireAllPendingVietQrOrdersAsync();
 
-        if (status.HasValue)
+        if (!ModelState.IsValid || from > to || from < new DateOnly(1900, 1, 1) || to == DateOnly.MaxValue ||
+            status is { } os && !Enum.IsDefined(os) ||
+            paymentStatus is { } ps && !Enum.IsDefined(ps) ||
+            paymentMethod is { } pm && !Enum.IsDefined(pm) ||
+            shipmentStatus is { } ss && !Enum.IsDefined(ss))
+            return BadRequest("Bộ lọc đơn hàng không hợp lệ.");
+
+        var query = _context.Orders.AsNoTracking();
+        var term = search?.Trim();
+        if (!string.IsNullOrEmpty(term))
         {
-            query = query.Where(o => o.Status == status.Value);
+            term = term[..Math.Min(term.Length, 100)];
+            query = query.Where(o => o.OrderCode.Contains(term) || o.ReceiverName.Contains(term) ||
+                o.Phone.Contains(term));
+        }
+        if (status.HasValue)
+            query = query.Where(o => o.Status == status);
+        if (paymentStatus.HasValue)
+            query = query.Where(o => o.PaymentStatus == paymentStatus);
+        if (paymentMethod.HasValue)
+            query = query.Where(o => o.PaymentMethod == paymentMethod);
+        if (shipmentStatus.HasValue)
+            query = query.Where(o => o.Shipments.OrderByDescending(s => s.CreatedAt).ThenByDescending(s => s.Id)
+                .Select(s => (ShipmentStatus?)s.Status).FirstOrDefault() == shipmentStatus);
+        if (from.HasValue)
+        {
+            var start = from.Value.ToDateTime(TimeOnly.MinValue).AddHours(-7);
+            query = query.Where(o => o.CreatedAt >= start);
+        }
+        if (to.HasValue)
+        {
+            var end = to.Value.AddDays(1).ToDateTime(TimeOnly.MinValue).AddHours(-7);
+            query = query.Where(o => o.CreatedAt < end);
         }
 
+        const int pageSize = 30;
+        var count = await query.CountAsync();
+        var pageCount = Math.Max(1, (int)Math.Ceiling(count / (double)pageSize));
+        page = Math.Clamp(page, 1, pageCount);
+        var ordered = sort switch
+        {
+            "oldest" => query.OrderBy(o => o.CreatedAt),
+            "amount" => query.OrderByDescending(o => o.TotalAmount),
+            _ => query.OrderByDescending(o => o.CreatedAt)
+        };
+        ViewBag.Count = count;
+        ViewBag.Page = page;
+        ViewBag.PageCount = pageCount;
+        ViewBag.Search = term;
         ViewBag.SelectedStatus = status;
-
-        var orders = await query.ToListAsync();
-
-        return View(orders);
+        ViewBag.PaymentStatus = paymentStatus;
+        ViewBag.PaymentMethod = paymentMethod;
+        ViewBag.ShipmentStatus = shipmentStatus;
+        ViewBag.From = from?.ToString("yyyy-MM-dd");
+        ViewBag.To = to?.ToString("yyyy-MM-dd");
+        ViewBag.Sort = sort;
+        return View(await ordered.ThenByDescending(o => o.Id)
+            .Skip((page - 1) * pageSize).Take(pageSize).ToListAsync());
     }
 
     // GET: /AdminOrders/Details/5
@@ -78,11 +130,15 @@ public class AdminOrdersController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdateStatus(int id, OrderStatus newStatus)
     {
-        if (!Enum.IsDefined(typeof(OrderStatus), newStatus))
+        if (!ModelState.IsValid || !Enum.IsDefined(newStatus))
         {
             TempData["Error"] = "Trạng thái đơn hàng không hợp lệ.";
             return RedirectToAction(nameof(Index));
         }
+
+        if (newStatus is OrderStatus.Cancelled or OrderStatus.Returned &&
+            !User.IsInRole("Admin") && !User.IsInRole("Manager"))
+            return Forbid();
 
         await using var transaction =
             await _context.Database.BeginTransactionAsync();
@@ -99,6 +155,14 @@ public class AdminOrdersController : Controller
 
                 TempData["Error"] = "Không tìm thấy đơn hàng.";
                 return RedirectToAction(nameof(Index));
+            }
+
+            if (order.Status == OrderStatus.Shipping && await _context.Shipments.AnyAsync(s =>
+                    s.OrderId == order.Id && (s.Status == ShipmentStatus.Assigned ||
+                    s.Status == ShipmentStatus.PickedUp || s.Status == ShipmentStatus.InTransit)))
+            {
+                TempData["Error"] = "Cập nhật kết quả giao hàng từ vận đơn đang hoạt động.";
+                return RedirectToAction(nameof(Details), new { id });
             }
 
             // Kiểm tra quy tắc chuyển trạng thái
@@ -118,7 +182,7 @@ public class AdminOrdersController : Controller
             // Dùng cờ InventoryRestored để tránh hoàn kho nhiều lần.
             bool needsInventoryRestore =
                 newStatus == OrderStatus.Cancelled ||
-                // newStatus == OrderStatus.DeliveryFailed (khong hoan kho khi chua ve kho)
+                newStatus == OrderStatus.DeliveryFailed ||
                 newStatus == OrderStatus.Returned;
 
             if (needsInventoryRestore && !order.InventoryRestored)
@@ -157,6 +221,8 @@ public class AdminOrdersController : Controller
             _context.OrderStatusHistories.Add(history);
 
             // Lưu trạng thái, lịch sử và tồn kho trong cùng transaction
+            _context.StockActorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            _context.StockReason = "Cập nhật đơn " + order.OrderCode;
             await _context.SaveChangesAsync();
 
             await transaction.CommitAsync();
@@ -207,7 +273,6 @@ public class AdminOrdersController : Controller
                 newStatus == OrderStatus.DeliveryFailed,
 
             OrderStatus.DeliveryFailed =>
-                newStatus == OrderStatus.Shipping ||
                 newStatus == OrderStatus.Returned,
 
             _ => false
@@ -229,77 +294,100 @@ public class AdminOrdersController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = AccessRoles.Management)]
     public async Task<IActionResult> UpdatePaymentStatus(int id, PaymentStatus newStatus)
     {
-        if (!Enum.IsDefined(typeof(PaymentStatus), newStatus))
+        if (!ModelState.IsValid || !Enum.IsDefined(newStatus))
         {
             TempData["Error"] = "Trạng thái thanh toán không hợp lệ.";
             return RedirectToAction(nameof(Details), new { id });
         }
-
-        var order = await _context.Orders
-            .FirstOrDefaultAsync(o => o.Id == id);
-
-        if (order == null)
-            return NotFound();
-
-        var currentStatus = order.PaymentStatus;
-
-        // Không cho phép cập nhật lại đơn đã hoàn tiền.
-        if (currentStatus == PaymentStatus.Refunded)
+        var actor = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(actor)) return Challenge();
+        if (newStatus == PaymentStatus.Refunded && await _context.MerchandiseReturns.AnyAsync(r =>
+                r.OrderId == id && r.State != ReturnState.Rejected))
         {
-            TempData["Error"] = "Đơn hàng đã hoàn tiền, không thể cập nhật tiếp.";
-            return RedirectToAction(nameof(Details), new { id });
+            TempData["Error"] = "Ghi nhận hoàn tiền trong yêu cầu đổi trả của đơn này.";
+            return RedirectToAction("Returns", "AdminOperations", new { id });
         }
 
-        // Chỉ cho phép chuyển sang Paid từ Pending hoặc Failed.
-        if (newStatus == PaymentStatus.Paid)
+        var result = await _payments.UpdateStatusAsync(id, newStatus, actor);
+        TempData[result.Success ? "Success" : "Error"] = result.Message;
+        return RedirectToAction(nameof(Details), new { id });
+    }
+
+    [HttpGet]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+    [Authorize(Roles = AccessRoles.Management)]
+    public async Task<IActionResult> PaymentHistory(int id)
+    {
+        if (!await _context.Orders.AnyAsync(o => o.Id == id)) return NotFound();
+        var histories = await _context.PaymentHistories.AsNoTracking()
+            .Where(h => h.OrderId == id).OrderBy(h => h.CreatedAt).ThenBy(h => h.Id)
+            .Select(h => new { h.Id, h.Event, oldStatus = h.OldStatus.ToString(),
+                newStatus = h.NewStatus.ToString(), h.Amount, h.ActorUserId, h.CreatedAt })
+            .ToListAsync();
+        return Json(histories);
+    }
+
+    // =========================================================================================
+    // [BÀI TOÁN 2 (PHÍA ADMIN): TỰ ĐỘNG QUÉT VÀ HỦY ĐƠN VIETQR QUÁ 15 PHÚT KHI ADMIN MỞ TRANG]
+    // Quét toàn bộ đơn VietQR chưa thanh toán quá 15 phút -> Chuyển sang mục "Đã hủy" và hoàn lại kho.
+    // =========================================================================================
+    private async Task TryExpireAllPendingVietQrOrdersAsync()
+    {
+        var cutoff = DateTime.UtcNow.AddMinutes(-15);
+        var expiredOrders = await _context.Orders
+            .Include(o => o.Items)
+            .Where(o => o.PaymentMethod == PaymentMethod.VietQR &&
+                        o.PaymentStatus == PaymentStatus.Pending &&
+                        !o.TransferReportedAt.HasValue &&
+                        o.Status != OrderStatus.Cancelled &&
+                        o.CreatedAt <= cutoff)
+            .Take(50)
+            .ToListAsync();
+
+        if (expiredOrders.Count == 0) return;
+
+        foreach (var order in expiredOrders)
         {
-            if (currentStatus != PaymentStatus.Pending &&
-                currentStatus != PaymentStatus.Failed)
+            if (!order.InventoryRestored)
             {
-                TempData["Error"] = "Không thể cập nhật trạng thái thanh toán này.";
-                return RedirectToAction(nameof(Details), new { id });
-            }
-        }
-        // Chỉ được đánh dấu Failed khi chưa thanh toán.
-        else if (newStatus == PaymentStatus.Failed)
-        {
-            if (currentStatus != PaymentStatus.Pending)
-            {
-                TempData["Error"] = "Không thể chuyển trạng thái thanh toán hiện tại sang thất bại.";
-                return RedirectToAction(nameof(Details), new { id });
-            }
-        }
-        // Chỉ hoàn tiền khi đã thanh toán và đơn đã hủy, giao thất bại hoặc hoàn hàng.
-        else if (newStatus == PaymentStatus.Refunded)
-        {
-            if (currentStatus != PaymentStatus.Paid)
-            {
-                TempData["Error"] = "Chỉ có thể hoàn tiền cho đơn hàng đã thanh toán.";
-                return RedirectToAction(nameof(Details), new { id });
+                foreach (var item in order.Items)
+                {
+                    var variant = await _context.ProductVariants
+                        .FirstOrDefaultAsync(v => v.Id == item.ProductVariantId);
+                    if (variant != null)
+                        variant.StockQuantity += item.Quantity;
+                }
+                order.InventoryRestored = true;
             }
 
-            if (order.Status != OrderStatus.Cancelled &&
-                order.Status != OrderStatus.DeliveryFailed &&
-                order.Status != OrderStatus.Returned)
-            {
-                TempData["Error"] = "Đơn hàng chưa đủ điều kiện ghi nhận hoàn tiền.";
-                return RedirectToAction(nameof(Details), new { id });
-            }
-        }
-        else
-        {
-            TempData["Error"] = "Trạng thái thanh toán không được hỗ trợ.";
-            return RedirectToAction(nameof(Details), new { id });
-        }
+            var oldStatus = order.Status;
+            order.Status = OrderStatus.Cancelled;
+            order.PaymentStatus = PaymentStatus.Failed;
 
-        order.PaymentStatus = newStatus;
+            _context.OrderStatusHistories.Add(new OrderStatusHistory
+            {
+                OrderId = order.Id,
+                OldStatus = oldStatus,
+                NewStatus = OrderStatus.Cancelled,
+                ChangedByUserId = order.UserId,
+                Note = "Đơn hàng tự động hủy do quá hạn thanh toán VietQR (15 phút).",
+                CreatedAt = DateTime.UtcNow
+            });
+
+            _context.PaymentHistories.Add(new PaymentHistory
+            {
+                OrderId = order.Id,
+                Event = "PaymentExpired",
+                OldStatus = PaymentStatus.Pending,
+                NewStatus = PaymentStatus.Failed,
+                Amount = order.TotalAmount,
+                ActorUserId = order.UserId
+            });
+        }
 
         await _context.SaveChangesAsync();
-
-        TempData["Success"] = "Cập nhật trạng thái thanh toán thành công.";
-
-        return RedirectToAction(nameof(Details), new { id });
     }
 }

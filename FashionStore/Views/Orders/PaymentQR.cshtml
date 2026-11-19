@@ -12,7 +12,9 @@
 <section class="payment-page" id="paymentPage" data-can-pay="@(canPay ? "true" : "false")" data-reported="@(reported ? "true" : "false")"
          data-status-url="@Url.Action("CheckPaymentStatus", "Orders", new { orderId = Model.Id })"
          data-details-url="@Url.Action("Details", "Orders", new { id = Model.Id })"
-         data-success-url="@Url.Action("Success", "Orders", new { id = Model.Id })">
+         data-success-url="@Url.Action("Success", "Orders", new { id = Model.Id })"
+         data-web-seconds="@(ViewBag.RemainingWebSeconds ?? 600)"
+         data-actual-seconds="@(ViewBag.RemainingActualSeconds ?? 900)">
     <nav class="pay-steps" aria-label="Tiến trình đặt hàng"><span class="is-done">01 <span>Thông tin</span> <b aria-hidden="true">✓</b></span><i></i><span class="is-current" aria-current="step">02 <span>Thanh toán</span></span><i></i><span>03 <span>Hoàn tất</span></span></nav>
     <div class="pay-intro"><p class="pay-eyebrow">CHỈ CÒN MỘT BƯỚC NỮA</p><h1>Một lựa chọn đẹp.<br /><em>Sắp thuộc về bạn.</em></h1><p>Quét mã để thanh toán. Phần còn lại, để FashionStore chăm chút.</p></div>
     <div class="pay-grid">
@@ -22,8 +24,31 @@
             @if (canPay && info != null)
             {
                 <div id="paymentControlsContainer">
+                    <div class="pay-countdown-banner" id="payCountdownBanner">
+                        <div class="pay-countdown-icon"><i class="bi bi-clock-history"></i></div>
+                        <div class="pay-countdown-content">
+                            <span class="pay-countdown-label" id="payCountdownLabel">Thời gian quét mã QR còn:</span>
+                            <span class="pay-countdown-time" id="payCountdownTime">10:00</span>
+                        </div>
+                    </div>
+                    <div class="pay-grace-alert d-none" id="payGraceAlert" role="alert">
+                        <div class="pay-grace-badge">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            <span>ĐÃ HẾT 10 PHÚT QUÉT MÃ QR</span>
+                        </div>
+                        <p>Nếu bạn <strong>vừa bấm chuyển khoản ở những giây cuối</strong>, hệ thống vẫn đang dành <strong>5 phút vùng đệm an toàn</strong> để nhận và đối soát tiền. Vui lòng bấm ngay nút <strong>"Tôi đã chuyển khoản"</strong> bên dưới!</p>
+                    </div>
                     <div class="pay-amount"><span>Tổng thanh toán</span><strong>@Money(info.Amount)</strong><small>Đã bao gồm phí vận chuyển</small></div>
-                    <div class="pay-qr-frame"><div class="pay-qr-corners"><img id="qrImageElement" src="@info.QrImageUrl" alt="Mã QR thanh toán @Money(info.Amount) cho đơn @Model.OrderCode" width="270" height="320" /></div></div>
+                    <div class="pay-qr-frame">
+                        <div class="pay-qr-corners">
+                            <img id="qrImageElement" src="@info.QrImageUrl" alt="Mã QR thanh toán @Money(info.Amount) cho đơn @Model.OrderCode" width="270" height="320" />
+                            <div class="pay-qr-overlay d-none" id="payQrOverlay">
+                                <i class="bi bi-shield-lock-fill"></i>
+                                <strong>MÃ QR ĐÃ ĐÓNG</strong>
+                                <small>Đã qua 10 phút quét mã</small>
+                            </div>
+                        </div>
+                    </div>
                     <div id="qrLoadError" class="pay-notice d-none" role="alert">Không tải được mã QR. Bạn có thể chuyển khoản thủ công theo thông tin bên dưới. <button id="retryQr" type="button" class="pay-text-button">Thử tải lại</button></div>
                     <p class="pay-qr-caption">Mở ứng dụng ngân hàng và chọn <strong>Quét mã QR</strong></p>
                     <div class="pay-bank"><span class="pay-bank-mark" aria-hidden="true">↗</span><div><strong>@info.BankName</strong><span>@info.AccountName</span></div></div>
