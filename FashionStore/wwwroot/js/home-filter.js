@@ -133,6 +133,7 @@
                     <span>Đặt lại</span>
                 </button>
             </div>
+            <div id="homeSearchSuggestions" class="fashion-search-suggestions" role="listbox" hidden></div>
 
             <!-- Vùng cuộn chứa các tầng tiêu chí lọc -->
             <div class="fashion-sidebar-scroll">
@@ -245,7 +246,7 @@
         <div class="hnmt-center-confirm-backdrop" id="hnmtHomeConfirmModal" aria-hidden="true">
             <div class="hnmt-center-confirm-card" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
                 <h3 class="confirm-title" id="confirmTitle">Chuyển tiếp đến không gian 3D</h3>
-                <div id="homeMatchingProducts" style="max-height: 45vh; overflow: auto;"></div>
+                <div id="homeMatchingProducts"></div>
                 
                 <p class="confirm-desc" id="confirmDesc">
                     Bạn sắp rời khỏi Không Gian Trang Chủ để bước vào <strong id="confirmTargetName">Sào Áo 3D</strong> với <strong id="confirmCount">40 sản phẩm</strong> phù hợp. Bạn có muốn tiếp tục trải nghiệm?
@@ -298,11 +299,13 @@
     }
 
     // Đọc cơ sở dữ liệu Showroom Catalog theo đối tượng được chọn
+    let showroomCatalogCache;
     function getCatalogData(aud = currentAudience) {
         try {
             const el = document.getElementById('showroomCatalog');
             if (!el) return { shirts: [], pants: [], shoes: [] };
-            const data = JSON.parse(el.textContent);
+            showroomCatalogCache ??= JSON.parse(el.textContent);
+            const data = showroomCatalogCache;
             const audiences = aud === 'all' ? Object.keys(AUDIENCES) : [aud];
             const extra = currentKeyword.trim() ? Object.values(data.lookbook || {}).filter(item => audiences.includes(item.audience)) : [];
             const shirts = audiences.flatMap(audience => data?.clothing?.[audience]?.ao || []);
@@ -565,7 +568,10 @@
             // Cập nhật số lượng trên nút Áp Dụng
             const count = filteredProductList.length;
             if (applyCountBadge) {
-                applyCountBadge.textContent = `${count} ${itemUnit}`;
+                const hasActiveFilter = currentKeyword.trim() || currentAudience !== 'all' ||
+                    currentMasterCategory !== 'all' || currentSubCategory !== 'all' ||
+                    currentDetailedStyle !== 'all' || currentColor !== 'all' || maxPrice < conf.max;
+                applyCountBadge.textContent = hasActiveFilter ? `${count} ${itemUnit}` : 'Chọn bộ lọc';
             }
 
             return count;
@@ -629,21 +635,8 @@
             document.getElementById('confirmTitle').textContent = showProducts ? 'Kết quả tìm kiếm' : 'Chuyển tiếp đến không gian 3D';
             document.getElementById('confirmDesc').style.display = showProducts ? 'none' : '';
             confirmProceedBtn.style.display = showProducts ? 'none' : '';
-            if (showProducts) {
-                const links = document.createElement('ul');
-                for (const product of filteredProductList) {
-                    if (!Number.isSafeInteger(product.productId) || product.productId <= 0) continue;
-                    const row = document.createElement('li');
-                    const link = document.createElement('a');
-                    link.href = '/Products/Details/' + product.productId;
-                    link.textContent = product.name;
-                    row.appendChild(link);
-                    links.appendChild(row);
-                }
-                const count = document.createElement('p');
-                count.textContent = links.childElementCount + ' sản phẩm phù hợp';
-                list.append(count, links);
-            }
+            confirmStayBtn.textContent = showProducts ? 'Đóng' : 'Ở lại Trang Chủ';
+            if (showProducts) renderMatchingProducts(1);
             let targetTitle = `Sào Áo 3D (${audLabel})`;
             let proceedBtnLabel = `Khám Phá Sào Áo Ngay`;
 
@@ -724,6 +717,68 @@
             confirmModal.setAttribute('aria-hidden', 'false');
         }
 
+        function renderMatchingProducts(page) {
+            const list = document.getElementById('homeMatchingProducts');
+            const pageSize = 12;
+            const pageCount = Math.ceil(filteredProductList.length / pageSize);
+            const start = (page - 1) * pageSize;
+            const products = filteredProductList.slice(start, start + pageSize);
+            list.replaceChildren();
+
+            const count = document.createElement('p');
+            count.className = 'search-results-count';
+            count.textContent = `${filteredProductList.length} sản phẩm phù hợp`;
+            list.appendChild(count);
+            if (!filteredProductList.length) {
+                const empty = document.createElement('p');
+                empty.className = 'search-results-empty';
+                empty.textContent = 'Thử từ khóa khác hoặc bỏ bớt điều kiện lọc.';
+                list.appendChild(empty);
+                return;
+            }
+
+            const grid = document.createElement('div');
+            grid.className = 'search-results-grid';
+            for (const product of products) {
+                if (!Number.isSafeInteger(product.productId) || product.productId <= 0) continue;
+                const card = document.createElement('a');
+                card.className = 'search-result-card';
+                card.href = '/Products/Details/' + product.productId;
+                const photo = document.createElement('img');
+                photo.src = product.frontImg || product.image || '';
+                photo.alt = product.name || 'Sản phẩm';
+                photo.loading = 'lazy';
+                const name = document.createElement('span');
+                name.textContent = product.name || 'Sản phẩm';
+                const price = document.createElement('strong');
+                const amount = Number(product.price || 0) * (product.kind === 'giay' ? 1 : 10000);
+                price.textContent = new Intl.NumberFormat('vi-VN').format(amount) + ' ₫';
+                card.append(photo, name, price);
+                grid.appendChild(card);
+            }
+            list.appendChild(grid);
+
+            if (pageCount > 1) {
+                const pagination = document.createElement('nav');
+                pagination.className = 'search-results-pagination';
+                pagination.setAttribute('aria-label', 'Trang kết quả tìm kiếm');
+                const previous = document.createElement('button');
+                previous.type = 'button';
+                previous.textContent = '‹ Trước';
+                previous.disabled = page === 1;
+                previous.addEventListener('click', () => renderMatchingProducts(page - 1));
+                const status = document.createElement('span');
+                status.textContent = `Trang ${page} / ${pageCount}`;
+                const next = document.createElement('button');
+                next.type = 'button';
+                next.textContent = 'Tiếp ›';
+                next.disabled = page === pageCount;
+                next.addEventListener('click', () => renderMatchingProducts(page + 1));
+                pagination.append(previous, status, next);
+                list.appendChild(pagination);
+            }
+        }
+
         // Đóng Center Confirm Modal
         function closeConfirmModal() {
             confirmModal.classList.remove('is-open');
@@ -773,6 +828,7 @@
             currentColor = 'all';
             currentKeyword = '';
             if (searchInput) searchInput.value = '';
+            renderSearchSuggestions('');
             if (clearSearchBtn) clearSearchBtn.style.display = 'none';
             if (selectedColorName) selectedColorName.textContent = 'Tất cả màu';
 
@@ -834,7 +890,7 @@
             });
             searchInput.addEventListener('input', (e) => {
                 currentKeyword = e.target.value;
-                populateSubCategories(currentMasterCategory, true);
+                renderSearchSuggestions(currentKeyword);
                 if (clearSearchBtn) {
                     clearSearchBtn.style.display = currentKeyword.length > 0 ? 'block' : 'none';
                 }
@@ -845,12 +901,51 @@
         if (clearSearchBtn) {
             clearSearchBtn.addEventListener('click', () => {
                 currentKeyword = '';
-                populateSubCategories(currentMasterCategory, true);
                 searchInput.value = '';
+                renderSearchSuggestions('');
                 clearSearchBtn.style.display = 'none';
                 computeLiveMatches();
                 searchInput.focus();
             });
+        }
+
+        function renderSearchSuggestions(keyword) {
+            const box = document.getElementById('homeSearchSuggestions');
+            const words = removeVietnameseTones(keyword.trim()).toLowerCase().split(/\s+/).filter(Boolean);
+            box.replaceChildren();
+            if (!words.length) {
+                box.hidden = true;
+                return;
+            }
+
+            const catalog = getCatalogData();
+            const items = currentMasterCategory === 'all'
+                ? [...catalog.shirts, ...catalog.pants, ...catalog.shoes]
+                : catalog[{ ao: 'shirts', quan: 'pants', giay: 'shoes' }[currentMasterCategory]];
+            const names = [...new Set(items.map(item => item.name).filter(name => {
+                const normalized = removeVietnameseTones(name).toLowerCase();
+                return words.every(word => normalized.includes(word));
+            }))].slice(0, 5);
+            if (!names.length) {
+                box.hidden = true;
+                return;
+            }
+            for (const name of names) {
+                const option = document.createElement('button');
+                option.type = 'button';
+                option.className = 'fashion-search-suggestion';
+                option.setAttribute('role', 'option');
+                option.textContent = name;
+                option.addEventListener('click', () => {
+                    searchInput.value = name;
+                    currentKeyword = name;
+                    box.hidden = true;
+                    computeLiveMatches();
+                    searchInput.focus();
+                });
+                box.appendChild(option);
+            }
+            box.hidden = false;
         }
 
         if (applyBtn) {
