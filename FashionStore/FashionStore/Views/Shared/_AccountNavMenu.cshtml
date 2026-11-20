@@ -18,7 +18,7 @@
                 aria-haspopup="true"
                 aria-expanded="false"
                 title="Tài khoản: @User.Identity?.Name">
-            <i class="bi bi-person"></i>
+            <i class="bi bi-person-fill"></i>
         </button>
 
         <div class="@menuClass fs-account-popover" role="menu" aria-hidden="true">
@@ -73,7 +73,8 @@
             <form asp-controller="Account"
                   asp-action="Logout"
                   method="post"
-                  class="fs-logout-form">
+                  class="fs-logout-form"
+                  onsubmit="try { localStorage.removeItem('hnmt_atelier_cart_v1'); } catch(e){}">
 
                 @Html.AntiForgeryToken()
 

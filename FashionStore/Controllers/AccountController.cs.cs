@@ -1,6 +1,7 @@
 ﻿
 using FashionStore.Models.Entities;
 using FashionStore.Models.ViewModels;
+using FashionStore.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,13 +12,16 @@ public class AccountController : Controller
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly ICartService _cartService;
 
     public AccountController(
         UserManager<ApplicationUser> userManager,
-        SignInManager<ApplicationUser> signInManager)
+        SignInManager<ApplicationUser> signInManager,
+        ICartService cartService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
+        _cartService = cartService;
     }
 
     // GET: /Account/Register
@@ -83,6 +87,7 @@ public class AccountController : Controller
             }
 
             await _signInManager.SignInAsync(user, isPersistent: false);
+            await _cartService.MergeCartOnLoginAsync(user.Id);
 
             TempData["Success"] = "Đăng ký tài khoản thành công!";
 
@@ -162,6 +167,8 @@ public class AccountController : Controller
 
         if (result.Succeeded)
         {
+            await _cartService.MergeCartOnLoginAsync(user.Id);
+
             TempData["Success"] = "Đăng nhập thành công!";
 
             if (isAjax)
@@ -199,6 +206,7 @@ public class AccountController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Logout()
     {
+        _cartService.ClearSessionCart();
         await _signInManager.SignOutAsync();
 
         TempData["Success"] = "Bạn đã đăng xuất.";

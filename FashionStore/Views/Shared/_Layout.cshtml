@@ -1,19 +1,9 @@
 @using Microsoft.AspNetCore.Http
-@using System.Text.Json
 @using FashionStore.Models.ViewModels
+@inject FashionStore.Services.Interfaces.ICartService CartService
 
 @{
-    int cartCount = 0;
-    var cartJson = Context.Session.GetString("FashionStore_Cart");
-    if (!string.IsNullOrEmpty(cartJson))
-    {
-        try
-        {
-            var items = JsonSerializer.Deserialize<List<CartItemViewModel>>(cartJson);
-            cartCount = items?.Sum(x => x.Quantity) ?? 0;
-        }
-        catch { }
-    }
+    int cartCount = await CartService.GetCartCountAsync();
 }
 
 <!DOCTYPE html>

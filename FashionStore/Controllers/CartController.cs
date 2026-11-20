@@ -1,6 +1,6 @@
-﻿using System.Text.Json;
-using FashionStore.Data;
+﻿using FashionStore.Data;
 using FashionStore.Models.ViewModels;
+using FashionStore.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,36 +8,20 @@ namespace FashionStore.Controllers;
 
 public class CartController : Controller
 {
-    private const string CartSessionKey = "FashionStore_Cart";
-
     private readonly ApplicationDbContext _context;
+    private readonly ICartService _cartService;
 
-    public CartController(ApplicationDbContext context)
+    public CartController(ApplicationDbContext context, ICartService cartService)
     {
         _context = context;
-    }
-
-    private List<CartItemViewModel> GetCart()
-    {
-        var json = HttpContext.Session.GetString(CartSessionKey);
-
-        if (string.IsNullOrEmpty(json))
-            return new List<CartItemViewModel>();
-
-        return JsonSerializer.Deserialize<List<CartItemViewModel>>(json)
-               ?? new List<CartItemViewModel>();
-    }
-
-    private void SaveCart(List<CartItemViewModel> cart)
-    {
-        var json = JsonSerializer.Serialize(cart);
-        HttpContext.Session.SetString(CartSessionKey, json);
+        _cartService = cartService;
     }
 
     // GET: /Cart
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return Redirect("/?openCart=true");
+        var cart = await _cartService.GetCartAsync();
+        return View(cart);
     }
 
     // POST: /Cart/Add
@@ -54,8 +38,7 @@ public class CartController : Controller
         if (quantity > 20)
         {
             TempData["CartError"] = "Mỗi lần chỉ được mua tối đa 20 sản phẩm.";
-            return RedirectToAction("Details", "Products",
-                new { id = productId });
+            return RedirectToAction("Details", "Products", new { id = productId });
         }
 
         var variant = await _context.ProductVariants
@@ -69,47 +52,19 @@ public class CartController : Controller
         if (variant == null)
             return NotFound();
 
-        var cart = GetCart();
-
-        var existingItem = cart.FirstOrDefault(
-            x => x.ProductVariantId == variantId);
-
+        var cart = await _cartService.GetCartAsync();
+        var existingItem = cart.FirstOrDefault(x => x.ProductVariantId == variantId);
         int newQuantity = quantity + (existingItem?.Quantity ?? 0);
 
         if (newQuantity > variant.StockQuantity)
         {
-            TempData["CartError"] =
-                $"Sản phẩm chỉ còn {variant.StockQuantity} sản phẩm trong kho.";
-
-            return RedirectToAction("Details", "Products",
-                new { id = productId });
+            TempData["CartError"] = $"Sản phẩm chỉ còn {variant.StockQuantity} sản phẩm trong kho.";
+            return RedirectToAction("Details", "Products", new { id = productId });
         }
 
-        if (existingItem != null)
-        {
-            existingItem.Quantity = newQuantity;
-            existingItem.UnitPrice = variant.Price;
-        }
-        else
-        {
-            cart.Add(new CartItemViewModel
-            {
-                ProductVariantId = variant.Id,
-                ProductId = variant.ProductId,
-                ProductName = variant.Product.Name,
-                ImageUrl = ShowroomCatalog.FrontPhoto(variant.Product, variant.Color),
-                SKU = variant.SKU,
-                Size = variant.Size,
-                Color = variant.Color,
-                UnitPrice = variant.Price,
-                Quantity = quantity
-            });
-        }
-
-        SaveCart(cart);
+        await _cartService.AddToCartAsync(variant.Id, quantity);
 
         TempData["CartSuccess"] = "Đã thêm sản phẩm vào giỏ hàng!";
-
         return RedirectToAction(nameof(Index));
     }
 
@@ -162,7 +117,7 @@ public class CartController : Controller
         }
 
         int qty = req.Quantity < 1 ? 1 : Math.Min(req.Quantity, 20);
-        var cart = GetCart();
+        var cart = await _cartService.GetCartAsync();
         var existingItem = cart.FirstOrDefault(x => x.ProductVariantId == variant.Id);
         int newQuantity = qty + (existingItem?.Quantity ?? 0);
 
@@ -171,34 +126,15 @@ public class CartController : Controller
             return BadRequest(new { success = false, message = $"Kho chỉ còn {variant.StockQuantity} sản phẩm cho size này." });
         }
 
-        if (existingItem != null)
-        {
-            existingItem.Quantity = newQuantity;
-            existingItem.UnitPrice = variant.Price;
-        }
-        else
-        {
-            cart.Add(new CartItemViewModel
-            {
-                ProductVariantId = variant.Id,
-                ProductId = variant.ProductId,
-                ProductName = variant.Product.Name,
-                ImageUrl = ShowroomCatalog.FrontPhoto(variant.Product, variant.Color),
-                SKU = variant.SKU,
-                Size = variant.Size,
-                Color = variant.Color,
-                UnitPrice = variant.Price,
-                Quantity = qty
-            });
-        }
-
-        SaveCart(cart);
+        await _cartService.AddToCartAsync(variant.Id, qty);
+        var updatedCart = await _cartService.GetCartAsync();
+        int totalCartCount = await _cartService.GetCartCountAsync();
 
         return Ok(new
         {
             success = true,
-            cartCount = cart.Sum(x => x.Quantity),
-            items = MiniCartItems(cart),
+            cartCount = totalCartCount,
+            items = MiniCartItems(updatedCart),
             message = $"Đã thêm {variant.Product.Name} ({variant.Size}) vào giỏ hàng!"
         });
     }
@@ -208,18 +144,15 @@ public class CartController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Update(int variantId, int quantity)
     {
-        var cart = GetCart();
-
-        var item = cart.FirstOrDefault(
-            x => x.ProductVariantId == variantId);
+        var cart = await _cartService.GetCartAsync();
+        var item = cart.FirstOrDefault(x => x.ProductVariantId == variantId);
 
         if (item == null)
             return RedirectToAction(nameof(Index));
 
         if (quantity <= 0)
         {
-            cart.Remove(item);
-            SaveCart(cart);
+            await _cartService.RemoveFromCartAsync(variantId);
             return RedirectToAction(nameof(Index));
         }
 
@@ -237,26 +170,18 @@ public class CartController : Controller
 
         if (variant == null)
         {
-            cart.Remove(item);
-            SaveCart(cart);
-
+            await _cartService.RemoveFromCartAsync(variantId);
             TempData["CartError"] = "Sản phẩm không còn kinh doanh.";
             return RedirectToAction(nameof(Index));
         }
 
         if (quantity > variant.StockQuantity)
         {
-            TempData["CartError"] =
-                $"Sản phẩm chỉ còn {variant.StockQuantity} sản phẩm.";
-
+            TempData["CartError"] = $"Sản phẩm chỉ còn {variant.StockQuantity} sản phẩm.";
             return RedirectToAction(nameof(Index));
         }
 
-        item.Quantity = quantity;
-        item.UnitPrice = variant.Price;
-
-        SaveCart(cart);
-
+        await _cartService.UpdateQuantityAsync(variantId, quantity);
         TempData["CartSuccess"] = "Đã cập nhật giỏ hàng.";
 
         return RedirectToAction(nameof(Index));
@@ -265,36 +190,28 @@ public class CartController : Controller
     // POST: /Cart/Remove
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Remove(int variantId)
+    public async Task<IActionResult> Remove(int variantId)
     {
-        var cart = GetCart();
-
-        cart.RemoveAll(x => x.ProductVariantId == variantId);
-
-        SaveCart(cart);
-
+        await _cartService.RemoveFromCartAsync(variantId);
         TempData["CartSuccess"] = "Đã xóa sản phẩm khỏi giỏ hàng.";
-
         return RedirectToAction(nameof(Index));
     }
 
     // POST: /Cart/Clear
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Clear()
+    public async Task<IActionResult> Clear()
     {
-        HttpContext.Session.Remove(CartSessionKey);
-
+        await _cartService.ClearCartAsync();
         TempData["CartSuccess"] = "Đã làm trống giỏ hàng.";
-
         return RedirectToAction(nameof(Index));
     }
 
     // GET: /Cart/GetMiniCart (JSON for slide-over drawer)
     [HttpGet]
-    public IActionResult GetMiniCart()
+    public async Task<IActionResult> GetMiniCart()
     {
-        var cart = GetCart();
+        var cart = await _cartService.GetCartAsync();
         decimal total = cart.Sum(x => x.TotalPrice);
         int totalQty = cart.Sum(x => x.Quantity);
         decimal freeshipThreshold = 500000m;
@@ -345,27 +262,22 @@ public class CartController : Controller
         if (req == null || req.VariantId <= 0)
             return BadRequest(new { success = false, message = "Dữ liệu không hợp lệ." });
 
-        var cart = GetCart();
+        var cart = await _cartService.GetCartAsync();
         var item = cart.FirstOrDefault(x => x.ProductVariantId == req.VariantId);
         if (item == null)
             return NotFound(new { success = false, message = "Không tìm thấy sản phẩm trong giỏ." });
 
         int targetQuantity = item.Quantity + req.Delta;
-        if (targetQuantity <= 0)
-        {
-            cart.Remove(item);
-        }
-        else
+        if (targetQuantity > 0)
         {
             var variant = await _context.ProductVariants.FirstOrDefaultAsync(v => v.Id == req.VariantId);
             if (variant != null && targetQuantity > variant.StockQuantity)
             {
                 return BadRequest(new { success = false, message = $"Kho chỉ còn {variant.StockQuantity} sản phẩm." });
             }
-            item.Quantity = targetQuantity;
         }
 
-        SaveCart(cart);
-        return GetMiniCart();
+        await _cartService.UpdateDeltaAsync(req.VariantId, req.Delta);
+        return await GetMiniCart();
     }
 }

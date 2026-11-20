@@ -90,6 +90,10 @@ public class ApplicationDbContext
     public DbSet<SupportConversation> SupportConversations => Set<SupportConversation>();
     public DbSet<SupportChatMessage> SupportChatMessages => Set<SupportChatMessage>();
 
+    public DbSet<Cart> Carts => Set<Cart>();
+
+    public DbSet<CartItem> CartItems => Set<CartItem>();
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -257,6 +261,33 @@ public class ApplicationDbContext
 
             entity.HasIndex(s => s.CreatedAt);
             entity.HasIndex(s => s.Status);
+        });
+
+        // --- Cart & CartItem ---
+        builder.Entity<Cart>(entity =>
+        {
+            entity.HasKey(c => c.Id);
+            entity.HasIndex(c => c.UserId).IsUnique();
+            entity.HasOne(c => c.User)
+                .WithMany()
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<CartItem>(entity =>
+        {
+            entity.HasKey(ci => ci.Id);
+            entity.HasOne(ci => ci.Cart)
+                .WithMany(c => c.Items)
+                .HasForeignKey(ci => ci.CartId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(ci => ci.ProductVariant)
+                .WithMany()
+                .HasForeignKey(ci => ci.ProductVariantId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(ci => new { ci.CartId, ci.ProductVariantId }).IsUnique();
         });
     }
 }

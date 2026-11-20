@@ -17,6 +17,12 @@ public class ApplicationDbContext
 
     public DbSet<Category> Categories => Set<Category>();
 
+    public IQueryable<Category> ListedAdminCategories() =>
+        Categories.AsNoTracking()
+            .Where(category => category.Slug != "showroom-ao" &&
+                category.Slug != "showroom-quan" && category.Slug != "showroom-giay" &&
+                (!ShowroomCatalog.FormerShoeCategorySlugs.Contains(category.Slug) || category.Products.Any()));
+
     public DbSet<ProductVariant> ProductVariants
         => Set<ProductVariant>();
 
@@ -24,19 +30,115 @@ public class ApplicationDbContext
 
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
 
+    public DbSet<PaymentHistory> PaymentHistories => Set<PaymentHistory>();
+
     public DbSet<OrderStatusHistory> OrderStatusHistories { get; set; }
 
     public DbSet<Shipment> Shipments => Set<Shipment>();
 
     public DbSet<ShipmentHistory> ShipmentHistories => Set<ShipmentHistory>();
 
+    public DbSet<ShipmentLocation> ShipmentLocations => Set<ShipmentLocation>();
+    public DbSet<SupportRequest> SupportRequests => Set<SupportRequest>();
+
+    public DbSet<StockMovement> StockMovements => Set<StockMovement>();
+    public DbSet<MerchandiseReturn> MerchandiseReturns => Set<MerchandiseReturn>();
+    public DbSet<Voucher> Vouchers => Set<Voucher>();
+    public DbSet<VoucherRedemption> VoucherRedemptions => Set<VoucherRedemption>();
+    public DbSet<StoreSettings> StoreSettings => Set<StoreSettings>();
+    public DbSet<AdminAuditEvent> AdminAuditEvents => Set<AdminAuditEvent>();
+
+    public DbSet<ProductReview> ProductReviews => Set<ProductReview>();
+    public DbSet<FeaturedProduct> FeaturedProducts => Set<FeaturedProduct>();
+
+    public string? StockActorId { get; set; }
+    public string StockReason { get; set; } = "Cập nhật tồn kho";
+
+    public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
+        CancellationToken cancellationToken = default)
+    {
+        var pending = ChangeTracker.Entries<StockMovement>().Where(entry => entry.State == EntityState.Added)
+            .Select(entry => entry.Entity.ProductVariant).ToHashSet();
+        var changes = ChangeTracker.Entries<ProductVariant>()
+            .Where(entry => entry.State is EntityState.Added or EntityState.Modified)
+            .Select(entry => new
+            {
+                Variant = entry.Entity,
+                Before = entry.State == EntityState.Added ? 0 : entry.OriginalValues.GetValue<int>(nameof(ProductVariant.StockQuantity)),
+                After = entry.Entity.StockQuantity
+            })
+            .Where(change => change.Before != change.After && !pending.Contains(change.Variant))
+            .ToList();
+        foreach (var change in changes)
+        {
+            if (change.After < 0)
+                throw new InvalidOperationException("Tồn kho không thể âm.");
+
+            StockMovements.Add(new StockMovement
+            {
+                ProductVariant = change.Variant,
+                Before = change.Before,
+                After = change.After,
+                ActorId = StockActorId,
+                Reason = StockReason
+            });
+        }
+
+        return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+    }
+
+    public DbSet<SupportConversation> SupportConversations => Set<SupportConversation>();
+    public DbSet<SupportChatMessage> SupportChatMessages => Set<SupportChatMessage>();
+
+    public DbSet<Cart> Carts => Set<Cart>();
+
+    public DbSet<CartItem> CartItems => Set<CartItem>();
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+        builder.Entity<SupportConversation>().HasIndex(c => c.CustomerId).IsUnique();
+        builder.Entity<SupportConversation>().HasIndex(c => new { c.IsClosed, c.NeedsReply, c.UpdatedAt });
+        builder.Entity<SupportChatMessage>().HasIndex(m => new { m.ConversationId, m.Id });
+
+
+        builder.Entity<FeaturedProduct>().HasOne(f => f.Product).WithMany().HasForeignKey(f => f.ProductId);
+        builder.Entity<FeaturedProduct>().HasIndex(f => f.ProductId).IsUnique();
+        builder.Entity<ProductReview>().HasIndex(r => new { r.ProductId, r.UserId }).IsUnique();
+        builder.Entity<StockMovement>().HasIndex(m => new { m.ProductVariantId, m.CreatedAt });
+        builder.Entity<MerchandiseReturn>().HasIndex(r => r.OrderId).IsUnique();
+        builder.Entity<MerchandiseReturn>().HasOne(r => r.Order).WithMany().OnDelete(DeleteBehavior.Restrict);
+        builder.Entity<Voucher>().HasIndex(v => v.Code).IsUnique();
+        builder.Entity<VoucherRedemption>().HasIndex(r => r.OrderId).IsUnique();
+        builder.Entity<VoucherRedemption>().HasIndex(r => new { r.VoucherId, r.CustomerId });
+        builder.Entity<StoreSettings>().Property(s => s.Id).ValueGeneratedNever();
+        builder.Entity<AdminAuditEvent>().HasIndex(e => e.CreatedAt);
+        builder.Entity<Order>().HasIndex(o => o.CreatedAt);
+        builder.Entity<ProductVariant>().Property(v => v.StockQuantity).IsConcurrencyToken();
+        builder.Entity<Order>().HasIndex(o => new { o.UserId, o.CheckoutRequestId })
+            .IsUnique().HasFilter("[CheckoutRequestId] IS NOT NULL");
+        builder.Entity<Order>().Property(o => o.RowVersion).IsRowVersion();
+        builder.Entity<PaymentHistory>(entity =>
+        {
+            entity.Property(h => h.Event).HasMaxLength(40);
+            entity.Property(h => h.Amount).HasPrecision(18, 2);
+            entity.HasOne(h => h.Order).WithMany().HasForeignKey(h => h.OrderId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(h => h.ActorUser).WithMany().HasForeignKey(h => h.ActorUserId)
+                .OnDelete(DeleteBehavior.SetNull);
+            entity.HasIndex(h => new { h.OrderId, h.CreatedAt });
+        });
 
         builder.Entity<Product>()
             .Property(x => x.Price)
             .HasPrecision(18, 2);
+
+        builder.Entity<Product>(entity =>
+        {
+            entity.Property(p => p.ShowroomAudience).HasMaxLength(16);
+            entity.Property(p => p.ShowroomKind).HasMaxLength(8);
+            entity.HasIndex(p => new { p.ShowroomAudience, p.ShowroomKind, p.ShowroomSortOrder });
+        });
 
         builder.Entity<ProductVariant>()
             .Property(x => x.Price)
@@ -133,6 +235,59 @@ public class ApplicationDbContext
                 .OnDelete(DeleteBehavior.SetNull);
 
             entity.Property(h => h.Note).HasMaxLength(500);
+        });
+
+        builder.Entity<ShipmentLocation>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+
+            entity.HasOne(x => x.Shipment)
+                .WithMany(x => x.Locations)
+                .HasForeignKey(x => x.ShipmentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(x => new { x.ShipmentId, x.RecordedAt });
+        });
+
+        // --- SupportRequest ---
+        builder.Entity<SupportRequest>(entity =>
+        {
+            entity.HasKey(s => s.Id);
+
+            entity.HasOne(s => s.User)
+                .WithMany()
+                .HasForeignKey(s => s.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasIndex(s => s.CreatedAt);
+            entity.HasIndex(s => s.Status);
+        });
+
+        // --- Cart & CartItem ---
+        builder.Entity<Cart>(entity =>
+        {
+            entity.HasKey(c => c.Id);
+            entity.HasIndex(c => c.UserId).IsUnique();
+            entity.HasOne(c => c.User)
+                .WithMany()
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<CartItem>(entity =>
+        {
+            entity.HasKey(ci => ci.Id);
+            entity.HasOne(ci => ci.Cart)
+                .WithMany(c => c.Items)
+                .HasForeignKey(ci => ci.CartId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(ci => ci.ProductVariant)
+                .WithMany()
+                .HasForeignKey(ci => ci.ProductVariantId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(ci => new { ci.CartId, ci.ProductVariantId }).IsUnique();
         });
     }
 }
