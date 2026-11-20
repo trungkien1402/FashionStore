@@ -35,3 +35,25 @@
     .support-inbox { grid-template-columns: 1fr; }
     .support-queue { max-height: 12rem; }
 }
+
+.support-widget { font-family: 'Jost', system-ui, sans-serif; }
+.support-panel { border-radius: 1.15rem; }
+.support-panel-welcome { height: auto; max-height: calc(100dvh - 6.5rem); overflow-y: auto; }
+.support-panel .support-chat-head { flex-wrap: nowrap; padding: .85rem 1rem; background: linear-gradient(120deg, #1d263b, #334361); }
+.support-brand { display: flex; align-items: center; gap: .65rem; min-width: 0; }
+.support-brand strong { display: block; font-size: .95rem; letter-spacing: .03em; }
+.support-brand small { display: block; color: #d4dded; font-size: .75rem; font-weight: 400; }
+.support-avatar { display: grid; place-items: center; width: 2.35rem; height: 2.35rem; border: 1px solid #ffffff36; background: #ffffff12; border-radius: .8rem; }
+.support-panel .support-chat-head button { display: grid; place-items: center; width: 1.9rem; height: 1.9rem; border-color: #ffffff50; border-radius: 50%; flex: 0 0 auto; }
+.support-chat-guest { padding: 1.5rem 1.2rem; text-align: center; background: radial-gradient(ellipse at top, #f0f3f9, #fff 75%); }
+.support-welcome-icon { display: grid; place-items: center; width: 3.1rem; height: 3.1rem; margin: 0 auto .8rem; border-radius: 1rem; color: #354c75; background: #e6ecf6; font-size: 1.3rem; }
+.support-chat-guest h2 { font-size: 1.15rem; margin: 0 0 .5rem; }
+.support-chat-guest p { font-size: .88rem; line-height: 1.6; color: #58647b; margin: 0 0 1rem; }
+.support-chat-guest a { display: flex; align-items: center; justify-content: center; gap: .65rem; font-size: .9rem; font-weight: 600; }
+.support-chat-footnote { border-top: 1px solid #edf0f5; padding: .45rem .75rem; text-align: center; font-size: .7rem; color: #65718a; background: #fafbfd; }
+.support-welcome-note { padding: .75rem 1rem; border-bottom: 1px solid #edf0f5; }
+.support-welcome-note strong { font-size: .85rem; }
+.support-welcome-note p { font-size: .76rem; color: #58647b; margin: .2rem 0 .45rem; }
+.support-topics { display: flex; flex-wrap: wrap; gap: .35rem; }
+.support-topics button { border: 1px solid #dce3ee; border-radius: 99rem; background: #f7f9fc; color: #354c75; font: inherit; font-size: .75rem; padding: .22rem .55rem; cursor: pointer; }
+.support-topics button:hover { background: #e9eff8; }

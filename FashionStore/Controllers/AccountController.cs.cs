@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.RateLimiting;
 ﻿
 using FashionStore.Models.Entities;
 using FashionStore.Models.ViewModels;
@@ -131,6 +132,7 @@ public class AccountController : Controller
     [HttpPost]
     [AllowAnonymous]
     [ValidateAntiForgeryToken]
+    [EnableRateLimiting("login")]
     public async Task<IActionResult> Login(LoginViewModel model)
     {
         var isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest" ||

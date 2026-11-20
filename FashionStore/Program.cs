@@ -1,3 +1,5 @@
+using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.RateLimiting;
 
 using FashionStore.Data;
 using FashionStore.Hubs;
@@ -74,6 +76,27 @@ builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<AdminReportService>();
 builder.Services.AddSingleton<VietnamAddresses>();
 
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.OnRejected = async (context, ct) =>
+    {
+        context.HttpContext.Response.Headers.RetryAfter = "60";
+        context.HttpContext.Response.ContentType = "text/plain; charset=utf-8";
+        await context.HttpContext.Response.WriteAsync("Bạn đang thao tác quá nhanh, vui lòng thử lại sau 1 phút.", ct);
+    };
+    foreach (var (name, limit) in new[] { ("login", 5), ("checkout", 10), ("voucher", 20) })
+    {
+        options.AddPolicy(name, http => RateLimitPartition.GetFixedWindowLimiter(
+            http.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = limit, Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0, AutoReplenishment = true
+            }));
+    }
+});
+
 var app = builder.Build();
 
 if (replaceCatalog || importCatalog)
@@ -115,6 +138,7 @@ app.UseSession();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseRateLimiter();
 
 app.MapControllerRoute(
     name: "default",

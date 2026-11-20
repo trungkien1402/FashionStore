@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using FashionStore.Services.Implementations;
 using FashionStore.Services;
 using FashionStore.Data;
 using FashionStore.Models.Entities;
@@ -19,8 +21,11 @@ public class AdminSupportRequestsController : Controller
     }
 
     // GET: /AdminSupportRequests
-    public async Task<IActionResult> Index(SupportRequestStatus? status, string? search)
+    public async Task<IActionResult> Index(SupportRequestStatus? status, string? search, int page = 1)
     {
+        if (!ModelState.IsValid || status is { } selected && !Enum.IsDefined(selected))
+            return BadRequest("Trạng thái hỗ trợ không hợp lệ.");
+
         var query = _context.SupportRequests
             .Include(s => s.User)
             .AsNoTracking()
@@ -35,6 +40,7 @@ public class AdminSupportRequestsController : Controller
         if (!string.IsNullOrWhiteSpace(search))
         {
             search = search.Trim();
+            search = search[..Math.Min(search.Length, 100)];
             query = query.Where(s =>
                 s.FullName.Contains(search) ||
                 s.Email.Contains(search) ||
@@ -51,7 +57,14 @@ public class AdminSupportRequestsController : Controller
         ViewBag.CountResolved = await _context.SupportRequests.CountAsync(s => s.Status == SupportRequestStatus.Resolved);
         ViewBag.CountClosed = await _context.SupportRequests.CountAsync(s => s.Status == SupportRequestStatus.Closed);
 
-        var list = await query.ToListAsync();
+        var count = await query.CountAsync();
+        var pageCount = Math.Max(1, (count + 29) / 30);
+        page = Math.Clamp(page, 1, pageCount);
+        ViewBag.Count = count;
+        ViewBag.Page = page;
+        ViewBag.PageCount = pageCount;
+        var list = await query.OrderByDescending(s => s.CreatedAt).ThenByDescending(s => s.Id)
+            .Skip((page - 1) * 30).Take(30).ToListAsync();
         return View(list);
     }
 
@@ -60,6 +73,7 @@ public class AdminSupportRequestsController : Controller
     {
         var item = await _context.SupportRequests
             .Include(s => s.User)
+            .AsNoTracking()
             .FirstOrDefaultAsync(s => s.Id == id);
 
         if (item == null)
@@ -75,12 +89,19 @@ public class AdminSupportRequestsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdateStatus(int id, SupportRequestStatus status, string? adminNote)
     {
+        if (!ModelState.IsValid || !Enum.IsDefined(status) || adminNote?.Length > 1000)
+        {
+            TempData["Error"] = "Kiểm tra trạng thái và ghi chú tối đa 1.000 ký tự.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
         var item = await _context.SupportRequests.FindAsync(id);
         if (item == null)
         {
             return NotFound();
         }
 
+        SalesRules.Audit(_context, User.FindFirstValue(ClaimTypes.NameIdentifier),
+            "SupportRequestUpdated", id.ToString(), $"{item.Status} → {status}");
         item.Status = status;
         item.AdminNote = adminNote?.Trim();
 

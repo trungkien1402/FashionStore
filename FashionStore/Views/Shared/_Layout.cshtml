@@ -84,9 +84,12 @@
                     <!-- Cart Trigger -->
                     <button type="button" id="fsCartDrawerTrigger" class="urbn-nav-icon position-relative" title="Giỏ hàng">
                         <i class="bi bi-cart"></i>
-                        <span class="fs-cart-count" style="position: absolute; top: -6px; right: -8px; background: #000; color: #fff; font-size: 10px; font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                            @cartCount
-                        </span>
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <span class="fs-cart-count" style="position: absolute; top: -6px; right: -8px; background: #000; color: #fff; font-size: 10px; font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                @cartCount
+                            </span>
+                        }
                     </button>
 
                 <partial name="_NotificationBell" view-data='@new ViewDataDictionary(ViewData) { { "BellButtonClass", "urbn-nav-icon" } }' />
@@ -211,9 +214,15 @@
     @if (!string.Equals(ViewContext.RouteData.Values["controller"]?.ToString(), "StyleGame", StringComparison.OrdinalIgnoreCase))
     {
         <div class="style-game-float" data-style-game-float hidden>
-            <a asp-controller="StyleGame" asp-action="Index" class="style-game-launcher" draggable="false">
-                <i class="bi bi-gift-fill style-game-gift" aria-hidden="true"></i>
-                <span><strong>Chơi nhận voucher</strong><small>Studio thiết kế</small></span>
+            <a asp-controller="StyleGame" asp-action="Index" class="style-game-launcher" draggable="false" aria-label="Chơi thiết kế để nhận voucher">
+                <span class="style-game-hover-label" aria-hidden="true">Chơi nhận voucher</span>
+                <span class="style-game-gift" aria-hidden="true">
+                    <span class="style-gift-bow"></span>
+                    <span class="style-gift-box"></span>
+                    <span class="style-gift-lid"></span>
+                    <i class="bi bi-pencil-fill style-gift-pencil"></i>
+                    <span class="style-gift-spark">✦</span>
+                </span>
             </a>
             <button type="button" class="style-game-close" aria-label="Ẩn trò chơi trong một phút" title="Ẩn trong một phút">
                 <i class="bi bi-x-lg" aria-hidden="true"></i>

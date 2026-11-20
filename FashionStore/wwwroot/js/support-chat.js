@@ -20,7 +20,7 @@ document.querySelectorAll("[data-support-chat]").forEach(root => {
         toggle.setAttribute("aria-expanded", String(open));
         if (open) {
             (input ?? panel.querySelector("[data-chat-hide]")).focus();
-            refresh();
+            if (form) refresh();
         } else toggle.focus();
     }
 
@@ -28,6 +28,13 @@ document.querySelectorAll("[data-support-chat]").forEach(root => {
     root.querySelector("[data-chat-hide]")?.addEventListener("click", () => show(false));
     root.addEventListener("keydown", event => {
         if (event.key === "Escape" && panel && !panel.hidden) show(false);
+    });
+    root.querySelectorAll("[data-chat-topic]").forEach(button => {
+        button.addEventListener("click", () => {
+            if (!input) return;
+            input.value = button.dataset.chatTopic;
+            input.focus();
+        });
     });
     if (!form) return;
 

@@ -111,4 +111,5 @@ document.querySelectorAll("[data-notification-url]").forEach(bell => {
         if (bell.open && !bell.contains(event.target)) bell.open = false;
     });
     refresh();
+    setInterval(() => { if (!document.hidden) refresh(); }, 10000);
 });
