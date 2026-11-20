@@ -58,6 +58,8 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICartService, CartService>();
 //Shipper
 builder.Services.AddScoped<IShipperService, ShipperService>();
 // Repository

@@ -17,34 +17,24 @@ namespace FashionStore.Controllers;
 [Authorize]
 public class OrdersController : Controller
 {
-    private const string CartSessionKey = "FashionStore_Cart";
     private const decimal DefaultShippingFee = 30000m;
 
     private readonly ApplicationDbContext _context;
     private readonly IPaymentService _payments;
+    private readonly ICartService _cartService;
 
-    public OrdersController(ApplicationDbContext context, IPaymentService payments)
+    public OrdersController(ApplicationDbContext context, IPaymentService payments, ICartService cartService)
     {
         _context = context;
         _payments = payments;
-    }
-
-    private List<CartItemViewModel> GetCart()
-    {
-        var json = HttpContext.Session.GetString(CartSessionKey);
-
-        if (string.IsNullOrWhiteSpace(json))
-            return new List<CartItemViewModel>();
-
-        return JsonSerializer.Deserialize<List<CartItemViewModel>>(json)
-               ?? new List<CartItemViewModel>();
+        _cartService = cartService;
     }
 
     // GET: /Orders/Checkout
     [HttpGet]
     public async Task<IActionResult> Checkout([FromServices] IDataProtectionProvider protection)
     {
-        var cart = GetCart();
+        var cart = await _cartService.GetCartAsync();
 
         if (!cart.Any())
         {
@@ -119,7 +109,7 @@ public class OrdersController : Controller
         if (await FindCheckoutOrderAsync(userId, model.CheckoutRequestId) is { } existing)
             return RedirectToCheckoutOrder(existing);
 
-        var cart = GetCart();
+        var cart = await _cartService.GetCartAsync();
 
         if (!cart.Any())
         {
@@ -377,9 +367,11 @@ public class OrdersController : Controller
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
 
-            // Dọn dẹp giỏ hàng trong Session sau khi mua thành công
-            HttpContext.Session.Remove(CartSessionKey);
-            if (voucher?.GameMinimumScore != null) HttpContext.Session.Remove("StyleGameReward");
+            // Dọn dẹp giỏ hàng sau khi mua thành công
+            await _cartService.ClearCartAsync();
+
+            if (voucher?.GameMinimumScore != null)
+                HttpContext.Session.Remove("StyleGameReward");
 
             return RedirectToCheckoutOrder(order);
         }
@@ -560,7 +552,7 @@ public class OrdersController : Controller
         if (code is null or { Length: 0 or > 40 })
             return BadRequest("Nhập mã khuyến mãi hợp lệ.");
 
-        var cart = GetCart();
+        var cart = await _cartService.GetCartAsync();
         var quantities = cart.GroupBy(item => item.ProductVariantId)
             .ToDictionary(group => group.Key, group => group.Sum(item => item.Quantity));
         var ids = quantities.Keys.ToList();
