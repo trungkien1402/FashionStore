@@ -112,6 +112,16 @@ public class AdminOrdersController : Controller
 
         ViewBag.StatusHistories = histories;
 
+        // Lấy lịch sử thanh toán của đơn hàng
+        var paymentHistories = await _context.PaymentHistories
+            .Include(h => h.ActorUser)
+            .Where(h => h.OrderId == id)
+            .OrderBy(h => h.CreatedAt)
+            .AsNoTracking()
+            .ToListAsync();
+
+        ViewBag.PaymentHistories = paymentHistories;
+
         // Lấy lô giao hàng (shipments) của đơn
         var shipments = await _context.Shipments
             .Include(s => s.Shipper)

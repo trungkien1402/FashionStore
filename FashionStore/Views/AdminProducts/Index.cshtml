@@ -36,7 +36,7 @@
 <!-- FILTER BAR -->
 <div class="adm-filter-bar mb-4">
     <form asp-action="Index" method="get" class="row g-3">
-        <div class="col-md-5">
+        <div class="col-md-4">
             <label class="d-none d-md-block">Tìm kiếm sản phẩm</label>
             <div class="input-group">
                 <span class="input-group-text">
@@ -48,7 +48,7 @@
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
             <label class="d-none d-md-block">Danh mục</label>
             <select name="categoryId" class="form-select">
                 <option value="">Tất cả danh mục</option>
@@ -59,12 +59,22 @@
             </select>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-2">
             <label class="d-none d-md-block">Trạng thái</label>
             <select name="isActive" class="form-select">
-                <option value="">Tất cả trạng thái hiển thị</option>
-                <option value="true" selected="@(isActive == true)">Đang hiển thị trên Shop</option>
-                <option value="false" selected="@(isActive == false)">Đã ẩn tạm thời</option>
+                <option value="">Tất cả hiển thị</option>
+                <option value="true" selected="@(isActive == true)">Đang bán</option>
+                <option value="false" selected="@(isActive == false)">Đã ẩn</option>
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label class="d-none d-md-block">Cảnh báo Tồn kho</label>
+            <select name="stock" class="form-select">
+                <option value="">Tất cả mức tồn</option>
+                <option value="low" selected="@(filter.Stock == "low")">&#9888; Các sản phẩm sắp hết hàng (&le; 5)</option>
+                <option value="out" selected="@(filter.Stock == "out")">Hết hàng (0)</option>
+                <option value="available" selected="@(filter.Stock == "available")">Tồn an toàn (&gt; 5)</option>
             </select>
         </div>
 
@@ -204,7 +214,9 @@ else
                                     }
                                     else if (isLowStock)
                                     {
-                                        <span class="badge bg-warning text-dark">Còn @totalStock cái</span>
+                                        <span class="badge bg-danger text-white py-1 px-2 fw-bold shadow-sm">
+                                            <i class="bi bi-exclamation-triangle-fill me-1"></i>[&#9888; Cần nhập thêm hàng] (@totalStock)
+                                        </span>
                                     }
                                     else
                                     {
@@ -287,6 +299,14 @@ else
                             <td>
                                 <div><strong class="adm-text-contrast">@product.VariantCount</strong> phân loại</div>
                                 <div class="text-muted small">Tổng tồn: <span class="fw-semibold">@totalStock</span></div>
+                                @if (totalStock <= 5 && product.VariantCount > 0)
+                                {
+                                    <div class="mt-1">
+                                        <span class="badge bg-danger text-white py-1 px-2 fw-bold" style="font-size: 0.72rem;">
+                                            <i class="bi bi-exclamation-triangle-fill me-1"></i>[&#9888; Cần nhập thêm hàng]
+                                        </span>
+                                    </div>
+                                }
                             </td>
                             <td>
                                 @if (product.IsActive)

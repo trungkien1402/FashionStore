@@ -56,6 +56,7 @@
 
     var shipments = ViewBag.Shipments as List<Shipment> ?? new List<Shipment>();
     var histories = ViewBag.StatusHistories as List<OrderStatusHistory> ?? new List<OrderStatusHistory>();
+    var paymentHistories = ViewBag.PaymentHistories as List<PaymentHistory> ?? new List<PaymentHistory>();
 }
 
 @if ((User.IsInRole("Admin") || User.IsInRole("Manager")) && Model.Status is OrderStatus.Delivered or OrderStatus.Returned)
@@ -279,6 +280,55 @@
                         </div>
                     }
                 </div>
+
+                @if (paymentHistories.Any())
+                {
+                    <div class="mt-4 pt-3 border-top border-secondary border-opacity-10">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <h6 class="fw-bold adm-heading mb-0" style="font-size: 0.85rem;">
+                                <i class="bi bi-clock-history me-1 text-warning"></i> Nhật ký thanh toán &amp; Giao dịch (@paymentHistories.Count)
+                            </h6>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-borderless mb-0" style="font-size: 0.78rem;">
+                                <thead>
+                                    <tr class="text-muted border-bottom border-secondary border-opacity-10">
+                                        <th>Thời gian</th>
+                                        <th>Sự kiện</th>
+                                        <th>Số tiền</th>
+                                        <th>Chuyển đổi</th>
+                                        <th>Người thực hiện</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var ph in paymentHistories)
+                                    {
+                                        var eventLabel = ph.Event switch
+                                        {
+                                            "Created" => "Tạo yêu cầu thanh toán",
+                                            "TransferReported" => "Khách báo đã chuyển khoản",
+                                            "StatusChanged" => "Thay đổi trạng thái",
+                                            "WebhookPaymentReceived" => "Webhook tự động xác nhận",
+                                            "ReturnRefundConfirmed" => "Xác nhận hoàn tiền",
+                                            _ => ph.Event
+                                        };
+                                        <tr class="border-bottom border-secondary border-opacity-10">
+                                            <td class="text-nowrap text-muted">@ph.CreatedAt.AddHours(7).ToString("dd/MM/yyyy HH:mm")</td>
+                                            <td><span class="badge bg-secondary bg-opacity-25 text-white">@eventLabel</span></td>
+                                            <td class="fw-bold font-monospace" style="color: var(--adm-gold);">@ph.Amount.ToString("N0") ₫</td>
+                                            <td>
+                                                <span class="text-muted">@ph.OldStatus</span>
+                                                <i class="bi bi-arrow-right mx-1 small"></i>
+                                                <span class="fw-bold @(ph.NewStatus == PaymentStatus.Paid ? "text-success" : ph.NewStatus == PaymentStatus.Refunded ? "text-warning" : "text-danger")">@ph.NewStatus</span>
+                                            </td>
+                                            <td class="text-muted">@(ph.ActorUser?.FullName ?? (string.IsNullOrEmpty(ph.ActorUserId) ? "Hệ thống" : "Admin"))</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
 
