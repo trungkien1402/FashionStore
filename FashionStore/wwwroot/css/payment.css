@@ -332,30 +332,46 @@
     display: none;
 }
 
-/* Select Controls */
+/* Select Controls (Clean Minimalist Luxury Dropdown) */
 .checkout-select {
     position: relative;
-    margin-bottom: 12px;
+    width: 100%;
 }
 
+.checkout-select select.hnmt-form-control,
 .checkout-select select {
-    appearance: none;
-    -webkit-appearance: none;
-    cursor: pointer;
-    padding-right: 32px;
+    width: 100%;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    background-color: #FFFFFF !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 14px center !important;
+    background-size: 14px !important;
+    padding-right: 38px !important;
+    padding-left: 14px !important;
+    height: 44px !important;
+    border: 1px solid #CBD5E1 !important;
+    border-radius: 8px !important;
+    font-size: 13.5px !important;
+    color: #1E293B !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+.checkout-select select:hover {
+    border-color: #94A3B8 !important;
+}
+
+.checkout-select select:focus {
+    border-color: #1E293B !important;
+    box-shadow: 0 0 0 3px rgba(30, 41, 59, 0.06) !important;
+    outline: none !important;
 }
 
 .checkout-chevron {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 8px;
-    height: 8px;
-    border-right: 1.5px solid var(--hnmt-muted);
-    border-bottom: 1.5px solid var(--hnmt-muted);
-    pointer-events: none;
-    rotate: 45deg;
+    display: none !important;
 }
 
 /* Payment Methods (Radio options) */

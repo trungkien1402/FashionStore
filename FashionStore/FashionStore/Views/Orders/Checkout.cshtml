@@ -259,17 +259,14 @@
 <style>
     .checkout-voucher-controls { display: flex; flex-wrap: wrap; gap: .5rem; }
     .checkout-voucher-controls input { flex: 1 1 10rem; min-width: 0; }
-    .checkout-voucher-controls button { border: 1px solid #152034; border-radius: .65rem; background: #152034; color: white; padding: .55rem .9rem; cursor: pointer; }
+    .checkout-voucher-controls button { border: 1px solid #1E293B; border-radius: .5rem; background: #1E293B; color: white; padding: .5rem 1rem; cursor: pointer; font-size: 13px; font-weight: 500; }
     #checkoutDiscountRow[hidden] { display: none; }
     #checkoutVoucherStatus:empty, #checkoutAddressStatus:empty { display: none; }
-    .checkout-select { position: relative; margin-bottom: .75rem; }
-    .checkout-select select { appearance: none; padding-inline-end: 3rem; margin-bottom: 0; }
-    .checkout-chevron { position: absolute; right: .85rem; top: 50%; transform: translateY(-50%); width: 1.65rem; height: 1.65rem; display: grid; place-items: center; border-radius: .45rem; background: #edf1f7; color: #33435b; pointer-events: none; }
-    .checkout-chevron::before { content: ""; width: .42rem; height: .42rem; border: solid currentColor; border-width: 0 1.5px 1.5px 0; transform: translateY(-.1rem) rotate(45deg); }
-    .checkout-studio-reward { display: flex; align-items: center; flex-wrap: wrap; gap: .65rem; padding: .75rem; margin-bottom: .8rem; border: 1px solid #e5d8f0; border-radius: .75rem; background: #f9f4fc; color: #382044; }
-    .checkout-studio-reward > i { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: .5rem; background: #eddef6; }
+    .checkout-chevron { display: none !important; }
+    .checkout-studio-reward { display: flex; align-items: center; flex-wrap: wrap; gap: .65rem; padding: .75rem; margin-bottom: .8rem; border: 1px solid #FEF3C7; border-radius: .75rem; background: #FFFBEB; color: #92400E; }
+    .checkout-studio-reward > i { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: .5rem; background: #FDE68A; }
     .checkout-studio-reward > div { flex: 1 1 8rem; overflow-wrap: anywhere; }
     .checkout-studio-reward small { display: block; }
-    .checkout-studio-reward button { background: #fff; border: 1px solid #bda4cb; border-radius: .55rem; color: inherit; padding: .4rem .7rem; cursor: pointer; }
+    .checkout-studio-reward button { background: #fff; border: 1px solid #FCD34D; border-radius: .55rem; color: inherit; padding: .4rem .7rem; cursor: pointer; }
     .checkout-studio-empty { font-size: .85rem; margin-bottom: .65rem; }
 </style>
