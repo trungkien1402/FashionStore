@@ -157,10 +157,10 @@
                         </svg>
                     </div>
                     <h3 class="hnmt-empty-title">Túi đồ của bạn đang trống</h3>
-                    <p class="hnmt-empty-desc">Hãy khám phá và chọn những thiết kế độc bản trong các sào đồ của HNMT Atelier.</p>
-                    <button type="button" class="sv-apply-capsule-btn hnmt-empty-explore-btn" id="hnmtCartExploreBtn">
-                        Khám Phá Sào Đồ
-                    </button>
+                    <p class="hnmt-empty-desc">Hãy khám phá và chọn những thiết kế độc bản trong cửa hàng của HNMT Atelier.</p>
+                    <a href="/Products" class="sv-apply-capsule-btn hnmt-empty-explore-btn" id="hnmtCartExploreBtn">
+                        Khám Phá Cửa Hàng
+                    </a>
                 </div>
             </div>
 
@@ -213,10 +213,16 @@
         const exploreBtn = modal.querySelector('#hnmtCartExploreBtn');
         if (isSneaker) {
             if (emptyDesc) emptyDesc.textContent = 'Hãy khám phá và chọn những đôi sneakers độc bản trong Tủ Giày của HNMT Sneaker Vault.';
-            if (exploreBtn) exploreBtn.textContent = 'Khám Phá Tủ Giày';
+            if (exploreBtn) {
+                exploreBtn.href = '/Products/Sneakers';
+                exploreBtn.textContent = 'Khám Phá Tủ Giày';
+            }
         } else {
-            if (emptyDesc) emptyDesc.textContent = 'Hãy khám phá và chọn những thiết kế độc bản trong các sào đồ của HNMT Atelier.';
-            if (exploreBtn) exploreBtn.textContent = 'Khám Phá Sào Đồ';
+            if (emptyDesc) emptyDesc.textContent = 'Hãy khám phá và chọn những thiết kế độc bản trong cửa hàng của HNMT Atelier.';
+            if (exploreBtn) {
+                exploreBtn.href = '/Products';
+                exploreBtn.textContent = 'Khám Phá Cửa Hàng';
+            }
         }
     }
 
@@ -520,14 +526,19 @@
         if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
 
         if (exploreBtn) {
-            exploreBtn.addEventListener('click', () => {
+            exploreBtn.addEventListener('click', (e) => {
                 closeDrawer();
                 if (isSneakerContext()) {
                     const grid = document.getElementById('svGrid') || document.getElementById('svApp');
-                    if (grid) grid.scrollIntoView({ behavior: 'smooth' });
-                } else if (typeof window.open3DClothesRack === 'function') {
-                    window.open3DClothesRack('ao');
+                    if (grid) {
+                        e.preventDefault();
+                        grid.scrollIntoView({ behavior: 'smooth' });
+                        return;
+                    }
+                    window.location.href = '/Products/Sneakers';
+                    return;
                 }
+                window.location.href = '/Products';
             });
         }
 

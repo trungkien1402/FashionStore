@@ -157,9 +157,9 @@
                         </svg>
                     </div>
                     <h3 class="hnmt-empty-title">Túi đồ của bạn đang trống</h3>
-                    <p class="hnmt-empty-desc">Hãy khám phá và chọn những thiết kế độc bản trong các sào đồ của HNMT Atelier.</p>
-                    <a href="/Products/Rail?type=ao" class="sv-apply-capsule-btn hnmt-empty-explore-btn" id="hnmtCartExploreBtn">
-                        Khám Phá Sào Đồ
+                    <p class="hnmt-empty-desc">Hãy khám phá và chọn những thiết kế độc bản trong cửa hàng của HNMT Atelier.</p>
+                    <a href="/Products" class="sv-apply-capsule-btn hnmt-empty-explore-btn" id="hnmtCartExploreBtn">
+                        Khám Phá Cửa Hàng
                     </a>
                 </div>
             </div>
@@ -211,13 +211,18 @@
 
         const emptyDesc = modal.querySelector('.hnmt-empty-desc');
         const exploreBtn = modal.querySelector('#hnmtCartExploreBtn');
-        if (exploreBtn) exploreBtn.href = isSneaker ? '/Products/Sneakers' : '/Products/Rail?type=ao';
         if (isSneaker) {
             if (emptyDesc) emptyDesc.textContent = 'Hãy khám phá và chọn những đôi sneakers độc bản trong Tủ Giày của HNMT Sneaker Vault.';
-            if (exploreBtn) exploreBtn.textContent = 'Khám Phá Tủ Giày';
+            if (exploreBtn) {
+                exploreBtn.href = '/Products/Sneakers';
+                exploreBtn.textContent = 'Khám Phá Tủ Giày';
+            }
         } else {
-            if (emptyDesc) emptyDesc.textContent = 'Hãy khám phá và chọn những thiết kế độc bản trong các sào đồ của HNMT Atelier.';
-            if (exploreBtn) exploreBtn.textContent = 'Khám Phá Sào Đồ';
+            if (emptyDesc) emptyDesc.textContent = 'Hãy khám phá và chọn những thiết kế độc bản trong cửa hàng của HNMT Atelier.';
+            if (exploreBtn) {
+                exploreBtn.href = '/Products';
+                exploreBtn.textContent = 'Khám Phá Cửa Hàng';
+            }
         }
     }
 
@@ -514,10 +519,28 @@
         const modal = ensureCartDOM();
         const backdrop = document.getElementById('hnmtCartBackdrop');
         const closeBtn = document.getElementById('hnmtCartCloseBtn');
+        const exploreBtn = document.getElementById('hnmtCartExploreBtn');
         const checkoutBtn = document.getElementById('hnmtCartCheckoutBtn');
 
         if (backdrop) backdrop.addEventListener('click', closeDrawer);
         if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+
+        if (exploreBtn) {
+            exploreBtn.addEventListener('click', (e) => {
+                closeDrawer();
+                if (isSneakerContext()) {
+                    const grid = document.getElementById('svGrid') || document.getElementById('svApp');
+                    if (grid) {
+                        e.preventDefault();
+                        grid.scrollIntoView({ behavior: 'smooth' });
+                        return;
+                    }
+                    window.location.href = '/Products/Sneakers';
+                    return;
+                }
+                window.location.href = '/Products';
+            });
+        }
 
         if (checkoutBtn) {
             checkoutBtn.addEventListener('click', async () => {
