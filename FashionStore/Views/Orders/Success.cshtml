@@ -137,16 +137,16 @@
 
         @if (pendingQr && !awaitingConfirmation)
         {
-            <a asp-action="PaymentQR" asp-route-id="@Model.Id" class="pay-btn-solid">
-                <span>Xem mã quét thanh toán</span>
-                <i class="bi bi-qr-code ms-1"></i>
+            <a asp-action="PaymentQR" asp-route-id="@Model.Id" class="pay-btn-solid" style="background: #1E293B !important; color: #FFFFFF !important;">
+                <span style="color: #FFFFFF !important;">Xem mã quét thanh toán</span>
+                <i class="bi bi-qr-code ms-1" style="color: #FFFFFF !important;"></i>
             </a>
         }
         else
         {
-            <a asp-action="Details" asp-route-id="@Model.Id" class="pay-btn-solid">
-                <span>Theo dõi đơn hàng</span>
-                <i class="bi bi-arrow-right ms-1"></i>
+            <a asp-action="Details" asp-route-id="@Model.Id" class="pay-btn-solid" style="background: #1E293B !important; color: #FFFFFF !important;">
+                <span style="color: #FFFFFF !important;">Theo dõi đơn hàng</span>
+                <i class="bi bi-arrow-right ms-1" style="color: #FFFFFF !important;"></i>
             </a>
         }
     </div>

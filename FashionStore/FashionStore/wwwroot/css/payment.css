@@ -1225,6 +1225,18 @@
     color: var(--hnmt-ink);
 }
 
+.pay-btn-solid,
+.hnmt-pay-shell a.pay-btn-solid,
+a.pay-btn-solid,
+.pay-btn-solid *,
+.pay-btn-solid:hover,
+.pay-btn-solid:visited,
+.pay-btn-solid:active,
+.pay-btn-solid:focus {
+    color: #FFFFFF !important;
+    text-decoration: none !important;
+}
+
 .pay-btn-solid {
     display: inline-flex;
     align-items: center;
@@ -1232,18 +1244,61 @@
     gap: 6px;
     padding: 10px 24px;
     border-radius: 999px;
-    background: var(--hnmt-ink);
-    color: #FFFFFF;
+    background: var(--hnmt-ink) !important;
     font-size: 13px;
     font-weight: 600;
-    text-decoration: none;
     transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(30, 41, 59, 0.12);
 }
 
 .pay-btn-solid:hover {
-    background: #0F172A;
-    color: #FFFFFF;
+    background: #0F172A !important;
+    transform: translateY(-1px);
 }
+
+/* Status Badges */
+.hnmt-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 999px;
+    letter-spacing: 0.2px;
+}
+
+.hnmt-status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+.hnmt-status-badge.status-pending {
+    background: #FEF3C7;
+    color: #B45309;
+}
+.hnmt-status-badge.status-pending .hnmt-status-dot { background: #D97706; }
+
+.hnmt-status-badge.status-processing {
+    background: #EFF6FF;
+    color: #1D4ED8;
+}
+.hnmt-status-badge.status-processing .hnmt-status-dot { background: #2563EB; }
+
+.hnmt-status-badge.status-delivered {
+    background: #DCFCE7;
+    color: #15803D;
+}
+.hnmt-status-badge.status-delivered .hnmt-status-dot { background: #16A34A; }
+
+.hnmt-status-badge.status-cancelled,
+.hnmt-status-badge.status-failed {
+    background: #FEF2F2;
+    color: #B91C1C;
+}
+.hnmt-status-badge.status-cancelled .hnmt-status-dot,
+.hnmt-status-badge.status-failed .hnmt-status-dot { background: #DC2626; }
 
 /* Keyframes */
 @keyframes pulseDot {
