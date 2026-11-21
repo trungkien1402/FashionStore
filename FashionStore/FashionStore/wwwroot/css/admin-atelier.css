@@ -2475,3 +2475,272 @@ body.adm-body {
 .adm-leaderboard-item:hover {
     background: var(--adm-bg-soft);
 }
+
+
+/* =========================================================
+   FIGMA PRECISION: APPLE / VERCEL SEGMENTED CONTROL & COMPOUND PICKER
+   ========================================================= */
+
+.adm-header-block {
+    margin-bottom: 24px;
+}
+
+.adm-meta-crumb {
+    font-size: 0.74rem;
+}
+
+.adm-pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #10B981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+.adm-kicker-text {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--adm-ink-muted);
+    text-transform: uppercase;
+}
+
+.adm-meta-divider {
+    color: var(--adm-border-glow);
+    font-size: 0.75rem;
+}
+
+.adm-order-count-badge {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--adm-cyan);
+    background: var(--adm-cyan-glow);
+    padding: 2px 8px;
+    border-radius: 9999px;
+    border: 1px solid rgba(37, 99, 235, 0.15);
+}
+
+.adm-title-main {
+    font-family: var(--adm-sans);
+    font-size: 1.55rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--adm-ink);
+    line-height: 1.2;
+    margin: 0;
+}
+
+.adm-action-btn {
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+
+.adm-btn-primary {
+    background: #0F172A;
+    color: #FFFFFF !important;
+    border: 1px solid #0F172A;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.1);
+}
+
+.adm-btn-primary:hover {
+    background: #1E293B;
+    border-color: #1E293B;
+    color: #FFFFFF !important;
+}
+
+[data-theme="dark"] .adm-btn-primary {
+    background: #38BDF8;
+    color: #0F172A !important;
+    border-color: #38BDF8;
+}
+
+[data-theme="dark"] .adm-btn-primary:hover {
+    background: #7DD3FC;
+    border-color: #7DD3FC;
+}
+
+.adm-btn-secondary {
+    background: var(--adm-surface);
+    color: var(--adm-ink) !important;
+    border: 1px solid var(--adm-border);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.adm-btn-secondary:hover {
+    background: var(--adm-bg-soft);
+    border-color: var(--adm-border-glow);
+    color: var(--adm-ink) !important;
+}
+
+/* 1. APPLE SEGMENTED CONTROL */
+.adm-filter-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.adm-segmented-control {
+    background: var(--adm-bg-soft);
+    border: 1px solid var(--adm-border);
+    border-radius: 8px;
+    padding: 3px;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    height: 36px;
+}
+
+.adm-segment {
+    padding: 0 14px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--adm-ink-muted);
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+
+.adm-segment:hover {
+    color: var(--adm-ink);
+    background: rgba(255, 255, 255, 0.5);
+}
+
+[data-theme="dark"] .adm-segment:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.adm-segment.active {
+    background: var(--adm-surface);
+    color: var(--adm-ink) !important;
+    font-weight: 700;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dark"] .adm-segment.active {
+    background: #1F2937;
+    color: #38BDF8 !important;
+    border: 1px solid #374151;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* 2. COMPOUND DATE RANGE */
+.adm-date-compound {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 36px;
+    padding: 0 8px 0 12px;
+    background: var(--adm-surface);
+    border: 1px solid var(--adm-border);
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.adm-date-compound:focus-within {
+    border-color: #0F172A;
+    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.08);
+}
+
+[data-theme="dark"] .adm-date-compound:focus-within {
+    border-color: #38BDF8;
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+}
+
+.adm-date-icon {
+    color: var(--adm-ink-faint);
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+.adm-date-native {
+    border: none !important;
+    background: transparent !important;
+    color: var(--adm-ink) !important;
+    font-size: 0.82rem !important;
+    font-weight: 500 !important;
+    font-family: var(--adm-sans) !important;
+    outline: none !important;
+    padding: 0 !important;
+    height: auto !important;
+    min-height: auto !important;
+    box-shadow: none !important;
+    width: 110px;
+    cursor: pointer;
+}
+
+.adm-date-arrow {
+    color: var(--adm-border-glow);
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.adm-date-apply-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    border: none;
+    background: #0F172A;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    margin-left: 2px;
+    flex-shrink: 0;
+}
+
+.adm-date-apply-btn:hover {
+    background: #1E293B;
+}
+
+[data-theme="dark"] .adm-date-apply-btn {
+    background: #38BDF8;
+    color: #0F172A;
+}
+
+[data-theme="dark"] .adm-date-apply-btn:hover {
+    background: #7DD3FC;
+}
+
+.adm-reset-ghost-btn {
+    height: 36px;
+    padding: 0 12px;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--adm-ink-muted);
+    background: transparent;
+    border: 1px dashed var(--adm-border-glow);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+
+.adm-reset-ghost-btn:hover {
+    color: #DC2626;
+    border-color: #DC2626;
+    background: rgba(220, 38, 38, 0.05);
+}
