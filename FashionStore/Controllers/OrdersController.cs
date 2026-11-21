@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.DataProtection;
 using FashionStore.Services.Implementations;
@@ -99,6 +100,7 @@ public class OrdersController : Controller
     // POST: /Orders/Checkout
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [EnableRateLimiting("checkout")]
     public async Task<IActionResult> Checkout(CheckoutViewModel model, [FromServices] IDataProtectionProvider protection,
         [FromServices] VietnamAddresses addresses)
     {
@@ -549,6 +551,7 @@ public class OrdersController : Controller
 
     [HttpPost, ValidateAntiForgeryToken]
     [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+    [EnableRateLimiting("voucher")]
     public async Task<IActionResult> PreviewVoucher(string? code, [FromServices] IDataProtectionProvider protection)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);

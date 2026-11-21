@@ -12,6 +12,7 @@
     </a>
 </div>
 
+<p class="text-muted small">Ghi chú xử lý được lưu nội bộ. Liên hệ khách qua email hoặc số điện thoại hiển thị bên dưới.</p>
 <!-- HEADER -->
 <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
     <div>
@@ -104,7 +105,7 @@
 
                 <div class="mb-3">
                     <label class="form-label fw-bold">Ghi chú xử lý / Nội bộ nhân viên:</label>
-                    <textarea name="adminNote" rows="4" class="form-control" 
+                    <textarea name="adminNote" maxlength="1000" rows="4" class="form-control"
                               placeholder="Nhập ghi chú phản hồi, nội dung đã gọi điện thoại/trao đổi với khách hàng...">@Model.AdminNote</textarea>
                     <small class="text-muted">Ghi chú này giúp các nhân viên trong ca làm việc nắm được tiến độ hỗ trợ.</small>
                 </div>

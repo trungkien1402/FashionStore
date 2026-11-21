@@ -45,7 +45,7 @@
     var countCancelled = allOrders.Count(o => o.Status == OrderStatus.Cancelled || o.Status == OrderStatus.DeliveryFailed || o.Status == OrderStatus.Returned);
 }
 
-<div class="hnmt-orders-page">
+<div class="hnmt-orders-page" data-order-live>
     <div class="hnmt-orders-shell">
         
         <!-- HEADER TIÊU ĐỀ CHÍNH -->
@@ -1322,3 +1322,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 </script>
+
+<script src="~/js/order-live.js" asp-append-version="true" defer></script>

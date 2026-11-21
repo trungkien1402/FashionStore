@@ -9,6 +9,15 @@
     const showAfter = Date.now() + 20_000;
     let hiddenUntil = 0;
 
+    function placeLabel() {
+        const rect = bubble.getBoundingClientRect();
+        const nearLeft = rect.left < 120;
+        bubble.style.setProperty("--game-label-left", nearLeft ? "0" : "auto");
+        bubble.style.setProperty("--game-label-right", nearLeft ? "auto" : "0");
+    }
+    link.addEventListener("pointerenter", placeLabel);
+    link.addEventListener("focus", placeLabel);
+
     function move(left, top) {
         const inset = 10;
         const maxLeft = Math.max(inset, window.innerWidth - bubble.offsetWidth - inset);

@@ -8,28 +8,20 @@
     var countPending = (int)(ViewBag.CountPending ?? 0);
 }
 
-<!-- HEADER -->
-<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
-    <div>
-        <div class="d-flex align-items-center gap-2 mb-1">
-            <span style="font-size: 0.68rem; font-weight: 700; letter-spacing: 0.28em; color: var(--adm-gold); text-transform: uppercase;">
-                CUSTOMER SUPPORT & INQUIRIES
-            </span>
-            <span style="width: 4px; height: 4px; border-radius: 50%; background: var(--adm-gold);"></span>
-            <span class="text-muted small">@Model.Count YÊU CẦU</span>
-        </div>
-        <h2 class="fw-bold mb-0 adm-heading" style="letter-spacing: -0.02em;">Yêu cầu Hỗ trợ & Phản hồi Khách hàng</h2>
-    </div>
-
-    @if (countPending > 0)
+<header class="adm-dashboard-header adm-overview-header mb-3">
+    <div><h1>Yêu cầu hỗ trợ</h1><p class="adm-dashboard-period">Tiếp nhận từ form Liên hệ · @ViewBag.Count kết quả</p></div>
+    <a asp-controller="SupportChat" asp-action="Inbox" class="adm-btn-outline"><i class="bi bi-chat-dots" aria-hidden="true"></i> Chat trực tiếp</a>
+</header>
+<div class="row row-cols-2 row-cols-xl-4 g-3 mb-3">
+    @foreach (var metric in new[] {
+        (SupportRequestStatus.Pending, "Chờ xử lý", (int)ViewBag.CountPending),
+        (SupportRequestStatus.InProgress, "Đang xử lý", (int)ViewBag.CountInProgress),
+        (SupportRequestStatus.Resolved, "Đã giải quyết", (int)ViewBag.CountResolved),
+        (SupportRequestStatus.Closed, "Đã đóng", (int)ViewBag.CountClosed) })
     {
-        <a asp-action="Index" asp-route-status="@((int)SupportRequestStatus.Pending)" 
-           class="adm-card p-2 px-3 d-flex align-items-center gap-2 text-decoration-none border-warning" 
-           style="background: rgba(217, 119, 6, 0.08); border-color: rgba(217, 119, 6, 0.3) !important;">
-            <span class="adm-pulse-dot" style="background: var(--adm-amber); box-shadow: 0 0 8px var(--adm-amber);"></span>
-            <span class="small fw-bold text-warning">@countPending yêu cầu mới cần xử lý</span>
-            <i class="bi bi-chevron-right text-warning small"></i>
-        </a>
+        <div class="col"><a asp-action="Index" asp-route-status="@metric.Item1" class="adm-card p-3 d-block text-decoration-none">
+            <span class="text-muted small">@metric.Item2</span><strong class="d-block fs-4 adm-heading">@metric.Item3</strong>
+        </a></div>
     }
 </div>
 
@@ -51,7 +43,7 @@
         <div class="col-md-5">
             <div class="input-group">
                 <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-search text-muted"></i></span>
-                <input type="text" name="search" class="form-control border-start-0" 
+                <input type="text" name="search" maxlength="100" aria-label="Tìm yêu cầu hỗ trợ" class="form-control border-start-0"
                        placeholder="Tìm theo tên, email, SĐT, mã đơn..." value="@searchKeyword" />
             </div>
         </div>
@@ -121,7 +113,7 @@ else
                             <td>
                                 <div class="fw-bold">@item.FullName</div>
                                 <div class="small text-muted">
-                                    <i class="bi bi-telephone me-1"></i>@item.PhoneNumber &nbsp;|&nbsp; 
+                                    <i class="bi bi-telephone me-1"></i>@item.PhoneNumber &nbsp;|&nbsp;
                                     <i class="bi bi-envelope me-1"></i>@item.Email
                                 </div>
                             </td>
@@ -173,4 +165,15 @@ else
             </table>
         </div>
     </div>
+}
+
+
+@if (ViewBag.PageCount > 1)
+{
+    var current = (int)ViewBag.Page;
+    <nav class="d-flex align-items-center justify-content-center gap-3 mt-3" aria-label="Phân trang yêu cầu hỗ trợ">
+        @if (current > 1) { <a asp-action="Index" asp-route-page="@(current - 1)" asp-route-status="@selectedStatus" asp-route-search="@searchKeyword" class="adm-btn-outline">Trang trước</a> }
+        <span>Trang @current / @ViewBag.PageCount</span>
+        @if (current < ViewBag.PageCount) { <a asp-action="Index" asp-route-page="@(current + 1)" asp-route-status="@selectedStatus" asp-route-search="@searchKeyword" class="adm-btn-outline">Trang sau</a> }
+    </nav>
 }
