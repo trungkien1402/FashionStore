@@ -510,7 +510,7 @@
                 if (writeCard) writeCard.style.display = 'none';
                 if (noticeBox) {
                     noticeBox.style.display = 'flex';
-                    if (noticeText) noticeText.textContent = '🔒 Đánh giá chỉ dành cho tài khoản đã mua và nhận sản phẩm thành công.';
+                    if (noticeText) noticeText.textContent = 'Đánh giá chỉ dành cho tài khoản đã mua và nhận sản phẩm thành công.';
                 }
             }
 

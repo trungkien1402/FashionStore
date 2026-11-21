@@ -930,188 +930,213 @@
 }
 
 /* ==============================================================================
-   PHẦN ĐÁNH GIÁ SẢN PHẨM TRỰC TIẾP TRÊN SÀO ĐỒ 3D (ĐỒNG BỘ FONT & MÀU CHỮ CHI TIẾT)
+   PHẦN ĐÁNH GIÁ SẢN PHẨM TRỰC TIẾP TRÊN SÀO ĐỒ 3D (ĐỒNG BỘ 100% PHONG CÁCH SHOWROOM)
    ============================================================================== */
 .rail-reviews-container {
-    width: 100%;
-    margin-top: 24px;
-    padding-top: 20px;
+    width: min(100%, 460px);
+    margin: 36px auto 20px;
+    padding-top: 24px;
     border-top: 1px solid rgba(43, 51, 96, 0.12);
     box-sizing: border-box;
     text-align: left;
-    font-family: var(--rail-font, 'Plus Jakarta Sans', -apple-system, sans-serif);
+    font-family: inherit;
     color: var(--rail-ink);
 }
 .rail-reviews-divider {
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(43, 51, 96, 0.14), transparent);
-    margin-bottom: 20px;
+    display: none;
 }
 .rail-reviews-header {
-    margin-bottom: 16px;
+    margin-bottom: 18px;
 }
 .rail-reviews-title-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
 }
 .rail-reviews-badge {
-    font-family: var(--rail-font, 'Plus Jakarta Sans', -apple-system, sans-serif);
+    font-family: inherit;
     font-size: 10px;
     font-weight: 700;
-    letter-spacing: 0.1em;
-    color: #10b981;
-    background: rgba(16, 185, 129, 0.12);
-    padding: 3px 8px;
-    border-radius: 999px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--rail-muted);
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 5px;
+}
+.rail-reviews-badge i {
+    font-size: 12px;
+    color: var(--rail-ink);
+    opacity: 0.7;
 }
 .rail-reviews-score {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
     font-size: 13px;
-    font-family: var(--rail-font, 'Plus Jakarta Sans', -apple-system, sans-serif);
+    font-family: inherit;
 }
 .rail-reviews-score .score-num {
-    font-weight: 800;
+    font-weight: 700;
     color: var(--rail-ink);
+    font-size: 13px;
 }
 .rail-reviews-score .score-stars {
-    color: #f59e0b;
-    letter-spacing: 1px;
+    color: #b4833e;
+    letter-spacing: 2px;
+    font-size: 12px;
 }
 .rail-reviews-score .score-count {
     color: var(--rail-muted);
     font-size: 12px;
+    font-weight: 500;
 }
 .rail-reviews-heading {
-    font-family: var(--rail-font, 'Plus Jakarta Sans', -apple-system, sans-serif);
-    font-size: 15px;
+    font-family: inherit;
+    font-size: 13px;
     font-weight: 800;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--rail-ink);
     margin: 0;
 }
 .rail-write-review-card {
-    background: rgba(43, 51, 96, 0.03);
+    background: rgba(255, 255, 255, 0.65);
     border: 1px solid rgba(43, 51, 96, 0.12);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 20px;
+    border-radius: 16px;
+    padding: 18px 20px;
+    margin-bottom: 22px;
     text-align: left;
-    font-family: var(--rail-font, 'Plus Jakarta Sans', -apple-system, sans-serif);
+    font-family: inherit;
+    box-shadow: 0 4px 16px rgba(43, 51, 96, 0.03);
+    backdrop-filter: blur(8px);
 }
 .rail-write-title {
-    font-family: var(--rail-font, 'Plus Jakarta Sans', -apple-system, sans-serif);
-    font-size: 13px;
+    font-family: inherit;
+    font-size: 12px;
     font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     color: var(--rail-ink);
-    display: block;
-    margin-bottom: 2px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+.rail-write-title i {
+    color: #b4833e;
+    font-size: 13px;
 }
 .rail-write-sub {
-    font-family: var(--rail-font, 'Plus Jakarta Sans', -apple-system, sans-serif);
-    font-size: 11.5px;
+    font-family: inherit;
+    font-size: 12px;
     color: var(--rail-muted);
-    margin: 0 0 12px 0;
+    line-height: 1.5;
+    margin: 0 0 14px 0;
 }
 .rail-star-selector {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 12px;
+    gap: 10px;
+    margin-bottom: 14px;
 }
 .rail-star-selector .star-label {
-    font-family: var(--rail-font, 'Plus Jakarta Sans', -apple-system, sans-serif);
-    font-size: 12px;
-    font-weight: 600;
+    font-family: inherit;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
     color: var(--rail-ink);
 }
 .rail-star-selector .star-btns {
     display: flex;
-    gap: 2px;
+    gap: 3px;
 }
 .rail-star-btn {
     background: none;
     border: none;
-    font-size: 20px;
-    color: rgba(43, 51, 96, 0.25);
+    font-size: 22px;
+    color: rgba(43, 51, 96, 0.2);
     cursor: pointer;
-    padding: 0 2px;
+    padding: 0 1px;
     transition: transform 0.15s, color 0.15s;
     line-height: 1;
 }
 .rail-star-btn.is-active,
 .rail-star-btn:hover {
-    color: #f59e0b;
+    color: #b4833e;
 }
 .rail-star-btn:hover {
-    transform: scale(1.15);
+    transform: scale(1.18);
 }
 .star-mood-text {
-    font-family: var(--rail-font, 'Plus Jakarta Sans', -apple-system, sans-serif);
+    font-family: inherit;
     font-size: 11.5px;
     font-weight: 600;
     color: var(--rail-muted);
-    margin-left: 4px;
+    margin-left: 6px;
 }
 .rail-review-input {
     width: 100%;
-    border-radius: 8px;
-    border: 1px solid rgba(43, 51, 96, 0.18);
+    border-radius: 12px;
+    border: 1px solid rgba(43, 51, 96, 0.15);
     background: #ffffff;
-    padding: 10px 12px;
+    padding: 12px 14px;
     font-size: 13px;
     color: var(--rail-ink);
     resize: vertical;
     box-sizing: border-box;
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
-    font-family: var(--rail-font, 'Plus Jakarta Sans', -apple-system, sans-serif);
-    margin-bottom: 10px;
+    font-family: inherit;
+    line-height: 1.5;
+    margin-bottom: 12px;
 }
 .rail-review-input:focus {
     border-color: var(--rail-ink);
-    box-shadow: 0 0 0 3px rgba(43, 51, 96, 0.1);
+    box-shadow: 0 0 0 3px rgba(43, 51, 96, 0.08);
 }
 .rail-review-submit-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 8px;
     width: 100%;
-    padding: 10px 16px;
-    border-radius: 999px;
+    padding: 13px 24px;
+    border-radius: 40px;
     background: var(--rail-ink);
     border: 1.5px solid var(--rail-ink);
     color: #ffffff;
-    font-family: var(--rail-font, 'Plus Jakarta Sans', -apple-system, sans-serif);
-    font-size: 12px;
+    font-family: inherit;
+    font-size: 11.5px;
     font-weight: 700;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.25s ease;
 }
 .rail-review-submit-btn:hover:not(:disabled) {
     background: #424d85;
     border-color: #424d85;
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(43, 51, 96, 0.18);
 }
 .rail-review-submit-btn:disabled {
-    opacity: 0.6;
+    opacity: 0.5;
     cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 .rail-review-msg {
-    font-family: var(--rail-font, 'Plus Jakarta Sans', -apple-system, sans-serif);
-    margin: 8px 0 0;
+    font-family: inherit;
+    margin: 10px 0 0;
     font-size: 12px;
     font-weight: 600;
+    text-align: center;
 }
 .rail-review-msg.success { color: #10b981; }
 .rail-review-msg.error { color: #ef4444; }
@@ -1119,19 +1144,23 @@
 .rail-review-notice-box {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
-    padding: 12px 14px;
-    background: rgba(43, 51, 96, 0.04);
-    border: 1px dashed rgba(43, 51, 96, 0.18);
-    border-radius: 10px;
-    font-family: var(--rail-font, 'Plus Jakarta Sans', -apple-system, sans-serif);
+    padding: 12px 18px;
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(43, 51, 96, 0.1);
+    border-radius: 999px;
+    font-family: inherit;
     font-size: 12px;
     color: var(--rail-muted);
-    margin-bottom: 20px;
+    margin: 14px 0 24px;
+    text-align: center;
+    backdrop-filter: blur(4px);
 }
 .rail-review-notice-box i {
-    font-size: 18px;
-    color: #10b981;
+    font-size: 14px;
+    color: var(--rail-ink);
+    opacity: 0.65;
     flex-shrink: 0;
 }
 
@@ -1141,13 +1170,13 @@
     align-items: center;
     padding-bottom: 8px;
     border-bottom: 1px solid rgba(43, 51, 96, 0.1);
-    margin-bottom: 12px;
-    font-family: var(--rail-font, 'Plus Jakarta Sans', -apple-system, sans-serif);
-    font-size: 12px;
+    margin-bottom: 14px;
+    font-family: inherit;
+    font-size: 11px;
     font-weight: 700;
     color: var(--rail-muted);
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.15em;
 }
 .rail-review-items {
     display: flex;
@@ -1155,86 +1184,94 @@
     gap: 12px;
 }
 .rail-review-item {
-    background: #ffffff;
-    border: 1px solid rgba(43, 51, 96, 0.1);
-    border-radius: 10px;
-    padding: 12px;
-    box-shadow: 0 2px 8px rgba(43, 51, 96, 0.04);
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(43, 51, 96, 0.08);
+    border-radius: 12px;
+    padding: 14px 16px;
+    box-shadow: 0 2px 10px rgba(43, 51, 96, 0.02);
     text-align: left;
-    font-family: var(--rail-font, 'Plus Jakarta Sans', -apple-system, sans-serif);
+    font-family: inherit;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.rail-review-item:hover {
+    box-shadow: 0 4px 14px rgba(43, 51, 96, 0.05);
 }
 .rail-review-item-top {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
 }
 .rail-item-user-info {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
 }
 .rail-item-avatar {
-    width: 26px;
-    height: 26px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     background: var(--rail-ink);
     color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: var(--rail-font, 'Plus Jakarta Sans', -apple-system, sans-serif);
+    font-family: inherit;
     font-size: 11px;
     font-weight: 700;
     flex-shrink: 0;
+    letter-spacing: 0;
 }
 .rail-item-user-meta {
     display: flex;
     flex-direction: column;
+    gap: 2px;
 }
 .rail-item-user-name {
-    font-family: var(--rail-font, 'Plus Jakarta Sans', -apple-system, sans-serif);
+    font-family: inherit;
     font-size: 12.5px;
     font-weight: 700;
     color: var(--rail-ink);
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 5px;
 }
 .rail-item-verified {
-    color: #10b981;
+    color: var(--rail-ink);
+    opacity: 0.6;
     font-size: 11px;
 }
 .rail-item-spec {
-    font-family: var(--rail-font, 'Plus Jakarta Sans', -apple-system, sans-serif);
+    font-family: inherit;
     font-size: 11px;
     color: var(--rail-muted);
 }
 .rail-item-stars {
-    color: #f59e0b;
+    color: #b4833e;
     font-size: 12px;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
 }
 .rail-item-date {
-    font-family: var(--rail-font, 'Plus Jakarta Sans', -apple-system, sans-serif);
+    font-family: inherit;
     font-size: 11px;
     color: var(--rail-muted);
 }
 .rail-item-comment {
-    font-family: var(--rail-font, 'Plus Jakarta Sans', -apple-system, sans-serif);
-    font-size: 12.5px;
+    font-family: inherit;
+    font-size: 13px;
     color: var(--rail-ink);
     opacity: 0.92;
-    line-height: 1.5;
-    margin: 0;
+    line-height: 1.55;
+    margin: 4px 0 0;
 }
 .rail-review-loading,
 .rail-review-empty {
     text-align: center;
     padding: 24px 0;
     color: var(--rail-muted);
-    font-family: var(--rail-font, 'Plus Jakarta Sans', -apple-system, sans-serif);
+    font-family: inherit;
     font-size: 12.5px;
+    font-style: italic;
 }
 
 .rail-btn-feedback {
