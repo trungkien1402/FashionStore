@@ -1,5 +1,8 @@
 @model List<FashionStore.Models.Entities.Order>
+@using FashionStore.Models.Entities
 @using FashionStore.Models.Enums
+@using Microsoft.EntityFrameworkCore
+@inject FashionStore.Data.ApplicationDbContext DbContext
 
 @{
     ViewData["Title"] = "Đơn hàng của tôi";
@@ -22,7 +25,7 @@
         OrderStatus.Processing => "Đang xử lý kho",
         OrderStatus.Shipping => "Đang vận chuyển",
         OrderStatus.Delivered => "Đã nhận hàng",
-        OrderStatus.Cancelled => "Đã hủy",
+        OrderStatus.Cancelled => "Đã hủy đơn",
         OrderStatus.DeliveryFailed => "Giao thất bại",
         OrderStatus.Returned => "Đã hoàn trả",
         _ => status.ToString()
@@ -45,20 +48,57 @@
     var countCancelled = allOrders.Count(o => o.Status == OrderStatus.Cancelled || o.Status == OrderStatus.DeliveryFailed || o.Status == OrderStatus.Returned);
 }
 
+@functions {
+    public string ResolveItemImage(OrderItem item, FashionStore.Data.ApplicationDbContext db)
+    {
+        Product? product = item.ProductVariant?.Product;
+        if (product == null && item.ProductVariantId > 0)
+        {
+            try
+            {
+                var variant = db.ProductVariants.Include(v => v.Product).FirstOrDefault(v => v.Id == item.ProductVariantId);
+                product = variant?.Product;
+            }
+            catch { }
+        }
+        if (product == null && !string.IsNullOrEmpty(item.ProductName))
+        {
+            try
+            {
+                product = db.Products.FirstOrDefault(p => p.Name == item.ProductName);
+            }
+            catch { }
+        }
+        if (product != null && !string.IsNullOrEmpty(product.ImageUrl))
+        {
+            return product.ImageUrl;
+        }
+        return "/clothing-rail/assets/reach-shirt-front.webp";
+    }
+}
+
 <div class="hnmt-orders-page" data-order-live>
     <div class="hnmt-orders-shell">
         
-        <!-- HEADER TIÊU ĐỀ CHÍNH -->
+        <!-- LUXURY EDITORIAL HEADER -->
         <header class="hnmt-orders-header">
+            <div class="hnmt-header-badge-wrap">
+                <span class="hnmt-orders-eyebrow">
+                    <i class="bi bi-bag-check-fill text-success"></i>
+                    HNMTSHOP ATELIER · ORDER ARCHIVE
+                </span>
+            </div>
             <h1 class="hnmt-orders-title">Hồ sơ đơn hàng của bạn</h1>
-            <p class="hnmt-orders-subtitle">Theo dõi tiến trình vận chuyển, tình trạng thanh toán và tra cứu thông tin chi tiết từng sản phẩm đã đặt mua.</p>
+            <p class="hnmt-orders-subtitle">
+                Theo dõi tiến trình vận chuyển, tình trạng thanh toán và tra cứu thông tin chi tiết từng sản phẩm đã đặt mua.
+            </p>
         </header>
 
         <!-- FLASH MESSAGE -->
         @if (TempData["Success"] != null && !TempData["Success"]!.ToString()!.Contains("Đăng nhập"))
         {
             <div class="hnmt-orders-alert is-success">
-                <i class="bi bi-check-circle"></i>
+                <i class="bi bi-check-circle-fill"></i>
                 <span>@TempData["Success"]</span>
             </div>
         }
@@ -66,7 +106,7 @@
         @if (TempData["Error"] != null)
         {
             <div class="hnmt-orders-alert is-error">
-                <i class="bi bi-exclamation-circle"></i>
+                <i class="bi bi-exclamation-circle-fill"></i>
                 <span>@TempData["Error"]</span>
             </div>
         }
@@ -76,14 +116,14 @@
             <!-- EMPTY STATE -->
             <div class="hnmt-orders-empty">
                 <div class="hnmt-empty-symbol">
-                    <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
                         <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/>
                         <path d="M3 6h18"/>
                         <path d="M16 10a4 4 0 0 1-8 0"/>
                     </svg>
                 </div>
                 <h3>Bạn chưa có đơn hàng nào</h3>
-                <p>Khám phá các thiết kế thời trang streetwear và bộ sưu tập độc bản của HNMTSHOP.</p>
+                <p>Khám phá các thiết kế thời trang đường phố và bộ sưu tập độc bản mới nhất của HNMTSHOP.</p>
                 <a asp-controller="Products" asp-action="Index" class="hnmt-explore-store-btn">
                     <span>Khám phá Cửa Hàng</span>
                     <i class="bi bi-arrow-right"></i>
@@ -92,66 +132,79 @@
         }
         else
         {
-            <!-- BỘ LỌC ĐƠN HÀNG THIẾT KẾ 2 HÀNG CÂN ĐỐI, CHUẨN ĐẸP -->
+            <!-- BỘ LỌC ĐƠN HÀNG THỜI TRANG CAO CẤP (SEGMENTED TABS & UTILITY BAR) -->
             <section class="hnmt-filter-panel" aria-label="Bộ lọc tìm kiếm đơn hàng">
-                <!-- HÀNG 1: TÌM KIẾM TỪ KHÓA & NÚT ĐẶT LẠI -->
-                <div class="hnmt-filter-primary-row">
+                <!-- 1. THANH TRẠNG THÁI SEGMENTED PILLS (1-TOUCH CHỌN TRẠNG THÁI) -->
+                <div class="hnmt-status-tabs-scroll">
+                    <div class="hnmt-status-tabs-bar" role="tablist">
+                        <button type="button" class="hnmt-status-tab active" data-status="all" role="tab" aria-selected="true">
+                            <span>Tất cả</span>
+                            <span class="tab-count">@countAll</span>
+                        </button>
+                        <button type="button" class="hnmt-status-tab" data-status="pending" role="tab" aria-selected="false">
+                            <span>Chờ xác nhận</span>
+                            <span class="tab-count">@countPending</span>
+                        </button>
+                        <button type="button" class="hnmt-status-tab" data-status="shipping" role="tab" aria-selected="false">
+                            <span>Đang giao</span>
+                            <span class="tab-count">@countShipping</span>
+                        </button>
+                        <button type="button" class="hnmt-status-tab" data-status="delivered" role="tab" aria-selected="false">
+                            <span>Đã nhận</span>
+                            <span class="tab-count">@countDelivered</span>
+                        </button>
+                        <button type="button" class="hnmt-status-tab" data-status="cancelled" role="tab" aria-selected="false">
+                            <span>Đã hủy</span>
+                            <span class="tab-count">@countCancelled</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SELECT ẨN ĐỂ ĐỒNG BỘ VỚI ORDER-LIVE.JS -->
+                <select id="hnmtOrderStatusSelect" class="d-none" aria-hidden="true" tabindex="-1">
+                    <option value="all">all</option>
+                    <option value="pending">pending</option>
+                    <option value="shipping">shipping</option>
+                    <option value="delivered">delivered</option>
+                    <option value="cancelled">cancelled</option>
+                </select>
+
+                <!-- 2. THANH CÔNG CỤ TÌM KIẾM & KHOẢNG NGÀY -->
+                <div class="hnmt-filter-utility-bar">
                     <div class="hnmt-search-box">
                         <svg class="hnmt-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="11" cy="11" r="8"></circle>
                             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                         </svg>
                         <input type="text" id="hnmtOrderSearchInput" placeholder="Tìm theo mã đơn (#FS...), tên sản phẩm..." autocomplete="off" />
-                        <button type="button" id="hnmtSearchClearBtn" class="hnmt-search-clear" title="Xóa từ khóa" aria-label="Xóa từ khóa">
+                        <button type="button" id="hnmtSearchClearBtn" class="hnmt-search-clear" title="Xóa từ khóa" aria-label="Xóa từ khóa" style="display: none;">
                             <i class="bi bi-x"></i>
                         </button>
                     </div>
 
-                    <!-- NÚT ĐẶT LẠI BỘ LỌC (ĐẶT NGAY CẠNH Ô TÌM KIẾM, KHÔNG BỊ RỚT DÒNG) -->
-                    <button type="button" id="hnmtFilterResetBtn" class="hnmt-filter-reset" title="Đặt lại toàn bộ tiêu chí về mặc định">
-                        <svg class="hnmt-reset-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-                            <path d="M3 3v5h5"/>
-                        </svg>
-                        <span>Đặt lại</span>
-                    </button>
-                </div>
-
-                <!-- HÀNG 2: BỘ LỌC TRẠNG THÁI & KHOẢNG NGÀY (GỌN GÀNG, CÂN XỨNG) -->
-                <div class="hnmt-filter-secondary-row">
-                    <!-- LỌC TRẠNG THÁI -->
-                    <div class="hnmt-filter-cell">
-                        <span class="hnmt-cell-label">Trạng thái:</span>
-                        <div class="hnmt-select-wrap">
-                            <select id="hnmtOrderStatusSelect" class="hnmt-filter-select" aria-label="Lọc theo trạng thái">
-                                <option value="all">Tất cả trạng thái (@countAll)</option>
-                                <option value="pending">Chờ xác nhận (@countPending)</option>
-                                <option value="shipping">Đang giao (@countShipping)</option>
-                                <option value="delivered">Đã nhận (@countDelivered)</option>
-                                <option value="cancelled">Đã hủy (@countCancelled)</option>
-                            </select>
+                    <div class="hnmt-date-filter-group">
+                        <div class="hnmt-date-field">
+                            <span class="hnmt-date-label">Từ:</span>
+                            <input type="date" id="hnmtOrderDateFrom" class="hnmt-date-input" aria-label="Từ ngày" title="Lọc từ ngày" />
                         </div>
-                    </div>
-
-                    <!-- LỌC KHOẢNG NGÀY: TỪ NGÀY -> ĐẾN NGÀY -->
-                    <div class="hnmt-filter-cell">
-                        <span class="hnmt-cell-label">Khoảng ngày:</span>
-                        <div class="hnmt-date-range-group">
-                            <div class="hnmt-date-field">
-                                <span class="hnmt-date-label">Từ:</span>
-                                <input type="date" id="hnmtOrderDateFrom" class="hnmt-date-input" aria-label="Từ ngày" title="Lọc từ ngày" />
-                            </div>
-                            <span class="hnmt-date-sep">–</span>
-                            <div class="hnmt-date-field">
-                                <span class="hnmt-date-label">Đến:</span>
-                                <input type="date" id="hnmtOrderDateTo" class="hnmt-date-input" aria-label="Đến ngày" title="Lọc đến ngày" />
-                            </div>
+                        <span class="hnmt-date-sep">–</span>
+                        <div class="hnmt-date-field">
+                            <span class="hnmt-date-label">Đến:</span>
+                            <input type="date" id="hnmtOrderDateTo" class="hnmt-date-input" aria-label="Đến ngày" title="Lọc đến ngày" />
                         </div>
+
+                        <button type="button" id="hnmtFilterResetBtn" class="hnmt-filter-reset" title="Đặt lại toàn bộ tiêu chí về mặc định">
+                            <svg class="hnmt-reset-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                                <path d="M3 3v5h5"/>
+                            </svg>
+                            <span>Đặt lại</span>
+                        </button>
                     </div>
                 </div>
             </section>
 
-            <!-- DANH SÁCH THẺ ĐƠN HÀNG -->
+            <!-- DANH SÁCH THẺ ĐƠN HÀNG (LOOKBOOK CARDS VỚI THUMBNAIL) -->
             <div class="hnmt-orders-stack" id="hnmtOrdersList">
                 @foreach (var order in allOrders)
                 {
@@ -169,7 +222,6 @@
                     var webExpireSec = isPendingVietQr ? Math.Max(0, (int)(order.CreatedAt.AddMinutes(10) - nowUtc).TotalSeconds) : 0;
                     var actualExpireSec = isPendingVietQr ? Math.Max(0, (int)(order.CreatedAt.AddMinutes(15) - nowUtc).TotalSeconds) : 0;
 
-                    // Gom chuỗi tìm kiếm không dấu/lowercase để tra cứu nhanh kể cả khi tóm tắt ẩn bớt
                     var searchWords = $"{order.OrderCode} {string.Join(" ", order.Items?.Select(i => $"{i.ProductName} {i.Size} {i.Color}") ?? Array.Empty<string>())}".ToLower();
 
                     <article class="hnmt-order-card" 
@@ -224,38 +276,84 @@
                             </div>
                         </div>
 
-                        <!-- BODY: TÓM TẮT SẢN PHẨM GỌN GÀNG, NHÃ NHẶN (NỘI DUNG PHỤ, CÓ DẤU ... NẾU NHIỀU MÓN) -->
+                        <!-- BODY: THUMBNAIL HÌNH ẢNH SẢN PHẨM & TÓM TẮT SANG TRỌNG -->
                         <div class="hnmt-card-body">
-                            <div class="hnmt-summary-row">
-                                <span class="hnmt-summary-label">Sản phẩm:</span>
-                                <span class="hnmt-summary-content">
-                                    @if (order.Items != null && order.Items.Any())
-                                    {
-                                        var itemCount = order.Items.Count;
-                                        if (itemCount == 1)
-                                        {
-                                            var first = order.Items.First();
-                                            <span>@first.ProductName @(!string.IsNullOrEmpty(first.Size) ? $"({first.Size})" : "")</span>
-                                        }
-                                        else
-                                        {
-                                            var previewNames = string.Join(", ", order.Items.Take(2).Select(i => i.ProductName));
-                                            <span>@(totalQty > 0 ? $"{totalQty} món " : "")(@previewNames...)</span>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted">Kiện hàng đang xử lý...</span>
-                                    }
-                                </span>
-                            </div>
+                            @if (order.Items != null && order.Items.Any())
+                            {
+                                var itemCount = order.Items.Count;
+                                if (itemCount == 1)
+                                {
+                                    var firstItem = order.Items.First();
+                                    var photoUrl = ResolveItemImage(firstItem, DbContext);
+
+                                    <div class="hnmt-single-item-layout">
+                                        <div class="hnmt-item-thumb-box">
+                                            <img src="@photoUrl" alt="@firstItem.ProductName" class="hnmt-item-thumb" onerror="this.onerror=null;this.src='/clothing-rail/assets/reach-shirt-front.webp';" />
+                                        </div>
+                                        <div class="hnmt-item-main-info">
+                                            <h4 class="hnmt-item-title">@firstItem.ProductName</h4>
+                                            <div class="hnmt-item-specs">
+                                                @if (!string.IsNullOrEmpty(firstItem.Size))
+                                                {
+                                                    <span class="spec-pill">Size: <strong>@firstItem.Size</strong></span>
+                                                }
+                                                @if (!string.IsNullOrEmpty(firstItem.Color))
+                                                {
+                                                    <span class="spec-pill">Màu: <strong>@firstItem.Color</strong></span>
+                                                }
+                                                <span class="spec-pill">Số lượng: <strong>@firstItem.Quantity</strong></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="hnmt-multi-item-layout">
+                                        <!-- GALLERY THUMBNAIL THU NHỎ -->
+                                        <div class="hnmt-thumb-gallery">
+                                            @foreach (var item in order.Items.Take(4))
+                                            {
+                                                var thumbUrl = ResolveItemImage(item, DbContext);
+                                                <div class="hnmt-thumb-wrap" title="@item.ProductName (@item.Size)">
+                                                    <img src="@thumbUrl" alt="@item.ProductName" class="hnmt-gallery-thumb" onerror="this.onerror=null;this.src='/clothing-rail/assets/reach-shirt-front.webp';" />
+                                                    <span class="hnmt-thumb-qty">×@item.Quantity</span>
+                                                </div>
+                                            }
+                                            @if (order.Items.Count > 4)
+                                            {
+                                                <div class="hnmt-thumb-more" title="Còn @(order.Items.Count - 4) sản phẩm khác">
+                                                    <span>+@(order.Items.Count - 4)</span>
+                                                </div>
+                                            }
+                                        </div>
+
+                                        <div class="hnmt-multi-meta">
+                                            <span class="hnmt-multi-badge">Kiện hàng gồm <strong>@totalQty món đồ</strong></span>
+                                            <p class="hnmt-multi-desc">
+                                                @string.Join(" · ", order.Items.Take(2).Select(i => i.ProductName))
+                                                @if (order.Items.Count > 2)
+                                                {
+                                                    <em> và @(order.Items.Count - 2) sản phẩm khác...</em>
+                                                }
+                                            </p>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="hnmt-empty-items-notice">
+                                    <i class="bi bi-box-seam"></i>
+                                    <span>Kiện hàng đang được hệ thống tiếp nhận...</span>
+                                </div>
+                            }
                         </div>
 
                         <!-- FOOTER: TỔNG TIỀN & CÁC NÚT THAO TÁC -->
                         <div class="hnmt-card-footer">
                             <div class="hnmt-total-box">
                                 <span class="hnmt-total-caption">Tổng thanh toán</span>
-                                <strong class="hnmt-total-val">@order.TotalAmount.ToString("N0") ₫</strong>
+                                <strong class="hnmt-total-val font-mono">@order.TotalAmount.ToString("N0") ₫</strong>
                             </div>
 
                             <div class="hnmt-action-group">
@@ -283,10 +381,10 @@
                                 @if (order.Status == OrderStatus.PendingConfirmation)
                                 {
                                     <form asp-action="CancelOrder" asp-route-id="@order.Id" method="post" class="m-0"
-                                          onsubmit="return confirm('Bạn có chắc chắn muốn yêu cầu hủy đơn hàng này?');">
+                                          onsubmit="return confirm('Bạn có chắc chắn muốn yêu cầu hủy đơn hàng này? Hệ thống sẽ hoàn kho sản phẩm ngay.');">
                                         @Html.AntiForgeryToken()
                                         <button type="submit" class="hnmt-btn-cancel" title="Hủy đơn hàng này">
-                                            <span>Hủy</span>
+                                            <span>Hủy đơn</span>
                                         </button>
                                     </form>
                                 }
@@ -314,76 +412,77 @@
 
 <style>
 /* ==========================================================================
-   HNMTSHOP - GIAO DIỆN HỒ SƠ ĐƠN HÀNG (ZARA / SSENSE LUXURY MINIMALIST)
-   Font Plus Jakarta Sans, Bộ lọc Select tinh gọn trên 1 hàng,
-   Badge Đã Hủy màu đỏ, Nội dung sản phẩm tóm tắt nhã nhặn không bị gắt/nổi.
+   HNMTSHOP - GIAO DIỆN HỒ SƠ ĐƠN HÀNG (THE EDITORIAL LOOKBOOK ARCHIVE)
+   Font Plus Jakarta Sans | Farfetch & SSENSE Luxury Standards
    ========================================================================== */
 
-@@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-
 .hnmt-orders-page {
-    background-color: #FFFFFF;
+    background-color: #F8FAFC;
     min-height: 100vh;
-    padding: 36px 0 88px;
+    padding: 44px 0 96px;
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     color: #0F172A;
     -webkit-font-smoothing: antialiased;
 }
 
 .hnmt-orders-shell {
-    max-width: 980px;
+    max-width: 1060px;
     margin: 0 auto;
     padding: 0 24px;
-    text-align: left;
 }
 
 /* 1. HEADER */
 .hnmt-orders-header {
-    margin-bottom: 24px;
-    text-align: left;
+    margin-bottom: 32px;
+}
+
+.hnmt-header-badge-wrap {
+    margin-bottom: 10px;
 }
 
 .hnmt-orders-eyebrow {
-    font-size: 11.5px;
-    font-weight: 700;
-    letter-spacing: 1.6px;
-    color: #64748B;
-    text-transform: uppercase;
-    display: block;
-    margin-bottom: 8px;
-    text-align: left;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    color: #334155;
+    background: #FFFFFF;
+    border: 1px solid #CBD5E1;
+    padding: 4px 14px;
+    border-radius: 999px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }
 
 .hnmt-orders-title {
-    font-size: clamp(26px, 3.2vw, 34px);
+    font-size: clamp(28px, 3.5vw, 38px);
     font-weight: 800;
-    color: #09090B;
+    color: #0F172A;
     letter-spacing: -0.6px;
-    margin: 0 0 8px;
-    line-height: 1.25;
-    text-align: left;
+    margin: 0 0 10px;
+    line-height: 1.2;
 }
 
 .hnmt-orders-subtitle {
-    font-size: 14.5px;
+    font-size: 0.95rem;
     color: #64748B;
-    max-width: 620px;
+    max-width: 650px;
     margin: 0;
     line-height: 1.6;
-    text-align: left;
 }
 
 /* 2. FLASH ALERTS */
 .hnmt-orders-alert {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 12px 18px;
-    border-radius: 10px;
-    font-size: 13.5px;
+    gap: 12px;
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-size: 0.92rem;
     font-weight: 600;
-    margin-bottom: 20px;
-    text-align: left;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .hnmt-orders-alert.is-success {
@@ -398,249 +497,217 @@
     border: 1px solid #FECACA;
 }
 
-/* 3. BỘ LỌC ĐƠN HÀNG 2 HÀNG CÂN ĐỐI, CHUẨN ĐẸP */
+/* 3. BỘ LỌC ĐƠN HÀNG */
 .hnmt-filter-panel {
-    background: #F8FAFC;
+    background: #FFFFFF;
     border: 1px solid #E2E8F0;
     border-radius: 16px;
-    padding: 16px 18px;
-    margin-bottom: 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    text-align: left;
+    padding: 16px 20px;
+    margin-bottom: 28px;
+    box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.03);
 }
 
-/* HÀNG 1: TÌM KIẾM CHÍNH & NÚT ĐẶT LẠI */
-.hnmt-filter-primary-row {
+/* SEGMENTED STATUS PILLS */
+.hnmt-status-tabs-scroll {
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    margin-bottom: 16px;
+    padding-bottom: 4px;
+}
+
+.hnmt-status-tabs-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.hnmt-status-tabs-bar {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #F1F5F9;
+    padding: 5px;
+    border-radius: 999px;
+    min-width: 100%;
+}
+
+.hnmt-status-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    background: transparent;
+    color: #64748B;
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.hnmt-status-tab:hover {
+    color: #0F172A;
+    background: rgba(255, 255, 255, 0.6);
+}
+
+.hnmt-status-tab.active {
+    background: #0F172A;
+    color: #FFFFFF;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.15);
+}
+
+.hnmt-status-tab .tab-count {
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 1px 7px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.08);
+}
+
+.hnmt-status-tab.active .tab-count {
+    background: rgba(255, 255, 255, 0.2);
+    color: #FFFFFF;
+}
+
+/* UTILITY BAR */
+.hnmt-filter-utility-bar {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 12px;
-    width: 100%;
 }
 
 .hnmt-search-box {
+    flex: 1 1 280px;
     position: relative;
-    flex: 1;
-    height: 46px;
     display: flex;
     align-items: center;
 }
 
 .hnmt-search-icon {
     position: absolute;
-    left: 16px;
+    left: 14px;
     color: #94A3B8;
     pointer-events: none;
-    width: 17px;
-    height: 17px;
 }
 
 .hnmt-search-box input {
     width: 100%;
-    height: 46px;
-    padding: 0 42px 0 46px;
-    border-radius: 999px;
-    border: 1.5px solid #CBD5E1;
-    background: #FFFFFF;
-    font-size: 14px;
+    padding: 10px 36px 10px 40px;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    font-size: 0.9rem;
     color: #0F172A;
     font-family: inherit;
-    outline: none;
-    transition: border-color 0.15s, box-shadow 0.15s;
-    box-sizing: border-box;
+    transition: all 0.2s ease;
 }
 
 .hnmt-search-box input:focus {
+    outline: none;
+    background: #FFFFFF;
     border-color: #0F172A;
-    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.08);
-}
-
-.hnmt-search-box input::placeholder {
-    color: #94A3B8;
-    font-size: 14px;
+    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.06);
 }
 
 .hnmt-search-clear {
     position: absolute;
-    right: 14px;
+    right: 10px;
     background: transparent;
     border: none;
     color: #94A3B8;
     cursor: pointer;
-    font-size: 17px;
+    font-size: 1.1rem;
     padding: 0;
-    display: none;
+    display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.hnmt-search-clear:hover {
-    color: #0F172A;
-}
-
-.hnmt-filter-reset {
-    height: 46px;
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    padding: 0 20px;
-    border-radius: 999px;
-    border: 1.5px solid #CBD5E1;
-    background: #FFFFFF;
-    font-size: 14px;
-    font-weight: 600;
-    color: #334155;
-    cursor: pointer;
-    font-family: inherit;
-    transition: all 0.2s ease;
-    box-sizing: border-box;
-    white-space: nowrap;
-    flex-shrink: 0;
-}
-
-.hnmt-filter-reset:hover {
-    background: #F1F5F9;
-    color: #0F172A;
-    border-color: #94A3B8;
-}
-
-.hnmt-reset-icon {
-    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.hnmt-filter-reset:hover .hnmt-reset-icon {
-    transform: rotate(-180deg);
-}
-
-/* HÀNG 2: BỘ LỌC TRẠNG THÁI & KHOẢNG NGÀY */
-.hnmt-filter-secondary-row {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    flex-wrap: wrap;
-    padding-top: 10px;
-    border-top: 1px dashed #E2E8F0;
-}
-
-.hnmt-filter-cell {
+.hnmt-date-filter-group {
     display: flex;
     align-items: center;
     gap: 8px;
-}
-
-.hnmt-cell-label {
-    font-size: 13px;
-    font-weight: 600;
-    color: #64748B;
-    user-select: none;
-    white-space: nowrap;
-}
-
-.hnmt-select-wrap {
-    position: relative;
-    display: flex;
-    align-items: center;
-    height: 42px;
-}
-
-.hnmt-filter-select {
-    height: 42px;
-    padding: 0 36px 0 16px;
-    border-radius: 999px;
-    border: 1.5px solid #CBD5E1;
-    background: #FFFFFF;
-    font-size: 13.5px;
-    font-weight: 500;
-    color: #1E293B;
-    font-family: inherit;
-    outline: none;
-    cursor: pointer;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-    transition: border-color 0.15s, box-shadow 0.15s;
-    box-sizing: border-box;
-}
-
-.hnmt-filter-select:focus {
-    border-color: #0F172A;
-    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.08);
-}
-
-.hnmt-date-range-group {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+    flex-wrap: wrap;
 }
 
 .hnmt-date-field {
     display: flex;
     align-items: center;
     gap: 6px;
-    height: 42px;
-    background: #FFFFFF;
-    border: 1.5px solid #CBD5E1;
-    border-radius: 999px;
-    padding: 0 14px;
-    transition: border-color 0.15s, box-shadow 0.15s;
-    box-sizing: border-box;
-}
-
-.hnmt-date-field:focus-within {
-    border-color: #0F172A;
-    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.08);
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 6px 10px;
 }
 
 .hnmt-date-label {
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 0.78rem;
+    font-weight: 700;
     color: #64748B;
-    user-select: none;
-    white-space: nowrap;
 }
 
 .hnmt-date-input {
     border: none;
-    outline: none;
     background: transparent;
-    font-size: 13px;
-    font-weight: 500;
-    color: #1E293B;
+    font-size: 0.85rem;
     font-family: inherit;
-    padding: 0;
+    color: #0F172A;
     cursor: pointer;
+}
+
+.hnmt-date-input:focus {
+    outline: none;
 }
 
 .hnmt-date-sep {
     color: #94A3B8;
-    font-size: 14px;
-    font-weight: 500;
-    user-select: none;
+    font-weight: 700;
 }
 
-/* 4. ORDER CARDS (STACK) */
+.hnmt-filter-reset {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #F1F5F9;
+    border: 1px solid #E2E8F0;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.hnmt-filter-reset:hover {
+    background: #E2E8F0;
+    color: #0F172A;
+}
+
+/* 4. ORDER CARDS */
 .hnmt-orders-stack {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    text-align: left;
+    gap: 20px;
 }
 
 .hnmt-order-card {
     background: #FFFFFF;
     border: 1px solid #E2E8F0;
-    border-radius: 14px;
-    padding: 20px 24px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    text-align: left;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.03);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .hnmt-order-card:hover {
     border-color: #CBD5E1;
-    box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.06);
+    transform: translateY(-2px);
 }
 
 .hnmt-order-card.is-hidden {
@@ -650,13 +717,13 @@
 /* CARD HEADER */
 .hnmt-card-header {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
     flex-wrap: wrap;
-    gap: 10px;
-    padding-bottom: 12px;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 24px;
+    background: #F8FAFC;
     border-bottom: 1px solid #F1F5F9;
-    text-align: left;
 }
 
 .hnmt-header-left {
@@ -664,110 +731,87 @@
     align-items: center;
     gap: 12px;
     flex-wrap: wrap;
-    text-align: left;
 }
 
 .hnmt-order-code {
-    font-size: 14.5px;
-    font-weight: 700;
+    font-family: monospace;
+    font-size: 0.95rem;
+    font-weight: 800;
     color: #0F172A;
-    letter-spacing: -0.3px;
+    letter-spacing: -0.2px;
 }
 
 /* STATUS BADGES */
 .hnmt-status-badge {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 3.5px 12px;
+    gap: 7px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 4px 12px;
     border-radius: 999px;
-    font-size: 12px;
-    font-weight: 600;
-    border: 1px solid #E2E8F0;
-    background: #F8FAFC;
-    color: #475569;
+    letter-spacing: 0.3px;
 }
 
 .hnmt-status-dot {
-    width: 6.5px;
-    height: 6.5px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
-    background: #94A3B8;
 }
 
-/* Chờ xác nhận */
 .hnmt-status-badge.status-pending {
-    background: #FFFBEB;
-    border-color: #FDE68A;
-    color: #92400E;
+    background: #FEF3C7;
+    color: #B45309;
 }
-.hnmt-status-badge.status-pending .hnmt-status-dot {
-    background: #D97706;
-}
+.hnmt-status-badge.status-pending .hnmt-status-dot { background: #D97706; }
 
-/* Đang xử lý kho */
 .hnmt-status-badge.status-processing {
     background: #EFF6FF;
-    border-color: #BFDBFE;
-    color: #1E40AF;
+    color: #1D4ED8;
 }
-.hnmt-status-badge.status-processing .hnmt-status-dot {
-    background: #2563EB;
-}
+.hnmt-status-badge.status-processing .hnmt-status-dot { background: #2563EB; }
 
-/* Đang giao hàng */
 .hnmt-status-badge.status-shipping {
-    background: #EEF2FF;
-    border-color: #C7D2FE;
-    color: #3730A3;
+    background: #F0FDF4;
+    color: #15803D;
 }
 .hnmt-status-badge.status-shipping .hnmt-status-dot {
-    background: #4F46E5;
-}
-
-/* Đã nhận hàng */
-.hnmt-status-badge.status-delivered {
-    background: #F0FDF4;
-    border-color: #BBF7D0;
-    color: #166534;
-}
-.hnmt-status-badge.status-delivered .hnmt-status-dot {
     background: #16A34A;
+    box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.7);
+    animation: pulseDot 2s infinite;
 }
 
-/* ĐÃ HỦY / GIAO THẤT BẠI: MÀU ĐỎ NỔI BẬT */
+.hnmt-status-badge.status-delivered {
+    background: #ECFDF5;
+    color: #047857;
+}
+.hnmt-status-badge.status-delivered .hnmt-status-dot { background: #10B981; }
+
 .hnmt-status-badge.status-cancelled,
 .hnmt-status-badge.status-failed {
-    background: #FEF2F2 !important;
-    border-color: #FECACA !important;
-    color: #DC2626 !important;
+    background: #FEF2F2;
+    color: #B91C1C;
 }
 .hnmt-status-badge.status-cancelled .hnmt-status-dot,
-.hnmt-status-badge.status-failed .hnmt-status-dot {
-    background: #EF4444 !important;
-}
+.hnmt-status-badge.status-failed .hnmt-status-dot { background: #DC2626; }
 
 .hnmt-header-right {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 13px;
+    font-size: 0.82rem;
     color: #64748B;
-    text-align: right;
+    flex-wrap: wrap;
 }
 
 .hnmt-order-method {
-    font-weight: 600;
+    font-weight: 700;
     color: #334155;
-    background: #F1F5F9;
-    padding: 2.5px 8px;
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    padding: 3px 9px;
     border-radius: 6px;
-    font-size: 11.5px;
-}
-
-.hnmt-header-sep {
-    color: #CBD5E1;
-    font-size: 11px;
+    font-size: 0.75rem;
 }
 
 .hnmt-order-datetime {
@@ -775,272 +819,300 @@
     align-items: center;
     gap: 5px;
     color: #64748B;
-    font-weight: 500;
 }
 
-/* 5. CARD BODY - TÓM TẮT SẢN PHẨM NHÃ NHẶN (NỘI DUNG PHỤ) */
+.hnmt-header-sep {
+    color: #CBD5E1;
+}
+
+/* CARD BODY (PRODUCT THUMBNAILS & DETAILS) */
 .hnmt-card-body {
-    padding: 12px 0 14px;
-    text-align: left;
+    padding: 20px 24px;
 }
 
-.hnmt-summary-row {
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-    font-size: 13.5px;
-    line-height: 1.5;
-    text-align: left;
-}
-
-.hnmt-summary-label {
-    color: #64748B;
-    font-weight: 500;
-    flex-shrink: 0;
-}
-
-.hnmt-summary-content {
-    color: #334155;
-    font-weight: 400;
-    word-break: break-word;
-}
-
-/* 6. CARD FOOTER */
-.hnmt-card-footer {
+.hnmt-single-item-layout {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 18px;
+}
+
+.hnmt-item-thumb-box {
+    width: 68px;
+    height: 68px;
+    min-width: 68px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hnmt-item-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.hnmt-item-main-info {
+    flex: 1;
+}
+
+.hnmt-item-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0F172A;
+    margin: 0 0 6px 0;
+    line-height: 1.4;
+}
+
+.hnmt-item-specs {
+    display: flex;
     flex-wrap: wrap;
-    gap: 12px;
-    padding-top: 14px;
+    gap: 8px;
+}
+
+.spec-pill {
+    font-size: 0.8rem;
+    color: #475569;
+    background: #F1F5F9;
+    padding: 3px 9px;
+    border-radius: 6px;
+}
+
+.spec-pill strong {
+    color: #0F172A;
+}
+
+/* MULTI-ITEM GALLERY */
+.hnmt-multi-item-layout {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.hnmt-thumb-gallery {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.hnmt-thumb-wrap {
+    position: relative;
+    width: 58px;
+    height: 58px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+}
+
+.hnmt-gallery-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.hnmt-thumb-qty {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    background: rgba(15, 23, 42, 0.85);
+    color: #FFFFFF;
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 1px 5px;
+    border-radius: 4px;
+}
+
+.hnmt-thumb-more {
+    width: 58px;
+    height: 58px;
+    border-radius: 10px;
+    background: #F1F5F9;
+    border: 1px dashed #CBD5E1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #64748B;
+}
+
+.hnmt-multi-meta {
+    flex: 1;
+}
+
+.hnmt-multi-badge {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #2B3360;
+    background: #EEF2F6;
+    padding: 3px 10px;
+    border-radius: 6px;
+    margin-bottom: 4px;
+}
+
+.hnmt-multi-desc {
+    margin: 0;
+    font-size: 0.88rem;
+    color: #64748B;
+    line-height: 1.45;
+}
+
+.hnmt-multi-desc em {
+    font-style: italic;
+    color: #94A3B8;
+}
+
+/* CARD FOOTER */
+.hnmt-card-footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 24px;
+    background: #FFFFFF;
     border-top: 1px solid #F1F5F9;
-    text-align: left;
 }
 
 .hnmt-total-box {
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    text-align: left;
 }
 
 .hnmt-total-caption {
-    font-size: 11px;
-    color: #64748B;
+    font-size: 0.75rem;
     font-weight: 700;
-    letter-spacing: 0.5px;
     text-transform: uppercase;
-    text-align: left;
+    letter-spacing: 0.5px;
+    color: #64748B;
 }
 
 .hnmt-total-val {
-    font-size: 18px;
+    font-size: 1.25rem;
     font-weight: 800;
     color: #0F172A;
-    letter-spacing: -0.3px;
-    text-align: left;
 }
 
 .hnmt-action-group {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
 .hnmt-btn-view {
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    padding: 10px 20px;
     background: #0F172A;
-    color: #FFFFFF !important;
-    text-decoration: none !important;
-    font-size: 13px;
-    font-weight: 700;
-    padding: 8.5px 19px;
+    color: #FFFFFF;
     border-radius: 999px;
-    transition: all 0.15s ease;
-    border: 1px solid #0F172A;
-    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.15);
 }
 
 .hnmt-btn-view:hover {
     background: #1E293B;
-    border-color: #1E293B;
-    color: #FFFFFF !important;
+    color: #FFFFFF;
     transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25);
+}
+
+.hnmt-btn-pay-now {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 18px;
+    background: #D97706;
+    color: #FFFFFF;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.hnmt-btn-pay-now:hover {
+    background: #B45309;
+    color: #FFFFFF;
 }
 
 .hnmt-btn-cancel {
-    background: #FFFFFF;
+    padding: 9px 16px;
+    background: transparent;
+    border: 1.5px solid #FCA5A5;
     color: #DC2626;
-    border: 1px solid #FECACA;
-    padding: 7.5px 16px;
     border-radius: 999px;
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 0.82rem;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: all 0.2s ease;
     font-family: inherit;
 }
 
 .hnmt-btn-cancel:hover {
     background: #FEF2F2;
-    border-color: #F87171;
+    border-color: #EF4444;
 }
 
-/* NÚT THANH TOÁN VIETQR NGAY */
-.hnmt-btn-pay-now {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: #16A34A;
-    color: #FFFFFF !important;
-    text-decoration: none !important;
-    font-size: 13px;
-    font-weight: 700;
-    padding: 8px 16px;
-    border-radius: 999px;
-    transition: all 0.15s ease;
-    border: 1px solid #16A34A;
-    font-family: inherit;
-    box-shadow: 0 2px 6px rgba(22, 163, 74, 0.25);
-}
-
-.hnmt-btn-pay-now:hover {
-    background: #15803D;
-    border-color: #15803D;
-    color: #FFFFFF !important;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(22, 163, 74, 0.35);
-}
-
-.hnmt-btn-pay-now.is-grace {
-    background: #D97706;
-    border-color: #D97706;
-    box-shadow: 0 2px 6px rgba(217, 119, 6, 0.25);
-}
-
-.hnmt-btn-pay-now.is-grace:hover {
-    background: #B45309;
-    border-color: #B45309;
-}
-
-/* HUY HIỆU ĐẾM NGƯỢC QR TRÊN CARD */
-.hnmt-qr-countdown-tag {
-    display: inline-flex;
-    align-items: center;
-}
-
-.hnmt-qr-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 11.5px;
-    font-weight: 600;
-    padding: 2.5px 9px;
-    border-radius: 999px;
-    line-height: 1.4;
-}
-
-.hnmt-qr-pill.is-active {
-    background: #DCFCE7;
-    color: #15803D;
-    border: 1px solid #BBF7D0;
-}
-
-.hnmt-qr-pill.is-active .hnmt-status-dot {
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #16A34A;
-    animation: hnmtPulseGreen 1.8s infinite;
-}
-
-.hnmt-qr-pill.is-grace {
-    background: #FEF3C7;
-    color: #B45309;
-    border: 1px solid #FDE68A;
-}
-
-.hnmt-qr-pill.is-grace .hnmt-status-dot {
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #D97706;
-    animation: hnmtPulseAmber 1.8s infinite;
-}
-
-.hnmt-qr-pill.is-expired {
-    background: #FEE2E2;
-    color: #991B1B;
-    border: 1px solid #FECACA;
-}
-
-@@keyframes hnmtPulseGreen {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.35; transform: scale(0.85); }
-}
-
-@@keyframes hnmtPulseAmber {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.35; transform: scale(0.85); }
-}
-
-/* 7. EMPTY / NO RESULTS */
+/* NO RESULTS */
 .hnmt-filter-no-results {
     text-align: center;
-    padding: 48px 24px;
+    padding: 56px 20px;
     background: #FFFFFF;
-    border: 1px dashed #CBD5E1;
-    border-radius: 14px;
-    margin-top: 8px;
+    border: 1px solid #E2E8F0;
+    border-radius: 16px;
 }
 
 .hnmt-no-results-icon {
-    font-size: 32px;
+    font-size: 2.2rem;
     color: #94A3B8;
     margin-bottom: 12px;
 }
 
 .hnmt-filter-no-results h4 {
-    font-size: 16px;
-    font-weight: 700;
+    font-size: 1.15rem;
+    font-weight: 800;
+    margin: 0 0 6px 0;
     color: #0F172A;
-    margin-bottom: 6px;
 }
 
 .hnmt-filter-no-results p {
-    font-size: 13.5px;
+    font-size: 0.9rem;
     color: #64748B;
-    max-width: 380px;
-    margin: 0 auto 16px;
+    margin: 0 0 20px 0;
 }
 
 .hnmt-reset-all-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+    padding: 10px 22px;
     background: #0F172A;
     color: #FFFFFF;
     border: none;
     border-radius: 999px;
-    padding: 8px 20px;
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 0.85rem;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.15s ease;
-    font-family: inherit;
+    transition: all 0.2s ease;
 }
 
 .hnmt-reset-all-btn:hover {
     background: #1E293B;
 }
 
+/* EMPTY STATE */
 .hnmt-orders-empty {
     text-align: center;
-    padding: 64px 24px;
+    padding: 72px 24px;
     background: #FFFFFF;
     border: 1px solid #E2E8F0;
     border-radius: 16px;
@@ -1049,154 +1121,113 @@
 .hnmt-empty-symbol {
     color: #94A3B8;
     margin-bottom: 16px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 68px;
-    height: 68px;
-    border-radius: 50%;
-    background: #F8FAFC;
 }
 
 .hnmt-orders-empty h3 {
-    font-size: 20px;
+    font-size: 1.35rem;
     font-weight: 800;
+    margin: 0 0 8px 0;
     color: #0F172A;
-    margin: 0 0 8px;
 }
 
 .hnmt-orders-empty p {
-    font-size: 14px;
     color: #64748B;
-    max-width: 440px;
-    margin: 0 auto 24px;
-    line-height: 1.55;
+    font-size: 0.95rem;
+    margin: 0 0 24px 0;
 }
 
 .hnmt-explore-store-btn {
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    padding: 12px 28px;
     background: #0F172A;
-    color: #FFFFFF !important;
-    text-decoration: none !important;
-    padding: 10px 24px;
+    color: #FFFFFF;
     border-radius: 999px;
-    font-size: 13.5px;
     font-weight: 700;
-    transition: all 0.15s ease;
+    font-size: 0.92rem;
+    text-decoration: none;
+    transition: all 0.2s ease;
 }
 
 .hnmt-explore-store-btn:hover {
     background: #1E293B;
+    color: #FFFFFF;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.2);
 }
 
 /* RESPONSIVE */
-@@media (max-width: 680px) {
-    .hnmt-orders-shell {
-        padding: 0 16px;
-    }
-    .hnmt-order-card {
-        padding: 16px;
-    }
-    .hnmt-card-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 6px;
-    }
+@@media (max-width: 768px) {
+    .hnmt-card-header,
     .hnmt-card-footer {
         flex-direction: column;
         align-items: flex-start;
-        gap: 12px;
     }
+    .hnmt-header-right,
     .hnmt-action-group {
         width: 100%;
-        justify-content: flex-end;
-    }
-    .hnmt-filter-primary-row {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    .hnmt-filter-secondary-row {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 12px;
-    }
-    .hnmt-filter-cell {
-        flex-direction: column;
-        align-items: flex-start;
-        width: 100%;
-        gap: 6px;
-    }
-    .hnmt-select-wrap {
-        width: 100%;
-    }
-    .hnmt-filter-select {
-        width: 100%;
-    }
-    .hnmt-date-range-group {
-        width: 100%;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
-    }
-    .hnmt-date-field {
-        width: 100%;
         justify-content: space-between;
-    }
-    .hnmt-date-sep {
-        display: none;
     }
 }
 </style>
 
 <script>
-// =============================================================================
-// BỘ LỌC ĐA NĂNG ĐƠN HÀNG (REAL-TIME FILTER ENGINE)
-// Hỗ trợ: Select trạng thái + Ô tìm kiếm + Lọc theo khoảng ngày (Từ ngày -> Đến ngày)
-// =============================================================================
 document.addEventListener('DOMContentLoaded', () => {
-    const cards = document.querySelectorAll('.hnmt-order-card');
-    const statusSelect = document.getElementById('hnmtOrderStatusSelect');
     const searchInput = document.getElementById('hnmtOrderSearchInput');
     const searchClearBtn = document.getElementById('hnmtSearchClearBtn');
+    const statusSelect = document.getElementById('hnmtOrderStatusSelect');
     const dateFromInput = document.getElementById('hnmtOrderDateFrom');
     const dateToInput = document.getElementById('hnmtOrderDateTo');
     const resetBtn = document.getElementById('hnmtFilterResetBtn');
+    const cards = document.querySelectorAll('.hnmt-order-card');
     const noResultsBox = document.getElementById('hnmtNoFilterResults');
+    const statusTabs = document.querySelectorAll('.hnmt-status-tab');
 
-    let currentStatus = 'all';
     let currentKeyword = '';
+    let currentStatus = 'all';
     let currentFromDate = '';
     let currentToDate = '';
 
-    // Hàm áp dụng bộ lọc tổng hợp
+    // Click chuyển tab trạng thái
+    statusTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            statusTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+
+            currentStatus = tab.dataset.status || 'all';
+            if (statusSelect) {
+                statusSelect.value = currentStatus;
+            }
+            applyOrderFilters();
+        });
+    });
+
     function applyOrderFilters() {
         let visibleCount = 0;
 
         cards.forEach(card => {
-            const group = card.getAttribute('data-group');
-            const searchData = (card.getAttribute('data-search') || '').toLowerCase();
-            const orderDateStr = card.getAttribute('data-date') || ''; // 'yyyy-MM-dd'
+            const cardGroup = card.getAttribute('data-group') || '';
+            const cardSearch = (card.getAttribute('data-search') || '').toLowerCase();
+            const cardDate = card.getAttribute('data-date') || '';
 
-            // 1. Kiểm tra Trạng thái
-            let statusMatch = (currentStatus === 'all' || group === currentStatus);
+            // 1. Kiểm tra trạng thái
+            let statusMatch = (currentStatus === 'all');
+            if (!statusMatch) {
+                statusMatch = (cardGroup === currentStatus);
+            }
 
-            // 2. Kiểm tra Từ khóa (Mã đơn hoặc tên sản phẩm / size / màu)
+            // 2. Kiểm tra từ khóa
             let keywordMatch = true;
-            if (currentKeyword.trim() !== '') {
-                const terms = currentKeyword.trim().toLowerCase().split(/\s+/);
-                keywordMatch = terms.every(term => searchData.includes(term));
+            if (currentKeyword.trim()) {
+                const words = currentKeyword.toLowerCase().trim().split(/\s+/);
+                keywordMatch = words.every(word => cardSearch.includes(word));
             }
 
-            // 3. Kiểm tra Khoảng ngày (Từ ngày -> Đến ngày)
+            // 3. Kiểm tra ngày tháng
             let dateMatch = true;
-            if (currentFromDate && orderDateStr < currentFromDate) {
-                dateMatch = false;
-            }
-            if (currentToDate && orderDateStr > currentToDate) {
-                dateMatch = false;
-            }
+            if (currentFromDate && cardDate < currentFromDate) dateMatch = false;
+            if (currentToDate && cardDate > currentToDate) dateMatch = false;
 
             if (statusMatch && keywordMatch && dateMatch) {
                 card.classList.remove('is-hidden');
@@ -1206,26 +1237,26 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Hiển thị/ẩn Empty results box
         if (noResultsBox) {
             noResultsBox.style.display = (visibleCount === 0) ? 'block' : 'none';
         }
 
-        // Hiện/ẩn nút xóa tìm kiếm
         if (searchClearBtn) {
             searchClearBtn.style.display = currentKeyword ? 'inline-flex' : 'none';
         }
     }
 
-    // Sự kiện chọn Trạng thái (Select)
     if (statusSelect) {
         statusSelect.addEventListener('change', (e) => {
             currentStatus = e.target.value;
+            statusTabs.forEach(t => {
+                if (t.dataset.status === currentStatus) t.classList.add('active');
+                else t.classList.remove('active');
+            });
             applyOrderFilters();
         });
     }
 
-    // Sự kiện gõ tìm kiếm từ khóa
     if (searchInput) {
         searchInput.addEventListener('input', (e) => {
             currentKeyword = e.target.value;
@@ -1233,7 +1264,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Nút xóa từ khóa
     if (searchClearBtn) {
         searchClearBtn.addEventListener('click', () => {
             if (searchInput) {
@@ -1245,7 +1275,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Sự kiện chọn Từ ngày
     if (dateFromInput) {
         dateFromInput.addEventListener('change', (e) => {
             currentFromDate = e.target.value;
@@ -1253,7 +1282,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Sự kiện chọn Đến ngày
     if (dateToInput) {
         dateToInput.addEventListener('change', (e) => {
             currentToDate = e.target.value;
@@ -1261,12 +1289,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Hàm reset toàn bộ bộ lọc
     window.resetAllOrderFilters = function() {
         currentStatus = 'all';
         currentKeyword = '';
         currentFromDate = '';
         currentToDate = '';
+
+        statusTabs.forEach(t => {
+            if (t.dataset.status === 'all') t.classList.add('active');
+            else t.classList.remove('active');
+        });
 
         if (statusSelect) statusSelect.value = 'all';
         if (searchInput) searchInput.value = '';
@@ -1280,7 +1312,7 @@ document.addEventListener('DOMContentLoaded', () => {
         resetBtn.addEventListener('click', window.resetAllOrderFilters);
     }
 
-    // ĐỒNG HỒ ĐẾM NGƯỢC THỜI GIAN THỰC CHO MÃ VIETQR
+    // ĐỒNG HỒ ĐẾM NGƯỢC VIETQR
     const qrCounters = document.querySelectorAll('[data-qr-countdown]');
     if (qrCounters.length > 0) {
         setInterval(() => {
