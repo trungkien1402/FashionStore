@@ -2349,3 +2349,129 @@ body.adm-body {
     font-size: 0.76rem;
     color: var(--adm-ink-muted);
 }
+
+
+/* =========================================================
+   EXECUTIVE OPERATIONS & INVENTORY RADAR (PROFESSIONAL SAAS)
+   ========================================================= */
+
+.adm-avatar-sm {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: var(--adm-bg-soft);
+    color: var(--adm-ink);
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid var(--adm-border);
+}
+
+.adm-btn-table-action {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    height: 30px !important;
+    padding: 0 10px !important;
+    background: var(--adm-surface) !important;
+    color: var(--adm-ink) !important;
+    border: 1px solid var(--adm-border) !important;
+    border-radius: 6px !important;
+    font-size: 0.76rem !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    transition: all 0.15s ease !important;
+    white-space: nowrap !important;
+}
+
+.adm-btn-table-action:hover {
+    background: #0F172A !important;
+    border-color: #0F172A !important;
+    color: #FFFFFF !important;
+}
+
+[data-theme="dark"] .adm-btn-table-action:hover {
+    background: #38BDF8 !important;
+    border-color: #38BDF8 !important;
+    color: #0F172A !important;
+}
+
+.adm-table th {
+    white-space: nowrap !important;
+}
+
+.adm-table td {
+    vertical-align: middle !important;
+    white-space: nowrap !important;
+}
+
+.adm-variant-tag {
+    display: inline-block;
+    padding: 2px 6px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    background: var(--adm-surface);
+    border: 1px solid var(--adm-border);
+    border-radius: 4px;
+    color: var(--adm-ink-muted);
+}
+
+.adm-sku-tag {
+    font-family: monospace;
+    font-size: 0.7rem;
+    color: var(--adm-ink-faint);
+}
+
+.adm-stock-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 9999px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.adm-stock-pill.out-of-stock {
+    background: rgba(220, 38, 38, 0.1) !important;
+    color: #DC2626 !important;
+    border: 1px solid rgba(220, 38, 38, 0.25) !important;
+}
+
+.adm-stock-pill.low-stock {
+    background: rgba(245, 158, 11, 0.1) !important;
+    color: #D97706 !important;
+    border: 1px solid rgba(245, 158, 11, 0.25) !important;
+}
+
+.adm-radar-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: var(--adm-surface-hover);
+    border: 1px solid var(--adm-border);
+    transition: background 0.15s ease;
+}
+
+.adm-radar-item:hover {
+    background: var(--adm-bg-soft);
+}
+
+.adm-leaderboard-item {
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: var(--adm-surface-hover);
+    border: 1px solid var(--adm-border);
+    transition: background 0.15s ease;
+}
+
+.adm-leaderboard-item:hover {
+    background: var(--adm-bg-soft);
+}

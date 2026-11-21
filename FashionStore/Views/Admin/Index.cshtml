@@ -22,7 +22,7 @@
     var paymentData = JsonSerializer.Serialize(Model.PaymentMethodData);
 }
 
-<!-- ACTION HEADER & SEAMLESS TOOLBAR (OPTION 1: LINEAR / STRIPE MINIMALIST) -->
+<!-- 1. ACTION HEADER & SEAMLESS TOOLBAR (STRIPE / LINEAR MINIMALIST) -->
 <div class="adm-action-header mb-4">
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
         <div>
@@ -101,7 +101,7 @@
     </form>
 </div>
 
-<!-- HERO KPI METRICS (4 TILES - STRIPE STYLE) -->
+<!-- 2. HERO KPI METRICS (4 TILES - STRIPE STYLE) -->
 <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-3 mb-4">
 
     <!-- KPI 1: DOANH THU THỰC NHẬN -->
@@ -185,7 +185,7 @@
 
 </div>
 
-<!-- CHARTS SECTION: BENTO GRID 8 : 4 -->
+<!-- 3. CHARTS SECTION: BENTO GRID 8 : 4 -->
 <div class="row g-3 mb-4">
 
     <!-- REVENUE SPLINE CHART (8 COLS) -->
@@ -202,7 +202,7 @@
                 </div>
             </div>
 
-            <div style="height: 310px; position: relative;">
+            <div style="height: 290px; position: relative;">
                 @if (Model.RevenueChartData.Any(value => value != 0))
                 {
                     <canvas id="admRevenueChart" aria-label="Giá trị đơn đã giao theo ngày đặt" role="img"></canvas>
@@ -226,7 +226,7 @@
                 <p class="text-muted small mb-3">Tỷ lệ thanh toán VietQR chuyển khoản vs Tiền mặt (COD)</p>
             </div>
 
-            <div style="height: 220px; position: relative;">
+            <div style="height: 210px; position: relative;">
                 <canvas id="admPaymentChart"></canvas>
             </div>
 
@@ -246,19 +246,17 @@
 
 </div>
 
-<!-- DATA OPERATIONS: RECENT ORDERS STREAM + TOP SELLERS + LOW STOCK RADAR -->
+<!-- 4. OPERATIONS TABLE: FULL WIDTH 12 COLS (NO TRUNCATION, AIRY & PROFESSIONAL) -->
 <div class="row g-3 mb-4">
-
-    <!-- RECENT ORDERS STREAM -->
-    <div class="col-xl-7">
-        <div class="adm-card h-100">
+    <div class="col-12">
+        <div class="adm-card">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <div>
                     <h5 class="fw-bold mb-0 adm-heading" style="font-size: 1.05rem;">Đơn hàng Mới nhất</h5>
-                    <p class="text-muted small mb-0">Luồng giao dịch trực tiếp từ khách hàng</p>
+                    <p class="text-muted small mb-0">Luồng giao dịch trực tiếp theo thời gian thực</p>
                 </div>
                 <a asp-controller="AdminOrders" asp-action="Index" class="btn adm-btn-outline py-1 px-3" style="font-size: 0.78rem;">
-                    Xem tất cả <i class="bi bi-chevron-right ms-1"></i>
+                    Xem tất cả đơn hàng <i class="bi bi-arrow-right ms-1"></i>
                 </a>
             </div>
 
@@ -268,30 +266,41 @@
                     <table class="adm-table">
                         <thead>
                             <tr>
-                                <th>MÃ ĐƠN</th>
-                                <th>KHÁCH HÀNG</th>
-                                <th>PHƯƠNG THỨC</th>
-                                <th>TỔNG TIỀN</th>
-                                <th>TRẠNG THÁI</th>
-                                <th class="text-end">THAO TÁC</th>
+                                <th style="width: 220px;">MÃ ĐƠN HÀNG</th>
+                                <th style="width: 200px;">KHÁCH HÀNG</th>
+                                <th style="width: 140px;">PHƯƠNG THỨC</th>
+                                <th style="width: 160px;">TỔNG TIỀN</th>
+                                <th style="width: 150px;">TRẠNG THÁI</th>
+                                <th class="text-end" style="width: 110px;">THAO TÁC</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var order in Model.RecentOrders)
                             {
+                                var shortCode = order.OrderCode.Length > 12 
+                                    ? "#" + order.OrderCode.Substring(order.OrderCode.Length - 10) 
+                                    : "#" + order.OrderCode;
+
                                 <tr>
                                     <td>
-                                        <div class="d-flex align-items-center gap-1">
-                                            <span class="fw-bold adm-heading font-monospace" style="font-size: 0.85rem;">@order.OrderCode</span>
-                                            <button type="button" class="btn btn-sm p-0 text-muted" onclick="copyAdmText(this, '@order.OrderCode')" title="Sao chép">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="fw-bold adm-heading font-monospace" style="font-size: 0.85rem;" title="@order.OrderCode">@shortCode</span>
+                                            <button type="button" class="btn btn-sm p-0 text-muted" onclick="copyAdmText(this, '@order.OrderCode')" title="Sao chép toàn bộ mã đơn: @order.OrderCode">
                                                 <i class="bi bi-copy" style="font-size: 0.75rem;"></i>
                                             </button>
                                         </div>
                                         <div class="text-muted" style="font-size: 0.72rem;">@AdminReportService.ToVietnamTime(order.CreatedAt).ToString("dd/MM/yyyy HH:mm")</div>
                                     </td>
                                     <td>
-                                        <div class="fw-semibold adm-heading">@order.ReceiverName</div>
-                                        <div class="text-muted" style="font-size: 0.75rem;">@order.Phone</div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="adm-avatar-sm">
+                                                @(string.IsNullOrWhiteSpace(order.ReceiverName) ? "K" : order.ReceiverName.Substring(0, 1).ToUpper())
+                                            </div>
+                                            <div>
+                                                <div class="fw-semibold adm-heading" style="font-size: 0.84rem;">@order.ReceiverName</div>
+                                                <div class="text-muted" style="font-size: 0.72rem;">@order.Phone</div>
+                                            </div>
+                                        </div>
                                     </td>
                                     <td>
                                         @if (order.PaymentMethod == PaymentMethod.VietQR)
@@ -303,12 +312,14 @@
                                         else
                                         {
                                             <span class="badge" style="background: var(--adm-bg-soft); color: var(--adm-ink-muted); border: 1px solid var(--adm-border);">
-                                                <i class="bi bi-cash me-1"></i> COD
+                                                <i class="bi bi-cash me-1"></i> Tiền mặt COD
                                             </span>
                                         }
                                     </td>
-                                    <td class="fw-bold adm-heading">
-                                        @order.TotalAmount.ToString("N0") ₫
+                                    <td>
+                                        <span class="fw-bold adm-heading text-nowrap" style="font-size: 0.9rem;">
+                                            @order.TotalAmount.ToString("N0") ₫
+                                        </span>
                                     </td>
                                     <td>
                                         @switch (order.Status)
@@ -338,8 +349,8 @@
                                     </td>
                                     <td class="text-end">
                                         <a asp-controller="AdminOrders" asp-action="Details" asp-route-id="@order.Id"
-                                           class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem;" title="Chi tiết đơn">
-                                            <i class="bi bi-eye"></i>
+                                           class="adm-btn-table-action" title="Chi tiết đơn hàng">
+                                            <i class="bi bi-eye"></i> <span>Chi tiết</span>
                                         </a>
                                     </td>
                                 </tr>
@@ -357,14 +368,19 @@
             }
         </div>
     </div>
+</div>
 
-    <!-- TOP SELLERS & LOW STOCK RADAR -->
-    <div class="col-xl-5 d-flex flex-column gap-3">
+<!-- 5. BALANCED PRODUCT LEADERBOARD & INVENTORY RADAR (6 COLS + 6 COLS) -->
+<div class="row g-3 mb-4">
 
-        <!-- TOP SELLING LEADERBOARD -->
-        <div class="adm-card">
+    <!-- TOP SELLING LEADERBOARD (6 COLS) -->
+    <div class="col-lg-6">
+        <div class="adm-card h-100">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="fw-bold mb-0 adm-heading" style="font-size: 1.05rem;">Top Sản phẩm Bán chạy</h5>
+                <div>
+                    <h5 class="fw-bold mb-0 adm-heading" style="font-size: 1.05rem;">Top Sản phẩm Bán chạy</h5>
+                    <p class="text-muted small mb-0">Xếp hạng theo sản lượng và doanh số</p>
+                </div>
                 <span class="badge" style="background: rgba(37, 99, 235, 0.1); color: var(--adm-cyan); border: 1px solid rgba(37, 99, 235, 0.2);">
                     LEADERBOARD
                 </span>
@@ -377,19 +393,24 @@
                     {
                         var item = Model.TopSellingProducts[i];
                         var rankClass = i == 0 ? "adm-rank-1" : i == 1 ? "adm-rank-2" : i == 2 ? "adm-rank-3" : "adm-rank-n";
-                        var pct = Math.Min(100, (int)((double)item.TotalQuantity / maxQuantity * 100));
+                        var pct = Math.Min(100, Math.Max(15, (int)((double)item.TotalQuantity / maxQuantity * 100)));
 
-                        <div class="p-2 rounded-3" style="background: var(--adm-surface-hover); border: 1px solid var(--adm-border);">
+                        <div class="adm-leaderboard-item">
                             <div class="d-flex align-items-center justify-content-between mb-1">
                                 <div class="d-flex align-items-center gap-2">
                                     <span class="adm-rank-badge @rankClass">@(i + 1)</span>
-                                    <span class="adm-heading fw-semibold small text-truncate" style="max-width: 190px;" title="@item.ProductName">
+                                    <span class="adm-heading fw-semibold" style="font-size: 0.86rem;" title="@item.ProductName">
                                         @item.ProductName
                                     </span>
                                 </div>
                                 <div class="text-end">
-                                    <span class="adm-heading fw-bold small">@item.TotalQuantity</span>
-                                    <span class="text-muted" style="font-size: 0.72rem;">đã bán</span>
+                                    <span class="adm-heading fw-bold" style="font-size: 0.86rem;">@item.TotalQuantity</span>
+                                    <span class="text-muted" style="font-size: 0.72rem;">chiếc</span>
+                                    @if (item.TotalRevenue > 0)
+                                    {
+                                        <span class="text-muted mx-1">•</span>
+                                        <span class="adm-text-contrast fw-semibold" style="font-size: 0.82rem;">@item.TotalRevenue.ToString("N0") ₫</span>
+                                    }
                                 </div>
                             </div>
                             <div class="progress" style="height: 4px; background: var(--adm-border); border-radius: 2px;">
@@ -402,41 +423,57 @@
             else
             {
                 <div class="text-center py-4 text-muted small">
-                    Chưa có số liệu sản phẩm bán ra.
+                    <i class="bi bi-bar-chart fs-3 d-block mb-1 opacity-50"></i>
+                    Chưa có số liệu sản phẩm bán ra trong kỳ này.
                 </div>
             }
         </div>
+    </div>
 
-        <!-- LOW STOCK RADAR -->
-        <div class="adm-card">
+    <!-- LOW STOCK RADAR (6 COLS) -->
+    <div class="col-lg-6">
+        <div class="adm-card h-100">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <div>
-                    <h5 class="fw-bold mb-0 adm-heading" style="font-size: 1.05rem;"><i class="bi bi-bell-fill text-danger me-1"></i>Radar Cảnh báo Kho Hàng</h5>
-                    <div class="text-muted" style="font-size: 0.72rem;">Mức tồn kho an toàn &le; 5 sản phẩm</div>
+                    <h5 class="fw-bold mb-0 adm-heading" style="font-size: 1.05rem;">
+                        <i class="bi bi-bell-fill text-danger me-1"></i>Radar Cảnh báo Kho Hàng
+                    </h5>
+                    <div class="text-muted small">Mức tồn kho an toàn &le; 5 sản phẩm</div>
                 </div>
-                <a asp-controller="AdminProducts" asp-action="Index" asp-route-stock="low" class="text-decoration-none small text-danger fw-bold">
-                    Xem tất cả &rarr;
+                <a asp-controller="AdminProducts" asp-action="Index" asp-route-stock="low" class="btn adm-btn-outline py-1 px-3" style="font-size: 0.76rem;">
+                    Quản lý kho <i class="bi bi-arrow-right ms-1"></i>
                 </a>
             </div>
 
             @if (Model.LowStockProducts.Any())
             {
                 <div class="d-flex flex-column gap-2">
-                    @foreach (var stock in Model.LowStockProducts.Take(6))
+                    @foreach (var stock in Model.LowStockProducts.Take(5))
                     {
-                        <div class="d-flex align-items-center justify-content-between p-2 rounded-3" style="background: rgba(220, 38, 38, 0.04); border: 1px solid rgba(220, 38, 38, 0.15);">
+                        <div class="adm-radar-item">
                             <div>
-                                <div class="adm-heading fw-semibold small text-truncate" style="max-width: 200px;" title="@stock.ProductName">
+                                <div class="adm-heading fw-semibold mb-1" style="font-size: 0.86rem;">
                                     @stock.ProductName
                                 </div>
-                                <div class="text-muted font-monospace" style="font-size: 0.72rem;">
-                                    Size: <span class="adm-heading">@stock.Size</span> | Màu: <span class="adm-heading">@stock.Color</span> | SKU: @stock.SKU
+                                <div class="d-flex align-items-center gap-1 flex-wrap">
+                                    <span class="adm-variant-tag">Size: @stock.Size</span>
+                                    <span class="adm-variant-tag">Màu: @stock.Color</span>
+                                    <span class="adm-sku-tag">SKU: @stock.SKU</span>
                                 </div>
                             </div>
-                            <div class="text-end">
-                                <span class="adm-badge-stock-danger">
-                                    <i class="bi bi-exclamation-triangle-fill"></i> Còn @stock.StockQuantity chiếc
-                                </span>
+                            <div class="text-end flex-shrink-0">
+                                @if (stock.StockQuantity == 0)
+                                {
+                                    <span class="adm-stock-pill out-of-stock">
+                                        <i class="bi bi-x-circle-fill"></i> Hết hàng (0)
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="adm-stock-pill low-stock">
+                                        <i class="bi bi-exclamation-triangle-fill"></i> Còn @stock.StockQuantity chiếc
+                                    </span>
+                                }
                             </div>
                         </div>
                     }
@@ -444,13 +481,12 @@
             }
             else
             {
-                <div class="text-center py-3 text-muted small">
-                    <i class="bi bi-shield-check text-success fs-5 d-block mb-1"></i>
+                <div class="text-center py-4 text-muted small">
+                    <i class="bi bi-shield-check text-success fs-3 d-block mb-1"></i>
                     Tất cả các mặt hàng hiện đều có mức tồn kho an toàn.
                 </div>
             }
         </div>
-
     </div>
 
 </div>
