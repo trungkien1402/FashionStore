@@ -22,39 +22,42 @@
     var paymentData = JsonSerializer.Serialize(Model.PaymentMethodData);
 }
 
-<!-- EXECUTIVE HEADER -->
-<header class="adm-dashboard-header adm-overview-header mb-3">
-    <div>
-        <p class="adm-dashboard-kicker"><i class="bi bi-gem me-1 text-primary"></i> HNMT ATELIER BACKOFFICE</p>
-        <h1>Tổng quan Doanh thu &amp; Vận hành</h1>
-        <p class="adm-dashboard-period">Kỳ báo cáo · @Model.StartDate.ToString("dd/MM/yyyy") – @Model.EndDate.ToString("dd/MM/yyyy")</p>
+<!-- ACTION HEADER & SEAMLESS TOOLBAR (OPTION 1: LINEAR / STRIPE MINIMALIST) -->
+<div class="adm-action-header mb-4">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+        <div>
+            <div class="adm-badge-live-pulse mb-1">
+                <span class="adm-live-dot"></span>
+                <span>ATELIER OPERATING SYSTEM</span>
+            </div>
+            <h1 class="adm-page-title">Tổng quan Doanh thu &amp; Dòng tiền</h1>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+            <a asp-controller="Admin"
+               asp-action="ExportReport"
+               asp-route-startDate="@Model.StartDate.ToString("yyyy-MM-dd")"
+               asp-route-endDate="@Model.EndDate.ToString("yyyy-MM-dd")"
+               class="adm-btn-atelier"
+               title="Xuất dữ liệu báo cáo dạng PDF">
+                <i class="bi bi-file-earmark-pdf"></i>
+                <span>Xuất PDF</span>
+            </a>
+
+            <a asp-action="PrintReport"
+               asp-route-startDate="@Model.StartDate.ToString("yyyy-MM-dd")"
+               asp-route-endDate="@Model.EndDate.ToString("yyyy-MM-dd")"
+               class="adm-btn-outline"
+               title="In nhanh trang báo cáo">
+                <i class="bi bi-printer"></i>
+                <span>In báo cáo</span>
+            </a>
+        </div>
     </div>
 
-    <div class="d-flex flex-wrap align-items-center gap-2">
-        <a asp-controller="Admin"
-           asp-action="ExportReport"
-           asp-route-startDate="@Model.StartDate.ToString("yyyy-MM-dd")"
-           asp-route-endDate="@Model.EndDate.ToString("yyyy-MM-dd")"
-           class="adm-btn-atelier"
-           title="Xuất dữ liệu báo cáo dạng PDF">
-            <i class="bi bi-file-earmark-pdf"></i>
-            <span>Xuất PDF</span>
-        </a>
-
-        <a asp-action="PrintReport" asp-route-startDate="@Model.StartDate.ToString("yyyy-MM-dd")"
-           asp-route-endDate="@Model.EndDate.ToString("yyyy-MM-dd")" class="adm-btn-outline"
-           title="In nhanh trang báo cáo">
-            <i class="bi bi-printer"></i>
-            <span>In báo cáo</span>
-        </a>
-    </div>
-</header>
-
-<!-- TIME FILTER BAR -->
-<div class="adm-filter-bar adm-overview-filter mb-3">
-    <form asp-controller="Admin" asp-action="Index" method="get" id="admFilterForm" class="adm-overview-filter-form">
-        <div class="adm-overview-presets" role="group" aria-label="Khoảng ngày nhanh">
-            <span class="text-muted small fw-semibold px-2 d-none d-md-inline">Khoảng nhanh:</span>
+    <!-- UNIFIED TOOLBAR STRIP: PRESETS + DATE RANGE (ONE SEAMLESS BAR) -->
+    <form asp-controller="Admin" asp-action="Index" method="get" id="admFilterForm" class="adm-toolbar-strip">
+        <div class="adm-presets-group" role="group" aria-label="Khoảng ngày nhanh">
             @{
                 var curStart = Model.StartDate.ToString("yyyy-MM-dd");
                 var curEnd = Model.EndDate.ToString("yyyy-MM-dd");
@@ -63,86 +66,80 @@
                 var monthStr = today.AddDays(1 - today.Day).ToString("yyyy-MM-dd");
                 var d30Str = today.AddDays(-29).ToString("yyyy-MM-dd");
             }
-            <a asp-action="Index" asp-route-startDate="@todayStr" asp-route-endDate="@todayStr" class="adm-quick-pill @(curStart == todayStr && curEnd == todayStr ? "active" : "")">Hôm nay</a>
-            <a asp-action="Index" asp-route-startDate="@d7Str" asp-route-endDate="@todayStr" class="adm-quick-pill @(curStart == d7Str && curEnd == todayStr ? "active" : "")">7 ngày qua</a>
-            <a asp-action="Index" asp-route-startDate="@monthStr" asp-route-endDate="@todayStr" class="adm-quick-pill @(curStart == monthStr && curEnd == todayStr ? "active" : "")">Tháng này</a>
-            <a asp-action="Index" asp-route-startDate="@d30Str" asp-route-endDate="@todayStr" class="adm-quick-pill @(curStart == d30Str && curEnd == todayStr ? "active" : "")">30 ngày qua</a>
+            <a asp-action="Index" asp-route-startDate="@todayStr" asp-route-endDate="@todayStr" class="adm-preset-pill @(curStart == todayStr && curEnd == todayStr ? "active" : "")">Hôm nay</a>
+            <a asp-action="Index" asp-route-startDate="@d7Str" asp-route-endDate="@todayStr" class="adm-preset-pill @(curStart == d7Str && curEnd == todayStr ? "active" : "")">7 ngày qua</a>
+            <a asp-action="Index" asp-route-startDate="@monthStr" asp-route-endDate="@todayStr" class="adm-preset-pill @(curStart == monthStr && curEnd == todayStr ? "active" : "")">Tháng này</a>
+            <a asp-action="Index" asp-route-startDate="@d30Str" asp-route-endDate="@todayStr" class="adm-preset-pill @(curStart == d30Str && curEnd == todayStr ? "active" : "")">30 ngày qua</a>
         </div>
 
-        <div class="adm-overview-dates">
-            <div class="d-flex flex-wrap align-items-center gap-2">
-                <div class="d-flex align-items-center gap-1">
-                    <label for="admStartDate" class="text-muted small mb-0 me-1">Từ</label>
-                    <input type="date"
-                           id="admStartDate"
-                           name="startDate"
-                           class="form-control adm-input-dark"
-                           style="width: 145px;"
-                           value="@Model.StartDate.ToString("yyyy-MM-dd")" />
-                </div>
+        <div class="adm-toolbar-divider d-none d-md-block"></div>
 
-                <div class="d-flex align-items-center gap-1">
-                    <label for="admEndDate" class="text-muted small mb-0 me-1">Đến</label>
-                    <input type="date"
-                           id="admEndDate"
-                           name="endDate"
-                           class="form-control adm-input-dark"
-                           style="width: 145px;"
-                           value="@Model.EndDate.ToString("yyyy-MM-dd")" />
-                </div>
-
-                <button type="submit" class="adm-btn-atelier py-1 px-3">
-                    <i class="bi bi-funnel"></i> <span>Lọc</span>
-                </button>
-
-                <a asp-controller="Admin" asp-action="Index" class="adm-btn-outline p-2" aria-label="Đặt lại bộ lọc" title="Đặt lại bộ lọc">
-                    <i class="bi bi-arrow-counterclockwise"></i>
-                </a>
+        <div class="adm-datepicker-group">
+            <div class="adm-datepicker-box">
+                <span class="adm-datepicker-label">Từ</span>
+                <input type="date" id="admStartDate" name="startDate" class="adm-datepicker-input" value="@Model.StartDate.ToString("yyyy-MM-dd")" />
             </div>
+            <span class="text-muted">–</span>
+            <div class="adm-datepicker-box">
+                <span class="adm-datepicker-label">Đến</span>
+                <input type="date" id="admEndDate" name="endDate" class="adm-datepicker-input" value="@Model.EndDate.ToString("yyyy-MM-dd")" />
+            </div>
+
+            <button type="submit" class="adm-toolbar-submit-btn" title="Áp dụng lọc ngày">
+                <i class="bi bi-funnel"></i> <span>Lọc</span>
+            </button>
+
+            <a asp-controller="Admin" asp-action="Index" class="adm-toolbar-reset-btn" title="Đặt lại bộ lọc">
+                <i class="bi bi-arrow-counterclockwise"></i>
+            </a>
+        </div>
+
+        <div class="adm-toolbar-info ms-md-auto d-flex align-items-center gap-1">
+            <i class="bi bi-receipt text-primary"></i>
+            <span><strong>@Model.TotalOrders</strong> đơn trong kỳ (@Model.StartDate.ToString("dd/MM") – @Model.EndDate.ToString("dd/MM/yyyy"))</span>
         </div>
     </form>
 </div>
 
-<p class="text-muted small mb-3"><i class="bi bi-info-circle me-1"></i><strong>@Model.TotalOrders</strong> đơn trong kỳ · Tính theo ngày đặt và trạng thái hiện tại</p>
+<!-- HERO KPI METRICS (4 TILES - STRIPE STYLE) -->
+<div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-3 mb-4">
 
-<!-- HERO KPI METRICS (4 TILES) -->
-<div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-3 mb-4 adm-kpi-grid">
-
-    <!-- KPI 1: TỔNG DOANH THU ĐÃ GIAO -->
+    <!-- KPI 1: DOANH THU THỰC NHẬN -->
     <div class="col">
-        <div class="adm-card adm-kpi-card">
-            <div class="adm-kpi-header">
-                <div>
-                    <h2 class="adm-kpi-title">Giá trị đơn đã giao</h2>
-                    <div class="adm-kpi-value">@Model.RevenueInRange.ToString("N0") <span class="adm-kpi-unit">₫</span></div>
-                </div>
-                <div class="adm-kpi-icon-pill emerald">
+        <div class="adm-kpi-card">
+            <div class="adm-kpi-top">
+                <h2 class="adm-kpi-label">Doanh thu thực nhận</h2>
+                <div class="adm-kpi-chip emerald" title="Đã đối soát">
                     <i class="bi bi-currency-dollar"></i>
                 </div>
             </div>
-            <div class="adm-kpi-meta">
-                <span>Đã giao / Đã hủy</span>
-                <span class="adm-text-contrast fw-bold">@Model.DeliveredOrders / @Model.CancelledOrders đơn</span>
+            <div class="adm-kpi-number">
+                @Model.RevenueInRange.ToString("N0") <span class="adm-kpi-unit">₫</span>
+            </div>
+            <div class="adm-kpi-footer">
+                <span>Đã giao: <strong class="text-success">@Model.DeliveredOrders</strong></span>
+                <span class="text-muted">•</span>
+                <span>Đã hủy: <strong class="text-danger">@Model.CancelledOrders</strong></span>
             </div>
         </div>
     </div>
 
     <!-- KPI 2: ĐƠN CHỜ DUYỆT -->
     <div class="col">
-        <div class="adm-card adm-kpi-card">
-            <div class="adm-kpi-header">
-                <div>
-                    <h2 class="adm-kpi-title">Đơn chờ duyệt</h2>
-                    <div class="adm-kpi-value">@Model.PendingOrders <span class="adm-kpi-unit">đơn</span></div>
-                </div>
-                <div class="adm-kpi-icon-pill amber">
+        <div class="adm-kpi-card">
+            <div class="adm-kpi-top">
+                <h2 class="adm-kpi-label">Đơn hàng chờ duyệt</h2>
+                <div class="adm-kpi-chip amber" title="Cần duyệt ngay">
                     <i class="bi bi-clock-history"></i>
                 </div>
             </div>
-            <div class="adm-kpi-meta">
-                <span>Tổng giá trị đơn đặt</span>
-                <a asp-controller="AdminOrders" asp-action="Index" class="adm-accent-link">
-                    @Model.OrderedAmount.ToString("N0") ₫ <i class="bi bi-arrow-right-short"></i>
+            <div class="adm-kpi-number">
+                @Model.PendingOrders <span class="adm-kpi-unit">đơn</span>
+            </div>
+            <div class="adm-kpi-footer">
+                <span>Tổng tiền đặt:</span>
+                <a asp-controller="AdminOrders" asp-action="Index" class="adm-accent-link fw-semibold">
+                    @Model.OrderedAmount.ToString("N0") ₫ &rarr;
                 </a>
             </div>
         </div>
@@ -150,18 +147,18 @@
 
     <!-- KPI 3: GIÁ TRỊ ĐÃ THANH TOÁN -->
     <div class="col">
-        <div class="adm-card adm-kpi-card">
-            <div class="adm-kpi-header">
-                <div>
-                    <h2 class="adm-kpi-title">Giá trị đã thanh toán</h2>
-                    <div class="adm-kpi-value">@Model.PaidAmount.ToString("N0") <span class="adm-kpi-unit">₫</span></div>
-                </div>
-                <div class="adm-kpi-icon-pill blue">
+        <div class="adm-kpi-card">
+            <div class="adm-kpi-top">
+                <h2 class="adm-kpi-label">Dòng tiền đã thanh toán</h2>
+                <div class="adm-kpi-chip blue" title="Thanh toán thành công">
                     <i class="bi bi-credit-card-2-front"></i>
                 </div>
             </div>
-            <div class="adm-kpi-meta">
-                <span>TB mỗi đơn thanh toán</span>
+            <div class="adm-kpi-number">
+                @Model.PaidAmount.ToString("N0") <span class="adm-kpi-unit">₫</span>
+            </div>
+            <div class="adm-kpi-footer">
+                <span>TB mỗi đơn:</span>
                 <span class="adm-text-contrast fw-bold">@Model.AveragePaidOrderValue.ToString("N0") ₫</span>
             </div>
         </div>
@@ -169,18 +166,18 @@
 
     <!-- KPI 4: SẢN PHẨM & KHÁCH HÀNG -->
     <div class="col">
-        <div class="adm-card adm-kpi-card">
-            <div class="adm-kpi-header">
-                <div>
-                    <h2 class="adm-kpi-title">Sản phẩm hoạt động</h2>
-                    <div class="adm-kpi-value">@Model.TotalProducts <span class="adm-kpi-unit">mặt hàng</span></div>
-                </div>
-                <div class="adm-kpi-icon-pill purple">
+        <div class="adm-kpi-card">
+            <div class="adm-kpi-top">
+                <h2 class="adm-kpi-label">Sản phẩm hoạt động</h2>
+                <div class="adm-kpi-chip purple" title="Danh mục & Biến thể">
                     <i class="bi bi-box-seam"></i>
                 </div>
             </div>
-            <div class="adm-kpi-meta">
-                <span>Khách hàng hoạt động</span>
+            <div class="adm-kpi-number">
+                @Model.TotalProducts <span class="adm-kpi-unit">mặt hàng</span>
+            </div>
+            <div class="adm-kpi-footer">
+                <span>Khách hoạt động:</span>
                 <span class="adm-text-contrast fw-bold">@Model.TotalCustomers khách</span>
             </div>
         </div>
@@ -188,24 +185,24 @@
 
 </div>
 
-<!-- CHARTS SECTION: REVENUE SPLINE + PAYMENT & STATUS DONUTS -->
+<!-- CHARTS SECTION: BENTO GRID 8 : 4 -->
 <div class="row g-3 mb-4">
 
-    <!-- REVENUE SPLINE CHART -->
+    <!-- REVENUE SPLINE CHART (8 COLS) -->
     <div class="col-xl-8">
         <div class="adm-card h-100">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <div>
-                    <h5 class="fw-bold mb-0 adm-heading">Giá trị đơn đã giao theo ngày đặt</h5>
+                    <h5 class="fw-bold mb-0 adm-heading" style="font-size: 1.05rem;">Giá trị đơn đã giao theo ngày đặt</h5>
                     <p class="text-muted small mb-0">Biểu đồ thể hiện dòng tiền đã giao nhận thành công</p>
                 </div>
                 <div class="d-flex align-items-center gap-2">
-                    <span style="width: 10px; height: 10px; border-radius: 50%; background: #2563EB; display: inline-block;"></span>
-                    <span class="small text-muted">Giá trị đơn đã giao (VND)</span>
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #2563EB; display: inline-block;"></span>
+                    <span class="small text-muted fw-semibold" style="font-size: 0.76rem;">Doanh thu thực nhận (VND)</span>
                 </div>
             </div>
 
-            <div style="height: 320px; position: relative;">
+            <div style="height: 310px; position: relative;">
                 @if (Model.RevenueChartData.Any(value => value != 0))
                 {
                     <canvas id="admRevenueChart" aria-label="Giá trị đơn đã giao theo ngày đặt" role="img"></canvas>
@@ -214,33 +211,33 @@
                 {
                     <div class="h-100 d-flex flex-column align-items-center justify-content-center text-muted">
                         <i class="bi bi-graph-up fs-2 mb-2 opacity-50"></i>
-                        <p class="mb-0">Giá trị đơn đã giao trong kỳ là 0 ₫.</p>
+                        <p class="mb-0 small">Chưa có giao dịch hoàn tất trong kỳ được chọn.</p>
                     </div>
                 }
             </div>
         </div>
     </div>
 
-    <!-- PAYMENT & ORDER BREAKDOWN -->
+    <!-- PAYMENT & ORDER BREAKDOWN (4 COLS) -->
     <div class="col-xl-4">
         <div class="adm-card h-100 d-flex flex-column justify-content-between">
             <div>
-                <h5 class="fw-bold mb-1 adm-heading">Cơ cấu Thanh toán &amp; Đơn hàng</h5>
+                <h5 class="fw-bold mb-1 adm-heading" style="font-size: 1.05rem;">Cơ cấu Thanh toán &amp; Đơn hàng</h5>
                 <p class="text-muted small mb-3">Tỷ lệ thanh toán VietQR chuyển khoản vs Tiền mặt (COD)</p>
             </div>
 
-            <div style="height: 230px; position: relative;">
+            <div style="height: 220px; position: relative;">
                 <canvas id="admPaymentChart"></canvas>
             </div>
 
             <div class="pt-3 border-top border-secondary border-opacity-25 mt-3 d-flex justify-content-around text-center">
                 <div>
-                    <div class="text-muted small">Tổng giá trị đơn đặt</div>
+                    <div class="text-muted small" style="font-size: 0.74rem;">Tổng đơn đặt</div>
                     <div class="fw-bold adm-heading fs-5">@Model.OrderStatusData.Sum()</div>
                 </div>
                 <div class="border-end border-secondary border-opacity-25"></div>
                 <div>
-                    <div class="text-muted small">Cần duyệt gấp</div>
+                    <div class="text-muted small" style="font-size: 0.74rem;">Cần duyệt gấp</div>
                     <div class="fw-bold text-warning fs-5">@Model.PendingOrders</div>
                 </div>
             </div>
@@ -257,7 +254,7 @@
         <div class="adm-card h-100">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <div>
-                    <h5 class="fw-bold mb-0 adm-heading">Đơn hàng Mới nhất</h5>
+                    <h5 class="fw-bold mb-0 adm-heading" style="font-size: 1.05rem;">Đơn hàng Mới nhất</h5>
                     <p class="text-muted small mb-0">Luồng giao dịch trực tiếp từ khách hàng</p>
                 </div>
                 <a asp-controller="AdminOrders" asp-action="Index" class="btn adm-btn-outline py-1 px-3" style="font-size: 0.78rem;">
@@ -299,13 +296,13 @@
                                     <td>
                                         @if (order.PaymentMethod == PaymentMethod.VietQR)
                                         {
-                                            <span class="badge" style="background: rgba(2, 132, 199, 0.12); color: #0284C7; border: 1px solid rgba(2, 132, 199, 0.3);">
+                                            <span class="badge" style="background: rgba(2, 132, 199, 0.1); color: #0284C7; border: 1px solid rgba(2, 132, 199, 0.25);">
                                                 <i class="bi bi-qr-code me-1"></i> VietQR
                                             </span>
                                         }
                                         else
                                         {
-                                            <span class="badge" style="background: var(--adm-surface-hover); color: var(--adm-ink-muted); border: 1px solid var(--adm-border);">
+                                            <span class="badge" style="background: var(--adm-bg-soft); color: var(--adm-ink-muted); border: 1px solid var(--adm-border);">
                                                 <i class="bi bi-cash me-1"></i> COD
                                             </span>
                                         }
@@ -367,7 +364,7 @@
         <!-- TOP SELLING LEADERBOARD -->
         <div class="adm-card">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="fw-bold mb-0 adm-heading">Top Sản phẩm Bán chạy</h5>
+                <h5 class="fw-bold mb-0 adm-heading" style="font-size: 1.05rem;">Top Sản phẩm Bán chạy</h5>
                 <span class="badge" style="background: rgba(37, 99, 235, 0.1); color: var(--adm-cyan); border: 1px solid rgba(37, 99, 235, 0.2);">
                     LEADERBOARD
                 </span>
@@ -414,7 +411,7 @@
         <div class="adm-card">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <div>
-                    <h5 class="fw-bold mb-0 adm-heading"><i class="bi bi-bell-fill text-danger me-1"></i>Radar Cảnh báo Kho Hàng</h5>
+                    <h5 class="fw-bold mb-0 adm-heading" style="font-size: 1.05rem;"><i class="bi bi-bell-fill text-danger me-1"></i>Radar Cảnh báo Kho Hàng</h5>
                     <div class="text-muted" style="font-size: 0.72rem;">Mức tồn kho an toàn &le; 5 sản phẩm</div>
                 </div>
                 <a asp-controller="AdminProducts" asp-action="Index" asp-route-stock="low" class="text-decoration-none small text-danger fw-bold">

@@ -184,12 +184,12 @@
         <!-- TOPBAR -->
         <header class="adm-topbar">
             <div class="d-flex align-items-center gap-2">
-                <button type="button" class="adm-btn-outline d-lg-none p-1 px-2" id="admSidebarToggle"
+                <button type="button" class="adm-topbar-icon-btn d-lg-none" id="admSidebarToggle"
                         aria-label="Menu quản trị" aria-controls="admSidebar" aria-expanded="false">
                     <i class="bi bi-list fs-5"></i>
                 </button>
 
-                <div class="adm-topbar-breadcrumb d-none d-sm-flex align-items-center gap-2">
+                <div class="adm-topbar-breadcrumb d-flex align-items-center gap-2">
                     <span class="adm-breadcrumb-chip">
                         <i class="bi bi-gem me-1 text-primary"></i>
                         <span>HNMT</span>
@@ -197,16 +197,15 @@
                     <i class="bi bi-chevron-right text-muted" style="font-size: 0.65rem;"></i>
                     <span class="adm-breadcrumb-page">@(ViewData["Title"] ?? "Quản trị")</span>
                 </div>
-                <span class="adm-topbar-label d-sm-none">@(ViewData["Title"] ?? "Quản trị")</span>
             </div>
 
             <div class="d-flex align-items-center gap-2">
-                <partial name="_NotificationBell" view-data='@new ViewDataDictionary(ViewData) { { "BellButtonClass", "adm-topbar-action-btn" } }' />
+                <partial name="_NotificationBell" view-data='@new ViewDataDictionary(ViewData) { { "BellButtonClass", "adm-topbar-icon-btn" } }' />
 
-                <!-- THEME SWITCHER (SÁNG / TỐI) -->
-                <button type="button" class="adm-topbar-action-btn adm-theme-btn" id="admThemeToggle" title="Chuyển đổi giao diện Sáng / Tối">
+                <!-- THEME SWITCHER (SÁNG / TỐI - MINIMAL ICON TOGGLE) -->
+                <button type="button" class="adm-topbar-icon-btn adm-theme-btn" id="admThemeToggle" title="Chuyển đổi giao diện Sáng / Tối" aria-label="Chuyển đổi giao diện Sáng / Tối">
                     <i class="bi bi-sun-fill text-warning" id="admThemeIcon"></i>
-                    <span class="d-none d-md-inline" id="admThemeText">Chế độ Sáng</span>
+                    <span class="visually-hidden" id="admThemeText">Chế độ Sáng</span>
                 </button>
 
                 <a asp-controller="Home" asp-action="Index" class="adm-topbar-store-btn" target="_blank" aria-label="Xem cửa hàng" title="Xem giao diện khách hàng">
