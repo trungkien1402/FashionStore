@@ -1030,3 +1030,549 @@ a.sv-exit-btn {
     text-decoration: none !important;
 }
 
+
+/* ==========================================================================
+   SNEAKER VAULT REVIEWS - ĐỒNG BỘ 100% FONT & MÀU CHỮ VỚI CHI TIẾT GIÀY
+   ========================================================================== */
+
+/* Nút đánh giá ở controls panel */
+.sv-reviews-btn {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    border: 1.5px solid rgba(255, 255, 255, 0.22);
+    border-radius: 999px;
+    padding: 10px 18px;
+    font-family: 'Space Grotesk', -apple-system, sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.25s var(--sv-bounce);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.sv-reviews-btn i {
+    color: #f59e0b;
+    font-size: 13px;
+}
+
+.sv-reviews-btn:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.5);
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.sv-reviews-btn:active {
+    transform: translateY(0) scale(0.97);
+}
+
+/* Dòng đánh giá trong bảng Tech Specs */
+.sv-reviews-meta-trigger {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: opacity 0.2s, transform 0.2s;
+    user-select: none;
+}
+
+.sv-reviews-meta-trigger:hover {
+    opacity: 0.85;
+    transform: translateX(2px);
+}
+
+.sv-stars-preview {
+    color: #f59e0b;
+    letter-spacing: 1px;
+    font-size: 12px;
+}
+
+.sv-rating-num {
+    font-family: 'Space Grotesk', -apple-system, sans-serif;
+    font-weight: 800;
+    color: #ffffff;
+    font-size: 13px;
+}
+
+.sv-count-num {
+    font-family: 'Space Grotesk', -apple-system, sans-serif;
+    font-weight: 600;
+    color: var(--sv-muted);
+    font-size: 12px;
+}
+
+/* Nền mờ Backdrop cho Reviews Drawer */
+.sv-reviews-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 92;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s ease;
+}
+
+.sv-reviews-backdrop.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* Khung Drawer Đánh giá Giày */
+.sv-reviews-drawer {
+    position: absolute;
+    bottom: calc(100% + 14px);
+    right: 0;
+    width: 390px;
+    max-width: calc(100vw - 32px);
+    max-height: min(78vh, 600px);
+    background: rgba(18, 20, 26, 0.94);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    border: 1.5px solid rgba(255, 255, 255, 0.22);
+    border-radius: 22px;
+    box-shadow: 0 24px 50px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.08);
+    padding: 20px 22px;
+    z-index: 96;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(16px) scale(0.96);
+    transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease, visibility 0.32s ease;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    box-sizing: border-box;
+    font-family: 'Plus Jakarta Sans', 'Montserrat', -apple-system, sans-serif;
+    color: #ffffff;
+}
+
+.sv-reviews-drawer.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+}
+
+.sv-reviews-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    flex-shrink: 0;
+}
+
+.sv-reviews-title {
+    font-family: 'Space Grotesk', -apple-system, sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    color: #ffffff;
+    text-transform: uppercase;
+    margin: 0 0 4px 0;
+}
+
+.sv-reviews-rating-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+}
+
+.sv-reviews-rating-badge .sv-reviews-stars {
+    color: #f59e0b;
+    letter-spacing: 1px;
+}
+
+.sv-reviews-rating-badge .sv-reviews-score {
+    font-family: 'Space Grotesk', -apple-system, sans-serif;
+    font-weight: 800;
+    color: #ffffff;
+}
+
+.sv-reviews-rating-badge .sv-reviews-count {
+    color: var(--sv-muted);
+    font-size: 11px;
+}
+
+.sv-reviews-close-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    padding: 0;
+    line-height: 1;
+}
+
+.sv-reviews-close-btn:hover {
+    background: #ffffff;
+    color: #000000;
+    transform: scale(1.1);
+}
+
+.sv-reviews-product-info {
+    font-size: 12px;
+    color: var(--sv-muted);
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+}
+
+.sv-reviews-product-model {
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.95);
+    max-width: 230px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: 'Space Grotesk', -apple-system, sans-serif;
+}
+
+.sv-reviews-product-price {
+    font-weight: 800;
+    color: #ffffff;
+    font-family: 'Space Grotesk', -apple-system, sans-serif;
+}
+
+.sv-reviews-body {
+    overflow-y: auto;
+    padding-right: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-height: calc(78vh - 120px);
+}
+
+.sv-reviews-body::-webkit-scrollbar {
+    width: 4px;
+}
+
+.sv-reviews-body::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+}
+
+.sv-reviews-write-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 14px;
+    padding: 14px;
+}
+
+.sv-write-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.sv-write-title {
+    font-family: 'Space Grotesk', -apple-system, sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: #ffffff;
+    text-transform: uppercase;
+}
+
+.sv-verified-badge {
+    font-size: 10px;
+    font-weight: 700;
+    color: #10b981;
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    padding: 2px 7px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.sv-write-sub {
+    font-size: 11px;
+    color: var(--sv-muted);
+    margin: 0 0 10px 0;
+    line-height: 1.4;
+}
+
+.sv-star-selector {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.sv-star-label {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.sv-star-btns {
+    display: flex;
+    gap: 2px;
+}
+
+.sv-star-btn {
+    background: none;
+    border: none;
+    font-size: 19px;
+    color: rgba(255, 255, 255, 0.25);
+    cursor: pointer;
+    padding: 0 1px;
+    transition: transform 0.15s, color 0.15s;
+    line-height: 1;
+}
+
+.sv-star-btn.is-active,
+.sv-star-btn:hover {
+    color: #f59e0b;
+}
+
+.sv-star-btn:hover {
+    transform: scale(1.15);
+}
+
+.sv-star-mood {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--sv-muted);
+    margin-left: 2px;
+}
+
+.sv-review-textarea {
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 9px 11px;
+    font-size: 12.5px;
+    color: #ffffff;
+    resize: vertical;
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: inherit;
+    margin-bottom: 10px;
+}
+
+.sv-review-textarea:focus {
+    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
+}
+
+.sv-review-submit-btn {
+    width: 100%;
+    height: 40px;
+    border-radius: 999px;
+    border: none;
+    background: #ffffff;
+    color: #000000;
+    font-family: 'Space Grotesk', -apple-system, sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.sv-review-submit-btn:hover:not(:disabled) {
+    background: #f0f0f0;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4);
+}
+
+.sv-review-submit-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.sv-review-msg {
+    margin: 8px 0 0;
+    font-size: 11.5px;
+    font-weight: 600;
+}
+
+.sv-review-msg.success { color: #10b981; }
+.sv-review-msg.error { color: #f87171; }
+
+.sv-review-notice-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px dashed rgba(255, 255, 255, 0.18);
+    border-radius: 10px;
+    font-size: 11.5px;
+    color: var(--sv-muted);
+    line-height: 1.4;
+}
+
+.sv-review-notice-box i {
+    font-size: 16px;
+    color: #10b981;
+    flex-shrink: 0;
+}
+
+.sv-reviews-list-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sv-reviews-list-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-family: 'Space Grotesk', -apple-system, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--sv-muted);
+    text-transform: uppercase;
+}
+
+.sv-reviews-total-count {
+    font-size: 11px;
+    color: var(--sv-muted);
+}
+
+.sv-reviews-items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sv-review-item {
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 12px;
+    padding: 10px 12px;
+    text-align: left;
+}
+
+.sv-review-item-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 6px;
+}
+
+.sv-item-user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sv-item-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    flex-shrink: 0;
+    font-family: 'Space Grotesk', -apple-system, sans-serif;
+}
+
+.sv-item-user-meta {
+    display: flex;
+    flex-direction: column;
+}
+
+.sv-item-user-name {
+    font-family: 'Space Grotesk', -apple-system, sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.sv-item-spec {
+    font-size: 10.5px;
+    color: var(--sv-muted);
+}
+
+.sv-item-stars {
+    color: #f59e0b;
+    font-size: 11px;
+    letter-spacing: 1px;
+}
+
+.sv-item-date {
+    font-size: 10.5px;
+    color: var(--sv-muted);
+}
+
+.sv-item-comment {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.88);
+    line-height: 1.45;
+    margin: 0;
+}
+
+.sv-reviews-loading,
+.sv-reviews-empty {
+    text-align: center;
+    padding: 20px 0;
+    color: var(--sv-muted);
+    font-size: 12px;
+}
+
+@media (max-width: 576px) {
+    .sv-reviews-drawer {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100vw !important;
+        max-width: 100vw !important;
+        margin: 0 !important;
+        border-radius: 28px 28px 0 0 !important;
+        padding: 24px 20px 32px !important;
+        transform: translateY(100%) !important;
+        max-height: 85vh !important;
+    }
+    .sv-reviews-drawer.is-open {
+        transform: translateY(0) !important;
+    }
+}

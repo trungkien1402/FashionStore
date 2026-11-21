@@ -1,4 +1,4 @@
-/**
+﻿/**
  * ==============================================================================
  * HNMTSHOP - CLOTHING RAIL CATALOG INTERACTIVE ENGINE
  * Sào Treo Đồ Thời Trang Độc Bản: Quần (Pants) & Áo (Shirts)
@@ -274,8 +274,8 @@
 
         const capTitleEl = $('#captionTitle');
         const capDetailEl = $('#captionDetail');
-        if (capTitleEl && currentRack.captionHeading) capTitleEl.textContent = currentRack.captionHeading;
-        if (capDetailEl && currentRack.captionDetail) capDetailEl.textContent = currentRack.captionDetail;
+        if (capTitleEl) capTitleEl.textContent = currentRack.captionHeading || '';
+        if (capDetailEl) capDetailEl.textContent = currentRack.captionDetail || '';
 
         // Quản lý hiển thị nút chuyển sào: Hiện khi số sào > 1, ẩn khi chỉ có 1 sào
         const prevRackBtn = $('#rackPrevBtn');
@@ -429,7 +429,203 @@
             });
         }
 
+        const detailsLink = $('#railViewDetailsLink') || document.getElementById('railViewDetailsLink');
+        if (detailsLink) {
+            detailsLink.style.display = 'none';
+        }
+
         renderSizes();
+        loadRailReviews(p.productId);
+    }
+
+    let currentReviewStar = 5;
+    const MOOD_TEXTS = {
+        1: 'Rất tệ (1 sao)',
+        2: 'Chưa hài lòng (2 sao)',
+        3: 'Bình thường (3 sao)',
+        4: 'Hài lòng (4 sao)',
+        5: 'Tuyệt vời (5 sao)'
+    };
+
+    async function loadRailReviews(productId) {
+        const container = $('#railReviewsContainer');
+        if (!container) return;
+
+        const scoreNum = $('#railScoreNum');
+        const scoreStars = $('#railScoreStars');
+        const scoreCount = $('#railScoreCount');
+        const writeCard = $('#railWriteReviewCard');
+        const noticeBox = $('#railReviewNoticeBox');
+        const noticeText = $('#railReviewNoticeText');
+        const reviewItems = $('#railReviewItems');
+        const msgEl = $('#railReviewMsg');
+
+        if (reviewItems) {
+            reviewItems.innerHTML = '<div class="rail-review-loading">Đang tải đánh giá...</div>';
+        }
+        if (msgEl) {
+            msgEl.style.display = 'none';
+            msgEl.textContent = '';
+        }
+
+        if (!productId) {
+            container.style.display = 'none';
+            return;
+        }
+        container.style.display = 'block';
+
+        try {
+            const res = await fetch(`/Products/GetProductReviews?productId=${productId}`, { cache: 'no-store' });
+            const data = await res.json();
+
+            if (!data.success) {
+                if (reviewItems) reviewItems.innerHTML = '<div class="rail-review-empty">Không thể tải đánh giá.</div>';
+                return;
+            }
+
+            if (scoreNum) scoreNum.textContent = data.count > 0 ? Number(data.average).toFixed(1) : '5.0';
+            if (scoreCount) scoreCount.textContent = `(${data.count})`;
+            if (scoreStars) {
+                const rounded = Math.round(data.average || 5);
+                scoreStars.textContent = '★'.repeat(rounded) + '☆'.repeat(Math.max(0, 5 - rounded));
+            }
+
+            // CHỈ CHO PHÉP TÀI KHOẢN ĐÃ MUA & NHẬN HÀNG THÀNH CÔNG ĐÁNH GIÁ
+            if (!data.isAuthenticated) {
+                if (writeCard) writeCard.style.display = 'none';
+                if (noticeBox) {
+                    noticeBox.style.display = 'flex';
+                    if (noticeText) noticeText.innerHTML = 'Vui lòng <a href="/Account/Login" style="color:var(--rail-ink);font-weight:700;text-decoration:underline;">đăng nhập</a> để đánh giá sau khi nhận hàng.';
+                }
+            } else if (data.hasReviewed) {
+                if (writeCard) writeCard.style.display = 'none';
+                if (noticeBox) {
+                    noticeBox.style.display = 'flex';
+                    if (noticeText) noticeText.textContent = '✓ Bạn đã đánh giá sản phẩm này. Cảm ơn bạn!';
+                }
+            } else if (data.hasDeliveredPurchase) {
+                if (noticeBox) noticeBox.style.display = 'none';
+                if (writeCard) writeCard.style.display = 'block';
+            } else {
+                if (writeCard) writeCard.style.display = 'none';
+                if (noticeBox) {
+                    noticeBox.style.display = 'flex';
+                    if (noticeText) noticeText.textContent = '🔒 Đánh giá chỉ dành cho tài khoản đã mua và nhận sản phẩm thành công.';
+                }
+            }
+
+            if (reviewItems) {
+                if (!data.reviews || data.reviews.length === 0) {
+                    reviewItems.innerHTML = '<div class="rail-review-empty">Chưa có đánh giá nào. Hãy là người đầu tiên trải nghiệm!</div>';
+                } else {
+                    reviewItems.innerHTML = data.reviews.map(r => {
+                        const initial = (r.reviewerName || 'K').trim()[0].toUpperCase();
+                        const starHtml = '★'.repeat(r.rating) + '☆'.repeat(Math.max(0, 5 - r.rating));
+                        return `
+                            <div class="rail-review-item">
+                                <div class="rail-review-item-top">
+                                    <div class="rail-item-user-info">
+                                        <div class="rail-item-avatar">${initial}</div>
+                                        <div class="rail-item-user-meta">
+                                            <span class="rail-item-user-name">
+                                                ${r.reviewerName}
+                                                <i class="bi bi-check-circle-fill rail-item-verified" title="Đã mua hàng"></i>
+                                            </span>
+                                            ${r.spec ? `<span class="rail-item-spec">${r.spec}</span>` : ''}
+                                        </div>
+                                    </div>
+                                    <span class="rail-item-stars">${starHtml}</span>
+                                </div>
+                                <p class="rail-item-comment">${r.comment}</p>
+                                <div style="display:flex;justify-content:flex-end;margin-top:4px;">
+                                    <span class="rail-item-date">${r.createdAtFormatted}</span>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            }
+
+        } catch (e) {
+            console.error('[RailReviews] Lỗi tải đánh giá:', e);
+            if (reviewItems) reviewItems.innerHTML = '<div class="rail-review-empty">Không thể kết nối máy chủ để tải đánh giá.</div>';
+        }
+    }
+
+    function initRailReviewEvents() {
+        const starBtns = document.querySelectorAll('#railStarBtns .rail-star-btn');
+        const moodText = $('#railStarMood');
+        starBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const star = parseInt(btn.dataset.star, 10) || 5;
+                currentReviewStar = star;
+                starBtns.forEach(b => {
+                    const s = parseInt(b.dataset.star, 10);
+                    b.classList.toggle('is-active', s <= star);
+                });
+                if (moodText) moodText.textContent = MOOD_TEXTS[star] || `${star} sao`;
+            });
+        });
+
+        const submitBtn = $('#railSubmitReviewBtn');
+        const commentInput = $('#railReviewComment');
+        const msgEl = $('#railReviewMsg');
+
+        if (submitBtn) {
+            submitBtn.addEventListener('click', async () => {
+                const p = products[current];
+                if (!p || !p.productId) return;
+                const comment = (commentInput?.value || '').trim();
+
+                if (!comment) {
+                    if (msgEl) {
+                        msgEl.className = 'rail-review-msg error';
+                        msgEl.textContent = 'Vui lòng nhập nội dung đánh giá.';
+                        msgEl.style.display = 'block';
+                    }
+                    if (commentInput) commentInput.focus();
+                    return;
+                }
+
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Đang gửi...';
+
+                try {
+                    const res = await fetch('/Products/SubmitReviewAjax', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            productId: p.productId,
+                            rating: currentReviewStar,
+                            comment: comment
+                        })
+                    });
+                    const resData = await res.json();
+
+                    if (msgEl) {
+                        msgEl.className = resData.success ? 'rail-review-msg success' : 'rail-review-msg error';
+                        msgEl.textContent = resData.message;
+                        msgEl.style.display = 'block';
+                    }
+
+                    if (resData.success) {
+                        if (commentInput) commentInput.value = '';
+                        setTimeout(() => {
+                            loadRailReviews(p.productId);
+                        }, 800);
+                    }
+                } catch (err) {
+                    if (msgEl) {
+                        msgEl.className = 'rail-review-msg error';
+                        msgEl.textContent = 'Có lỗi xảy ra khi gửi đánh giá.';
+                        msgEl.style.display = 'block';
+                    }
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="bi bi-send-fill"></i> GỬI ĐÁNH GIÁ';
+                }
+            });
+        }
     }
 
     function renderSizes() {
@@ -511,7 +707,7 @@
 
     // Chọn và phóng to chi tiết một món đồ cụ thể
     function selectProduct(category, slugOrIdx) {
-        const audience = window.HNMTChilePortal?.getAudience?.() || 'men';
+        const audience = window.HNMTChilePortal?.getAudience?.() || currentAudience;
         if (currentAudience !== audience || (category && currentCategory !== category)) {
             openClothingRail(category || currentCategory, audience);
         } else {
@@ -554,7 +750,8 @@
         }
 
         const catalog = getAllProducts(currentCategory, currentAudience);
-        filteredList = filteredList.filter(product => catalog.some(item => item.slug === product.slug));
+        const slugs = new Set(filteredList.map(product => product.slug));
+        filteredList = catalog.filter(item => slugs.has(item.slug));
         isFiltered = true;
         activeFilterLabel = filterLabel;
 
@@ -623,6 +820,7 @@
         applyFilter,
         resetFilter,
         getCategory: () => currentCategory,
+        getAudience: () => currentAudience,
         setCategory: (cat) => { openClothingRail(cat); },
         getAllProducts,
         SHIRT_RACKS: DEFAULT_SHIRT_RACKS,
@@ -635,19 +833,19 @@
     // 6. KHỞI TẠO EVENT LISTENERS & DOM
     // ==========================================================================
     function init() {
-        try {
-            const urlParams = new URLSearchParams(window.location.search);
-            const catParam = urlParams.get('category') || urlParams.get('cat') || urlParams.get('type');
-            if (catParam === 'quan') {
-                currentCategory = 'quan';
-                currentRacks = DEFAULT_PANTS_RACKS;
-                currentRackIdx = 0;
-                products = currentRacks[0]?.products || [];
-            }
-        } catch (e) {}
+        const standalone = document.querySelector('.hnmt-clothing-rail-wrap.is-standalone');
+        if (standalone) {
+            const params = new URLSearchParams(window.location.search);
+            const kind = params.get('category') || params.get('cat') || params.get('type');
+            const audience = params.get('audience');
+            currentCategory = kind === 'quan' ? 'quan' : 'ao';
+            if (Object.hasOwn(audienceClothing, audience)) currentAudience = audience;
+            currentRacks = chunkProductsIntoRacks(getAllProducts(currentCategory, currentAudience), currentCategory);
+        }
 
         ensureSearchButton();
         setInterval(ensureSearchButton, 600);
+        initRailReviewEvents();
 
         const prevBtn = $('#prevBtn');
         const nextBtn = $('#nextBtn');
@@ -768,14 +966,12 @@
 
         // Tự động nhận diện và áp dụng bộ lọc chuyển tiếp từ Trang Chủ
         try {
-            const pendingJson = sessionStorage.getItem('hnmt_pending_rail_filter');
+            const pendingJson = standalone && sessionStorage.getItem('hnmt_pending_rail_filter');
             if (pendingJson) {
                 sessionStorage.removeItem('hnmt_pending_rail_filter');
                 const pending = JSON.parse(pendingJson);
-                if (pending && Array.isArray(pending.filteredProducts) && pending.filteredProducts.length > 0) {
-                    setTimeout(() => {
-                        window.ClothingRail.applyFilter(pending.filteredProducts, pending.label || 'BỘ LỌC TỪ TRANG CHỦ');
-                    }, 220);
+                if (pending?.audience === currentAudience && pending.category === currentCategory && Array.isArray(pending.filteredProducts)) {
+                    applyFilter(pending.filteredProducts, pending.label || 'BỘ LỌC TỪ TRANG CHỦ');
                 }
             }
         } catch (e) {}

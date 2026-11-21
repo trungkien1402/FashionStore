@@ -1,0 +1,440 @@
+@* 
+    ======================================================================
+    HNMTSHOP - 3D SHOWROOM PORTAL + CLOTHING RAIL CATALOG
+    1. Khi mở Showroom: Hiển thị không gian 3D Adidas Chile 20 (Mặt nước gợn sóng, 3 cột, Quần - Áo - Giày)
+    2. Khi bấm vào Áo: Mở Sào Treo Đồ Thời Trang Độc Bản (clothing-rail-catalog từ GitHub)
+    3. Khi bấm "Quay lại": Trở về không gian 3D Showroom
+    ======================================================================
+*@
+
+<div id="hnmtChilePortal" class="hnmt-chile-portal" aria-hidden="true">
+
+    <!-- 1. THREE.JS 3D WEBGL CANVAS (RENDER TOÀN BỘ KHÔNG GIAN 3D & MẶT NƯỚC GỢN SÓNG) -->
+    <canvas id="hnmt3dCanvas" class="hnmt-3d-canvas"></canvas>
+
+    <!-- 2. THANH HEADER TỐI GIẢN CỦA SHOWROOM -->
+    <header class="hnmt-portal-header">
+        <div class="hnmt-portal-brand">
+            <span class="hnmt-brand-title">HnmtShop</span>
+        </div>
+
+        <div class="hnmt-portal-actions">
+            <button type="button" class="hnmt-exit-btn" id="hnmtPortalExitBtn" title="Thoát không gian 3D">
+                <i class="bi bi-arrow-left"></i>
+                <span>Thoát</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- 3. DÒNG CHỮ HƯỚNG DẪN DƯỚI ĐÁY -->
+    <footer class="hnmt-portal-footer">
+        <div class="hnmt-badge-prompt">CHỌN 1 MÓN ĐỒ ĐỂ BẮT ĐẦU</div>
+        <div class="hnmt-badge-subnote">( Lưu ý: Nhấp vào món đồ bất kỳ để mở phòng trưng bày chi tiết )</div>
+    </footer>
+
+    <!-- HOVER TAG KHI RÊ CHUỘT LÊN ĐỒ VẬT 3D -->
+    <div class="hnmt-hover-tag" id="hnmtHoverTag" style="display: none !important;">
+        <span class="hnmt-hover-cat" id="hnmtHoverCat">02 // TOPS</span>
+        <span class="hnmt-hover-name" id="hnmtHoverName">ÁO THUN HNMTSHOP</span>
+    </div>
+
+    <!-- 4. GIAO DIỆN SÀO TREO ĐỒ (CLOTHING-RAIL-CATALOG TỪ GITHUB - MỞ RA KHI BẤM VÀO ÁO) -->
+    <div id="hnmtRackOverlay" class="hnmt-clothing-rail-wrap" aria-hidden="true">
+        <div class="rail-app">
+            <!-- Header của Sào đồ -->
+            <header class="rail-header" id="header">
+                <a href="/" class="rail-brand-signature" id="railBrandSignature" title="Về trang chủ">HnmtShop</a>
+                <div class="rail-brand" aria-label="Sào Đồ Thời Trang">
+                    <span>Sào Đồ</span>
+                    <span>Thời Trang</span>
+                </div>
+                <div class="rail-head-right">
+                    <button type="button" class="rail-search-btn" id="railSearchBtn" aria-label="Tìm kiếm đồ" title="Tìm đồ nhanh (Phím tắt /)">
+                        <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                            <circle cx="11" cy="11" r="7"/>
+                            <path d="m20 20-4.35-4.35"/>
+                        </svg>
+                    </button>
+                    <button type="button" class="rail-bag-btn" id="bagBtn" aria-label="Giỏ hàng">
+                        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                            <path d="M4 8h16l-1 13H5L4 8Z"/>
+                            <path d="M9 9V6a3 3 0 0 1 6 0v3"/>
+                        </svg>
+                        <span class="rail-bag-count" id="bagCount">0</span>
+                    </button>
+                    <!-- Nút Quay lại Showroom 3D -->
+                    <button type="button" class="rail-portal-exit-btn" id="hnmtRackBackToLobbyBtn" title="Quay lại">
+                        <i class="bi bi-arrow-left"></i>
+                        <span>Quay lại</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Main Rail Scene -->
+            <main class="rail-main">
+                <div class="rail-intro">
+                    <p class="rail-eyebrow">BỘ SƯU TẬP ÁO</p>
+                    <div class="rail-title-row">
+                        <button type="button" class="rail-rack-nav-btn prev" id="rackPrevBtn" title="Sào trước" aria-label="Sào trước">
+                            <i class="bi bi-chevron-left"></i>
+                        </button>
+                        <h1 class="rail-hero-title">Thời Trang Độc Bản · Nâng Tầm Phong Cách</h1>
+                        <button type="button" class="rail-rack-nav-btn next" id="rackNextBtn" title="Sào tiếp theo" aria-label="Sào tiếp theo">
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <section class="rail-scene" aria-label="Sào treo đồ thời trang">
+                    <div class="rail-scroll" id="railScroll">
+                        <div class="rail-stage" id="railStage">
+                            <div class="chrome-rail" aria-hidden="true"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="rail-caption-panel">
+                    <div class="rail-caption-heading" id="captionTitle">Bộ sưu tập độc bản HNMTSHOP.</div>
+                    <div class="rail-caption-detail" id="captionDetail">10 thiết kế giới hạn — Lướt sào hoặc chọn để xem chi tiết.</div>
+                    <button type="button" class="rail-outline-pill" id="availabilityBtn">XEM CHI TIẾT ↗</button>
+                </section>
+            </main>
+        </div>
+
+        <!-- Product Detail Modal Overlay -->
+        <section class="rail-product-overlay" id="productOverlay" role="dialog" aria-modal="true" aria-label="Chi tiết sản phẩm">
+            <button type="button" class="rail-product-close" id="closeBtn">ĐÓNG <span>×</span></button>
+            <div class="rail-detail-content">
+                <div class="rail-detail-image-row">
+                    <button type="button" class="rail-arrow-btn" id="prevBtn" aria-label="Sản phẩm trước">←</button>
+                    <img class="rail-detail-img" id="detailImage" alt="">
+                    <button type="button" class="rail-arrow-btn" id="nextBtn" aria-label="Sản phẩm sau">→</button>
+                </div>
+                <p class="rail-counter" id="counter"></p>
+                <h2 class="rail-detail-name" id="detailName"></h2>
+                <div class="rail-view-switch" id="viewSwitch" role="tablist" aria-label="Góc nhìn sản phẩm">
+                    <button type="button" class="rail-view-opt is-active" data-view="front" role="tab" aria-selected="true">Side A</button>
+                    <span class="rail-view-sep" aria-hidden="true">|</span>
+                    <button type="button" class="rail-view-opt is-dimmed" data-view="back" role="tab" aria-selected="false">Side B</button>
+                </div>
+                <p class="rail-description" id="description"></p>
+                <div class="rail-price-line">
+                    <span id="detailPrice"></span>
+                    <span class="rail-stock" id="stock"></span>
+                </div>
+                <span class="rail-options-label">MÀU SẮC</span>
+                <div class="rail-color-options" id="colors"></div>
+                <span class="rail-options-label">KÍCH CỠ</span>
+                <div class="rail-size-options" id="sizes"></div>
+                <p class="rail-size-hint" id="sizeHint"></p>
+                <button type="button" class="rail-cart-cta" id="cartCta">CHỌN KÍCH CỠ</button>
+                <p class="rail-delivery">Miễn phí giao hàng toàn quốc từ 500.000 ₫. Đổi trả trong 30 ngày.</p>
+
+                <!-- ============================================================== -->
+                <!-- PHẦN ĐÁNH GIÁ SẢN PHẨM TRỰC TIẾP TRÊN SÀO ĐỒ 3D               -->
+                <!-- ============================================================== -->
+                <div class="rail-reviews-container" id="railReviewsContainer">
+                    <div class="rail-reviews-divider"></div>
+                    
+                    <div class="rail-reviews-header">
+                        <div class="rail-reviews-title-row">
+                            <span class="rail-reviews-badge"><i class="bi bi-patch-check-fill"></i> ĐÁNH GIÁ XÁC THỰC</span>
+                            <div class="rail-reviews-score" id="railReviewsScore">
+                                <span class="score-num" id="railScoreNum">5.0</span>
+                                <span class="score-stars" id="railScoreStars">★★★★★</span>
+                                <span class="score-count" id="railScoreCount">(0)</span>
+                            </div>
+                        </div>
+                        <h4 class="rail-reviews-heading">Đánh Giá Từ Khách Hàng</h4>
+                    </div>
+
+                    <!-- FORM VIẾT ĐÁNH GIÁ (DÀNH CHO KHÁCH ĐÃ NHẬN HÀNG) -->
+                    <div class="rail-write-review-card" id="railWriteReviewCard" style="display: none;">
+                        <span class="rail-write-title"><i class="bi bi-star-fill text-warning"></i> Bạn đã mua sản phẩm này</span>
+                        <p class="rail-write-sub">Hãy chia sẻ cảm nhận thực tế về chất vải, form dáng và màu sắc nhé!</p>
+                        
+                        <div class="rail-star-selector" id="railStarSelector">
+                            <span class="star-label">Đánh giá:</span>
+                            <div class="star-btns" id="railStarBtns">
+                                <button type="button" class="rail-star-btn is-active" data-star="1">★</button>
+                                <button type="button" class="rail-star-btn is-active" data-star="2">★</button>
+                                <button type="button" class="rail-star-btn is-active" data-star="3">★</button>
+                                <button type="button" class="rail-star-btn is-active" data-star="4">★</button>
+                                <button type="button" class="rail-star-btn is-active" data-star="5">★</button>
+                            </div>
+                            <span class="star-mood-text" id="railStarMood">Tuyệt vời (5 sao)</span>
+                        </div>
+
+                        <textarea id="railReviewComment" class="rail-review-input" rows="3" maxlength="1000" placeholder="Viết cảm nhận của bạn về sản phẩm này..."></textarea>
+                        
+                        <button type="button" class="rail-review-submit-btn" id="railSubmitReviewBtn">
+                            <i class="bi bi-send-fill"></i> GỬI ĐÁNH GIÁ
+                        </button>
+                        <p class="rail-review-msg" id="railReviewMsg" style="display: none;"></p>
+                    </div>
+
+                    <!-- TRẠNG THÁI KHÓA FORM: CHƯA MUA HOẶC ĐÃ ĐÁNH GIÁ -->
+                    <div class="rail-review-notice-box" id="railReviewNoticeBox">
+                        <i class="bi bi-shield-check"></i>
+                        <span id="railReviewNoticeText">Đánh giá chỉ dành cho khách hàng đã mua và nhận sản phẩm thành công.</span>
+                    </div>
+
+                    <!-- DANH SÁCH BÌNH LUẬN THỰC TẾ -->
+                    <div class="rail-review-feed">
+                        <div class="rail-feed-header">
+                            <span>Nhận xét gần đây</span>
+                        </div>
+                        <div class="rail-review-items" id="railReviewItems">
+                            <div class="rail-review-loading">Đang tải đánh giá...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Informational Modal -->
+        <div class="rail-nav-modal" id="modal" role="dialog" aria-modal="true">
+            <div class="rail-modal-body">
+                <h2 id="modalTitle">Về HNMTSHOP</h2>
+                <p id="modalText"></p>
+                <button type="button" class="rail-modal-exit" id="modalExit">ĐÓNG [ESC]</button>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <aside class="rail-toast" id="toast" role="status" aria-live="polite"></aside>
+    </div>
+
+    <!-- 5. GIAO DIỆN SNEAKER VAULT (1:1 THEO VIDEO FIGMA - MỞ RA KHI BẤM VÀO GIÀY TRONG SHOWROOM) -->
+    <div id="hnmtSneakerOverlay" class="hnmt-sneaker-vault-wrap" aria-hidden="true">
+        <div class="sv-app is-grid-mode" id="svApp">
+
+            <!-- HEADER CỦA SNEAKER VAULT TRONG SHOWROOM -->
+            <header class="sv-header">
+                <div class="sv-header-left">
+                    <button type="button" class="sv-icon-btn" id="svToggleViewBtn" title="Chuyển chế độ xem">
+                        <i class="bi bi-view-stacked"></i>
+                        <span>SLIDER 3D</span>
+                    </button>
+                    <div class="sv-vault-switcher" id="svVaultSwitcher">
+                        <button type="button" class="sv-vault-arrow" id="svPrevCollectionBtn" aria-label="Bộ giày trước" title="Bộ sưu tập trước">
+                            <i class="bi bi-chevron-left"></i>
+                        </button>
+                        <span class="sv-header-title" id="svCollectionTitle">FUTURIST SNEAKER VAULT</span>
+                        <button type="button" class="sv-vault-arrow" id="svNextCollectionBtn" aria-label="Bộ giày tiếp theo" title="Bộ sưu tập kế tiếp">
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <a href="/" class="sv-brand-signature" title="Về trang chủ HnmtShop">HnmtShop</a>
+
+                <div class="sv-head-right">
+                    <button type="button" class="sv-search-btn" id="svSearchBtn" aria-label="Tìm kiếm giày" title="Tìm đồ nhanh (Phím tắt /)">
+                        <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                            <circle cx="11" cy="11" r="7"/>
+                            <path d="m20 20-4.35-4.35"/>
+                        </svg>
+                    </button>
+                    <button type="button" class="sv-bag-btn" id="svBagBtn" aria-label="Giỏ hàng">
+                        <svg fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+                            <path d="M4 8h16l-1 13H5L4 8Z" />
+                            <path d="M9 9V6a3 3 0 0 1 6 0v3" />
+                        </svg>
+                        <span class="sv-bag-badge" id="svBagBadge">0</span>
+                    </button>
+                    <!-- Nút Quay lại không gian 3D Showroom -->
+                    <button type="button" class="sv-exit-btn" id="svExitShowroomBtn" onclick="window.closeSneakerShowcase()" title="Quay lại">
+                        <i class="bi bi-arrow-left"></i>
+                        <span>Quay lại</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- VIEW 1: GRID OVERVIEW (3x2 FLOATING SNEAKER GRID) -->
+            <section class="sv-grid-container" id="svGridContainer" aria-label="Bộ sưu tập sneaker dạng lưới">
+                <div class="sv-grid" id="svGrid">
+                    <!-- Render tự động bởi sneaker-vault.js -->
+                </div>
+            </section>
+
+            <!-- VIEW 2: CINEMATIC SLIDER VIEW (FULLSCREEN 1:1 THEO VIDEO FIGMA) -->
+            <section class="sv-slider-container" id="svSliderContainer" aria-label="Chi tiết Sneaker nổi khối 3D">
+
+                <!-- CHỮ TYPOGRAPHY KHỔNG LỒ NẰM SAU CHIẾC GIÀY -->
+                <div class="sv-giant-title-track" aria-hidden="true">
+                    <h2 class="sv-giant-title" id="svGiantTitle">AIR FUTURE IV</h2>
+                </div>
+
+                <!-- KHÔNG GIAN GIÀY BAY LƠ LỬNG NỔI KHỐI 3D PARALLAX THEO CHUỘT -->
+                <div class="sv-stage" id="svStage">
+                    <div class="sv-hero-wrap" id="svHeroWrap">
+                        <img src="/images/sneakers/air-future-iv.webp?v=center_h_v27" alt="AIR FUTURE IV" class="sv-hero-img" id="svHeroImg" />
+                        <div class="sv-hero-shadow" id="svHeroShadow"></div>
+                    </div>
+                </div>
+
+                <!-- THANH THÔNG SỐ VÀ ĐIỀU KHIỂN DƯỚI ĐÁY -->
+                <footer class="sv-bottom-bar">
+
+                    <!-- GÓC DƯỚI TRÁI: TECH SPECS -->
+                    <div class="sv-specs-panel">
+                        <h3 class="sv-colorway-name" id="svColorwayName">INFRARAY STORM</h3>
+                        <dl class="sv-spec-grid">
+                            <dt>MÃ GIÀY:</dt>
+                            <dd id="svStyleCode">HFS-04-STORM</dd>
+
+                            <dt>PHỐI MÀU:</dt>
+                            <dd id="svColorName">STORM GREY / INFRARED</dd>
+
+                            <dt>THIẾT KẾ:</dt>
+                            <dd id="svDesigner">HNMTSHOP × FUTURE LAB</dd>
+
+                            <dt>GIÁ BÁN:</dt>
+                            <dd id="svPrice">5.200.000 ₫</dd>
+
+                            <dt>ĐÁNH GIÁ:</dt>
+                            <dd id="svReviewsMetaRow" class="sv-reviews-meta-trigger" title="Nhấp để xem và gửi đánh giá">
+                                <span class="sv-stars-preview" id="svStarsPreview">★★★★★</span>
+                                <span class="sv-rating-num" id="svRatingNum">5.0</span>
+                                <span class="sv-count-num" id="svCountNum">(0)</span>
+                            </dd>
+                        </dl>
+                    </div>
+
+                    <!-- GÓC DƯỚI PHẢI: MŨI TÊN < > , SELECT COLOR VÀ NÚT ADD TO BAG -->
+                    <div class="sv-controls-panel">
+                        <div class="sv-arrow-group">
+                            <button type="button" class="sv-nav-btn prev" id="svPrevBtn" aria-label="Mẫu trước">
+                                <i class="bi bi-chevron-left"></i>
+                            </button>
+                            <button type="button" class="sv-nav-btn next" id="svNextBtn" aria-label="Mẫu tiếp theo">
+                                <i class="bi bi-chevron-right"></i>
+                            </button>
+                        </div>
+
+                        <div class="sv-color-swatches">
+                            <span class="sv-swatches-label">CHỌN MÀU</span>
+                            <div class="sv-swatches-row" id="svSwatches">
+                                <!-- Chấm màu swatches -->
+                            </div>
+                        </div>
+
+                        <button type="button" class="sv-reviews-btn" id="svReviewsBtn" title="Xem &amp; gửi đánh giá sản phẩm">
+                            <i class="bi bi-star-fill"></i>
+                            <span id="svReviewsBtnText">ĐÁNH GIÁ</span>
+                        </button>
+
+                        <button type="button" class="sv-add-bag-btn" id="svAddBagBtn">
+                            <span>THÊM VÀO GIỎ</span>
+                            <i class="bi bi-arrow-right"></i>
+                        </button>
+                    </div>
+
+                </footer>
+
+            </section>
+
+        </div>
+    </div>
+
+        <!-- SPOTLIGHT MULTI-CRITERIA QUICK SEARCH MODAL -->
+    <div id="hnmtSpotlightSearchModal" class="hnmt-spotlight-modal" aria-hidden="true">
+        <div class="hnmt-spotlight-backdrop" id="spotlightBackdrop"></div>
+        <div class="hnmt-spotlight-dialog" role="dialog" aria-modal="true" aria-label="Tìm kiếm sản phẩm nhanh">
+            <!-- Search Input Header -->
+            <div class="hnmt-spotlight-search-header">
+                <div class="hnmt-spotlight-input-wrap">
+                    <svg class="hnmt-spotlight-search-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <circle cx="11" cy="11" r="7"/>
+                        <path d="m20 20-4.35-4.35"/>
+                    </svg>
+                    <input type="text" id="hnmtSpotlightInput" class="hnmt-spotlight-input" placeholder="Tìm kiếm theo tên đồ hoặc từ khóa... (Enter để đẩy lên sào)" autocomplete="off" spellcheck="false">
+                    <button type="button" id="hnmtSpotlightClearBtn" class="hnmt-spotlight-clear-btn" aria-label="Xóa từ khóa" style="display: none;">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                    <button type="button" id="hnmtSpotlightSubmitBtn" class="hnmt-spotlight-submit-btn" title="Tìm kiếm và đưa ra sào (Enter)">
+                        <i class="bi bi-search"></i>
+                        <span>TÌM KIẾM</span>
+                    </button>
+                </div>
+                <div class="hnmt-spotlight-meta">
+                    <button type="button" class="hnmt-spotlight-esc-pill" id="spotlightClosePillBtn">ESC ĐÓNG</button>
+                </div>
+            </div>
+
+            <!-- Category Tabs -->
+            <div class="hnmt-spotlight-tabs" id="spotlightTabs">
+                <button type="button" class="hnmt-spotlight-tab is-active" data-cat="all">Tất Cả <span class="tab-count" id="tabCountAll">0</span></button>
+                <button type="button" class="hnmt-spotlight-tab" data-cat="quan">Sào Quần <span class="tab-count" id="tabCountQuan">12</span></button>
+                <button type="button" class="hnmt-spotlight-tab" data-cat="ao">Sào Áo <span class="tab-count" id="tabCountAo">15</span></button>
+                <button type="button" class="hnmt-spotlight-tab" data-cat="giay">Tủ Giày <span class="tab-count" id="tabCountGiay">18</span></button>
+            </div>
+
+            <!-- Multi-criteria Filter Section -->
+            <div class="hnmt-spotlight-filter-panel" id="spotlightFilterPanel">
+                <!-- Row 1: Khoảng Giá -->
+                <div class="spotlight-filter-row">
+                    <span class="filter-row-label">Khoảng Giá:</span>
+                    <div class="filter-pills-wrap" id="pricePillsContainer"></div>
+                </div>
+
+                <!-- Row 2: Kiểu Cách / Loại Đồ -->
+                <div class="spotlight-filter-row">
+                    <span class="filter-row-label">Kiểu Dáng:</span>
+                    <div class="filter-pills-wrap" id="stylePillsContainer"></div>
+                </div>
+
+                <!-- Row 3: Màu Sắc -->
+                <div class="spotlight-filter-row">
+                    <span class="filter-row-label">Màu Sắc:</span>
+                    <div class="filter-pills-wrap" id="colorPillsContainer"></div>
+                </div>
+
+                <!-- Action Bar: Đếm số lượng, Reset & Đẩy lên sào -->
+                <div class="spotlight-filter-action-bar">
+                    <div class="filter-match-stat">
+                        <span class="stat-dot"></span>
+                        <span>Phù hợp: <strong id="spotlightMatchCount">0</strong> sản phẩm</span>
+                    </div>
+                    <div class="filter-action-btns">
+                        <button type="button" id="spotlightResetFilterBtn" class="spotlight-reset-btn" title="Đặt lại bộ lọc về mặc định">
+                            <i class="bi bi-arrow-counterclockwise"></i>
+                            <span>Đặt lại</span>
+                        </button>
+                        <button type="button" id="spotlightApplyToRailBtn" class="spotlight-apply-rail-cta" title="Đẩy các sản phẩm phù hợp ra trên sào đồ (Enter)">
+                            <i class="bi bi-funnel-fill"></i>
+                            <span>ÁP DỤNG LÊN SÀO (<strong id="spotlightRailCount">0</strong>)</span>
+                            <kbd>↵ ENTER</kbd>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Preview List -->
+            <div class="hnmt-spotlight-results" id="spotlightResults"></div>
+
+            <!-- Empty State Notice -->
+            <div class="hnmt-spotlight-empty" id="spotlightEmpty" style="display: none;">
+                <div class="empty-icon">🔍</div>
+                <p class="empty-title">Không tìm thấy sản phẩm phù hợp</p>
+                <p class="empty-desc">Thử chọn "Tất cả giá", "Tất cả màu" hoặc bấm "Đặt lại" để xem toàn bộ bộ sưu tập trên sào.</p>
+            </div>
+
+            <!-- Footer Hint -->
+            <div class="hnmt-spotlight-footer">
+                <div class="spotlight-hint">
+                    <span><kbd>ENTER</kbd> Đẩy đồ lên sào</span>
+                    <span><kbd>↑</kbd><kbd>↓</kbd> Chọn nhanh</span>
+                    <span><kbd>ESC</kbd> Đóng</span>
+                </div>
+                <div class="spotlight-brand">HNMTSHOP // FAST FIND & RAIL FILTER</div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+</div>
+
+<script src="~/js/shirt-filter.js" asp-append-version="true"></script>
+<script src="~/js/spotlight-search.js" asp-append-version="true"></script>

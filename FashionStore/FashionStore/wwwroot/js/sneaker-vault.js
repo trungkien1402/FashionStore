@@ -1,4 +1,4 @@
-/**
+﻿/**
  * HNMTSHOP — FUTURIST SNEAKER VAULT (1:1 FIDELITY REPLICA OF FIGMA SNEAKER SLIDER)
  * Standardized 2D lateral profile view with smooth slide-in, giant typography, and color morphing.
  */
@@ -15,6 +15,7 @@
             const pageCount = Math.ceil(collection.items.length / ITEMS_PER_GRID);
             return Array.from({ length: pageCount }, (_, page) => ({
                 ...collection,
+                collectionTitle: collection.title,
                 title: pageCount > 1 ? `${collection.title} ${page + 1}/${pageCount}` : collection.title,
                 items: collection.items.slice(page * ITEMS_PER_GRID, (page + 1) * ITEMS_PER_GRID)
             }));
@@ -28,7 +29,7 @@
     let filteredPageIdx = 0;
     let activeFilterLabel = '';
 
-    const getAllSneakers = () => activeCollections.flatMap(c => c.items.map(it => ({ ...it, collectionId: c.id, collectionTitle: c.title })));
+    const getAllSneakers = () => activeCollections.flatMap(c => c.items.map(it => ({ ...it, collectionId: c.id, collectionTitle: c.collectionTitle })));
     const getFilteredTotalPages = () => (!filteredSneakers ? 1 : Math.max(1, Math.ceil(filteredSneakers.length / ITEMS_PER_GRID)));
     const getSneakers = () => {
         if (filteredSneakers !== null) {
@@ -480,6 +481,7 @@
         // 5. Tính toán FLIP cho Hero Image với chuyển động bay chậm rãi, điện ảnh
         if (heroImg && startRect) {
             heroImg.classList.remove('is-floating');
+            heroImg.classList.remove('is-pair-view');
             heroImg.src = snk.image;
             heroImg.alt = snk.model;
             heroImg.style.transition = 'none';
@@ -730,7 +732,45 @@
     }
 
     // --- Cập nhật dữ liệu thông số Tech Specs & Swatches (không làm gián đoạn FLIP) ---
+    function renderGallery(snk) {
+        const slider = $('#svStage')?.closest('.sv-slider-container');
+        const hero = $('#svHeroImg');
+        if (!slider || !hero) return;
+        slider.querySelector('.sv-gallery')?.remove();
+        if (!snk.pairImage) return;
+
+        const gallery = document.createElement('div');
+        gallery.className = 'sv-gallery';
+        gallery.setAttribute('role', 'group');
+        gallery.setAttribute('aria-label', 'Góc xem giày');
+        const views = [
+            { src: snk.image, label: 'Một chiếc' },
+            { src: snk.pairImage, label: 'Cả đôi' }
+        ];
+        const buttons = views.map((view, index) => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.setAttribute('aria-label', view.label);
+            button.setAttribute('aria-pressed', String(index === 0));
+            const image = document.createElement('img');
+            image.src = view.src;
+            image.alt = '';
+            button.append(image);
+            button.addEventListener('click', () => {
+                if (isAnimating || isTransitioning) return;
+                hero.src = view.src;
+                hero.alt = snk.model + ' — ' + view.label;
+                hero.classList.toggle('is-pair-view', index === 1);
+                buttons.forEach(other => other.setAttribute('aria-pressed', String(other === button)));
+            });
+            gallery.append(button);
+            return button;
+        });
+        slider.append(gallery);
+    }
+
     function updateSliderDataOnly(snk) {
+        renderGallery(snk);
         const colorwayName = $('#svColorwayName');
         const styleCode = $('#svStyleCode');
         const price = $('#svPrice');
@@ -792,6 +832,7 @@
             }
             if (heroImg) {
                 heroImg.classList.remove('is-floating');
+                heroImg.classList.remove('is-pair-view');
                 heroImg.src = snk.image;
                 heroImg.alt = snk.model;
                 heroImg.style.opacity = '1';
@@ -835,6 +876,7 @@
                     giantTitle.style.transform = 'scale(1)';
                 }
                 if (heroImg) {
+                    heroImg.classList.remove('is-pair-view');
                     heroImg.src = snk.image;
                     heroImg.alt = snk.model;
                     heroImg.style.opacity = '1';
@@ -943,6 +985,7 @@
     }
 
     function openSizeDrawer() {
+        closeReviewsDrawer();
         ensureSizeDrawerInDOM();
         const snk = getSneakers()[currentIndex];
         if (!snk) return;
@@ -1032,6 +1075,325 @@
         if (toast) toast.remove();
     }
 
+    // ==========================================================================
+    // PHẦN ĐÁNH GIÁ GIÀY (SNEAKER VAULT REVIEWS - ĐỒNG BỘ 100% GIAO DIỆN)
+    // ==========================================================================
+    let currentSneakerReviewStar = 5;
+    const SNEAKER_MOOD_TEXTS = {
+        1: 'Rất tệ (1 sao)',
+        2: 'Chưa hài lòng (2 sao)',
+        3: 'Bình thường (3 sao)',
+        4: 'Hài lòng (4 sao)',
+        5: 'Tuyệt vời (5 sao)'
+    };
+
+    function ensureReviewsDrawerInDOM() {
+        let backdrop = document.getElementById('svReviewsBackdrop');
+        if (!backdrop) {
+            backdrop = document.createElement('div');
+            backdrop.className = 'sv-reviews-backdrop';
+            backdrop.id = 'svReviewsBackdrop';
+            document.body.appendChild(backdrop);
+            backdrop.onclick = closeReviewsDrawer;
+        }
+
+        const controlsPanels = document.querySelectorAll('.sv-controls-panel');
+        controlsPanels.forEach(panel => {
+            let drawer = panel.querySelector('.sv-reviews-drawer');
+            if (!drawer) {
+                drawer = document.createElement('div');
+                drawer.className = 'sv-reviews-drawer';
+                drawer.id = 'svReviewsDrawer';
+                drawer.innerHTML = `
+                    <div class="sv-reviews-header">
+                        <div>
+                            <h4 class="sv-reviews-title">ĐÁNH GIÁ SẢN PHẨM</h4>
+                            <div class="sv-reviews-rating-badge">
+                                <span class="sv-reviews-stars" id="svReviewsStarsText">★★★★★</span>
+                                <span class="sv-reviews-score" id="svReviewsScoreText">5.0</span>
+                                <span class="sv-reviews-count" id="svReviewsCountText">(0)</span>
+                            </div>
+                        </div>
+                        <button type="button" class="sv-reviews-close-btn" id="svCloseReviewsDrawerBtn" title="Đóng">✕</button>
+                    </div>
+
+                    <div class="sv-reviews-product-info">
+                        <span class="sv-reviews-product-model" id="svReviewsModelName">SNEAKER VAULT</span>
+                        <span class="sv-reviews-product-price" id="svReviewsPrice">0 ₫</span>
+                    </div>
+
+                    <div class="sv-reviews-body">
+                        <!-- FORM GỬI ĐÁNH GIÁ (Chỉ cho tài khoản đã nhận hàng thành công) -->
+                        <div class="sv-reviews-write-card" id="svWriteReviewCard" style="display: none;">
+                            <div class="sv-write-header">
+                                <span class="sv-write-title">GỬI ĐÁNH GIÁ CỦA BẠN</span>
+                                <span class="sv-verified-badge"><i class="bi bi-shield-check"></i> Đã mua hàng</span>
+                            </div>
+                            <p class="sv-write-sub">Chia sẻ cảm nhận thực tế về form giày, độ êm và chất liệu</p>
+
+                            <div class="sv-star-selector">
+                                <span class="sv-star-label">Đánh giá:</span>
+                                <div class="sv-star-btns" id="svStarSelector">
+                                    <button type="button" class="sv-star-btn is-active" data-val="1">★</button>
+                                    <button type="button" class="sv-star-btn is-active" data-val="2">★</button>
+                                    <button type="button" class="sv-star-btn is-active" data-val="3">★</button>
+                                    <button type="button" class="sv-star-btn is-active" data-val="4">★</button>
+                                    <button type="button" class="sv-star-btn is-active" data-val="5">★</button>
+                                </div>
+                                <span class="sv-star-mood" id="svStarMood">Tuyệt vời (5 sao)</span>
+                            </div>
+
+                            <textarea id="svReviewComment" class="sv-review-textarea" rows="3" placeholder="Chia sẻ cảm nhận thực tế của bạn về đôi giày này..."></textarea>
+
+                            <button type="button" class="sv-review-submit-btn" id="svSubmitReviewBtn">
+                                <i class="bi bi-send-fill"></i>
+                                <span>GỬI ĐÁNH GIÁ</span>
+                            </button>
+                            <div id="svReviewMsg" class="sv-review-msg" style="display: none;"></div>
+                        </div>
+
+                        <!-- THÔNG BÁO CHO TÀI KHOẢN CHƯA MUA / ĐÃ ĐÁNH GIÁ -->
+                        <div class="sv-review-notice-box" id="svReviewNoticeBox" style="display: none;">
+                            <i class="bi bi-shield-lock"></i>
+                            <span id="svReviewNoticeText">Đánh giá chỉ dành cho tài khoản đã mua và nhận sản phẩm thành công.</span>
+                        </div>
+
+                        <!-- DANH SÁCH TẤT CẢ ĐÁNH GIÁ -->
+                        <div class="sv-reviews-list-wrap">
+                            <div class="sv-reviews-list-title">
+                                <span>TẤT CẢ ĐÁNH GIÁ</span>
+                                <span id="svReviewsTotalCount" class="sv-reviews-total-count">0 nhận xét</span>
+                            </div>
+                            <div class="sv-reviews-items" id="svReviewsItems">
+                                <div class="sv-reviews-loading">Đang tải đánh giá...</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                panel.appendChild(drawer);
+
+                const closeBtn = drawer.querySelector('#svCloseReviewsDrawerBtn');
+                if (closeBtn) closeBtn.onclick = (e) => { e.stopPropagation(); closeReviewsDrawer(); };
+
+                initSneakerReviewStarEvents(drawer);
+                initSneakerSubmitReviewEvent(drawer);
+            }
+        });
+    }
+
+    function openReviewsDrawer() {
+        closeSizeDrawer();
+        ensureReviewsDrawerInDOM();
+        const snk = getSneakers()[currentIndex];
+        if (!snk) return;
+
+        const backdrop = $('#svReviewsBackdrop');
+        const drawer = $('#svReviewsDrawer');
+        if (backdrop) backdrop.classList.add('is-open');
+        if (drawer) drawer.classList.add('is-open');
+
+        const nameEl = $('#svReviewsModelName');
+        const priceEl = $('#svReviewsPrice');
+        if (nameEl) nameEl.textContent = `${snk.model} — ${snk.colorway}`;
+        if (priceEl) priceEl.textContent = formatPrice(snk.price);
+
+        loadSneakerReviews(snk.productId);
+    }
+
+    function closeReviewsDrawer() {
+        const backdrop = $('#svReviewsBackdrop');
+        const drawer = $('#svReviewsDrawer');
+        if (backdrop) backdrop.classList.remove('is-open');
+        if (drawer) drawer.classList.remove('is-open');
+    }
+
+    async function loadSneakerReviews(productId) {
+        if (!productId) return;
+        ensureReviewsDrawerInDOM();
+
+        const starsPreview = $('#svStarsPreview');
+        const ratingNum = $('#svRatingNum');
+        const countNum = $('#svCountNum');
+
+        const drawerStars = $('#svReviewsStarsText');
+        const drawerScore = $('#svReviewsScoreText');
+        const drawerCount = $('#svReviewsCountText');
+        const totalCount = $('#svReviewsTotalCount');
+        const writeCard = $('#svWriteReviewCard');
+        const noticeBox = $('#svReviewNoticeBox');
+        const noticeText = $('#svReviewNoticeText');
+        const reviewItems = $('#svReviewsItems');
+        const msgEl = $('#svReviewMsg');
+
+        if (reviewItems) {
+            reviewItems.innerHTML = '<div class="sv-reviews-loading">Đang tải đánh giá...</div>';
+        }
+        if (msgEl) {
+            msgEl.style.display = 'none';
+            msgEl.textContent = '';
+        }
+
+        try {
+            const res = await fetch(`/Products/GetProductReviews?productId=${productId}`, { cache: 'no-store' });
+            const data = await res.json();
+
+            if (!data.success) {
+                if (reviewItems) reviewItems.innerHTML = '<div class="sv-reviews-empty">Không thể tải đánh giá.</div>';
+                return;
+            }
+
+            const scoreFormatted = data.count > 0 ? Number(data.average).toFixed(1) : '5.0';
+            const rounded = Math.round(data.average || 5);
+            const starsStr = '★'.repeat(rounded) + '☆'.repeat(Math.max(0, 5 - rounded));
+
+            if (starsPreview) starsPreview.textContent = starsStr;
+            if (ratingNum) ratingNum.textContent = scoreFormatted;
+            if (countNum) countNum.textContent = `(${data.count})`;
+
+            if (drawerStars) drawerStars.textContent = starsStr;
+            if (drawerScore) drawerScore.textContent = scoreFormatted;
+            if (drawerCount) drawerCount.textContent = `(${data.count})`;
+            if (totalCount) totalCount.textContent = `${data.count} nhận xét`;
+
+            // Kiểm tra phân quyền đánh giá: Chỉ khách đã mua và nhận hàng thành công
+            if (!data.isAuthenticated) {
+                if (writeCard) writeCard.style.display = 'none';
+                if (noticeBox) {
+                    noticeBox.style.display = 'flex';
+                    if (noticeText) noticeText.innerHTML = 'Vui lòng <a href="/Account/Login" style="color:#ffffff;font-weight:700;text-decoration:underline;">đăng nhập</a> để đánh giá sau khi nhận hàng.';
+                }
+            } else if (data.hasReviewed) {
+                if (writeCard) writeCard.style.display = 'none';
+                if (noticeBox) {
+                    noticeBox.style.display = 'flex';
+                    if (noticeText) noticeText.textContent = '✓ Bạn đã đánh giá sản phẩm này. Cảm ơn bạn!';
+                }
+            } else if (data.hasDeliveredPurchase) {
+                if (noticeBox) noticeBox.style.display = 'none';
+                if (writeCard) writeCard.style.display = 'block';
+            } else {
+                if (writeCard) writeCard.style.display = 'none';
+                if (noticeBox) {
+                    noticeBox.style.display = 'flex';
+                    if (noticeText) noticeText.textContent = '🔒 Đánh giá chỉ dành cho tài khoản đã mua và nhận giày thành công.';
+                }
+            }
+
+            if (reviewItems) {
+                if (!data.reviews || data.reviews.length === 0) {
+                    reviewItems.innerHTML = '<div class="sv-reviews-empty">Chưa có đánh giá nào. Hãy là người đầu tiên trải nghiệm đôi giày này!</div>';
+                } else {
+                    reviewItems.innerHTML = data.reviews.map(r => {
+                        const rStar = Math.round(r.rating || 5);
+                        const starHtml = '★'.repeat(rStar) + '☆'.repeat(Math.max(0, 5 - rStar));
+                        const initial = (r.reviewerName || 'K').trim().charAt(0).toUpperCase();
+                        return `
+                            <div class="sv-review-item">
+                                <div class="sv-review-item-top">
+                                    <div class="sv-item-user-info">
+                                        <div class="sv-item-avatar">${initial}</div>
+                                        <div class="sv-item-user-meta">
+                                            <span class="sv-item-user-name">
+                                                ${r.reviewerName}
+                                                <i class="bi bi-patch-check-fill sv-verified-badge-icon" style="color:#10b981;font-size:12px;" title="Đã mua hàng"></i>
+                                            </span>
+                                            ${r.spec ? `<span class="sv-item-spec">${r.spec}</span>` : ''}
+                                        </div>
+                                    </div>
+                                    <span class="sv-item-stars">${starHtml}</span>
+                                </div>
+                                <p class="sv-item-comment">${r.comment}</p>
+                                <div style="display:flex;justify-content:flex-end;margin-top:4px;">
+                                    <span class="sv-item-date">${r.createdAtFormatted}</span>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            }
+        } catch (err) {
+            console.error('[SneakerReviews] Lỗi tải đánh giá:', err);
+            if (reviewItems) reviewItems.innerHTML = '<div class="sv-reviews-empty">Không thể kết nối máy chủ để tải đánh giá.</div>';
+        }
+    }
+
+    function initSneakerReviewStarEvents(drawer) {
+        const starBtns = drawer.querySelectorAll('#svStarSelector .sv-star-btn');
+        const moodEl = drawer.querySelector('#svStarMood');
+        starBtns.forEach(btn => {
+            btn.onclick = (e) => {
+                e.stopPropagation();
+                const val = parseInt(btn.dataset.val || '5', 10);
+                currentSneakerReviewStar = val;
+                starBtns.forEach(b => {
+                    const bVal = parseInt(b.dataset.val || '5', 10);
+                    b.classList.toggle('is-active', bVal <= val);
+                });
+                if (moodEl) moodEl.textContent = SNEAKER_MOOD_TEXTS[val] || `${val} sao`;
+            };
+        });
+    }
+
+    function initSneakerSubmitReviewEvent(drawer) {
+        const submitBtn = drawer.querySelector('#svSubmitReviewBtn');
+        if (!submitBtn) return;
+        submitBtn.onclick = async (e) => {
+            e.stopPropagation();
+            const snk = getSneakers()[currentIndex];
+            if (!snk) return;
+
+            const commentInput = drawer.querySelector('#svReviewComment');
+            const comment = commentInput ? commentInput.value.trim() : '';
+            const msgEl = drawer.querySelector('#svReviewMsg');
+
+            if (!comment) {
+                if (msgEl) {
+                    msgEl.className = 'sv-review-msg error';
+                    msgEl.textContent = 'Vui lòng nhập nội dung đánh giá thực tế của bạn.';
+                    msgEl.style.display = 'block';
+                }
+                if (commentInput) commentInput.focus();
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Đang gửi...';
+
+            try {
+                const res = await fetch('/Products/SubmitReviewAjax', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        productId: snk.productId,
+                        rating: currentSneakerReviewStar,
+                        comment: comment
+                    })
+                });
+                const resData = await res.json();
+                if (msgEl) {
+                    msgEl.className = resData.success ? 'sv-review-msg success' : 'sv-review-msg error';
+                    msgEl.textContent = resData.message;
+                    msgEl.style.display = 'block';
+                }
+                if (resData.success) {
+                    if (commentInput) commentInput.value = '';
+                    setTimeout(() => {
+                        loadSneakerReviews(snk.productId);
+                    }, 800);
+                }
+            } catch (err) {
+                if (msgEl) {
+                    msgEl.className = 'sv-review-msg error';
+                    msgEl.textContent = 'Có lỗi xảy ra khi gửi đánh giá.';
+                    msgEl.style.display = 'block';
+                }
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="bi bi-send-fill"></i> <span>GỬI ĐÁNH GIÁ</span>';
+            }
+        };
+    }
+
     // --- Bind sự kiện nút bấm & Bàn phím ---
     function bindEvents() {
         const refreshBackdropTitle = () => {
@@ -1061,6 +1423,12 @@
         const addBagBtn = $('#svAddBagBtn');
         if (addBagBtn) addBagBtn.onclick = addToBag;
 
+        const reviewsBtn = $('#svReviewsBtn');
+        if (reviewsBtn) reviewsBtn.onclick = openReviewsDrawer;
+
+        const reviewsMeta = $('#svReviewsMetaRow');
+        if (reviewsMeta) reviewsMeta.onclick = openReviewsDrawer;
+
         // Bàn phím: Mũi tên trái / phải để lướt slider, Esc để về grid/showroom
         window.addEventListener('keydown', (e) => {
             const overlay = $('#hnmtSneakerOverlay');
@@ -1073,6 +1441,11 @@
             else if (e.key === 'Escape') {
                 if (window.HNMTSneakerFilter && document.getElementById('hnmtSneakerFilterModal')?.classList.contains('is-open')) {
                     window.HNMTSneakerFilter.close();
+                    return;
+                }
+                const rDrawer = $('#svReviewsDrawer');
+                if (rDrawer && rDrawer.classList.contains('is-open')) {
+                    closeReviewsDrawer();
                     return;
                 }
                 const drawer = $('#svSizeDrawer');
@@ -1180,6 +1553,10 @@
 
     // Tự khởi chạy an toàn
     function init() {
+        const standalone = document.body.classList.contains('is-sneaker-standalone');
+        const audience = standalone ? new URLSearchParams(window.location.search).get('audience') || 'men' : 'men';
+        if (standalone) activeCollections = getAudienceCollections(audience);
+
         ensureSneakerSearchButton();
         setInterval(ensureSneakerSearchButton, 600);
         ensureVaultSwitcherInDOM();
@@ -1202,14 +1579,12 @@
 
         // Tự động nhận diện và áp dụng bộ lọc chuyển tiếp từ Trang Chủ
         try {
-            const pendingJson = sessionStorage.getItem('hnmt_pending_sneaker_filter');
+            const pendingJson = standalone && sessionStorage.getItem('hnmt_pending_sneaker_filter');
             if (pendingJson) {
                 sessionStorage.removeItem('hnmt_pending_sneaker_filter');
                 const pending = JSON.parse(pendingJson);
-                if (pending && Array.isArray(pending.filteredProducts) && pending.filteredProducts.length > 0) {
-                    setTimeout(() => {
-                        applyFilter(pending.filteredProducts, pending.label || 'BỘ LỌC TỪ TRANG CHỦ');
-                    }, 220);
+                if (pending?.audience === audience && pending.category === 'giay' && Array.isArray(pending.filteredProducts)) {
+                    applyFilter(pending.filteredProducts, pending.label || 'BỘ LỌC TỪ TRANG CHỦ');
                 }
             }
         } catch (e) {}

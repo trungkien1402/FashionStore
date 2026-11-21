@@ -1,246 +1,232 @@
-﻿@model FashionStore.Models.ViewModels.ProductListViewModel
+@model FashionStore.Models.ViewModels.ProductListViewModel
 
 @{
-    ViewData["Title"] = "Sản phẩm";
-
+    ViewData["Title"] = "Cửa Hàng HNMTSHOP – Danh Mục Thời Trang Nổi Bật";
 }
 
-<!-- PAGE BANNER -->
-<section class="fs-shop-banner">
-    <div>
-        <p class="fs-eyebrow">FASHIONSTORE / COLLECTION</p>
-        <h1>Our Products</h1>
-        <p>Khám phá những thiết kế dành riêng cho phong cách của bạn.</p>
+@section Styles {
+    <link rel="stylesheet" href="~/css/store3d.css" asp-append-version="true" />
+}
+
+<!-- KHÔNG GIAN BỘ SƯU TẬP 4 KHỐI EDITORIAL TRÊN NỀN TRẮNG CHUẨN TRANG CHỦ -->
+<div class="hnmt-editorial-catalog">
+    <div class="hnmt-editorial-container">
+        
+        <!-- Phần tiêu đề sang trọng, nội dung hợp lý chuẩn thương hiệu HNMTSHOP -->
+        <header class="hnmt-editorial-header">
+            <h1 class="hnmt-editorial-title">Danh Mục Nổi Bật</h1>
+            <p class="hnmt-editorial-desc">
+                Từ trang phục thiết yếu hằng ngày đến những món đồ tạo điểm nhấn — Chọn danh mục của bạn để tiếp tục.
+            </p>
+        </header>
+
+        <!-- Bố cục 4 khối riêng biệt độc lập: 1 ảnh trọn vẹn cho mỗi đối tượng -->
+        <div class="hnmt-editorial-grid">
+            
+            <!-- Khối 1: WOMEN (Khối riêng biệt độc lập) -->
+            <div class="hnmt-cat-card hnmt-card-women" data-open-chile-portal data-category="women" title="Khám phá Bộ Sưu Tập Nữ 3D">
+                <img src="/images/categories/cat-women.jpg?v=sep_v4" alt="WOMEN" class="hnmt-card-img" />
+                <div class="hnmt-card-pill">
+                    <span>Women</span>
+                </div>
+            </div>
+
+            <!-- Khối 2: GIRLS (Khối riêng biệt độc lập) -->
+            <div class="hnmt-cat-card hnmt-card-girls" data-open-chile-portal data-category="girls" title="Khám phá Bộ Sưu Tập Bé Gái 3D">
+                <img src="/images/categories/cat-girls.jpg?v=sep_v4" alt="GIRLS" class="hnmt-card-img" />
+                <div class="hnmt-card-pill">
+                    <span>Girls</span>
+                </div>
+            </div>
+
+            <!-- Khối 3: MEN (Khối riêng biệt độc lập) -->
+            <div class="hnmt-cat-card hnmt-card-men" data-open-chile-portal data-category="men" title="Khám phá Bộ Sưu Tập Nam 3D">
+                <img src="/images/categories/cat-men.jpg?v=sep_v4" alt="MEN" class="hnmt-card-img" />
+                <div class="hnmt-card-pill">
+                    <span>Men</span>
+                </div>
+            </div>
+
+            <!-- Khối 4: BOY (Khối riêng biệt độc lập) -->
+            <div class="hnmt-cat-card hnmt-card-boy" data-open-chile-portal data-category="boy" title="Khám phá Bộ Sưu Tập Bé Trai 3D">
+                <img src="/images/categories/cat-boy.jpg?v=sep_v4" alt="BOY" class="hnmt-card-img" />
+                <div class="hnmt-card-pill">
+                    <span>Boy</span>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<!-- DANH SÁCH TẤT CẢ SẢN PHẨM TRONG CỬA HÀNG -->
+<section class="hnmt-catalog-section py-5" id="all-products" style="background: #ffffff; border-top: 1px solid #f1f5f9;">
+    <div class="container" style="max-width: 1320px; margin: 0 auto; padding: 0 20px;">
+        <div class="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-3">
+            <div>
+                <span style="font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #6b7280; display: block; margin-bottom: 4px;">Atelier Collection</span>
+                <h2 style="font-family: 'Cormorant Garamond', Georgia, serif; font-size: 34px; font-weight: 700; color: #111827; margin: 0;">Tất Cả Sản Phẩm</h2>
+                <p style="color: #6b7280; font-size: 14.5px; margin-top: 4px; margin-bottom: 0;">Khám phá toàn bộ thiết kế độc bản. Nhấp vào sản phẩm để xem chi tiết, chọn kích cỡ và đọc đánh giá thực tế.</p>
+            </div>
+            
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-dark rounded-pill px-3 py-2" style="font-size: 13px; font-weight: 600;">@(Model.TotalItems) sản phẩm</span>
+            </div>
+        </div>
+
+        @if (Model.Products != null && Model.Products.Any())
+        {
+            <div class="hnmt-product-grid">
+                @foreach (var p in Model.Products)
+                {
+                    <a asp-controller="Products" asp-action="Details" asp-route-id="@p.Id" class="hnmt-product-card-link">
+                        <div class="hnmt-product-card-box">
+                            <div class="hnmt-product-img-wrap">
+                                <img src="@p.ImageUrl" alt="@p.Name" loading="lazy" onerror="this.onerror=null;this.src='/clothing-rail/assets/reach-shirt-front.webp';" />
+                                <span class="hnmt-product-view-btn">
+                                    <i class="bi bi-eye"></i> Xem Chi Tiết
+                                </span>
+                            </div>
+                            <div class="hnmt-product-info-wrap">
+                                <span class="hnmt-product-cat-name">@(p.Category?.Name ?? "Thiết kế độc bản")</span>
+                                <h3 class="hnmt-product-name">@p.Name</h3>
+                                <div class="hnmt-product-price-row">
+                                    <strong class="hnmt-product-price-val">@p.Price.ToString("N0") ₫</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                }
+            </div>
+
+            @if (Model.TotalPages > 1)
+            {
+                <nav class="d-flex justify-content-center mt-5" aria-label="Phân trang sản phẩm">
+                    <ul class="pagination pagination-sm gap-1">
+                        @for (int i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                                <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-keyword="@Model.Keyword" asp-route-categoryId="@Model.CategoryId" asp-route-sortOrder="@Model.SortOrder">@i</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            }
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="bi bi-inbox" style="font-size: 48px; color: #9ca3af;"></i>
+                <p class="text-muted mt-2">Hiện chưa có sản phẩm nào trong danh mục này.</p>
+            </div>
+        }
     </div>
 </section>
 
-<div class="fs-shop-container">
-
-    <!-- BREADCRUMB -->
-    <div class="fs-breadcrumb">
-        <a asp-controller="Home" asp-action="Index">Trang chủ</a>
-        <span>/</span>
-        <span>Sản phẩm</span>
-    </div>
-
-    <div class="fs-shop-heading">
-        <div>
-            <p class="fs-eyebrow">EXPLORE OUR COLLECTION</p>
-            <h2>Tất cả sản phẩm</h2>
-            <p class="fs-shop-count">
-                Tìm thấy <strong>@Model.TotalItems</strong> sản phẩm
-            </p>
-        </div>
-    </div>
-
-    <div class="fs-shop-layout">
-
-        <!-- FILTER SIDEBAR -->
-        <aside class="fs-filter-sidebar">
-            <form asp-controller="Products"
-                  asp-action="Index"
-                  method="get">
-
-                <div class="fs-filter-heading">
-                    <h3>Bộ lọc</h3>
-                    <a asp-controller="Products"
-                       asp-action="Index">Xóa tất cả</a>
-                </div>
-
-                <div class="fs-filter-group">
-                    <label for="keyword">Tìm kiếm</label>
-                    <input id="keyword"
-                           name="keyword"
-                           value="@Model.Keyword"
-                           class="fs-form-control"
-                           placeholder="Tên sản phẩm..." />
-                </div>
-
-                <div class="fs-filter-group">
-                    <label for="categoryId">Danh mục</label>
-                    <select id="categoryId"
-                            name="categoryId"
-                            class="fs-form-control">
-                        <option value="">Tất cả danh mục</option>
-
-                        @foreach (var category in Model.Categories)
-                        {
-                            if (Model.CategoryId == category.Id)
-                            {
-                                <option value="@category.Id" selected>
-                                    @category.Name
-                                </option>
-                            }
-                            else
-                            {
-                                <option value="@category.Id">
-                                    @category.Name
-                                </option>
-                            }
-                        }
-                    </select>
-                </div>
-
-                <div class="fs-filter-group">
-                    <label>Khoảng giá (VNĐ)</label>
-
-                    <div class="fs-price-inputs">
-                        <input type="number"
-                               name="minPrice"
-                               value="@Model.MinPrice"
-                               min="0"
-                               placeholder="Từ"
-                               class="fs-form-control" />
-
-                        <input type="number"
-                               name="maxPrice"
-                               value="@Model.MaxPrice"
-                               min="0"
-                               placeholder="Đến"
-                               class="fs-form-control" />
-                    </div>
-                </div>
-
-                <div class="fs-filter-group">
-                    <label for="sortOrder">Sắp xếp</label>
-                    <select id="sortOrder"
-                            name="sortOrder"
-                            class="fs-form-control">
-                        <option value="newest"
-                                selected="@(Model.SortOrder == "newest")">
-                            Mới nhất
-                        </option>
-                        <option value="price-asc"
-                                selected="@(Model.SortOrder == "price-asc")">
-                            Giá thấp đến cao
-                        </option>
-                        <option value="price-desc"
-                                selected="@(Model.SortOrder == "price-desc")">
-                            Giá cao đến thấp
-                        </option>
-                        <option value="name-asc"
-                                selected="@(Model.SortOrder == "name-asc")">
-                            Tên A - Z
-                        </option>
-                    </select>
-                </div>
-
-                <button type="submit" class="fs-btn w-100">
-                    Áp dụng bộ lọc
-                </button>
-            </form>
-        </aside>
-
-        <!-- PRODUCT LIST -->
-        <div class="fs-shop-products">
-
-            @if (Model.Products.Any())
-            {
-                <div class="fs-product-grid">
-                    @foreach (var product in Model.Products)
-                    {
-                        <a asp-controller="Products"
-                           asp-action="Details"
-                           asp-route-id="@product.Id"
-                           class="fs-product-card">
-
-                            <div class="fs-product-image">
-                                @if (!string.IsNullOrWhiteSpace(product.ImageUrl))
-                                {
-                                    <img src="@product.ImageUrl"
-                                         alt="@product.Name"
-                                         loading="lazy" />
-                                }
-                                else
-                                {
-                                    <div class="fs-product-placeholder">
-                                        FASHIONSTORE
-                                    </div>
-                                }
-
-                                <span class="fs-product-tag">FASHION</span>
-                            </div>
-
-                            <div class="fs-product-info">
-                                <p class="fs-product-category">
-                                    @(product.Category?.Name ?? "Fashion")
-                                </p>
-
-                                <h3>@product.Name</h3>
-
-                                <div class="fs-product-bottom">
-                                    <span class="fs-product-price">
-                                        @product.Price.ToString("N0") đ
-                                    </span>
-                                    <span class="fs-product-arrow">→</span>
-                                </div>
-                            </div>
-                        </a>
-                    }
-                </div>
-
-                <!-- PAGINATION -->
-                @if (Model.TotalPages > 1)
-                {
-                    <nav class="fs-pagination" aria-label="Phân trang">
-                        @if (Model.CurrentPage > 1)
-                        {
-                            <a asp-action="Index"
-                               asp-route-keyword="@Model.Keyword"
-                               asp-route-categoryId="@Model.CategoryId"
-                               asp-route-minPrice="@Model.MinPrice"
-                               asp-route-maxPrice="@Model.MaxPrice"
-                               asp-route-sortOrder="@Model.SortOrder"
-                               asp-route-page="@(Model.CurrentPage - 1)">
-                                ←
-                            </a>
-                        }
-
-                        @for (int i = 1; i <= Model.TotalPages; i++)
-                        {
-                            <a asp-action="Index"
-                               asp-route-keyword="@Model.Keyword"
-                               asp-route-categoryId="@Model.CategoryId"
-                               asp-route-minPrice="@Model.MinPrice"
-                               asp-route-maxPrice="@Model.MaxPrice"
-                               asp-route-sortOrder="@Model.SortOrder"
-                               asp-route-page="@i"
-                               class="@(i == Model.CurrentPage ? "active" : "")">
-                                @i
-                            </a>
-                        }
-
-                        @if (Model.CurrentPage < Model.TotalPages)
-                        {
-                            <a asp-action="Index"
-                               asp-route-keyword="@Model.Keyword"
-                               asp-route-categoryId="@Model.CategoryId"
-                               asp-route-minPrice="@Model.MinPrice"
-                               asp-route-maxPrice="@Model.MaxPrice"
-                               asp-route-sortOrder="@Model.SortOrder"
-                               asp-route-page="@(Model.CurrentPage + 1)">
-                                →
-                            </a>
-                        }
-                    </nav>
-                }
-            }
-            else
-            {
-                <div class="fs-no-products">
-                    <div class="fs-no-products-icon">⌕</div>
-                    <h3>Không tìm thấy sản phẩm</h3>
-                    <p>
-                        Không có sản phẩm phù hợp với điều kiện tìm kiếm.
-                        Hãy thử thay đổi bộ lọc của bạn.
-                    </p>
-                    <a asp-controller="Products"
-                       asp-action="Index"
-                       class="fs-btn">
-                        Xem tất cả sản phẩm
-                    </a>
-                </div>
-            }
-        </div>
-    </div>
-</div>
+<style>
+.hnmt-product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 28px 24px;
+}
+@@media (max-width: 1024px) {
+    .hnmt-product-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@@media (max-width: 768px) {
+    .hnmt-product-grid { grid-template-columns: repeat(2, 1fr); gap: 16px 12px; }
+}
+.hnmt-product-card-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.25s ease;
+}
+.hnmt-product-card-link:hover {
+    transform: translateY(-4px);
+}
+.hnmt-product-card-box {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    transition: all 0.25s ease;
+}
+.hnmt-product-card-link:hover .hnmt-product-card-box {
+    box-shadow: 0 14px 30px rgba(0,0,0,0.08);
+    border-color: #cbd5e1;
+}
+.hnmt-product-img-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    background: #f8fafc;
+    overflow: hidden;
+}
+.hnmt-product-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+.hnmt-product-card-link:hover .hnmt-product-img-wrap img {
+    transform: scale(1.05);
+}
+.hnmt-product-view-btn {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: rgba(17, 24, 39, 0.9);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 999px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: all 0.25s ease;
+    backdrop-filter: blur(4px);
+}
+.hnmt-product-card-link:hover .hnmt-product-view-btn {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+.hnmt-product-info-wrap {
+    padding: 14px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+.hnmt-product-cat-name {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #94a3b8;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+.hnmt-product-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 8px 0;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.hnmt-product-price-row {
+    margin-top: auto;
+    padding-top: 6px;
+}
+.hnmt-product-price-val {
+    font-size: 15px;
+    font-weight: 800;
+    color: #0f172a;
+}
+</style>
