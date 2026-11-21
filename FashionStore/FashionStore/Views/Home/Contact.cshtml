@@ -1,16 +1,21 @@
 @model FashionStore.Models.ViewModels.ContactViewModel
 @{
-    ViewData["Title"] = "Liên Hệ & Hỗ Trợ Khách Hàng";
+    ViewData["Title"] = "Liên Hệ & Dịch Vụ Khách Hàng";
 }
 
 <div class="contact-page-wrapper">
-    <!-- HERO HEADER -->
-    <section class="contact-hero">
+    <!-- LUXURY CONCIERGE HERO HEADER -->
+    <section class="contact-hero-luxury">
         <div class="contact-container">
-            <span class="contact-eyebrow">HNMTSHOP · CUSTOMER CARE</span>
-            <h1 class="contact-title">CHÚNG TÔI LUÔN Ở ĐÂY<br />ĐỂ LẮNG NGHE BẠN</h1>
+            <div class="hero-badge-wrap">
+                <span class="luxury-eyebrow">
+                    <i class="bi bi-patch-check-fill text-success"></i>
+                    ATELIER CONCIERGE · DỊCH VỤ KHÁCH HÀNG CAO CẤP
+                </span>
+            </div>
+            <h1 class="contact-title">Chăm Sóc Khách Hàng <em>&</em> Hỗ Trợ Độc Quyền</h1>
             <p class="contact-subtitle">
-                Mọi thắc mắc về sản phẩm, tư vấn size, đơn hàng hoặc ý kiến đóng góp, xin vui lòng gửi tin nhắn. Đội ngũ HNMTSHOP sẽ hỗ trợ bạn sớm nhất!
+                Đội ngũ tư vấn viên HNMTSHOP hân hạnh lắng nghe mọi yêu cầu về kích cỡ, sản phẩm, quy trình đổi trả và trải nghiệm mua sắm của bạn.
             </p>
         </div>
     </section>
@@ -19,137 +24,106 @@
         <!-- SUCCESS ALERT -->
         @if (TempData["SuccessMessage"] != null)
         {
-            <div class="contact-alert success">
-                <i class="bi bi-check-circle-fill"></i>
-                <div>
-                    <strong>Thành công!</strong> @TempData["SuccessMessage"]
+            <div class="contact-alert-luxury success">
+                <div class="alert-icon-box">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+                <div class="alert-text-box">
+                    <h5>Gửi yêu cầu thành công!</h5>
+                    <p>@TempData["SuccessMessage"]</p>
                 </div>
             </div>
         }
 
+        <!-- 50:50 SPLIT: CONCIERGE SHOWROOM HUB (LEFT) & BESPOKE INQUIRY FORM (RIGHT) -->
         <div class="contact-grid">
-            <!-- LEFT: FORM -->
-            <div class="contact-card contact-form-card">
-                <div class="contact-card-header">
-                    <span class="badge-tag">GỬI YÊU CẦU</span>
-                    <h2>Liên hệ trực tuyến</h2>
-                    <p>Điền đầy đủ thông tin bên dưới để chúng tôi có thể liên hệ lại nhanh nhất.</p>
+            <!-- LEFT COLUMN: CONCIERGE SHOWROOM & DIRECT CHANNELS -->
+            <div class="contact-concierge-col" id="stores">
+                <!-- LIVE STATUS CARD -->
+                <div class="concierge-status-card">
+                    <div class="live-status-header">
+                        <span class="live-pulse-dot"></span>
+                        <span class="live-status-text">ĐANG TRỰC TUYẾN · PHẢN HỒI TRONG 15 PHÚT</span>
+                    </div>
+                    <h3 class="concierge-card-title">Kết nối trực tiếp cùng chúng tôi</h3>
+                    <p class="concierge-card-desc">
+                        Cần tư vấn chọn size gấp hoặc giải đáp thắc mắc về đơn hàng? Hãy liên hệ ngay qua các kênh phản hồi tức thì:
+                    </p>
+
+                    <div class="quick-channels-grid">
+                        <a href="tel:+84988776655" class="channel-pill-item">
+                            <div class="channel-icon-wrap phone">
+                                <i class="bi bi-telephone-fill"></i>
+                            </div>
+                            <div class="channel-info">
+                                <span class="channel-tag">HOTLINE VIP 24/7</span>
+                                <strong class="channel-val">0988 776 655</strong>
+                            </div>
+                        </a>
+
+                        <a href="https://zalo.me" target="_blank" rel="noopener noreferrer" class="channel-pill-item">
+                            <div class="channel-icon-wrap zalo">
+                                <i class="bi bi-chat-dots-fill"></i>
+                            </div>
+                            <div class="channel-info">
+                                <span class="channel-tag">ZALO OFFICIAL CARE</span>
+                                <strong class="channel-val">Tư vấn viên Zalo</strong>
+                            </div>
+                        </a>
+
+                        <a href="mailto:hotro@fashionstore.vn" class="channel-pill-item full-width">
+                            <div class="channel-icon-wrap email">
+                                <i class="bi bi-envelope-at-fill"></i>
+                            </div>
+                            <div class="channel-info">
+                                <span class="channel-tag">HỘP THƯ CSKH</span>
+                                <strong class="channel-val">hotro@fashionstore.vn · cskh@hnmtshop.vn</strong>
+                            </div>
+                        </a>
+                    </div>
                 </div>
 
-                <form asp-action="Contact" method="post" id="contactForm">
-                    @Html.AntiForgeryToken()
-
-                    <div asp-validation-summary="ModelOnly" class="text-danger contact-val-summary"></div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label asp-for="FullName">Họ và tên <span class="required">*</span></label>
-                            <input asp-for="FullName" class="form-control-custom" placeholder="Ví dụ: Nguyễn Văn A" />
-                            <span asp-validation-for="FullName" class="text-danger"></span>
-                        </div>
-
-                        <div class="form-group">
-                            <label asp-for="PhoneNumber">Số điện thoại <span class="required">*</span></label>
-                            <input asp-for="PhoneNumber" class="form-control-custom" placeholder="0988776655" />
-                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                        </div>
+                <!-- SHOWROOM DETAILS & MAP -->
+                <div class="showroom-detail-card">
+                    <div class="showroom-info-header">
+                        <span class="sub-badge">BOUTIQUE SHOWROOM</span>
+                        <h4>Không gian trải nghiệm mua sắm</h4>
+                        <p class="showroom-address">
+                            <i class="bi bi-geo-alt-fill text-danger"></i>
+                            <span>123 Đường Thời Trang, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh</span>
+                        </p>
                     </div>
 
-                    <div class="form-group">
-                        <label asp-for="Email">Địa chỉ Email <span class="required">*</span></label>
-                        <input asp-for="Email" class="form-control-custom" placeholder="email@example.com" />
-                        <span asp-validation-for="Email" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label asp-for="Subject">Chủ đề hỗ trợ <span class="required">*</span></label>
-                            <select asp-for="Subject" class="form-control-custom">
-                                <option value="">-- Chọn chủ đề liên hệ --</option>
-                                <option value="Tư vấn sản phẩm & Chọn size">Tư vấn sản phẩm & Chọn size</option>
-                                <option value="Hỏi về tiến độ đơn hàng">Hỏi về tiến độ đơn hàng</option>
-                                <option value="Yêu cầu đổi size / Đổi trả hàng">Yêu cầu đổi size / Đổi trả hàng</option>
-                                <option value="Thắc mắc thanh toán & Hoàn tiền">Thắc mắc thanh toán & Hoàn tiền</option>
-                                <option value="Khiếu nại dịch vụ">Khiếu nại dịch vụ</option>
-                                <option value="Hợp tác kinh doanh">Hợp tác kinh doanh</option>
-                                <option value="Chủ đề khác">Chủ đề khác</option>
-                            </select>
-                            <span asp-validation-for="Subject" class="text-danger"></span>
-                        </div>
-
-                        <div class="form-group">
-                            <label asp-for="OrderCode">Mã đơn hàng <em>(nếu có)</em></label>
-                            <input asp-for="OrderCode" class="form-control-custom" placeholder="Ví dụ: FS-84920" />
-                            <span asp-validation-for="OrderCode" class="text-danger"></span>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label asp-for="Message">Nội dung tin nhắn <span class="required">*</span></label>
-                        <textarea asp-for="Message" rows="5" class="form-control-custom" placeholder="Mô tả chi tiết câu hỏi hoặc yêu cầu cần hỗ trợ..."></textarea>
-                        <span asp-validation-for="Message" class="text-danger"></span>
-                    </div>
-
-                    <button type="submit" class="contact-submit-btn">
-                        <span>GỬI YÊU CẦU NGAY</span>
-                        <i class="bi bi-arrow-right"></i>
-                    </button>
-                </form>
-            </div>
-
-            <!-- RIGHT: INFO & MAP -->
-            <div class="contact-info-col" id="stores">
-                <div class="contact-card contact-info-card">
-                    <div class="contact-card-header">
-                        <span class="badge-tag">HỆ THỐNG CỬA HÀNG</span>
-                        <h2>Thông tin hỗ trợ</h2>
-                        <p>Bạn cũng có thể ghé thăm trực tiếp hoặc liên hệ trực tiếp qua hotline.</p>
-                    </div>
-
-                    <div class="info-list">
-                        <div class="info-item">
-                            <div class="info-icon"><i class="bi bi-geo-alt-fill"></i></div>
-                            <div class="info-text">
-                                <h6>Địa chỉ Showroom</h6>
-                                <p>123 Đường Thời Trang, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh</p>
+                    <div class="showroom-meta-grid">
+                        <div class="meta-row">
+                            <i class="bi bi-clock-fill"></i>
+                            <div>
+                                <strong>Thời gian mở cửa:</strong>
+                                <span>08:30 – 21:30 (Mở cửa tất cả các ngày, bao gồm Lễ & Tết)</span>
                             </div>
                         </div>
-
-                        <div class="info-item">
-                            <div class="info-icon"><i class="bi bi-telephone-fill"></i></div>
-                            <div class="info-text">
-                                <h6>Hotline CSKH & Mua hàng</h6>
-                                <p><strong>+84 988 776 655</strong> (8:30 - 21:30 hàng ngày)</p>
-                                <small class="text-muted">Hotline khiếu nại: +84 901 234 567</small>
-                            </div>
-                        </div>
-
-                        <div class="info-item">
-                            <div class="info-icon"><i class="bi bi-envelope-fill"></i></div>
-                            <div class="info-text">
-                                <h6>Hộp thư điện tử</h6>
-                                <p>hotro@fashionstore.vn</p>
-                                <p>cskh@hnmtshop.vn</p>
-                            </div>
-                        </div>
-
-                        <div class="info-item">
-                            <div class="info-icon"><i class="bi bi-clock-fill"></i></div>
-                            <div class="info-text">
-                                <h6>Thời gian làm việc</h6>
-                                <p>Thứ Hai – Chủ Nhật: 08:30 – 21:30</p>
-                                <small class="text-muted">(Phục vụ cả ngày lễ & Tết)</small>
+                        <div class="meta-row">
+                            <i class="bi bi-shield-check"></i>
+                            <div>
+                                <strong>Hotline bảo hành & đổi size:</strong>
+                                <span>+84 901 234 567 (Đổi size miễn phí trong 7 ngày)</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- MAP EMBED -->
-                    <div class="contact-map">
+                    <!-- EMBEDDED MAP -->
+                    <div class="contact-map-frame">
+                        <div class="map-topbar">
+                            <span class="map-label"><i class="bi bi-compass"></i> Bản đồ chỉ đường Showroom</span>
+                            <a href="https://maps.google.com" target="_blank" rel="noopener noreferrer" class="map-open-link">
+                                Mở toàn màn hình <i class="bi bi-box-arrow-up-right"></i>
+                            </a>
+                        </div>
                         <iframe 
                             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.460233486392!2d106.70248881471842!3d10.776019392321852!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f447781b491%3A0x7d6a52140bbd0c88!2zQuG6v24gTmdow6ksIFF14bqtbiAxLCBUaMOgbmggcGjhu5EgSOG7kyBDaMOtIE1pbmgsIFZp4buHdCBOYW0!5e0!3m2!1svi!2s!4v1680000000000!5m2!1svi!2s" 
                             width="100%" 
-                            height="220" 
-                            style="border:0; border-radius: 8px;" 
+                            height="230" 
+                            style="border:0;" 
                             allowfullscreen="" 
                             loading="lazy" 
                             referrerpolicy="no-referrer-when-downgrade">
@@ -157,74 +131,167 @@
                     </div>
                 </div>
             </div>
+
+            <!-- RIGHT COLUMN: THE BESPOKE INQUIRY FORM -->
+            <div class="contact-form-card" id="contactFormCard">
+                <div class="form-card-header">
+                    <span class="sub-badge">GỬI YÊU CẦU TRỰC TUYẾN</span>
+                    <h2>Gửi tin nhắn cho đội ngũ hỗ trợ</h2>
+                    <p>Hãy điền thông tin bên dưới, nhân viên chăm sóc khách hàng sẽ liên hệ lại với bạn trong thời gian sớm nhất.</p>
+                </div>
+
+                <form asp-action="Contact" method="post" id="contactForm" class="contact-form-element">
+                    @Html.AntiForgeryToken()
+
+                    <div asp-validation-summary="ModelOnly" class="contact-val-summary"></div>
+
+                    <div class="form-row-luxury">
+                        <div class="form-group-luxury">
+                            <label asp-for="FullName">Họ và tên <span class="required">*</span></label>
+                            <input asp-for="FullName" class="form-control-luxury" placeholder="Ví dụ: Triển Huỳnh" required />
+                            <span asp-validation-for="FullName" class="val-error"></span>
+                        </div>
+
+                        <div class="form-group-luxury">
+                            <label asp-for="PhoneNumber">Số điện thoại <span class="required">*</span></label>
+                            <input asp-for="PhoneNumber" class="form-control-luxury" placeholder="Ví dụ: 0988776655" required />
+                            <span asp-validation-for="PhoneNumber" class="val-error"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group-luxury">
+                        <label asp-for="Email">Địa chỉ Email <span class="required">*</span></label>
+                        <input asp-for="Email" class="form-control-luxury" placeholder="email@domain.com" required />
+                        <span asp-validation-for="Email" class="val-error"></span>
+                    </div>
+
+                    <div class="form-row-luxury">
+                        <div class="form-group-luxury">
+                            <label asp-for="Subject">Chủ đề cần hỗ trợ <span class="required">*</span></label>
+                            <select asp-for="Subject" class="form-control-luxury" id="contactSubjectSelect" required>
+                                <option value="">-- Chọn chủ đề hỗ trợ --</option>
+                                <option value="Tư vấn sản phẩm & Chọn size">Tư vấn sản phẩm & Chọn size</option>
+                                <option value="Hỏi về tiến độ đơn hàng">Hỏi về tiến độ đơn hàng</option>
+                                <option value="Yêu cầu đổi size / Đổi trả hàng">Yêu cầu đổi size / Đổi trả hàng</option>
+                                <option value="Thắc mắc thanh toán & Hoàn tiền">Thắc mắc thanh toán & Hoàn tiền</option>
+                                <option value="Khiếu nại dịch vụ">Khiếu nại chất lượng dịch vụ</option>
+                                <option value="Hợp tác kinh doanh">Hợp tác kinh doanh / Brand Ambassador</option>
+                                <option value="Chủ đề khác">Chủ đề khác</option>
+                            </select>
+                            <span asp-validation-for="Subject" class="val-error"></span>
+                        </div>
+
+                        <div class="form-group-luxury">
+                            <label asp-for="OrderCode">Mã đơn hàng <em>(nếu có)</em></label>
+                            <input asp-for="OrderCode" class="form-control-luxury" placeholder="Ví dụ: FS-84920" />
+                            <span asp-validation-for="OrderCode" class="val-error"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group-luxury">
+                        <label asp-for="Message">Nội dung yêu cầu chi tiết <span class="required">*</span></label>
+                        <textarea asp-for="Message" id="contactMessageInput" rows="5" class="form-control-luxury textarea" placeholder="Mô tả cụ thể câu hỏi hoặc nhu cầu tư vấn của bạn..."></textarea>
+                        <span asp-validation-for="Message" class="val-error"></span>
+                    </div>
+
+                    <div class="form-actions-luxury">
+                        <button type="submit" class="contact-submit-luxury">
+                            <span>GỬI YÊU CẦU NGAY</span>
+                            <i class="bi bi-arrow-right"></i>
+                        </button>
+                        <div class="security-guarantee">
+                            <i class="bi bi-lock-fill"></i>
+                            <span>Thông tin của bạn được cam kết bảo mật theo tiêu chuẩn SSL 256-bit.</span>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
 
-        <!-- FAQ SECTION -->
-        <section class="contact-faq-section" id="faq">
-            <div class="faq-header">
-                <span class="badge-tag">HỎI ĐÁP & CHÍNH SÁCH</span>
+        <!-- REFINED FAQ ACCORDION SECTION -->
+        <section class="contact-faq-luxury" id="faq">
+            <div class="faq-section-header">
+                <span class="sub-badge">HỎI ĐÁP & CHÍNH SÁCH</span>
                 <h2>Câu hỏi thường gặp & Quy định (FAQ)</h2>
-                <p>Một số thông tin hữu ích giúp bạn giải đáp nhanh các thắc mắc về đơn hàng, đổi trả và bảo mật.</p>
+                <p>Những thông tin phổ biến giúp bạn giải đáp nhanh về vận chuyển, chính sách đổi hàng và mua sắm.</p>
             </div>
 
-            <div class="faq-accordion">
-                <details class="faq-item" id="faq-shipping">
+            <div class="faq-accordion-grid">
+                <details class="faq-card" id="faq-shipping">
                     <summary>
-                        <span>1. Thời gian & chi phí giao hàng là bao lâu?</span>
-                        <i class="bi bi-chevron-down"></i>
+                        <span class="faq-q-text">
+                            <span class="faq-num">01</span>
+                            Thời gian & chi phí giao hàng tiêu chuẩn là bao lâu?
+                        </span>
+                        <i class="bi bi-chevron-down faq-chevron"></i>
                     </summary>
-                    <div class="faq-answer">
-                        <p>Đơn hàng nội thành TP.HCM và Hà Nội thường được giao từ 1 - 2 ngày làm việc. Đối với các tỉnh thành khác, thời gian từ 2 - 4 ngày. Phí vận chuyển tiêu chuẩn toàn quốc là 30.000đ, miễn phí giao hàng cho các đơn hàng đạt điều kiện ưu đãi.</p>
+                    <div class="faq-body">
+                        <p>Đơn hàng nội thành TP.HCM và Hà Nội giao nhanh từ <strong>1 – 2 ngày làm việc</strong>. Đối với các tỉnh thành khác, thời gian giao hàng từ 2 – 4 ngày. Phí vận chuyển tiêu chuẩn toàn quốc là 30.000đ, miễn phí giao hàng cho tất cả đơn hàng từ 500.000đ.</p>
                     </div>
                 </details>
 
-                <details class="faq-item" id="faq-returns">
+                <details class="faq-card" id="faq-returns">
                     <summary>
-                        <span>2. Chính sách đổi size và đổi trả hàng như thế nào?</span>
-                        <i class="bi bi-chevron-down"></i>
+                        <span class="faq-q-text">
+                            <span class="faq-num">02</span>
+                            Chính sách đổi size và đổi trả hàng như thế nào?
+                        </span>
+                        <i class="bi bi-chevron-down faq-chevron"></i>
                     </summary>
-                    <div class="faq-answer">
-                        <p>FashionStore hỗ trợ đổi size miễn phí trong vòng <strong>7 ngày</strong> kể từ khi bạn nhận được hàng. Sản phẩm đổi trả phải còn nguyên tem mác, hộp đựng (nếu có giày/phụ kiện), chưa qua giặt ủi hay sử dụng. Nếu sản phẩm giao lỗi do nhà sản xuất, cửa hàng chịu 100% phí ship 2 chiều.</p>
+                    <div class="faq-body">
+                        <p>HNMTSHOP hỗ trợ đổi size miễn phí trong vòng <strong>7 ngày</strong> kể từ khi bạn nhận hàng. Sản phẩm cần còn nguyên tem mác, hộp đựng (đối với giày và phụ kiện), chưa qua giặt ủi hay sử dụng. Nếu sản phẩm phát sinh lỗi từ nhà sản xuất, cửa hàng chịu 100% phí vận chuyển hai chiều.</p>
                     </div>
                 </details>
 
-                <details class="faq-item" id="faq-size">
+                <details class="faq-card" id="faq-size">
                     <summary>
-                        <span>3. Làm thế nào để kiểm tra size phù hợp trước khi đặt?</span>
-                        <i class="bi bi-chevron-down"></i>
+                        <span class="faq-q-text">
+                            <span class="faq-num">03</span>
+                            Làm thế nào để chọn size chuẩn trước khi đặt đơn?
+                        </span>
+                        <i class="bi bi-chevron-down faq-chevron"></i>
                     </summary>
-                    <div class="faq-answer">
-                        <p>Bạn có thể sử dụng công cụ tính size tự động tại trang <a asp-controller="Home" asp-action="SizeGuide" class="text-decoration-underline text-dark fw-bold">Hướng Dẫn Chọn Size</a> hoặc gửi tin nhắn trực tiếp ở form trên để nhân viên tư vấn cụ thể theo chiều cao & cân nặng của bạn.</p>
+                    <div class="faq-body">
+                        <p>Bạn có thể sử dụng công cụ tính size thông minh tại trang <a asp-controller="Home" asp-action="SizeGuide" class="faq-link">Bảng Quy Đổi Kích Thước</a> hoặc gửi thông tin chiều cao, cân nặng trực tiếp qua form trên để chuyên viên tư vấn chi tiết từng mẫu trang phục.</p>
                     </div>
                 </details>
 
-                <details class="faq-item" id="faq-cod">
+                <details class="faq-card" id="faq-cod">
                     <summary>
-                        <span>4. Tôi có được kiểm tra hàng trước khi thanh toán không?</span>
-                        <i class="bi bi-chevron-down"></i>
+                        <span class="faq-q-text">
+                            <span class="faq-num">04</span>
+                            Tôi có quyền kiểm tra hàng trước khi thanh toán COD không?
+                        </span>
+                        <i class="bi bi-chevron-down faq-chevron"></i>
                     </summary>
-                    <div class="faq-answer">
-                        <p>Khách hàng được quyền đồng kiểm ngoại quan (kiểm tra đúng mẫu, đúng size, màu sắc và số lượng) trước khi thanh toán COD cho nhân viên giao hàng (Shipper).</p>
+                    <div class="faq-body">
+                        <p>Quý khách luôn được quyền <strong>đồng kiểm ngoại quan</strong> (kiểm tra chuẩn mẫu mã, màu sắc, size áo/quần và số lượng) cùng nhân viên giao vận trước khi thanh toán tiền mặt (COD).</p>
                     </div>
                 </details>
 
-                <details class="faq-item" id="faq-terms">
+                <details class="faq-card" id="faq-terms">
                     <summary>
-                        <span>5. Điều khoản dịch vụ & quy định mua hàng</span>
-                        <i class="bi bi-chevron-down"></i>
+                        <span class="faq-q-text">
+                            <span class="faq-num">05</span>
+                            Điều khoản dịch vụ & quy định mua hàng trực tuyến
+                        </span>
+                        <i class="bi bi-chevron-down faq-chevron"></i>
                     </summary>
-                    <div class="faq-answer">
-                        <p>Khi đặt hàng tại FashionStore, quý khách cam kết cung cấp đúng thông tin liên hệ và địa chỉ nhận hàng. Cửa hàng có quyền từ chối hoặc hủy các đơn hàng có dấu hiệu gian lận hoặc không liên hệ xác nhận được với người mua. Giá sản phẩm niêm yết trên website đã bao gồm thuế GTGT.</p>
+                    <div class="faq-body">
+                        <p>Khi đặt hàng tại HNMTSHOP, quý khách cam kết cung cấp chính xác thông tin liên hệ và địa chỉ nhận hàng. Giá sản phẩm niêm yết trên website đã bao gồm thuế GTGT. Chúng tôi luôn xác nhận đơn hàng qua SMS hoặc tổng đài trước khi gửi hàng đi.</p>
                     </div>
                 </details>
 
-                <details class="faq-item" id="faq-privacy">
+                <details class="faq-card" id="faq-privacy">
                     <summary>
-                        <span>6. Chính sách bảo mật thông tin khách hàng</span>
-                        <i class="bi bi-chevron-down"></i>
+                        <span class="faq-q-text">
+                            <span class="faq-num">06</span>
+                            Chính sách bảo mật thông tin & dữ liệu cá nhân
+                        </span>
+                        <i class="bi bi-chevron-down faq-chevron"></i>
                     </summary>
-                    <div class="faq-answer">
-                        <p>FashionStore cam kết bảo mật tuyệt đối dữ liệu cá nhân của quý khách (họ tên, số điện thoại, địa chỉ nhận hàng, lịch sử giao dịch). Dữ liệu chỉ được sử dụng cho việc xử lý đơn hàng, chăm sóc khách hàng và không chia sẻ cho bên thứ ba vì mục đích thương mại.</p>
+                    <div class="faq-body">
+                        <p>HNMTSHOP cam kết bảo mật tuyệt đối dữ liệu khách hàng (họ tên, số điện thoại, địa chỉ, lịch sử đơn hàng). Thông tin chỉ được sử dụng cho việc xử lý đơn hàng và chăm sóc dịch vụ, tuyệt đối không cung cấp cho bên thứ ba vì mục đích thương mại.</p>
                     </div>
                 </details>
             </div>
@@ -232,394 +299,675 @@
     </div>
 </div>
 
-<style>
-.contact-page-wrapper {
-    background-color: #fafafa;
-    padding-bottom: 80px;
-    font-family: inherit;
-    color: #111;
-}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Auto-fill from query params if redirected from SizeGuide (e.g., ?subject=...&message=...)
+        var urlParams = new URLSearchParams(window.location.search);
+        var subjectParam = urlParams.get("subject");
+        var messageParam = urlParams.get("message");
 
-.contact-hero {
-    background: #0f0f11;
-    color: #fff;
-    padding: 70px 20px 60px;
-    text-align: center;
-    margin-bottom: 50px;
+        if (subjectParam) {
+            var subjectSelect = document.getElementById("contactSubjectSelect");
+            if (subjectSelect) {
+                for (var i = 0; i < subjectSelect.options.length; i++) {
+                    if (subjectSelect.options[i].value === subjectParam) {
+                        subjectSelect.selectedIndex = i;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (messageParam) {
+            var messageInput = document.getElementById("contactMessageInput");
+            if (messageInput && !messageInput.value.trim()) {
+                messageInput.value = messageParam;
+            }
+        }
+    });
+</script>
+
+<style>
+/* ==========================================================================
+   HNMTSHOP - CONTACT & LUXURY CONCIERGE (THE LUXURY CONCIERGE SPLIT)
+   Style: Minimalist High Fashion / Farfetch & SSENSE Concierge Style
+   Font Family: Plus Jakarta Sans & Playfair Display / Cormorant Garamond
+   ========================================================================== */
+
+.contact-page-wrapper {
+    background-color: #F8FAFC;
+    color: #0F172A;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding-bottom: 90px;
+    min-height: 100vh;
 }
 
 .contact-container {
-    max-width: 1200px;
+    width: min(1240px, calc(100% - 40px));
     margin: 0 auto;
-    padding: 0 20px;
 }
 
-    .contact-eyebrow {
-        display: inline-block;
-        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        font-size: 0.8rem;
-        font-weight: 700;
-        letter-spacing: 2px;
-        color: #9ca3af;
-        margin-bottom: 15px;
-        text-transform: uppercase;
-    }
+/* 1. HERO HEADER (ELEGANT LIGHT LUXURY) */
+.contact-hero-luxury {
+    background: linear-gradient(180deg, #FFFFFF 0%, #F1F5F9 100%);
+    border-bottom: 1px solid #E2E8F0;
+    padding: 56px 20px 48px;
+    text-align: center;
+    margin-bottom: 40px;
+}
 
-    .contact-title {
-        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        font-size: clamp(32px, 4vw, 44px);
-        font-weight: 800;
-        line-height: 1.25;
-        letter-spacing: -0.5px;
-        margin-bottom: 16px;
-        color: #FFFFFF;
-        text-transform: uppercase;
-    }
-
-    .contact-title em {
-        font-style: normal;
-        font-weight: 800;
-        color: #FFFFFF;
-    }
-
-    .contact-subtitle {
-        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        max-width: 650px;
-        margin: 0 auto;
-        color: #9ca3af;
-        font-size: 15px;
-        line-height: 1.6;
-    }
-
-.contact-alert.success {
+.hero-badge-wrap {
     display: flex;
+    justify-content: center;
+    margin-bottom: 14px;
+}
+
+.luxury-eyebrow {
+    display: inline-flex;
     align-items: center;
-    gap: 12px;
-    background: #ecfdf5;
-    border: 1px solid #10b981;
-    color: #065f46;
-    padding: 16px 20px;
-    border-radius: 8px;
-    margin-bottom: 35px;
-    font-size: 0.95rem;
+    gap: 8px;
+    background: #FFFFFF;
+    border: 1px solid #CBD5E1;
+    color: #334155;
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
-.contact-alert.success i {
-    font-size: 1.4rem;
-    color: #10b981;
+.contact-title {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: clamp(28px, 3.8vw, 42px);
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.8px;
+    color: #0F172A;
+    margin: 0 auto 14px;
+    max-width: 800px;
 }
 
+.contact-title em {
+    font-family: 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
+    font-style: italic;
+    font-weight: 500;
+    color: #2B3360;
+}
+
+.contact-subtitle {
+    font-size: 15px;
+    line-height: 1.65;
+    color: #64748B;
+    max-width: 660px;
+    margin: 0 auto;
+}
+
+/* 2. SUCCESS ALERT */
+.contact-alert-luxury.success {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    background: #ECFDF5;
+    border: 1px solid #10B981;
+    color: #065F46;
+    padding: 18px 22px;
+    border-radius: 12px;
+    margin-bottom: 32px;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
+}
+
+.alert-icon-box {
+    font-size: 1.6rem;
+    color: #10B981;
+    line-height: 1;
+}
+
+.alert-text-box h5 {
+    margin: 0 0 4px 0;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.alert-text-box p {
+    margin: 0;
+    font-size: 0.92rem;
+    color: #047857;
+}
+
+/* 3. MAIN 50:50 SPLIT GRID */
 .contact-grid {
     display: grid;
-    grid-template-columns: 1.25fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
     gap: 32px;
     align-items: start;
 }
 
-.contact-card {
-    background: #fff;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 36px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+/* LEFT COLUMN: CONCIERGE & SHOWROOM */
+.contact-concierge-col {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
 }
 
-.badge-tag {
+.concierge-status-card,
+.showroom-detail-card,
+.contact-form-card {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+}
+
+.sub-badge {
     display: inline-block;
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 700;
-    letter-spacing: 1.5px;
-    color: #4b5563;
-    background: #f3f4f6;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: #2B3360;
+    background: #EEF2F6;
     padding: 4px 10px;
-    border-radius: 4px;
+    border-radius: 6px;
     margin-bottom: 12px;
 }
 
-.contact-card-header h2 {
+/* LIVE STATUS BADGE */
+.live-status-header {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #F0FDF4;
+    border: 1px solid #BBF7D0;
+    padding: 5px 12px;
+    border-radius: 999px;
+    margin-bottom: 16px;
+}
+
+.live-pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #22C55E;
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+    animation: pulseDot 2s infinite;
+}
+
+@@keyframes pulseDot {
+    0% {
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+    }
+}
+
+.live-status-text {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    color: #15803D;
+}
+
+.concierge-card-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.4px;
+    color: #0F172A;
+    margin: 0 0 8px;
+}
+
+.concierge-card-desc {
+    font-size: 0.92rem;
+    color: #64748B;
+    line-height: 1.55;
+    margin: 0 0 24px;
+}
+
+/* QUICK CHANNELS GRID */
+.quick-channels-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.channel-pill-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    color: #0F172A;
+}
+
+.channel-pill-item:hover {
+    background: #FFFFFF;
+    border-color: #0F172A;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+    transform: translateY(-2px);
+    color: #0F172A;
+}
+
+.channel-pill-item.full-width {
+    grid-column: 1 / -1;
+}
+
+.channel-icon-wrap {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+
+.channel-icon-wrap.phone {
+    background: #EEF2F6;
+    color: #2B3360;
+}
+
+.channel-icon-wrap.zalo {
+    background: #E0F2FE;
+    color: #0284C7;
+}
+
+.channel-icon-wrap.email {
+    background: #FEF3C7;
+    color: #D97706;
+}
+
+.channel-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.channel-tag {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    color: #64748B;
+}
+
+.channel-val {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #0F172A;
+}
+
+/* SHOWROOM DETAIL CARD */
+.showroom-info-header h4 {
+    font-size: 1.25rem;
+    font-weight: 800;
+    margin: 0 0 8px;
+    color: #0F172A;
+}
+
+.showroom-address {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 0.92rem;
+    color: #334155;
+    margin: 0 0 20px;
+    line-height: 1.5;
+}
+
+.showroom-address i {
+    font-size: 1.1rem;
+    margin-top: 1px;
+}
+
+.showroom-meta-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px 0;
+    border-top: 1px solid #F1F5F9;
+    border-bottom: 1px solid #F1F5F9;
+    margin-bottom: 20px;
+}
+
+.meta-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 0.88rem;
+    color: #475569;
+}
+
+.meta-row i {
+    color: #2B3360;
+    font-size: 1.05rem;
+    margin-top: 1px;
+}
+
+.meta-row strong {
+    color: #0F172A;
+    display: block;
+    margin-bottom: 2px;
+}
+
+/* MAP FRAME */
+.contact-map-frame {
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #FFFFFF;
+}
+
+.map-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: #F8FAFC;
+    border-bottom: 1px solid #E2E8F0;
+    font-size: 0.78rem;
+}
+
+.map-label {
+    font-weight: 700;
+    color: #334155;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.map-open-link {
+    color: #2B3360;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.map-open-link:hover {
+    text-decoration: underline;
+}
+
+/* 4. RIGHT COLUMN: FORM CARD */
+.contact-form-card {
+    padding: 36px 40px;
+}
+
+.form-card-header h2 {
     font-size: 1.5rem;
     font-weight: 800;
-    margin-bottom: 8px;
-    letter-spacing: -0.5px;
+    letter-spacing: -0.4px;
+    margin: 0 0 8px;
+    color: #0F172A;
 }
 
-.contact-card-header p {
-    color: #6b7280;
+.form-card-header p {
+    color: #64748B;
     font-size: 0.92rem;
-    margin-bottom: 24px;
+    line-height: 1.55;
+    margin: 0 0 24px;
 }
 
-.form-row {
+.form-row-luxury {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
 }
 
-.form-group {
+.form-group-luxury {
     margin-bottom: 20px;
 }
 
-.form-group label {
+.form-group-luxury label {
     display: block;
-    font-size: 0.88rem;
-    font-weight: 600;
-    margin-bottom: 6px;
-    color: #1f2937;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #1E293B;
+    margin-bottom: 8px;
+    letter-spacing: 0.2px;
 }
 
-.form-group .required {
-    color: #ef4444;
+.form-group-luxury .required {
+    color: #EF4444;
 }
 
-.form-control-custom {
+.form-group-luxury label em {
+    font-style: italic;
+    font-weight: 400;
+    color: #94A3B8;
+}
+
+.form-control-luxury {
     width: 100%;
-    padding: 12px 14px;
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
+    padding: 12px 16px;
+    background: #FFFFFF;
+    border: 1.5px solid #CBD5E1;
+    border-radius: 8px;
     font-size: 0.95rem;
-    background: #fafafa;
+    color: #0F172A;
+    font-family: inherit;
     transition: all 0.2s ease;
-    color: #111;
+    box-sizing: border-box;
 }
 
-.form-control-custom:focus {
+.form-control-luxury:focus {
     outline: none;
-    border-color: #111;
-    background: #fff;
-    box-shadow: 0 0 0 3px rgba(0,0,0,0.06);
+    border-color: #0F172A;
+    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.08);
+    background: #FFFFFF;
 }
 
-.contact-submit-btn {
+.form-control-luxury.textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.val-error {
+    display: block;
+    font-size: 0.8rem;
+    color: #DC2626;
+    margin-top: 4px;
+    font-weight: 500;
+}
+
+.contact-val-summary {
+    color: #DC2626;
+    font-size: 0.88rem;
+    margin-bottom: 16px;
+}
+
+.contact-submit-luxury {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
     width: 100%;
-    padding: 14px 24px;
-    background: #111827;
-    color: #fff;
+    padding: 15px 28px;
+    background: #0F172A;
+    color: #FFFFFF;
     border: none;
-    border-radius: 6px;
-    font-size: 0.95rem;
-    font-weight: 700;
-    letter-spacing: 1px;
+    border-radius: 999px;
+    font-size: 0.92rem;
+    font-weight: 800;
+    letter-spacing: 1.2px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.15);
 }
 
-.contact-submit-btn:hover {
-    background: #000;
-    transform: translateY(-1px);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+.contact-submit-luxury:hover {
+    background: #1E293B;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.25);
 }
 
-.info-list {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    margin-bottom: 28px;
+.contact-submit-luxury i {
+    font-size: 1.1rem;
+    transition: transform 0.2s ease;
 }
 
-.info-item {
-    display: flex;
-    gap: 16px;
-    align-items: flex-start;
+.contact-submit-luxury:hover i {
+    transform: translateX(4px);
 }
 
-.info-icon {
-    width: 42px;
-    height: 42px;
-    min-width: 42px;
-    background: #f3f4f6;
-    color: #111;
-    border-radius: 8px;
+.security-guarantee {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.15rem;
+    gap: 6px;
+    margin-top: 14px;
+    font-size: 0.78rem;
+    color: #94A3B8;
 }
 
-.info-text h6 {
-    font-size: 0.95rem;
-    font-weight: 700;
-    margin-bottom: 4px;
-    color: #111;
+.security-guarantee i {
+    color: #10B981;
 }
 
-.info-text p {
-    font-size: 0.9rem;
-    color: #4b5563;
-    margin-bottom: 2px;
-    line-height: 1.45;
+/* 5. FAQ SECTION */
+.contact-faq-luxury {
+    margin-top: 64px;
+    padding-top: 48px;
+    border-top: 1px solid #E2E8F0;
 }
 
-.contact-map {
-    margin-top: 10px;
-    overflow: hidden;
-    border-radius: 8px;
-    border: 1px solid #e5e7eb;
-}
-
-/* FAQ SECTION */
-.contact-faq-section {
-    margin-top: 60px;
-    padding-top: 50px;
-    border-top: 1px solid #e5e7eb;
-}
-
-.faq-header {
+.faq-section-header {
     text-align: center;
-    margin-bottom: 35px;
+    margin-bottom: 36px;
 }
 
-.faq-header h2 {
-    font-size: 1.7rem;
+.faq-section-header h2 {
+    font-size: clamp(22px, 3vw, 30px);
     font-weight: 800;
-    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+    color: #0F172A;
+    margin: 0 0 10px;
 }
 
-.faq-header p {
-    color: #6b7280;
+.faq-section-header p {
     font-size: 0.95rem;
-}
-
-.faq-accordion {
-    max-width: 850px;
+    color: #64748B;
+    max-width: 600px;
     margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
 }
 
-.faq-item {
-    background: #fff;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    padding: 16px 20px;
-    cursor: pointer;
-    transition: border-color 0.2s;
+.faq-accordion-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
 }
 
-.faq-item[open] {
-    border-color: #111;
+.faq-card {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 0;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.faq-item summary {
+.faq-card:hover {
+    border-color: #CBD5E1;
+}
+
+.faq-card[open] {
+    border-color: #0F172A;
+    box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.05);
+}
+
+.faq-card summary {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-weight: 600;
-    font-size: 0.98rem;
-    list-style: none;
+    gap: 12px;
+    padding: 18px 22px;
+    cursor: pointer;
     user-select: none;
+    list-style: none;
 }
 
-.faq-item summary::-webkit-details-marker {
+.faq-card summary::-webkit-details-marker {
     display: none;
 }
 
-.faq-item[open] summary i {
+.faq-q-text {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #0F172A;
+    line-height: 1.4;
+}
+
+.faq-num {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #64748B;
+    background: #F1F5F9;
+    padding: 2px 7px;
+    border-radius: 4px;
+}
+
+.faq-chevron {
+    font-size: 0.9rem;
+    color: #64748B;
+    transition: transform 0.2s ease;
+}
+
+.faq-card[open] .faq-chevron {
     transform: rotate(180deg);
+    color: #0F172A;
 }
 
-.faq-answer {
-    padding-top: 12px;
+.faq-body {
+    padding: 0 22px 20px 48px;
     font-size: 0.92rem;
-    line-height: 1.6;
-    color: #4b5563;
-    border-top: 1px solid #f3f4f6;
-    margin-top: 12px;
+    line-height: 1.65;
+    color: #475569;
 }
 
-.faq-item.highlight-target,
-.contact-card.highlight-target {
-    border-color: #d97706 !important;
-    box-shadow: 0 0 0 4px rgba(217, 119, 6, 0.25) !important;
-    animation: highlightPulse 2s ease-in-out;
+.faq-body p {
+    margin: 0;
 }
 
-@@keyframes highlightPulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.015); }
-    100% { transform: scale(1); }
+.faq-link {
+    color: #0F172A;
+    font-weight: 700;
+    text-decoration: underline;
 }
 
-@@media (max-width: 900px) {
+/* RESPONSIVE */
+@@media (max-width: 991px) {
     .contact-grid {
         grid-template-columns: 1fr;
     }
-    .form-row {
+    .faq-accordion-grid {
         grid-template-columns: 1fr;
     }
-    .contact-hero {
-        padding: 50px 15px 40px;
+    .contact-form-card {
+        padding: 28px 24px;
     }
-    .contact-title {
-        font-size: 1.8rem;
+}
+
+@@media (max-width: 576px) {
+    .form-row-luxury {
+        grid-template-columns: 1fr;
+    }
+    .quick-channels-grid {
+        grid-template-columns: 1fr;
+    }
+    .contact-hero-luxury {
+        padding: 40px 16px 36px;
     }
 }
 </style>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // 1. Tự động điền chủ đề nếu có query string ?subject=...
-            const urlParams = new URLSearchParams(window.location.search);
-            const subjectParam = urlParams.get('subject');
-            if (subjectParam) {
-                const subjectSelect = document.querySelector('select[name="Subject"]');
-                if (subjectSelect) {
-                    for (let opt of subjectSelect.options) {
-                        if (opt.value.toLowerCase().includes(subjectParam.toLowerCase()) || subjectParam.toLowerCase().includes(opt.value.toLowerCase())) {
-                            opt.selected = true;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            // Tự động điền nội dung nếu có query string ?message=...
-            const messageParam = urlParams.get('message');
-            if (messageParam) {
-                const messageTextarea = document.querySelector('textarea[name="Message"]');
-                if (messageTextarea && !messageTextarea.value.trim()) {
-                    messageTextarea.value = messageParam;
-                }
-            }
-
-            // 2. Xử lý hash nhảy tới đúng mục và mở accordion
-            function handleHash() {
-                const hash = window.location.hash;
-                if (!hash) return;
-
-                const targetEl = document.querySelector(hash);
-                if (targetEl) {
-                    // Nếu là thẻ details hoặc con của details -> mở ra
-                    if (targetEl.tagName === 'DETAILS') {
-                        targetEl.open = true;
-                    } else {
-                        const parentDetails = targetEl.closest('details');
-                        if (parentDetails) parentDetails.open = true;
-                    }
-
-                    // Thêm hiệu ứng highlight
-                    targetEl.classList.add('highlight-target');
-                    setTimeout(() => {
-                        targetEl.classList.remove('highlight-target');
-                    }, 3500);
-
-                    // Cuộn mượt tới vị trí
-                    setTimeout(() => {
-                        targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 100);
-                }
-            }
-
-            // Chạy khi tải trang và khi hash thay đổi
-            handleHash();
-            window.addEventListener('hashchange', handleHash);
-        });
-    </script>
-}

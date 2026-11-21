@@ -1,0 +1,506 @@
+@{
+    ViewData["Title"] = "Bảng Quy Đổi Kích Thước & Hướng Dẫn Chọn Size";
+}
+
+<div class="sg-page">
+    <!-- LUXURY HERO HEADER -->
+    <section class="sg-hero-luxury">
+        <div class="sg-container">
+            <div class="sg-hero-badge-wrap">
+                <span class="sg-eyebrow-badge">
+                    <i class="bi bi-rulers"></i>
+                    SMART SIZING SYSTEM · BẢNG SIZE CHUẨN QUỐC TẾ
+                </span>
+            </div>
+            <h1 class="sg-hero-title">Hướng Dẫn Chọn Kích Cỡ <em>&</em> Đo Lường Vóc Dáng</h1>
+            <p class="sg-hero-subtitle">
+                Sử dụng bộ công cụ phân tích số đo thông minh kết hợp bảng thông số kỹ thuật chuẩn may đo cho từng dòng sản phẩm.
+            </p>
+        </div>
+    </section>
+
+    <!-- MAIN INTERACTIVE SECTION -->
+    <section class="sg-container sg-main-section" id="sg-calculator" aria-labelledby="sg-calculator-title">
+        <!-- UNIFIED CATEGORY SELECTOR TABS -->
+        <div class="sg-toolbar-wrap">
+            <div class="sg-category-nav">
+                <button type="button" class="sg-tab sg-category-pill active" data-target="clothing">
+                    <i class="bi bi-person-standing"></i>
+                    <span>ÁO & TOPS</span>
+                </button>
+
+                <button type="button" class="sg-tab sg-category-pill" data-target="pants">
+                    <i class="bi bi-rulers"></i>
+                    <span>QUẦN & BOTTOMS</span>
+                </button>
+
+                <button type="button" class="sg-tab sg-category-pill" data-target="shoes">
+                    <i class="bi bi-bag"></i>
+                    <span>GIÀY & SNEAKER</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 1. CLOTHING CALCULATOR & ANATOMY GUIDE -->
+        <div class="sg-panel active" id="clothing">
+            <!-- LEFT: SMART FITTER FORM -->
+            <div class="sg-card sg-form-card">
+                <div class="sg-card-header">
+                    <span class="sg-card-tag">BỘ LỌC THÔNG MINH</span>
+                    <h3>Thông số cơ thể của bạn</h3>
+                    <p>Nhập chiều cao và cân nặng thực tế để hệ thống tính toán size áo tối ưu.</p>
+                </div>
+
+                <form id="clothingForm" class="sg-fitter-form">
+                    <div class="sg-form-row">
+                        <div class="sg-form-group">
+                            <label for="sgHeight">Chiều cao <span class="unit">(cm)</span></label>
+                            <input type="number" id="sgHeight" min="130" max="220" placeholder="Ví dụ: 170" required class="sg-input" />
+                        </div>
+
+                        <div class="sg-form-group">
+                            <label for="sgWeight">Cân nặng <span class="unit">(kg)</span></label>
+                            <input type="number" id="sgWeight" min="30" max="180" placeholder="Ví dụ: 62" required class="sg-input" />
+                        </div>
+                    </div>
+
+                    <div class="sg-form-group">
+                        <label for="sgFit">Phong cách mặc mong muốn</label>
+                        <select id="sgFit" class="sg-input sg-select">
+                            <option value="regular">Regular Fit · Vừa vặn thanh lịch</option>
+                            <option value="oversize">Oversize · Rộng rãi phóng khoáng</option>
+                            <option value="slim">Slim Fit · Ôm gọn tôn dáng</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="sg-btn-submit">
+                        <i class="bi bi-stars"></i>
+                        <span>PHÂN TÍCH SIZE CỦA TÔI</span>
+                    </button>
+                </form>
+
+                <!-- RESULT BOX -->
+                <div id="clothingResult" class="sg-result-card" hidden aria-live="polite">
+                    <div class="sg-result-topbar">
+                        <span id="clothingEyebrow" class="sg-result-badge">YOUR RECOMMENDED SIZE</span>
+                    </div>
+                    <div class="sg-result-main">
+                        <div class="sg-result-size-display" id="clothingSize">M</div>
+                        <div class="sg-result-details">
+                            <h4 id="clothingTitle">Size phù hợp với bạn</h4>
+                            <p id="clothingDescription"></p>
+                        </div>
+                    </div>
+
+                    <!-- CSKH SUPPORT BOX KHI SỐ ĐO KHÔNG PHÙ HỢP -->
+                    <div id="clothingSupportBox" class="sg-support-box" hidden>
+                        <div class="sg-support-header">
+                            <div class="sg-support-icon">
+                                <i class="bi bi-headset"></i>
+                            </div>
+                            <div>
+                                <h5>Cần hỗ trợ tư vấn từ chuyên viên Atelier</h5>
+                                <p>Số đo của bạn cần được tư vấn kỹ lưỡng để chọn trang phục có form dáng vừa vặn và thoải mái nhất.</p>
+                            </div>
+                        </div>
+                        <div class="sg-support-actions">
+                            <a id="clothingContactBtn" href="/contact" class="sg-support-btn sg-support-btn-primary">
+                                <i class="bi bi-chat-dots-fill"></i>
+                                Gửi yêu cầu tư vấn size
+                            </a>
+                            <a href="tel:+84988776655" class="sg-support-btn sg-support-btn-outline">
+                                <i class="bi bi-telephone-fill"></i>
+                                Hotline: 0988 776 655
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="sg-result-note" id="clothingNote">
+                        <i class="bi bi-info-circle-fill"></i>
+                        <span>Đây là kích cỡ đề xuất tham khảo. Hãy đối chiếu thêm bảng số đo chi tiết bên dưới trước khi chốt đơn.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: VISUAL ANATOMY MEASUREMENT GUIDE -->
+            <div class="sg-card sg-guide-card">
+                <div class="sg-card-header">
+                    <span class="sg-card-tag">HƯỚNG DẪN ĐO LƯỜNG</span>
+                    <h3>Cách lấy số đo áo chuẩn xác</h3>
+                    <p>Chuẩn bị thước dây mềm và đứng thẳng người tự nhiên để có kết quả chính xác nhất.</p>
+                </div>
+
+                <div class="sg-anatomy-steps">
+                    <div class="anatomy-step-item">
+                        <div class="step-num-pill">01</div>
+                        <div class="step-content">
+                            <h6>Vòng Ngực (Chest)</h6>
+                            <p>Vòng thước dây quanh điểm nở nhất của lồng ngực, giữ thước dây ngang bằng song song mặt đất.</p>
+                        </div>
+                    </div>
+
+                    <div class="anatomy-step-item">
+                        <div class="step-num-pill">02</div>
+                        <div class="step-content">
+                            <h6>Rộng Vai (Shoulder)</h6>
+                            <p>Đo ngang lưng từ đỉnh khớp nối vai bên trái sang đỉnh khớp vai bên phải.</p>
+                        </div>
+                    </div>
+
+                    <div class="anatomy-step-item">
+                        <div class="step-num-pill">03</div>
+                        <div class="step-content">
+                            <h6>Dài Thân Áo (Length)</h6>
+                            <p>Đo từ điểm cao nhất của vai xuôi thẳng xuống dưới ngang cạp quần hoặc vị trí mong muốn.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sg-guide-footer-tip">
+                    <i class="bi bi-lightbulb-fill text-warning"></i>
+                    <div>
+                        <strong>Mẹo chọn giữa hai size:</strong>
+                        <span>Nếu số đo nằm giữa hai cỡ, hãy ưu tiên chọn size lớn hơn nếu thích mặc rộng thoải mái (Oversize) hoặc chọn size nhỏ hơn nếu thích ôm gọn cơ thể.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. PANTS CALCULATOR & GUIDE -->
+        <div class="sg-panel" id="pants">
+            <!-- LEFT: PANTS FORM -->
+            <div class="sg-card sg-form-card">
+                <div class="sg-card-header">
+                    <span class="sg-card-tag">BỘ LỌC QUẦN & JEANS</span>
+                    <h3>Thông số vòng eo & chiều cao</h3>
+                    <p>Nhập số đo tại vị trí bạn thường mặc cạp quần để nhận gợi ý chuẩn xác.</p>
+                </div>
+
+                <form id="pantsForm" class="sg-fitter-form">
+                    <div class="sg-form-row">
+                        <div class="sg-form-group">
+                            <label for="sgPantsHeight">Chiều cao <span class="unit">(cm)</span></label>
+                            <input type="number" id="sgPantsHeight" min="130" max="220" inputmode="numeric" placeholder="Ví dụ: 170" required class="sg-input" />
+                        </div>
+
+                        <div class="sg-form-group">
+                            <label for="sgPantsWeight">Cân nặng <span class="unit">(kg)</span></label>
+                            <input type="number" id="sgPantsWeight" min="30" max="180" step="0.1" inputmode="decimal" placeholder="Ví dụ: 62" required class="sg-input" />
+                        </div>
+                    </div>
+
+                    <div class="sg-form-group">
+                        <label for="sgWaist">Vòng eo đo thực tế <span class="unit">(inch hoặc cm chia 2.54)</span></label>
+                        <input type="number" id="sgWaist" inputmode="decimal" min="20" max="65" step="0.1" placeholder="Ví dụ: 30.5" required class="sg-input" />
+                        <small class="sg-field-hint">Mẹo: Nếu bạn đo được 76 cm vòng eo, chia cho 2.54 sẽ được ~30 inch (Size W30).</small>
+                    </div>
+
+                    <button type="submit" class="sg-btn-submit">
+                        <i class="bi bi-stars"></i>
+                        <span>GỢI Ý SIZE QUẦN CHO TÔI</span>
+                    </button>
+                </form>
+
+                <div id="pantsResult" class="sg-result-card" hidden aria-live="polite">
+                    <div class="sg-result-topbar">
+                        <span class="sg-result-badge">YOUR RECOMMENDED PANTS SIZE</span>
+                    </div>
+                    <div class="sg-result-main">
+                        <div class="sg-result-size-display" id="pantsSize">W30</div>
+                        <div class="sg-result-details">
+                            <h4>Size quần phù hợp</h4>
+                            <p id="pantsDescription"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: PANTS MEASUREMENT GUIDE -->
+            <div class="sg-card sg-guide-card">
+                <div class="sg-card-header">
+                    <span class="sg-card-tag">HƯỚNG DẪN ĐO QUẦN</span>
+                    <h3>Cách xác định size quần tiêu chuẩn</h3>
+                    <p>Hướng dẫn cách đọc thông số W (Waist) và L (Length) của quần jeans & âu.</p>
+                </div>
+
+                <div class="sg-anatomy-steps">
+                    <div class="anatomy-step-item">
+                        <div class="step-num-pill">W</div>
+                        <div class="step-content">
+                            <h6>Vòng Eo Danh Nghĩa (Waist)</h6>
+                            <p>Ký hiệu W biểu thị vòng eo tính theo đơn vị inch (1 inch = 2.54 cm). Ví dụ W30 tương đương vòng eo ~76.2 cm.</p>
+                        </div>
+                    </div>
+
+                    <div class="anatomy-step-item">
+                        <div class="step-num-pill">L</div>
+                        <div class="step-content">
+                            <h6>Chiều Dài Ống Trong (Inseam)</h6>
+                            <p>Đo từ đáy đũng quần xuôi theo đường chỉ ống trong xuống mép gấu quần để xác định độ dài vừa vặn với chiều cao.</p>
+                        </div>
+                    </div>
+
+                    <div class="anatomy-step-item">
+                        <div class="step-num-pill">03</div>
+                        <div class="step-content">
+                            <h6>Vòng Mông (Hips)</h6>
+                            <p>Vòng thước dây quanh vị trí nở nhất của mông để chọn mẫu quần jeans không bị bó kích khi ngồi.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sg-guide-footer-tip">
+                    <i class="bi bi-info-circle-fill text-primary"></i>
+                    <div>
+                        <strong>Đối chiếu chi tiết:</strong>
+                        <span>Hãy xem bảng quy đổi chi tiết bên dưới để đối chiếu thêm giữa đơn vị inch và cm.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. SHOES CALCULATOR & GUIDE -->
+        <div class="sg-panel" id="shoes">
+            <!-- LEFT: SHOE FORM -->
+            <div class="sg-card sg-form-card">
+                <div class="sg-card-header">
+                    <span class="sg-card-tag">BỘ LỌC GIÀY SNEAKER</span>
+                    <h3>Chiều dài bàn chân</h3>
+                    <p>Đo từ điểm gót chân đến đầu ngón chân dài nhất để tìm size EU chuẩn xác.</p>
+                </div>
+
+                <form id="shoeForm" class="sg-fitter-form">
+                    <div class="sg-form-group">
+                        <label for="sgFootLength">Chiều dài bàn chân thực tế <span class="unit">(cm)</span></label>
+                        <input type="number" id="sgFootLength" min="20" max="32" step="0.1" placeholder="Ví dụ: 25.5" required class="sg-input" />
+                    </div>
+
+                    <div class="sg-measure-tip-box">
+                        <i class="bi bi-lightbulb-fill text-warning"></i>
+                        <span>Đo cả hai bàn chân và sử dụng số đo của bàn chân dài hơn để tránh bị chật mũi giày.</span>
+                    </div>
+
+                    <button type="submit" class="sg-btn-submit">
+                        <i class="bi bi-stars"></i>
+                        <span>TÌM SIZE GIÀY CỦA TÔI</span>
+                    </button>
+                </form>
+
+                <div id="shoeResult" class="sg-result-card" hidden aria-live="polite">
+                    <div class="sg-result-topbar">
+                        <span id="shoeEyebrow" class="sg-result-badge">YOUR RECOMMENDED SHOE SIZE</span>
+                    </div>
+                    <div class="sg-result-main">
+                        <div class="sg-result-size-display" id="shoeSize">41</div>
+                        <div class="sg-result-details">
+                            <h4 id="shoeTitle">Size giày EU tham khảo</h4>
+                            <p id="shoeDescription"></p>
+                        </div>
+                    </div>
+
+                    <!-- CSKH SUPPORT BOX KHI SỐ ĐO GIÀY KHÔNG PHÙ HỢP -->
+                    <div id="shoeSupportBox" class="sg-support-box" hidden>
+                        <div class="sg-support-header">
+                            <div class="sg-support-icon">
+                                <i class="bi bi-headset"></i>
+                            </div>
+                            <div>
+                                <h5>Cần hỗ trợ tư vấn size giày đặc biệt</h5>
+                                <p>Số đo bàn chân của bạn nằm ngoài dải size thông thường. Hãy liên hệ CSKH để chuyên viên gợi ý mẫu giày form rộng hoặc ngoại cỡ.</p>
+                            </div>
+                        </div>
+                        <div class="sg-support-actions">
+                            <a id="shoeContactBtn" href="/contact" class="sg-support-btn sg-support-btn-primary">
+                                <i class="bi bi-chat-dots-fill"></i>
+                                Gửi yêu cầu tư vấn size giày
+                            </a>
+                            <a href="tel:+84988776655" class="sg-support-btn sg-support-btn-outline">
+                                <i class="bi bi-telephone-fill"></i>
+                                Hotline: 0988 776 655
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="sg-result-note" id="shoeNote">
+                        <i class="bi bi-info-circle-fill"></i>
+                        <span>Kết quả phụ thuộc vào form giày từng bộ sưu tập. Hãy tham khảo mô tả chi tiết của từng sản phẩm.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: SHOE MEASUREMENT GUIDE -->
+            <div class="sg-card sg-guide-card">
+                <div class="sg-card-header">
+                    <span class="sg-card-tag">HƯỚNG DẪN ĐO CHÂN</span>
+                    <h3>3 bước đo chân chính xác tại nhà</h3>
+                    <p>Phương pháp đặt gót chân chạm tường giúp đo chiều dài chuẩn xác tới từng milimet.</p>
+                </div>
+
+                <div class="sg-anatomy-steps">
+                    <div class="anatomy-step-item">
+                        <div class="step-num-pill">01</div>
+                        <div class="step-content">
+                            <h6>Chuẩn bị giấy & Đứng sát tường</h6>
+                            <p>Đặt một tờ giấy trắng trên sàn sát chân tường. Đứng thẳng lên giấy, đặt gót chân chạm nhẹ vào tường.</p>
+                        </div>
+                    </div>
+
+                    <div class="anatomy-step-item">
+                        <div class="step-num-pill">02</div>
+                        <div class="step-content">
+                            <h6>Đánh dấu điểm dài nhất</h6>
+                            <p>Dùng bút chì giữ thẳng đứng vuông góc mặt sàn, đánh dấu điểm đầu ngón chân dài nhất (ngón cái hoặc ngón trỏ).</p>
+                        </div>
+                    </div>
+
+                    <div class="anatomy-step-item">
+                        <div class="step-num-pill">03</div>
+                        <div class="step-content">
+                            <h6>Đo khoảng cách (cm)</h6>
+                            <p>Dùng thước kẻ đo khoảng cách từ mép tường đến điểm vừa đánh dấu để có chiều dài bàn chân chính xác.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sg-guide-footer-tip">
+                    <i class="bi bi-clock-history text-primary"></i>
+                    <div>
+                        <strong>Thời điểm đo chuẩn nhất:</strong>
+                        <span>Nên đo chân vào chiều tối vì bàn chân có xu hướng giãn nở nhẹ sau một ngày vận động.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STRUCTURED SIZE MATRIX TABLES -->
+    <div class="sg-tables-container">
+        <!-- 1. CLOTHING TABLE -->
+        <section class="sg-chart-section" id="sg-clothing-chart">
+            <div class="sg-container">
+                <div class="sg-chart-header">
+                    <span class="sg-section-tag">THÔNG SỐ TIÊU CHUẨN</span>
+                    <h2>Bảng Thông Số Size Áo Nam & Nữ</h2>
+                    <p>Bảng quy đổi kích thước áp dụng cho áo thun, sơ mi, áo len và hoodie form dáng quốc tế.</p>
+                </div>
+
+                <div class="sg-table-frame" tabindex="0" role="region" aria-label="Bảng size áo">
+                    <table class="sg-matrix-table">
+                        <thead>
+                            <tr>
+                                <th>KÍCH CỠ</th>
+                                <th>CHIỀU CAO (CM)</th>
+                                <th>CÂN NẶNG (KG)</th>
+                                <th>VÒNG NGỰC (CM)</th>
+                                <th>ĐỘ DÀI ÁO (CM)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><th scope="row" class="size-col">XS</th><td>145 – 160</td><td>35 – 45</td><td>80 – 86</td><td>64 – 66</td></tr>
+                            <tr><th scope="row" class="size-col">S</th><td>150 – 165</td><td>40 – 52</td><td>86 – 92</td><td>66 – 68</td></tr>
+                            <tr><th scope="row" class="size-col highlight">M</th><td>160 – 170</td><td>50 – 62</td><td>92 – 98</td><td>68 – 70</td></tr>
+                            <tr><th scope="row" class="size-col highlight">L</th><td>165 – 175</td><td>60 – 72</td><td>98 – 104</td><td>70 – 72</td></tr>
+                            <tr><th scope="row" class="size-col">XL</th><td>170 – 185</td><td>70 – 85</td><td>104 – 112</td><td>72 – 75</td></tr>
+                            <tr><th scope="row" class="size-col">XXL</th><td>175 – 195</td><td>80 – 100</td><td>112 – 120</td><td>75 – 78</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="sg-table-footnote">
+                    <i class="bi bi-info-circle"></i>
+                    <span>* Bảng số đo mang tính chất tham khảo tiêu chuẩn. Một số sản phẩm phong cách Oversize có thể có độ rộng ngực lớn hơn 4 – 8 cm.</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. PANTS TABLE -->
+        <section class="sg-chart-section" id="sg-pants-chart">
+            <div class="sg-container">
+                <div class="sg-chart-header">
+                    <span class="sg-section-tag">QUY ĐỔI VÒNG EO</span>
+                    <h2>Bảng Quy Đổi Size Quần Jeans & Trousers</h2>
+                    <p>Quy đổi chuẩn giữa vòng eo inch quốc tế và số đo cm thực tế.</p>
+                </div>
+
+                <div class="sg-table-frame" tabindex="0" role="region" aria-label="Bảng size quần theo inch">
+                    <table class="sg-matrix-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">SIZE QUẦN</th>
+                                <th scope="col">VÒNG EO (INCH)</th>
+                                <th scope="col">VÒNG EO (CM)</th>
+                                <th scope="col">CHIỀU CAO GỢI Ý (CM)</th>
+                                <th scope="col">CÂN NẶNG GỢI Ý (KG)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @for (var waist = 26; waist <= 38; waist += 2)
+                        {
+                            var cm = (waist * 2.54m).ToString("N1", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"));
+                            var heightMin = 155 + (waist - 26) * 3;
+                            var heightMax = heightMin + 12;
+                            var weightMin = 45 + (waist - 26) * 4;
+                            var weightMax = weightMin + 10;
+                            <tr>
+                                <th scope="row" class="size-col">W@waist</th>
+                                <td>@waist inch</td>
+                                <td>@cm cm</td>
+                                <td>@heightMin – @heightMax cm</td>
+                                <td>@weightMin – @weightMax kg</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. SHOES TABLE -->
+        <section class="sg-chart-section" id="sg-shoe-chart">
+            <div class="sg-container">
+                <div class="sg-chart-header">
+                    <span class="sg-section-tag">KÍCH CỠ GIÀY TIÊU CHUẨN</span>
+                    <h2>Bảng Quy Đổi Size Giày Sneaker Quốc Tế</h2>
+                    <p>Đối chiếu chuẩn xác giữa chiều dài bàn chân thực tế (cm), size EU và size US.</p>
+                </div>
+
+                <div class="sg-table-frame" tabindex="0" role="region" aria-label="Bảng quy đổi size giày">
+                    <table class="sg-matrix-table">
+                        <thead>
+                            <tr>
+                                <th>EU SIZE</th>
+                                <th>CHIỀU DÀI BÀN CHÂN (CM)</th>
+                                <th>US MEN</th>
+                                <th>US WOMEN</th>
+                                <th>UK SIZE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><th scope="row" class="size-col">36</th><td>22.5 – 23.0</td><td>4.5</td><td>6.0</td><td>3.5</td></tr>
+                            <tr><th scope="row" class="size-col">37</th><td>23.1 – 23.5</td><td>5.0</td><td>6.5</td><td>4.0</td></tr>
+                            <tr><th scope="row" class="size-col">38</th><td>23.6 – 24.0</td><td>6.0</td><td>7.5</td><td>5.0</td></tr>
+                            <tr><th scope="row" class="size-col">39</th><td>24.1 – 24.5</td><td>6.5</td><td>8.0</td><td>5.5</td></tr>
+                            <tr><th scope="row" class="size-col highlight">40</th><td>24.6 – 25.0</td><td>7.5</td><td>9.0</td><td>6.5</td></tr>
+                            <tr><th scope="row" class="size-col highlight">41</th><td>25.1 – 26.0</td><td>8.0</td><td>9.5</td><td>7.0</td></tr>
+                            <tr><th scope="row" class="size-col highlight">42</th><td>26.1 – 26.5</td><td>9.0</td><td>10.5</td><td>8.0</td></tr>
+                            <tr><th scope="row" class="size-col">43</th><td>26.6 – 27.0</td><td>9.5</td><td>11.0</td><td>8.5</td></tr>
+                            <tr><th scope="row" class="size-col">44</th><td>27.1 – 28.0</td><td>10.5</td><td>12.0</td><td>9.5</td></tr>
+                            <tr><th scope="row" class="size-col">45</th><td>28.1 – 28.5</td><td>11.5</td><td>13.0</td><td>10.5</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="sg-table-footnote">
+                    <i class="bi bi-info-circle"></i>
+                    <span>* Chiều dài bàn chân tính từ điểm lùi xa nhất của gót đến đầu ngón chân dài nhất. Nếu chân có mu dày hoặc bè ngang, nên tăng 0.5 – 1 size để có cảm giác thoải mái nhất.</span>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/size-guide.css" asp-append-version="true" />
+}
+
+@section Scripts {
+    <script src="~/js/size-guide.js" asp-append-version="true"></script>
+}

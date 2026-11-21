@@ -53,9 +53,19 @@ public class HomeController : Controller
     }
 
     [HttpGet("/contact")]
-    public async Task<IActionResult> Contact()
+    public async Task<IActionResult> Contact([FromQuery] string? subject = null, [FromQuery] string? message = null)
     {
         var model = new ContactViewModel();
+
+        if (!string.IsNullOrWhiteSpace(subject))
+        {
+            model.Subject = subject;
+        }
+
+        if (!string.IsNullOrWhiteSpace(message))
+        {
+            model.Message = message;
+        }
 
         if (User.Identity?.IsAuthenticated == true)
         {

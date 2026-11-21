@@ -1,6 +1,6 @@
 ﻿document.addEventListener("DOMContentLoaded", () => {
     // Chuyển tab Quần áo / Giày dép
-    const tabs = document.querySelectorAll(".sg-tab");
+    const tabs = document.querySelectorAll(".sg-tab, .sg-category-pill");
     const panels = document.querySelectorAll(".sg-panel");
 
     tabs.forEach(tab => {
