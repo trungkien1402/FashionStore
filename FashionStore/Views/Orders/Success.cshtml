@@ -7,20 +7,147 @@
     var closed = Model.Status is OrderStatus.Cancelled or OrderStatus.Returned or OrderStatus.DeliveryFailed;
     var pendingQr = Model.PaymentMethod == PaymentMethod.VietQR && Model.PaymentStatus == PaymentStatus.Pending && !closed;
     var awaitingConfirmation = pendingQr && Model.TransferReportedAt.HasValue;
-    var title = closed ? "Thông tin đơn hàng" : paid ? "Thanh toán đã được xác nhận" : awaitingConfirmation ? "Đã nhận thông báo của bạn" : "Đơn hàng đã được ghi nhận";
-    ViewData["Title"] = title;
+
+    var pageHeading = closed 
+        ? "Thông tin đơn hàng" 
+        : paid 
+            ? "Thanh toán thành công!" 
+            : awaitingConfirmation 
+                ? "Đã ghi nhận thanh toán!" 
+                : "Đặt hàng thành công!";
+
+    ViewData["Title"] = pageHeading;
     string Money(decimal amount) => amount.ToString("N0", CultureInfo.GetCultureInfo("vi-VN")) + " ₫";
-    var paymentText = Model.PaymentStatus switch { PaymentStatus.Paid => "Đã thanh toán", PaymentStatus.Refunded => "Đã hoàn tiền", PaymentStatus.Failed => "Thanh toán thất bại", _ => awaitingConfirmation ? "Chờ cửa hàng xác nhận" : "Chưa thanh toán" };
+    
+    var paymentBadgeClass = paid 
+        ? "status-delivered" 
+        : awaitingConfirmation 
+            ? "status-pending" 
+            : "status-processing";
+
+    var paymentText = Model.PaymentStatus switch 
+    { 
+        PaymentStatus.Paid => "Đã thanh toán", 
+        PaymentStatus.Refunded => "Đã hoàn tiền", 
+        PaymentStatus.Failed => "Thanh toán thất bại", 
+        _ => awaitingConfirmation ? "Chờ xác nhận đối soát" : "Thanh toán khi nhận hàng (COD)" 
+    };
 }
-<nav class="pay-steps" aria-label="Tiến trình đặt hàng"><span class="is-done">01 <span>Thông tin</span></span><i></i><span class="@(paid || awaitingConfirmation ? "is-done" : "")">02 <span>Thanh toán</span></span><i></i><span class="is-current" aria-current="step">03 <span>Ghi nhận đơn</span></span></nav>
-<section class="pay-result">
-    <span class="pay-state-icon" aria-hidden="true">@(closed ? "!" : "✓")</span><p class="pay-eyebrow">FASHIONSTORE · CẢM ƠN BẠN</p><h1>@title<span style="color:var(--accent)">.</span></h1>
-    <p>@(closed ? "Đơn hàng đã thay đổi trạng thái. Vui lòng xem chi tiết để theo dõi thông tin mới nhất." : paid ? "Cửa hàng đã xác nhận thanh toán của bạn. Theo dõi đơn hàng để biết các bước xử lý tiếp theo." : awaitingConfirmation ? "Bạn đã hoàn tất bước thông báo chuyển khoản. Cửa hàng sẽ kiểm tra và xác nhận thanh toán. Bạn có thể đóng trang này và theo dõi tại đơn hàng; không cần chuyển tiền lần nữa." : Model.PaymentMethod == PaymentMethod.COD ? "Cảm ơn bạn đã lựa chọn FashionStore. Bạn sẽ thanh toán khi nhận hàng." : "Đơn hàng đã được lưu. Thanh toán của bạn vẫn đang chờ cửa hàng xác nhận.")</p>
-    <div class="pay-summary"><span class="pay-eyebrow">ĐƠN HÀNG</span><h2>@Model.OrderCode</h2><div class="pay-rule"></div>
-        <dl class="pay-totals"><div><dt>Phương thức</dt><dd>@(Model.PaymentMethod == PaymentMethod.VietQR ? "Chuyển khoản VietQR" : "Khi nhận hàng (COD)")</dd></div><div><dt>Thanh toán</dt><dd class="pay-status-label">@paymentText</dd></div><div class="pay-total"><dt>Tổng thanh toán</dt><dd>@Money(Model.TotalAmount)</dd></div></dl>
-        <div class="pay-address"><strong>@Model.ReceiverName</strong>@Model.Phone<br />@Model.Address</div>
-        <a class="pay-detail-link" asp-action="Details" asp-route-id="@Model.Id">Theo dõi đơn hàng <span aria-hidden="true">↗</span></a>
+
+<!-- TIẾN TRÌNH ĐẶT HÀNG (3 BƯỚC HOÀN TẤT) -->
+<nav class="hnmt-pay-steps" aria-label="Tiến trình đặt hàng">
+    <div class="hnmt-pay-step is-done">
+        <span class="hnmt-step-num">✓</span>
+        <span class="hnmt-step-name">Thông tin</span>
     </div>
-    @if (pendingQr && !awaitingConfirmation) { <a asp-action="PaymentQR" asp-route-id="@Model.Id" class="pay-button">@(Model.TransferReportedAt.HasValue ? "Xem thông tin thanh toán" : "Tiếp tục thanh toán")</a> }
-    else { <a asp-controller="Products" asp-action="Index" class="pay-button">Tiếp tục khám phá</a> }
-</section>
+    <span class="hnmt-pay-step-line"></span>
+    <div class="hnmt-pay-step is-done">
+        <span class="hnmt-step-num">✓</span>
+        <span class="hnmt-step-name">Thanh toán</span>
+    </div>
+    <span class="hnmt-pay-step-line"></span>
+    <div class="hnmt-pay-step is-active" aria-current="step">
+        <span class="hnmt-step-num">03</span>
+        <span class="hnmt-step-name">Hoàn tất</span>
+    </div>
+</nav>
+
+<div class="pay-success-shell">
+    <!-- SUCCESS HERO HEADER -->
+    <header class="pay-success-header">
+        <div class="pay-success-icon-wrap" aria-hidden="true">
+            <i class="bi @(closed ? "bi-exclamation-lg text-danger" : "bi-check2 text-success")"></i>
+        </div>
+        <h1 class="pay-success-title">@pageHeading</h1>
+        <p class="pay-success-sub">
+            @(closed 
+                ? "Đơn hàng đã thay đổi trạng thái. Vui lòng xem chi tiết để theo dõi thông tin mới nhất." 
+                : paid 
+                    ? "Cảm ơn bạn đã lựa chọn HNMTSHOP. Giao dịch đã được xác nhận thành công và kiện hàng đang được đóng gói gửi đến bạn." 
+                    : awaitingConfirmation 
+                        ? "Hệ thống đã ghi nhận thông báo chuyển khoản của bạn. Đội ngũ CSKH đang tiến hành đối soát và chuẩn bị gửi hàng ngay." 
+                        : "Cảm ơn bạn đã lựa chọn HNMTSHOP. Đơn hàng đã được lưu và nhân viên giao vận sẽ thu tiền mặt khi giao kiện hàng tận tay bạn.")
+        </p>
+    </header>
+
+    <!-- CHI TIẾT ĐƠN HÀNG VỪA ĐẶT -->
+    <div class="pay-success-card">
+        <div class="pay-success-card-top">
+            <div>
+                <span class="pay-eyebrow">MÃ ĐƠN HÀNG</span>
+                <div class="pay-success-code">#@Model.OrderCode</div>
+            </div>
+            <span class="hnmt-status-badge @paymentBadgeClass">
+                <span class="hnmt-status-dot"></span>
+                <span>@paymentText</span>
+            </span>
+        </div>
+
+        <div class="pay-success-grid">
+            <!-- CỘT 1: THÔNG TIN NGƯỜI NHẬN -->
+            <div>
+                <span class="pay-success-block-title">Địa chỉ nhận hàng</span>
+                <div class="pay-success-block-content">
+                    <strong>@Model.ReceiverName</strong>
+                    <div class="text-muted mt-1"><i class="bi bi-telephone me-1"></i>@Model.Phone</div>
+                    <div class="mt-1"><i class="bi bi-geo-alt me-1 text-danger"></i>@Model.Address</div>
+                </div>
+            </div>
+
+            <!-- CỘT 2: THÔNG TIN THANH TOÁN & GIAO VẬN -->
+            <div>
+                <span class="pay-success-block-title">Chi tiết thanh toán</span>
+                <div class="pay-success-block-content">
+                    <div>Phương thức: <strong>@(Model.PaymentMethod == PaymentMethod.VietQR ? "Chuyển khoản VietQR 24/7" : "Thanh toán COD")</strong></div>
+                    <div class="mt-1">Dự kiến nhận hàng: <strong>2 – 3 ngày làm việc</strong></div>
+                    <div class="mt-2 pt-2 border-top">
+                        Tổng thanh toán: <strong class="fs-5 text-primary">@Money(Model.TotalAmount)</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DANH SÁCH SẢN PHẨM TRONG ĐƠN HÀNG -->
+        @if (Model.Items != null && Model.Items.Any())
+        {
+            <div class="border-top pt-3 mt-3">
+                <span class="pay-success-block-title mb-2 d-block">Kiện hàng chi tiết (@Model.Items.Sum(i => i.Quantity) món)</span>
+                <div class="d-flex flex-column gap-2">
+                    @foreach (var item in Model.Items)
+                    {
+                        <div class="d-flex justify-content-between align-items-center py-2 px-3 rounded bg-light" style="font-size: 13px;">
+                            <div>
+                                <strong>@item.ProductName</strong>
+                                <span class="text-muted ms-2">(Size: @item.Size · Màu: @item.Color · SL: @item.Quantity)</span>
+                            </div>
+                            <span class="fw-semibold">@Money(item.UnitPrice * item.Quantity)</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- HÀNH ĐỘNG TIẾP THEO -->
+    <div class="pay-success-actions">
+        <a asp-controller="Products" asp-action="Index" class="pay-btn-outline">
+            <i class="bi bi-bag me-1"></i>
+            <span>Tiếp tục mua sắm</span>
+        </a>
+
+        @if (pendingQr && !awaitingConfirmation)
+        {
+            <a asp-action="PaymentQR" asp-route-id="@Model.Id" class="pay-btn-solid">
+                <span>Xem mã quét thanh toán</span>
+                <i class="bi bi-qr-code ms-1"></i>
+            </a>
+        }
+        else
+        {
+            <a asp-action="Details" asp-route-id="@Model.Id" class="pay-btn-solid">
+                <span>Theo dõi đơn hàng</span>
+                <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        }
+    </div>
+</div>

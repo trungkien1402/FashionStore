@@ -3,27 +3,63 @@
 @using System.Globalization
 @{
     Layout = "_PaymentLayout";
-    ViewData["Title"] = "Thanh toán đơn hàng";
+    ViewData["Title"] = "Thanh toán đơn hàng #" + Model.OrderCode;
     var info = ViewBag.PaymentInfo as PaymentInfoViewModel;
     var canPay = info?.CanPay == true && !string.IsNullOrWhiteSpace(info.QrImageUrl);
     var reported = info?.TransferReported ?? Model.TransferReportedAt.HasValue;
     string Money(decimal amount) => amount.ToString("N0", CultureInfo.GetCultureInfo("vi-VN")) + " ₫";
 }
+
 <section class="payment-page" id="paymentPage" data-can-pay="@(canPay ? "true" : "false")" data-reported="@(reported ? "true" : "false")"
          data-status-url="@Url.Action("CheckPaymentStatus", "Orders", new { orderId = Model.Id })"
          data-details-url="@Url.Action("Details", "Orders", new { id = Model.Id })"
          data-success-url="@Url.Action("Success", "Orders", new { id = Model.Id })"
          data-web-seconds="@(ViewBag.RemainingWebSeconds ?? 600)"
          data-actual-seconds="@(ViewBag.RemainingActualSeconds ?? 900)">
-    <nav class="pay-steps" aria-label="Tiến trình đặt hàng"><span class="is-done">01 <span>Thông tin</span> <b aria-hidden="true">✓</b></span><i></i><span class="is-current" aria-current="step">02 <span>Thanh toán</span></span><i></i><span>03 <span>Hoàn tất</span></span></nav>
-    <div class="pay-intro"><p class="pay-eyebrow">CHỈ CÒN MỘT BƯỚC NỮA</p><h1>Một lựa chọn đẹp.<br /><em>Sắp thuộc về bạn.</em></h1><p>Quét mã để thanh toán. Phần còn lại, để FashionStore chăm chút.</p></div>
+
+    <!-- TIẾN TRÌNH 3 BƯỚC -->
+    <nav class="hnmt-pay-steps" aria-label="Tiến trình đặt hàng">
+        <div class="hnmt-pay-step is-done">
+            <span class="hnmt-step-num">✓</span>
+            <span class="hnmt-step-name">Thông tin</span>
+        </div>
+        <span class="hnmt-pay-step-line"></span>
+        <div class="hnmt-pay-step is-active" aria-current="step">
+            <span class="hnmt-step-num">02</span>
+            <span class="hnmt-step-name">Thanh toán</span>
+        </div>
+        <span class="hnmt-pay-step-line"></span>
+        <div class="hnmt-pay-step">
+            <span class="hnmt-step-num">03</span>
+            <span class="hnmt-step-name">Hoàn tất</span>
+        </div>
+    </nav>
+
+    <!-- HEADING CHUẨN FINTECH -->
+    <div class="hnmt-pay-heading">
+        <h1 class="hnmt-pay-title">Thanh toán đơn hàng #@Model.OrderCode</h1>
+        <p class="hnmt-pay-subtitle">Quét mã VietQR hoặc chuyển khoản theo thông tin bên dưới để hoàn tất đơn hàng.</p>
+    </div>
+
     <div class="pay-grid">
-        <article class="pay-panel pay-qr-panel">
-            <div class="pay-panel-top"><span class="pay-eyebrow">THANH TOÁN VIETQR</span><span class="pay-pill">Chuyển khoản ngân hàng</span></div>
-            <div id="paymentClosed" class="pay-closed @(canPay ? "d-none" : "")" role="alert"><span class="pay-state-icon" aria-hidden="true">!</span><h2>Thông tin thanh toán đã thay đổi</h2><p id="paymentClosedText">Đơn hàng hiện không nhận thanh toán QR. Vui lòng xem trạng thái mới nhất.</p><a asp-action="Details" asp-route-id="@Model.Id" class="pay-button">Xem chi tiết đơn hàng</a></div>
+        <!-- CỘT TRÁI: KHUNG QUÉT MÃ QR & TRẠNG THÁI REALTIME -->
+        <article class="pay-panel">
+            <div class="pay-panel-top">
+                <h2 class="hnmt-card-title-clean">Mã VietQR thanh toán 24/7</h2>
+                <span class="pay-pill">Chuyển khoản liên ngân hàng</span>
+            </div>
+
+            <div id="paymentClosed" class="pay-closed @(canPay ? "d-none" : "")" role="alert">
+                <span class="pay-state-icon" aria-hidden="true">!</span>
+                <h2>Thông tin thanh toán đã thay đổi</h2>
+                <p id="paymentClosedText">Đơn hàng hiện không nhận thanh toán QR. Vui lòng xem trạng thái mới nhất.</p>
+                <a asp-action="Details" asp-route-id="@Model.Id" class="pay-button">Xem chi tiết đơn hàng</a>
+            </div>
+
             @if (canPay && info != null)
             {
                 <div id="paymentControlsContainer">
+                    <!-- COUNTDOWN BANNER -->
                     <div class="pay-countdown-banner" id="payCountdownBanner">
                         <div class="pay-countdown-icon"><i class="bi bi-clock-history"></i></div>
                         <div class="pay-countdown-content">
@@ -31,6 +67,8 @@
                             <span class="pay-countdown-time" id="payCountdownTime">10:00</span>
                         </div>
                     </div>
+
+                    <!-- GRACE ALERT -->
                     <div class="pay-grace-alert d-none" id="payGraceAlert" role="alert">
                         <div class="pay-grace-badge">
                             <i class="bi bi-exclamation-triangle-fill"></i>
@@ -38,10 +76,11 @@
                         </div>
                         <p>Nếu bạn <strong>vừa bấm chuyển khoản ở những giây cuối</strong>, hệ thống vẫn đang dành <strong>5 phút vùng đệm an toàn</strong> để nhận và đối soát tiền. Vui lòng bấm ngay nút <strong>"Tôi đã chuyển khoản"</strong> bên dưới!</p>
                     </div>
-                    <div class="pay-amount"><span>Tổng thanh toán</span><strong>@Money(info.Amount)</strong><small>Đã bao gồm phí vận chuyển</small></div>
+
+                    <!-- QR IMAGE BOX -->
                     <div class="pay-qr-frame">
                         <div class="pay-qr-corners">
-                            <img id="qrImageElement" src="@info.QrImageUrl" alt="Mã QR thanh toán @Money(info.Amount) cho đơn @Model.OrderCode" width="270" height="320" />
+                            <img id="qrImageElement" src="@info.QrImageUrl" alt="Mã QR thanh toán @Money(info.Amount) cho đơn @Model.OrderCode" width="240" height="280" />
                             <div class="pay-qr-overlay d-none" id="payQrOverlay">
                                 <i class="bi bi-shield-lock-fill"></i>
                                 <strong>MÃ QR ĐÃ ĐÓNG</strong>
@@ -49,32 +88,176 @@
                             </div>
                         </div>
                     </div>
-                    <div id="qrLoadError" class="pay-notice d-none" role="alert">Không tải được mã QR. Bạn có thể chuyển khoản thủ công theo thông tin bên dưới. <button id="retryQr" type="button" class="pay-text-button">Thử tải lại</button></div>
-                    <p class="pay-qr-caption">Mở ứng dụng ngân hàng và chọn <strong>Quét mã QR</strong></p>
-                    <div class="pay-bank"><span class="pay-bank-mark" aria-hidden="true">↗</span><div><strong>@info.BankName</strong><span>@info.AccountName</span></div></div>
-                    <div class="pay-transfer-row"><div><span>Số tài khoản</span><strong>@info.AccountNo</strong></div><button type="button" class="pay-copy" data-copy="@info.AccountNo" aria-label="Sao chép số tài khoản">Sao chép <span aria-hidden="true">⧉</span></button></div>
-                    <div class="pay-transfer-row pay-reference"><div><span>Nội dung chuyển khoản</span><strong>@info.TransferContent</strong></div><button type="button" class="pay-copy" data-copy="@info.TransferContent" aria-label="Sao chép nội dung chuyển khoản">Sao chép <span aria-hidden="true">⧉</span></button></div>
-                    <p class="pay-help">Giữ đúng số tiền và nội dung trên để cửa hàng đối chiếu đơn của bạn.</p>
-                    <form id="reportTransferForm" method="post" asp-controller="Orders" asp-action="ReportTransfer" hidden>@Html.AntiForgeryToken()<input type="hidden" name="orderId" value="@Model.Id" /></form>
+
+                    <div id="qrLoadError" class="pay-notice d-none" role="alert">
+                        Không tải được mã QR. Bạn có thể chuyển khoản thủ công theo thông tin bên phải. 
+                        <button id="retryQr" type="button" class="pay-text-button">Thử tải lại</button>
+                    </div>
+
+                    <p class="pay-qr-caption">Mở ứng dụng ngân hàng bất kỳ và chọn tính năng <strong>Quét mã QR</strong></p>
+
+                    <!-- THÔNG TIN CHUYỂN KHOẢN THỦ CÔNG (CHO AI KHÔNG QUÉT ĐƯỢC QR) -->
+                    <div class="pay-bank-card">
+                        <div class="pay-bank-card-title">
+                            <i class="bi bi-bank"></i>
+                            <span>Thông tin chuyển khoản thủ công</span>
+                        </div>
+
+                        <div class="pay-transfer-row">
+                            <div class="pay-transfer-info">
+                                <span class="pay-transfer-label">Ngân hàng thụ hưởng</span>
+                                <span class="pay-transfer-val">@info.BankName (@info.AccountName)</span>
+                            </div>
+                        </div>
+
+                        <div class="pay-transfer-row">
+                            <div class="pay-transfer-info">
+                                <span class="pay-transfer-label">Số tài khoản nhận tiền</span>
+                                <span class="pay-transfer-val">@info.AccountNo</span>
+                            </div>
+                            <button type="button" class="pay-copy-btn" data-copy="@info.AccountNo" aria-label="Sao chép số tài khoản">
+                                <span>Sao chép</span>
+                                <i class="bi bi-copy"></i>
+                            </button>
+                        </div>
+
+                        <div class="pay-transfer-row">
+                            <div class="pay-transfer-info">
+                                <span class="pay-transfer-label">Số tiền chính xác</span>
+                                <span class="pay-transfer-val text-primary">@Money(info.Amount)</span>
+                            </div>
+                            <button type="button" class="pay-copy-btn" data-copy="@info.Amount.ToString("0")" aria-label="Sao chép số tiền">
+                                <span>Sao chép</span>
+                                <i class="bi bi-copy"></i>
+                            </button>
+                        </div>
+
+                        <div class="pay-transfer-row">
+                            <div class="pay-transfer-info">
+                                <span class="pay-transfer-label">Nội dung chuyển khoản (bắt buộc)</span>
+                                <span class="pay-transfer-val text-danger">@info.TransferContent</span>
+                            </div>
+                            <button type="button" class="pay-copy-btn" data-copy="@info.TransferContent" aria-label="Sao chép nội dung">
+                                <span>Sao chép</span>
+                                <i class="bi bi-copy"></i>
+                            </button>
+                        </div>
+
+                        <p class="pay-help-text">Vui lòng giữ đúng số tiền và nội dung để hệ thống nhận diện tự động.</p>
+                    </div>
+
+                    <!-- FORM BÁO ĐÃ CHUYỂN KHOẢN -->
+                    <form id="reportTransferForm" method="post" asp-controller="Orders" asp-action="ReportTransfer" hidden>
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="orderId" value="@Model.Id" />
+                    </form>
                     <div id="reportFeedback" class="d-none" role="status" aria-live="polite"></div>
-                    <button id="btnReportTransfer" class="pay-button" type="button" disabled="@reported">@(reported ? "Đã gửi thông báo chuyển khoản" : "Tôi đã chuyển khoản")</button>
+
+                    <button id="btnReportTransfer" class="pay-button" type="button" disabled="@reported">
+                        <span>@(reported ? "Đã gửi thông báo chuyển khoản" : "Tôi đã chuyển khoản")</span>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    </button>
+
                     <div class="mt-3 text-center">
-                        <button id="btnSimulateSePay" type="button" class="btn btn-sm btn-outline-success" style="font-size: 13px; border-radius: 20px; padding: 6px 16px;">
-                            <i class="bi bi-lightning-charge-fill"></i> Giả lập SePay Webhook (Test tự động)
+                        <button id="btnSimulateSePay" type="button" class="btn btn-sm btn-outline-success" style="font-size: 12px; border-radius: 999px; padding: 4px 14px;">
+                            <i class="bi bi-lightning-charge-fill"></i> Giả lập SePay Webhook (Thanh toán tức thì)
                         </button>
                     </div>
-                    <div class="pay-status" id="pollingAlert"><span class="pay-status-dot" aria-hidden="true"></span><span id="pollingStatusText" aria-live="polite">@(reported ? "Đã thông báo. Chờ cửa hàng xác nhận; không chuyển tiền lần nữa." : "Cửa hàng sẽ xác nhận sau khi kiểm tra chuyển khoản.")</span></div>
+
+                    <!-- REALTIME RADAR POLLING STATUS -->
+                    <div class="pay-status-ping" id="pollingAlert">
+                        <span class="pay-radar-dot" aria-hidden="true"></span>
+                        <span id="pollingStatusText" aria-live="polite">
+                            @(reported ? "Đã thông báo. Chờ cửa hàng xác nhận; không chuyển tiền lần nữa." : "Đang chờ tín hiệu giao dịch từ ngân hàng...")
+                        </span>
+                    </div>
                 </div>
             }
         </article>
+
+        <!-- CỘT PHẢI: TÓM TẮT ĐƠN HÀNG & HƯỚNG DẪN 3 BƯỚC -->
         <aside class="pay-sidebar">
-            <div class="pay-summary"><p class="pay-eyebrow">ĐƠN HÀNG CỦA BẠN</p><h2>Những điều bạn chọn.</h2><span class="pay-order-code">@Model.OrderCode</span><div class="pay-rule"></div>
-                <dl class="pay-totals"><div><dt>Tạm tính</dt><dd>@Money(Model.SubTotal)</dd></div><div><dt>Phí vận chuyển</dt><dd>@Money(Model.ShippingFee)</dd></div>@if (Model.DiscountAmount > 0) { <div><dt>Giảm giá</dt><dd>−@Money(Model.DiscountAmount)</dd></div> }<div class="pay-total"><dt>Tổng cộng</dt><dd>@Money(Model.TotalAmount)</dd></div></dl>
-                <a class="pay-detail-link" asp-action="Details" asp-route-id="@Model.Id">Xem chi tiết đơn hàng <span aria-hidden="true">↗</span></a>
+            <div class="pay-summary">
+                <div class="hnmt-summary-header">
+                    <h3 class="hnmt-summary-title">Tóm tắt thanh toán</h3>
+                    <span class="hnmt-summary-count">#@Model.OrderCode</span>
+                </div>
+
+                <div class="hnmt-summary-calc">
+                    <div class="hnmt-calc-row">
+                        <span class="hnmt-calc-label">Tạm tính tiền hàng</span>
+                        <span class="hnmt-calc-val">@Money(Model.SubTotal)</span>
+                    </div>
+                    <div class="hnmt-calc-row">
+                        <span class="hnmt-calc-label">Phí vận chuyển</span>
+                        <span class="hnmt-calc-val">@(Model.ShippingFee > 0 ? Money(Model.ShippingFee) : "Miễn phí")</span>
+                    </div>
+                    @if (Model.DiscountAmount > 0)
+                    {
+                        <div class="hnmt-calc-row">
+                            <span class="hnmt-calc-label">Giảm giá voucher</span>
+                            <span class="hnmt-calc-val text-success">−@Money(Model.DiscountAmount)</span>
+                        </div>
+                    }
+                </div>
+
+                <div class="hnmt-summary-divider"></div>
+
+                <div class="hnmt-summary-grand-total">
+                    <div>
+                        <div class="hnmt-total-label">TỔNG THANH TOÁN</div>
+                        <div class="hnmt-vat-note">Đã bao gồm VAT & phí ship</div>
+                    </div>
+                    <div class="hnmt-total-amount">@Money(Model.TotalAmount)</div>
+                </div>
+
+                <a class="pay-detail-link" asp-action="Details" asp-route-id="@Model.Id">
+                    <span>Xem chi tiết kiện hàng</span>
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
             </div>
-            <div class="pay-guide"><p class="pay-eyebrow">THANH TOÁN THẬT DỄ</p><ol><li><span>01</span><div><strong>Quét mã & chuyển khoản</strong><p>QR đã điền sẵn số tiền và nội dung cho bạn.</p></div></li><li><span>02</span><div><strong>Báo cho FashionStore</strong><p>Bấm “Tôi đã chuyển khoản” sau khi giao dịch hoàn tất.</p></div></li><li><span>03</span><div><strong>Chờ cửa hàng xác nhận</strong><p>Bạn có thể rời trang và theo dõi trong đơn hàng.</p></div></li></ol></div>
-            <p class="pay-sidebar-note">Một chút lưu ý: hãy giữ biên lai chuyển khoản cho đến khi đơn hàng được xác nhận.</p>
+
+            <!-- HƯỚNG DẪN THANH TOÁN 3 BƯỚC -->
+            <div class="pay-guide-card">
+                <h4 class="pay-guide-title">
+                    <i class="bi bi-shield-check text-success"></i>
+                    <span>Hướng dẫn 3 bước thanh toán</span>
+                </h4>
+                <ul class="pay-guide-steps">
+                    <li class="pay-guide-step-item">
+                        <span class="pay-guide-step-num">01</span>
+                        <div class="pay-guide-step-content">
+                            <strong>Quét mã QR qua ứng dụng ngân hàng</strong>
+                            <p>Mã đã điền sẵn số tiền và mã đơn hàng của bạn.</p>
+                        </div>
+                    </li>
+                    <li class="pay-guide-step-item">
+                        <span class="pay-guide-step-num">02</span>
+                        <div class="pay-guide-step-content">
+                            <strong>Xác nhận giao dịch chuyển tiền</strong>
+                            <p>Kiểm tra số tiền và hoàn tất giao dịch trên app ngân hàng.</p>
+                        </div>
+                    </li>
+                    <li class="pay-guide-step-item">
+                        <span class="pay-guide-step-num">03</span>
+                        <div class="pay-guide-step-content">
+                            <strong>Hệ thống tự động kích hoạt đơn hàng</strong>
+                            <p>Sau khi tiền vào tài khoản, đơn hàng sẽ tự động chuyển trạng thái ngay.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="hnmt-sidebar-help-box">
+                <i class="bi bi-headset"></i>
+                <span>Gặp sự cố chuyển tiền? Gọi ngay hotline <strong>1900 8888</strong></span>
+            </div>
         </aside>
     </div>
 </section>
-@section Scripts { <script src="~/js/payment.js" asp-append-version="true"></script> }
+
+@section Scripts {
+    <script src="~/js/payment.js" asp-append-version="true"></script>
+}
