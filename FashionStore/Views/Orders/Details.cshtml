@@ -76,7 +76,7 @@
     var simpleSteps = new[]
     {
         new { Id = 1, Label = "Đặt hàng", Icon = "bi-bag-check" },
-        new { Id = 2, Label = "Đã xác nhận", Icon = "bi-patch-check" },
+        new { Id = 2, Label = "Đã xác nhận", Icon = "bi-check2" },
         new { Id = 3, Label = "Đang giao", Icon = "bi-truck" },
         new { Id = 4, Label = "Đã nhận", Icon = "bi-box-seam" }
     };
@@ -229,7 +229,7 @@
         <!-- TOP NAV: NÚT QUAY LẠI GỌN GÀNG -->
         <nav class="hnmt-dossier-nav" aria-label="Điều hướng">
             <a asp-action="Index" class="hnmt-back-link">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="19" y1="12" x2="5" y2="12"></line>
                     <polyline points="12 19 5 12 12 5"></polyline>
                 </svg>
@@ -245,7 +245,7 @@
                         Đơn hàng <span class="hnmt-code-display">#@Model.OrderCode</span>
                     </h1>
                     <button type="button" class="hnmt-copy-pill" onclick="copyOrderCode('@Model.OrderCode')" title="Sao chép mã đơn hàng">
-                        <svg class="hnmt-copy-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg class="hnmt-copy-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                         </svg>
@@ -255,19 +255,15 @@
 
                 <div class="hnmt-order-meta-bar">
                     <span class="hnmt-meta-unit">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <polyline points="12 6 12 12 16 14"></polyline>
-                        </svg>
-                        <span>Khởi tạo: <strong>@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</strong></span>
+                        <span>Khởi tạo: @Model.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span>
                     </span>
                     <span class="hnmt-meta-dot">•</span>
                     <span class="hnmt-meta-unit">
-                        <span>Tổng: <strong>@Model.Items.Sum(i => i.Quantity) món</strong></span>
+                        <span>Tổng: @Model.Items.Sum(i => i.Quantity) món</span>
                     </span>
                     <span class="hnmt-meta-dot">•</span>
                     <span class="hnmt-meta-unit">
-                        <span>Phương thức: <strong>@(Model.PaymentMethod == PaymentMethod.VietQR ? "VietQR 24/7" : "COD")</strong></span>
+                        <span>Phương thức: @(Model.PaymentMethod == PaymentMethod.VietQR ? "VietQR 24/7" : "COD")</span>
                     </span>
                 </div>
             </div>
@@ -297,19 +293,16 @@
             </div>
         }
 
-        <!-- 2-COLUMN LUXURY GRID: CỘT TRÁI (TIẾN TRÌNH & SẢN PHẨM) - CỘT PHẢI (GIAO NHẬN & THANH TOÁN) -->
+        <!-- 2-COLUMN LUXURY GRID -->
         <div class="hnmt-dossier-grid">
 
-            <!-- CỘT CHÍNH (BÊN TRÁI): TIẾN TRÌNH GIAO VẬN, KIỆN HÀNG SẢN PHẨM & BẢN ĐỒ GPS -->
+            <!-- CỘT CHÍNH (BÊN TRÁI): TIẾN TRÌNH & KIỆN HÀNG -->
             <main class="hnmt-content-primary">
                 
-                <!-- KHỐI 1: TRẠNG THÁI & STEPPER TIẾN TRÌNH ĐƠN HÀNG (ĐƯA LÊN ĐẦU TIÊN CỦA CỘT TRÁI) -->
+                <!-- KHỐI 1: TRẠNG THÁI & STEPPER TIẾN TRÌNH -->
                 <section class="hnmt-card hnmt-stepper-section" aria-label="Tiến trình đơn hàng">
                     <div class="hnmt-card-top">
-                        <div class="hnmt-card-heading-group">
-                            <span class="hnmt-sub-badge">TIẾN TRÌNH VẬN ĐƠN</span>
-                            <h2 class="hnmt-card-title">Trạng thái đơn hàng</h2>
-                        </div>
+                        <h2 class="hnmt-card-title">Trạng thái đơn hàng</h2>
                     </div>
 
                     @if (!isExceptionalStatus)
@@ -342,7 +335,7 @@
                             </div>
                         </div>
 
-                        <!-- THANH TIẾN TRÌNH 4 BƯỚC THIẾT KẾ HIỆN ĐẠI -->
+                        <!-- THANH TIẾN TRÌNH 4 BƯỚC NHẸ NHÀNG, TINH TẾ -->
                         <div class="hnmt-luxury-stepper">
                             @for (int i = 0; i < simpleSteps.Length; i++)
                             {
@@ -359,12 +352,11 @@
                                         }
                                         else if (isActive)
                                         {
-                                            <span class="hnmt-step-pulse-ring"></span>
-                                            <i class="bi @s.Icon"></i>
+                                            <span class="hnmt-step-active-dot"></span>
                                         }
                                         else
                                         {
-                                            <span>0@(s.Id)</span>
+                                            <span>@(s.Id)</span>
                                         }
                                     </div>
                                     <span class="hnmt-step-label">@s.Label</span>
@@ -381,7 +373,7 @@
                     {
                         <div class="hnmt-exceptional-alert @(isCancelled ? "is-cancelled" : "is-failed")">
                             <div class="hnmt-ex-icon">
-                                <i class="bi bi-x-circle-fill"></i>
+                                <i class="bi bi-x-circle"></i>
                             </div>
                             <div class="hnmt-ex-text">
                                 <strong>@(isCancelled ? "Đơn hàng này đã được hủy" : "Giao hàng không thành công")</strong>
@@ -390,7 +382,7 @@
                         </div>
                     }
 
-                    <!-- BẢN ĐỒ VỊ TRÍ GIAO HÀNG TRỰC TIẾP (KHI TRẠNG THÁI ĐANG GIAO HÀNG) -->
+                    <!-- BẢN ĐỒ VỊ TRÍ GIAO HÀNG TRỰC TIẾP -->
                     @if (showTrackingMap)
                     {
                         <div class="hnmt-live-map-card" data-order-tracking data-url="@Url.Action("TrackingLocation", "Orders", new { id = Model.Id })">
@@ -437,7 +429,7 @@
                     @if (histories.Any())
                     {
                         <div class="hnmt-simple-history">
-                            <div class="hnmt-history-title"><i class="bi bi-clock-history"></i> Lịch sử cập nhật đơn hàng</div>
+                            <div class="hnmt-history-title"><i class="bi bi-clock"></i> Lịch sử cập nhật đơn hàng</div>
                             <div class="hnmt-history-list">
                                 @foreach (var hist in histories)
                                 {
@@ -457,13 +449,10 @@
                     }
                 </section>
 
-                <!-- KHỐI 2: SẢN PHẨM ĐÃ ĐẶT (THIẾT KẾ MANIFEST SANG TRỌNG) -->
+                <!-- KHỐI 2: SẢN PHẨM ĐÃ ĐẶT -->
                 <section class="hnmt-card hnmt-items-section" aria-label="Sản phẩm đã đặt">
                     <div class="hnmt-card-top">
-                        <div class="hnmt-card-heading-group">
-                            <span class="hnmt-sub-badge">KIỆN HÀNG CHI TIẾT</span>
-                            <h2 class="hnmt-card-title">Sản phẩm đã đặt (@Model.Items.Count)</h2>
-                        </div>
+                        <h2 class="hnmt-card-title">Sản phẩm đã đặt (@Model.Items.Count)</h2>
                     </div>
 
                     <div class="hnmt-simple-items-list">
@@ -502,7 +491,7 @@
                                     <div class="hnmt-simple-variant">
                                         @if (!string.IsNullOrEmpty(item.Size))
                                         {
-                                            <span class="spec-tag">Size: <strong>@item.Size</strong></span>
+                                            <span class="spec-tag">Size: @item.Size</span>
                                         }
                                         @if (!string.IsNullOrEmpty(item.Color))
                                         {
@@ -511,10 +500,10 @@
                                                 {
                                                     <span class="hnmt-color-swatch" style="background-color: @photoData.ColorHex;"></span>
                                                 }
-                                                Màu: <strong>@item.Color</strong>
+                                                Màu: @item.Color
                                             </span>
                                         }
-                                        <span class="spec-tag">Số lượng: <strong>@item.Quantity</strong></span>
+                                        <span class="spec-tag">SL: @item.Quantity</span>
                                     </div>
 
                                     @if (Model.Status == OrderStatus.Delivered && User.Identity?.IsAuthenticated == true &&
@@ -523,7 +512,7 @@
                                         <div class="mt-2">
                                             <a asp-controller="Products" asp-action="Details" asp-route-id="@reviewProduct.Id"
                                                asp-fragment="product-reviews" class="hnmt-review-link">
-                                                <i class="bi bi-star-fill text-warning"></i>
+                                                <i class="bi bi-star text-warning"></i>
                                                 <span>Đánh giá sản phẩm</span>
                                             </a>
                                         </div>
@@ -536,38 +525,35 @@
 
             </main>
 
-            <!-- CỘT PHỤ (BÊN PHẢI): THÔNG TIN GIAO NHẬN (LÊN ĐẦU) & HÓA ĐƠN THANH TOÁN -->
+            <!-- CỘT PHỤ (BÊN PHẢI): GIAO NHẬN & THANH TOÁN -->
             <aside class="hnmt-sidebar-sticky">
 
-                <!-- CARD 1: THÔNG TIN GIAO NHẬN (ĐƯỢC ĐƯA LÊN ĐẦU TIÊN CỘT PHẢI ĐỂ DỄ THEO DÕI) -->
+                <!-- CARD 1: THÔNG TIN GIAO NHẬN (ĐƯỢC ĐƯA LÊN ĐẦU) -->
                 <section class="hnmt-card hnmt-shipping-card-sidebar" aria-label="Thông tin giao nhận">
                     <div class="hnmt-card-top border-none pb-0">
-                        <div class="hnmt-card-heading-group">
-                            <span class="hnmt-sub-badge">ĐỊA CHỈ NHẬN HÀNG</span>
-                            <h2 class="hnmt-card-title">Thông tin giao nhận</h2>
-                        </div>
+                        <h2 class="hnmt-card-title">Thông tin giao nhận</h2>
                     </div>
 
                     <div class="hnmt-customer-detail-list">
                         <div class="hnmt-customer-detail-item">
                             <span class="hnmt-detail-label">
-                                <i class="bi bi-person-fill"></i>
+                                <i class="bi bi-person"></i>
                                 <span>Người nhận:</span>
                             </span>
-                            <strong class="hnmt-detail-value">@Model.ReceiverName</strong>
+                            <span class="hnmt-detail-value">@Model.ReceiverName</span>
                         </div>
 
                         <div class="hnmt-customer-detail-item">
                             <span class="hnmt-detail-label">
-                                <i class="bi bi-telephone-fill"></i>
+                                <i class="bi bi-telephone"></i>
                                 <span>Điện thoại:</span>
                             </span>
-                            <strong class="hnmt-detail-value font-mono">@Model.Phone</strong>
+                            <span class="hnmt-detail-value font-mono">@Model.Phone</span>
                         </div>
 
                         <div class="hnmt-customer-detail-item">
                             <span class="hnmt-detail-label">
-                                <i class="bi bi-geo-alt-fill"></i>
+                                <i class="bi bi-geo-alt"></i>
                                 <span>Địa chỉ:</span>
                             </span>
                             <span class="hnmt-detail-value address-value">@Model.Address</span>
@@ -599,13 +585,10 @@
                     </div>
                 }
 
-                <!-- CARD 2: TỔNG KẾT THANH TOÁN & BIÊN LAI BOUTIQUE -->
+                <!-- CARD 2: TỔNG KẾT THANH TOÁN -->
                 <div class="hnmt-card hnmt-invoice-panel">
                     <div class="hnmt-card-top border-none pb-0">
-                        <div class="hnmt-card-heading-group">
-                            <span class="hnmt-sub-badge">HÓA ĐƠN ĐƠN HÀNG</span>
-                            <h2 class="hnmt-card-title">Tổng kết thanh toán</h2>
-                        </div>
+                        <h2 class="hnmt-card-title">Tổng kết thanh toán</h2>
                     </div>
 
                     <!-- DÒNG TÍNH TIỀN GỌN GÀNG -->
@@ -645,7 +628,7 @@
                     <div class="hnmt-simple-pay-meta">
                         <div class="hnmt-pay-meta-row">
                             <span class="hnmt-pay-lbl">Hình thức:</span>
-                            <strong class="hnmt-pay-val">@paymentMethodText</strong>
+                            <span class="hnmt-pay-val">@paymentMethodText</span>
                         </div>
                         <div class="hnmt-pay-meta-row">
                             <span class="hnmt-pay-lbl">Tình trạng:</span>
@@ -731,7 +714,7 @@
                         }
                     }
 
-                    <!-- KHU VỰC THAO TÁC CÂN ĐỐI -->
+                    <!-- KHU VỰC THAO TÁC -->
                     <div class="hnmt-invoice-actions">
                         <a asp-controller="Products" asp-action="Index" class="hnmt-btn-primary">
                             <span>Tiếp tục mua sắm</span>
@@ -766,8 +749,8 @@
 
 <style>
 /* ==========================================================================
-   HNMTSHOP - CHI TIẾT ĐƠN HÀNG (THE LUXURY ATELIER DOSSIER)
-   Font: Plus Jakarta Sans | Farfetch & Zara Haute Couture Sizing
+   HNMTSHOP - CHI TIẾT ĐƠN HÀNG (THE LUXURY ATELIER DOSSIER - LIGHTENED)
+   Font: Plus Jakarta Sans | Soft Luxury Contrast & Minimalist Typography
    ========================================================================== */
 
 .hnmt-order-details-page {
@@ -775,7 +758,7 @@
     min-height: 100vh;
     padding: 36px 0 96px;
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    color: #0F172A;
+    color: #1E293B;
     -webkit-font-smoothing: antialiased;
 }
 
@@ -794,22 +777,21 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 7px 16px;
+    padding: 6px 14px;
     background: #FFFFFF;
     border: 1px solid #E2E8F0;
     border-radius: 999px;
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: #475569;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #64748B;
     text-decoration: none;
     transition: all 0.2s ease;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
 .hnmt-back-link:hover {
-    background: #0F172A;
+    background: #1E293B;
     color: #FFFFFF;
-    border-color: #0F172A;
+    border-color: #1E293B;
 }
 
 /* DOSSIER HEADER */
@@ -819,7 +801,7 @@
     justify-content: space-between;
     align-items: flex-start;
     gap: 20px;
-    margin-bottom: 32px;
+    margin-bottom: 28px;
 }
 
 .hnmt-title-action-row {
@@ -827,33 +809,33 @@
     align-items: center;
     gap: 12px;
     flex-wrap: wrap;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .hnmt-order-heading {
-    font-size: clamp(24px, 3.2vw, 32px);
-    font-weight: 800;
-    color: #0F172A;
-    letter-spacing: -0.6px;
+    font-size: clamp(22px, 2.6vw, 28px);
+    font-weight: 700;
+    color: #1E293B;
+    letter-spacing: -0.4px;
     margin: 0;
 }
 
 .hnmt-code-display {
     font-family: monospace;
-    font-weight: 800;
+    font-weight: 700;
 }
 
 .hnmt-copy-pill {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 4px 12px;
+    gap: 5px;
+    padding: 3px 10px;
     background: #FFFFFF;
     border: 1px solid #CBD5E1;
     border-radius: 999px;
-    font-size: 0.78rem;
-    font-weight: 700;
-    color: #475569;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #64748B;
     cursor: pointer;
     transition: all 0.15s ease;
     font-family: inherit;
@@ -861,14 +843,14 @@
 
 .hnmt-copy-pill:hover {
     background: #F1F5F9;
-    color: #0F172A;
+    color: #1E293B;
 }
 
 .hnmt-order-meta-bar {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 0.85rem;
+    gap: 8px;
+    font-size: 0.82rem;
     color: #64748B;
     flex-wrap: wrap;
 }
@@ -876,7 +858,6 @@
 .hnmt-meta-unit {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
 }
 
 .hnmt-meta-dot {
@@ -887,13 +868,12 @@
 .hnmt-alert-card {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 14px 20px;
-    border-radius: 12px;
-    font-size: 0.92rem;
-    font-weight: 600;
-    margin-bottom: 24px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    gap: 10px;
+    padding: 12px 18px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    margin-bottom: 20px;
 }
 
 .hnmt-alert-card.is-success {
@@ -912,20 +892,20 @@
 .hnmt-dossier-grid {
     display: grid;
     grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-    gap: 32px;
+    gap: 28px;
     align-items: start;
 }
 
 .hnmt-content-primary {
     display: flex;
     flex-direction: column;
-    gap: 28px;
+    gap: 24px;
 }
 
 .hnmt-sidebar-sticky {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 20px;
     position: sticky;
     top: 24px;
 }
@@ -933,34 +913,21 @@
 /* CARDS COMMON */
 .hnmt-card {
     background: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    border-radius: 16px;
-    padding: 28px 32px;
-    box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+    border: 1px solid #F1F5F9;
+    border-radius: 14px;
+    padding: 24px 28px;
+    box-shadow: 0 2px 12px -2px rgba(15, 23, 42, 0.03);
 }
 
 .hnmt-card-top {
-    margin-bottom: 20px;
-}
-
-.hnmt-sub-badge {
-    display: inline-block;
-    font-size: 0.72rem;
-    font-weight: 800;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: #2B3360;
-    background: #EEF2F6;
-    padding: 3px 9px;
-    border-radius: 6px;
-    margin-bottom: 8px;
+    margin-bottom: 16px;
 }
 
 .hnmt-card-title {
-    font-size: 1.3rem;
-    font-weight: 800;
-    color: #0F172A;
-    letter-spacing: -0.3px;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #1E293B;
+    letter-spacing: -0.2px;
     margin: 0;
 }
 
@@ -970,23 +937,23 @@
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     background: #F8FAFC;
-    border: 1px solid #E2E8F0;
-    padding: 14px 18px;
-    border-radius: 12px;
-    margin-bottom: 28px;
+    border: 1px solid #F1F5F9;
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 24px;
 }
 
 .hnmt-status-notice {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
 
 .hnmt-status-dot-indicator {
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     flex-shrink: 0;
 }
@@ -998,27 +965,28 @@
 .hnmt-status-dot-indicator.status-pending { background: #D97706; }
 
 .hnmt-status-lead {
-    font-size: 0.92rem;
-    font-weight: 700;
-    color: #0F172A;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: #1E293B;
 }
 
 .hnmt-simple-eta {
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     color: #64748B;
 }
 
 .hnmt-simple-eta strong {
-    color: #0F172A;
+    color: #1E293B;
+    font-weight: 600;
 }
 
-/* LUXURY STEPPER */
+/* LUXURY STEPPER - CLEAN & LIGHTWEIGHT */
 .hnmt-luxury-stepper {
     display: flex;
     align-items: center;
     justify-content: space-between;
     position: relative;
-    padding: 10px 10px 20px;
+    padding: 6px 6px 12px;
 }
 
 .hnmt-step-item {
@@ -1031,87 +999,82 @@
 }
 
 .hnmt-step-circle {
-    width: 44px;
-    height: 44px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.95rem;
-    font-weight: 800;
+    font-size: 0.82rem;
+    font-weight: 600;
     transition: all 0.25s ease;
-    background: #F8FAFC;
-    border: 2px solid #CBD5E1;
+    background: #FFFFFF;
+    border: 1.5px solid #CBD5E1;
     color: #94A3B8;
-    position: relative;
 }
 
 .hnmt-step-item.is-done .hnmt-step-circle {
-    background: #0F172A;
-    border-color: #0F172A;
-    color: #FFFFFF;
+    background: #F1F5F9;
+    border-color: #1E293B;
+    color: #1E293B;
 }
 
 .hnmt-step-item.is-active .hnmt-step-circle {
-    background: #0F172A;
-    border-color: #0F172A;
+    background: #1E293B;
+    border-color: #1E293B;
     color: #FFFFFF;
-    box-shadow: 0 0 0 5px rgba(15, 23, 42, 0.12);
+    box-shadow: 0 0 0 4px rgba(30, 41, 59, 0.1);
 }
 
-.hnmt-step-pulse-ring {
-    position: absolute;
-    width: 100%;
-    height: 100%;
+.hnmt-step-active-dot {
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-    border: 2px solid #0F172A;
-    animation: pulseRing 2s infinite;
-}
-
-@@keyframes pulseRing {
-    0% { transform: scale(1); opacity: 0.8; }
-    100% { transform: scale(1.4); opacity: 0; }
+    background: #FFFFFF;
 }
 
 .hnmt-step-label {
-    font-size: 0.82rem;
-    font-weight: 700;
+    font-size: 0.78rem;
+    font-weight: 500;
     color: #64748B;
     white-space: nowrap;
 }
 
-.hnmt-step-item.is-done .hnmt-step-label,
+.hnmt-step-item.is-done .hnmt-step-label {
+    color: #334155;
+    font-weight: 600;
+}
+
 .hnmt-step-item.is-active .hnmt-step-label {
-    color: #0F172A;
+    color: #1E293B;
+    font-weight: 600;
 }
 
 .hnmt-step-divider {
     flex: 1;
-    height: 3px;
+    height: 1.5px;
     background: #E2E8F0;
     margin: 0 8px 24px;
     z-index: 1;
-    border-radius: 999px;
-    transition: background-color 0.25s ease;
 }
 
 .hnmt-step-divider.is-filled {
-    background: #0F172A;
+    background: #1E293B;
 }
 
 /* ITEMS SECTION */
 .hnmt-simple-items-list {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
 }
 
 .hnmt-simple-item-row {
     display: flex;
     align-items: center;
-    gap: 20px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #F1F5F9;
+    gap: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #F8FAFC;
 }
 
 .hnmt-simple-item-row:last-child {
@@ -1120,13 +1083,13 @@
 }
 
 .hnmt-simple-photo {
-    width: 88px;
-    height: 88px;
-    min-width: 88px;
-    border-radius: 12px;
+    width: 76px;
+    height: 76px;
+    min-width: 76px;
+    border-radius: 10px;
     overflow: hidden;
     background: #F8FAFC;
-    border: 1px solid #E2E8F0;
+    border: 1px solid #F1F5F9;
 }
 
 .hnmt-simple-photo img {
@@ -1143,30 +1106,30 @@
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    gap: 12px;
-    margin-bottom: 8px;
+    gap: 10px;
+    margin-bottom: 6px;
 }
 
 .hnmt-simple-name {
-    font-size: 1.05rem;
-    font-weight: 800;
-    color: #0F172A;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1E293B;
     text-decoration: none;
 }
 
 .hnmt-simple-name:hover {
-    color: #2B3360;
+    color: #2563EB;
 }
 
 .hnmt-simple-price {
-    font-size: 1.1rem;
-    font-weight: 800;
-    color: #0F172A;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1E293B;
 }
 
 .hnmt-simple-math {
     display: block;
-    font-size: 0.78rem;
+    font-size: 0.75rem;
     color: #64748B;
     text-align: right;
 }
@@ -1174,24 +1137,21 @@
 .hnmt-simple-variant {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 6px;
 }
 
 .spec-tag {
-    font-size: 0.82rem;
-    color: #475569;
-    background: #F1F5F9;
-    padding: 3px 10px;
+    font-size: 0.78rem;
+    color: #64748B;
+    background: #F8FAFC;
+    border: 1px solid #F1F5F9;
+    padding: 2px 8px;
     border-radius: 6px;
 }
 
-.spec-tag strong {
-    color: #0F172A;
-}
-
 .hnmt-color-swatch {
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
     border: 1px solid rgba(0, 0, 0, 0.15);
     display: inline-block;
@@ -1200,33 +1160,28 @@
 .hnmt-review-link {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: #2B3360;
+    gap: 5px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #2563EB;
     text-decoration: none;
-    padding: 4px 10px;
-    background: #EEF2F6;
+    padding: 3px 8px;
+    background: #EFF6FF;
     border-radius: 6px;
-    transition: all 0.2s ease;
-}
-
-.hnmt-review-link:hover {
-    background: #E2E8F0;
 }
 
 /* HISTORY */
 .hnmt-simple-history {
-    margin-top: 28px;
-    padding-top: 20px;
-    border-top: 1px solid #F1F5F9;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #F8FAFC;
 }
 
 .hnmt-history-title {
-    font-size: 0.88rem;
-    font-weight: 800;
-    color: #334155;
-    margin-bottom: 12px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 10px;
     display: flex;
     align-items: center;
     gap: 6px;
@@ -1235,139 +1190,139 @@
 .hnmt-history-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
 }
 
 .hnmt-history-row {
     display: flex;
     align-items: baseline;
-    gap: 12px;
-    font-size: 0.85rem;
+    gap: 10px;
+    font-size: 0.82rem;
     color: #64748B;
 }
 
 .hnmt-history-time {
     color: #94A3B8;
-    font-size: 0.8rem;
-    min-width: 90px;
+    font-size: 0.78rem;
+    min-width: 80px;
 }
 
 .hnmt-history-desc strong {
-    color: #0F172A;
+    color: #334155;
+    font-weight: 600;
 }
 
 /* SIDEBAR: SHIPPING CARD */
 .hnmt-shipping-card-sidebar {
-    padding: 24px 28px;
+    padding: 20px 24px;
 }
 
 .hnmt-customer-detail-list {
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    margin-top: 12px;
+    gap: 10px;
+    margin-top: 8px;
 }
 
 .hnmt-customer-detail-item {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    gap: 12px;
-    font-size: 0.9rem;
+    gap: 10px;
+    font-size: 0.85rem;
 }
 
 .hnmt-detail-label {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     color: #64748B;
-    font-weight: 600;
+    font-weight: 400;
     flex-shrink: 0;
 }
 
 .hnmt-detail-label i {
-    color: #2B3360;
-    font-size: 1rem;
+    color: #94A3B8;
+    font-size: 0.95rem;
 }
 
 .hnmt-detail-value {
-    color: #0F172A;
-    font-weight: 700;
+    color: #1E293B;
+    font-weight: 500;
     text-align: right;
 }
 
 .hnmt-detail-value.address-value {
-    font-weight: 500;
-    color: #334155;
-    line-height: 1.45;
+    font-weight: 400;
+    color: #475569;
+    line-height: 1.4;
     max-width: 65%;
 }
 
 /* SIDEBAR: INVOICE PANEL */
 .hnmt-invoice-panel {
-    padding: 28px 30px;
+    padding: 22px 24px;
 }
 
 .hnmt-simple-ledger {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    margin-top: 16px;
+    gap: 10px;
+    margin-top: 12px;
 }
 
 .hnmt-ledger-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.92rem;
-    color: #475569;
+    font-size: 0.88rem;
+    color: #64748B;
 }
 
 .hnmt-ledger-row.is-discount {
-    color: #15803D;
+    color: #16A34A;
 }
 
 .hnmt-ledger-sep {
     height: 1px;
-    background: #E2E8F0;
-    border-top: 1px dashed #CBD5E1;
-    margin: 8px 0;
+    background: #F1F5F9;
+    margin: 6px 0;
 }
 
 .hnmt-ledger-total-row {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    margin-top: 4px;
+    margin-top: 2px;
 }
 
 .hnmt-total-lbl {
-    font-size: 0.95rem;
-    font-weight: 800;
-    color: #0F172A;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #1E293B;
     display: block;
 }
 
 .hnmt-total-sublbl {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     color: #94A3B8;
 }
 
 .hnmt-total-number {
-    font-size: 1.4rem;
-    font-weight: 800;
+    font-size: 1.25rem;
+    font-weight: 700;
     color: #0F172A;
 }
 
 .hnmt-simple-pay-meta {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding: 14px 0;
-    margin-top: 16px;
+    gap: 8px;
+    padding: 12px 0;
+    margin-top: 12px;
     border-top: 1px dashed #E2E8F0;
     border-bottom: 1px dashed #E2E8F0;
-    font-size: 0.88rem;
+    font-size: 0.82rem;
 }
 
 .hnmt-pay-meta-row {
@@ -1381,29 +1336,29 @@
 }
 
 .hnmt-pay-val {
-    color: #0F172A;
-    font-weight: 700;
+    color: #334155;
+    font-weight: 500;
 }
 
 .hnmt-pay-badge {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 3px 9px;
+    gap: 5px;
+    padding: 2px 8px;
     border-radius: 999px;
-    font-size: 0.75rem;
-    font-weight: 800;
+    font-size: 0.72rem;
+    font-weight: 600;
 }
 
 .hnmt-pay-badge .hnmt-dot {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
     border-radius: 50%;
 }
 
 .hnmt-pay-badge.is-paid {
-    background: #DCFCE7;
-    color: #15803D;
+    background: #F0FDF4;
+    color: #166534;
     border: 1px solid #BBF7D0;
 }
 .hnmt-pay-badge.is-paid .hnmt-dot { background: #16A34A; }
@@ -1419,8 +1374,8 @@
 .hnmt-invoice-actions {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin-top: 20px;
+    gap: 8px;
+    margin-top: 16px;
 }
 
 .hnmt-btn-primary {
@@ -1429,37 +1384,33 @@
     justify-content: center;
     gap: 8px;
     width: 100%;
-    padding: 13px 20px;
-    background: #0F172A;
+    padding: 11px 18px;
+    background: #1E293B;
     color: #FFFFFF !important;
     border-radius: 999px;
-    font-size: 0.92rem;
-    font-weight: 800;
-    letter-spacing: 0.5px;
+    font-size: 0.85rem;
+    font-weight: 600;
     text-decoration: none;
     transition: all 0.2s ease;
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
 }
 
 .hnmt-btn-primary:hover {
-    background: #1E293B;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.25);
+    background: #0F172A;
 }
 
 .hnmt-btn-cancel {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 6px;
     width: 100%;
-    padding: 11px 20px;
+    padding: 9px 16px;
     background: transparent;
     color: #DC2626;
-    border: 1.5px solid #FCA5A5;
+    border: 1px solid #FECACA;
     border-radius: 999px;
-    font-size: 0.85rem;
-    font-weight: 700;
+    font-size: 0.82rem;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
     font-family: inherit;
@@ -1467,7 +1418,6 @@
 
 .hnmt-btn-cancel:hover {
     background: #FEF2F2;
-    border-color: #EF4444;
 }
 
 .hnmt-support-strip {
@@ -1475,40 +1425,41 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-    margin-top: 16px;
-    font-size: 0.8rem;
+    margin-top: 12px;
+    font-size: 0.78rem;
     color: #94A3B8;
 }
 
 .hnmt-support-strip strong {
-    color: #475569;
+    color: #64748B;
+    font-weight: 600;
 }
 
 /* VIETQR BOX */
 .hnmt-vietqr-box {
     background: #FFFBEB;
     border: 1px solid #FDE68A;
-    border-radius: 12px;
-    padding: 16px;
-    margin: 16px 0;
+    border-radius: 10px;
+    padding: 14px;
+    margin: 14px 0;
 }
 
 .hnmt-vqr-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 8px;
-    font-size: 0.88rem;
+    margin-bottom: 6px;
+    font-size: 0.85rem;
 }
 
 .hnmt-vqr-pill {
-    font-size: 0.72rem;
-    font-weight: 800;
-    padding: 2px 8px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 2px 7px;
     border-radius: 999px;
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
 }
 
 .hnmt-vqr-pill.is-active {
@@ -1532,20 +1483,20 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     margin-bottom: 6px;
 }
 
 .hnmt-vqr-timer {
-    font-size: 1.15rem;
+    font-size: 1.05rem;
     color: #B45309;
 }
 
 .hnmt-vietqr-box p {
-    margin: 0 0 12px 0;
-    font-size: 0.82rem;
+    margin: 0 0 10px 0;
+    font-size: 0.8rem;
     color: #78350F;
-    line-height: 1.45;
+    line-height: 1.4;
 }
 
 .hnmt-vqr-action-btn {
@@ -1554,18 +1505,13 @@
     justify-content: center;
     gap: 6px;
     width: 100%;
-    padding: 10px 16px;
+    padding: 9px 14px;
     background: #D97706;
     color: #FFFFFF !important;
     border-radius: 999px;
-    font-size: 0.85rem;
-    font-weight: 700;
+    font-size: 0.82rem;
+    font-weight: 600;
     text-decoration: none;
-    transition: all 0.2s ease;
-}
-
-.hnmt-vqr-action-btn:hover {
-    background: #B45309;
 }
 
 /* RETURN CARD */
@@ -1577,29 +1523,29 @@
 .hnmt-return-card-link {
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 18px 22px;
-    color: #0F172A;
+    gap: 12px;
+    padding: 14px 18px;
+    color: #1E293B;
     text-decoration: none;
     transition: all 0.2s ease;
 }
 
 .hnmt-return-card-link:hover {
     background: #F8FAFC;
-    color: #0F172A;
+    color: #1E293B;
 }
 
 .hnmt-return-card-icon {
-    width: 40px;
-    height: 40px;
-    min-width: 40px;
-    border-radius: 10px;
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    border-radius: 8px;
     background: #EFF6FF;
     color: #2563EB;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
 }
 
 .hnmt-return-card-info {
@@ -1608,13 +1554,13 @@
 
 .hnmt-return-card-title {
     display: block;
-    font-size: 0.92rem;
-    font-weight: 700;
+    font-size: 0.88rem;
+    font-weight: 600;
     margin-bottom: 2px;
 }
 
 .hnmt-return-card-sub {
-    font-size: 0.78rem;
+    font-size: 0.75rem;
     color: #64748B;
 }
 
@@ -1624,9 +1570,9 @@
 
 /* LIVE GPS MAP CARD */
 .hnmt-live-map-card {
-    margin-top: 24px;
+    margin-top: 20px;
     border: 1px solid #E2E8F0;
-    border-radius: 14px;
+    border-radius: 12px;
     overflow: hidden;
 }
 
@@ -1634,23 +1580,23 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 18px;
+    padding: 10px 16px;
     background: #F8FAFC;
     border-bottom: 1px solid #E2E8F0;
-    font-size: 0.82rem;
+    font-size: 0.8rem;
 }
 
 .hnmt-live-map-title {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-weight: 700;
-    color: #0F172A;
+    font-weight: 600;
+    color: #1E293B;
 }
 
 .hnmt-pulse-dot {
-    width: 8px;
-    height: 8px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
     background: #16A34A;
     box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.7);
@@ -1659,7 +1605,7 @@
 
 .hnmt-map-viewport {
     position: relative;
-    height: 240px;
+    height: 220px;
     background: #E2E8F0;
 }
 
@@ -1680,14 +1626,14 @@
 }
 
 .hnmt-waiting-text {
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: #0F172A;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #1E293B;
     margin: 0 0 4px 0;
 }
 
 .hnmt-waiting-sub {
-    font-size: 0.78rem;
+    font-size: 0.75rem;
     color: #64748B;
 }
 
@@ -1695,15 +1641,15 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 18px;
+    padding: 8px 16px;
     background: #FFFFFF;
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     border-top: 1px solid #E2E8F0;
 }
 
 .hnmt-shipment-badge {
-    color: #2B3360;
-    font-weight: 700;
+    color: #2563EB;
+    font-weight: 600;
 }
 
 /* RESPONSIVE */
@@ -1720,19 +1666,18 @@
     .hnmt-luxury-stepper {
         flex-direction: column;
         align-items: flex-start;
-        gap: 16px;
+        gap: 12px;
     }
     .hnmt-step-divider {
         display: none;
     }
     .hnmt-card {
-        padding: 20px 18px;
+        padding: 18px 16px;
     }
 }
 </style>
 
 <script>
-// 1. Sao chép mã đơn hàng
 function copyOrderCode(code) {
     if (!navigator.clipboard) {
         const ta = document.createElement('textarea');
@@ -1753,7 +1698,6 @@ function copyOrderCode(code) {
     }
 }
 
-// 2. Đếm ngược thời gian thực cho mã VietQR trong Chi tiết đơn hàng
 (function() {
     const box = document.getElementById('detailVietQrBox');
     if (!box) return;
