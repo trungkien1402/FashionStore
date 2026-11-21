@@ -18,6 +18,22 @@ var replaceCatalog = args.Contains(replaceCatalogOption, StringComparer.Ordinal)
 var importCatalog = args.Contains(importCatalogOption, StringComparer.Ordinal);
 var builder = WebApplication.CreateBuilder(args.Where(arg => arg != replaceCatalogOption && arg != importCatalogOption).ToArray());
 
+// Đảm bảo luôn tìm thấy wwwroot (CSS, JS, 3D models, hình ảnh) dù ứng dụng chạy từ thư mục gốc giải pháp, Visual Studio hay output bin
+var candidateWebRoots = new[]
+{
+    builder.Environment.WebRootPath,
+    Path.Combine(builder.Environment.ContentRootPath, "wwwroot"),
+    Path.Combine(builder.Environment.ContentRootPath, "FashionStore", "wwwroot"),
+    Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "wwwroot")),
+    Path.Combine(AppContext.BaseDirectory, "wwwroot")
+};
+var resolvedWebRoot = candidateWebRoots.FirstOrDefault(p => !string.IsNullOrEmpty(p) && Directory.Exists(p) && File.Exists(Path.Combine(p, "css", "fashionstore.css")));
+if (!string.IsNullOrEmpty(resolvedWebRoot))
+{
+    builder.Environment.WebRootPath = resolvedWebRoot;
+    builder.Environment.WebRootFileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(resolvedWebRoot);
+}
+
 // MVC
 builder.Services.AddControllersWithViews();
 
@@ -117,9 +133,9 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
+    app.UseHttpsRedirection();
 }
 
-app.UseHttpsRedirection();
 // Cấu hình MIME type hỗ trợ file 3D (.glb, .gltf, .bin) và ảnh webp
 var contentTypeProvider = new Microsoft.AspNetCore.StaticFiles.FileExtensionContentTypeProvider();
 contentTypeProvider.Mappings[".glb"] = "model/gltf-binary";
@@ -127,10 +143,16 @@ contentTypeProvider.Mappings[".gltf"] = "model/gltf+json";
 contentTypeProvider.Mappings[".bin"] = "application/octet-stream";
 contentTypeProvider.Mappings[".webp"] = "image/webp";
 
-app.UseStaticFiles(new StaticFileOptions
+var staticFileOptions = new StaticFileOptions
 {
     ContentTypeProvider = contentTypeProvider
-});
+};
+if (!string.IsNullOrEmpty(resolvedWebRoot) && Directory.Exists(resolvedWebRoot))
+{
+    staticFileOptions.FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(resolvedWebRoot);
+}
+
+app.UseStaticFiles(staticFileOptions);
 
 app.UseRouting();
 

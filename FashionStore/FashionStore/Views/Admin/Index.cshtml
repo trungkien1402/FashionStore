@@ -406,22 +406,22 @@
         <div class="adm-card">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <div>
-                    <h5 class="fw-bold mb-0 adm-heading">Radar Cảnh báo Kho Hàng</h5>
-                    <div class="text-muted" style="font-size: 0.72rem;">Tồn kho &le; 5 sản phẩm</div>
+                    <h5 class="fw-bold mb-0 adm-heading"><i class="bi bi-bell-fill text-danger me-1"></i>Radar Cảnh báo Kho Hàng</h5>
+                    <div class="text-muted" style="font-size: 0.72rem;">Mức tồn kho an toàn &le; 5 sản phẩm</div>
                 </div>
-                <a asp-controller="AdminProducts" asp-action="Index" class="text-decoration-none small text-warning">
-                    Quản lý kho &rarr;
+                <a asp-controller="AdminProducts" asp-action="Index" asp-route-stock="low" class="text-decoration-none small text-danger fw-bold">
+                    Các sản phẩm sắp hết hàng &rarr;
                 </a>
             </div>
 
             @if (Model.LowStockProducts.Any())
             {
                 <div class="d-flex flex-column gap-2">
-                    @foreach (var stock in Model.LowStockProducts.Take(4))
+                    @foreach (var stock in Model.LowStockProducts.Take(6))
                     {
-                        <div class="d-flex align-items-center justify-content-between p-2 rounded-3" style="background: rgba(217, 119, 6, 0.05); border: 1px solid rgba(217, 119, 6, 0.18);">
+                        <div class="d-flex align-items-center justify-content-between p-2 rounded-3" style="background: rgba(220, 38, 38, 0.08); border: 1px solid rgba(220, 38, 38, 0.22);">
                             <div>
-                                <div class="adm-heading fw-semibold small text-truncate" style="max-width: 210px;" title="@stock.ProductName">
+                                <div class="adm-heading fw-semibold small text-truncate" style="max-width: 200px;" title="@stock.ProductName">
                                     @stock.ProductName
                                 </div>
                                 <div class="text-muted font-monospace" style="font-size: 0.72rem;">
@@ -429,8 +429,8 @@
                                 </div>
                             </div>
                             <div class="text-end">
-                                <span class="badge bg-danger bg-opacity-75 text-white fw-bold">
-                                    Còn @stock.StockQuantity
+                                <span class="badge bg-danger text-white fw-bold shadow-sm" style="font-size: 0.75rem;">
+                                    <i class="bi bi-exclamation-triangle-fill me-1"></i>[&#9888; Cần nhập thêm hàng] (Còn @stock.StockQuantity)
                                 </span>
                             </div>
                         </div>
