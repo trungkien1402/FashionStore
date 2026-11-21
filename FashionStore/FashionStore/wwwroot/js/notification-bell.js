@@ -32,15 +32,8 @@ document.querySelectorAll("[data-notification-url]").forEach(bell => {
 
     function updateCount() {
         const unread = current.filter(key => !seen.includes(key)).length;
-        if (unread > 0) {
-            count.textContent = String(unread);
-            count.hidden = false;
-            count.style.display = "";
-        } else {
-            count.textContent = "";
-            count.hidden = true;
-            count.style.display = "none";
-        }
+        count.textContent = String(unread);
+        count.hidden = unread === 0;
         trigger.setAttribute("aria-label", unread ? `Thông báo (${unread} mục mới)` : "Thông báo");
     }
 
@@ -118,4 +111,5 @@ document.querySelectorAll("[data-notification-url]").forEach(bell => {
         if (bell.open && !bell.contains(event.target)) bell.open = false;
     });
     refresh();
+    setInterval(() => { if (!document.hidden) refresh(); }, 10000);
 });

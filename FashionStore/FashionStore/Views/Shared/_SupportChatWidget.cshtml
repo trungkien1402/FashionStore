@@ -1,0 +1,58 @@
+@{
+    var customerChat = User.IsInRole("Customer");
+}
+<div class="support-widget" data-support-chat data-thread="@Url.Action("Thread", "SupportChat")">
+    <section class="support-room support-panel @(customerChat ? "" : "support-panel-welcome")" id="storeSupportPanel" aria-label="Chat với cửa hàng" hidden>
+        <header class="support-chat-head">
+            <div class="support-brand">
+                <span class="support-avatar"><i class="bi bi-headset" aria-hidden="true"></i></span>
+                <div><strong>HNMTSHOP</strong><small>Hỗ trợ mua sắm</small></div>
+            </div>
+            <button type="button" data-chat-hide aria-label="Thu gọn chat"><i class="bi bi-dash-lg" aria-hidden="true"></i></button>
+        </header>
+        @if (User.IsInRole("Customer"))
+        {
+            <div class="support-welcome-note">
+                <strong>Chào bạn, cửa hàng có thể giúp gì?</strong>
+                <p>Gửi câu hỏi kèm mã đơn hoặc tên sản phẩm để được hỗ trợ.</p>
+                <div class="support-topics">
+                    <button type="button" data-chat-topic="Mình cần tư vấn chọn size cho sản phẩm ">Chọn size</button>
+                    <button type="button" data-chat-topic="Mình muốn hỏi về đơn hàng mã ">Đơn hàng</button>
+                    <button type="button" data-chat-topic="Mình cần hỗ trợ đổi trả cho đơn ">Đổi trả</button>
+                </div>
+            </div>
+            <partial name="_SupportChatMessages" />
+            <form asp-controller="SupportChat" asp-action="Send" method="post" class="support-compose">
+                <label class="support-sr-only" for="supportMessage">Tin nhắn</label>
+                <textarea id="supportMessage" name="message" rows="2" maxlength="1000" required placeholder="Bạn cần hỗ trợ gì?"></textarea>
+                <button type="submit" aria-label="Gửi tin nhắn"><i class="bi bi-send-fill" aria-hidden="true"></i></button>
+            </form>
+        }
+        else if (User.Identity?.IsAuthenticated != true)
+        {
+            <div class="support-chat-guest">
+                <span class="support-welcome-icon"><i class="bi bi-chat-heart" aria-hidden="true"></i></span>
+                <h2>Cửa hàng sẵn sàng lắng nghe</h2>
+                <p>Đăng nhập để gửi tin nhắn và xem lại phản hồi của cửa hàng.</p>
+                <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">Đăng nhập để chat</a>
+            </div>
+        }
+        else if (FashionStore.Services.AccessRoles.CanUseBackOffice(User))
+        {
+            <div class="support-chat-guest">
+                <span class="support-welcome-icon"><i class="bi bi-inbox" aria-hidden="true"></i></span>
+                <h2>Hộp thư khách hàng</h2>
+                <p>Bạn đang dùng tài khoản vận hành. Mở hộp thư để xem các cuộc trò chuyện, phản hồi và xử lý yêu cầu của khách.</p>
+                <a asp-controller="SupportChat" asp-action="Inbox">Mở hộp thư hỗ trợ <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a>
+            </div>
+        }
+        else
+        {
+            <div class="support-chat-guest"><a asp-controller="Home" asp-action="Contact">Liên hệ cửa hàng</a></div>
+        }
+        <footer class="support-chat-footnote"><i class="bi bi-shield-check" aria-hidden="true"></i> Tin nhắn được lưu để bạn xem lại</footer>
+    </section>
+    <button type="button" class="support-launcher" data-chat-toggle aria-expanded="false" aria-controls="storeSupportPanel">
+        <i class="bi bi-chat-dots-fill" aria-hidden="true"></i><span>Hỗ trợ</span>
+    </button>
+</div>
