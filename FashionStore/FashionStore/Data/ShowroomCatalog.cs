@@ -79,10 +79,39 @@ public static class ShowroomCatalog
         "giay-balenciaga", "giay-rick-owens", "giay-sneaker-streetwear"
     ];
 
+    private static Stream GetCatalogStream()
+    {
+        var asm = typeof(ShowroomCatalog).Assembly;
+        var stream = asm.GetManifestResourceStream("FashionStore.Data.showroom-catalog.json");
+        if (stream != null) return stream;
+
+        var resName = asm.GetManifestResourceNames().FirstOrDefault(n => n.EndsWith("showroom-catalog.json", StringComparison.OrdinalIgnoreCase));
+        if (resName != null)
+        {
+            var resStream = asm.GetManifestResourceStream(resName);
+            if (resStream != null) return resStream;
+        }
+
+        var possiblePaths = new[]
+        {
+            Path.Combine(AppContext.BaseDirectory, "Data", "showroom-catalog.json"),
+            Path.Combine(Directory.GetCurrentDirectory(), "Data", "showroom-catalog.json"),
+            Path.Combine(Directory.GetCurrentDirectory(), "FashionStore", "Data", "showroom-catalog.json")
+        };
+        foreach (var path in possiblePaths)
+        {
+            if (File.Exists(path))
+            {
+                return File.OpenRead(path);
+            }
+        }
+
+        throw new InvalidOperationException("Không tìm thấy danh mục showroom.");
+    }
+
     public static async Task ReconcileCategoriesAsync(ApplicationDbContext db)
     {
-        using var source = typeof(ShowroomCatalog).Assembly.GetManifestResourceStream("FashionStore.Data.showroom-catalog.json")
-            ?? throw new InvalidOperationException("Không tìm thấy danh mục showroom.");
+        using var source = GetCatalogStream();
         var entries = await JsonSerializer.DeserializeAsync<Entry[]>(source, JsonOptions)
             ?? throw new InvalidOperationException("Danh mục showroom trống.");
         var assignments = entries.Where(entry => entry.AdminCategory != null)
@@ -149,8 +178,7 @@ public static class ShowroomCatalog
 
     public static async Task<(int Added, int Removed)> ImportAsync(ApplicationDbContext db, bool replaceLegacy = false)
     {
-        using var source = typeof(ShowroomCatalog).Assembly.GetManifestResourceStream("FashionStore.Data.showroom-catalog.json")
-            ?? throw new InvalidOperationException("Không tìm thấy danh mục showroom.");
+        using var source = GetCatalogStream();
         var entries = await JsonSerializer.DeserializeAsync<Entry[]>(source, JsonOptions)
             ?? throw new InvalidOperationException("Danh mục showroom trống.");
         if (entries.Length == 0 || entries.Select(item => item.Slug).Distinct(StringComparer.OrdinalIgnoreCase).Count() != entries.Length ||

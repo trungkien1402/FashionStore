@@ -4,9 +4,19 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!-- The nested project is an archived copy, not part of this application. -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);FashionStore/**</DefaultItemExcludes>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="QuestPDF" Version="2026.9.1" />
+    <PackageReference Include="ClosedXML" Version="0.105.1" />
+    <EmbeddedResource Include="Data\showroom-catalog.json">
+      <LogicalName>FashionStore.Data.showroom-catalog.json</LogicalName>
+    </EmbeddedResource>
+    <None Update="Data\showroom-catalog.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.14" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.14">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
