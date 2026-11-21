@@ -21,7 +21,7 @@ public class AdminProductVariantsController : Controller
     }
 
     // GET: /AdminProductVariants?productId=1
-    public async Task<IActionResult> Index(int productId)
+    public async Task<IActionResult> Index(int productId, bool? low = null)
     {
         var product = await _context.Products
             .AsNoTracking()
@@ -30,14 +30,23 @@ public class AdminProductVariantsController : Controller
         if (product == null)
             return NotFound();
 
-        var variants = await _context.ProductVariants
-            .Where(v => v.ProductId == productId)
-            .OrderBy(v => v.Size)
+        var query = _context.ProductVariants
+            .Where(v => v.ProductId == productId);
+
+        if (low == true)
+        {
+            query = query.Where(v => v.IsActive && v.StockQuantity <= ProductVariant.DefaultSafetyStock);
+        }
+
+        var variants = await query
+            .OrderBy(v => v.StockQuantity)
+            .ThenBy(v => v.Size)
             .ThenBy(v => v.Color)
             .AsNoTracking()
             .ToListAsync();
 
         ViewBag.Product = product;
+        ViewBag.LowFilter = low == true;
 
         return View(variants);
     }

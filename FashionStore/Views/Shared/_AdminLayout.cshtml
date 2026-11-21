@@ -118,6 +118,9 @@
             @if (User.IsInRole("Admin"))
             {
                 <div class="adm-nav-label">Quản trị</div>
+                <a asp-controller="AdminUsers" asp-action="Index" class="adm-nav-link @(currentController == "AdminUsers" ? "active" : "")">
+                    <i class="bi bi-person-badge"></i><span>Tài khoản &amp; Phân quyền</span>
+                </a>
                 <a asp-controller="AdminOperations" asp-action="Staff" class="adm-nav-link">
                     <i class="bi bi-person-gear"></i><span>Nhân viên</span>
                 </a>

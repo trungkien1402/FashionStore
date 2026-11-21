@@ -19,4 +19,8 @@ public class ProductVariant
     public int StockQuantity { get; set; }
 
     public bool IsActive { get; set; } = true;
+
+    public const int DefaultSafetyStock = 5;
+
+    public bool IsLowStock => IsActive && StockQuantity <= DefaultSafetyStock;
 }

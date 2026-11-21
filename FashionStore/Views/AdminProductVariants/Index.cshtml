@@ -43,7 +43,7 @@
 </div>
 
 <!-- INVENTORY SUMMARY TILES -->
-<div class="row g-3 mb-4">
+<div class="row g-3 mb-3">
     <div class="col-6 col-md-3">
         <div class="adm-card p-3">
             <div class="text-muted small text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.1em;">Tổng biến thể</div>
@@ -59,7 +59,7 @@
     <div class="col-6 col-md-3">
         <div class="adm-card p-3">
             <div class="text-muted small text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.1em;">Sắp hết hàng (&le;5)</div>
-            <div class="fs-4 fw-bold text-warning mt-1">@lowStockCount <span class="fs-6 text-muted font-normal">mã</span></div>
+            <div class="fs-4 fw-bold text-danger mt-1">@lowStockCount <span class="fs-6 text-muted font-normal">mã</span></div>
         </div>
     </div>
     <div class="col-6 col-md-3">
@@ -68,6 +68,27 @@
             <div class="fs-4 fw-bold text-danger mt-1">@outOfStockCount <span class="fs-6 text-muted font-normal">mã</span></div>
         </div>
     </div>
+</div>
+
+<!-- LOW STOCK FILTER BAR -->
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4 p-2 rounded-3" style="background: var(--adm-surface); border: 1px solid var(--adm-border);">
+    <div class="d-flex align-items-center gap-2">
+        <span class="text-muted small fw-semibold ps-2"><i class="bi bi-funnel me-1"></i>Bộ lọc:</span>
+        <a asp-action="Index" asp-route-productId="@product?.Id" 
+           class="btn btn-sm @(ViewBag.LowFilter != true ? "adm-btn-atelier" : "adm-btn-outline") py-1 px-3">
+            Tất cả biến thể
+        </a>
+        <a asp-action="Index" asp-route-productId="@product?.Id" asp-route-low="true" 
+           class="btn btn-sm @(ViewBag.LowFilter == true ? "btn-danger text-white" : "btn-outline-danger") py-1 px-3">
+            <i class="bi bi-exclamation-triangle-fill me-1"></i>Các sản phẩm sắp hết hàng (&le; 5)
+        </a>
+    </div>
+    @if (lowStockCount > 0)
+    {
+        <div class="badge bg-danger text-white py-2 px-3 fw-bold">
+            <i class="bi bi-bell-fill me-1"></i> Có @lowStockCount biến thể dưới mức an toàn
+        </div>
+    }
 </div>
 
 @if (Model == null || !Model.Any())
@@ -126,11 +147,15 @@ else
                             <td>
                                 @if (item.StockQuantity == 0)
                                 {
-                                    <span class="badge bg-danger bg-opacity-75 text-white">Hết hàng</span>
+                                    <span class="badge bg-danger text-white py-1 px-2 fw-bold">
+                                        <i class="bi bi-x-circle me-1"></i>Hết hàng (0)
+                                    </span>
                                 }
                                 else if (item.StockQuantity <= 5)
                                 {
-                                    <span class="badge bg-warning text-dark">Còn @item.StockQuantity cái</span>
+                                    <span class="badge bg-danger text-white py-1 px-2 fw-bold shadow-sm" title="Mức tồn kho an toàn &le; 5">
+                                        <i class="bi bi-exclamation-triangle-fill me-1"></i>[&#9888; Cần nhập thêm hàng] (Còn @item.StockQuantity)
+                                    </span>
                                 }
                                 else
                                 {
