@@ -22,25 +22,28 @@
     var paymentData = JsonSerializer.Serialize(Model.PaymentMethodData);
 }
 
+<!-- EXECUTIVE HEADER -->
 <header class="adm-dashboard-header adm-overview-header mb-3">
     <div>
-        <p class="adm-dashboard-kicker">◆ &nbsp; HNMT Atelier</p>
-        <h1>Tổng quan</h1>
+        <p class="adm-dashboard-kicker"><i class="bi bi-gem me-1 text-primary"></i> HNMT ATELIER BACKOFFICE</p>
+        <h1>Tổng quan Doanh thu &amp; Vận hành</h1>
         <p class="adm-dashboard-period">Kỳ báo cáo · @Model.StartDate.ToString("dd/MM/yyyy") – @Model.EndDate.ToString("dd/MM/yyyy")</p>
     </div>
 
-    <div class="d-flex flex-wrap gap-2">
+    <div class="d-flex flex-wrap align-items-center gap-2">
         <a asp-controller="Admin"
            asp-action="ExportReport"
            asp-route-startDate="@Model.StartDate.ToString("yyyy-MM-dd")"
            asp-route-endDate="@Model.EndDate.ToString("yyyy-MM-dd")"
-           class="adm-btn-atelier">
+           class="adm-btn-atelier"
+           title="Xuất dữ liệu báo cáo dạng PDF">
             <i class="bi bi-file-earmark-pdf"></i>
             <span>Xuất PDF</span>
         </a>
 
         <a asp-action="PrintReport" asp-route-startDate="@Model.StartDate.ToString("yyyy-MM-dd")"
-           asp-route-endDate="@Model.EndDate.ToString("yyyy-MM-dd")" class="adm-btn-outline">
+           asp-route-endDate="@Model.EndDate.ToString("yyyy-MM-dd")" class="adm-btn-outline"
+           title="In nhanh trang báo cáo">
             <i class="bi bi-printer"></i>
             <span>In báo cáo</span>
         </a>
@@ -51,7 +54,7 @@
 <div class="adm-filter-bar adm-overview-filter mb-3">
     <form asp-controller="Admin" asp-action="Index" method="get" id="admFilterForm" class="adm-overview-filter-form">
         <div class="adm-overview-presets" role="group" aria-label="Khoảng ngày nhanh">
-            <span class="text-muted small fw-semibold">Khoảng nhanh</span>
+            <span class="text-muted small fw-semibold px-2 d-none d-md-inline">Khoảng nhanh:</span>
             @{
                 var curStart = Model.StartDate.ToString("yyyy-MM-dd");
                 var curEnd = Model.EndDate.ToString("yyyy-MM-dd");
@@ -68,29 +71,31 @@
 
         <div class="adm-overview-dates">
             <div class="d-flex flex-wrap align-items-center gap-2">
-                <div class="d-flex align-items-center gap-2">
-                    <label for="admStartDate" class="text-muted small">Từ</label>
+                <div class="d-flex align-items-center gap-1">
+                    <label for="admStartDate" class="text-muted small mb-0 me-1">Từ</label>
                     <input type="date"
                            id="admStartDate"
                            name="startDate"
                            class="form-control adm-input-dark"
+                           style="width: 145px;"
                            value="@Model.StartDate.ToString("yyyy-MM-dd")" />
                 </div>
 
-                <div class="d-flex align-items-center gap-2">
-                    <label for="admEndDate" class="text-muted small">Đến</label>
+                <div class="d-flex align-items-center gap-1">
+                    <label for="admEndDate" class="text-muted small mb-0 me-1">Đến</label>
                     <input type="date"
                            id="admEndDate"
                            name="endDate"
                            class="form-control adm-input-dark"
+                           style="width: 145px;"
                            value="@Model.EndDate.ToString("yyyy-MM-dd")" />
                 </div>
 
-                <button type="submit" class="btn adm-btn-atelier py-2 px-3">
-                    <i class="bi bi-funnel"></i> Lọc
+                <button type="submit" class="adm-btn-atelier py-1 px-3">
+                    <i class="bi bi-funnel"></i> <span>Lọc</span>
                 </button>
 
-                <a asp-controller="Admin" asp-action="Index" class="btn adm-btn-outline py-2 px-3" aria-label="Đặt lại bộ lọc">
+                <a asp-controller="Admin" asp-action="Index" class="adm-btn-outline p-2" aria-label="Đặt lại bộ lọc" title="Đặt lại bộ lọc">
                     <i class="bi bi-arrow-counterclockwise"></i>
                 </a>
             </div>
@@ -98,43 +103,43 @@
     </form>
 </div>
 
-<p class="text-muted small mb-2">@Model.TotalOrders đơn trong kỳ · Tính theo ngày đặt và trạng thái hiện tại</p>
+<p class="text-muted small mb-3"><i class="bi bi-info-circle me-1"></i><strong>@Model.TotalOrders</strong> đơn trong kỳ · Tính theo ngày đặt và trạng thái hiện tại</p>
 
 <!-- HERO KPI METRICS (4 TILES) -->
-<div class="row row-cols-1 row-cols-md-2 g-3 mb-4 adm-kpi-grid">
+<div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-3 mb-4 adm-kpi-grid">
 
-    <!-- KPI 1: TỔNG DOANH THU HỆ THỐNG -->
+    <!-- KPI 1: TỔNG DOANH THU ĐÃ GIAO -->
     <div class="col">
-        <div class="adm-card adm-kpi-card adm-kpi-featured">
+        <div class="adm-card adm-kpi-card">
             <div class="adm-kpi-header">
                 <div>
                     <h2 class="adm-kpi-title">Giá trị đơn đã giao</h2>
-                    <div class="adm-kpi-value mt-2 adm-heading">@Model.RevenueInRange.ToString("N0") <span style="font-size: 1rem; color: var(--adm-gold);">₫</span></div>
+                    <div class="adm-kpi-value">@Model.RevenueInRange.ToString("N0") <span class="adm-kpi-unit">₫</span></div>
                 </div>
-                <div class="adm-kpi-icon gold">
+                <div class="adm-kpi-icon-pill emerald">
                     <i class="bi bi-currency-dollar"></i>
                 </div>
             </div>
-            <div class="adm-kpi-meta pt-2 justify-content-between">
+            <div class="adm-kpi-meta">
                 <span>Đã giao / Đã hủy</span>
                 <span class="adm-text-contrast fw-bold">@Model.DeliveredOrders / @Model.CancelledOrders đơn</span>
             </div>
         </div>
     </div>
 
-    <!-- KPI 2: ĐƠN CHỜ XÁC NHẬN -->
+    <!-- KPI 2: ĐƠN CHỜ DUYỆT -->
     <div class="col">
         <div class="adm-card adm-kpi-card">
             <div class="adm-kpi-header">
                 <div>
                     <h2 class="adm-kpi-title">Đơn chờ duyệt</h2>
-                    <div class="adm-kpi-value mt-2">@Model.PendingOrders <span class="adm-kpi-unit">đơn</span></div>
+                    <div class="adm-kpi-value">@Model.PendingOrders <span class="adm-kpi-unit">đơn</span></div>
                 </div>
-                <div class="adm-kpi-icon amber">
+                <div class="adm-kpi-icon-pill amber">
                     <i class="bi bi-clock-history"></i>
                 </div>
             </div>
-            <div class="adm-kpi-meta pt-2 justify-content-between">
+            <div class="adm-kpi-meta">
                 <span>Tổng giá trị đơn đặt</span>
                 <a asp-controller="AdminOrders" asp-action="Index" class="adm-accent-link">
                     @Model.OrderedAmount.ToString("N0") ₫ <i class="bi bi-arrow-right-short"></i>
@@ -143,39 +148,39 @@
         </div>
     </div>
 
-    <!-- KPI 3: DOANH THU HÔM NAY & THÁNG -->
+    <!-- KPI 3: GIÁ TRỊ ĐÃ THANH TOÁN -->
     <div class="col">
         <div class="adm-card adm-kpi-card">
             <div class="adm-kpi-header">
                 <div>
                     <h2 class="adm-kpi-title">Giá trị đã thanh toán</h2>
-                    <div class="adm-kpi-value mt-2">@Model.PaidAmount.ToString("N0") <span class="adm-kpi-unit">₫</span></div>
+                    <div class="adm-kpi-value">@Model.PaidAmount.ToString("N0") <span class="adm-kpi-unit">₫</span></div>
                 </div>
-                <div class="adm-kpi-icon">
-                    <i class="bi bi-graph-up-arrow"></i>
+                <div class="adm-kpi-icon-pill blue">
+                    <i class="bi bi-credit-card-2-front"></i>
                 </div>
             </div>
-            <div class="adm-kpi-meta pt-2 justify-content-between">
-                <span>Trung bình mỗi đơn đã thanh toán</span>
+            <div class="adm-kpi-meta">
+                <span>TB mỗi đơn thanh toán</span>
                 <span class="adm-text-contrast fw-bold">@Model.AveragePaidOrderValue.ToString("N0") ₫</span>
             </div>
         </div>
     </div>
 
-    <!-- KPI 4: DANH MỤC & SẢN PHẨM HOẠT ĐỘNG -->
+    <!-- KPI 4: SẢN PHẨM & KHÁCH HÀNG -->
     <div class="col">
         <div class="adm-card adm-kpi-card">
             <div class="adm-kpi-header">
                 <div>
-                    <h2 class="adm-kpi-title">Sản phẩm</h2>
-                    <div class="adm-kpi-value mt-2">@Model.TotalProducts <span class="adm-kpi-unit">sản phẩm</span></div>
+                    <h2 class="adm-kpi-title">Sản phẩm hoạt động</h2>
+                    <div class="adm-kpi-value">@Model.TotalProducts <span class="adm-kpi-unit">mặt hàng</span></div>
                 </div>
-                <div class="adm-kpi-icon">
+                <div class="adm-kpi-icon-pill purple">
                     <i class="bi bi-box-seam"></i>
                 </div>
             </div>
-            <div class="adm-kpi-meta pt-2 justify-content-between">
-                <span>Số khách hàng hoạt động:</span>
+            <div class="adm-kpi-meta">
+                <span>Khách hàng hoạt động</span>
                 <span class="adm-text-contrast fw-bold">@Model.TotalCustomers khách</span>
             </div>
         </div>
@@ -195,7 +200,7 @@
                     <p class="text-muted small mb-0">Biểu đồ thể hiện dòng tiền đã giao nhận thành công</p>
                 </div>
                 <div class="d-flex align-items-center gap-2">
-                    <span style="width: 10px; height: 10px; border-radius: 50%; background: var(--adm-gold); display: inline-block;"></span>
+                    <span style="width: 10px; height: 10px; border-radius: 50%; background: #2563EB; display: inline-block;"></span>
                     <span class="small text-muted">Giá trị đơn đã giao (VND)</span>
                 </div>
             </div>
@@ -207,7 +212,10 @@
                 }
                 else
                 {
-                    <p class="text-muted">Giá trị đơn đã giao trong kỳ là 0 ₫.</p>
+                    <div class="h-100 d-flex flex-column align-items-center justify-content-center text-muted">
+                        <i class="bi bi-graph-up fs-2 mb-2 opacity-50"></i>
+                        <p class="mb-0">Giá trị đơn đã giao trong kỳ là 0 ₫.</p>
+                    </div>
                 }
             </div>
         </div>
@@ -217,11 +225,11 @@
     <div class="col-xl-4">
         <div class="adm-card h-100 d-flex flex-column justify-content-between">
             <div>
-                <h5 class="fw-bold mb-1 adm-heading">Cơ cấu Thanh toán & Đơn hàng</h5>
+                <h5 class="fw-bold mb-1 adm-heading">Cơ cấu Thanh toán &amp; Đơn hàng</h5>
                 <p class="text-muted small mb-3">Tỷ lệ thanh toán VietQR chuyển khoản vs Tiền mặt (COD)</p>
             </div>
 
-            <div style="height: 240px; position: relative;">
+            <div style="height: 230px; position: relative;">
                 <canvas id="admPaymentChart"></canvas>
             </div>
 
@@ -291,7 +299,7 @@
                                     <td>
                                         @if (order.PaymentMethod == PaymentMethod.VietQR)
                                         {
-                                            <span class="badge" style="background: rgba(2, 132, 199, 0.12); color: var(--adm-cyan); border: 1px solid rgba(2, 132, 199, 0.3);">
+                                            <span class="badge" style="background: rgba(2, 132, 199, 0.12); color: #0284C7; border: 1px solid rgba(2, 132, 199, 0.3);">
                                                 <i class="bi bi-qr-code me-1"></i> VietQR
                                             </span>
                                         }
@@ -346,7 +354,7 @@
             else
             {
                 <div class="text-center py-5 text-muted">
-                    <i class="bi bi-inbox fs-2 mb-2 d-block"></i>
+                    <i class="bi bi-inbox fs-2 mb-2 d-block opacity-50"></i>
                     Không có đơn hàng nào trong khoảng thời gian này.
                 </div>
             }
@@ -360,7 +368,7 @@
         <div class="adm-card">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h5 class="fw-bold mb-0 adm-heading">Top Sản phẩm Bán chạy</h5>
-                <span class="badge" style="background: rgba(179, 136, 47, 0.12); color: var(--adm-gold); border: 1px solid var(--adm-border-glow);">
+                <span class="badge" style="background: rgba(37, 99, 235, 0.1); color: var(--adm-cyan); border: 1px solid rgba(37, 99, 235, 0.2);">
                     LEADERBOARD
                 </span>
             </div>
@@ -388,7 +396,7 @@
                                 </div>
                             </div>
                             <div class="progress" style="height: 4px; background: var(--adm-border); border-radius: 2px;">
-                                <div class="progress-bar" style="width: @pct%; background: var(--adm-gold); border-radius: 2px;"></div>
+                                <div class="progress-bar" style="width: @pct%; background: #2563EB; border-radius: 2px;"></div>
                             </div>
                         </div>
                     }
@@ -410,7 +418,7 @@
                     <div class="text-muted" style="font-size: 0.72rem;">Mức tồn kho an toàn &le; 5 sản phẩm</div>
                 </div>
                 <a asp-controller="AdminProducts" asp-action="Index" asp-route-stock="low" class="text-decoration-none small text-danger fw-bold">
-                    Các sản phẩm sắp hết hàng &rarr;
+                    Xem tất cả &rarr;
                 </a>
             </div>
 
@@ -419,7 +427,7 @@
                 <div class="d-flex flex-column gap-2">
                     @foreach (var stock in Model.LowStockProducts.Take(6))
                     {
-                        <div class="d-flex align-items-center justify-content-between p-2 rounded-3" style="background: rgba(220, 38, 38, 0.08); border: 1px solid rgba(220, 38, 38, 0.22);">
+                        <div class="d-flex align-items-center justify-content-between p-2 rounded-3" style="background: rgba(220, 38, 38, 0.04); border: 1px solid rgba(220, 38, 38, 0.15);">
                             <div>
                                 <div class="adm-heading fw-semibold small text-truncate" style="max-width: 200px;" title="@stock.ProductName">
                                     @stock.ProductName
@@ -429,8 +437,8 @@
                                 </div>
                             </div>
                             <div class="text-end">
-                                <span class="badge bg-danger text-white fw-bold shadow-sm" style="font-size: 0.75rem;">
-                                    <i class="bi bi-exclamation-triangle-fill me-1"></i>[&#9888; Cần nhập thêm hàng] (Còn @stock.StockQuantity)
+                                <span class="adm-badge-stock-danger">
+                                    <i class="bi bi-exclamation-triangle-fill"></i> Còn @stock.StockQuantity chiếc
                                 </span>
                             </div>
                         </div>
@@ -469,22 +477,22 @@
         function getChartColors(theme) {
             const isDark = theme === 'dark';
             return {
-                textColor: isDark ? '#9e9a91' : '#5e6270',
-                gridColor: isDark ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0, 0, 0, 0.06)',
-                tooltipBg: isDark ? 'rgba(18, 18, 24, 0.95)' : 'rgba(255, 255, 255, 0.95)',
-                tooltipText: isDark ? '#f5f3ef' : '#121316',
-                tooltipBorder: isDark ? 'rgba(198, 163, 92, 0.4)' : 'rgba(179, 136, 47, 0.3)',
-                borderColor: '#b3882f',
-                gradientStart: isDark ? 'rgba(198, 163, 92, 0.35)' : 'rgba(179, 136, 47, 0.25)',
-                gradientEnd: isDark ? 'rgba(198, 163, 92, 0.0)' : 'rgba(179, 136, 47, 0.0)',
-                donutBorder: isDark ? '#121216' : '#ffffff'
+                textColor: isDark ? '#94A3B8' : '#64748B',
+                gridColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
+                tooltipBg: isDark ? '#1E293B' : '#FFFFFF',
+                tooltipText: isDark ? '#F8FAFC' : '#0F172A',
+                tooltipBorder: isDark ? '#334155' : '#E2E8F0',
+                borderColor: isDark ? '#38BDF8' : '#2563EB',
+                gradientStart: isDark ? 'rgba(56, 189, 248, 0.28)' : 'rgba(37, 99, 235, 0.20)',
+                gradientEnd: isDark ? 'rgba(56, 189, 248, 0.0)' : 'rgba(37, 99, 235, 0.0)',
+                donutBorder: isDark ? '#111827' : '#FFFFFF'
             };
         }
 
         function initCharts(theme) {
             const colors = getChartColors(theme);
             Chart.defaults.color = colors.textColor;
-            Chart.defaults.font.family = '"Jost", -apple-system, sans-serif';
+            Chart.defaults.font.family = '"Plus Jakarta Sans", system-ui, -apple-system, sans-serif';
 
             // 1. REVENUE SPLINE
             const revCtx = document.getElementById('admRevenueChart');
@@ -507,11 +515,11 @@
                             borderWidth: 2.5,
                             backgroundColor: gradient,
                             fill: true,
-                            tension: 0.38,
+                            tension: 0.35,
                             pointRadius: 4,
                             pointHoverRadius: 6,
                             pointBackgroundColor: colors.borderColor,
-                            pointBorderColor: theme === 'dark' ? '#0a0a0c' : '#ffffff',
+                            pointBorderColor: theme === 'dark' ? '#111827' : '#FFFFFF',
                             pointBorderWidth: 2
                         }]
                     },
@@ -569,8 +577,8 @@
                         datasets: [{
                             data: paymentData,
                             backgroundColor: [
-                                theme === 'dark' ? 'rgba(255, 255, 255, 0.15)' : '#e2e8f0', // COD
-                                '#0284c7'                                                  // VietQR
+                                theme === 'dark' ? 'rgba(255, 255, 255, 0.15)' : '#E2E8F0', // COD
+                                '#0284C7'                                                  // VietQR
                             ],
                             borderColor: colors.donutBorder,
                             borderWidth: 3,
