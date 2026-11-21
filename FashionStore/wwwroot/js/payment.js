@@ -209,6 +209,32 @@
         });
     });
 
+    const btnSimulateSePay = document.getElementById("btnSimulateSePay");
+    btnSimulateSePay?.addEventListener("click", async () => {
+        btnSimulateSePay.disabled = true;
+        const originalHtml = btnSimulateSePay.innerHTML;
+        btnSimulateSePay.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Đang giả lập SePay Webhook...';
+        try {
+            const orderCode = document.querySelector(".pay-order-code")?.textContent?.trim() || "";
+            const response = await fetch(`/api/sepay/simulate?orderCode=${encodeURIComponent(orderCode)}`, {
+                method: "POST"
+            });
+            const data = await readJson(response);
+            if (data.success) {
+                feedback("✅ Webhook SePay đã duyệt đơn thành công! Đang cập nhật trạng thái...");
+                await checkStatus();
+            } else {
+                feedback(data.message || "Không thể giả lập thanh toán.");
+                btnSimulateSePay.disabled = false;
+                btnSimulateSePay.innerHTML = originalHtml;
+            }
+        } catch (err) {
+            feedback("Lỗi kết nối giả lập: " + (err.message || err));
+            btnSimulateSePay.disabled = false;
+            btnSimulateSePay.innerHTML = originalHtml;
+        }
+    });
+
     button?.addEventListener("click", async () => {
         if (stopped || reported || button.disabled) return;
         reporting = true;

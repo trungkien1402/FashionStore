@@ -70,6 +70,7 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 // Services
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.Configure<VietQrOptions>(builder.Configuration.GetSection("VietQR"));
+builder.Services.Configure<SePayOptions>(builder.Configuration.GetSection(SePayOptions.Section));
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<AdminReportService>();
 builder.Services.AddSingleton<VietnamAddresses>();
