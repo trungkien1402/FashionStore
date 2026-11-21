@@ -79,87 +79,99 @@
         <section class="rail-product-overlay" id="productOverlay" role="dialog" aria-modal="true" aria-label="Chi tiết sản phẩm">
             <button type="button" class="rail-product-close" id="closeBtn">ĐÓNG <span>×</span></button>
             <div class="rail-detail-content">
-                <div class="rail-detail-image-row">
-                    <button type="button" class="rail-arrow-btn" id="prevBtn" aria-label="Sản phẩm trước">←</button>
-                    <img class="rail-detail-img" id="detailImage" alt="">
-                    <button type="button" class="rail-arrow-btn" id="nextBtn" aria-label="Sản phẩm sau">→</button>
-                </div>
-                <p class="rail-counter" id="counter"></p>
-                <h2 class="rail-detail-name" id="detailName"></h2>
-                <div class="rail-view-switch" id="viewSwitch" role="tablist" aria-label="Góc nhìn sản phẩm">
-                    <button type="button" class="rail-view-opt is-active" data-view="front" role="tab" aria-selected="true">Side A</button>
-                    <span class="rail-view-sep" aria-hidden="true">|</span>
-                    <button type="button" class="rail-view-opt is-dimmed" data-view="back" role="tab" aria-selected="false">Side B</button>
-                </div>
-                <p class="rail-description" id="description"></p>
-                <div class="rail-price-line">
-                    <span id="detailPrice"></span>
-                    <span class="rail-stock" id="stock"></span>
-                </div>
-                <span class="rail-options-label">MÀU SẮC</span>
-                <div class="rail-color-options" id="colors"></div>
-                <span class="rail-options-label">KÍCH CỠ</span>
-                <div class="rail-size-options" id="sizes"></div>
-                <p class="rail-size-hint" id="sizeHint"></p>
-                <button type="button" class="rail-cart-cta" id="cartCta">CHỌN KÍCH CỠ</button>
-                <p class="rail-delivery">Miễn phí giao hàng toàn quốc từ 500.000 ₫. Đổi trả trong 30 ngày.</p>
+                <div class="rail-detail-split-layout">
+                    <!-- CỘT TRÁI: HÌNH ẢNH SẢN PHẨM & GÓC NHÌN SIDE A/B -->
+                    <div class="rail-detail-col-visual">
+                        <div class="rail-detail-image-row">
+                            <button type="button" class="rail-arrow-btn" id="prevBtn" aria-label="Sản phẩm trước">←</button>
+                            <img class="rail-detail-img" id="detailImage" alt="">
+                            <button type="button" class="rail-arrow-btn" id="nextBtn" aria-label="Sản phẩm sau">→</button>
+                        </div>
+                        <div class="rail-view-switch" id="viewSwitch" role="tablist" aria-label="Góc nhìn sản phẩm">
+                            <button type="button" class="rail-view-opt is-active" data-view="front" role="tab" aria-selected="true">Side A</button>
+                            <span class="rail-view-sep" aria-hidden="true">|</span>
+                            <button type="button" class="rail-view-opt is-dimmed" data-view="back" role="tab" aria-selected="false">Side B</button>
+                        </div>
+                    </div>
 
-                <!-- ============================================================== -->
-                <!-- PHẦN ĐÁNH GIÁ SẢN PHẨM TRỰC TIẾP TRÊN SÀO ĐỒ 3D               -->
-                <!-- ============================================================== -->
-                <div class="rail-reviews-container" id="railReviewsContainer">
-                    <div class="rail-reviews-divider"></div>
-                    
-                    <div class="rail-reviews-header">
-                        <div class="rail-reviews-title-row">
-                            <span class="rail-reviews-badge"><i class="bi bi-shield-check"></i> ĐÁNH GIÁ XÁC THỰC</span>
-                            <div class="rail-reviews-score" id="railReviewsScore">
-                                <span class="score-stars" id="railScoreStars">★★★★★</span>
-                                <span class="score-num" id="railScoreNum">5.0</span>
-                                <span class="score-count" id="railScoreCount">(0)</span>
+                    <!-- CỘT PHẢI: THÔNG TIN CHI TIẾT, MUA HÀNG & ĐÁNH GIÁ -->
+                    <div class="rail-detail-col-info">
+                        <p class="rail-counter" id="counter"></p>
+                        <h2 class="rail-detail-name" id="detailName"></h2>
+                        <div class="rail-price-line">
+                            <span id="detailPrice"></span>
+                            <span class="rail-stock" id="stock"></span>
+                        </div>
+                        <p class="rail-description" id="description"></p>
+
+                        <div class="rail-detail-actions-panel">
+                            <span class="rail-options-label">MÀU SẮC</span>
+                            <div class="rail-color-options" id="colors"></div>
+                            <span class="rail-options-label">KÍCH CỠ</span>
+                            <div class="rail-size-options" id="sizes"></div>
+                            <p class="rail-size-hint" id="sizeHint"></p>
+                            <button type="button" class="rail-cart-cta" id="cartCta">CHỌN KÍCH CỠ</button>
+                            <p class="rail-delivery">Miễn phí giao hàng toàn quốc từ 500.000 ₫. Đổi trả trong 30 ngày.</p>
+                        </div>
+
+                        <!-- ============================================================== -->
+                        <!-- PHẦN ĐÁNH GIÁ SẢN PHẨM TRỰC TIẾP TRÊN SÀO ĐỒ 3D               -->
+                        <!-- ============================================================== -->
+                        <div class="rail-reviews-container" id="railReviewsContainer">
+                            <div class="rail-reviews-divider"></div>
+                            
+                            <div class="rail-reviews-header">
+                                <div class="rail-reviews-title-row">
+                                    <span class="rail-reviews-badge"><i class="bi bi-shield-check"></i> ĐÁNH GIÁ XÁC THỰC</span>
+                                    <div class="rail-reviews-score" id="railReviewsScore">
+                                        <span class="score-stars" id="railScoreStars">★★★★★</span>
+                                        <span class="score-num" id="railScoreNum">5.0</span>
+                                        <span class="score-count" id="railScoreCount">(0)</span>
+                                    </div>
+                                </div>
+                                <h4 class="rail-reviews-heading">ĐÁNH GIÁ TỪ KHÁCH HÀNG</h4>
                             </div>
-                        </div>
-                        <h4 class="rail-reviews-heading">ĐÁNH GIÁ TỪ KHÁCH HÀNG</h4>
-                    </div>
 
-                    <!-- FORM VIẾT ĐÁNH GIÁ (DÀNH CHO KHÁCH ĐÃ NHẬN HÀNG) -->
-                    <div class="rail-write-review-card" id="railWriteReviewCard" style="display: none;">
-                        <span class="rail-write-title"><i class="bi bi-star-fill text-warning"></i> Bạn đã mua sản phẩm này</span>
-                        <p class="rail-write-sub">Hãy chia sẻ cảm nhận thực tế về chất vải, form dáng và màu sắc nhé!</p>
-                        
-                        <div class="rail-star-selector" id="railStarSelector">
-                            <span class="star-label">Đánh giá:</span>
-                            <div class="star-btns" id="railStarBtns">
-                                <button type="button" class="rail-star-btn is-active" data-star="1">★</button>
-                                <button type="button" class="rail-star-btn is-active" data-star="2">★</button>
-                                <button type="button" class="rail-star-btn is-active" data-star="3">★</button>
-                                <button type="button" class="rail-star-btn is-active" data-star="4">★</button>
-                                <button type="button" class="rail-star-btn is-active" data-star="5">★</button>
+                            <!-- FORM VIẾT ĐÁNH GIÁ (DÀNH CHO KHÁCH ĐÃ NHẬN HÀNG) -->
+                            <div class="rail-write-review-card" id="railWriteReviewCard" style="display: none;">
+                                <span class="rail-write-title"><i class="bi bi-star-fill text-warning"></i> Bạn đã mua sản phẩm này</span>
+                                <p class="rail-write-sub">Hãy chia sẻ cảm nhận thực tế về chất vải, form dáng và màu sắc nhé!</p>
+                                
+                                <div class="rail-star-selector" id="railStarSelector">
+                                    <span class="star-label">Đánh giá:</span>
+                                    <div class="star-btns" id="railStarBtns">
+                                        <button type="button" class="rail-star-btn is-active" data-star="1">★</button>
+                                        <button type="button" class="rail-star-btn is-active" data-star="2">★</button>
+                                        <button type="button" class="rail-star-btn is-active" data-star="3">★</button>
+                                        <button type="button" class="rail-star-btn is-active" data-star="4">★</button>
+                                        <button type="button" class="rail-star-btn is-active" data-star="5">★</button>
+                                    </div>
+                                    <span class="star-mood-text" id="railStarMood">Tuyệt vời (5 sao)</span>
+                                </div>
+
+                                <textarea id="railReviewComment" class="rail-review-input" rows="3" maxlength="1000" placeholder="Viết cảm nhận của bạn về sản phẩm này..."></textarea>
+                                
+                                <button type="button" class="rail-review-submit-btn" id="railSubmitReviewBtn">
+                                    <i class="bi bi-send-fill"></i> GỬI ĐÁNH GIÁ
+                                </button>
+                                <p class="rail-review-msg" id="railReviewMsg" style="display: none;"></p>
                             </div>
-                            <span class="star-mood-text" id="railStarMood">Tuyệt vời (5 sao)</span>
-                        </div>
 
-                        <textarea id="railReviewComment" class="rail-review-input" rows="3" maxlength="1000" placeholder="Viết cảm nhận của bạn về sản phẩm này..."></textarea>
-                        
-                        <button type="button" class="rail-review-submit-btn" id="railSubmitReviewBtn">
-                            <i class="bi bi-send-fill"></i> GỬI ĐÁNH GIÁ
-                        </button>
-                        <p class="rail-review-msg" id="railReviewMsg" style="display: none;"></p>
-                    </div>
+                            <!-- TRẠNG THÁI KHÓA FORM: CHƯA MUA HOẶC ĐÃ ĐÁNH GIÁ -->
+                            <div class="rail-review-notice-box" id="railReviewNoticeBox">
+                                <i class="bi bi-info-circle"></i>
+                                <span id="railReviewNoticeText">Đánh giá chỉ dành cho khách hàng đã mua và nhận sản phẩm thành công.</span>
+                            </div>
 
-                    <!-- TRẠNG THÁI KHÓA FORM: CHƯA MUA HOẶC ĐÃ ĐÁNH GIÁ -->
-                    <div class="rail-review-notice-box" id="railReviewNoticeBox">
-                        <i class="bi bi-info-circle"></i>
-                        <span id="railReviewNoticeText">Đánh giá chỉ dành cho khách hàng đã mua và nhận sản phẩm thành công.</span>
-                    </div>
-
-                    <!-- DANH SÁCH BÌNH LUẬN THỰC TẾ -->
-                    <div class="rail-review-feed">
-                        <div class="rail-feed-header">
-                            <span>Nhận xét gần đây</span>
-                        </div>
-                        <div class="rail-review-items" id="railReviewItems">
-                            <div class="rail-review-loading">Đang tải đánh giá...</div>
+                            <!-- DANH SÁCH BÌNH LUẬN THỰC TẾ -->
+                            <div class="rail-review-feed">
+                                <div class="rail-feed-header">
+                                    <span>Nhận xét gần đây</span>
+                                </div>
+                                <div class="rail-review-items" id="railReviewItems">
+                                    <div class="rail-review-loading">Đang tải đánh giá...</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

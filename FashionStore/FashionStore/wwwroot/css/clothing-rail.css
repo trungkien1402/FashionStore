@@ -632,30 +632,137 @@
 
 .rail-detail-content {
     width: 100%;
-    max-width: 850px;
-    margin: 80px auto 45px;
-    padding: 0 20px;
+    max-width: 1240px;
+    margin: 70px auto 50px;
+    padding: 0 clamp(16px, 4vw, 48px);
+    box-sizing: border-box;
+}
+
+.rail-detail-split-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    align-items: center;
+    width: 100%;
+}
+
+/* Cột Trái: Trưng bày trực quan hình ảnh & đổi góc nhìn */
+.rail-detail-col-visual {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+/* Cột Phải: Thông tin chi tiết, thao tác mua hàng & đánh giá */
+.rail-detail-col-info {
+    width: 100%;
+    max-width: 540px;
+    display: flex;
+    flex-direction: column;
     text-align: center;
 }
 
+@media (min-width: 960px) {
+    .rail-detail-split-layout {
+        display: grid;
+        grid-template-columns: minmax(440px, 1.15fr) minmax(420px, 1fr);
+        gap: clamp(32px, 5vw, 72px);
+        align-items: start;
+        text-align: left;
+    }
+
+    .rail-detail-col-visual {
+        position: sticky;
+        top: 90px;
+        align-items: center;
+        padding-top: 10px;
+    }
+
+    .rail-detail-col-info {
+        max-width: 100%;
+        text-align: left;
+        padding-right: 12px;
+    }
+
+    .rail-detail-col-info .rail-counter {
+        margin: 0 0 10px;
+        text-align: left;
+    }
+
+    .rail-detail-col-info .rail-detail-name {
+        text-align: left;
+        font-size: clamp(30px, 3.2vw, 44px);
+        line-height: 1.15;
+    }
+
+    .rail-detail-col-info .rail-price-line {
+        justify-content: flex-start;
+        margin: 16px 0;
+    }
+
+    .rail-detail-col-info .rail-description {
+        text-align: left;
+        margin: 0 0 20px;
+        max-width: 100%;
+    }
+
+    .rail-detail-col-info .rail-options-label {
+        text-align: left;
+    }
+
+    .rail-detail-col-info .rail-color-options,
+    .rail-detail-col-info .rail-size-options {
+        justify-content: flex-start;
+    }
+
+    .rail-detail-col-info .rail-size-hint {
+        text-align: left;
+    }
+
+    .rail-detail-col-info .rail-cart-cta {
+        width: 100%;
+        margin: 12px 0 0;
+    }
+
+    .rail-detail-col-info .rail-delivery {
+        text-align: left;
+    }
+
+    .rail-detail-col-info .rail-reviews-container {
+        width: 100%;
+        margin: 36px 0 20px;
+    }
+}
+
 .rail-detail-image-row {
-    display: grid;
-    grid-template-columns: 75px 1fr 75px;
+    display: flex;
     align-items: center;
-    max-width: 650px;
-    margin: auto;
+    justify-content: center;
+    gap: 16px;
+    width: 100%;
+    max-width: 560px;
+    margin: 0 auto;
+    position: relative;
 }
 
 .rail-detail-img {
     display: block;
     width: auto;
-    max-width: min(100%, 340px);
-    height: min(40vh, 365px);
-    min-height: 255px;
+    max-width: min(100%, 420px);
+    height: min(58vh, 480px);
+    min-height: 300px;
     object-fit: contain;
     margin: 0 auto;
     animation: railEnter 0.7s var(--rail-ease);
-    filter: drop-shadow(0 17px 13px rgba(49, 53, 76, 0.16));
+    filter: drop-shadow(0 20px 24px rgba(43, 51, 96, 0.16));
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.rail-detail-img:hover {
+    transform: scale(1.03);
+    filter: drop-shadow(0 24px 32px rgba(43, 51, 96, 0.22));
 }
 
 @keyframes railEnter {
@@ -664,23 +771,25 @@
 }
 
 .rail-arrow-btn {
-    width: 46px;
-    height: 46px;
+    width: 48px;
+    height: 48px;
     border: 1.5px solid var(--rail-ink);
-    background: none;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(4px);
     border-radius: 50%;
-    font-size: 22px;
+    font-size: 20px;
     display: grid;
     place-items: center;
-    justify-self: center;
+    flex-shrink: 0;
     color: var(--rail-ink);
     cursor: pointer;
-    transition: background 0.2s, color 0.2s;
+    transition: all 0.25s ease;
 }
 
 .rail-arrow-btn:hover {
     background: var(--rail-ink);
     color: #ffffff;
+    transform: scale(1.08);
 }
 
 .rail-counter {
@@ -704,7 +813,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin: 6px auto 14px;
+    margin: 12px auto 14px;
     user-select: none;
     font-size: 14px;
     line-height: 1.2;
