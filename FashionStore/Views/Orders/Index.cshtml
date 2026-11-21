@@ -160,8 +160,8 @@
                     </div>
                 </div>
 
-                <!-- SELECT ẨN ĐỂ ĐỒNG BỘ VỚI ORDER-LIVE.JS -->
-                <select id="hnmtOrderStatusSelect" class="d-none" aria-hidden="true" tabindex="-1">
+                <!-- SELECT ẨN ĐỂ ĐỒNG BỘ VỚI ORDER-LIVE.JS (ẨN TUYỆT ĐỐI) -->
+                <select id="hnmtOrderStatusSelect" style="display: none !important;" aria-hidden="true" tabindex="-1">
                     <option value="all">all</option>
                     <option value="pending">pending</option>
                     <option value="shipping">shipping</option>
@@ -512,8 +512,8 @@
     overflow-x: auto;
     scrollbar-width: none;
     -ms-overflow-style: none;
-    margin-bottom: 16px;
-    padding-bottom: 4px;
+    margin-bottom: 14px;
+    padding-bottom: 2px;
 }
 
 .hnmt-status-tabs-scroll::-webkit-scrollbar {
@@ -521,23 +521,22 @@
 }
 
 .hnmt-status-tabs-bar {
-    display: inline-flex;
+    display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 6px;
-    background: #F1F5F9;
-    padding: 5px;
-    border-radius: 999px;
-    min-width: 100%;
+    gap: 8px;
+    background: transparent;
+    padding: 0;
 }
 
 .hnmt-status-tab {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    border: none;
-    background: transparent;
-    color: #64748B;
-    padding: 8px 18px;
+    border: 1.5px solid #E2E8F0;
+    background: #FFFFFF;
+    color: #475569;
+    padding: 7px 16px;
     border-radius: 999px;
     font-family: inherit;
     font-size: 0.85rem;
@@ -549,11 +548,13 @@
 
 .hnmt-status-tab:hover {
     color: #0F172A;
-    background: rgba(255, 255, 255, 0.6);
+    border-color: #0F172A;
+    background: #F8FAFC;
 }
 
 .hnmt-status-tab.active {
     background: #0F172A;
+    border-color: #0F172A;
     color: #FFFFFF;
     box-shadow: 0 2px 8px rgba(15, 23, 42, 0.15);
 }
@@ -561,9 +562,10 @@
 .hnmt-status-tab .tab-count {
     font-size: 0.75rem;
     font-weight: 800;
-    padding: 1px 7px;
+    padding: 2px 7px;
     border-radius: 999px;
-    background: rgba(0, 0, 0, 0.08);
+    background: #F1F5F9;
+    color: #475569;
 }
 
 .hnmt-status-tab.active .tab-count {
@@ -577,6 +579,8 @@
     flex-wrap: wrap;
     align-items: center;
     gap: 12px;
+    padding-top: 14px;
+    border-top: 1px solid #F1F5F9;
 }
 
 .hnmt-search-box {
