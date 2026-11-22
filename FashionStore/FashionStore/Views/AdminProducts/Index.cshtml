@@ -315,6 +315,10 @@ else
                                         <i class="bi @(product.IsActive ? "bi-eye" : "bi-eye-slash text-danger")"></i>
                                     </button>
                                 </form>
+
+                                <button type="button" class="adm-btn-table-action text-danger" style="height: 30px; width: 30px; padding: 0; justify-content: center;" title="Xóa sản phẩm" onclick="confirmDeleteProduct(@product.Id, '@Html.Raw(Html.Encode(product.Name))')">
+                                    <i class="bi bi-trash"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -417,6 +421,10 @@ else
                                             <i class="bi @(product.IsActive ? "bi-eye" : "bi-eye-slash text-danger")"></i>
                                         </button>
                                     </form>
+
+                                    <button type="button" class="adm-btn-table-action text-danger" style="height: 30px; width: 30px; padding: 0; justify-content: center;" title="Xóa sản phẩm" onclick="confirmDeleteProduct(@product.Id, '@Html.Raw(Html.Encode(product.Name))')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -450,7 +458,43 @@ else
 }
 
 @section Scripts {
+    <form id="admGlobalDeleteForm" asp-action="Delete" method="post" style="display:none;">
+        @Html.AntiForgeryToken()
+    </form>
     <script>
+        function confirmDeleteProduct(id, name) {
+            if (!confirm(`Bạn có chắc chắn muốn xóa sản phẩm "${name}"?\n\nLưu ý: Chỉ có thể xóa sản phẩm chưa phát sinh đơn hàng. Hành động này không thể hoàn tác!`)) {
+                return;
+            }
+
+            const form = document.getElementById('admGlobalDeleteForm');
+            const token = form.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+
+            const formData = new FormData();
+            formData.append('__RequestVerificationToken', token);
+
+            fetch(`/AdminProducts/Delete/${id}`, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    window.location.reload();
+                } else {
+                    alert(data.message || 'Không thể xóa sản phẩm.');
+                }
+            })
+            .catch(err => {
+                form.action = `/AdminProducts/Delete/${id}`;
+                form.submit();
+            });
+        }
+
         const btnGrid = document.getElementById('admBtnViewGrid');
         const btnTable = document.getElementById('admBtnViewTable');
         const viewGrid = document.getElementById('admViewGrid');

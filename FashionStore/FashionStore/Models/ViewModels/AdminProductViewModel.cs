@@ -40,6 +40,46 @@ public class AdminProductViewModel
     public bool IsActive { get; set; } = true;
 
     /// <summary>
+    /// Đối tượng trưng bày Showroom: "men" (Nam), "women" (Nữ), "boy" (Bé trai), "girls" (Bé gái)
+    /// </summary>
+    public string Audience { get; set; } = "men";
+
+    /// <summary>
+    /// Phân loại sào/sân khấu: "giay", "ao", "quan"
+    /// </summary>
+    public string Kind { get; set; } = "giay";
+
+    /// <summary>
+    /// Bộ sưu tập giày (VD: "STREET REMIX", "FUTURE LAB", "CYBER LAB"...)
+    /// </summary>
+    public string? CollectionTitle { get; set; } = "STREET REMIX";
+
+    /// <summary>
+    /// Chữ to in chìm sau giày (VD: "TOBACCO DECK", "DUNK PANDA"...)
+    /// </summary>
+    public string? HeroModelText { get; set; }
+
+    /// <summary>
+    /// Màu nền sân khấu (ThemeColor hex, VD: "#5C3A21")
+    /// </summary>
+    public string? ThemeColor { get; set; } = "#5C3A21";
+
+    /// <summary>
+    /// Tên phối màu (Colorway, VD: "TOBACCO / GUM", "PANDA"...)
+    /// </summary>
+    public string? ColorwayName { get; set; }
+
+    /// <summary>
+    /// Đơn vị thiết kế (VD: "HNMTSHOP", "NIKE"...)
+    /// </summary>
+    public string? Designer { get; set; } = "HNMTSHOP";
+
+    /// <summary>
+    /// Mã giày (StyleCode, VD: "MEN-TOBACCO-GUM-DECK")
+    /// </summary>
+    public string? StyleCode { get; set; }
+
+    /// <summary>
     /// Backdrop studio: "atelier" (ấm), "white" (trắng), "transparent" (trong suốt)
     /// </summary>
     public string StudioBackdrop { get; set; } = "atelier";

@@ -154,31 +154,82 @@ public class AdminProductsController : Controller
             var category = await _context.Categories.FindAsync(model.CategoryId);
             var catSlug = category?.Slug?.ToLower() ?? "";
             var catName = category?.Name?.ToLower() ?? "";
-            var isShoe = catSlug.Contains("giay") || catName.Contains("giày") || catSlug.Contains("shoe");
+            var isShoe = model.Kind == "giay" || catSlug.Contains("giay") || catName.Contains("giày") || catSlug.Contains("shoe");
+            var isPants = model.Kind == "quan" || catSlug.Contains("quan") || catName.Contains("quần") || catSlug.Contains("jeans") || catSlug.Contains("pant");
 
-            var photoObj = new
+            var audience = string.IsNullOrWhiteSpace(model.Audience) ? "men" : model.Audience.ToLowerInvariant();
+            var kind = isShoe ? "giay" : (isPants ? "quan" : "ao");
+
+            object metaObj;
+
+            if (isShoe)
             {
-                Front = imageUrl,
-                Side = sideUrl ?? imageUrl,
-                Back = backUrl ?? imageUrl,
-                Pair = pairUrl ?? imageUrl
-            };
+                var colTitle = string.IsNullOrWhiteSpace(model.CollectionTitle) ? "STREET REMIX" : model.CollectionTitle.Trim().ToUpperInvariant();
+                var colId = $"{audience}-{CreateSlug(colTitle)}";
+                var themeColor = string.IsNullOrWhiteSpace(model.ThemeColor) ? "#5C3A21" : model.ThemeColor.Trim();
+                var heroText = string.IsNullOrWhiteSpace(model.HeroModelText) ? model.Name.Trim().ToUpperInvariant() : model.HeroModelText.Trim().ToUpperInvariant();
+                var colorway = string.IsNullOrWhiteSpace(model.ColorwayName)
+                    ? (model.Variants.FirstOrDefault()?.Color ?? "ORIGINAL")
+                    : model.ColorwayName.Trim();
+                var styleCode = string.IsNullOrWhiteSpace(model.StyleCode)
+                    ? $"{audience.ToUpper()}-{CreateSlug(model.Name).ToUpper()}"
+                    : model.StyleCode.Trim().ToUpper();
+                var designer = string.IsNullOrWhiteSpace(model.Designer) ? "HNMTSHOP" : model.Designer.Trim();
 
-            var metaColors = (model.Variants != null && model.Variants.Any())
-                ? model.Variants.Select(v => v.Color).Distinct().Where(c => !string.IsNullOrWhiteSpace(c)).Select(c => new[] { c, "#18181B" }).ToArray()
-                : new[] { new[] { "Tiêu chuẩn", "#18181B" } };
-
-            var metaSizes = (model.Variants != null && model.Variants.Any())
-                ? model.Variants.Select(v => v.Size).Distinct().Where(s => !string.IsNullOrWhiteSpace(s)).ToArray()
-                : new[] { "FreeSize" };
-
-            var metaObj = new
+                metaObj = new
+                {
+                    colors = model.Variants.Select(v => v.Color).Distinct().Where(c => !string.IsNullOrWhiteSpace(c)).Select(c => new[] { c, themeColor }).ToArray(),
+                    photos = new[]
+                    {
+                        new
+                        {
+                            front = sideUrl ?? imageUrl,
+                            pair = pairUrl ?? imageUrl
+                        }
+                    },
+                    sizes = model.Variants.Select(v => v.Size).Distinct().Where(s => !string.IsNullOrWhiteSpace(s)).ToArray(),
+                    collection = new
+                    {
+                        id = colId,
+                        title = colTitle,
+                        order = 1
+                    },
+                    details = new
+                    {
+                        model = heroText,
+                        colorway = colorway,
+                        swatches = new[] { themeColor },
+                        themeColor = themeColor,
+                        accentColor = themeColor,
+                        silhouettes = new[] { "low-top" },
+                        styleCode = styleCode,
+                        designer = designer
+                    }
+                };
+            }
+            else
             {
-                Colors = metaColors,
-                Photos = new[] { photoObj },
-                Sizes = metaSizes,
-                Details = new { studioBackdrop = model.StudioBackdrop ?? "atelier" }
-            };
+                metaObj = new
+                {
+                    colors = model.Variants.Select(v => v.Color).Distinct().Where(c => !string.IsNullOrWhiteSpace(c)).Select(c => new[] { c, "#18181B" }).ToArray(),
+                    photos = new[]
+                    {
+                        new
+                        {
+                            front = imageUrl,
+                            side = sideUrl ?? imageUrl,
+                            back = backUrl ?? imageUrl,
+                            pair = (string?)null
+                        }
+                    },
+                    sizes = model.Variants.Select(v => v.Size).Distinct().Where(s => !string.IsNullOrWhiteSpace(s)).ToArray(),
+                    details = new
+                    {
+                        lookbookOnly = false,
+                        material = model.Description
+                    }
+                };
+            }
 
             var product = new Product
             {
@@ -188,8 +239,8 @@ public class AdminProductsController : Controller
                 Price = model.Price,
                 CategoryId = model.CategoryId,
                 ImageUrl = imageUrl,
-                ShowroomKind = isShoe ? "giay" : "ao",
-                ShowroomAudience = "men",
+                ShowroomKind = kind,
+                ShowroomAudience = audience,
                 ShowroomMetadata = System.Text.Json.JsonSerializer.Serialize(metaObj, ShowroomCatalog.JsonOptions),
                 IsActive = model.IsActive,
                 CreatedAt = DateTime.UtcNow
@@ -391,6 +442,74 @@ public class AdminProductsController : Controller
             ? "Đã hiển thị sản phẩm."
             : "Đã ẩn sản phẩm.";
 
+        return RedirectToAction(nameof(Index));
+    }
+
+    // POST: /AdminProducts/Delete/5
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var product = await _context.Products.FindAsync(id);
+        if (product == null)
+        {
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest" || Request.Headers.Accept.ToString().Contains("application/json"))
+                return Json(new { success = false, message = "Không tìm thấy sản phẩm." });
+
+            TempData["Error"] = "Không tìm thấy sản phẩm.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        var variants = await _context.ProductVariants.Where(v => v.ProductId == id).ToListAsync();
+        var variantIds = variants.Select(v => v.Id).ToList();
+
+        var hasOrders = await _context.OrderItems.AnyAsync(oi => variantIds.Contains(oi.ProductVariantId));
+        if (hasOrders)
+        {
+            var msg = "Sản phẩm này đã có đơn hàng trong hệ thống, không thể xóa vĩnh viễn để bảo toàn lịch sử giao dịch. Vui lòng tắt hiển thị (Ẩn sản phẩm) thay thế.";
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest" || Request.Headers.Accept.ToString().Contains("application/json"))
+                return Json(new { success = false, message = msg });
+
+            TempData["Error"] = msg;
+            return RedirectToAction(nameof(Index));
+        }
+
+        // Xóa giỏ hàng liên quan
+        var cartItems = await _context.CartItems.Where(c => variantIds.Contains(c.ProductVariantId)).ToListAsync();
+        _context.CartItems.RemoveRange(cartItems);
+
+        // Xóa biến động kho
+        var stockMovements = await _context.StockMovements.Where(sm => variantIds.Contains(sm.ProductVariantId)).ToListAsync();
+        _context.StockMovements.RemoveRange(stockMovements);
+
+        // Xóa đánh giá & nổi bật
+        var reviews = await _context.ProductReviews.Where(pr => pr.ProductId == id).ToListAsync();
+        _context.ProductReviews.RemoveRange(reviews);
+
+        var featured = await _context.FeaturedProducts.Where(fp => fp.ProductId == id).ToListAsync();
+        _context.FeaturedProducts.RemoveRange(featured);
+
+        // Gỡ liên kết voucher nếu có
+        var vouchers = await _context.Vouchers.Where(v => v.ProductId == id).ToListAsync();
+        foreach (var v in vouchers)
+        {
+            v.ProductId = null;
+        }
+
+        // Xóa biến thể
+        _context.ProductVariants.RemoveRange(variants);
+
+        // Xóa ảnh sản phẩm nếu là file cục bộ
+        DeleteImage(product.ImageUrl);
+
+        // Xóa sản phẩm
+        _context.Products.Remove(product);
+        await _context.SaveChangesAsync();
+
+        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest" || Request.Headers.Accept.ToString().Contains("application/json"))
+            return Json(new { success = true, message = $"Đã xóa sản phẩm '{product.Name}' thành công." });
+
+        TempData["Success"] = $"Đã xóa sản phẩm '{product.Name}' thành công.";
         return RedirectToAction(nameof(Index));
     }
 
