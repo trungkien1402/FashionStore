@@ -163,7 +163,80 @@ public class AdminProductsController : Controller
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Thêm sản phẩm thành công.";
+            // Khởi tạo tồn kho và biến thể ngay lập tức trên cùng 1 trang
+            _context.StockActorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            _context.StockReason = "Khởi tạo tồn kho sản phẩm " + product.Name;
+
+            var createdVariantsCount = 0;
+
+            if (model.ProductType == "simple")
+            {
+                // Tạo biến thể đơn giản FreeSize
+                var sku = await EnsureUniqueSkuAsync($"{product.Slug}-FREE");
+                var variant = new ProductVariant
+                {
+                    ProductId = product.Id,
+                    SKU = sku,
+                    Size = "FreeSize",
+                    Color = "Tiêu chuẩn",
+                    Price = product.Price,
+                    StockQuantity = Math.Max(0, model.SimpleStock),
+                    IsActive = true
+                };
+                _context.ProductVariants.Add(variant);
+                createdVariantsCount = 1;
+            }
+            else if (model.Variants != null && model.Variants.Any())
+            {
+                foreach (var v in model.Variants)
+                {
+                    if (string.IsNullOrWhiteSpace(v.Size) && string.IsNullOrWhiteSpace(v.Color))
+                        continue;
+
+                    var sizeStr = string.IsNullOrWhiteSpace(v.Size) ? "FreeSize" : v.Size.Trim();
+                    var colorStr = string.IsNullOrWhiteSpace(v.Color) ? "Tiêu chuẩn" : v.Color.Trim();
+
+                    var baseSku = string.IsNullOrWhiteSpace(v.SKU)
+                        ? $"{product.Slug}-{sizeStr}-{colorStr}"
+                        : v.SKU.Trim();
+
+                    var sku = await EnsureUniqueSkuAsync(baseSku);
+
+                    var variant = new ProductVariant
+                    {
+                        ProductId = product.Id,
+                        SKU = sku,
+                        Size = sizeStr,
+                        Color = colorStr,
+                        Price = v.Price > 0 ? v.Price : product.Price,
+                        StockQuantity = Math.Max(0, v.StockQuantity),
+                        IsActive = v.IsActive
+                    };
+                    _context.ProductVariants.Add(variant);
+                    createdVariantsCount++;
+                }
+            }
+            else
+            {
+                // Fallback nếu người dùng không sinh biến thể nào: tự động tạo 1 biến thể FreeSize để sản phẩm bán được ngay
+                var sku = await EnsureUniqueSkuAsync($"{product.Slug}-FREE");
+                var variant = new ProductVariant
+                {
+                    ProductId = product.Id,
+                    SKU = sku,
+                    Size = "FreeSize",
+                    Color = "Tiêu chuẩn",
+                    Price = product.Price,
+                    StockQuantity = Math.Max(0, model.SimpleStock),
+                    IsActive = true
+                };
+                _context.ProductVariants.Add(variant);
+                createdVariantsCount = 1;
+            }
+
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = $"Thêm sản phẩm \"{product.Name}\" và {createdVariantsCount} phân loại biến thể thành công.";
 
             return RedirectToAction(nameof(Index));
         }
@@ -388,5 +461,19 @@ public class AdminProductsController : Controller
         {
             System.IO.File.Delete(filePath);
         }
+    }
+
+    private async Task<string> EnsureUniqueSkuAsync(string baseSku)
+    {
+        var slug = CreateSlug(baseSku).ToUpperInvariant().Replace(" ", "-");
+        if (string.IsNullOrEmpty(slug)) slug = "SKU";
+        var uniqueSku = slug;
+        var counter = 1;
+        while (await _context.ProductVariants.AnyAsync(v => v.SKU == uniqueSku))
+        {
+            uniqueSku = $"{slug}-{counter}";
+            counter++;
+        }
+        return uniqueSku;
     }
 }

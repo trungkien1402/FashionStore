@@ -4,132 +4,612 @@
     ViewData["Title"] = "Thêm sản phẩm mới";
 }
 
+<!-- 1. BREADCRUMB & HEADER -->
 <div class="mb-4">
-    <a asp-action="Index" class="adm-btn-outline py-1 px-3 mb-3 d-inline-flex" style="font-size: 0.8rem;">
-        <i class="bi bi-arrow-left"></i>
-        <span>Quay lại Showroom</span>
-    </a>
-
-    <div class="d-flex align-items-center gap-2 mb-1">
-        <span style="font-size: 0.68rem; font-weight: 700; letter-spacing: 0.28em; color: var(--adm-gold); text-transform: uppercase;">
-            ATELIER PRODUCT STUDIO
-        </span>
-        <span style="width: 4px; height: 4px; border-radius: 50%; background: var(--adm-gold);"></span>
-        <span class="text-muted small">NEW ITEM CREATION</span>
+    <div class="d-flex align-items-center gap-2 mb-2">
+        <a asp-action="Index" class="adm-btn-action-secondary" style="height: 32px; padding: 0 12px; font-size: 0.78rem;">
+            <i class="bi bi-arrow-left"></i>
+            <span>Quay lại Showroom</span>
+        </a>
+        <span class="text-muted" style="font-size: 0.75rem;">/</span>
+        <span class="text-muted" style="font-size: 0.75rem;">HNMT ATELIER · SHOWROOM STUDIO</span>
     </div>
-    <h2 class="fw-bold mb-0 adm-heading" style="letter-spacing: -0.02em;">Thêm Sản phẩm Mới</h2>
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <div>
+            <h1 class="adm-title-main mb-1" style="font-size: 1.35rem; font-weight: 700; letter-spacing: -0.01em;">
+                Thêm Sản phẩm &amp; Khởi tạo Kho
+            </h1>
+            <p class="text-muted mb-0" style="font-size: 0.78rem;">
+                Nhập thông tin sản phẩm và thiết lập ma trận biến thể (Size, Màu, Tồn kho) trên cùng một trang.
+            </p>
+        </div>
+    </div>
 </div>
 
-<form asp-action="Create" method="post" enctype="multipart/form-data">
+<form asp-action="Create" method="post" enctype="multipart/form-data" id="createProductForm">
     @Html.AntiForgeryToken()
 
-    <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4"></div>
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4 py-2 px-3 border-0" style="font-size: 0.82rem; border-radius: 8px;"></div>
 
     <div class="row g-4">
-        <!-- LEFT COLUMN: MAIN SPECS -->
+        <!-- LEFT COLUMN: MAIN SPECS & VARIANT MATRIX -->
         <div class="col-lg-8">
-            <div class="adm-form-card mb-4">
-                <h5 class="fw-bold mb-3 adm-heading">Thông tin Sản phẩm</h5>
+
+            <!-- CARD 1: THÔNG TIN CƠ BẢN -->
+            <div class="adm-card mb-4">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <i class="bi bi-info-circle text-primary" style="font-size: 1rem;"></i>
+                    <h2 class="fw-bold mb-0" style="font-size: 0.92rem; color: var(--adm-ink);">Thông tin Cơ bản</h2>
+                </div>
 
                 <div class="mb-3">
-                    <label asp-for="Name" class="adm-form-label">Tên sản phẩm *</label>
-                    <input asp-for="Name" class="form-control adm-input-dark" placeholder="Ví dụ: Heavyweight Boxy Hoodie, Atelier Wool Coat..." />
-                    <span asp-validation-for="Name" class="text-danger small mt-1 d-block"></span>
+                    <label asp-for="Name" class="form-label text-muted small mb-1" style="font-size: 0.72rem; text-transform: uppercase; font-weight: 600;">
+                        Tên sản phẩm *
+                    </label>
+                    <input asp-for="Name" class="form-control adm-input-dark" id="productName"
+                           placeholder="Ví dụ: Áo Thun Oversize Heavyweight, Áo Khoác Denim Atelier..."
+                           style="height: 38px; font-size: 0.85rem;" required />
+                    <span asp-validation-for="Name" class="text-danger small mt-1 d-block" style="font-size: 0.74rem;"></span>
                 </div>
 
                 <div class="row g-3 mb-3">
                     <div class="col-md-6">
-                        <label asp-for="Price" class="adm-form-label">Giá bán niêm yết (VNĐ) *</label>
+                        <label asp-for="Price" class="form-label text-muted small mb-1" style="font-size: 0.72rem; text-transform: uppercase; font-weight: 600;">
+                            Giá bán niêm yết (₫) *
+                        </label>
                         <div class="input-group">
-                            <!-- FIXED: step="1" allows values like 299900 without browser constraint errors -->
-                            <input asp-for="Price" type="number" min="1" step="1"
-                                   class="form-control adm-input-dark" placeholder="299900" />
-                            <span class="input-group-text border-start-0" style="background: var(--adm-surface); border-color: var(--adm-border); color: var(--adm-gold); font-weight: 600;">
+                            <input asp-for="Price" type="number" min="1000" step="1000" id="productPrice"
+                                   class="form-control adm-input-dark" placeholder="350000"
+                                   style="height: 38px; font-size: 0.85rem;" required />
+                            <span class="input-group-text border-start-0 text-muted" style="background: var(--adm-surface); border-color: var(--adm-border); font-size: 0.82rem;">
                                 ₫
                             </span>
                         </div>
-                        <span asp-validation-for="Price" class="text-danger small mt-1 d-block"></span>
+                        <span asp-validation-for="Price" class="text-danger small mt-1 d-block" style="font-size: 0.74rem;"></span>
                     </div>
 
                     <div class="col-md-6">
-                        <label asp-for="CategoryId" class="adm-form-label">Bộ sưu tập / Danh mục *</label>
-                        <select asp-for="CategoryId" class="form-select adm-input-dark"
-                                asp-items="@(new SelectList(ViewBag.Categories, "Id", "Name"))">
+                        <label asp-for="CategoryId" class="form-label text-muted small mb-1" style="font-size: 0.72rem; text-transform: uppercase; font-weight: 600;">
+                            Bộ sưu tập / Danh mục *
+                        </label>
+                        <select asp-for="CategoryId" class="form-select adm-input-dark" id="productCategory"
+                                asp-items="@(new SelectList(ViewBag.Categories, "Id", "Name"))"
+                                style="height: 38px; font-size: 0.85rem;" required>
                             <option value="">-- Chọn danh mục --</option>
                         </select>
-                        <span asp-validation-for="CategoryId" class="text-danger small mt-1 d-block"></span>
+                        <span asp-validation-for="CategoryId" class="text-danger small mt-1 d-block" style="font-size: 0.74rem;"></span>
                     </div>
                 </div>
 
                 <div class="mb-0">
-                    <label asp-for="Description" class="adm-form-label">Mô tả & Câu chuyện sản phẩm</label>
-                    <textarea asp-for="Description" class="form-control adm-input-dark" rows="7"
-                              placeholder="Chi tiết chất liệu (Cotton 100%, GSM 380), phom dáng (Oversized Boxy Fit), kỹ thuật dệt may thủ công..."></textarea>
-                    <span asp-validation-for="Description" class="text-danger small mt-1 d-block"></span>
+                    <label asp-for="Description" class="form-label text-muted small mb-1" style="font-size: 0.72rem; text-transform: uppercase; font-weight: 600;">
+                        Mô tả &amp; Chi tiết chất liệu
+                    </label>
+                    <textarea asp-for="Description" class="form-control adm-input-dark" rows="4"
+                              placeholder="Chi tiết chất liệu (Cotton 100%, GSM 320), kiểu phom (Boxy Fit), thông số giặt ủi..."
+                              style="font-size: 0.84rem;"></textarea>
+                    <span asp-validation-for="Description" class="text-danger small mt-1 d-block" style="font-size: 0.74rem;"></span>
+                </div>
+            </div>
+
+            <!-- CARD 2: CẤU HÌNH SIZE, MÀU & MA TRẬN KHO (GAME CHANGER!) -->
+            <div class="adm-card mb-4" style="border: 2px solid #0F172A !important;">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-layers-half text-warning" style="font-size: 1.1rem;"></i>
+                        <div>
+                            <h2 class="fw-bold mb-0" style="font-size: 0.95rem; color: var(--adm-ink);">
+                                Phân loại Biến thể &amp; Khởi tạo Kho hàng
+                            </h2>
+                            <div class="text-muted" style="font-size: 0.74rem;">
+                                Tạo size, màu sắc và số lượng tồn kho để sản phẩm mở bán được ngay.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PRODUCT TYPE TOGGLE -->
+                    <div class="adm-segmented-control" role="group" aria-label="Loại sản phẩm" style="padding: 3px;">
+                        <label class="adm-segment active" id="btnTypeVariants" style="cursor: pointer; font-size: 0.76rem;">
+                            <input type="radio" name="ProductType" value="variants" checked class="d-none" id="radioVariants" />
+                            <i class="bi bi-grid-3x3-gap me-1"></i> Có nhiều Size / Màu
+                        </label>
+                        <label class="adm-segment" id="btnTypeSimple" style="cursor: pointer; font-size: 0.76rem;">
+                            <input type="radio" name="ProductType" value="simple" class="d-none" id="radioSimple" />
+                            <i class="bi bi-tag me-1"></i> FreeSize / 1 cỡ
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 2A. PANEL SIMPLE PRODUCT (FREESIZE) -->
+                <div id="panelSimpleProduct" class="d-none p-3 rounded-3" style="background: var(--adm-surface-hover); border: 1px solid var(--adm-border);">
+                    <div class="row align-items-center g-3">
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small mb-1" style="font-size: 0.72rem; text-transform: uppercase; font-weight: 600;">
+                                Số lượng tồn kho ban đầu (cái) *
+                            </label>
+                            <input type="number" min="0" name="SimpleStock" value="20" class="form-control adm-input-dark" style="height: 38px; font-size: 0.88rem; font-weight: 600;" />
+                        </div>
+                        <div class="col-md-6">
+                            <div class="text-muted" style="font-size: 0.76rem; line-height: 1.45;">
+                                <i class="bi bi-info-circle text-primary me-1"></i>
+                                Hệ thống sẽ tự động tạo một phân loại <strong>FreeSize / Tiêu chuẩn</strong> với số tồn kho này. Khách hàng có thể đặt mua ngay lập tức.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2B. PANEL MATRIX VARIANTS (SIZE & COLOR CHIPS GENERATOR) -->
+                <div id="panelMatrixVariants">
+                    <!-- 1. QUICK SIZE CHIPS -->
+                    <div class="mb-3 p-3 rounded-3" style="background: var(--adm-surface-hover); border: 1px solid var(--adm-border);">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label class="text-muted small mb-0" style="font-size: 0.72rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.04em;">
+                                1. Chọn các kích cỡ (Sizes)
+                            </label>
+                            <span class="text-muted" style="font-size: 0.7rem;">Click để chọn nhanh</span>
+                        </div>
+
+                        <!-- CLOTHING SIZES -->
+                        <div class="d-flex flex-wrap align-items-center gap-1 mb-2">
+                            <span class="text-muted small me-2" style="font-size: 0.7rem;">Quần áo:</span>
+                            @foreach (var s in new[] { "XS", "S", "M", "L", "XL", "2XL", "3XL", "FreeSize" })
+                            {
+                                <button type="button" class="adm-chip-btn size-chip @(s == "S" || s == "M" || s == "L" ? "active" : "")" data-size="@s">
+                                    <span>@s</span>
+                                </button>
+                            }
+                        </div>
+
+                        <!-- SHOE SIZES -->
+                        <div class="d-flex flex-wrap align-items-center gap-1 mb-2">
+                            <span class="text-muted small me-2" style="font-size: 0.7rem;">Giày dép:</span>
+                            @foreach (var s in new[] { "38", "39", "40", "41", "42", "43", "44" })
+                            {
+                                <button type="button" class="adm-chip-btn size-chip" data-size="@s">
+                                    <span>@s</span>
+                                </button>
+                            }
+                        </div>
+
+                        <!-- CUSTOM SIZE INPUT -->
+                        <div class="d-flex align-items-center gap-2 mt-2 pt-2 border-top" style="border-color: var(--adm-border) !important;">
+                            <input type="text" id="customSizeInput" placeholder="Thêm size khác (VD: 29, 30, Oversized...)" class="form-control adm-input-dark" style="height: 32px; font-size: 0.78rem; max-width: 280px;" />
+                            <button type="button" id="btnAddCustomSize" class="adm-btn-action-secondary" style="height: 32px; padding: 0 12px; font-size: 0.76rem;">
+                                <i class="bi bi-plus-lg"></i> Thêm size
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 2. QUICK COLOR CHIPS -->
+                    <div class="mb-3 p-3 rounded-3" style="background: var(--adm-surface-hover); border: 1px solid var(--adm-border);">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label class="text-muted small mb-0" style="font-size: 0.72rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.04em;">
+                                2. Chọn các màu sắc (Colors)
+                            </label>
+                            <span class="text-muted" style="font-size: 0.7rem;">Click để chọn nhanh</span>
+                        </div>
+
+                        <div class="d-flex flex-wrap align-items-center gap-1 mb-2">
+                            @foreach (var c in new[] { "Đen", "Trắng", "Xám", "Be", "Xanh Navy", "Nâu", "Xanh Rêu" })
+                            {
+                                <button type="button" class="adm-chip-btn color-chip @(c == "Đen" ? "active" : "")" data-color="@c">
+                                    <span>@c</span>
+                                </button>
+                            }
+                        </div>
+
+                        <!-- CUSTOM COLOR INPUT -->
+                        <div class="d-flex align-items-center gap-2 mt-2 pt-2 border-top" style="border-color: var(--adm-border) !important;">
+                            <input type="text" id="customColorInput" placeholder="Thêm màu khác (VD: Xanh Cobalt, Đỏ Rượu...)" class="form-control adm-input-dark" style="height: 32px; font-size: 0.78rem; max-width: 280px;" />
+                            <button type="button" id="btnAddCustomColor" class="adm-btn-action-secondary" style="height: 32px; padding: 0 12px; font-size: 0.76rem;">
+                                <i class="bi bi-plus-lg"></i> Thêm màu
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 3. LIVE MATRIX TABLE & BULK STOCK CONTROLS -->
+                    <div class="pt-2">
+                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="fw-bold" style="font-size: 0.86rem; color: var(--adm-ink);">Bảng Biến thể Tự động sinh:</span>
+                                <span class="adm-pill gray" id="lblVariantCount" style="font-size: 0.72rem;">0 phân loại</span>
+                            </div>
+
+                            <!-- BULK STOCK TOOL -->
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="text-muted small" style="font-size: 0.72rem;">Điền tồn kho hàng loạt:</span>
+                                <input type="number" min="0" id="bulkStockInput" value="15" class="form-control adm-input-dark text-center" style="height: 30px; width: 65px; font-size: 0.78rem; padding: 0;" />
+                                <button type="button" id="btnApplyBulkStock" class="adm-btn-action-secondary" style="height: 30px; padding: 0 10px; font-size: 0.74rem;" title="Áp dụng số tồn này cho toàn bộ bảng">
+                                    <i class="bi bi-check2-all me-1"></i> Áp dụng tất cả
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- DYNAMIC VARIANT TABLE -->
+                        <div class="table-responsive border rounded-3" style="border-color: var(--adm-border) !important;">
+                            <table class="table align-middle mb-0" id="matrixTable" style="font-size: 0.82rem; border-color: var(--adm-border);">
+                                <thead>
+                                    <tr style="background: var(--adm-surface-hover); font-size: 0.72rem; color: var(--adm-ink-muted); text-transform: uppercase;">
+                                        <th class="ps-3 py-2">Phân loại</th>
+                                        <th class="py-2" style="width: 25%;">Mã SKU</th>
+                                        <th class="py-2 text-end" style="width: 22%;">Giá bán (₫)</th>
+                                        <th class="py-2 text-center" style="width: 18%;">Tồn kho</th>
+                                        <th class="py-2 pe-3 text-end" style="width: 40px;"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="matrixTableBody">
+                                    <!-- Populated via JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- RIGHT COLUMN: MEDIA & STATUS -->
+        <!-- RIGHT COLUMN: MEDIA, PREVIEW & SUBMIT -->
         <div class="col-lg-4">
-            <div class="adm-form-card mb-4">
-                <h5 class="fw-bold mb-3 adm-heading">Hình ảnh & Trạng thái</h5>
 
-                <div class="mb-3">
-                    <label class="adm-form-label" id="imgLabel">Ảnh đại diện sản phẩm *</label>
-
-                    <!-- FIXED: Keyboard accessible label with tabindex="0", focus-visible outline and Enter/Space support -->
-                    <label for="ImageFile" tabindex="0" role="button" aria-labelledby="imgLabel"
-                           class="adm-img-preview-box mb-2" id="imageUploadBox"
-                           onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();document.getElementById('ImageFile').click();}">
-                        <img id="imagePreview" src="#" alt="Xem trước" class="d-none" />
-                        <div id="imagePlaceholder" class="text-center p-3">
-                            <i class="bi bi-cloud-arrow-up fs-2" style="color: var(--adm-gold);"></i>
-                            <div class="small fw-semibold mt-2 adm-heading">Chọn ảnh từ máy (Nhấn Enter)</div>
-                            <div class="text-muted" style="font-size: 0.72rem;">Hỗ trợ JPG, PNG, WEBP (Tối đa 5MB)</div>
-                        </div>
-                    </label>
-
-                    <input asp-for="ImageFile" type="file" id="ImageFile" class="visually-hidden"
-                           accept=".jpg,.jpeg,.png,.webp"
-                           onchange="previewAdmImage(this, 'imagePreview', 'imagePlaceholder')" />
-
-                    <div class="d-flex align-items-center justify-content-between mt-1">
-                        <button type="button" class="btn btn-sm adm-btn-outline py-1 px-3" onclick="document.getElementById('ImageFile').click()">
-                            <i class="bi bi-folder2-open me-1"></i> Duyệt tệp...
-                        </button>
-                        <span class="text-muted small" style="font-size: 0.72rem;">Bắt buộc</span>
-                    </div>
-
-                    <span asp-validation-for="ImageFile" class="text-danger small mt-1 d-block"></span>
+            <!-- CARD 1: MEDIA UPLOAD -->
+            <div class="adm-card mb-4">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <i class="bi bi-image text-primary" style="font-size: 1rem;"></i>
+                    <h2 class="fw-bold mb-0" style="font-size: 0.92rem; color: var(--adm-ink);">Hình ảnh Đại diện *</h2>
                 </div>
 
-                <div class="pt-3 border-top border-secondary border-opacity-10">
-                    <div class="form-check form-switch d-flex align-items-center justify-content-between p-0 mb-0">
-                        <label class="form-check-label fw-semibold adm-heading" for="IsActive" style="cursor: pointer;">
-                            Hiển thị trên Shop
-                            <div class="text-muted fw-normal" style="font-size: 0.75rem;">Cho phép khách hàng xem và đặt mua</div>
-                        </label>
-                        <input asp-for="IsActive" class="form-check-input ms-3" type="checkbox" role="switch" id="IsActive" checked style="cursor: pointer; width: 2.5em; height: 1.3em;" />
+                <!-- DRAG & DROP ZONE -->
+                <div class="adm-dropzone mb-2" id="dropZone" onclick="document.getElementById('productImageFile').click()">
+                    <input asp-for="ImageFile" type="file" id="productImageFile" class="visually-hidden"
+                           accept=".jpg,.jpeg,.png,.webp" required onchange="handleFileSelect(this)" />
+
+                    <!-- PLACEHOLDER STATE -->
+                    <div id="dropPlaceholder">
+                        <i class="bi bi-cloud-arrow-up" style="font-size: 2rem; color: var(--adm-ink-muted);"></i>
+                        <div class="fw-semibold mt-2" style="font-size: 0.84rem; color: var(--adm-ink);">
+                            Kéo thả ảnh vào đây hoặc duyệt file
+                        </div>
+                        <div class="text-muted mt-1" style="font-size: 0.72rem;">
+                            Hỗ trợ JPG, PNG, WEBP (Tối đa 5MB)
+                        </div>
                     </div>
+
+                    <!-- PREVIEW STATE -->
+                    <div id="dropPreview" class="d-none position-relative">
+                        <img id="previewImg" src="#" alt="Preview" class="rounded-2" style="width: 100%; max-height: 240px; object-fit: contain; background: #F8FAFC;" />
+                        <button type="button" class="btn btn-sm btn-dark position-absolute top-0 end-0 m-2 rounded-circle" style="width: 28px; height: 28px; padding: 0;" onclick="removeImage(event)" title="Xóa ảnh">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </div>
+                </div>
+                <span asp-validation-for="ImageFile" class="text-danger small mt-1 d-block" style="font-size: 0.74rem;"></span>
+            </div>
+
+            <!-- CARD 2: STATUS & SALES CHANNELS -->
+            <div class="adm-card mb-4">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <i class="bi bi-toggles text-primary" style="font-size: 1rem;"></i>
+                    <h2 class="fw-bold mb-0" style="font-size: 0.92rem; color: var(--adm-ink);">Trạng thái &amp; Hiển thị</h2>
+                </div>
+
+                <div class="form-check form-switch d-flex align-items-center justify-content-between p-0 mb-0">
+                    <label class="form-check-label fw-semibold" for="IsActive" style="cursor: pointer; font-size: 0.84rem; color: var(--adm-ink);">
+                        Mở bán ngay trên Shop
+                        <div class="text-muted fw-normal" style="font-size: 0.74rem;">Khách hàng có thể tìm kiếm và đặt mua ngay</div>
+                    </label>
+                    <input asp-for="IsActive" class="form-check-input ms-3" type="checkbox" role="switch" id="IsActive" checked style="cursor: pointer; width: 2.4em; height: 1.25em;" />
                 </div>
             </div>
 
-            <!-- ACTIONS -->
-            <div class="d-flex flex-column gap-2">
-                <button type="submit" class="btn adm-btn-atelier py-2 justify-content-center w-100">
-                    <i class="bi bi-check2-circle"></i>
-                    <span>Tạo và tiếp tục tạo Size</span>
+            <!-- CARD 3: SUBMIT ACTIONS -->
+            <div class="adm-card" style="border: 1px solid var(--adm-border);">
+                <button type="submit" class="adm-btn-action-primary py-2 mb-2 w-100 justify-content-center" style="height: 42px; font-size: 0.86rem; font-weight: 700;">
+                    <i class="bi bi-check2-circle fs-5 me-1"></i>
+                    <span>Lưu &amp; Kích hoạt Bán ngay</span>
                 </button>
 
-                <a asp-action="Index" class="btn adm-btn-outline py-2 justify-content-center w-100">
-                    Hủy thao tác
+                <a asp-action="Index" class="adm-btn-action-secondary py-2 w-100 justify-content-center text-decoration-none" style="height: 38px;">
+                    Hủy &amp; Quay lại
                 </a>
             </div>
+
         </div>
     </div>
 </form>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        // 1. PRODUCT TYPE TOGGLE (Variants vs Simple)
+        const btnTypeVariants = document.getElementById('btnTypeVariants');
+        const btnTypeSimple = document.getElementById('btnTypeSimple');
+        const radioVariants = document.getElementById('radioVariants');
+        const radioSimple = document.getElementById('radioSimple');
+        const panelMatrixVariants = document.getElementById('panelMatrixVariants');
+        const panelSimpleProduct = document.getElementById('panelSimpleProduct');
+
+        function setProductType(type) {
+            if (type === 'simple') {
+                radioSimple.checked = true;
+                btnTypeSimple.classList.add('active');
+                btnTypeVariants.classList.remove('active');
+                panelMatrixVariants.classList.add('d-none');
+                panelSimpleProduct.classList.remove('d-none');
+            } else {
+                radioVariants.checked = true;
+                btnTypeVariants.classList.add('active');
+                btnTypeSimple.classList.remove('active');
+                panelSimpleProduct.classList.add('d-none');
+                panelMatrixVariants.classList.remove('d-none');
+                renderMatrix();
+            }
+        }
+
+        btnTypeVariants?.addEventListener('click', () => setProductType('variants'));
+        btnTypeSimple?.addEventListener('click', () => setProductType('simple'));
+
+        // 2. ACTIVE SIZES AND COLORS STATE
+        let activeSizes = ['S', 'M', 'L'];
+        let activeColors = ['Đen'];
+
+        function initChips() {
+            document.querySelectorAll('.size-chip').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const size = btn.getAttribute('data-size');
+                    if (btn.classList.contains('active')) {
+                        btn.classList.remove('active');
+                        activeSizes = activeSizes.filter(s => s !== size);
+                    } else {
+                        btn.classList.add('active');
+                        if (!activeSizes.includes(size)) activeSizes.push(size);
+                    }
+                    renderMatrix();
+                });
+            });
+
+            document.querySelectorAll('.color-chip').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const color = btn.getAttribute('data-color');
+                    if (btn.classList.contains('active')) {
+                        btn.classList.remove('active');
+                        activeColors = activeColors.filter(c => c !== color);
+                    } else {
+                        btn.classList.add('active');
+                        if (!activeColors.includes(color)) activeColors.push(color);
+                    }
+                    renderMatrix();
+                });
+            });
+        }
+        initChips();
+
+        // ADD CUSTOM SIZE
+        document.getElementById('btnAddCustomSize')?.addEventListener('click', () => {
+            const input = document.getElementById('customSizeInput');
+            const val = input.value.trim();
+            if (!val) return;
+            if (!activeSizes.includes(val)) {
+                activeSizes.push(val);
+                // Create a new chip in the UI
+                const newChip = document.createElement('button');
+                newChip.type = 'button';
+                newChip.className = 'adm-chip-btn size-chip active';
+                newChip.setAttribute('data-size', val);
+                newChip.innerHTML = `<span>${val}</span>`;
+                newChip.addEventListener('click', () => {
+                    if (newChip.classList.contains('active')) {
+                        newChip.classList.remove('active');
+                        activeSizes = activeSizes.filter(s => s !== val);
+                    } else {
+                        newChip.classList.add('active');
+                        if (!activeSizes.includes(val)) activeSizes.push(val);
+                    }
+                    renderMatrix();
+                });
+                input.parentElement.before(newChip);
+            }
+            input.value = '';
+            renderMatrix();
+        });
+
+        // ADD CUSTOM COLOR
+        document.getElementById('btnAddCustomColor')?.addEventListener('click', () => {
+            const input = document.getElementById('customColorInput');
+            const val = input.value.trim();
+            if (!val) return;
+            if (!activeColors.includes(val)) {
+                activeColors.push(val);
+                const newChip = document.createElement('button');
+                newChip.type = 'button';
+                newChip.className = 'adm-chip-btn color-chip active';
+                newChip.setAttribute('data-color', val);
+                newChip.innerHTML = `<span>${val}</span>`;
+                newChip.addEventListener('click', () => {
+                    if (newChip.classList.contains('active')) {
+                        newChip.classList.remove('active');
+                        activeColors = activeColors.filter(c => c !== val);
+                    } else {
+                        newChip.classList.add('active');
+                        if (!activeColors.includes(val)) activeColors.push(val);
+                    }
+                    renderMatrix();
+                });
+                input.parentElement.before(newChip);
+            }
+            input.value = '';
+            renderMatrix();
+        });
+
+        // 3. GENERATE SLUG HELPER
+        function makeSlug(str) {
+            return str.toLowerCase().trim()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                .replace(/[đĐ]/g, 'd')
+                .replace(/[^a-z0-9 -]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-');
+        }
+
+        // 4. RENDER MATRIX TABLE
+        function renderMatrix() {
+            const tbody = document.getElementById('matrixTableBody');
+            const lblCount = document.getElementById('lblVariantCount');
+            if (!tbody) return;
+
+            const prodName = document.getElementById('productName')?.value.trim() || 'SP';
+            const baseSlug = makeSlug(prodName).toUpperCase() || 'PROD';
+            const defaultPrice = document.getElementById('productPrice')?.value || '350000';
+            const bulkStock = document.getElementById('bulkStockInput')?.value || '15';
+
+            const sizes = activeSizes.length > 0 ? activeSizes : ['FreeSize'];
+            const colors = activeColors.length > 0 ? activeColors : ['Tiêu chuẩn'];
+
+            let html = '';
+            let index = 0;
+
+            sizes.forEach(size => {
+                colors.forEach(color => {
+                    const sizeSlug = makeSlug(size).toUpperCase();
+                    const colorSlug = makeSlug(color).toUpperCase();
+                    const generatedSku = `${baseSlug}-${sizeSlug}-${colorSlug}`;
+
+                    html += `
+                        <tr id="rowVariant_${index}" style="border-bottom: 1px solid var(--adm-border);">
+                            <td class="ps-3 py-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="adm-pill gray" style="font-size: 0.74rem; font-weight: 600;">Size: ${size}</span>
+                                    <span class="adm-pill gray" style="font-size: 0.74rem;">${color}</span>
+                                    <input type="hidden" name="Variants[${index}].Size" value="${size}" />
+                                    <input type="hidden" name="Variants[${index}].Color" value="${color}" />
+                                    <input type="hidden" name="Variants[${index}].IsActive" value="true" />
+                                </div>
+                            </td>
+                            <td>
+                                <input type="text" name="Variants[${index}].SKU" value="${generatedSku}"
+                                       class="form-control adm-input-dark font-monospace variant-sku-input"
+                                       style="height: 32px; font-size: 0.78rem;" />
+                            </td>
+                            <td class="text-end">
+                                <input type="number" min="0" step="1000" name="Variants[${index}].Price" value="${defaultPrice}"
+                                       class="form-control adm-input-dark text-end variant-price-input"
+                                       style="height: 32px; font-size: 0.78rem;" />
+                            </td>
+                            <td class="text-center">
+                                <input type="number" min="0" name="Variants[${index}].StockQuantity" value="${bulkStock}"
+                                       class="form-control adm-input-dark text-center variant-stock-input"
+                                       style="height: 32px; font-size: 0.82rem; font-weight: 600;" />
+                            </td>
+                            <td class="pe-3 text-end">
+                                <button type="button" class="btn btn-sm text-danger p-0 border-0" onclick="removeVariantRow(${index})" title="Bỏ phân loại này">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    index++;
+                });
+            });
+
+            tbody.innerHTML = html;
+            if (lblCount) lblCount.textContent = `${index} phân loại`;
+        }
+
+        // UPDATE PRICES OR SKUS WHEN MAIN INPUTS CHANGE
+        document.getElementById('productName')?.addEventListener('input', () => {
+            // Update SKUs if not manually modified
+            const baseSlug = makeSlug(document.getElementById('productName').value).toUpperCase() || 'PROD';
+            document.querySelectorAll('.variant-sku-input').forEach(input => {
+                const parts = input.value.split('-');
+                if (parts.length >= 3) {
+                    input.value = `${baseSlug}-${parts[parts.length - 2]}-${parts[parts.length - 1]}`;
+                }
+            });
+        });
+
+        document.getElementById('productPrice')?.addEventListener('input', (e) => {
+            const newPrice = e.target.value;
+            if (newPrice) {
+                document.querySelectorAll('.variant-price-input').forEach(input => {
+                    input.value = newPrice;
+                });
+            }
+        });
+
+        // BULK APPLY STOCK BUTTON
+        document.getElementById('btnApplyBulkStock')?.addEventListener('click', () => {
+            const bulkVal = document.getElementById('bulkStockInput')?.value || '10';
+            document.querySelectorAll('.variant-stock-input').forEach(input => {
+                input.value = bulkVal;
+            });
+        });
+
+        function removeVariantRow(index) {
+            const row = document.getElementById(`rowVariant_${index}`);
+            row?.remove();
+            const currentRows = document.querySelectorAll('#matrixTableBody tr').length;
+            const lblCount = document.getElementById('lblVariantCount');
+            if (lblCount) lblCount.textContent = `${currentRows} phân loại`;
+        }
+
+        // INITIAL RENDER
+        renderMatrix();
+
+        // 5. IMAGE DRAG AND DROP & PREVIEW
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('productImageFile');
+        const dropPlaceholder = document.getElementById('dropPlaceholder');
+        const dropPreview = document.getElementById('dropPreview');
+        const previewImg = document.getElementById('previewImg');
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.classList.add('dragover');
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.classList.remove('dragover');
+            });
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            if (files && files.length > 0) {
+                fileInput.files = files;
+                handleFileSelect(fileInput);
+            }
+        });
+
+        function handleFileSelect(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('Ảnh không được vượt quá 5MB.');
+                    input.value = '';
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    dropPlaceholder.classList.add('d-none');
+                    dropPreview.classList.remove('d-none');
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeImage(e) {
+            e.stopPropagation();
+            fileInput.value = '';
+            previewImg.src = '#';
+            dropPreview.classList.add('d-none');
+            dropPlaceholder.classList.remove('d-none');
+        }
+    </script>
 }

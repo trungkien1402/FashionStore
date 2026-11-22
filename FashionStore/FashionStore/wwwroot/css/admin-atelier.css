@@ -3790,3 +3790,56 @@ body.adm-body {
     font-size: 0.74rem;
     color: var(--adm-ink-muted);
 }
+
+/* ================= ALL-IN-ONE PRODUCT CREATION STUDIO ================= */
+.adm-chip-btn {
+    border: 1px solid var(--adm-border);
+    background: var(--adm-surface);
+    color: var(--adm-ink);
+    padding: 5px 12px;
+    border-radius: 9999px;
+    font-size: 0.76rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.adm-chip-btn:hover {
+    background: var(--adm-surface-hover);
+    border-color: var(--adm-ink-muted);
+}
+
+.adm-chip-btn.active {
+    background: #0F172A !important;
+    color: #FFFFFF !important;
+    border-color: #0F172A !important;
+}
+
+[data-theme="dark"] .adm-chip-btn.active {
+    background: #38BDF8 !important;
+    color: #09090B !important;
+    border-color: #38BDF8 !important;
+}
+
+.adm-dropzone {
+    border: 2px dashed var(--adm-border);
+    border-radius: 12px;
+    padding: 24px 16px;
+    text-align: center;
+    cursor: pointer;
+    background: var(--adm-surface);
+    transition: all 0.2s ease;
+}
+
+.adm-dropzone:hover, .adm-dropzone.dragover {
+    border-color: #0F172A;
+    background: var(--adm-surface-hover);
+}
+
+[data-theme="dark"] .adm-dropzone:hover, [data-theme="dark"] .adm-dropzone.dragover {
+    border-color: #38BDF8;
+}
