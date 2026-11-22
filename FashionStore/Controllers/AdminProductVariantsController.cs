@@ -21,21 +21,39 @@ public class AdminProductVariantsController : Controller
     }
 
     // GET: /AdminProductVariants?productId=1
-    public async Task<IActionResult> Index(int productId, bool? low = null)
+    public async Task<IActionResult> Index(int productId, string? stock = null, bool? low = null)
     {
         var product = await _context.Products
+            .Include(p => p.Category)
             .AsNoTracking()
             .FirstOrDefaultAsync(p => p.Id == productId);
 
         if (product == null)
             return NotFound();
 
-        var query = _context.ProductVariants
+        var allVariantsQuery = _context.ProductVariants
             .Where(v => v.ProductId == productId);
 
-        if (low == true)
+        ViewBag.CountAll = await allVariantsQuery.CountAsync();
+        ViewBag.CountLow = await allVariantsQuery.CountAsync(v => v.IsActive && v.StockQuantity > 0 && v.StockQuantity <= ProductVariant.DefaultSafetyStock);
+        ViewBag.CountOut = await allVariantsQuery.CountAsync(v => v.StockQuantity == 0);
+        ViewBag.TotalStock = await allVariantsQuery.Where(v => v.IsActive).SumAsync(v => (long?)v.StockQuantity) ?? 0;
+
+        var query = allVariantsQuery;
+
+        if (stock == "low" || low == true)
         {
-            query = query.Where(v => v.IsActive && v.StockQuantity <= ProductVariant.DefaultSafetyStock);
+            query = query.Where(v => v.IsActive && v.StockQuantity > 0 && v.StockQuantity <= ProductVariant.DefaultSafetyStock);
+            ViewBag.StockFilter = "low";
+        }
+        else if (stock == "out")
+        {
+            query = query.Where(v => v.StockQuantity == 0);
+            ViewBag.StockFilter = "out";
+        }
+        else
+        {
+            ViewBag.StockFilter = null;
         }
 
         var variants = await query
@@ -46,7 +64,6 @@ public class AdminProductVariantsController : Controller
             .ToListAsync();
 
         ViewBag.Product = product;
-        ViewBag.LowFilter = low == true;
 
         return View(variants);
     }
