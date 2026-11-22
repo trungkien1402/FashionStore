@@ -1,78 +1,63 @@
 @model FashionStore.Models.ViewModels.AdminProductViewModel
 
 @{
-    ViewData["Title"] = "Thêm sản phẩm mới - Atelier Studio";
+    ViewData["Title"] = "Thêm sản phẩm mới";
 }
 
 <style>
-    /* ATELIER PRODUCT STUDIO UX */
-    .adm-archetype-card {
-        border: 2px solid var(--adm-border);
-        border-radius: 12px;
-        background: var(--adm-surface);
-        padding: 14px 18px;
-        cursor: pointer;
-        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        user-select: none;
-        flex: 1;
-    }
-    .adm-archetype-card:hover {
-        border-color: #CBD5E1;
-        background: #FFFFFF;
-        transform: translateY(-1px);
-    }
-    .adm-archetype-card.active {
-        border-color: #18181B;
-        background: #18181B;
-        color: #FFFFFF !important;
-        box-shadow: 0 4px 14px rgba(0,0,0,0.12);
-    }
-    .adm-archetype-card.active .text-muted {
-        color: #94A3B8 !important;
-    }
-    .adm-archetype-card.active .adm-archetype-icon {
-        background: #27272A;
-        color: #FFFFFF;
-        border-color: #3F3F46;
-    }
-    .adm-archetype-icon {
-        width: 44px;
-        height: 44px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.4rem;
+    /* ATELIER CLEAN MINIMAL STUDIO */
+    .adm-segment-group {
+        display: inline-flex;
         background: #F4F4F5;
+        padding: 3px;
+        border-radius: 8px;
         border: 1px solid var(--adm-border);
-        flex-shrink: 0;
-        transition: all 0.2s;
+        gap: 2px;
+    }
+    .adm-segment-item {
+        border: none;
+        background: transparent;
+        color: #71717A;
+        font-size: 0.8rem;
+        font-weight: 500;
+        padding: 6px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        user-select: none;
+    }
+    .adm-segment-item:hover {
+        color: #18181B;
+    }
+    .adm-segment-item.active {
+        background: #FFFFFF;
+        color: #18181B;
+        font-weight: 600;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
     }
 
     /* VISUAL STUDIO STAGE */
     .adm-stage-card {
         background: #FFFFFF;
         border: 1px solid var(--adm-border);
-        border-radius: 14px;
-        padding: 22px;
-        position: sticky;
-        top: 24px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+        border-radius: 12px;
+        padding: 16px;
     }
     .adm-stage-viewport {
         width: 100%;
         aspect-ratio: 1 / 1;
-        border-radius: 12px;
+        border-radius: 10px;
         position: relative;
         overflow: hidden;
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: background 0.3s ease;
+        transition: background 0.25s ease;
         border: 1px dashed #CBD5E1;
+        background: #F8FAFC;
         cursor: pointer;
     }
     .adm-stage-viewport.has-image {
@@ -80,47 +65,43 @@
         border-color: var(--adm-border);
     }
     .adm-stage-viewport.dragover {
-        border-color: #D4AF37;
-        background: rgba(212, 175, 55, 0.08) !important;
+        border-color: #18181B;
+        background: #F1F5F9 !important;
     }
     .adm-stage-img {
-        max-width: 88%;
-        max-height: 88%;
+        max-width: 86%;
+        max-height: 86%;
         object-fit: contain;
-        transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), filter 0.25s;
-    }
-    .adm-stage-viewport:hover .adm-stage-img {
-        transform: scale(1.02);
+        transition: transform 0.2s ease, filter 0.2s ease;
     }
 
     /* ANGLE STRIP THUMBNAILS */
     .adm-angle-strip {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-        margin-top: 14px;
+        gap: 8px;
+        margin-top: 12px;
     }
     .adm-angle-thumb {
-        border: 2px solid var(--adm-border);
+        border: 1.5px solid var(--adm-border);
         border-radius: 8px;
-        background: #F8FAFC;
-        padding: 8px 6px;
+        background: #FAFAFA;
+        padding: 6px 4px;
         text-align: center;
         cursor: pointer;
         transition: all 0.15s ease;
-        position: relative;
     }
     .adm-angle-thumb:hover {
-        border-color: #94A3B8;
+        border-color: #A1A1AA;
     }
     .adm-angle-thumb.active {
         border-color: #18181B;
         background: #FFFFFF;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
     }
     .adm-angle-thumb-preview {
         width: 100%;
-        height: 52px;
+        height: 48px;
         object-fit: contain;
         border-radius: 4px;
     }
@@ -132,43 +113,61 @@
     }
     .adm-sheet-table th {
         background: #F8FAFC;
-        color: #64748B;
+        color: #71717A;
         font-size: 0.72rem;
         text-transform: uppercase;
         letter-spacing: 0.04em;
-        font-weight: 700;
-        padding: 10px 12px;
+        font-weight: 600;
+        padding: 9px 12px;
         border-bottom: 1px solid var(--adm-border);
     }
     .adm-sheet-table td {
-        padding: 8px 12px;
+        padding: 7px 12px;
         vertical-align: middle;
         border-bottom: 1px solid #F1F5F9;
+    }
+
+    /* FIX BOOTSTRAP SWITCH BLEEDING */
+    .adm-switch-wrapper {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .adm-clean-switch {
+        margin: 0 !important;
+        float: none !important;
+        cursor: pointer;
+        width: 2.2em !important;
+        height: 1.2em !important;
     }
 </style>
 
 <!-- 1. BREADCRUMB & HEADER -->
 <div class="mb-4">
     <div class="d-flex align-items-center gap-2 mb-2">
-        <a asp-action="Index" class="adm-btn-action-secondary" style="height: 32px; padding: 0 12px; font-size: 0.78rem;">
+        <a asp-action="Index" class="adm-btn-action-secondary" style="height: 30px; padding: 0 10px; font-size: 0.78rem;">
             <i class="bi bi-arrow-left"></i>
             <span>Quay lại Showroom</span>
         </a>
-        <span class="text-muted" style="font-size: 0.75rem;">/</span>
-        <span class="text-muted" style="font-size: 0.75rem;">HNMT ATELIER · PRODUCT STUDIO</span>
     </div>
 
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
         <div>
-            <div class="d-flex align-items-center gap-2 mb-1 adm-meta-crumb">
-                <span class="adm-pulse-dot"></span>
-                <span class="adm-kicker-text">CREATIVE PRODUCT WORKSPACE</span>
-                <span class="adm-meta-divider">/</span>
-                <span class="adm-order-count-badge">CHUẨN QUỐC TẾ FARFETCH &amp; SSENSE</span>
-            </div>
-            <h1 class="adm-title-main mb-0" style="font-size: 1.4rem; font-weight: 700; letter-spacing: -0.01em;">
-                Atelier Product Studio &amp; Inventory Suite
+            <h1 class="adm-title-main mb-0" style="font-size: 1.35rem; font-weight: 700; letter-spacing: -0.01em;">
+                Thêm Sản phẩm mới
             </h1>
+        </div>
+
+        <!-- PRODUCT ARCHETYPE TOGGLE (COMPACT & CLEAN) -->
+        <div class="adm-segment-group">
+            <button type="button" class="adm-segment-item active" id="btnArchetypeShoes" onclick="selectArchetype('shoes')">
+                <span>👟</span>
+                <span>Giày dép</span>
+            </button>
+            <button type="button" class="adm-segment-item" id="btnArchetypeClothes" onclick="selectArchetype('clothes')">
+                <span>🧥</span>
+                <span>Quần áo</span>
+            </button>
         </div>
     </div>
 </div>
@@ -179,76 +178,31 @@
 
     <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4 py-2 px-3 border-0" style="font-size: 0.82rem; border-radius: 8px;"></div>
 
-    <!-- 2. ARCHETYPE SELECTOR (CHỌN ĐÚNG BẢN CHẤT NGAY BƯỚC ĐẦU) -->
-    <div class="mb-4">
-        <div class="d-flex align-items-center justify-content-between mb-2">
-            <span style="font-size: 0.72rem; font-weight: 700; letter-spacing: 0.15em; color: var(--adm-gold); text-transform: uppercase;">
-                1. CHỌN LOẠI SẢN PHẨM (PRODUCT ARCHETYPE)
-            </span>
-            <span class="text-muted" style="font-size: 0.74rem;">Hệ thống sẽ tự động cấu hình Size, Phối màu &amp; Góc chụp chuẩn</span>
-        </div>
-
-        <div class="d-flex flex-column flex-md-row gap-3">
-            <!-- ARCHETYPE: FOOTWEAR -->
-            <div class="adm-archetype-card active" id="cardArchetypeShoes" onclick="selectArchetype('shoes')">
-                <div class="adm-archetype-icon">👟</div>
-                <div>
-                    <div class="fw-bold" style="font-size: 0.95rem;">Giày Dép &amp; Sneakers (Footwear Atelier)</div>
-                    <div class="text-muted small">Hệ size số EU (38-45), Tên phối màu Colorway, Studio 2 chiếc nghệ thuật &amp; góc nghiêng</div>
-                </div>
-            </div>
-
-            <!-- ARCHETYPE: APPAREL -->
-            <div class="adm-archetype-card" id="cardArchetypeClothes" onclick="selectArchetype('clothes')">
-                <div class="adm-archetype-icon">🧥</div>
-                <div>
-                    <div class="fw-bold" style="font-size: 0.95rem;">Quần Áo &amp; Outerwear (Apparel Atelier)</div>
-                    <div class="text-muted small">Hệ size chữ (XS-3XL), Bảng màu đơn sắc/họa tiết, Studio 3 góc (Mặt trước, Mặt sau, Bên hông)</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 3. MAIN WORKSPACE: 2-WING ATELIER ARCHITECTURE -->
+    <!-- 2. MAIN 2-WING WORKSPACE -->
     <div class="row g-4">
 
-        <!-- LEFT WING: VISUAL STUDIO STAGE (5 COLS - IMMERSIVE PHOTOGRAPHY) -->
+        <!-- LEFT WING: VISUAL STUDIO STAGE (5 COLS) -->
         <div class="col-lg-5">
             <div class="adm-stage-card">
                 <!-- STAGE HEADER -->
-                <div class="d-flex align-items-center justify-content-between mb-3">
-                    <div class="d-flex align-items-center gap-2">
-                        <i class="bi bi-camera text-primary" style="font-size: 1.1rem;"></i>
-                        <div>
-                            <div class="fw-bold" style="font-size: 0.92rem; color: var(--adm-ink);">Visual Studio Stage</div>
-                            <div class="text-muted" id="stageAngleSubtitle" style="font-size: 0.72rem;">Ảnh 2 đôi nghệ thuật (Hero)</div>
-                        </div>
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <div class="fw-bold" style="font-size: 0.88rem; color: var(--adm-heading);">
+                        Ảnh sản phẩm
                     </div>
-                    <span id="stageProtocolBadge" class="adm-pill dark" style="font-size: 0.68rem; font-weight: 700;">
-                        FOOTWEAR PROTOCOL
-                    </span>
-                </div>
 
-                <!-- STUDIO BACKDROP SELECTOR -->
-                <div class="p-2 mb-3 rounded-2" style="background: var(--adm-surface); border: 1px solid var(--adm-border);">
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                        <span class="text-muted small" style="font-size: 0.68rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em;">
-                            Phông nền Studio:
-                        </span>
-                        <span class="text-muted" style="font-size: 0.68rem;">Đồng bộ ánh sáng toàn web</span>
-                    </div>
-                    <div class="d-flex gap-1">
-                        <button type="button" class="btn btn-sm adm-chip-btn active flex-fill justify-content-center backdrop-btn" data-backdrop="atelier" onclick="selectBackdrop('atelier')">
-                            <span style="width: 10px; height: 10px; border-radius: 50%; background: #FAF8F5; border: 1px solid #D4AF37; display: inline-block;"></span>
-                            <span style="font-size: 0.72rem;">Atelier Ấm</span>
+                    <!-- STUDIO BACKDROP SELECTOR -->
+                    <div class="d-flex gap-1" id="backdropGroup">
+                        <button type="button" class="btn btn-sm adm-chip-btn active py-0 px-2 backdrop-btn" style="height: 26px; font-size: 0.7rem;" data-backdrop="atelier" onclick="selectBackdrop('atelier')">
+                            <span style="width: 8px; height: 8px; border-radius: 50%; background: #FAF8F5; border: 1px solid #D4AF37; display: inline-block;"></span>
+                            <span>Atelier</span>
                         </button>
-                        <button type="button" class="btn btn-sm adm-chip-btn flex-fill justify-content-center backdrop-btn" data-backdrop="white" onclick="selectBackdrop('white')">
-                            <span style="width: 10px; height: 10px; border-radius: 50%; background: #FFFFFF; border: 1px solid #CBD5E1; display: inline-block;"></span>
-                            <span style="font-size: 0.72rem;">Trắng Tinh</span>
+                        <button type="button" class="btn btn-sm adm-chip-btn py-0 px-2 backdrop-btn" style="height: 26px; font-size: 0.7rem;" data-backdrop="white" onclick="selectBackdrop('white')">
+                            <span style="width: 8px; height: 8px; border-radius: 50%; background: #FFFFFF; border: 1px solid #CBD5E1; display: inline-block;"></span>
+                            <span>Trắng</span>
                         </button>
-                        <button type="button" class="btn btn-sm adm-chip-btn flex-fill justify-content-center backdrop-btn" data-backdrop="transparent" onclick="selectBackdrop('transparent')">
-                            <span style="width: 10px; height: 10px; border-radius: 50%; background: repeating-conic-gradient(#808080 0% 25%, transparent 0% 50%) 50%/6px 6px; display: inline-block;"></span>
-                            <span style="font-size: 0.72rem;">Trong suốt</span>
+                        <button type="button" class="btn btn-sm adm-chip-btn py-0 px-2 backdrop-btn" style="height: 26px; font-size: 0.7rem;" data-backdrop="transparent" onclick="selectBackdrop('transparent')">
+                            <span style="width: 8px; height: 8px; border-radius: 50%; background: repeating-conic-gradient(#808080 0% 25%, transparent 0% 50%) 50%/4px 4px; display: inline-block;"></span>
+                            <span>Trong suốt</span>
                         </button>
                     </div>
                 </div>
@@ -258,11 +212,11 @@
                     <!-- GHOST SILHOUETTE PLACEHOLDER -->
                     <div id="stagePlaceholder" class="text-center p-3">
                         <div id="stageGhostIcon" class="mb-2"></div>
-                        <div class="fw-semibold" id="stageSlotTitle" style="font-size: 0.88rem; color: var(--adm-ink);">
+                        <div class="fw-semibold" id="stageSlotTitle" style="font-size: 0.84rem; color: var(--adm-ink);">
                             Tải ảnh 2 Đôi Xếp Nghệ Thuật
                         </div>
-                        <div class="text-muted small mt-1" id="stageSlotDesc" style="font-size: 0.72rem; max-width: 260px; margin: 0 auto;">
-                            Kéo thả ảnh hoặc click để duyệt (Hỗ trợ JPG, PNG, WEBP)
+                        <div class="text-muted small mt-1" style="font-size: 0.72rem;">
+                            Kéo thả hoặc click để tải ảnh lên
                         </div>
                     </div>
 
@@ -270,15 +224,15 @@
                     <img id="stageImg" src="#" alt="Studio Stage" class="adm-stage-img d-none" />
                 </div>
 
-                <!-- STAGE ACTION BUTTONS -->
-                <div class="d-flex gap-2 mt-3">
-                    <button type="button" id="btnStageMagic" class="adm-btn-action-primary flex-fill justify-content-center py-2" style="height: 38px; font-size: 0.78rem; font-weight: 600;" onclick="processStageMagic()" disabled>
-                        <i class="bi bi-magic me-1"></i> Tách nền &amp; Chuẩn hóa Studio
+                <!-- STAGE ACTION BUTTONS (CLEAN & ALIGNED) -->
+                <div class="d-flex gap-2 mt-2">
+                    <button type="button" id="btnStageMagic" class="adm-action-btn adm-btn-primary flex-fill justify-content-center" style="height: 36px; font-size: 0.78rem; font-weight: 600;" onclick="processStageMagic()" disabled>
+                        <i class="bi bi-magic me-1"></i> Tách nền studio
                     </button>
-                    <button type="button" id="btnStageReset" class="adm-btn-action-secondary py-2" style="height: 38px; padding: 0 14px; font-size: 0.78rem;" onclick="resetStageImage()" title="Khôi phục ảnh gốc" disabled>
+                    <button type="button" id="btnStageReset" class="adm-btn-action-secondary" style="height: 36px; padding: 0 12px; font-size: 0.78rem;" onclick="resetStageImage()" title="Khôi phục ảnh gốc" disabled>
                         <i class="bi bi-arrow-counterclockwise"></i>
                     </button>
-                    <button type="button" id="btnStageRemove" class="adm-btn-action-secondary py-2 text-danger" style="height: 38px; padding: 0 14px; font-size: 0.78rem;" onclick="removeStageImage()" title="Xóa ảnh góc này" disabled>
+                    <button type="button" id="btnStageRemove" class="adm-btn-action-secondary text-danger" style="height: 36px; padding: 0 12px; font-size: 0.78rem;" onclick="removeStageImage()" title="Xóa ảnh" disabled>
                         <i class="bi bi-trash"></i>
                     </button>
                 </div>
@@ -287,27 +241,27 @@
                 <div class="adm-angle-strip">
                     <div class="adm-angle-thumb active" id="thumbSlot1" onclick="switchActiveSlot(1)">
                         <div class="adm-angle-thumb-preview d-flex align-items-center justify-content-center bg-white border" id="thumbBox1">
-                            <span class="text-muted small" style="font-size: 0.65rem;">Chưa có</span>
+                            <span class="text-muted small" style="font-size: 0.65rem;">Trống</span>
                         </div>
-                        <div class="fw-bold mt-1 text-truncate" id="thumbTitle1" style="font-size: 0.7rem;">Góc Hero *</div>
+                        <div class="fw-semibold mt-1 text-truncate" id="thumbTitle1" style="font-size: 0.72rem;">2 Đôi (Hero) *</div>
                     </div>
 
                     <div class="adm-angle-thumb" id="thumbSlot2" onclick="switchActiveSlot(2)">
                         <div class="adm-angle-thumb-preview d-flex align-items-center justify-content-center bg-white border" id="thumbBox2">
-                            <span class="text-muted small" style="font-size: 0.65rem;">Chưa có</span>
+                            <span class="text-muted small" style="font-size: 0.65rem;">Trống</span>
                         </div>
-                        <div class="fw-bold mt-1 text-truncate" id="thumbTitle2" style="font-size: 0.7rem;">Góc 2</div>
+                        <div class="fw-semibold mt-1 text-truncate" id="thumbTitle2" style="font-size: 0.72rem;">Nghiêng 1 Bên</div>
                     </div>
 
                     <div class="adm-angle-thumb" id="thumbSlot3" onclick="switchActiveSlot(3)">
                         <div class="adm-angle-thumb-preview d-flex align-items-center justify-content-center bg-white border" id="thumbBox3">
-                            <span class="text-muted small" style="font-size: 0.65rem;">Chưa có</span>
+                            <span class="text-muted small" style="font-size: 0.65rem;">Trống</span>
                         </div>
-                        <div class="fw-bold mt-1 text-truncate" id="thumbTitle3" style="font-size: 0.7rem;">Góc 3</div>
+                        <div class="fw-semibold mt-1 text-truncate" id="thumbTitle3" style="font-size: 0.72rem;">Mặt đế / Chi tiết</div>
                     </div>
                 </div>
 
-                <!-- HIDDEN REAL FILE INPUTS -->
+                <!-- HIDDEN FILE INPUTS -->
                 <input asp-for="ImageFile" type="file" id="realInputSlot1" class="d-none" accept=".jpg,.jpeg,.png,.webp" required onchange="handleStageFileSelect(1, this)" />
                 <input asp-for="ImageBackFile" type="file" id="realInputSlot2" class="d-none" accept=".jpg,.jpeg,.png,.webp" onchange="handleStageFileSelect(2, this)" />
                 <input asp-for="ImageSideFile" type="file" id="realInputSlot3" class="d-none" accept=".jpg,.jpeg,.png,.webp" onchange="handleStageFileSelect(3, this)" />
@@ -316,107 +270,85 @@
             </div>
         </div>
 
-        <!-- RIGHT WING: PRODUCT SPECS & LUXURY INVENTORY MATRIX (7 COLS) -->
+        <!-- RIGHT WING: PRODUCT SPECS & INVENTORY (7 COLS) -->
         <div class="col-lg-7">
 
-            <!-- CARD 1: ĐỊNH DANH & BỘ SƯU TẬP -->
-            <div class="adm-card mb-4">
-                <div class="d-flex align-items-center gap-2 mb-3">
-                    <i class="bi bi-tag text-primary" style="font-size: 1rem;"></i>
-                    <h2 class="fw-bold mb-0" style="font-size: 0.92rem; color: var(--adm-ink);">Thông tin Định danh Sản phẩm</h2>
+            <!-- CARD 1: THÔNG TIN CƠ BẢN -->
+            <div class="adm-card mb-3">
+                <div class="fw-bold mb-3" style="font-size: 0.88rem; color: var(--adm-heading);">
+                    Thông tin cơ bản
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="Name" class="form-label text-muted small mb-1" style="font-size: 0.72rem; text-transform: uppercase; font-weight: 600;">
-                        Tên sản phẩm *
-                    </label>
+                    <label asp-for="Name" class="adm-form-label">Tên sản phẩm *</label>
                     <input asp-for="Name" class="form-control adm-input-dark" id="productName"
-                           placeholder="Ví dụ: Nike Dunk Low Retro Panda, Áo Khoác Denim Atelier..."
-                           style="height: 40px; font-size: 0.88rem; font-weight: 600;" required />
-                    <span asp-validation-for="Name" class="text-danger small mt-1 d-block" style="font-size: 0.74rem;"></span>
+                           placeholder="VD: Nike Dunk Low Retro Panda" style="height: 38px; font-size: 0.86rem;" required />
+                    <span asp-validation-for="Name" class="text-danger small mt-1 d-block"></span>
                 </div>
 
                 <div class="row g-3 mb-3">
                     <div class="col-md-6">
-                        <label asp-for="Price" class="form-label text-muted small mb-1" style="font-size: 0.72rem; text-transform: uppercase; font-weight: 600;">
-                            Giá niêm yết (₫) *
-                        </label>
+                        <label asp-for="Price" class="adm-form-label">Giá niêm yết (₫) *</label>
                         <div class="input-group">
                             <input asp-for="Price" type="number" min="1000" step="1000" id="productPrice"
                                    class="form-control adm-input-dark" placeholder="1850000"
-                                   style="height: 38px; font-size: 0.88rem; font-weight: 600;" required />
+                                   style="height: 38px; font-size: 0.86rem; font-weight: 600;" required />
                             <span class="input-group-text border-start-0 text-muted" style="background: var(--adm-surface); border-color: var(--adm-border); font-size: 0.82rem;">
                                 ₫
                             </span>
                         </div>
-                        <span asp-validation-for="Price" class="text-danger small mt-1 d-block" style="font-size: 0.74rem;"></span>
+                        <span asp-validation-for="Price" class="text-danger small mt-1 d-block"></span>
                     </div>
 
                     <div class="col-md-6">
-                        <label asp-for="CategoryId" class="form-label text-muted small mb-1" style="font-size: 0.72rem; text-transform: uppercase; font-weight: 600;">
-                            Danh mục phân loại *
-                        </label>
+                        <label asp-for="CategoryId" class="adm-form-label">Danh mục *</label>
                         <select asp-for="CategoryId" class="form-select adm-input-dark" id="productCategory"
                                 asp-items="@(new SelectList(ViewBag.Categories, "Id", "Name"))"
                                 style="height: 38px; font-size: 0.85rem;" required>
                             <option value="">-- Chọn danh mục --</option>
                         </select>
-                        <span asp-validation-for="CategoryId" class="text-danger small mt-1 d-block" style="font-size: 0.74rem;"></span>
+                        <span asp-validation-for="CategoryId" class="text-danger small mt-1 d-block"></span>
                     </div>
                 </div>
 
                 <div class="mb-0">
-                    <label asp-for="Description" class="form-label text-muted small mb-1" style="font-size: 0.72rem; text-transform: uppercase; font-weight: 600;">
-                        Mô tả &amp; Chi tiết chế tác
-                    </label>
+                    <label asp-for="Description" class="adm-form-label">Mô tả sản phẩm</label>
                     <textarea asp-for="Description" class="form-control adm-input-dark" rows="3" id="productDesc"
-                              placeholder="Chất liệu upper da cao cấp, đế cupsole cao su nguyên khối, lót cổ êm ái..."
-                              style="font-size: 0.84rem;"></textarea>
-                    <span asp-validation-for="Description" class="text-danger small mt-1 d-block" style="font-size: 0.74rem;"></span>
+                              placeholder="Mô tả chất liệu, kiểu dáng..." style="font-size: 0.84rem;"></textarea>
+                    <span asp-validation-for="Description" class="text-danger small mt-1 d-block"></span>
                 </div>
             </div>
 
-            <!-- CARD 2: CẤU HÌNH SIZE & PHỐI MÀU (ADAPTIVE TO ARCHETYPE) -->
-            <div class="adm-card mb-4" style="border: 2px solid #0F172A !important;">
-                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-                    <div class="d-flex align-items-center gap-2">
-                        <i class="bi bi-palette text-warning" style="font-size: 1.1rem;"></i>
-                        <div>
-                            <h2 class="fw-bold mb-0" style="font-size: 0.95rem; color: var(--adm-ink);">
-                                Kích cỡ (Size) &amp; Phối màu (Colorway)
-                            </h2>
-                            <div class="text-muted" style="font-size: 0.74rem;">
-                                Click chọn nhanh để hệ thống tự động sinh ma trận kho bên dưới
-                            </div>
-                        </div>
+            <!-- CARD 2: CẤU HÌNH SIZE & MÀU SẮC -->
+            <div class="adm-card mb-3">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div class="fw-bold" style="font-size: 0.88rem; color: var(--adm-heading);">
+                        Kích cỡ &amp; Màu sắc
                     </div>
 
                     <!-- PRODUCT TYPE TOGGLE -->
-                    <div class="adm-segmented-control" role="group" aria-label="Loại sản phẩm" style="padding: 3px;">
-                        <label class="adm-segment active" id="btnTypeVariants" style="cursor: pointer; font-size: 0.76rem;">
+                    <div class="adm-segmented-control" style="padding: 2px;">
+                        <label class="adm-segment active" id="btnTypeVariants" style="cursor: pointer; font-size: 0.74rem;">
                             <input type="radio" name="ProductType" value="variants" checked class="d-none" id="radioVariants" />
-                            <i class="bi bi-grid-3x3-gap me-1"></i> Có nhiều Size / Màu
+                            <span>Nhiều Size / Màu</span>
                         </label>
-                        <label class="adm-segment" id="btnTypeSimple" style="cursor: pointer; font-size: 0.76rem;">
+                        <label class="adm-segment" id="btnTypeSimple" style="cursor: pointer; font-size: 0.74rem;">
                             <input type="radio" name="ProductType" value="simple" class="d-none" id="radioSimple" />
-                            <i class="bi bi-tag me-1"></i> FreeSize / 1 cỡ
+                            <span>FreeSize</span>
                         </label>
                     </div>
                 </div>
 
                 <!-- PANEL SIMPLE PRODUCT (FREESIZE) -->
-                <div id="panelSimpleProduct" class="d-none p-3 rounded-3 mb-3" style="background: var(--adm-surface-hover); border: 1px solid var(--adm-border);">
+                <div id="panelSimpleProduct" class="d-none p-3 rounded-2 mb-3" style="background: var(--adm-surface); border: 1px solid var(--adm-border);">
                     <div class="row align-items-center g-3">
                         <div class="col-md-6">
-                            <label class="form-label text-muted small mb-1" style="font-size: 0.72rem; text-transform: uppercase; font-weight: 600;">
-                                Số lượng tồn kho ban đầu (cái) *
-                            </label>
-                            <input type="number" min="0" name="SimpleStock" value="20" class="form-control adm-input-dark" style="height: 38px; font-size: 0.88rem; font-weight: 600;" />
+                            <label class="adm-form-label mb-1">Số lượng tồn kho ban đầu *</label>
+                            <input type="number" min="0" name="SimpleStock" value="20" class="form-control adm-input-dark" style="height: 36px; font-size: 0.86rem; font-weight: 600;" />
                         </div>
                         <div class="col-md-6">
-                            <div class="text-muted" style="font-size: 0.76rem; line-height: 1.45;">
-                                <i class="bi bi-info-circle text-primary me-1"></i>
-                                Sản phẩm 1 cỡ duy nhất sẽ được mở bán ngay với số tồn kho này.
+                            <div class="text-muted" style="font-size: 0.75rem;">
+                                Hệ thống sẽ tạo 1 biến thể FreeSize duy nhất với số tồn kho này.
                             </div>
                         </div>
                     </div>
@@ -424,106 +356,88 @@
 
                 <!-- PANEL MATRIX CHIPS -->
                 <div id="panelMatrixVariants">
-                    <!-- 1. SIZES CHIPS -->
-                    <div class="mb-3 p-3 rounded-3" style="background: var(--adm-surface-hover); border: 1px solid var(--adm-border);">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <label class="text-muted small mb-0" id="lblSizeGroup" style="font-size: 0.72rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.04em;">
-                                1. KÍCH CỠ GIÀY (EU SIZES)
-                            </label>
-                            <span class="text-muted" style="font-size: 0.7rem;">Click để bật/tắt</span>
-                        </div>
-                        <div class="d-flex flex-wrap align-items-center gap-1 mb-2" id="sizeChipsContainer">
-                            <!-- Dynamic Size Chips loaded by JS based on Archetype -->
-                        </div>
-                        <!-- CUSTOM SIZE INPUT -->
-                        <div class="d-flex align-items-center gap-2 mt-2 pt-2 border-top" style="border-color: var(--adm-border) !important;">
-                            <input type="text" id="customSizeInput" placeholder="Thêm size khác (VD: 46, 47, Oversized...)" class="form-control adm-input-dark" style="height: 32px; font-size: 0.78rem; max-width: 260px;" />
-                            <button type="button" id="btnAddCustomSize" class="adm-btn-action-secondary" style="height: 32px; padding: 0 12px; font-size: 0.76rem;">
-                                <i class="bi bi-plus-lg"></i> Thêm size
+                    <!-- SIZES CHIPS -->
+                    <div class="mb-3">
+                        <label class="adm-form-label mb-1" id="lblSizeGroup">Kích cỡ</label>
+                        <div class="d-flex flex-wrap align-items-center gap-1 mb-2" id="sizeChipsContainer"></div>
+                        <div class="d-flex align-items-center gap-2">
+                            <input type="text" id="customSizeInput" placeholder="Thêm size khác..." class="form-control adm-input-dark" style="height: 30px; font-size: 0.76rem; max-width: 180px;" />
+                            <button type="button" id="btnAddCustomSize" class="adm-btn-action-secondary" style="height: 30px; padding: 0 10px; font-size: 0.74rem;">
+                                + Thêm
                             </button>
                         </div>
                     </div>
 
-                    <!-- 2. COLORWAY CHIPS -->
-                    <div class="mb-3 p-3 rounded-3" style="background: var(--adm-surface-hover); border: 1px solid var(--adm-border);">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <label class="text-muted small mb-0" id="lblColorGroup" style="font-size: 0.72rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.04em;">
-                                2. PHỐI MÀU (COLORWAYS)
-                            </label>
-                            <span class="text-muted" style="font-size: 0.7rem;">Click để bật/tắt</span>
-                        </div>
-                        <div class="d-flex flex-wrap align-items-center gap-1 mb-2" id="colorChipsContainer">
-                            <!-- Dynamic Colorway Chips loaded by JS based on Archetype -->
-                        </div>
-                        <!-- CUSTOM COLOR INPUT -->
-                        <div class="d-flex align-items-center gap-2 mt-2 pt-2 border-top" style="border-color: var(--adm-border) !important;">
-                            <input type="text" id="customColorInput" placeholder="Thêm phối màu khác (VD: Chicago, Reverse Mocha, Trắng / Đỏ...)" class="form-control adm-input-dark" style="height: 32px; font-size: 0.78rem; max-width: 280px;" />
-                            <button type="button" id="btnAddCustomColor" class="adm-btn-action-secondary" style="height: 32px; padding: 0 12px; font-size: 0.76rem;">
-                                <i class="bi bi-plus-lg"></i> Thêm phối màu
+                    <!-- COLORWAY CHIPS -->
+                    <div class="mb-0">
+                        <label class="adm-form-label mb-1" id="lblColorGroup">Phối màu</label>
+                        <div class="d-flex flex-wrap align-items-center gap-1 mb-2" id="colorChipsContainer"></div>
+                        <div class="d-flex align-items-center gap-2">
+                            <input type="text" id="customColorInput" placeholder="Thêm phối màu khác..." class="form-control adm-input-dark" style="height: 30px; font-size: 0.76rem; max-width: 220px;" />
+                            <button type="button" id="btnAddCustomColor" class="adm-btn-action-secondary" style="height: 30px; padding: 0 10px; font-size: 0.74rem;">
+                                + Thêm
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- CARD 3: LUXURY INVENTORY SPREADSHEET (MA TRẬN KHO & SKU) -->
-            <div class="adm-card mb-4" id="cardInventoryMatrix">
-                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+            <!-- CARD 3: MA TRẬN KHO (SPREADSHEET) -->
+            <div class="adm-card mb-3" id="cardInventoryMatrix">
+                <div class="d-flex align-items-center justify-content-between mb-2">
                     <div class="d-flex align-items-center gap-2">
-                        <i class="bi bi-table text-primary" style="font-size: 1rem;"></i>
-                        <h2 class="fw-bold mb-0" style="font-size: 0.92rem; color: var(--adm-ink);">
-                            Ma trận Biến thể &amp; Tồn kho
-                        </h2>
-                        <span class="adm-pill gray" id="lblVariantCount" style="font-size: 0.74rem;">0 phân loại</span>
+                        <span class="fw-bold" style="font-size: 0.88rem; color: var(--adm-heading);">Bảng tồn kho biến thể</span>
+                        <span class="adm-pill gray" id="lblVariantCount" style="font-size: 0.72rem;">0 phân loại</span>
                     </div>
 
-                    <!-- BULK INVENTORY TOOLBAR -->
                     <div class="d-flex align-items-center gap-2">
-                        <span class="text-muted small" style="font-size: 0.74rem;">Gán nhanh tồn kho:</span>
-                        <input type="number" id="bulkStockInput" min="0" value="10" class="form-control adm-input-dark text-center" style="width: 65px; height: 30px; font-size: 0.78rem; font-weight: 600;" />
-                        <button type="button" id="btnApplyBulkStock" class="adm-btn-action-secondary" style="height: 30px; padding: 0 10px; font-size: 0.74rem;">
-                            Áp dụng tất cả
+                        <span class="text-muted small" style="font-size: 0.72rem;">Gán tồn kho:</span>
+                        <input type="number" id="bulkStockInput" min="0" value="10" class="form-control adm-input-dark text-center" style="width: 55px; height: 28px; font-size: 0.76rem; font-weight: 600;" />
+                        <button type="button" id="btnApplyBulkStock" class="adm-btn-action-secondary" style="height: 28px; padding: 0 8px; font-size: 0.72rem;">
+                            Gán tất cả
                         </button>
                     </div>
                 </div>
 
-                <div class="table-responsive rounded border border-light" style="max-height: 340px; overflow-y: auto;">
+                <div class="table-responsive rounded border border-light" style="max-height: 280px; overflow-y: auto;">
                     <table class="table adm-sheet-table mb-0">
                         <thead>
                             <tr>
                                 <th style="width: 32%;">Mã SKU</th>
                                 <th style="width: 14%;">Size</th>
-                                <th style="width: 22%;">Phối màu</th>
-                                <th style="width: 18%;">Giá bán (₫)</th>
+                                <th style="width: 22%;">Màu</th>
+                                <th style="width: 18%;">Giá (₫)</th>
                                 <th style="width: 14%;">Tồn kho</th>
-                                <th style="width: 45px;"></th>
+                                <th style="width: 35px;"></th>
                             </tr>
                         </thead>
-                        <tbody id="matrixTableBody">
-                            <!-- Matrix rows dynamically rendered by JS -->
-                        </tbody>
+                        <tbody id="matrixTableBody"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- CARD 4: TRẠNG THÁI & SUBMIT ACTION BAR -->
-            <div class="adm-card">
+            <!-- CARD 4: TRẠNG THÁI & ACTION BAR (CLEAN, ROCK-SOLID ALIGNMENT) -->
+            <div class="adm-card p-3">
                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-                    <div class="form-check form-switch d-flex align-items-center p-0 m-0">
-                        <input asp-for="IsActive" class="form-check-input me-3" type="checkbox" role="switch" id="IsActive" checked style="cursor: pointer; width: 2.6em; height: 1.3em;" />
-                        <label class="form-check-label fw-semibold" for="IsActive" style="cursor: pointer; font-size: 0.86rem; color: var(--adm-ink);">
-                            Kích hoạt Mở bán ngay trên Shop
-                            <div class="text-muted fw-normal" style="font-size: 0.74rem;">Khách hàng có thể tìm kiếm và đặt mua ngay</div>
-                        </label>
+                    <!-- TOGGLE SWITCH (COMPLETELY FIXED ALIGNMENT) -->
+                    <div class="adm-switch-wrapper">
+                        <input asp-for="IsActive" class="form-check-input adm-clean-switch" type="checkbox" role="switch" id="IsActive" checked />
+                        <div>
+                            <label class="form-check-label fw-semibold mb-0 d-block" for="IsActive" style="cursor: pointer; font-size: 0.84rem; color: var(--adm-heading);">
+                                Mở bán ngay trên Shop
+                            </label>
+                            <span class="text-muted" style="font-size: 0.72rem;">Khách hàng có thể tìm kiếm và đặt mua</span>
+                        </div>
                     </div>
 
+                    <!-- ACTION BUTTONS (EQUAL HEIGHT 38PX, CRISP ALIGNMENT) -->
                     <div class="d-flex align-items-center gap-2">
-                        <a asp-action="Index" class="adm-btn-action-secondary py-2 px-3 text-decoration-none" style="height: 40px; font-size: 0.82rem;">
+                        <a asp-action="Index" class="adm-btn-action-secondary" style="height: 38px; padding: 0 16px; font-size: 0.82rem; display: inline-flex; align-items: center;">
                             Hủy bỏ
                         </a>
-                        <button type="submit" class="adm-action-btn adm-btn-primary py-2 px-4" style="height: 40px; font-size: 0.86rem; font-weight: 700;">
-                            <i class="bi bi-check2-circle me-1"></i>
-                            <span>Lưu &amp; Kích hoạt Mở bán</span>
+                        <button type="submit" class="adm-action-btn adm-btn-primary" style="height: 38px; padding: 0 20px; font-size: 0.82rem; font-weight: 600;">
+                            <i class="bi bi-check2"></i>
+                            <span>Lưu sản phẩm</span>
                         </button>
                     </div>
                 </div>
@@ -546,33 +460,31 @@
 
         const presets = {
             shoes: {
-                badge: 'FOOTWEAR PROTOCOL',
                 sizes: ['38', '39', '40', '41', '42', '43', '44'],
                 colors: [
                     { name: 'Panda', hex: 'linear-gradient(135deg, #FFFFFF 50%, #18181B 50%)' },
-                    { name: 'Triple White', hex: '#FFFFFF' },
-                    { name: 'Triple Black', hex: '#18181B' },
+                    { name: 'Trắng', hex: '#FFFFFF' },
+                    { name: 'Đen', hex: '#18181B' },
                     { name: 'Mocha', hex: 'linear-gradient(135deg, #78350F 50%, #E5D9C5 50%)' },
-                    { name: 'Grey Fog', hex: '#94A3B8' },
-                    { name: 'University Blue', hex: 'linear-gradient(135deg, #FFFFFF 50%, #38BDF8 50%)' },
+                    { name: 'Xám', hex: '#94A3B8' },
+                    { name: 'Xanh Navy', hex: 'linear-gradient(135deg, #FFFFFF 50%, #1E3A8A 50%)' },
                     { name: 'Chicago', hex: 'linear-gradient(135deg, #DC2626 50%, #18181B 50%)' }
                 ],
                 slots: [
-                    { title: 'Ảnh 2 Đôi Xếp Nghệ Thuật (Hero)', sub: '2 chiếc xếp chéo góc 45° chuẩn ảnh bìa tạp chí', thumb: '2 Đôi (Hero) *' },
-                    { title: 'Ảnh Nghiêng 1 Bên (Lateral Side)', sub: 'Chụp góc ngang cạnh ngoài, thấy rõ thân & đế', thumb: 'Nghiêng 1 Bên' },
-                    { title: 'Ảnh Mặt Đế / Cận Cảnh', sub: 'Góc nhìn từ trên xuống hoặc bề mặt đế giày', thumb: 'Đế / Chi tiết' }
+                    { title: 'Ảnh 2 Đôi Xếp Nghệ Thuật (Hero)', thumb: '2 Đôi (Hero) *' },
+                    { title: 'Ảnh Nghiêng 1 Bên (Lateral Side)', thumb: 'Nghiêng 1 Bên' },
+                    { title: 'Ảnh Mặt Đế / Chi tiết', thumb: 'Mặt đế / Chi tiết' }
                 ],
                 ghosts: [
-                    `<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 17h18a2 2 0 0 0 2-2v-1c0-2-2-4-5-4l-4-2-3 1c-2 1-3 2.5-3 5v1a2 2 0 0 0 2 2z"/><path d="M5 21h17a1 1 0 0 0 1-1v-1c0-1.5-1.5-3-4-3l-4-1.5-3 .8c-1.5.8-2.5 2-2.5 4v.7"/><circle cx="10" cy="13" r="1"/></svg>`,
-                    `<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 17h20v1.5a1.5 1.5 0 0 1-1.5 1.5H3.5A1.5 1.5 0 0 1 2 18.5V17z"/><path d="M2 17c0-3 1.5-5.5 4-6.5l6-3 5 2.5c2.5 1.5 3 4 3 7"/><path d="M9 14h5"/></svg>`,
-                    `<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="5" ry="9"/><path d="M12 5v14"/><path d="M8 9h8"/><path d="M8 15h8"/></svg>`
+                    `<svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 17h18a2 2 0 0 0 2-2v-1c0-2-2-4-5-4l-4-2-3 1c-2 1-3 2.5-3 5v1a2 2 0 0 0 2 2z"/><path d="M5 21h17a1 1 0 0 0 1-1v-1c0-1.5-1.5-3-4-3l-4-1.5-3 .8c-1.5.8-2.5 2-2.5 4v.7"/><circle cx="10" cy="13" r="1"/></svg>`,
+                    `<svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 17h20v1.5a1.5 1.5 0 0 1-1.5 1.5H3.5A1.5 1.5 0 0 1 2 18.5V17z"/><path d="M2 17c0-3 1.5-5.5 4-6.5l6-3 5 2.5c2.5 1.5 3 4 3 7"/><path d="M9 14h5"/></svg>`,
+                    `<svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="5" ry="9"/><path d="M12 5v14"/><path d="M8 9h8"/><path d="M8 15h8"/></svg>`
                 ],
                 defaultPrice: '1850000',
-                placeholderName: 'Nike Dunk Low Retro Panda, Air Jordan 1 Low Mocha...',
-                placeholderDesc: 'Chất liệu upper da bò cao cấp, đệm Air-Sole êm ái, đế cao su bám đường chống trơn trượt...'
+                placeholderName: 'VD: Nike Dunk Low Retro Panda',
+                placeholderDesc: 'Chất liệu da cao cấp, đệm êm ái, đế cao su chống trơn trượt...'
             },
             clothes: {
-                badge: 'APPAREL PROTOCOL',
                 sizes: ['S', 'M', 'L', 'XL', '2XL'],
                 colors: [
                     { name: 'Đen', hex: '#18181B' },
@@ -585,40 +497,38 @@
                     { name: 'Đỏ Rượu', hex: '#881337' }
                 ],
                 slots: [
-                    { title: 'Ảnh Mặt Trước (Front Hero)', sub: 'Chụp phẳng phiu nhìn thẳng, thấy trọn phom dáng', thumb: 'Mặt trước *' },
-                    { title: 'Ảnh Mặt Sau (Back View)', sub: 'Chụp lưng áo/quần hoặc góc xoay 180°', thumb: 'Mặt sau' },
-                    { title: 'Ảnh Bên Hông (Side Profile)', sub: 'Góc nhìn sườn áo hoặc chi tiết đường may', thumb: 'Bên hông' }
+                    { title: 'Ảnh Mặt Trước (Front Hero)', thumb: 'Mặt trước *' },
+                    { title: 'Ảnh Mặt Sau (Back View)', thumb: 'Mặt sau' },
+                    { title: 'Ảnh Bên Hông (Side Profile)', thumb: 'Bên hông' }
                 ],
                 ghosts: [
-                    `<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg>`,
-                    `<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/><line x1="12" y1="2" x2="12" y2="7"/></svg>`,
-                    `<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M7 6h10"/><path d="M11 10h2"/></svg>`
+                    `<svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg>`,
+                    `<svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/><line x1="12" y1="2" x2="12" y2="7"/></svg>`,
+                    `<svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M7 6h10"/><path d="M11 10h2"/></svg>`
                 ],
                 defaultPrice: '650000',
-                placeholderName: 'Áo Khoác Denim Atelier Boxy Fit, Heavyweight Hoodie...',
-                placeholderDesc: 'Chất liệu 100% Premium Cotton GSM 360, phom dáng Boxy tôn dáng, đường may 2 kim bền chắc...'
+                placeholderName: 'VD: Áo Khoác Denim Boxy Fit',
+                placeholderDesc: 'Chất liệu 100% Cotton GSM 360, form dáng Boxy hiện đại...'
             }
         };
 
-        // Current selected chips
         let selectedSizes = [];
         let selectedColors = [];
 
         function selectArchetype(type) {
             currentArchetype = type;
-            document.getElementById('cardArchetypeShoes').classList.toggle('active', type === 'shoes');
-            document.getElementById('cardArchetypeClothes').classList.toggle('active', type === 'clothes');
+            document.getElementById('btnArchetypeShoes').classList.toggle('active', type === 'shoes');
+            document.getElementById('btnArchetypeClothes').classList.toggle('active', type === 'clothes');
 
             const p = presets[type];
-            document.getElementById('stageProtocolBadge').textContent = p.badge;
 
-            // Load name & desc placeholders
+            // Set inputs placeholder
             const nameInput = document.getElementById('productName');
             if (!nameInput.value) nameInput.placeholder = p.placeholderName;
             const descInput = document.getElementById('productDesc');
             if (!descInput.value) descInput.placeholder = p.placeholderDesc;
 
-            // Sync Category dropdown if matching
+            // Auto-select matching category
             const catSelect = document.getElementById('productCategory');
             if (catSelect) {
                 for (let i = 0; i < catSelect.options.length; i++) {
@@ -634,8 +544,8 @@
                 }
             }
 
-            // Load Sizing Chips
-            document.getElementById('lblSizeGroup').textContent = type === 'shoes' ? '1. KÍCH CỠ GIÀY (EU SIZES)' : '1. KÍCH CỠ QUẦN ÁO (APPAREL SIZES)';
+            // Sizing Chips
+            document.getElementById('lblSizeGroup').textContent = type === 'shoes' ? 'Kích cỡ giày (EU)' : 'Kích cỡ quần áo';
             const sizeCont = document.getElementById('sizeChipsContainer');
             sizeCont.innerHTML = '';
             selectedSizes = [...p.sizes];
@@ -649,11 +559,11 @@
                 sizeCont.appendChild(btn);
             });
 
-            // Load Colorway Chips
-            document.getElementById('lblColorGroup').textContent = type === 'shoes' ? '2. PHỐI MÀU GIÀY (COLORWAYS)' : '2. MÀU SẮC QUẦN ÁO (COLORS)';
+            // Colorway Chips
+            document.getElementById('lblColorGroup').textContent = type === 'shoes' ? 'Phối màu (Colorways)' : 'Màu sắc';
             const colorCont = document.getElementById('colorChipsContainer');
             colorCont.innerHTML = '';
-            selectedColors = [p.colors[0].name]; // Select first by default
+            selectedColors = [p.colors[0].name];
             p.colors.forEach((c, idx) => {
                 const btn = document.createElement('button');
                 btn.type = 'button';
@@ -665,7 +575,7 @@
                 colorCont.appendChild(btn);
             });
 
-            // Update Thumb Strip Titles & Ghosts
+            // Update Thumb Strip Titles
             [1, 2, 3].forEach(slot => {
                 document.getElementById(`thumbTitle${slot}`).textContent = p.slots[slot - 1].thumb;
             });
@@ -752,9 +662,7 @@
         function updateStageDisplay() {
             const p = presets[currentArchetype];
             const slotInfo = p.slots[activeSlot - 1];
-            document.getElementById('stageAngleSubtitle').textContent = slotInfo.thumb;
             document.getElementById('stageSlotTitle').textContent = slotInfo.title;
-            document.getElementById('stageSlotDesc').textContent = slotInfo.sub;
             document.getElementById('stageGhostIcon').innerHTML = p.ghosts[activeSlot - 1];
 
             const img = document.getElementById('stageImg');
@@ -800,12 +708,12 @@
             const img = document.getElementById('stageImg');
             if (currentBackdrop === 'atelier') {
                 viewport.style.background = 'linear-gradient(180deg, #FAF8F5 0%, #F3EDE2 100%)';
-                img.style.filter = 'drop-shadow(0 16px 22px rgba(40, 30, 20, 0.16))';
+                img.style.filter = 'drop-shadow(0 14px 18px rgba(40, 30, 20, 0.14))';
             } else if (currentBackdrop === 'white') {
                 viewport.style.background = '#FFFFFF';
-                img.style.filter = 'drop-shadow(0 12px 16px rgba(0, 0, 0, 0.08))';
+                img.style.filter = 'drop-shadow(0 10px 14px rgba(0, 0, 0, 0.08))';
             } else {
-                viewport.style.background = 'repeating-conic-gradient(#E2E8F0 0% 25%, #FFFFFF 0% 50%) 50%/14px 14px';
+                viewport.style.background = 'repeating-conic-gradient(#E2E8F0 0% 25%, #FFFFFF 0% 50%) 50%/12px 12px';
                 img.style.filter = 'none';
             }
         }
@@ -821,7 +729,6 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     originalDataUrls[slot] = e.target.result;
-                    // Update thumbnail box
                     const thumbBox = document.getElementById(`thumbBox${slot}`);
                     thumbBox.innerHTML = `<img src="${e.target.result}" class="adm-angle-thumb-preview" alt="Slot ${slot}" />`;
                     updateStageDisplay();
@@ -841,7 +748,7 @@
             const input = document.getElementById(`realInputSlot${activeSlot}`);
             if (input) input.value = '';
             originalDataUrls[activeSlot] = null;
-            document.getElementById(`thumbBox${activeSlot}`).innerHTML = `<span class="text-muted small" style="font-size: 0.65rem;">Chưa có</span>`;
+            document.getElementById(`thumbBox${activeSlot}`).innerHTML = `<span class="text-muted small" style="font-size: 0.65rem;">Trống</span>`;
             updateStageDisplay();
         }
 
@@ -852,7 +759,7 @@
 
             const btn = document.getElementById('btnStageMagic');
             const originalBtnHtml = btn.innerHTML;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Đang xử lý...';
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Xử lý...';
             btn.disabled = true;
 
             const img = new Image();
@@ -925,14 +832,14 @@
                     sCtx.restore();
 
                     sCtx.shadowColor = 'rgba(30, 20, 15, 0.12)';
-                    sCtx.shadowBlur = 20;
+                    sCtx.shadowBlur = 18;
                     sCtx.shadowOffsetY = 10;
                     sCtx.drawImage(canvas, 0, 0);
                 } else if (currentBackdrop === 'white') {
                     sCtx.fillStyle = '#FFFFFF';
                     sCtx.fillRect(0, 0, sCanvas.width, sCanvas.height);
                     sCtx.shadowColor = 'rgba(0, 0, 0, 0.08)';
-                    sCtx.shadowBlur = 18;
+                    sCtx.shadowBlur = 16;
                     sCtx.shadowOffsetY = 8;
                     sCtx.drawImage(canvas, 0, 0);
                 } else {
@@ -991,7 +898,7 @@
             str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
             str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
             str = str.replace(/ì|í|ị|ỉ|ĩ/g, "i");
-            str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o");
+            str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|Ỡ/g, "o");
             str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u");
             str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
             str = str.replace(/đ/g, "d");
@@ -1041,7 +948,7 @@
                             <input type="hidden" name="Variants[${rowCount}].Size" value="${size}" />
                         </td>
                         <td>
-                            <span class="fw-semibold" style="font-size: 0.8rem;">${color}</span>
+                            <span class="fw-semibold" style="font-size: 0.78rem;">${color}</span>
                             <input type="hidden" name="Variants[${rowCount}].Color" value="${color}" />
                         </td>
                         <td>
@@ -1079,7 +986,6 @@
             });
         });
 
-        // Sync matrix on name or price change
         document.getElementById('productName')?.addEventListener('blur', renderMatrix);
         document.getElementById('productPrice')?.addEventListener('input', () => {
             const newPrice = parseInt(document.getElementById('productPrice').value || 0, 10);
@@ -1115,7 +1021,7 @@
             panelSimpleProduct.classList.remove('d-none');
         });
 
-        // INITIALIZE ON LOAD: DEFAULT FOOTWEAR
+        // INITIALIZE ON LOAD
         document.addEventListener('DOMContentLoaded', () => {
             selectArchetype('shoes');
         });
