@@ -244,8 +244,11 @@
             }
             @if (liveEnabled)
             {
-                <div class="d-flex justify-content-end mb-2">
-                    <small class="text-muted" role="status" data-admin-live-status>Tự động cập nhật mỗi 5 giây</small>
+                <div class="d-flex justify-content-end align-items-center mb-3">
+                    <div class="adm-live-badge" title="Dữ liệu được cập nhật tự động qua background worker">
+                        <span class="adm-live-pulse"></span>
+                        <span class="adm-live-text" role="status" data-admin-live-status>Đồng bộ thời gian thực · 5s</span>
+                    </div>
                 </div>
                 <div data-admin-live-content>@RenderBody()</div>
             }

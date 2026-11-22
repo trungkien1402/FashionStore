@@ -76,6 +76,28 @@ public class AdminOrdersController : Controller
             "amount" => query.OrderByDescending(o => o.TotalAmount),
             _ => query.OrderByDescending(o => o.CreatedAt)
         };
+
+        // Status Segmented Tab Counts (Global Context)
+        var allCount = await _context.Orders.CountAsync();
+        var pendingCount = await _context.Orders.CountAsync(o => o.Status == OrderStatus.PendingConfirmation);
+        var confirmedCount = await _context.Orders.CountAsync(o => o.Status == OrderStatus.Confirmed);
+        var shippingCount = await _context.Orders.CountAsync(o => o.Status == OrderStatus.Shipping || o.Status == OrderStatus.Processing);
+        var deliveredCount = await _context.Orders.CountAsync(o => o.Status == OrderStatus.Delivered);
+        var cancelledCount = await _context.Orders.CountAsync(o => o.Status == OrderStatus.Cancelled || o.Status == OrderStatus.DeliveryFailed);
+
+        // Executive Operational KPIs
+        var pendingAmount = await _context.Orders
+            .Where(o => o.Status == OrderStatus.PendingConfirmation)
+            .SumAsync(o => (decimal?)o.TotalAmount) ?? 0m;
+
+        var deliveredAmount = await _context.Orders
+            .Where(o => o.Status == OrderStatus.Delivered)
+            .SumAsync(o => (decimal?)o.TotalAmount) ?? 0m;
+
+        var avgOrderValue = allCount > 0
+            ? await _context.Orders.AverageAsync(o => (decimal?)o.TotalAmount) ?? 0m
+            : 0m;
+
         ViewBag.Count = count;
         ViewBag.Page = page;
         ViewBag.PageCount = pageCount;
@@ -87,6 +109,18 @@ public class AdminOrdersController : Controller
         ViewBag.From = from?.ToString("yyyy-MM-dd");
         ViewBag.To = to?.ToString("yyyy-MM-dd");
         ViewBag.Sort = sort;
+
+        ViewBag.CountAll = allCount;
+        ViewBag.CountPending = pendingCount;
+        ViewBag.CountConfirmed = confirmedCount;
+        ViewBag.CountShipping = shippingCount;
+        ViewBag.CountDelivered = deliveredCount;
+        ViewBag.CountCancelled = cancelledCount;
+
+        ViewBag.PendingAmount = pendingAmount;
+        ViewBag.DeliveredAmount = deliveredAmount;
+        ViewBag.AvgOrderValue = avgOrderValue;
+
         return View(await ordered.ThenByDescending(o => o.Id)
             .Skip((page - 1) * pageSize).Take(pageSize).ToListAsync());
     }
@@ -138,11 +172,13 @@ public class AdminOrdersController : Controller
     // POST: /AdminOrders/UpdateStatus
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> UpdateStatus(int id, OrderStatus newStatus)
+    public async Task<IActionResult> UpdateStatus(int id, OrderStatus newStatus, string? returnUrl = null)
     {
         if (!ModelState.IsValid || !Enum.IsDefined(newStatus))
         {
             TempData["Error"] = "Trạng thái đơn hàng không hợp lệ.";
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                return Redirect(returnUrl);
             return RedirectToAction(nameof(Index));
         }
 
@@ -164,6 +200,8 @@ public class AdminOrdersController : Controller
                 await transaction.RollbackAsync();
 
                 TempData["Error"] = "Không tìm thấy đơn hàng.";
+                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    return Redirect(returnUrl);
                 return RedirectToAction(nameof(Index));
             }
 
@@ -172,6 +210,8 @@ public class AdminOrdersController : Controller
                     s.Status == ShipmentStatus.PickedUp || s.Status == ShipmentStatus.InTransit)))
             {
                 TempData["Error"] = "Cập nhật kết quả giao hàng từ vận đơn đang hoạt động.";
+                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    return Redirect(returnUrl);
                 return RedirectToAction(nameof(Details), new { id });
             }
 
@@ -183,6 +223,8 @@ public class AdminOrdersController : Controller
                 TempData["Error"] =
                     $"Không thể chuyển từ {order.Status} sang {newStatus}.";
 
+                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    return Redirect(returnUrl);
                 return RedirectToAction(nameof(Details), new { id });
             }
 
@@ -237,7 +279,10 @@ public class AdminOrdersController : Controller
 
             await transaction.CommitAsync();
 
-            TempData["Success"] = "Cập nhật trạng thái đơn hàng thành công.";
+            TempData["Success"] = $"Đã cập nhật đơn hàng #{order.OrderCode} sang {GetStatusName(newStatus)} thành công.";
+
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                return Redirect(returnUrl);
 
             return RedirectToAction(nameof(Details), new { id });
         }
@@ -255,8 +300,114 @@ public class AdminOrdersController : Controller
             TempData["Error"] =
                 "Có lỗi xảy ra khi cập nhật đơn hàng. Vui lòng thử lại.";
 
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                return Redirect(returnUrl);
+
             return RedirectToAction(nameof(Details), new { id });
         }
+    }
+
+    // POST: /AdminOrders/BatchUpdateStatus
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> BatchUpdateStatus(List<int> ids, OrderStatus newStatus, string? returnUrl = null)
+    {
+        if (ids == null || !ids.Any() || !Enum.IsDefined(newStatus))
+        {
+            TempData["Error"] = "Vui lòng chọn ít nhất một đơn hàng.";
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                return Redirect(returnUrl);
+            return RedirectToAction(nameof(Index));
+        }
+
+        if (newStatus is OrderStatus.Cancelled or OrderStatus.Returned &&
+            !User.IsInRole("Admin") && !User.IsInRole("Manager"))
+            return Forbid();
+
+        int successCount = 0;
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        foreach (var id in ids)
+        {
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var order = await _context.Orders
+                    .Include(o => o.Items)
+                    .FirstOrDefaultAsync(o => o.Id == id);
+
+                if (order == null || !IsValidTransition(order.Status, newStatus))
+                {
+                    await transaction.RollbackAsync();
+                    continue;
+                }
+
+                if (order.Status == OrderStatus.Shipping && await _context.Shipments.AnyAsync(s =>
+                        s.OrderId == order.Id && (s.Status == ShipmentStatus.Assigned ||
+                        s.Status == ShipmentStatus.PickedUp || s.Status == ShipmentStatus.InTransit)))
+                {
+                    await transaction.RollbackAsync();
+                    continue;
+                }
+
+                var oldStatus = order.Status;
+                bool needsInventoryRestore =
+                    newStatus == OrderStatus.Cancelled ||
+                    newStatus == OrderStatus.DeliveryFailed ||
+                    newStatus == OrderStatus.Returned;
+
+                if (needsInventoryRestore && !order.InventoryRestored)
+                {
+                    foreach (var item in order.Items)
+                    {
+                        var variant = await _context.ProductVariants
+                            .FirstOrDefaultAsync(v => v.Id == item.ProductVariantId);
+
+                        if (variant != null)
+                        {
+                            variant.StockQuantity += item.Quantity;
+                        }
+                    }
+                    order.InventoryRestored = true;
+                }
+
+                order.Status = newStatus;
+                var history = new OrderStatusHistory
+                {
+                    OrderId = order.Id,
+                    OldStatus = oldStatus,
+                    NewStatus = newStatus,
+                    ChangedByUserId = userId,
+                    Note = $"Thao tác hàng loạt: {GetStatusName(oldStatus)} → {GetStatusName(newStatus)}",
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                _context.OrderStatusHistories.Add(history);
+                _context.StockActorId = userId;
+                _context.StockReason = "Cập nhật hàng loạt đơn " + order.OrderCode;
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+                successCount++;
+            }
+            catch
+            {
+                try { await transaction.RollbackAsync(); } catch { }
+            }
+        }
+
+        if (successCount > 0)
+        {
+            TempData["Success"] = $"Đã duyệt / cập nhật thành công {successCount} đơn hàng.";
+        }
+        else
+        {
+            TempData["Error"] = "Không thể cập nhật các đơn hàng đã chọn (trạng thái đơn hiện tại không hợp lệ).";
+        }
+
+        if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            return Redirect(returnUrl);
+
+        return RedirectToAction(nameof(Index));
     }
 
     // Kiểm tra quy tắc chuyển trạng thái
