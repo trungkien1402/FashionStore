@@ -70,16 +70,22 @@
         filter: brightness(1.1);
     }
     .adm-stage-img {
-        max-width: 82%;
-        max-height: 82%;
+        max-width: 84%;
+        max-height: 84%;
         object-fit: contain;
         position: relative;
         z-index: 2;
         transition: transform 0.25s ease, filter 0.25s ease;
+        border-radius: 6px;
     }
-    .adm-stage-img.shoe-angle {
+    .adm-stage-img.shoe-angle.is-transparent {
         filter: drop-shadow(0 20px 24px rgba(0, 0, 0, 0.5));
         transform: rotate(-6deg);
+        border-radius: 0;
+    }
+    .adm-stage-img.shoe-angle:not(.is-transparent) {
+        filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.25));
+        transform: none;
     }
     .adm-stage-img.apparel-flat {
         filter: drop-shadow(0 14px 18px rgba(40, 30, 20, 0.14));
@@ -175,6 +181,7 @@
     .adm-sheet-table {
         font-size: 0.82rem;
         margin-bottom: 0;
+        min-width: 580px;
     }
     .adm-sheet-table th {
         background: #F8FAFC;
@@ -185,11 +192,13 @@
         font-weight: 600;
         padding: 9px 12px;
         border-bottom: 1px solid var(--adm-border);
+        white-space: nowrap;
     }
     .adm-sheet-table td {
         padding: 7px 12px;
         vertical-align: middle;
         border-bottom: 1px solid #F1F5F9;
+        white-space: nowrap;
     }
 
     /* FIX BOOTSTRAP SWITCH BLEEDING */
@@ -306,7 +315,7 @@
 
         <!-- LEFT WING: VISUAL STUDIO STAGE (5 COLS) -->
         <div class="col-lg-5">
-            <div class="adm-stage-card sticky-top" style="top: 20px;">
+            <div class="adm-stage-card">
                 <!-- STAGE HEADER -->
                 <div class="d-flex align-items-center justify-content-between mb-2">
                     <div class="fw-bold d-flex align-items-center gap-2" style="font-size: 0.88rem; color: var(--adm-heading);">
@@ -402,43 +411,32 @@
                     </div>
                 </div>
 
-                <!-- SAMPLE TEST IMAGES QUICK LOADER -->
+                <!-- SAMPLE TEST IMAGES QUICK LOADER (COMPACT & CLEAN) -->
                 <div class="mt-3 pt-2 border-top">
                     <div class="d-flex align-items-center justify-content-between mb-2">
                         <span class="text-muted small" style="font-size: 0.72rem; font-weight: 600;">
-                            <i class="bi bi-lightning-charge text-warning me-1"></i> Ảnh mẫu chưa cắt nền (Test tách nền AI):
+                            <i class="bi bi-lightning-charge text-warning me-1"></i> Ảnh mẫu thử nghiệm (chưa tách nền):
                         </span>
                     </div>
-                    <div class="d-flex flex-column gap-2">
-                        <!-- 3 MẶT ÁO KHOÁC WORKWEAR (FRONT, BACK, SIDE CỦA CÙNG 1 ÁO) -->
-                        <div class="d-flex gap-2">
-                            <button type="button" class="btn btn-sm adm-btn-action-secondary p-1 flex-fill text-start d-flex align-items-center gap-2" style="font-size: 0.72rem;" onclick="loadSampleImage('/images/test-samples/jacket-3views-front-raw.jpg', 1)" title="Mặt trước áo khoác canvas trên móc gỗ">
-                                <img src="/images/test-samples/jacket-3views-front-raw.jpg" style="width: 26px; height: 26px; object-fit: cover; border-radius: 4px;" />
-                                <span class="text-truncate">1. Trước (Front)</span>
-                            </button>
-                            <button type="button" class="btn btn-sm adm-btn-action-secondary p-1 flex-fill text-start d-flex align-items-center gap-2" style="font-size: 0.72rem;" onclick="loadSampleImage('/images/test-samples/jacket-3views-back-raw.jpg', 2)" title="Mặt sau áo khoác canvas">
-                                <img src="/images/test-samples/jacket-3views-back-raw.jpg" style="width: 26px; height: 26px; object-fit: cover; border-radius: 4px;" />
-                                <span class="text-truncate">2. Sau (Back)</span>
-                            </button>
-                            <button type="button" class="btn btn-sm adm-btn-action-secondary p-1 flex-fill text-start d-flex align-items-center gap-2" style="font-size: 0.72rem;" onclick="loadSampleImage('/images/test-samples/jacket-3views-side-raw.jpg', 3)" title="Bên hông áo khoác canvas">
-                                <img src="/images/test-samples/jacket-3views-side-raw.jpg" style="width: 26px; height: 26px; object-fit: cover; border-radius: 4px;" />
-                                <span class="text-truncate">3. Hông (Side)</span>
-                            </button>
-                        </div>
-                        <div class="d-flex gap-2">
-                            <button type="button" class="btn btn-sm adm-btn-action-secondary p-1 flex-fill text-start d-flex align-items-center gap-2" style="font-size: 0.72rem;" onclick="loadSampleImage('/images/test-samples/sample-shoe-pair-raw.jpg', 1)" title="2 đôi giày trên sàn bê tông">
-                                <img src="/images/test-samples/sample-shoe-pair-raw.jpg" style="width: 26px; height: 26px; object-fit: cover; border-radius: 4px;" />
-                                <span class="text-truncate">👟 Giày 2 đôi</span>
-                            </button>
-                            <button type="button" class="btn btn-sm adm-btn-action-secondary p-1 flex-fill text-start d-flex align-items-center gap-2" style="font-size: 0.72rem;" onclick="loadSampleImage('/images/test-samples/sample-shoe-side-raw.jpg', 2)" title="Giày góc nghiêng 1 bên">
-                                <img src="/images/test-samples/sample-shoe-side-raw.jpg" style="width: 26px; height: 26px; object-fit: cover; border-radius: 4px;" />
-                                <span class="text-truncate">👟 Giày 1 chiếc</span>
-                            </button>
-                            <button type="button" class="btn btn-sm adm-btn-action-primary p-1 flex-fill text-center d-flex align-items-center justify-content-center gap-1" style="font-size: 0.72rem; font-weight: 600;" onclick="loadAllJacketViews()" title="Nạp nhanh cả 3 mặt của cùng 1 áo vào 3 slot">
-                                <i class="bi bi-cloud-arrow-down"></i>
-                                <span>Nạp đủ 3 mặt áo</span>
-                            </button>
-                        </div>
+                    <div class="d-flex flex-wrap gap-1">
+                        <button type="button" class="btn btn-sm adm-btn-action-secondary py-1 px-2" style="font-size: 0.72rem;" onclick="loadSampleImage('/images/test-samples/sample-shoe-pair-raw.jpg', 1)" title="2 đôi giày góc nghiêng sàn bê tông">
+                            <span>👟 Giày 2 đôi</span>
+                        </button>
+                        <button type="button" class="btn btn-sm adm-btn-action-secondary py-1 px-2" style="font-size: 0.72rem;" onclick="loadSampleImage('/images/test-samples/sample-shoe-side-raw.jpg', 2)" title="Giày góc nghiêng 1 bên">
+                            <span>👟 Giày 1 chiếc</span>
+                        </button>
+                        <button type="button" class="btn btn-sm adm-btn-action-secondary py-1 px-2" style="font-size: 0.72rem;" onclick="loadSampleImage('/images/test-samples/jacket-3views-front-raw.jpg', 1)" title="Mặt trước áo khoác canvas">
+                            <span>🧥 Áo trước</span>
+                        </button>
+                        <button type="button" class="btn btn-sm adm-btn-action-secondary py-1 px-2" style="font-size: 0.72rem;" onclick="loadSampleImage('/images/test-samples/jacket-3views-back-raw.jpg', 2)" title="Mặt sau áo khoác canvas">
+                            <span>🧥 Áo sau</span>
+                        </button>
+                        <button type="button" class="btn btn-sm adm-btn-action-secondary py-1 px-2" style="font-size: 0.72rem;" onclick="loadSampleImage('/images/test-samples/jacket-3views-side-raw.jpg', 3)" title="Bên hông áo khoác canvas">
+                            <span>🧥 Áo hông</span>
+                        </button>
+                        <button type="button" class="btn btn-sm adm-btn-action-primary py-1 px-2" style="font-size: 0.72rem; font-weight: 600;" onclick="loadAllJacketViews()" title="Nạp đủ 3 mặt của áo vào 3 slot">
+                            <i class="bi bi-cloud-arrow-down me-1"></i><span>Nạp 3 mặt áo</span>
+                        </button>
                     </div>
                 </div>
 
@@ -454,91 +452,10 @@
         <!-- RIGHT WING: PRODUCT SPECS & STAGE CONFIG (7 COLS) -->
         <div class="col-lg-7">
 
-            <!-- CARD 1: CẤU HÌNH SÂN KHẤU 3D CHO GIÀY (FOOTWEAR STAGE CONFIG) -->
-            <div class="adm-card mb-3" id="cardShoeStageConfig">
-                <div class="fw-bold mb-2 d-flex align-items-center gap-2" style="font-size: 0.88rem; color: var(--adm-heading);">
-                    <i class="bi bi-display"></i>
-                    <span>Cấu hình Sân khấu 3D Giày (3D Interactive Stage)</span>
-                </div>
-                <div class="text-muted small mb-3" style="font-size: 0.74rem;">
-                    Tùy biến chữ to in chìm, màu nền sân khấu, bộ sưu tập và thông số góc dưới
-                </div>
-
-                <!-- BỘ SƯU TẬP (COLLECTION) -->
-                <div class="mb-3">
-                    <label class="adm-form-label">Bộ sưu tập (Collection)</label>
-                    <div class="d-flex gap-2">
-                        <select class="form-select adm-input-dark" id="selectCollectionPreset" style="height: 38px; font-size: 0.85rem;" onchange="handleCollectionSelect(this)">
-                            <option value="STREET REMIX" selected>STREET REMIX</option>
-                            <option value="FUTURE LAB">FUTURE LAB</option>
-                            <option value="CYBER LAB">CYBER LAB</option>
-                            <option value="RETRO VINTAGE">RETRO VINTAGE</option>
-                            <option value="CHILE 20">CHILE 20</option>
-                            <option value="__custom__">+ Nhập tên bộ sưu tập mới...</option>
-                        </select>
-                        <input asp-for="CollectionTitle" type="text" class="form-control adm-input-dark d-none" id="collectionTitleInput" value="STREET REMIX" placeholder="Nhập tên bộ sưu tập..." style="height: 38px; font-size: 0.85rem;" />
-                    </div>
-                </div>
-
-                <!-- CHỮ TO IN CHÌM SAU ĐÔI GIÀY (HERO MODEL TEXT) -->
-                <div class="mb-3">
-                    <label asp-for="HeroModelText" class="adm-form-label">
-                        Chữ to in chìm sau đôi giày (Hero Backdrop Text)
-                    </label>
-                    <input asp-for="HeroModelText" class="form-control adm-input-dark font-monospace text-uppercase" id="heroModelTextInput"
-                           placeholder="VD: TOBACCO DECK" value="TOBACCO DECK" style="height: 38px; font-size: 0.86rem; font-weight: 700;" />
-                    <span class="text-muted small mt-1 d-block" style="font-size: 0.72rem;">
-                        Chữ này sẽ hiển thị to toàn màn hình phía sau đôi giày xoay 3D trên trang khách hàng.
-                    </span>
-                </div>
-
-                <!-- MÀU NỀN SÂN KHẤU (THEME COLOR) -->
-                <div class="mb-3">
-                    <label class="adm-form-label">Màu nền sân khấu (Stage Theme Color)</label>
-                    <div class="d-flex flex-wrap align-items-center gap-3">
-                        <div class="d-flex align-items-center gap-2">
-                            <input asp-for="ThemeColor" type="color" id="themeColorPicker" value="#5C3A21"
-                                   style="width: 38px; height: 38px; border: 1px solid var(--adm-border); border-radius: 6px; cursor: pointer; padding: 2px;" />
-                            <input type="text" id="themeColorHex" value="#5C3A21" class="form-control adm-input-dark font-monospace text-uppercase" style="width: 95px; height: 38px; font-size: 0.82rem;" />
-                        </div>
-
-                        <!-- QUICK SWATCH PRESETS -->
-                        <div class="d-flex align-items-center gap-2">
-                            <span class="text-muted small" style="font-size: 0.72rem;">Gợi ý:</span>
-                            <button type="button" class="adm-theme-swatch active" style="background: #5C3A21;" data-color="#5C3A21" title="Nâu thuốc (Tobacco)" onclick="setStageColor('#5C3A21')"></button>
-                            <button type="button" class="adm-theme-swatch" style="background: #1F242D;" data-color="#1F242D" title="Đen than (Dark Charcoal)" onclick="setStageColor('#1F242D')"></button>
-                            <button type="button" class="adm-theme-swatch" style="background: #5B1818;" data-color="#5B1818" title="Đỏ rượu (Oxblood)" onclick="setStageColor('#5B1818')"></button>
-                            <button type="button" class="adm-theme-swatch" style="background: #2A3A50;" data-color="#2A3A50" title="Xanh Navy (Deep Navy)" onclick="setStageColor('#2A3A50')"></button>
-                            <button type="button" class="adm-theme-swatch" style="background: #36453B;" data-color="#36453B" title="Xanh rêu (Forest Olive)" onclick="setStageColor('#36453B')"></button>
-                            <button type="button" class="adm-theme-swatch" style="background: #7C5335;" data-color="#7C5335" title="Da bò (Caramel)" onclick="setStageColor('#7C5335')"></button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- THÔNG SỐ GÓC DƯỚI BÊN PHẢI (SPECS BLOCK) -->
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <label asp-for="ColorwayName" class="adm-form-label">Tên phối màu</label>
-                        <input asp-for="ColorwayName" class="form-control adm-input-dark" id="colorwayNameInput"
-                               placeholder="VD: NÂU THUỐC / GUM" value="NÂU THUỐC / GUM" style="height: 38px; font-size: 0.82rem;" />
-                    </div>
-                    <div class="col-md-4">
-                        <label asp-for="StyleCode" class="adm-form-label">Mã giày (StyleCode)</label>
-                        <input asp-for="StyleCode" class="form-control adm-input-dark font-monospace text-uppercase" id="styleCodeInput"
-                               placeholder="MEN-TOBACCO-GUM-DECK" value="MEN-TOBACCO-GUM-DECK" style="height: 38px; font-size: 0.82rem;" />
-                    </div>
-                    <div class="col-md-4">
-                        <label asp-for="Designer" class="adm-form-label">Thiết kế (Designer)</label>
-                        <input asp-for="Designer" class="form-control adm-input-dark" id="designerInput"
-                               placeholder="HNMTSHOP" value="HNMTSHOP" style="height: 38px; font-size: 0.82rem;" />
-                    </div>
-                </div>
-            </div>
-
-            <!-- CARD 2: THÔNG TIN CƠ BẢN -->
+            <!-- CARD 1: THÔNG TIN CƠ BẢN (CORE PRODUCT INFO) -->
             <div class="adm-card mb-3">
                 <div class="fw-bold mb-3" style="font-size: 0.88rem; color: var(--adm-heading);">
-                    Thông tin cơ bản
+                    1. Thông tin cơ bản
                 </div>
 
                 <div class="mb-3">
@@ -575,9 +492,85 @@
 
                 <div class="mb-0">
                     <label asp-for="Description" class="adm-form-label">Mô tả sản phẩm</label>
-                    <textarea asp-for="Description" class="form-control adm-input-dark" rows="3" id="productDesc"
+                    <textarea asp-for="Description" class="form-control adm-input-dark" rows="2" id="productDesc"
                               placeholder="Mô tả chất liệu, kiểu dáng..." style="font-size: 0.84rem;">Chất liệu da lộn Suede cao cấp, đế Gum chống trượt, đệm OrthoLite êm ái.</textarea>
                     <span asp-validation-for="Description" class="text-danger small mt-1 d-block"></span>
+                </div>
+            </div>
+
+            <!-- CARD 2: CẤU HÌNH SÂN KHẤU 3D CHO GIÀY (FOOTWEAR STAGE CONFIG) -->
+            <div class="adm-card mb-3" id="cardShoeStageConfig">
+                <div class="fw-bold mb-1 d-flex align-items-center gap-2" style="font-size: 0.88rem; color: var(--adm-heading);">
+                    <i class="bi bi-display"></i>
+                    <span>2. Cấu hình Sân khấu 3D Giày (3D Interactive Stage)</span>
+                </div>
+                <div class="text-muted small mb-3" style="font-size: 0.74rem;">
+                    Tùy biến chữ to in chìm, màu nền sân khấu, bộ sưu tập và thông số góc dưới
+                </div>
+
+                <!-- ROW 1: BỘ SƯU TẬP & MÀU NỀN SÂN KHẤU -->
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="adm-form-label">Bộ sưu tập (Collection)</label>
+                        <div class="d-flex gap-2">
+                            <select class="form-select adm-input-dark" id="selectCollectionPreset" style="height: 38px; font-size: 0.85rem;" onchange="handleCollectionSelect(this)">
+                                <option value="STREET REMIX" selected>STREET REMIX</option>
+                                <option value="FUTURE LAB">FUTURE LAB</option>
+                                <option value="CYBER LAB">CYBER LAB</option>
+                                <option value="RETRO VINTAGE">RETRO VINTAGE</option>
+                                <option value="CHILE 20">CHILE 20</option>
+                                <option value="__custom__">+ Nhập bộ sưu tập mới...</option>
+                            </select>
+                            <input asp-for="CollectionTitle" type="text" class="form-control adm-input-dark d-none" id="collectionTitleInput" value="STREET REMIX" placeholder="Nhập tên..." style="height: 38px; font-size: 0.85rem;" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="adm-form-label">Màu nền sân khấu (Stage Theme Color)</label>
+                        <div class="d-flex align-items-center gap-2">
+                            <input asp-for="ThemeColor" type="color" id="themeColorPicker" value="#5C3A21"
+                                   style="width: 38px; height: 38px; border: 1px solid var(--adm-border); border-radius: 6px; cursor: pointer; padding: 2px;" />
+                            <input type="text" id="themeColorHex" value="#5C3A21" class="form-control adm-input-dark font-monospace text-uppercase" style="width: 85px; height: 38px; font-size: 0.82rem;" />
+                            <div class="d-flex align-items-center gap-1 ms-1">
+                                <button type="button" class="adm-theme-swatch active" style="background: #5C3A21;" data-color="#5C3A21" title="Nâu thuốc" onclick="setStageColor('#5C3A21')"></button>
+                                <button type="button" class="adm-theme-swatch" style="background: #1F242D;" data-color="#1F242D" title="Đen than" onclick="setStageColor('#1F242D')"></button>
+                                <button type="button" class="adm-theme-swatch" style="background: #5B1818;" data-color="#5B1818" title="Đỏ rượu" onclick="setStageColor('#5B1818')"></button>
+                                <button type="button" class="adm-theme-swatch" style="background: #2A3A50;" data-color="#2A3A50" title="Xanh Navy" onclick="setStageColor('#2A3A50')"></button>
+                                <button type="button" class="adm-theme-swatch" style="background: #36453B;" data-color="#36453B" title="Xanh rêu" onclick="setStageColor('#36453B')"></button>
+                                <button type="button" class="adm-theme-swatch" style="background: #7C5335;" data-color="#7C5335" title="Da bò" onclick="setStageColor('#7C5335')"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ROW 2: CHỮ TO IN CHÌM & TÊN PHỐI MÀU -->
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="HeroModelText" class="adm-form-label">
+                            Chữ to in chìm sau giày (Hero Backdrop Text)
+                        </label>
+                        <input asp-for="HeroModelText" class="form-control adm-input-dark font-monospace text-uppercase" id="heroModelTextInput"
+                               placeholder="VD: TOBACCO DECK" value="TOBACCO DECK" style="height: 38px; font-size: 0.86rem; font-weight: 700;" />
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="ColorwayName" class="adm-form-label">Tên phối màu (Colorway)</label>
+                        <input asp-for="ColorwayName" class="form-control adm-input-dark" id="colorwayNameInput"
+                               placeholder="VD: NÂU THUỐC / GUM" value="NÂU THUỐC / GUM" style="height: 38px; font-size: 0.85rem;" />
+                    </div>
+                </div>
+
+                <!-- ROW 3: MÃ GIÀY & ĐƠN VỊ THIẾT KẾ -->
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="StyleCode" class="adm-form-label">Mã giày (StyleCode)</label>
+                        <input asp-for="StyleCode" class="form-control adm-input-dark font-monospace text-uppercase" id="styleCodeInput"
+                               placeholder="MEN-TOBACCO-GUM-DECK" value="MEN-TOBACCO-GUM-DECK" style="height: 38px; font-size: 0.82rem;" />
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Designer" class="adm-form-label">Thiết kế (Designer)</label>
+                        <input asp-for="Designer" class="form-control adm-input-dark" id="designerInput"
+                               placeholder="HNMTSHOP" value="HNMTSHOP" style="height: 38px; font-size: 0.85rem;" />
+                    </div>
                 </div>
             </div>
 
@@ -585,7 +578,7 @@
             <div class="adm-card mb-3">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <div class="fw-bold" style="font-size: 0.88rem; color: var(--adm-heading);">
-                        Kích cỡ &amp; Phối màu
+                        3. Kích cỡ &amp; Phối màu
                     </div>
 
                     <!-- PRODUCT TYPE TOGGLE -->
@@ -648,7 +641,7 @@
             <div class="adm-card mb-3" id="cardInventoryMatrix">
                 <div class="d-flex align-items-center justify-content-between mb-2">
                     <div class="d-flex align-items-center gap-2">
-                        <span class="fw-bold" style="font-size: 0.88rem; color: var(--adm-heading);">Bảng tồn kho biến thể</span>
+                        <span class="fw-bold" style="font-size: 0.88rem; color: var(--adm-heading);">4. Bảng tồn kho biến thể</span>
                         <span class="adm-pill gray" id="lblVariantCount" style="font-size: 0.72rem;">0 phân loại</span>
                     </div>
 
@@ -665,11 +658,11 @@
                     <table class="table adm-sheet-table mb-0">
                         <thead>
                             <tr>
-                                <th style="width: 32%;">Mã SKU</th>
-                                <th style="width: 14%;">Size</th>
-                                <th style="width: 22%;">Màu</th>
-                                <th style="width: 18%;">Giá (₫)</th>
-                                <th style="width: 14%;">Tồn kho</th>
+                                <th style="min-width: 170px;">Mã SKU</th>
+                                <th style="min-width: 60px;">Size</th>
+                                <th style="min-width: 130px;">Màu</th>
+                                <th style="min-width: 110px;">Giá (₫)</th>
+                                <th style="min-width: 80px;">Tồn kho</th>
                                 <th style="width: 35px;"></th>
                             </tr>
                         </thead>
@@ -678,7 +671,7 @@
                 </div>
             </div>
 
-            <!-- CARD 5: TRẠNG THÁI & ACTION BAR (CLEAN, ROCK-SOLID ALIGNMENT) -->
+            <!-- CARD 5: TRẠNG THÁI & ACTION BAR -->
             <div class="adm-card p-3">
                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
                     <!-- TOGGLE SWITCH -->
@@ -1086,6 +1079,7 @@
                 document.getElementById('btnStageRemove').disabled = false;
             } else {
                 img.src = '#';
+                img.classList.remove('is-transparent');
                 img.classList.add('d-none');
                 placeholder.classList.remove('d-none');
                 viewport.classList.remove('has-image');
@@ -1113,6 +1107,8 @@
                     originalDataUrls[slot] = e.target.result;
                     const thumbBox = document.getElementById(`thumbBox${slot}`);
                     thumbBox.innerHTML = `<img src="${e.target.result}" class="adm-angle-thumb-preview" alt="Slot ${slot}" />`;
+                    const img = document.getElementById('stageImg');
+                    img.classList.remove('is-transparent');
                     updateStageDisplay();
                 };
                 reader.readAsDataURL(file);
@@ -1121,7 +1117,9 @@
 
         function resetStageImage() {
             if (originalDataUrls[activeSlot]) {
-                document.getElementById('stageImg').src = originalDataUrls[activeSlot];
+                const img = document.getElementById('stageImg');
+                img.src = originalDataUrls[activeSlot];
+                img.classList.remove('is-transparent');
                 updateStageBackdrop();
             }
         }
@@ -1173,7 +1171,9 @@
                 const transparentUrl = URL.createObjectURL(transparentBlob);
 
                 // Show transparent image directly in stage viewport
-                document.getElementById('stageImg').src = transparentUrl;
+                const stageImg = document.getElementById('stageImg');
+                stageImg.src = transparentUrl;
+                stageImg.classList.add('is-transparent');
                 document.getElementById(`thumbBox${activeSlot}`).innerHTML = `<img src="${transparentUrl}" class="adm-angle-thumb-preview" alt="Slot ${activeSlot}" />`;
 
                 // Assign to real file input via DataTransfer
