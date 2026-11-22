@@ -261,6 +261,29 @@
                     </div>
                 </div>
 
+                <!-- SAMPLE TEST IMAGES QUICK LOADER -->
+                <div class="mt-3 pt-2 border-top">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span class="text-muted small" style="font-size: 0.72rem; font-weight: 600;">
+                            <i class="bi bi-lightning-charge text-warning me-1"></i> Ảnh mẫu chưa tách (Click để nạp thử):
+                        </span>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-sm adm-btn-action-secondary p-1 flex-fill text-start d-flex align-items-center gap-2" style="font-size: 0.72rem;" onclick="loadSampleImage('/images/test-samples/sample-shoe-pair-raw.jpg')" title="2 đôi giày trên sàn bê tông">
+                            <img src="/images/test-samples/sample-shoe-pair-raw.jpg" style="width: 28px; height: 28px; object-fit: cover; border-radius: 4px;" />
+                            <span>2 Đôi Giày</span>
+                        </button>
+                        <button type="button" class="btn btn-sm adm-btn-action-secondary p-1 flex-fill text-start d-flex align-items-center gap-2" style="font-size: 0.72rem;" onclick="loadSampleImage('/images/test-samples/sample-shoe-side-raw.jpg')" title="Giày góc nghiêng 1 bên">
+                            <img src="/images/test-samples/sample-shoe-side-raw.jpg" style="width: 28px; height: 28px; object-fit: cover; border-radius: 4px;" />
+                            <span>1 Chiếc Giày</span>
+                        </button>
+                        <button type="button" class="btn btn-sm adm-btn-action-secondary p-1 flex-fill text-start d-flex align-items-center gap-2" style="font-size: 0.72rem;" onclick="loadSampleImage('/images/test-samples/sample-jacket-front-raw.jpg')" title="Áo khoác da trên nền phòng">
+                            <img src="/images/test-samples/sample-jacket-front-raw.jpg" style="width: 28px; height: 28px; object-fit: cover; border-radius: 4px;" />
+                            <span>Áo Khoác</span>
+                        </button>
+                    </div>
+                </div>
+
                 <!-- HIDDEN FILE INPUTS -->
                 <input asp-for="ImageFile" type="file" id="realInputSlot1" class="d-none" accept=".jpg,.jpeg,.png,.webp" required onchange="handleStageFileSelect(1, this)" />
                 <input asp-for="ImageBackFile" type="file" id="realInputSlot2" class="d-none" accept=".jpg,.jpeg,.png,.webp" onchange="handleStageFileSelect(2, this)" />
@@ -1020,6 +1043,22 @@
             cardInventoryMatrix.classList.add('d-none');
             panelSimpleProduct.classList.remove('d-none');
         });
+
+        function loadSampleImage(url) {
+            fetch(url)
+                .then(res => res.blob())
+                .then(blob => {
+                    const file = new File([blob], url.split('/').pop(), { type: blob.type || 'image/jpeg' });
+                    const dt = new DataTransfer();
+                    dt.items.add(file);
+                    const input = document.getElementById(`realInputSlot${activeSlot}`);
+                    if (input) {
+                        input.files = dt.files;
+                        handleStageFileSelect(activeSlot, input);
+                    }
+                })
+                .catch(err => console.error('Error loading sample:', err));
+        }
 
         // INITIALIZE ON LOAD
         document.addEventListener('DOMContentLoaded', () => {
