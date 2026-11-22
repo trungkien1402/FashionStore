@@ -335,8 +335,9 @@
 }
 
 .sv-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: clamp(24px, 3.5vw, 56px);
     width: 100%;
     max-width: 1280px;
@@ -344,6 +345,9 @@
 }
 
 .sv-grid-item {
+    flex: 0 0 calc(33.333% - 40px);
+    min-width: 280px;
+    max-width: 380px;
     background: transparent !important;
     border: none !important;
     border-radius: 0 !important;

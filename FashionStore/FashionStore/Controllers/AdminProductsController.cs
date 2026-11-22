@@ -146,11 +146,6 @@ public class AdminProductsController : Controller
 
         try
         {
-            var imageUrl = await SaveImageAsync(model.ImageFile!);
-            string? backUrl = model.ImageBackFile != null ? await SaveImageAsync(model.ImageBackFile) : null;
-            string? sideUrl = model.ImageSideFile != null ? await SaveImageAsync(model.ImageSideFile) : null;
-            string? pairUrl = model.ImagePairFile != null ? await SaveImageAsync(model.ImagePairFile) : null;
-
             var category = await _context.Categories.FindAsync(model.CategoryId);
             var catSlug = category?.Slug?.ToLower() ?? "";
             var catName = category?.Name?.ToLower() ?? "";
@@ -159,6 +154,12 @@ public class AdminProductsController : Controller
 
             var audience = string.IsNullOrWhiteSpace(model.Audience) ? "men" : model.Audience.ToLowerInvariant();
             var kind = isShoe ? "giay" : (isPants ? "quan" : "ao");
+            var imageKind = isShoe ? "shoe" : "apparel";
+
+            var imageUrl = await SaveImageAsync(model.ImageFile!, imageKind);
+            string? backUrl = model.ImageBackFile != null ? await SaveImageAsync(model.ImageBackFile, imageKind) : null;
+            string? sideUrl = model.ImageSideFile != null ? await SaveImageAsync(model.ImageSideFile, imageKind) : null;
+            string? pairUrl = model.ImagePairFile != null ? await SaveImageAsync(model.ImagePairFile, imageKind) : null;
 
             object metaObj;
 
@@ -520,7 +521,7 @@ public class AdminProductsController : Controller
     // POST: /AdminProducts/RemoveBackground
     [HttpPost]
     [IgnoreAntiforgeryToken]
-    public async Task<IActionResult> RemoveBackground(IFormFile? file)
+    public async Task<IActionResult> RemoveBackground(IFormFile? file, [FromForm] string? kind)
     {
         if (file == null || file.Length == 0)
             return BadRequest("Vui lòng tải ảnh lên.");
@@ -546,10 +547,16 @@ public class AdminProductsController : Controller
                 scriptPath = Path.Combine(Directory.GetCurrentDirectory(), "FashionStore", "Scripts", "rembg_runner.py");
             }
 
+            var mode = string.Equals(kind, "shoe", StringComparison.OrdinalIgnoreCase) || string.Equals(kind, "giay", StringComparison.OrdinalIgnoreCase)
+                ? "shoe"
+                : (string.Equals(kind, "apparel", StringComparison.OrdinalIgnoreCase) || string.Equals(kind, "ao", StringComparison.OrdinalIgnoreCase) || string.Equals(kind, "quan", StringComparison.OrdinalIgnoreCase)
+                    ? "apparel"
+                    : "auto");
+
             var startInfo = new System.Diagnostics.ProcessStartInfo
             {
                 FileName = "python",
-                Arguments = $"\"{scriptPath}\" \"{inPath}\" \"{outPath}\"",
+                Arguments = $"\"{scriptPath}\" \"{inPath}\" \"{outPath}\" \"{mode}\"",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
@@ -633,7 +640,7 @@ public class AdminProductsController : Controller
             System.Text.NormalizationForm.FormC);
     }
 
-    private async Task<string> SaveImageAsync(IFormFile file)
+    private async Task<string> SaveImageAsync(IFormFile file, string? kind = null)
     {
         var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
         var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
@@ -654,8 +661,52 @@ public class AdminProductsController : Controller
         var fileName = $"{Guid.NewGuid():N}{extension}";
         var filePath = Path.Combine(folder, fileName);
 
-        await using var stream = new FileStream(filePath, FileMode.Create);
-        await file.CopyToAsync(stream);
+        await using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await file.CopyToAsync(stream);
+        }
+
+        // Tự động chuẩn hóa kích thước Studio (1200x750 cho giày, y-top sát móc treo cho quần áo)
+        if (extension == ".png")
+        {
+            try
+            {
+                var scriptPath = Path.Combine(_environment.ContentRootPath, "Scripts", "rembg_runner.py");
+                if (!System.IO.File.Exists(scriptPath))
+                {
+                    scriptPath = Path.Combine(Directory.GetCurrentDirectory(), "FashionStore", "Scripts", "rembg_runner.py");
+                }
+                var mode = string.Equals(kind, "shoe", StringComparison.OrdinalIgnoreCase) || string.Equals(kind, "giay", StringComparison.OrdinalIgnoreCase)
+                    ? "shoe"
+                    : (string.Equals(kind, "apparel", StringComparison.OrdinalIgnoreCase) || string.Equals(kind, "ao", StringComparison.OrdinalIgnoreCase) || string.Equals(kind, "quan", StringComparison.OrdinalIgnoreCase)
+                        ? "apparel"
+                        : "auto");
+
+                var psi = new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = "python",
+                    Arguments = $"\"{scriptPath}\" --frame-only \"{filePath}\" \"{filePath}\" \"{mode}\"",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+                using var p = System.Diagnostics.Process.Start(psi);
+                if (p != null) await p.WaitForExitAsync();
+            }
+            catch { }
+        }
+
+        // Đảm bảo đồng bộ ảnh sang thư mục con FashionStore/FashionStore nếu có
+        try
+        {
+            var mirrorFolder = Path.Combine(Directory.GetCurrentDirectory(), "FashionStore", "FashionStore", "wwwroot", "images", "products");
+            if (Directory.Exists(mirrorFolder))
+            {
+                System.IO.File.Copy(filePath, Path.Combine(mirrorFolder, fileName), true);
+            }
+        }
+        catch { }
 
         return $"/images/products/{fileName}";
     }

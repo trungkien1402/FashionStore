@@ -1157,6 +1157,7 @@
             try {
                 const formData = new FormData();
                 formData.append('file', fileToProcess);
+                formData.append('kind', currentArchetype === 'shoes' ? 'shoe' : 'apparel');
 
                 const response = await fetch('/AdminProducts/RemoveBackground', {
                     method: 'POST',
