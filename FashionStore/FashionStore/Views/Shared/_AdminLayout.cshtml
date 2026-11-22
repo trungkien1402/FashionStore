@@ -244,12 +244,6 @@
             }
             @if (liveEnabled)
             {
-                <div class="d-flex justify-content-end align-items-center mb-3">
-                    <div class="adm-live-badge" title="Dữ liệu được cập nhật trực tiếp theo thời gian thực">
-                        <span class="adm-live-pulse"></span>
-                        <span class="adm-live-text" role="status" data-admin-live-status>Trực tiếp</span>
-                    </div>
-                </div>
                 <div data-admin-live-content>@RenderBody()</div>
             }
             else

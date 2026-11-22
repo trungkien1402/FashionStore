@@ -2,7 +2,7 @@
 (() => {
     let content = document.querySelector('[data-admin-live-content]');
     const status = document.querySelector('[data-admin-live-status]');
-    if (!content || !status) return;
+    if (!content) return;
     let busy = false;
     let dirty = false;
     let submitting = false;
@@ -38,7 +38,7 @@
             if (dirty || content.contains(document.activeElement)
                 || document.querySelector('.modal.show, .dropdown-menu.show')
                 || (window.getSelection()?.toString() ?? '').length) {
-                status.textContent = 'Tạm dừng khi thao tác';
+                if (status) status.textContent = 'Tạm dừng khi thao tác';
                 return;
             }
             busy = true;
@@ -49,7 +49,7 @@
             });
             if (response.status === 401 || response.status === 403 || response.redirected) {
                 submitting = true;
-                status.textContent = 'Phiên làm việc đã hết hạn';
+                if (status) status.textContent = 'Phiên làm việc đã hết hạn';
                 return;
             }
             if (!response.ok) throw new Error('refresh');
@@ -65,10 +65,10 @@
                 window.scrollTo(scroll.x, scroll.y);
             }
             failures = 0;
-            status.textContent = 'Trực tiếp';
+            if (status) status.textContent = 'Trực tiếp';
         } catch {
             failures++;
-            status.textContent = 'Đang kết nối lại';
+            if (status) status.textContent = 'Đang kết nối lại';
         } finally {
             busy = false;
             if (!submitting) timer = setTimeout(refresh, Math.min(30000, 4000 * (1 + failures)));
