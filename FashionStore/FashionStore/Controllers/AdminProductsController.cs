@@ -176,6 +176,10 @@ public class AdminProductsController : Controller
                     : model.StyleCode.Trim().ToUpper();
                 var designer = string.IsNullOrWhiteSpace(model.Designer) ? "HNMTSHOP" : model.Designer.Trim();
 
+                // Với giày: Slot 1 là 2 Đôi (Hero/Pair), Slot 2 là Nghiêng 1 Bên (Một chiếc), Slot 3 là Chi tiết
+                var singleShoeUrl = backUrl ?? sideUrl ?? imageUrl;
+                var pairShoeUrl = pairUrl ?? imageUrl;
+
                 metaObj = new
                 {
                     colors = model.Variants.Select(v => v.Color).Distinct().Where(c => !string.IsNullOrWhiteSpace(c)).Select(c => new[] { c, themeColor }).ToArray(),
@@ -183,8 +187,8 @@ public class AdminProductsController : Controller
                     {
                         new
                         {
-                            front = sideUrl ?? imageUrl,
-                            pair = pairUrl ?? imageUrl
+                            front = singleShoeUrl,
+                            pair = pairShoeUrl
                         }
                     },
                     sizes = model.Variants.Select(v => v.Size).Distinct().Where(s => !string.IsNullOrWhiteSpace(s)).ToArray(),
@@ -238,7 +242,7 @@ public class AdminProductsController : Controller
                 Description = model.Description.Trim(),
                 Price = model.Price,
                 CategoryId = model.CategoryId,
-                ImageUrl = imageUrl,
+                ImageUrl = isShoe ? (backUrl ?? sideUrl ?? imageUrl) : imageUrl,
                 ShowroomKind = kind,
                 ShowroomAudience = audience,
                 ShowroomMetadata = System.Text.Json.JsonSerializer.Serialize(metaObj, ShowroomCatalog.JsonOptions),

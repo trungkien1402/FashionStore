@@ -360,8 +360,8 @@ public static class ShowroomCatalog
         {
             item["id"] = product.Slug;
             item["name"] = product.Name;
-            item["image"] = product.ImageUrl;
-            item["pairImage"] = metadata.Photos[0].Pair;
+            item["image"] = metadata.Photos.FirstOrDefault()?.Front ?? product.ImageUrl;
+            item["pairImage"] = metadata.Photos.FirstOrDefault()?.Pair ?? product.ImageUrl;
             item["price"] = product.Price;
             item["colorName"] = metadata.Colors[0][0];
         }
