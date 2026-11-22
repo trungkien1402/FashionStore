@@ -183,7 +183,7 @@ public class AdminProductsController : Controller
 
                 metaObj = new
                 {
-                    colors = model.Variants.Select(v => v.Color).Distinct().Where(c => !string.IsNullOrWhiteSpace(c)).Select(c => new[] { c, themeColor }).ToArray(),
+                    colors = model.Variants.Select(v => v.Color).Distinct().Where(c => !string.IsNullOrWhiteSpace(c)).Select(c => new[] { c, ResolveColorHex(c, themeColor) }).ToArray(),
                     photos = new[]
                     {
                         new
@@ -216,7 +216,7 @@ public class AdminProductsController : Controller
             {
                 metaObj = new
                 {
-                    colors = model.Variants.Select(v => v.Color).Distinct().Where(c => !string.IsNullOrWhiteSpace(c)).Select(c => new[] { c, "#18181B" }).ToArray(),
+                    colors = model.Variants.Select(v => v.Color).Distinct().Where(c => !string.IsNullOrWhiteSpace(c)).Select(c => new[] { c, ResolveColorHex(c) }).ToArray(),
                     photos = new[]
                     {
                         new
@@ -747,5 +747,62 @@ public class AdminProductsController : Controller
             counter++;
         }
         return uniqueSku;
+    }
+
+    private static readonly Dictionary<string, string> ColorHexMap = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["Đen"] = "#18181B",
+        ["Black"] = "#18181B",
+        ["Trắng"] = "#FFFFFF",
+        ["White"] = "#FFFFFF",
+        ["Xám"] = "#71717A",
+        ["Grey"] = "#71717A",
+        ["Gray"] = "#71717A",
+        ["Be"] = "#E5D9C5",
+        ["Beige"] = "#E5D9C5",
+        ["Nâu"] = "#78350F",
+        ["Brown"] = "#78350F",
+        ["Xanh Navy"] = "#1E3A8A",
+        ["Navy"] = "#1E3A8A",
+        ["Xanh Rêu"] = "#4D7C0F",
+        ["Rêu"] = "#4D7C0F",
+        ["Olive"] = "#4D7C0F",
+        ["Đỏ Rượu"] = "#881337",
+        ["Burgundy"] = "#881337",
+        ["Đỏ"] = "#DC2626",
+        ["Red"] = "#DC2626",
+        ["Vàng"] = "#FBBF24",
+        ["Yellow"] = "#FBBF24",
+        ["Kem"] = "#FEF3C7",
+        ["Cream"] = "#FEF3C7",
+        ["Xanh Dương"] = "#2563EB",
+        ["Blue"] = "#2563EB",
+        ["Hồng"] = "#F472B6",
+        ["Pink"] = "#F472B6",
+        ["Cam"] = "#F97316",
+        ["Orange"] = "#F97316",
+        ["Tím"] = "#7C3AED",
+        ["Purple"] = "#7C3AED",
+        ["Panda"] = "#18181B",
+        ["Mocha"] = "#5C3A21",
+        ["Nâu Thuốc / Gum"] = "#5C3A21",
+        ["Nâu Thuốc"] = "#5C3A21",
+        ["Chicago"] = "#991B1B"
+    };
+
+    private static string ResolveColorHex(string? colorName, string fallback = "#18181B")
+    {
+        if (string.IsNullOrWhiteSpace(colorName)) return fallback;
+        var trimmed = colorName.Trim();
+        if (ColorHexMap.TryGetValue(trimmed, out var hex)) return hex;
+
+        if (trimmed.StartsWith("#") && (trimmed.Length == 7 || trimmed.Length == 4)) return trimmed;
+
+        foreach (var (k, v) in ColorHexMap)
+        {
+            if (trimmed.Contains(k, StringComparison.OrdinalIgnoreCase) || k.Contains(trimmed, StringComparison.OrdinalIgnoreCase))
+                return v;
+        }
+        return fallback;
     }
 }
