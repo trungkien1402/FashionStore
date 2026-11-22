@@ -14,7 +14,7 @@
                 <span class="adm-meta-divider">/</span>
                 <span class="adm-order-count-badge">TẠO MỚI</span>
             </div>
-            <h1 class="adm-title-main">Thêm danh mục sản phẩm</h1>
+            <h1 class="adm-title-main">Thêm Danh mục Sản phẩm</h1>
         </div>
         <div>
             <a asp-action="Index" class="adm-action-btn adm-btn-secondary">
@@ -24,46 +24,221 @@
     </div>
 </div>
 
-<div class="row">
+<div class="row g-4">
+    <!-- LEFT COLUMN: FORM INPUTS -->
     <div class="col-lg-7">
         <div class="adm-card shadow-sm">
-            <form asp-action="Create" method="post">
+            <div class="d-flex align-items-center gap-2 mb-3 pb-3 border-bottom border-secondary border-opacity-10">
+                <i class="bi bi-tags fs-5" style="color: var(--adm-gold, #D97706);"></i>
+                <h5 class="fw-bold mb-0 adm-heading">Thông tin Danh mục Thời trang</h5>
+            </div>
+
+            <form asp-action="Create" method="post" id="catForm">
                 @Html.AntiForgeryToken()
 
-                <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4"></div>
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4 shadow-sm"></div>
 
+                <!-- TÊN DANH MỤC -->
                 <div class="mb-3">
                     <label asp-for="Name" class="adm-form-label fw-bold">Tên danh mục <span class="text-danger">*</span></label>
-                    <input asp-for="Name" class="form-control adm-input-dark" placeholder="Ví dụ: Áo khoác & Jacket, Quần Denim, Giày Sneaker..." required />
+                    <input asp-for="Name" id="catNameInput" class="form-control adm-input-dark fs-6" placeholder="Ví dụ: Áo Khoác & Outerwear, Quần Denim, Giày Sneaker..." required autocomplete="off" />
                     <span asp-validation-for="Name" class="text-danger small mt-1 d-block"></span>
                 </div>
 
+                <!-- QUICK PRESET SUGGESTIONS -->
                 <div class="mb-4">
-                    <label asp-for="Slug" class="adm-form-label fw-bold">Đường dẫn tĩnh (Slug) - Tùy chọn</label>
-                    <input asp-for="Slug" class="form-control adm-input-dark font-monospace" placeholder="ao-khoac-jacket" />
+                    <label class="text-muted small fw-semibold d-block mb-2">Gợi ý danh mục thời trang nhanh:</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Áo Khoác & Outerwear', 'ao-khoac-outerwear')">+ Áo Khoác & Outerwear</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Áo Polo', 'ao-polo')">+ Áo Polo</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Áo Sơ Mi & Blouse', 'ao-so-mi-blouse')">+ Áo Sơ Mi & Blouse</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Áo Thun & Graphic Tees', 'ao-thun-graphic-tees')">+ Áo Thun & Graphic Tees</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Quần Denim & Jean', 'quan-denim-jean')">+ Quần Denim & Jean</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Giày Sneaker & Footwear', 'giay-sneaker')">+ Giày Sneaker</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Phụ Kiện & Túi Xách', 'phu-kien-tui-xach')">+ Phụ Kiện</button>
+                    </div>
+                </div>
+
+                <!-- SLUG -->
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <label asp-for="Slug" class="adm-form-label fw-bold mb-0">Đường dẫn tĩnh (Slug) - Tự động tạo chuẩn SEO</label>
+                        <button type="button" class="btn btn-sm p-0 text-muted" onclick="autoSlugFromName()" title="Tạo lại từ tên danh mục" style="font-size: 0.75rem;">
+                            <i class="bi bi-arrow-repeat me-1"></i>Tự tạo
+                        </button>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-text font-monospace text-muted small" style="background: var(--adm-surface-hover, #F8FAFC); border-color: var(--adm-border, #E2E8F0); font-size: 0.8rem;">
+                            hnmtshop.vn/collections/
+                        </span>
+                        <input asp-for="Slug" id="catSlugInput" class="form-control adm-input-dark font-monospace" placeholder="ao-khoac-outerwear" />
+                    </div>
                     <div class="text-muted small mt-1" style="font-size: 0.75rem;">
-                        Nếu để trống, hệ thống sẽ tự động tạo slug chuẩn SEO không dấu từ tên danh mục.
+                        Nếu để trống, hệ thống sẽ tự động tạo slug không dấu từ tên danh mục.
                     </div>
                     <span asp-validation-for="Slug" class="text-danger small mt-1 d-block"></span>
                 </div>
 
-                <div class="mb-4 pt-3 border-top border-secondary border-opacity-10">
+                <!-- SWITCH KÍCH HOẠT -->
+                <div class="p-3 rounded-3 mb-4" style="background: var(--adm-surface-hover, #F8FAFC); border: 1px solid var(--adm-border, #E2E8F0);">
                     <div class="form-check form-switch p-0 mb-0 d-flex align-items-center justify-content-between">
                         <label class="form-check-label fw-semibold adm-heading" for="IsActive" style="cursor: pointer;">
-                            <div>Kích hoạt hiển thị</div>
-                            <div class="text-muted fw-normal" style="font-size: 0.75rem;">Danh mục đang bật sẽ xuất hiện trên menu khách hàng và bộ lọc sản phẩm.</div>
+                            <div>Kích hoạt hiển thị danh mục</div>
+                            <div class="text-muted fw-normal" style="font-size: 0.75rem;">Khi bật, danh mục sẽ lập tức xuất hiện trên menu bộ sưu tập và bộ lọc showroom.</div>
                         </label>
-                        <input asp-for="IsActive" class="form-check-input ms-3" type="checkbox" role="switch" id="IsActive" checked style="cursor: pointer; width: 2.5em; height: 1.3em;" />
+                        <input asp-for="IsActive" class="form-check-input ms-3" type="checkbox" role="switch" id="IsActive" checked style="cursor: pointer; width: 2.5em; height: 1.3em;" onchange="updateLivePreview()" />
                     </div>
                 </div>
 
-                <div class="d-flex align-items-center gap-2 pt-2 border-top border-secondary border-opacity-10">
+                <!-- SUBMIT BUTTONS -->
+                <div class="d-flex align-items-center gap-2 pt-3 border-top border-secondary border-opacity-10">
                     <button type="submit" class="adm-action-btn adm-btn-primary py-2 px-4">
-                        <i class="bi bi-check2"></i> <span>Lưu danh mục</span>
+                        <i class="bi bi-check2 me-1"></i> <span>Lưu danh mục</span>
                     </button>
                     <a asp-action="Index" class="adm-action-btn adm-btn-secondary py-2 px-3">Hủy bỏ</a>
                 </div>
             </form>
         </div>
     </div>
+
+    <!-- RIGHT COLUMN: LIVE VISUAL PREVIEW & BEST PRACTICES -->
+    <div class="col-lg-5">
+        <!-- LIVE SHOWCASE PREVIEW -->
+        <div class="adm-card shadow-sm mb-4">
+            <div class="d-flex align-items-center justify-content-between mb-3 pb-3 border-bottom border-secondary border-opacity-10">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-eye fs-5" style="color: var(--adm-gold, #D97706);"></i>
+                    <h5 class="fw-bold mb-0 adm-heading">Xem trước Hiển thị (Live Preview)</h5>
+                </div>
+                <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #10B981; font-size: 0.72rem;">Showroom Ready</span>
+            </div>
+
+            <!-- SIMULATED CATEGORY CARD -->
+            <div class="border rounded-3 overflow-hidden shadow-sm" style="background: #FFFFFF;">
+                <div style="height: 140px; background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%); position: relative; display: flex; align-items: center; justify-content: center;">
+                    <div style="width: 52px; height: 52px; border-radius: 50%; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: #F59E0B;">
+                        <i class="bi bi-tag-fill"></i>
+                    </div>
+
+                    <div class="position-absolute top-0 end-0 m-2">
+                        <span id="previewStatusBadge" class="adm-pill adm-pill-emerald shadow-sm">Đang bật</span>
+                    </div>
+
+                    <div class="position-absolute bottom-0 start-0 m-2 text-white">
+                        <span class="badge" style="background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); font-size: 0.68rem; border: 1px solid rgba(255,255,255,0.2);">
+                            Atelier Collection
+                        </span>
+                    </div>
+                </div>
+
+                <div class="p-3">
+                    <h5 id="previewCatName" class="fw-bold adm-heading mb-1" style="font-size: 1.05rem;">Tên danh mục</h5>
+                    <div id="previewCatSlug" class="font-monospace text-muted small mb-3" style="font-size: 0.75rem;">
+                        /duong-dan-tinh
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-between pt-2 border-top border-secondary border-opacity-10">
+                        <span class="badge" style="background: var(--adm-surface-hover, #F8FAFC); color: var(--adm-ink, #0F172A); border: 1px solid var(--adm-border, #CBD5E1); font-weight: 600;">
+                            0 sản phẩm
+                        </span>
+
+                        <span class="small fw-semibold" style="color: var(--adm-gold, #D97706);">
+                            Khám phá bộ sưu tập &rarr;
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEO & CATALOG TIPS -->
+            <div class="mt-4 p-3 rounded-3" style="background: var(--adm-surface-hover, #F8FAFC); border: 1px solid var(--adm-border, #E2E8F0);">
+                <div class="fw-bold adm-heading small mb-2">
+                    <i class="bi bi-lightbulb me-1 text-warning"></i> Quy chuẩn Danh mục Atelier:
+                </div>
+                <ul class="text-muted small ps-3 mb-0" style="font-size: 0.78rem; line-height: 1.6;">
+                    <li><strong>Slug chuẩn SEO:</strong> Sử dụng chữ thường, không dấu, nối bằng dấu gạch ngang (<code>-</code>).</li>
+                    <li><strong>Gán sản phẩm:</strong> Sau khi tạo, bạn có thể chuyển sang trang <em>Sản phẩm</em> hoặc <em>Product Studio</em> để chọn danh mục này.</li>
+                    <li><strong>Ảnh Lookbook:</strong> Hệ thống tự động lấy ảnh đại diện của sản phẩm mới nhất thuộc danh mục này làm bìa Lookbook.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+        function removeVietnameseTones(str) {
+            str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
+            str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
+            str = str.replace(/ì|í|ị|ỉ|ĩ/g, "i");
+            str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o");
+            str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u");
+            str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
+            str = str.replace(/đ/g, "d");
+            str = str.replace(/À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ/g, "A");
+            str = str.replace(/È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ/g, "E");
+            str = str.replace(/Ì|Í|Ị|Ỉ|Ĩ/g, "I");
+            str = str.replace(/Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ/g, "O");
+            str = str.replace(/Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ/g, "U");
+            str = str.replace(/Ỳ|Ý|Ỵ|Ỷ|Ỹ/g, "Y");
+            str = str.replace(/Đ/g, "D");
+            return str;
+        }
+
+        function slugify(text) {
+            return removeVietnameseTones(text)
+                .toLowerCase()
+                .trim()
+                .replace(/[^\w\s-]/g, '')
+                .replace(/[\s_-]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+        }
+
+        let userTouchedSlug = false;
+        const nameInput = document.getElementById('catNameInput');
+        const slugInput = document.getElementById('catSlugInput');
+        const activeSwitch = document.getElementById('IsActive');
+        const previewName = document.getElementById('previewCatName');
+        const previewSlug = document.getElementById('previewCatSlug');
+        const previewStatus = document.getElementById('previewStatusBadge');
+
+        slugInput.addEventListener('input', () => {
+            userTouchedSlug = true;
+            updateLivePreview();
+        });
+
+        nameInput.addEventListener('input', () => {
+            if (!userTouchedSlug) {
+                slugInput.value = slugify(nameInput.value);
+            }
+            updateLivePreview();
+        });
+
+        function autoSlugFromName() {
+            slugInput.value = slugify(nameInput.value);
+            userTouchedSlug = false;
+            updateLivePreview();
+        }
+
+        function applyPreset(name, slug) {
+            nameInput.value = name;
+            slugInput.value = slug;
+            userTouchedSlug = true;
+            updateLivePreview();
+        }
+
+        function updateLivePreview() {
+            const valName = nameInput.value.trim();
+            const valSlug = slugInput.value.trim();
+            previewName.textContent = valName ? valName : "Tên danh mục";
+            previewSlug.textContent = valSlug ? "/" + valSlug : "/duong-dan-tinh";
+
+            if (activeSwitch.checked) {
+                previewStatus.className = "adm-pill adm-pill-emerald shadow-sm";
+                previewStatus.textContent = "Đang bật";
+            } else {
+                previewStatus.className = "adm-pill adm-pill-faint shadow-sm";
+                previewStatus.textContent = "Đang tắt";
+            }
+        }
+    </script>
+}

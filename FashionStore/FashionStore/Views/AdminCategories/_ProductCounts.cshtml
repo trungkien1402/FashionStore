@@ -1,0 +1,11 @@
+@model AdminCategoryListItemViewModel
+
+<a asp-controller="AdminProducts" asp-action="Index" asp-route-categoryId="@Model.Category.Id"
+   class="fw-semibold">@Model.ProductCount sản phẩm</a>
+<div class="small">
+    <a asp-controller="AdminProducts" asp-action="Index" asp-route-categoryId="@Model.Category.Id"
+       asp-route-isActive="true">@Model.ActiveProductCount đang hiển thị</a>
+    <span aria-hidden="true"> · </span>
+    <a asp-controller="AdminProducts" asp-action="Index" asp-route-categoryId="@Model.Category.Id"
+       asp-route-isActive="false">@Model.InactiveProductCount đang ẩn</a>
+</div>

@@ -173,6 +173,9 @@ public class AdminCategoriesController : Controller
             return NotFound();
         }
 
+        ViewBag.ProductCount = await _context.Products.CountAsync(p => p.CategoryId == id);
+        ViewBag.ActiveProductCount = await _context.Products.CountAsync(p => p.CategoryId == id && p.IsActive);
+
         var model = new AdminCategoryViewModel
         {
             Id = category.Id,
