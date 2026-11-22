@@ -394,6 +394,69 @@ public class AdminProductsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    // POST: /AdminProducts/RemoveBackground
+    [HttpPost]
+    [IgnoreAntiforgeryToken]
+    public async Task<IActionResult> RemoveBackground(IFormFile? file)
+    {
+        if (file == null || file.Length == 0)
+            return BadRequest("Vui lòng tải ảnh lên.");
+
+        var tempFolder = Path.Combine(Path.GetTempPath(), "FashionStoreRembg");
+        Directory.CreateDirectory(tempFolder);
+
+        var ext = Path.GetExtension(file.FileName);
+        if (string.IsNullOrWhiteSpace(ext)) ext = ".jpg";
+        var inPath = Path.Combine(tempFolder, $"{Guid.NewGuid():N}{ext}");
+        var outPath = Path.Combine(tempFolder, $"{Guid.NewGuid():N}.png");
+
+        try
+        {
+            await using (var stream = new FileStream(inPath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            var scriptPath = Path.Combine(_environment.ContentRootPath, "Scripts", "rembg_runner.py");
+            if (!System.IO.File.Exists(scriptPath))
+            {
+                scriptPath = Path.Combine(Directory.GetCurrentDirectory(), "FashionStore", "Scripts", "rembg_runner.py");
+            }
+
+            var startInfo = new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = "python",
+                Arguments = $"\"{scriptPath}\" \"{inPath}\" \"{outPath}\"",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            using var process = System.Diagnostics.Process.Start(startInfo);
+            if (process != null)
+            {
+                await process.WaitForExitAsync();
+                if (process.ExitCode == 0 && System.IO.File.Exists(outPath))
+                {
+                    var bytes = await System.IO.File.ReadAllBytesAsync(outPath);
+                    return File(bytes, "image/png");
+                }
+            }
+
+            return StatusCode(500, "Xử lý tách nền AI không thành công.");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+        finally
+        {
+            try { if (System.IO.File.Exists(inPath)) System.IO.File.Delete(inPath); } catch { }
+            try { if (System.IO.File.Exists(outPath)) System.IO.File.Delete(outPath); } catch { }
+        }
+    }
+
     private async Task LoadCategoriesAsync()
     {
         ViewBag.Categories = await _context.ListedAdminCategories()

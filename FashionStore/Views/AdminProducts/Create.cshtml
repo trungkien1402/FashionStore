@@ -775,120 +775,120 @@
             updateStageDisplay();
         }
 
-        // SMART CLIENT-SIDE STUDIO CANVASES (BACKGROUND REMOVAL & CONTACT SHADOW)
-        function processStageMagic() {
-            const src = originalDataUrls[activeSlot];
-            if (!src) return;
+        // REAL AI STUDIO REMBG & CONTACT SHADOW
+        async function processStageMagic() {
+            const input = document.getElementById(`realInputSlot${activeSlot}`);
+            let fileToProcess = input?.files && input.files[0] ? input.files[0] : null;
+
+            if (!fileToProcess && originalDataUrls[activeSlot]) {
+                try {
+                    const res = await fetch(originalDataUrls[activeSlot]);
+                    const blob = await res.blob();
+                    fileToProcess = new File([blob], `input-${activeSlot}.jpg`, { type: blob.type || 'image/jpeg' });
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+
+            if (!fileToProcess) return;
 
             const btn = document.getElementById('btnStageMagic');
             const originalBtnHtml = btn.innerHTML;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Xử lý...';
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Đang tách nền AI...';
             btn.disabled = true;
 
-            const img = new Image();
-            img.crossOrigin = 'anonymous';
-            img.onload = function() {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                canvas.width = img.naturalWidth || 800;
-                canvas.height = img.naturalHeight || 800;
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            try {
+                const formData = new FormData();
+                formData.append('file', fileToProcess);
 
-                const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                const d = imgData.data;
-
-                // Sample corner pixels
-                const samples = [
-                    0, 1, 2,
-                    (canvas.width - 1) * 4,
-                    ((canvas.height - 1) * canvas.width) * 4,
-                    ((canvas.height - 1) * canvas.width + (canvas.width - 1)) * 4
-                ];
-                let bgR = 0, bgG = 0, bgB = 0;
-                samples.forEach(idx => {
-                    bgR += d[idx]; bgG += d[idx + 1]; bgB += d[idx + 2];
+                const response = await fetch('/AdminProducts/RemoveBackground', {
+                    method: 'POST',
+                    body: formData
                 });
-                bgR /= 4; bgG /= 4; bgB /= 4;
 
-                const tol = 38;
-                for (let i = 0; i < d.length; i += 4) {
-                    const dist = Math.sqrt((d[i] - bgR)**2 + (d[i+1] - bgG)**2 + (d[i+2] - bgB)**2);
-                    if (dist < tol) {
-                        d[i + 3] = 0;
-                    } else if (dist < tol + 16) {
-                        d[i + 3] = Math.round(((dist - tol) / 16) * 255);
+                if (!response.ok) {
+                    throw new Error('Lỗi máy chủ khi tách nền.');
+                }
+
+                const transparentBlob = await response.blob();
+                const transparentUrl = URL.createObjectURL(transparentBlob);
+
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = img.naturalWidth || 800;
+                    canvas.height = img.naturalHeight || 800;
+
+                    if (currentBackdrop === 'atelier') {
+                        const g = ctx.createRadialGradient(
+                            canvas.width / 2, canvas.height * 0.45, 40,
+                            canvas.width / 2, canvas.height / 2, canvas.width * 0.75
+                        );
+                        g.addColorStop(0, '#FAF8F5');
+                        g.addColorStop(0.7, '#F3EDE2');
+                        g.addColorStop(1, '#EFE8DE');
+                        ctx.fillStyle = g;
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                        // Soft floor contact shadow
+                        ctx.save();
+                        ctx.scale(1, 0.22);
+                        const sGrad = ctx.createRadialGradient(
+                            canvas.width / 2, (canvas.height * 0.88) / 0.22, 10,
+                            canvas.width / 2, (canvas.height * 0.88) / 0.22, canvas.width * 0.38
+                        );
+                        sGrad.addColorStop(0, 'rgba(40, 30, 20, 0.25)');
+                        sGrad.addColorStop(0.5, 'rgba(50, 40, 30, 0.08)');
+                        sGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                        ctx.fillStyle = sGrad;
+                        ctx.beginPath();
+                        ctx.arc(canvas.width / 2, (canvas.height * 0.88) / 0.22, canvas.width * 0.38, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.restore();
+
+                        ctx.shadowColor = 'rgba(30, 20, 15, 0.12)';
+                        ctx.shadowBlur = 18;
+                        ctx.shadowOffsetY = 10;
+                        ctx.drawImage(img, 0, 0);
+                    } else if (currentBackdrop === 'white') {
+                        ctx.fillStyle = '#FFFFFF';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        ctx.shadowColor = 'rgba(0, 0, 0, 0.08)';
+                        ctx.shadowBlur = 16;
+                        ctx.shadowOffsetY = 8;
+                        ctx.drawImage(img, 0, 0);
+                    } else {
+                        ctx.drawImage(img, 0, 0);
                     }
-                }
-                ctx.putImageData(imgData, 0, 0);
 
-                // Build Final Composite Studio
-                const sCanvas = document.createElement('canvas');
-                const sCtx = sCanvas.getContext('2d');
-                sCanvas.width = canvas.width;
-                sCanvas.height = canvas.height;
+                    canvas.toBlob(blob => {
+                        const finalProcessedUrl = canvas.toDataURL('image/png');
+                        document.getElementById('stageImg').src = finalProcessedUrl;
+                        document.getElementById(`thumbBox${activeSlot}`).innerHTML = `<img src="${finalProcessedUrl}" class="adm-angle-thumb-preview" alt="Slot ${activeSlot}" />`;
 
-                if (currentBackdrop === 'atelier') {
-                    const g = sCtx.createRadialGradient(
-                        sCanvas.width / 2, sCanvas.height * 0.45, 40,
-                        sCanvas.width / 2, sCanvas.height / 2, sCanvas.width * 0.75
-                    );
-                    g.addColorStop(0, '#FAF8F5');
-                    g.addColorStop(0.7, '#F3EDE2');
-                    g.addColorStop(1, '#EFE8DE');
-                    sCtx.fillStyle = g;
-                    sCtx.fillRect(0, 0, sCanvas.width, sCanvas.height);
+                        // Re-assign to file input via DataTransfer
+                        const fileInput = document.getElementById(`realInputSlot${activeSlot}`);
+                        const processedFile = new File([blob], `studio-slot-${activeSlot}.png`, { type: 'image/png' });
+                        const dt = new DataTransfer();
+                        dt.items.add(processedFile);
+                        fileInput.files = dt.files;
 
-                    // Soft floor contact shadow
-                    sCtx.save();
-                    sCtx.scale(1, 0.22);
-                    const sGrad = sCtx.createRadialGradient(
-                        sCanvas.width / 2, (sCanvas.height * 0.88) / 0.22, 10,
-                        sCanvas.width / 2, (sCanvas.height * 0.88) / 0.22, sCanvas.width * 0.38
-                    );
-                    sGrad.addColorStop(0, 'rgba(40, 30, 20, 0.25)');
-                    sGrad.addColorStop(0.5, 'rgba(50, 40, 30, 0.08)');
-                    sGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-                    sCtx.fillStyle = sGrad;
-                    sCtx.beginPath();
-                    sCtx.arc(sCanvas.width / 2, (sCanvas.height * 0.88) / 0.22, sCanvas.width * 0.38, 0, Math.PI * 2);
-                    sCtx.fill();
-                    sCtx.restore();
+                        btn.innerHTML = '<i class="bi bi-check2"></i> Đã tách nền AI!';
+                        setTimeout(() => {
+                            btn.innerHTML = originalBtnHtml;
+                            btn.disabled = false;
+                        }, 2000);
+                    }, 'image/png');
+                };
+                img.src = transparentUrl;
 
-                    sCtx.shadowColor = 'rgba(30, 20, 15, 0.12)';
-                    sCtx.shadowBlur = 18;
-                    sCtx.shadowOffsetY = 10;
-                    sCtx.drawImage(canvas, 0, 0);
-                } else if (currentBackdrop === 'white') {
-                    sCtx.fillStyle = '#FFFFFF';
-                    sCtx.fillRect(0, 0, sCanvas.width, sCanvas.height);
-                    sCtx.shadowColor = 'rgba(0, 0, 0, 0.08)';
-                    sCtx.shadowBlur = 16;
-                    sCtx.shadowOffsetY = 8;
-                    sCtx.drawImage(canvas, 0, 0);
-                } else {
-                    sCtx.drawImage(canvas, 0, 0);
-                }
-
-                sCanvas.toBlob(blob => {
-                    const processedUrl = sCanvas.toDataURL('image/png');
-                    document.getElementById('stageImg').src = processedUrl;
-                    document.getElementById(`thumbBox${activeSlot}`).innerHTML = `<img src="${processedUrl}" class="adm-angle-thumb-preview" alt="Slot ${activeSlot}" />`;
-
-                    // Re-assign to file input via DataTransfer
-                    const fileInput = document.getElementById(`realInputSlot${activeSlot}`);
-                    const file = new File([blob], `studio-slot-${activeSlot}.png`, { type: 'image/png' });
-                    const dt = new DataTransfer();
-                    dt.items.add(file);
-                    fileInput.files = dt.files;
-
-                    btn.innerHTML = '<i class="bi bi-check2"></i> Đã chuẩn hóa';
-                    setTimeout(() => {
-                        btn.innerHTML = originalBtnHtml;
-                        btn.disabled = false;
-                    }, 1500);
-                }, 'image/png');
-            };
-            img.src = src;
+            } catch (err) {
+                console.error(err);
+                alert('Tách nền thất bại: ' + err.message);
+                btn.innerHTML = originalBtnHtml;
+                btn.disabled = false;
+            }
         }
 
         // DRAG & DROP FOR STAGE
