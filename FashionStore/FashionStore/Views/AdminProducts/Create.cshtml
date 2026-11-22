@@ -1,8 +1,151 @@
 @model FashionStore.Models.ViewModels.AdminProductViewModel
 
 @{
-    ViewData["Title"] = "Thêm sản phẩm mới";
+    ViewData["Title"] = "Thêm sản phẩm mới - Atelier Studio";
 }
+
+<style>
+    /* ATELIER PRODUCT STUDIO UX */
+    .adm-archetype-card {
+        border: 2px solid var(--adm-border);
+        border-radius: 12px;
+        background: var(--adm-surface);
+        padding: 14px 18px;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        user-select: none;
+        flex: 1;
+    }
+    .adm-archetype-card:hover {
+        border-color: #CBD5E1;
+        background: #FFFFFF;
+        transform: translateY(-1px);
+    }
+    .adm-archetype-card.active {
+        border-color: #18181B;
+        background: #18181B;
+        color: #FFFFFF !important;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+    }
+    .adm-archetype-card.active .text-muted {
+        color: #94A3B8 !important;
+    }
+    .adm-archetype-card.active .adm-archetype-icon {
+        background: #27272A;
+        color: #FFFFFF;
+        border-color: #3F3F46;
+    }
+    .adm-archetype-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        background: #F4F4F5;
+        border: 1px solid var(--adm-border);
+        flex-shrink: 0;
+        transition: all 0.2s;
+    }
+
+    /* VISUAL STUDIO STAGE */
+    .adm-stage-card {
+        background: #FFFFFF;
+        border: 1px solid var(--adm-border);
+        border-radius: 14px;
+        padding: 22px;
+        position: sticky;
+        top: 24px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    }
+    .adm-stage-viewport {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        border-radius: 12px;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.3s ease;
+        border: 1px dashed #CBD5E1;
+        cursor: pointer;
+    }
+    .adm-stage-viewport.has-image {
+        border-style: solid;
+        border-color: var(--adm-border);
+    }
+    .adm-stage-viewport.dragover {
+        border-color: #D4AF37;
+        background: rgba(212, 175, 55, 0.08) !important;
+    }
+    .adm-stage-img {
+        max-width: 88%;
+        max-height: 88%;
+        object-fit: contain;
+        transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), filter 0.25s;
+    }
+    .adm-stage-viewport:hover .adm-stage-img {
+        transform: scale(1.02);
+    }
+
+    /* ANGLE STRIP THUMBNAILS */
+    .adm-angle-strip {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-top: 14px;
+    }
+    .adm-angle-thumb {
+        border: 2px solid var(--adm-border);
+        border-radius: 8px;
+        background: #F8FAFC;
+        padding: 8px 6px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        position: relative;
+    }
+    .adm-angle-thumb:hover {
+        border-color: #94A3B8;
+    }
+    .adm-angle-thumb.active {
+        border-color: #18181B;
+        background: #FFFFFF;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .adm-angle-thumb-preview {
+        width: 100%;
+        height: 52px;
+        object-fit: contain;
+        border-radius: 4px;
+    }
+
+    /* SPREADSHEET TABLE */
+    .adm-sheet-table {
+        font-size: 0.82rem;
+        margin-bottom: 0;
+    }
+    .adm-sheet-table th {
+        background: #F8FAFC;
+        color: #64748B;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        font-weight: 700;
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--adm-border);
+    }
+    .adm-sheet-table td {
+        padding: 8px 12px;
+        vertical-align: middle;
+        border-bottom: 1px solid #F1F5F9;
+    }
+</style>
 
 <!-- 1. BREADCRUMB & HEADER -->
 <div class="mb-4">
@@ -12,35 +155,175 @@
             <span>Quay lại Showroom</span>
         </a>
         <span class="text-muted" style="font-size: 0.75rem;">/</span>
-        <span class="text-muted" style="font-size: 0.75rem;">HNMT ATELIER · SHOWROOM STUDIO</span>
+        <span class="text-muted" style="font-size: 0.75rem;">HNMT ATELIER · PRODUCT STUDIO</span>
     </div>
 
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
         <div>
-            <h1 class="adm-title-main mb-1" style="font-size: 1.35rem; font-weight: 700; letter-spacing: -0.01em;">
-                Thêm Sản phẩm &amp; Khởi tạo Kho
+            <div class="d-flex align-items-center gap-2 mb-1 adm-meta-crumb">
+                <span class="adm-pulse-dot"></span>
+                <span class="adm-kicker-text">CREATIVE PRODUCT WORKSPACE</span>
+                <span class="adm-meta-divider">/</span>
+                <span class="adm-order-count-badge">CHUẨN QUỐC TẾ FARFETCH &amp; SSENSE</span>
+            </div>
+            <h1 class="adm-title-main mb-0" style="font-size: 1.4rem; font-weight: 700; letter-spacing: -0.01em;">
+                Atelier Product Studio &amp; Inventory Suite
             </h1>
-            <p class="text-muted mb-0" style="font-size: 0.78rem;">
-                Nhập thông tin sản phẩm và thiết lập ma trận biến thể (Size, Màu, Tồn kho) trên cùng một trang.
-            </p>
         </div>
     </div>
 </div>
 
 <form asp-action="Create" method="post" enctype="multipart/form-data" id="createProductForm">
     @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="StudioBackdrop" id="studioBackdropInput" value="atelier" />
 
     <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4 py-2 px-3 border-0" style="font-size: 0.82rem; border-radius: 8px;"></div>
 
-    <div class="row g-4">
-        <!-- LEFT COLUMN: MAIN SPECS & VARIANT MATRIX -->
-        <div class="col-lg-8">
+    <!-- 2. ARCHETYPE SELECTOR (CHỌN ĐÚNG BẢN CHẤT NGAY BƯỚC ĐẦU) -->
+    <div class="mb-4">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+            <span style="font-size: 0.72rem; font-weight: 700; letter-spacing: 0.15em; color: var(--adm-gold); text-transform: uppercase;">
+                1. CHỌN LOẠI SẢN PHẨM (PRODUCT ARCHETYPE)
+            </span>
+            <span class="text-muted" style="font-size: 0.74rem;">Hệ thống sẽ tự động cấu hình Size, Phối màu &amp; Góc chụp chuẩn</span>
+        </div>
 
-            <!-- CARD 1: THÔNG TIN CƠ BẢN -->
+        <div class="d-flex flex-column flex-md-row gap-3">
+            <!-- ARCHETYPE: FOOTWEAR -->
+            <div class="adm-archetype-card active" id="cardArchetypeShoes" onclick="selectArchetype('shoes')">
+                <div class="adm-archetype-icon">👟</div>
+                <div>
+                    <div class="fw-bold" style="font-size: 0.95rem;">Giày Dép &amp; Sneakers (Footwear Atelier)</div>
+                    <div class="text-muted small">Hệ size số EU (38-45), Tên phối màu Colorway, Studio 2 chiếc nghệ thuật &amp; góc nghiêng</div>
+                </div>
+            </div>
+
+            <!-- ARCHETYPE: APPAREL -->
+            <div class="adm-archetype-card" id="cardArchetypeClothes" onclick="selectArchetype('clothes')">
+                <div class="adm-archetype-icon">🧥</div>
+                <div>
+                    <div class="fw-bold" style="font-size: 0.95rem;">Quần Áo &amp; Outerwear (Apparel Atelier)</div>
+                    <div class="text-muted small">Hệ size chữ (XS-3XL), Bảng màu đơn sắc/họa tiết, Studio 3 góc (Mặt trước, Mặt sau, Bên hông)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. MAIN WORKSPACE: 2-WING ATELIER ARCHITECTURE -->
+    <div class="row g-4">
+
+        <!-- LEFT WING: VISUAL STUDIO STAGE (5 COLS - IMMERSIVE PHOTOGRAPHY) -->
+        <div class="col-lg-5">
+            <div class="adm-stage-card">
+                <!-- STAGE HEADER -->
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-camera text-primary" style="font-size: 1.1rem;"></i>
+                        <div>
+                            <div class="fw-bold" style="font-size: 0.92rem; color: var(--adm-ink);">Visual Studio Stage</div>
+                            <div class="text-muted" id="stageAngleSubtitle" style="font-size: 0.72rem;">Ảnh 2 đôi nghệ thuật (Hero)</div>
+                        </div>
+                    </div>
+                    <span id="stageProtocolBadge" class="adm-pill dark" style="font-size: 0.68rem; font-weight: 700;">
+                        FOOTWEAR PROTOCOL
+                    </span>
+                </div>
+
+                <!-- STUDIO BACKDROP SELECTOR -->
+                <div class="p-2 mb-3 rounded-2" style="background: var(--adm-surface); border: 1px solid var(--adm-border);">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="text-muted small" style="font-size: 0.68rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em;">
+                            Phông nền Studio:
+                        </span>
+                        <span class="text-muted" style="font-size: 0.68rem;">Đồng bộ ánh sáng toàn web</span>
+                    </div>
+                    <div class="d-flex gap-1">
+                        <button type="button" class="btn btn-sm adm-chip-btn active flex-fill justify-content-center backdrop-btn" data-backdrop="atelier" onclick="selectBackdrop('atelier')">
+                            <span style="width: 10px; height: 10px; border-radius: 50%; background: #FAF8F5; border: 1px solid #D4AF37; display: inline-block;"></span>
+                            <span style="font-size: 0.72rem;">Atelier Ấm</span>
+                        </button>
+                        <button type="button" class="btn btn-sm adm-chip-btn flex-fill justify-content-center backdrop-btn" data-backdrop="white" onclick="selectBackdrop('white')">
+                            <span style="width: 10px; height: 10px; border-radius: 50%; background: #FFFFFF; border: 1px solid #CBD5E1; display: inline-block;"></span>
+                            <span style="font-size: 0.72rem;">Trắng Tinh</span>
+                        </button>
+                        <button type="button" class="btn btn-sm adm-chip-btn flex-fill justify-content-center backdrop-btn" data-backdrop="transparent" onclick="selectBackdrop('transparent')">
+                            <span style="width: 10px; height: 10px; border-radius: 50%; background: repeating-conic-gradient(#808080 0% 25%, transparent 0% 50%) 50%/6px 6px; display: inline-block;"></span>
+                            <span style="font-size: 0.72rem;">Trong suốt</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- MAIN STAGE VIEWPORT (INTERACTIVE DRAG & DROP & PREVIEW) -->
+                <div class="adm-stage-viewport" id="stageViewport" onclick="triggerActiveSlotUpload()">
+                    <!-- GHOST SILHOUETTE PLACEHOLDER -->
+                    <div id="stagePlaceholder" class="text-center p-3">
+                        <div id="stageGhostIcon" class="mb-2"></div>
+                        <div class="fw-semibold" id="stageSlotTitle" style="font-size: 0.88rem; color: var(--adm-ink);">
+                            Tải ảnh 2 Đôi Xếp Nghệ Thuật
+                        </div>
+                        <div class="text-muted small mt-1" id="stageSlotDesc" style="font-size: 0.72rem; max-width: 260px; margin: 0 auto;">
+                            Kéo thả ảnh hoặc click để duyệt (Hỗ trợ JPG, PNG, WEBP)
+                        </div>
+                    </div>
+
+                    <!-- ACTIVE IMAGE DISPLAY -->
+                    <img id="stageImg" src="#" alt="Studio Stage" class="adm-stage-img d-none" />
+                </div>
+
+                <!-- STAGE ACTION BUTTONS -->
+                <div class="d-flex gap-2 mt-3">
+                    <button type="button" id="btnStageMagic" class="adm-btn-action-primary flex-fill justify-content-center py-2" style="height: 38px; font-size: 0.78rem; font-weight: 600;" onclick="processStageMagic()" disabled>
+                        <i class="bi bi-magic me-1"></i> Tách nền &amp; Chuẩn hóa Studio
+                    </button>
+                    <button type="button" id="btnStageReset" class="adm-btn-action-secondary py-2" style="height: 38px; padding: 0 14px; font-size: 0.78rem;" onclick="resetStageImage()" title="Khôi phục ảnh gốc" disabled>
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                    </button>
+                    <button type="button" id="btnStageRemove" class="adm-btn-action-secondary py-2 text-danger" style="height: 38px; padding: 0 14px; font-size: 0.78rem;" onclick="removeStageImage()" title="Xóa ảnh góc này" disabled>
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+
+                <!-- 3-ANGLE THUMBNAIL STRIP -->
+                <div class="adm-angle-strip">
+                    <div class="adm-angle-thumb active" id="thumbSlot1" onclick="switchActiveSlot(1)">
+                        <div class="adm-angle-thumb-preview d-flex align-items-center justify-content-center bg-white border" id="thumbBox1">
+                            <span class="text-muted small" style="font-size: 0.65rem;">Chưa có</span>
+                        </div>
+                        <div class="fw-bold mt-1 text-truncate" id="thumbTitle1" style="font-size: 0.7rem;">Góc Hero *</div>
+                    </div>
+
+                    <div class="adm-angle-thumb" id="thumbSlot2" onclick="switchActiveSlot(2)">
+                        <div class="adm-angle-thumb-preview d-flex align-items-center justify-content-center bg-white border" id="thumbBox2">
+                            <span class="text-muted small" style="font-size: 0.65rem;">Chưa có</span>
+                        </div>
+                        <div class="fw-bold mt-1 text-truncate" id="thumbTitle2" style="font-size: 0.7rem;">Góc 2</div>
+                    </div>
+
+                    <div class="adm-angle-thumb" id="thumbSlot3" onclick="switchActiveSlot(3)">
+                        <div class="adm-angle-thumb-preview d-flex align-items-center justify-content-center bg-white border" id="thumbBox3">
+                            <span class="text-muted small" style="font-size: 0.65rem;">Chưa có</span>
+                        </div>
+                        <div class="fw-bold mt-1 text-truncate" id="thumbTitle3" style="font-size: 0.7rem;">Góc 3</div>
+                    </div>
+                </div>
+
+                <!-- HIDDEN REAL FILE INPUTS -->
+                <input asp-for="ImageFile" type="file" id="realInputSlot1" class="d-none" accept=".jpg,.jpeg,.png,.webp" required onchange="handleStageFileSelect(1, this)" />
+                <input asp-for="ImageBackFile" type="file" id="realInputSlot2" class="d-none" accept=".jpg,.jpeg,.png,.webp" onchange="handleStageFileSelect(2, this)" />
+                <input asp-for="ImageSideFile" type="file" id="realInputSlot3" class="d-none" accept=".jpg,.jpeg,.png,.webp" onchange="handleStageFileSelect(3, this)" />
+
+                <span asp-validation-for="ImageFile" class="text-danger small mt-2 d-block" style="font-size: 0.74rem;"></span>
+            </div>
+        </div>
+
+        <!-- RIGHT WING: PRODUCT SPECS & LUXURY INVENTORY MATRIX (7 COLS) -->
+        <div class="col-lg-7">
+
+            <!-- CARD 1: ĐỊNH DANH & BỘ SƯU TẬP -->
             <div class="adm-card mb-4">
                 <div class="d-flex align-items-center gap-2 mb-3">
-                    <i class="bi bi-info-circle text-primary" style="font-size: 1rem;"></i>
-                    <h2 class="fw-bold mb-0" style="font-size: 0.92rem; color: var(--adm-ink);">Thông tin Cơ bản</h2>
+                    <i class="bi bi-tag text-primary" style="font-size: 1rem;"></i>
+                    <h2 class="fw-bold mb-0" style="font-size: 0.92rem; color: var(--adm-ink);">Thông tin Định danh Sản phẩm</h2>
                 </div>
 
                 <div class="mb-3">
@@ -48,20 +331,20 @@
                         Tên sản phẩm *
                     </label>
                     <input asp-for="Name" class="form-control adm-input-dark" id="productName"
-                           placeholder="Ví dụ: Áo Thun Oversize Heavyweight, Áo Khoác Denim Atelier..."
-                           style="height: 38px; font-size: 0.85rem;" required />
+                           placeholder="Ví dụ: Nike Dunk Low Retro Panda, Áo Khoác Denim Atelier..."
+                           style="height: 40px; font-size: 0.88rem; font-weight: 600;" required />
                     <span asp-validation-for="Name" class="text-danger small mt-1 d-block" style="font-size: 0.74rem;"></span>
                 </div>
 
                 <div class="row g-3 mb-3">
                     <div class="col-md-6">
                         <label asp-for="Price" class="form-label text-muted small mb-1" style="font-size: 0.72rem; text-transform: uppercase; font-weight: 600;">
-                            Giá bán niêm yết (₫) *
+                            Giá niêm yết (₫) *
                         </label>
                         <div class="input-group">
                             <input asp-for="Price" type="number" min="1000" step="1000" id="productPrice"
-                                   class="form-control adm-input-dark" placeholder="350000"
-                                   style="height: 38px; font-size: 0.85rem;" required />
+                                   class="form-control adm-input-dark" placeholder="1850000"
+                                   style="height: 38px; font-size: 0.88rem; font-weight: 600;" required />
                             <span class="input-group-text border-start-0 text-muted" style="background: var(--adm-surface); border-color: var(--adm-border); font-size: 0.82rem;">
                                 ₫
                             </span>
@@ -71,7 +354,7 @@
 
                     <div class="col-md-6">
                         <label asp-for="CategoryId" class="form-label text-muted small mb-1" style="font-size: 0.72rem; text-transform: uppercase; font-weight: 600;">
-                            Bộ sưu tập / Danh mục *
+                            Danh mục phân loại *
                         </label>
                         <select asp-for="CategoryId" class="form-select adm-input-dark" id="productCategory"
                                 asp-items="@(new SelectList(ViewBag.Categories, "Id", "Name"))"
@@ -84,26 +367,26 @@
 
                 <div class="mb-0">
                     <label asp-for="Description" class="form-label text-muted small mb-1" style="font-size: 0.72rem; text-transform: uppercase; font-weight: 600;">
-                        Mô tả &amp; Chi tiết chất liệu
+                        Mô tả &amp; Chi tiết chế tác
                     </label>
-                    <textarea asp-for="Description" class="form-control adm-input-dark" rows="4"
-                              placeholder="Chi tiết chất liệu (Cotton 100%, GSM 320), kiểu phom (Boxy Fit), thông số giặt ủi..."
+                    <textarea asp-for="Description" class="form-control adm-input-dark" rows="3" id="productDesc"
+                              placeholder="Chất liệu upper da cao cấp, đế cupsole cao su nguyên khối, lót cổ êm ái..."
                               style="font-size: 0.84rem;"></textarea>
                     <span asp-validation-for="Description" class="text-danger small mt-1 d-block" style="font-size: 0.74rem;"></span>
                 </div>
             </div>
 
-            <!-- CARD 2: CẤU HÌNH SIZE, MÀU & MA TRẬN KHO (GAME CHANGER!) -->
+            <!-- CARD 2: CẤU HÌNH SIZE & PHỐI MÀU (ADAPTIVE TO ARCHETYPE) -->
             <div class="adm-card mb-4" style="border: 2px solid #0F172A !important;">
                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
                     <div class="d-flex align-items-center gap-2">
-                        <i class="bi bi-layers-half text-warning" style="font-size: 1.1rem;"></i>
+                        <i class="bi bi-palette text-warning" style="font-size: 1.1rem;"></i>
                         <div>
                             <h2 class="fw-bold mb-0" style="font-size: 0.95rem; color: var(--adm-ink);">
-                                Phân loại Biến thể &amp; Khởi tạo Kho hàng
+                                Kích cỡ (Size) &amp; Phối màu (Colorway)
                             </h2>
                             <div class="text-muted" style="font-size: 0.74rem;">
-                                Tạo size, màu sắc và số lượng tồn kho để sản phẩm mở bán được ngay.
+                                Click chọn nhanh để hệ thống tự động sinh ma trận kho bên dưới
                             </div>
                         </div>
                     </div>
@@ -121,8 +404,8 @@
                     </div>
                 </div>
 
-                <!-- 2A. PANEL SIMPLE PRODUCT (FREESIZE) -->
-                <div id="panelSimpleProduct" class="d-none p-3 rounded-3" style="background: var(--adm-surface-hover); border: 1px solid var(--adm-border);">
+                <!-- PANEL SIMPLE PRODUCT (FREESIZE) -->
+                <div id="panelSimpleProduct" class="d-none p-3 rounded-3 mb-3" style="background: var(--adm-surface-hover); border: 1px solid var(--adm-border);">
                     <div class="row align-items-center g-3">
                         <div class="col-md-6">
                             <label class="form-label text-muted small mb-1" style="font-size: 0.72rem; text-transform: uppercase; font-weight: 600;">
@@ -133,335 +416,117 @@
                         <div class="col-md-6">
                             <div class="text-muted" style="font-size: 0.76rem; line-height: 1.45;">
                                 <i class="bi bi-info-circle text-primary me-1"></i>
-                                Hệ thống sẽ tự động tạo một phân loại <strong>FreeSize / Tiêu chuẩn</strong> với số tồn kho này. Khách hàng có thể đặt mua ngay lập tức.
+                                Sản phẩm 1 cỡ duy nhất sẽ được mở bán ngay với số tồn kho này.
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 2B. PANEL MATRIX VARIANTS (SIZE & COLOR CHIPS GENERATOR) -->
+                <!-- PANEL MATRIX CHIPS -->
                 <div id="panelMatrixVariants">
-                    <!-- 1. QUICK SIZE CHIPS -->
+                    <!-- 1. SIZES CHIPS -->
                     <div class="mb-3 p-3 rounded-3" style="background: var(--adm-surface-hover); border: 1px solid var(--adm-border);">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <label class="text-muted small mb-0" style="font-size: 0.72rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.04em;">
-                                1. Chọn các kích cỡ (Sizes)
+                            <label class="text-muted small mb-0" id="lblSizeGroup" style="font-size: 0.72rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.04em;">
+                                1. KÍCH CỠ GIÀY (EU SIZES)
                             </label>
-                            <span class="text-muted" style="font-size: 0.7rem;">Click để chọn nhanh</span>
+                            <span class="text-muted" style="font-size: 0.7rem;">Click để bật/tắt</span>
                         </div>
-
-                        <!-- CLOTHING SIZES -->
-                        <div class="d-flex flex-wrap align-items-center gap-1 mb-2">
-                            <span class="text-muted small me-2" style="font-size: 0.7rem;">Quần áo:</span>
-                            @foreach (var s in new[] { "XS", "S", "M", "L", "XL", "2XL", "3XL", "FreeSize" })
-                            {
-                                <button type="button" class="adm-chip-btn size-chip @(s == "S" || s == "M" || s == "L" ? "active" : "")" data-size="@s">
-                                    <span>@s</span>
-                                </button>
-                            }
+                        <div class="d-flex flex-wrap align-items-center gap-1 mb-2" id="sizeChipsContainer">
+                            <!-- Dynamic Size Chips loaded by JS based on Archetype -->
                         </div>
-
-                        <!-- SHOE SIZES -->
-                        <div class="d-flex flex-wrap align-items-center gap-1 mb-2">
-                            <span class="text-muted small me-2" style="font-size: 0.7rem;">Giày dép:</span>
-                            @foreach (var s in new[] { "38", "39", "40", "41", "42", "43", "44" })
-                            {
-                                <button type="button" class="adm-chip-btn size-chip" data-size="@s">
-                                    <span>@s</span>
-                                </button>
-                            }
-                        </div>
-
                         <!-- CUSTOM SIZE INPUT -->
                         <div class="d-flex align-items-center gap-2 mt-2 pt-2 border-top" style="border-color: var(--adm-border) !important;">
-                            <input type="text" id="customSizeInput" placeholder="Thêm size khác (VD: 29, 30, Oversized...)" class="form-control adm-input-dark" style="height: 32px; font-size: 0.78rem; max-width: 280px;" />
+                            <input type="text" id="customSizeInput" placeholder="Thêm size khác (VD: 46, 47, Oversized...)" class="form-control adm-input-dark" style="height: 32px; font-size: 0.78rem; max-width: 260px;" />
                             <button type="button" id="btnAddCustomSize" class="adm-btn-action-secondary" style="height: 32px; padding: 0 12px; font-size: 0.76rem;">
                                 <i class="bi bi-plus-lg"></i> Thêm size
                             </button>
                         </div>
                     </div>
 
-                    <!-- 2. QUICK COLOR CHIPS -->
+                    <!-- 2. COLORWAY CHIPS -->
                     <div class="mb-3 p-3 rounded-3" style="background: var(--adm-surface-hover); border: 1px solid var(--adm-border);">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <label class="text-muted small mb-0" style="font-size: 0.72rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.04em;">
-                                2. Chọn các màu sắc (Colors / Phối màu giày)
+                            <label class="text-muted small mb-0" id="lblColorGroup" style="font-size: 0.72rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.04em;">
+                                2. PHỐI MÀU (COLORWAYS)
                             </label>
-                            <span class="text-muted" style="font-size: 0.7rem;">Click để chọn nhanh</span>
+                            <span class="text-muted" style="font-size: 0.7rem;">Click để bật/tắt</span>
                         </div>
-
-                        <div class="d-flex flex-wrap align-items-center gap-1 mb-2">
-                            <button type="button" class="adm-chip-btn color-chip active" data-color="Đen">
-                                <span class="adm-swatch-dot" style="background: #18181B;"></span>
-                                <span>Đen</span>
-                            </button>
-                            <button type="button" class="adm-chip-btn color-chip" data-color="Trắng">
-                                <span class="adm-swatch-dot" style="background: #FFFFFF; border: 1px solid #CBD5E1;"></span>
-                                <span>Trắng</span>
-                            </button>
-                            <button type="button" class="adm-chip-btn color-chip" data-color="Xám">
-                                <span class="adm-swatch-dot" style="background: #71717A;"></span>
-                                <span>Xám</span>
-                            </button>
-                            <button type="button" class="adm-chip-btn color-chip" data-color="Be">
-                                <span class="adm-swatch-dot" style="background: #E5D9C5;"></span>
-                                <span>Be</span>
-                            </button>
-                            <button type="button" class="adm-chip-btn color-chip" data-color="Xanh Navy">
-                                <span class="adm-swatch-dot" style="background: #1E3A8A;"></span>
-                                <span>Xanh Navy</span>
-                            </button>
-                            <button type="button" class="adm-chip-btn color-chip" data-color="Nâu">
-                                <span class="adm-swatch-dot" style="background: #78350F;"></span>
-                                <span>Nâu</span>
-                            </button>
-                            <button type="button" class="adm-chip-btn color-chip" data-color="Xanh Rêu">
-                                <span class="adm-swatch-dot" style="background: #4D7C0F;"></span>
-                                <span>Xanh Rêu</span>
-                            </button>
-                            <button type="button" class="adm-chip-btn color-chip" data-color="Đen / Cam">
-                                <span class="adm-swatch-dot" style="background: linear-gradient(135deg, #18181B 50%, #EA580C 50%);"></span>
-                                <span>Đen / Cam</span>
-                            </button>
-                            <button type="button" class="adm-chip-btn color-chip" data-color="Trắng / Xanh">
-                                <span class="adm-swatch-dot" style="background: linear-gradient(135deg, #FFFFFF 50%, #2563EB 50%); border: 1px solid #CBD5E1;"></span>
-                                <span>Trắng / Xanh</span>
-                            </button>
+                        <div class="d-flex flex-wrap align-items-center gap-1 mb-2" id="colorChipsContainer">
+                            <!-- Dynamic Colorway Chips loaded by JS based on Archetype -->
                         </div>
-
-                        <!-- CUSTOM COLOR INPUT WITH MINI COLOR PICKER -->
+                        <!-- CUSTOM COLOR INPUT -->
                         <div class="d-flex align-items-center gap-2 mt-2 pt-2 border-top" style="border-color: var(--adm-border) !important;">
-                            <input type="color" id="customColorPicker" value="#7C3AED" class="adm-color-picker-mini" title="Chọn màu trực quan" />
-                            <input type="text" id="customColorInput" placeholder="Tên màu (VD: Tím Khói, Xanh Rêu Phối Cam...)" class="form-control adm-input-dark" style="height: 32px; font-size: 0.78rem; max-width: 280px;" />
+                            <input type="text" id="customColorInput" placeholder="Thêm phối màu khác (VD: Chicago, Reverse Mocha, Trắng / Đỏ...)" class="form-control adm-input-dark" style="height: 32px; font-size: 0.78rem; max-width: 280px;" />
                             <button type="button" id="btnAddCustomColor" class="adm-btn-action-secondary" style="height: 32px; padding: 0 12px; font-size: 0.76rem;">
-                                <i class="bi bi-plus-lg"></i> Thêm màu
+                                <i class="bi bi-plus-lg"></i> Thêm phối màu
                             </button>
-                        </div>
-                    </div>
-
-                    <!-- 3. LIVE MATRIX TABLE & BULK STOCK CONTROLS -->
-                    <div class="pt-2">
-                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
-                            <div class="d-flex align-items-center gap-2">
-                                <span class="fw-bold" style="font-size: 0.86rem; color: var(--adm-ink);">Bảng Biến thể Tự động sinh:</span>
-                                <span class="adm-pill gray" id="lblVariantCount" style="font-size: 0.72rem;">0 phân loại</span>
-                            </div>
-
-                            <!-- BULK STOCK TOOL -->
-                            <div class="d-flex align-items-center gap-2">
-                                <span class="text-muted small" style="font-size: 0.72rem;">Điền tồn kho hàng loạt:</span>
-                                <input type="number" min="0" id="bulkStockInput" value="15" class="form-control adm-input-dark text-center" style="height: 30px; width: 65px; font-size: 0.78rem; padding: 0;" />
-                                <button type="button" id="btnApplyBulkStock" class="adm-btn-action-secondary" style="height: 30px; padding: 0 10px; font-size: 0.74rem;" title="Áp dụng số tồn này cho toàn bộ bảng">
-                                    <i class="bi bi-check2-all me-1"></i> Áp dụng tất cả
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- DYNAMIC VARIANT TABLE -->
-                        <div class="table-responsive border rounded-3" style="border-color: var(--adm-border) !important;">
-                            <table class="table align-middle mb-0" id="matrixTable" style="font-size: 0.82rem; border-color: var(--adm-border);">
-                                <thead>
-                                    <tr style="background: var(--adm-surface-hover); font-size: 0.72rem; color: var(--adm-ink-muted); text-transform: uppercase;">
-                                        <th class="ps-3 py-2">Phân loại</th>
-                                        <th class="py-2" style="width: 25%;">Mã SKU</th>
-                                        <th class="py-2 text-end" style="width: 22%;">Giá bán (₫)</th>
-                                        <th class="py-2 text-center" style="width: 18%;">Tồn kho</th>
-                                        <th class="py-2 pe-3 text-end" style="width: 40px;"></th>
-                                    </tr>
-                                </thead>
-                                <tbody id="matrixTableBody">
-                                    <!-- Populated via JavaScript -->
-                                </tbody>
-                            </table>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- RIGHT COLUMN: MEDIA, PREVIEW & SUBMIT -->
-        <div class="col-lg-4">
-
-            <!-- CARD 1: ATELIER PHOTO STUDIO & BACKGROUND ENGINE -->
-            <div class="adm-card mb-4" style="border: 1px solid var(--adm-border);">
-                <div class="d-flex align-items-center justify-content-between mb-3">
+            <!-- CARD 3: LUXURY INVENTORY SPREADSHEET (MA TRẬN KHO & SKU) -->
+            <div class="adm-card mb-4" id="cardInventoryMatrix">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
                     <div class="d-flex align-items-center gap-2">
-                        <i class="bi bi-camera text-primary" style="font-size: 1.05rem;"></i>
-                        <div>
-                            <h2 class="fw-bold mb-0" style="font-size: 0.92rem; color: var(--adm-ink);">
-                                Studio &amp; Chuẩn hóa Ảnh
-                            </h2>
-                        </div>
+                        <i class="bi bi-table text-primary" style="font-size: 1rem;"></i>
+                        <h2 class="fw-bold mb-0" style="font-size: 0.92rem; color: var(--adm-ink);">
+                            Ma trận Biến thể &amp; Tồn kho
+                        </h2>
+                        <span class="adm-pill gray" id="lblVariantCount" style="font-size: 0.74rem;">0 phân loại</span>
                     </div>
-                    <span id="studioProtocolBadge" class="badge" style="background: #18181B; color: #FAF8F5; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em; padding: 4px 8px;">
-                        ÁO / QUẦN (3 GÓC)
-                    </span>
-                </div>
 
-                <!-- STUDIO BACKDROP SELECTOR -->
-                <div class="p-2 mb-3 rounded-2" style="background: var(--adm-surface-hover); border: 1px solid var(--adm-border);">
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                        <span class="text-muted small" style="font-size: 0.68rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em;">
-                            Phông nền Studio:
-                        </span>
-                        <span class="text-muted" style="font-size: 0.68rem;">Đồng bộ toàn web</span>
-                    </div>
-                    <div class="d-flex gap-1" id="backdropButtonGroup">
-                        <button type="button" class="btn btn-sm adm-chip-btn active flex-fill justify-content-center backdrop-btn" data-backdrop="atelier" onclick="selectBackdrop('atelier')">
-                            <span style="width: 10px; height: 10px; border-radius: 50%; background: #FAF8F5; border: 1px solid #D4AF37; display: inline-block;"></span>
-                            <span style="font-size: 0.72rem;">Atelier Ấm</span>
-                        </button>
-                        <button type="button" class="btn btn-sm adm-chip-btn flex-fill justify-content-center backdrop-btn" data-backdrop="white" onclick="selectBackdrop('white')">
-                            <span style="width: 10px; height: 10px; border-radius: 50%; background: #FFFFFF; border: 1px solid #CBD5E1; display: inline-block;"></span>
-                            <span style="font-size: 0.72rem;">Trắng Tinh</span>
-                        </button>
-                        <button type="button" class="btn btn-sm adm-chip-btn flex-fill justify-content-center backdrop-btn" data-backdrop="transparent" onclick="selectBackdrop('transparent')">
-                            <span style="width: 10px; height: 10px; border-radius: 50%; background: repeating-conic-gradient(#808080 0% 25%, transparent 0% 50%) 50%/6px 6px; display: inline-block;"></span>
-                            <span style="font-size: 0.72rem;">Trong suốt</span>
-                        </button>
-                    </div>
-                    <input type="hidden" asp-for="StudioBackdrop" id="studioBackdropInput" value="atelier" />
-                </div>
-
-                <!-- PROTOCOL SLOT TABS -->
-                <div class="d-flex gap-1 mb-2 border-bottom pb-2" style="border-color: var(--adm-border) !important;">
-                    <button type="button" class="adm-chip-btn slot-tab-btn active flex-fill justify-content-center" data-slot="1" onclick="switchSlot(1)">
-                        <span id="tab1Title">Mặt trước *</span>
-                    </button>
-                    <button type="button" class="adm-chip-btn slot-tab-btn flex-fill justify-content-center" data-slot="2" onclick="switchSlot(2)">
-                        <span id="tab2Title">Mặt sau</span>
-                    </button>
-                    <button type="button" class="adm-chip-btn slot-tab-btn flex-fill justify-content-center" data-slot="3" onclick="switchSlot(3)">
-                        <span id="tab3Title">Bên hông</span>
-                    </button>
-                </div>
-
-                <!-- HIDDEN FILE INPUTS FOR 3 SLOTS -->
-                <input asp-for="ImageFile" type="file" id="inputSlot1" class="d-none" accept=".jpg,.jpeg,.png,.webp" required onchange="handleSlotFileSelect(1, this)" />
-                <input asp-for="ImageBackFile" type="file" id="inputSlot2" class="d-none" accept=".jpg,.jpeg,.png,.webp" onchange="handleSlotFileSelect(2, this)" />
-                <input asp-for="ImageSideFile" type="file" id="inputSlot3" class="d-none" accept=".jpg,.jpeg,.png,.webp" onchange="handleSlotFileSelect(3, this)" />
-
-                <!-- SLOT 1 CONTAINER -->
-                <div class="slot-pane" id="paneSlot1">
-                    <div class="adm-dropzone mb-2" id="dropZone1" onclick="triggerSlotUpload(1)">
-                        <div id="placeholder1" class="text-center py-3">
-                            <div id="ghostIcon1" class="mb-2"></div>
-                            <div class="fw-semibold" id="slot1TitleText" style="font-size: 0.82rem; color: var(--adm-ink);">
-                                Tải ảnh Mặt trước
-                            </div>
-                            <div class="text-muted small mt-1" id="slot1DescText" style="font-size: 0.7rem;">
-                                Chụp phẳng phiu nhìn thẳng, thấy trọn vẹn phom dáng
-                            </div>
-                        </div>
-                        <div id="previewContainer1" class="d-none position-relative">
-                            <img id="previewImg1" src="#" alt="Slot 1" class="rounded-2" style="width: 100%; max-height: 220px; object-fit: contain; transition: all 0.2s;" />
-                            <button type="button" class="btn btn-sm btn-dark position-absolute top-0 end-0 m-2 rounded-circle" style="width: 26px; height: 26px; padding: 0;" onclick="removeSlotImage(1, event)" title="Xóa">
-                                <i class="bi bi-x-lg"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="d-flex gap-2">
-                        <button type="button" id="btnMagic1" class="adm-btn-action-primary flex-fill justify-content-center py-1" style="height: 32px; font-size: 0.74rem;" onclick="processMagicBackdrop(1)" disabled>
-                            <i class="bi bi-magic me-1"></i> Tách nền &amp; Gắn Studio
-                        </button>
-                        <button type="button" id="btnReset1" class="adm-btn-action-secondary py-1" style="height: 32px; font-size: 0.74rem;" onclick="resetSlotImage(1)" title="Ảnh gốc" disabled>
-                            <i class="bi bi-arrow-counterclockwise"></i>
+                    <!-- BULK INVENTORY TOOLBAR -->
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="text-muted small" style="font-size: 0.74rem;">Gán nhanh tồn kho:</span>
+                        <input type="number" id="bulkStockInput" min="0" value="10" class="form-control adm-input-dark text-center" style="width: 65px; height: 30px; font-size: 0.78rem; font-weight: 600;" />
+                        <button type="button" id="btnApplyBulkStock" class="adm-btn-action-secondary" style="height: 30px; padding: 0 10px; font-size: 0.74rem;">
+                            Áp dụng tất cả
                         </button>
                     </div>
                 </div>
 
-                <!-- SLOT 2 CONTAINER -->
-                <div class="slot-pane d-none" id="paneSlot2">
-                    <div class="adm-dropzone mb-2" id="dropZone2" onclick="triggerSlotUpload(2)">
-                        <div id="placeholder2" class="text-center py-3">
-                            <div id="ghostIcon2" class="mb-2"></div>
-                            <div class="fw-semibold" id="slot2TitleText" style="font-size: 0.82rem; color: var(--adm-ink);">
-                                Tải ảnh Mặt sau
-                            </div>
-                            <div class="text-muted small mt-1" id="slot2DescText" style="font-size: 0.7rem;">
-                                Chụp lưng áo/quần hoặc góc xoay 180°
-                            </div>
-                        </div>
-                        <div id="previewContainer2" class="d-none position-relative">
-                            <img id="previewImg2" src="#" alt="Slot 2" class="rounded-2" style="width: 100%; max-height: 220px; object-fit: contain; transition: all 0.2s;" />
-                            <button type="button" class="btn btn-sm btn-dark position-absolute top-0 end-0 m-2 rounded-circle" style="width: 26px; height: 26px; padding: 0;" onclick="removeSlotImage(2, event)" title="Xóa">
-                                <i class="bi bi-x-lg"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="d-flex gap-2">
-                        <button type="button" id="btnMagic2" class="adm-btn-action-primary flex-fill justify-content-center py-1" style="height: 32px; font-size: 0.74rem;" onclick="processMagicBackdrop(2)" disabled>
-                            <i class="bi bi-magic me-1"></i> Tách nền &amp; Gắn Studio
-                        </button>
-                        <button type="button" id="btnReset2" class="adm-btn-action-secondary py-1" style="height: 32px; font-size: 0.74rem;" onclick="resetSlotImage(2)" title="Ảnh gốc" disabled>
-                            <i class="bi bi-arrow-counterclockwise"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- SLOT 3 CONTAINER -->
-                <div class="slot-pane d-none" id="paneSlot3">
-                    <div class="adm-dropzone mb-2" id="dropZone3" onclick="triggerSlotUpload(3)">
-                        <div id="placeholder3" class="text-center py-3">
-                            <div id="ghostIcon3" class="mb-2"></div>
-                            <div class="fw-semibold" id="slot3TitleText" style="font-size: 0.82rem; color: var(--adm-ink);">
-                                Tải ảnh Bên hông
-                            </div>
-                            <div class="text-muted small mt-1" id="slot3DescText" style="font-size: 0.7rem;">
-                                Góc nhìn sườn áo hoặc chi tiết đường kim mũi chỉ
-                            </div>
-                        </div>
-                        <div id="previewContainer3" class="d-none position-relative">
-                            <img id="previewImg3" src="#" alt="Slot 3" class="rounded-2" style="width: 100%; max-height: 220px; object-fit: contain; transition: all 0.2s;" />
-                            <button type="button" class="btn btn-sm btn-dark position-absolute top-0 end-0 m-2 rounded-circle" style="width: 26px; height: 26px; padding: 0;" onclick="removeSlotImage(3, event)" title="Xóa">
-                                <i class="bi bi-x-lg"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="d-flex gap-2">
-                        <button type="button" id="btnMagic3" class="adm-btn-action-primary flex-fill justify-content-center py-1" style="height: 32px; font-size: 0.74rem;" onclick="processMagicBackdrop(3)" disabled>
-                            <i class="bi bi-magic me-1"></i> Tách nền &amp; Gắn Studio
-                        </button>
-                        <button type="button" id="btnReset3" class="adm-btn-action-secondary py-1" style="height: 32px; font-size: 0.74rem;" onclick="resetSlotImage(3)" title="Ảnh gốc" disabled>
-                            <i class="bi bi-arrow-counterclockwise"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- STATUS SUMMARY OF SLOTS -->
-                <div class="mt-3 pt-2 border-top d-flex align-items-center justify-content-between" style="border-color: var(--adm-border) !important; font-size: 0.72rem;">
-                    <span class="text-muted">Tiến độ studio:</span>
-                    <span id="studioProgressText" class="fw-bold" style="color: var(--adm-ink);">0/3 ảnh đã tải</span>
-                </div>
-                <span asp-validation-for="ImageFile" class="text-danger small mt-1 d-block" style="font-size: 0.74rem;"></span>
-            </div>
-
-            <!-- CARD 2: STATUS & SALES CHANNELS -->
-            <div class="adm-card mb-4">
-                <div class="d-flex align-items-center gap-2 mb-3">
-                    <i class="bi bi-toggles text-primary" style="font-size: 1rem;"></i>
-                    <h2 class="fw-bold mb-0" style="font-size: 0.92rem; color: var(--adm-ink);">Trạng thái &amp; Hiển thị</h2>
-                </div>
-
-                <div class="form-check form-switch d-flex align-items-center justify-content-between p-0 mb-0">
-                    <label class="form-check-label fw-semibold" for="IsActive" style="cursor: pointer; font-size: 0.84rem; color: var(--adm-ink);">
-                        Mở bán ngay trên Shop
-                        <div class="text-muted fw-normal" style="font-size: 0.74rem;">Khách hàng có thể tìm kiếm và đặt mua ngay</div>
-                    </label>
-                    <input asp-for="IsActive" class="form-check-input ms-3" type="checkbox" role="switch" id="IsActive" checked style="cursor: pointer; width: 2.4em; height: 1.25em;" />
+                <div class="table-responsive rounded border border-light" style="max-height: 340px; overflow-y: auto;">
+                    <table class="table adm-sheet-table mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width: 32%;">Mã SKU</th>
+                                <th style="width: 14%;">Size</th>
+                                <th style="width: 22%;">Phối màu</th>
+                                <th style="width: 18%;">Giá bán (₫)</th>
+                                <th style="width: 14%;">Tồn kho</th>
+                                <th style="width: 45px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="matrixTableBody">
+                            <!-- Matrix rows dynamically rendered by JS -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- CARD 3: SUBMIT ACTIONS -->
-            <div class="adm-card" style="border: 1px solid var(--adm-border);">
-                <button type="submit" class="adm-btn-action-primary py-2 mb-2 w-100 justify-content-center" style="height: 42px; font-size: 0.86rem; font-weight: 700;">
-                    <i class="bi bi-check2-circle fs-5 me-1"></i>
-                    <span>Lưu &amp; Kích hoạt Bán ngay</span>
-                </button>
+            <!-- CARD 4: TRẠNG THÁI & SUBMIT ACTION BAR -->
+            <div class="adm-card">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                    <div class="form-check form-switch d-flex align-items-center p-0 m-0">
+                        <input asp-for="IsActive" class="form-check-input me-3" type="checkbox" role="switch" id="IsActive" checked style="cursor: pointer; width: 2.6em; height: 1.3em;" />
+                        <label class="form-check-label fw-semibold" for="IsActive" style="cursor: pointer; font-size: 0.86rem; color: var(--adm-ink);">
+                            Kích hoạt Mở bán ngay trên Shop
+                            <div class="text-muted fw-normal" style="font-size: 0.74rem;">Khách hàng có thể tìm kiếm và đặt mua ngay</div>
+                        </label>
+                    </div>
 
-                <a asp-action="Index" class="adm-btn-action-secondary py-2 w-100 justify-content-center text-decoration-none" style="height: 38px;">
-                    Hủy &amp; Quay lại
-                </a>
+                    <div class="d-flex align-items-center gap-2">
+                        <a asp-action="Index" class="adm-btn-action-secondary py-2 px-3 text-decoration-none" style="height: 40px; font-size: 0.82rem;">
+                            Hủy bỏ
+                        </a>
+                        <button type="submit" class="adm-action-btn adm-btn-primary py-2 px-4" style="height: 40px; font-size: 0.86rem; font-weight: 700;">
+                            <i class="bi bi-check2-circle me-1"></i>
+                            <span>Lưu &amp; Kích hoạt Mở bán</span>
+                        </button>
+                    </div>
+                </div>
             </div>
 
         </div>
@@ -471,361 +536,254 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        // 1. PRODUCT TYPE TOGGLE (Variants vs Simple)
-        const btnTypeVariants = document.getElementById('btnTypeVariants');
-        const btnTypeSimple = document.getElementById('btnTypeSimple');
-        const radioVariants = document.getElementById('radioVariants');
-        const radioSimple = document.getElementById('radioSimple');
-        const panelMatrixVariants = document.getElementById('panelMatrixVariants');
-        const panelSimpleProduct = document.getElementById('panelSimpleProduct');
-
-        function setProductType(type) {
-            if (type === 'simple') {
-                radioSimple.checked = true;
-                btnTypeSimple.classList.add('active');
-                btnTypeVariants.classList.remove('active');
-                panelMatrixVariants.classList.add('d-none');
-                panelSimpleProduct.classList.remove('d-none');
-            } else {
-                radioVariants.checked = true;
-                btnTypeVariants.classList.add('active');
-                btnTypeSimple.classList.remove('active');
-                panelSimpleProduct.classList.add('d-none');
-                panelMatrixVariants.classList.remove('d-none');
-                renderMatrix();
-            }
-        }
-
-        btnTypeVariants?.addEventListener('click', () => setProductType('variants'));
-        btnTypeSimple?.addEventListener('click', () => setProductType('simple'));
-
-        // 2. ACTIVE SIZES AND COLORS STATE
-        let activeSizes = ['S', 'M', 'L'];
-        let activeColors = ['Đen'];
-        const customColorHexMap = {};
-
-        const FASHION_COLOR_MAP = {
-            "đen": "#18181B", "black": "#18181B",
-            "trắng": "#FFFFFF", "white": "#FFFFFF",
-            "xám": "#71717A", "ghi": "#71717A", "gray": "#71717A",
-            "be": "#E5D9C5", "kem": "#E5D9C5", "cream": "#E5D9C5", "beige": "#E5D9C5",
-            "nâu": "#78350F", "brown": "#78350F",
-            "xanh navy": "#1E3A8A", "navy": "#1E3A8A",
-            "xanh rêu": "#4D7C0F", "olive": "#4D7C0F",
-            "xanh lá": "#16A34A", "green": "#16A34A",
-            "xanh dương": "#2563EB", "blue": "#2563EB",
-            "xanh cobalt": "#1D4ED8", "cobalt": "#1D4ED8",
-            "xanh mint": "#6EE7B7", "mint": "#6EE7B7",
-            "xanh bơ": "#A3E635",
-            "đỏ": "#DC2626", "red": "#DC2626",
-            "đỏ rượu": "#881337", "burgundy": "#881337",
-            "hồng": "#F472B6", "pink": "#F472B6",
-            "hồng pastel": "#FBCFE8",
-            "cam": "#EA580C", "orange": "#EA580C",
-            "vàng": "#EAB308", "yellow": "#EAB308",
-            "tím": "#7C3AED", "purple": "#7C3AED"
-        };
-
-        function getColorStyle(name) {
-            if (!name) return '#71717A';
-            if (customColorHexMap[name]) return customColorHexMap[name];
-            const norm = name.toLowerCase().trim();
-            if (norm.includes('/') || norm.includes('&')) {
-                const parts = norm.split(/[/&]/);
-                if (parts.length >= 2) {
-                    const c1 = FASHION_COLOR_MAP[parts[0].trim()] || '#18181B';
-                    const c2 = FASHION_COLOR_MAP[parts[1].trim()] || '#2563EB';
-                    return `linear-gradient(135deg, ${c1} 50%, ${c2} 50%)`;
-                }
-            }
-            return FASHION_COLOR_MAP[norm] || '#71717A';
-        }
-
-        function initChips() {
-            document.querySelectorAll('.size-chip').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const size = btn.getAttribute('data-size');
-                    if (btn.classList.contains('active')) {
-                        btn.classList.remove('active');
-                        activeSizes = activeSizes.filter(s => s !== size);
-                    } else {
-                        btn.classList.add('active');
-                        if (!activeSizes.includes(size)) activeSizes.push(size);
-                    }
-                    renderMatrix();
-                });
-            });
-
-            document.querySelectorAll('.color-chip').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const color = btn.getAttribute('data-color');
-                    if (btn.classList.contains('active')) {
-                        btn.classList.remove('active');
-                        activeColors = activeColors.filter(c => c !== color);
-                    } else {
-                        btn.classList.add('active');
-                        if (!activeColors.includes(color)) activeColors.push(color);
-                    }
-                    renderMatrix();
-                });
-            });
-        }
-        initChips();
-
-        // ADD CUSTOM SIZE
-        document.getElementById('btnAddCustomSize')?.addEventListener('click', () => {
-            const input = document.getElementById('customSizeInput');
-            const val = input.value.trim();
-            if (!val) return;
-            if (!activeSizes.includes(val)) {
-                activeSizes.push(val);
-                const newChip = document.createElement('button');
-                newChip.type = 'button';
-                newChip.className = 'adm-chip-btn size-chip active';
-                newChip.setAttribute('data-size', val);
-                newChip.innerHTML = `<span>${val}</span>`;
-                newChip.addEventListener('click', () => {
-                    if (newChip.classList.contains('active')) {
-                        newChip.classList.remove('active');
-                        activeSizes = activeSizes.filter(s => s !== val);
-                    } else {
-                        newChip.classList.add('active');
-                        if (!activeSizes.includes(val)) activeSizes.push(val);
-                    }
-                    renderMatrix();
-                });
-                input.parentElement.before(newChip);
-            }
-            input.value = '';
-            renderMatrix();
-        });
-
-        // ADD CUSTOM COLOR
-        document.getElementById('btnAddCustomColor')?.addEventListener('click', () => {
-            const input = document.getElementById('customColorInput');
-            const picker = document.getElementById('customColorPicker');
-            const val = input.value.trim();
-            if (!val) return;
-
-            const chosenHex = picker ? picker.value : '#7C3AED';
-            customColorHexMap[val] = chosenHex;
-
-            if (!activeColors.includes(val)) {
-                activeColors.push(val);
-                const newChip = document.createElement('button');
-                newChip.type = 'button';
-                newChip.className = 'adm-chip-btn color-chip active';
-                newChip.setAttribute('data-color', val);
-                newChip.innerHTML = `<span class="adm-swatch-dot" style="background: ${chosenHex};"></span><span>${val}</span>`;
-                newChip.addEventListener('click', () => {
-                    if (newChip.classList.contains('active')) {
-                        newChip.classList.remove('active');
-                        activeColors = activeColors.filter(c => c !== val);
-                    } else {
-                        newChip.classList.add('active');
-                        if (!activeColors.includes(val)) activeColors.push(val);
-                    }
-                    renderMatrix();
-                });
-                input.parentElement.before(newChip);
-            }
-            input.value = '';
-            renderMatrix();
-        });
-
-        // 3. GENERATE SLUG HELPER
-        function makeSlug(str) {
-            return str.toLowerCase().trim()
-                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-                .replace(/[đĐ]/g, 'd')
-                .replace(/[^a-z0-9 -]/g, '')
-                .replace(/\s+/g, '-')
-                .replace(/-+/g, '-');
-        }
-
-        // 4. RENDER MATRIX TABLE
-        function renderMatrix() {
-            const tbody = document.getElementById('matrixTableBody');
-            const lblCount = document.getElementById('lblVariantCount');
-            if (!tbody) return;
-
-            const prodName = document.getElementById('productName')?.value.trim() || 'SP';
-            const baseSlug = makeSlug(prodName).toUpperCase() || 'PROD';
-            const defaultPrice = document.getElementById('productPrice')?.value || '350000';
-            const bulkStock = document.getElementById('bulkStockInput')?.value || '15';
-
-            const sizes = activeSizes.length > 0 ? activeSizes : ['FreeSize'];
-            const colors = activeColors.length > 0 ? activeColors : ['Tiêu chuẩn'];
-
-            let html = '';
-            let index = 0;
-
-            sizes.forEach(size => {
-                colors.forEach(color => {
-                    const sizeSlug = makeSlug(size).toUpperCase();
-                    const colorSlug = makeSlug(color).toUpperCase();
-                    const generatedSku = `${baseSlug}-${sizeSlug}-${colorSlug}`;
-                    const cStyle = getColorStyle(color);
-                    const isWhite = color.toLowerCase().includes('trắng');
-
-                    html += `
-                        <tr id="rowVariant_${index}" style="border-bottom: 1px solid var(--adm-border);">
-                            <td class="ps-3 py-2">
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="adm-pill gray" style="font-size: 0.74rem; font-weight: 600;">Size: ${size}</span>
-                                    <span class="adm-pill gray d-flex align-items-center gap-1" style="font-size: 0.74rem;">
-                                        <span class="adm-swatch-dot" style="background: ${cStyle}; ${isWhite ? 'border: 1px solid #CBD5E1;' : ''}"></span>
-                                        <span>${color}</span>
-                                    </span>
-                                    <input type="hidden" name="Variants[${index}].Size" value="${size}" />
-                                    <input type="hidden" name="Variants[${index}].Color" value="${color}" />
-                                    <input type="hidden" name="Variants[${index}].IsActive" value="true" />
-                                </div>
-                            </td>
-                            <td>
-                                <input type="text" name="Variants[${index}].SKU" value="${generatedSku}"
-                                       class="form-control adm-input-dark font-monospace variant-sku-input"
-                                       style="height: 32px; font-size: 0.78rem;" />
-                            </td>
-                            <td class="text-end">
-                                <input type="number" min="0" step="1000" name="Variants[${index}].Price" value="${defaultPrice}"
-                                       class="form-control adm-input-dark text-end variant-price-input"
-                                       style="height: 32px; font-size: 0.78rem;" />
-                            </td>
-                            <td class="text-center">
-                                <input type="number" min="0" name="Variants[${index}].StockQuantity" value="${bulkStock}"
-                                       class="form-control adm-input-dark text-center variant-stock-input"
-                                       style="height: 32px; font-size: 0.82rem; font-weight: 600;" />
-                            </td>
-                            <td class="pe-3 text-end">
-                                <button type="button" class="btn btn-sm text-danger p-0 border-0" onclick="removeVariantRow(${index})" title="Bỏ phân loại này">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                    index++;
-                });
-            });
-
-            tbody.innerHTML = html;
-            if (lblCount) lblCount.textContent = `${index} phân loại`;
-        }
-
-        // UPDATE PRICES OR SKUS WHEN MAIN INPUTS CHANGE
-        document.getElementById('productName')?.addEventListener('input', () => {
-            // Update SKUs if not manually modified
-            const baseSlug = makeSlug(document.getElementById('productName').value).toUpperCase() || 'PROD';
-            document.querySelectorAll('.variant-sku-input').forEach(input => {
-                const parts = input.value.split('-');
-                if (parts.length >= 3) {
-                    input.value = `${baseSlug}-${parts[parts.length - 2]}-${parts[parts.length - 1]}`;
-                }
-            });
-        });
-
-        document.getElementById('productPrice')?.addEventListener('input', (e) => {
-            const newPrice = e.target.value;
-            if (newPrice) {
-                document.querySelectorAll('.variant-price-input').forEach(input => {
-                    input.value = newPrice;
-                });
-            }
-        });
-
-        // BULK APPLY STOCK BUTTON
-        document.getElementById('btnApplyBulkStock')?.addEventListener('click', () => {
-            const bulkVal = document.getElementById('bulkStockInput')?.value || '10';
-            document.querySelectorAll('.variant-stock-input').forEach(input => {
-                input.value = bulkVal;
-            });
-        });
-
-        function removeVariantRow(index) {
-            const row = document.getElementById(`rowVariant_${index}`);
-            row?.remove();
-            const currentRows = document.querySelectorAll('#matrixTableBody tr').length;
-            const lblCount = document.getElementById('lblVariantCount');
-            if (lblCount) lblCount.textContent = `${currentRows} phân loại`;
-        }
-
-        // INITIAL RENDER
-        renderMatrix();
-
-        // 5. ATELIER PHOTO STUDIO & BACKGROUND ENGINE
-        let currentStudioProtocol = 'apparel';
-        let currentBackdrop = 'atelier';
-        let activeSlot = 1;
+        // ==========================================
+        // 1. ARCHETYPE PRESETS & PROTOCOLS
+        // ==========================================
+        let currentArchetype = 'shoes'; // 'shoes' | 'clothes'
+        let currentBackdrop = 'atelier'; // 'atelier' | 'white' | 'transparent'
+        let activeSlot = 1; // 1 | 2 | 3
         const originalDataUrls = { 1: null, 2: null, 3: null };
 
-        const ghostSvg = {
-            shirtFront: `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg>`,
-            shirtBack: `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/><line x1="12" y1="2" x2="12" y2="7"/></svg>`,
-            shirtSide: `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M7 6h10"/><path d="M11 10h2"/></svg>`,
-            shoePair: `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 17h18a2 2 0 0 0 2-2v-1c0-2-2-4-5-4l-4-2-3 1c-2 1-3 2.5-3 5v1a2 2 0 0 0 2 2z"/><path d="M5 21h17a1 1 0 0 0 1-1v-1c0-1.5-1.5-3-4-3l-4-1.5-3 .8c-1.5.8-2.5 2-2.5 4v.7"/><circle cx="10" cy="13" r="1"/></svg>`,
-            shoeSide: `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 17h20v1.5a1.5 1.5 0 0 1-1.5 1.5H3.5A1.5 1.5 0 0 1 2 18.5V17z"/><path d="M2 17c0-3 1.5-5.5 4-6.5l6-3 5 2.5c2.5 1.5 3 4 3 7"/><path d="M9 14h5"/></svg>`,
-            shoeSole: `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="5" ry="9"/><path d="M12 5v14"/><path d="M8 9h8"/><path d="M8 15h8"/></svg>`
+        const presets = {
+            shoes: {
+                badge: 'FOOTWEAR PROTOCOL',
+                sizes: ['38', '39', '40', '41', '42', '43', '44'],
+                colors: [
+                    { name: 'Panda', hex: 'linear-gradient(135deg, #FFFFFF 50%, #18181B 50%)' },
+                    { name: 'Triple White', hex: '#FFFFFF' },
+                    { name: 'Triple Black', hex: '#18181B' },
+                    { name: 'Mocha', hex: 'linear-gradient(135deg, #78350F 50%, #E5D9C5 50%)' },
+                    { name: 'Grey Fog', hex: '#94A3B8' },
+                    { name: 'University Blue', hex: 'linear-gradient(135deg, #FFFFFF 50%, #38BDF8 50%)' },
+                    { name: 'Chicago', hex: 'linear-gradient(135deg, #DC2626 50%, #18181B 50%)' }
+                ],
+                slots: [
+                    { title: 'Ảnh 2 Đôi Xếp Nghệ Thuật (Hero)', sub: '2 chiếc xếp chéo góc 45° chuẩn ảnh bìa tạp chí', thumb: '2 Đôi (Hero) *' },
+                    { title: 'Ảnh Nghiêng 1 Bên (Lateral Side)', sub: 'Chụp góc ngang cạnh ngoài, thấy rõ thân & đế', thumb: 'Nghiêng 1 Bên' },
+                    { title: 'Ảnh Mặt Đế / Cận Cảnh', sub: 'Góc nhìn từ trên xuống hoặc bề mặt đế giày', thumb: 'Đế / Chi tiết' }
+                ],
+                ghosts: [
+                    `<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 17h18a2 2 0 0 0 2-2v-1c0-2-2-4-5-4l-4-2-3 1c-2 1-3 2.5-3 5v1a2 2 0 0 0 2 2z"/><path d="M5 21h17a1 1 0 0 0 1-1v-1c0-1.5-1.5-3-4-3l-4-1.5-3 .8c-1.5.8-2.5 2-2.5 4v.7"/><circle cx="10" cy="13" r="1"/></svg>`,
+                    `<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 17h20v1.5a1.5 1.5 0 0 1-1.5 1.5H3.5A1.5 1.5 0 0 1 2 18.5V17z"/><path d="M2 17c0-3 1.5-5.5 4-6.5l6-3 5 2.5c2.5 1.5 3 4 3 7"/><path d="M9 14h5"/></svg>`,
+                    `<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="5" ry="9"/><path d="M12 5v14"/><path d="M8 9h8"/><path d="M8 15h8"/></svg>`
+                ],
+                defaultPrice: '1850000',
+                placeholderName: 'Nike Dunk Low Retro Panda, Air Jordan 1 Low Mocha...',
+                placeholderDesc: 'Chất liệu upper da bò cao cấp, đệm Air-Sole êm ái, đế cao su bám đường chống trơn trượt...'
+            },
+            clothes: {
+                badge: 'APPAREL PROTOCOL',
+                sizes: ['S', 'M', 'L', 'XL', '2XL'],
+                colors: [
+                    { name: 'Đen', hex: '#18181B' },
+                    { name: 'Trắng', hex: '#FFFFFF' },
+                    { name: 'Xám', hex: '#71717A' },
+                    { name: 'Be', hex: '#E5D9C5' },
+                    { name: 'Nâu', hex: '#78350F' },
+                    { name: 'Xanh Navy', hex: '#1E3A8A' },
+                    { name: 'Xanh Rêu', hex: '#4D7C0F' },
+                    { name: 'Đỏ Rượu', hex: '#881337' }
+                ],
+                slots: [
+                    { title: 'Ảnh Mặt Trước (Front Hero)', sub: 'Chụp phẳng phiu nhìn thẳng, thấy trọn phom dáng', thumb: 'Mặt trước *' },
+                    { title: 'Ảnh Mặt Sau (Back View)', sub: 'Chụp lưng áo/quần hoặc góc xoay 180°', thumb: 'Mặt sau' },
+                    { title: 'Ảnh Bên Hông (Side Profile)', sub: 'Góc nhìn sườn áo hoặc chi tiết đường may', thumb: 'Bên hông' }
+                ],
+                ghosts: [
+                    `<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg>`,
+                    `<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/><line x1="12" y1="2" x2="12" y2="7"/></svg>`,
+                    `<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M7 6h10"/><path d="M11 10h2"/></svg>`
+                ],
+                defaultPrice: '650000',
+                placeholderName: 'Áo Khoác Denim Atelier Boxy Fit, Heavyweight Hoodie...',
+                placeholderDesc: 'Chất liệu 100% Premium Cotton GSM 360, phom dáng Boxy tôn dáng, đường may 2 kim bền chắc...'
+            }
         };
 
-        function setStudioProtocol(protocol) {
-            currentStudioProtocol = protocol;
-            const badge = document.getElementById('studioProtocolBadge');
-            const tab1 = document.getElementById('tab1Title');
-            const tab2 = document.getElementById('tab2Title');
-            const tab3 = document.getElementById('tab3Title');
+        // Current selected chips
+        let selectedSizes = [];
+        let selectedColors = [];
 
-            if (protocol === 'footwear') {
-                badge.textContent = 'GIÀY DÉP (2 ĐÔI & 1 BÊN)';
-                badge.style.background = '#854D0E';
-                tab1.textContent = '2 Đôi Nghệ Thuật *';
-                tab2.textContent = 'Nghiêng 1 Bên';
-                tab3.textContent = 'Đế & Chi tiết';
+        function selectArchetype(type) {
+            currentArchetype = type;
+            document.getElementById('cardArchetypeShoes').classList.toggle('active', type === 'shoes');
+            document.getElementById('cardArchetypeClothes').classList.toggle('active', type === 'clothes');
 
-                document.getElementById('ghostIcon1').innerHTML = ghostSvg.shoePair;
-                document.getElementById('slot1TitleText').textContent = 'Ảnh 2 Đôi Xếp Nghệ Thuật (Hero)';
-                document.getElementById('slot1DescText').textContent = '2 chiếc xếp chéo góc 45° chuẩn ảnh bìa tạp chí Showroom';
+            const p = presets[type];
+            document.getElementById('stageProtocolBadge').textContent = p.badge;
 
-                document.getElementById('ghostIcon2').innerHTML = ghostSvg.shoeSide;
-                document.getElementById('slot2TitleText').textContent = 'Ảnh Nghiêng 1 Bên (Lateral Side)';
-                document.getElementById('slot2DescText').textContent = 'Ảnh chụp góc ngang cạnh ngoài, thấy rõ phom dáng đế & thân';
+            // Load name & desc placeholders
+            const nameInput = document.getElementById('productName');
+            if (!nameInput.value) nameInput.placeholder = p.placeholderName;
+            const descInput = document.getElementById('productDesc');
+            if (!descInput.value) descInput.placeholder = p.placeholderDesc;
 
-                document.getElementById('ghostIcon3').innerHTML = ghostSvg.shoeSole;
-                document.getElementById('slot3TitleText').textContent = 'Ảnh Cận Cảnh / Mặt Đế Giày';
-                document.getElementById('slot3DescText').textContent = 'Góc nhìn từ trên xuống hoặc bề mặt đế giày sắc nét';
-            } else {
-                badge.textContent = 'ÁO / QUẦN (3 GÓC)';
-                badge.style.background = '#18181B';
-                tab1.textContent = 'Mặt trước *';
-                tab2.textContent = 'Mặt sau';
-                tab3.textContent = 'Bên hông';
-
-                document.getElementById('ghostIcon1').innerHTML = ghostSvg.shirtFront;
-                document.getElementById('slot1TitleText').textContent = 'Ảnh Mặt Trước (Front Hero)';
-                document.getElementById('slot1DescText').textContent = 'Chụp phẳng phiu nhìn thẳng, thấy trọn vẹn phom dáng';
-
-                document.getElementById('ghostIcon2').innerHTML = ghostSvg.shirtBack;
-                document.getElementById('slot2TitleText').textContent = 'Ảnh Mặt Sau (Back View)';
-                document.getElementById('slot2DescText').textContent = 'Chụp lưng áo/quần hoặc góc xoay 180°';
-
-                document.getElementById('ghostIcon3').innerHTML = ghostSvg.shirtSide;
-                document.getElementById('slot3TitleText').textContent = 'Ảnh Bên Hông (Side Profile)';
-                document.getElementById('slot3DescText').textContent = 'Góc nhìn sườn áo hoặc chi tiết đường kim mũi chỉ';
+            // Sync Category dropdown if matching
+            const catSelect = document.getElementById('productCategory');
+            if (catSelect) {
+                for (let i = 0; i < catSelect.options.length; i++) {
+                    const txt = catSelect.options[i].text.toLowerCase();
+                    const isShoe = txt.includes('giày') || txt.includes('shoe');
+                    if (type === 'shoes' && isShoe) {
+                        catSelect.selectedIndex = i;
+                        break;
+                    } else if (type === 'clothes' && !isShoe && i > 0) {
+                        catSelect.selectedIndex = i;
+                        break;
+                    }
+                }
             }
+
+            // Load Sizing Chips
+            document.getElementById('lblSizeGroup').textContent = type === 'shoes' ? '1. KÍCH CỠ GIÀY (EU SIZES)' : '1. KÍCH CỠ QUẦN ÁO (APPAREL SIZES)';
+            const sizeCont = document.getElementById('sizeChipsContainer');
+            sizeCont.innerHTML = '';
+            selectedSizes = [...p.sizes];
+            p.sizes.forEach(s => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'adm-chip-btn active size-chip';
+                btn.dataset.size = s;
+                btn.innerHTML = `<span>${s}</span>`;
+                btn.onclick = () => toggleSize(s, btn);
+                sizeCont.appendChild(btn);
+            });
+
+            // Load Colorway Chips
+            document.getElementById('lblColorGroup').textContent = type === 'shoes' ? '2. PHỐI MÀU GIÀY (COLORWAYS)' : '2. MÀU SẮC QUẦN ÁO (COLORS)';
+            const colorCont = document.getElementById('colorChipsContainer');
+            colorCont.innerHTML = '';
+            selectedColors = [p.colors[0].name]; // Select first by default
+            p.colors.forEach((c, idx) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = `adm-chip-btn ${idx === 0 ? 'active' : ''} color-chip`;
+                btn.dataset.color = c.name;
+                const border = (c.hex === '#FFFFFF') ? 'border: 1px solid #CBD5E1;' : '';
+                btn.innerHTML = `<span class="adm-swatch-dot" style="background: ${c.hex}; ${border}"></span><span>${c.name}</span>`;
+                btn.onclick = () => toggleColor(c.name, btn);
+                colorCont.appendChild(btn);
+            });
+
+            // Update Thumb Strip Titles & Ghosts
+            [1, 2, 3].forEach(slot => {
+                document.getElementById(`thumbTitle${slot}`).textContent = p.slots[slot - 1].thumb;
+            });
+            updateStageDisplay();
+            renderMatrix();
         }
 
-        function switchSlot(slotNum) {
+        // ==========================================
+        // 2. CHIP TOGGLES & CUSTOM ADDERS
+        // ==========================================
+        function toggleSize(val, btn) {
+            const idx = selectedSizes.indexOf(val);
+            if (idx > -1) {
+                if (selectedSizes.length > 1) {
+                    selectedSizes.splice(idx, 1);
+                    btn.classList.remove('active');
+                }
+            } else {
+                selectedSizes.push(val);
+                btn.classList.add('active');
+            }
+            renderMatrix();
+        }
+
+        function toggleColor(val, btn) {
+            const idx = selectedColors.indexOf(val);
+            if (idx > -1) {
+                if (selectedColors.length > 1) {
+                    selectedColors.splice(idx, 1);
+                    btn.classList.remove('active');
+                }
+            } else {
+                selectedColors.push(val);
+                btn.classList.add('active');
+            }
+            renderMatrix();
+        }
+
+        document.getElementById('btnAddCustomSize')?.addEventListener('click', () => {
+            const input = document.getElementById('customSizeInput');
+            const val = input.value.trim().toUpperCase();
+            if (!val || selectedSizes.includes(val)) return;
+
+            selectedSizes.push(val);
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'adm-chip-btn active size-chip';
+            btn.dataset.size = val;
+            btn.innerHTML = `<span>${val}</span>`;
+            btn.onclick = () => toggleSize(val, btn);
+            document.getElementById('sizeChipsContainer').appendChild(btn);
+            input.value = '';
+            renderMatrix();
+        });
+
+        document.getElementById('btnAddCustomColor')?.addEventListener('click', () => {
+            const input = document.getElementById('customColorInput');
+            const val = input.value.trim();
+            if (!val || selectedColors.includes(val)) return;
+
+            selectedColors.push(val);
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'adm-chip-btn active color-chip';
+            btn.dataset.color = val;
+            btn.innerHTML = `<span class="adm-swatch-dot" style="background: #18181B;"></span><span>${val}</span>`;
+            btn.onclick = () => toggleColor(val, btn);
+            document.getElementById('colorChipsContainer').appendChild(btn);
+            input.value = '';
+            renderMatrix();
+        });
+
+        // ==========================================
+        // 3. VISUAL STAGE & MULTI-ANGLE SYSTEM
+        // ==========================================
+        function switchActiveSlot(slotNum) {
             activeSlot = slotNum;
-            document.querySelectorAll('.slot-tab-btn').forEach(btn => {
-                btn.classList.toggle('active', parseInt(btn.dataset.slot, 10) === slotNum);
+            document.querySelectorAll('.adm-angle-thumb').forEach((th, idx) => {
+                th.classList.toggle('active', (idx + 1) === slotNum);
             });
-            document.querySelectorAll('.slot-pane').forEach((pane, idx) => {
-                pane.classList.toggle('d-none', (idx + 1) !== slotNum);
-            });
+            updateStageDisplay();
         }
 
-        function triggerSlotUpload(slot) {
-            const input = document.getElementById(`inputSlot${slot}`);
-            input?.click();
+        function updateStageDisplay() {
+            const p = presets[currentArchetype];
+            const slotInfo = p.slots[activeSlot - 1];
+            document.getElementById('stageAngleSubtitle').textContent = slotInfo.thumb;
+            document.getElementById('stageSlotTitle').textContent = slotInfo.title;
+            document.getElementById('stageSlotDesc').textContent = slotInfo.sub;
+            document.getElementById('stageGhostIcon').innerHTML = p.ghosts[activeSlot - 1];
+
+            const img = document.getElementById('stageImg');
+            const placeholder = document.getElementById('stagePlaceholder');
+            const viewport = document.getElementById('stageViewport');
+            const dataUrl = originalDataUrls[activeSlot];
+
+            if (dataUrl) {
+                img.src = dataUrl;
+                img.classList.remove('d-none');
+                placeholder.classList.add('d-none');
+                viewport.classList.add('has-image');
+                document.getElementById('btnStageMagic').disabled = false;
+                document.getElementById('btnStageReset').disabled = false;
+                document.getElementById('btnStageRemove').disabled = false;
+            } else {
+                img.src = '#';
+                img.classList.add('d-none');
+                placeholder.classList.remove('d-none');
+                viewport.classList.remove('has-image');
+                document.getElementById('btnStageMagic').disabled = true;
+                document.getElementById('btnStageReset').disabled = true;
+                document.getElementById('btnStageRemove').disabled = true;
+            }
+            applyBackdropStyling();
+        }
+
+        function triggerActiveSlotUpload() {
+            document.getElementById(`realInputSlot${activeSlot}`)?.click();
         }
 
         function selectBackdrop(type) {
@@ -834,29 +792,25 @@
             document.querySelectorAll('.backdrop-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.backdrop === type);
             });
-            [1, 2, 3].forEach(slot => {
-                if (originalDataUrls[slot]) {
-                    applyStudioBackdropToImg(slot);
-                }
-            });
+            applyBackdropStyling();
         }
 
-        function applyStudioBackdropToImg(slot) {
-            const img = document.getElementById(`previewImg${slot}`);
-            if (!img) return;
+        function applyBackdropStyling() {
+            const viewport = document.getElementById('stageViewport');
+            const img = document.getElementById('stageImg');
             if (currentBackdrop === 'atelier') {
-                img.style.background = 'linear-gradient(180deg, #FAF8F5 0%, #F3EDE2 100%)';
-                img.style.filter = 'drop-shadow(0 14px 18px rgba(40, 30, 20, 0.12))';
+                viewport.style.background = 'linear-gradient(180deg, #FAF8F5 0%, #F3EDE2 100%)';
+                img.style.filter = 'drop-shadow(0 16px 22px rgba(40, 30, 20, 0.16))';
             } else if (currentBackdrop === 'white') {
-                img.style.background = '#FFFFFF';
-                img.style.filter = 'drop-shadow(0 10px 14px rgba(0, 0, 0, 0.08))';
+                viewport.style.background = '#FFFFFF';
+                img.style.filter = 'drop-shadow(0 12px 16px rgba(0, 0, 0, 0.08))';
             } else {
-                img.style.background = 'repeating-conic-gradient(#E2E8F0 0% 25%, #FFFFFF 0% 50%) 50%/12px 12px';
+                viewport.style.background = 'repeating-conic-gradient(#E2E8F0 0% 25%, #FFFFFF 0% 50%) 50%/14px 14px';
                 img.style.filter = 'none';
             }
         }
 
-        function handleSlotFileSelect(slot, input) {
+        function handleStageFileSelect(slot, input) {
             if (input.files && input.files[0]) {
                 const file = input.files[0];
                 if (file.size > 5 * 1024 * 1024) {
@@ -867,59 +821,36 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     originalDataUrls[slot] = e.target.result;
-                    const img = document.getElementById(`previewImg${slot}`);
-                    img.src = e.target.result;
-                    document.getElementById(`placeholder${slot}`).classList.add('d-none');
-                    document.getElementById(`previewContainer${slot}`).classList.remove('d-none');
-                    document.getElementById(`btnMagic${slot}`).disabled = false;
-                    document.getElementById(`btnReset${slot}`).disabled = false;
-                    applyStudioBackdropToImg(slot);
-                    updateStudioProgress();
+                    // Update thumbnail box
+                    const thumbBox = document.getElementById(`thumbBox${slot}`);
+                    thumbBox.innerHTML = `<img src="${e.target.result}" class="adm-angle-thumb-preview" alt="Slot ${slot}" />`;
+                    updateStageDisplay();
                 };
                 reader.readAsDataURL(file);
             }
         }
 
-        function resetSlotImage(slot) {
-            if (originalDataUrls[slot]) {
-                const img = document.getElementById(`previewImg${slot}`);
-                img.src = originalDataUrls[slot];
-                applyStudioBackdropToImg(slot);
+        function resetStageImage() {
+            if (originalDataUrls[activeSlot]) {
+                document.getElementById('stageImg').src = originalDataUrls[activeSlot];
+                applyBackdropStyling();
             }
         }
 
-        function removeSlotImage(slot, e) {
-            e.stopPropagation();
-            const input = document.getElementById(`inputSlot${slot}`);
+        function removeStageImage() {
+            const input = document.getElementById(`realInputSlot${activeSlot}`);
             if (input) input.value = '';
-            originalDataUrls[slot] = null;
-            const img = document.getElementById(`previewImg${slot}`);
-            if (img) img.src = '#';
-            document.getElementById(`previewContainer${slot}`).classList.add('d-none');
-            document.getElementById(`placeholder${slot}`).classList.remove('d-none');
-            document.getElementById(`btnMagic${slot}`).disabled = true;
-            document.getElementById(`btnReset${slot}`).disabled = true;
-            updateStudioProgress();
-        }
-
-        function updateStudioProgress() {
-            let count = 0;
-            [1, 2, 3].forEach(s => {
-                if (originalDataUrls[s]) count++;
-            });
-            const lbl = document.getElementById('studioProgressText');
-            if (lbl) {
-                lbl.textContent = `${count}/3 ảnh đã tải`;
-                lbl.style.color = count > 0 ? '#16A34A' : 'var(--adm-ink)';
-            }
+            originalDataUrls[activeSlot] = null;
+            document.getElementById(`thumbBox${activeSlot}`).innerHTML = `<span class="text-muted small" style="font-size: 0.65rem;">Chưa có</span>`;
+            updateStageDisplay();
         }
 
         // SMART CLIENT-SIDE STUDIO CANVASES (BACKGROUND REMOVAL & CONTACT SHADOW)
-        function processMagicBackdrop(slot) {
-            const src = originalDataUrls[slot];
+        function processStageMagic() {
+            const src = originalDataUrls[activeSlot];
             if (!src) return;
 
-            const btn = document.getElementById(`btnMagic${slot}`);
+            const btn = document.getElementById('btnStageMagic');
             const originalBtnHtml = btn.innerHTML;
             btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Đang xử lý...';
             btn.disabled = true;
@@ -938,16 +869,14 @@
 
                 // Sample corner pixels
                 const samples = [
-                    0, 1, 2, // top-left
+                    0, 1, 2,
                     (canvas.width - 1) * 4,
                     ((canvas.height - 1) * canvas.width) * 4,
                     ((canvas.height - 1) * canvas.width + (canvas.width - 1)) * 4
                 ];
                 let bgR = 0, bgG = 0, bgB = 0;
                 samples.forEach(idx => {
-                    bgR += d[idx];
-                    bgG += d[idx + 1];
-                    bgB += d[idx + 2];
+                    bgR += d[idx]; bgG += d[idx + 1]; bgB += d[idx + 2];
                 });
                 bgR /= 4; bgG /= 4; bgB /= 4;
 
@@ -979,7 +908,7 @@
                     sCtx.fillStyle = g;
                     sCtx.fillRect(0, 0, sCanvas.width, sCanvas.height);
 
-                    // Contact shadow ellipse
+                    // Soft floor contact shadow
                     sCtx.save();
                     sCtx.scale(1, 0.22);
                     const sGrad = sCtx.createRadialGradient(
@@ -995,7 +924,6 @@
                     sCtx.fill();
                     sCtx.restore();
 
-                    // Soft ambient drop-shadow
                     sCtx.shadowColor = 'rgba(30, 20, 15, 0.12)';
                     sCtx.shadowBlur = 20;
                     sCtx.shadowOffsetY = 10;
@@ -1013,13 +941,12 @@
 
                 sCanvas.toBlob(blob => {
                     const processedUrl = sCanvas.toDataURL('image/png');
-                    const preview = document.getElementById(`previewImg${slot}`);
-                    preview.src = processedUrl;
-                    applyStudioBackdropToImg(slot);
+                    document.getElementById('stageImg').src = processedUrl;
+                    document.getElementById(`thumbBox${activeSlot}`).innerHTML = `<img src="${processedUrl}" class="adm-angle-thumb-preview" alt="Slot ${activeSlot}" />`;
 
-                    // Re-assign to file input using DataTransfer
-                    const fileInput = document.getElementById(`inputSlot${slot}`);
-                    const file = new File([blob], `studio-slot-${slot}.png`, { type: 'image/png' });
+                    // Re-assign to file input via DataTransfer
+                    const fileInput = document.getElementById(`realInputSlot${activeSlot}`);
+                    const file = new File([blob], `studio-slot-${activeSlot}.png`, { type: 'image/png' });
                     const dt = new DataTransfer();
                     dt.items.add(file);
                     fileInput.files = dt.files;
@@ -1034,45 +961,163 @@
             img.src = src;
         }
 
-        // DRAG AND DROP SETUP FOR ALL 3 SLOTS
-        [1, 2, 3].forEach(slot => {
-            const dz = document.getElementById(`dropZone${slot}`);
-            const input = document.getElementById(`inputSlot${slot}`);
-            if (!dz || !input) return;
+        // DRAG & DROP FOR STAGE
+        const stageViewport = document.getElementById('stageViewport');
+        ['dragenter', 'dragover'].forEach(evt => {
+            stageViewport.addEventListener(evt, (e) => {
+                e.preventDefault(); e.stopPropagation();
+                stageViewport.classList.add('dragover');
+            });
+        });
+        ['dragleave', 'drop'].forEach(evt => {
+            stageViewport.addEventListener(evt, (e) => {
+                e.preventDefault(); e.stopPropagation();
+                stageViewport.classList.remove('dragover');
+            });
+        });
+        stageViewport.addEventListener('drop', (e) => {
+            const files = e.dataTransfer.files;
+            if (files && files.length > 0) {
+                const input = document.getElementById(`realInputSlot${activeSlot}`);
+                input.files = files;
+                handleStageFileSelect(activeSlot, input);
+            }
+        });
 
-            ['dragenter', 'dragover'].forEach(evt => {
-                dz.addEventListener(evt, (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    dz.classList.add('dragover');
+        // ==========================================
+        // 4. MATRIX SPREADSHEET RENDERING & AUTO SKU
+        // ==========================================
+        function removeVietnameseTones(str) {
+            str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
+            str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
+            str = str.replace(/ì|í|ị|ỉ|ĩ/g, "i");
+            str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o");
+            str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u");
+            str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
+            str = str.replace(/đ/g, "d");
+            str = str.replace(/À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ/g, "A");
+            str = str.replace(/È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ/g, "E");
+            str = str.replace(/Ì|Í|Ị|Ỉ|Ĩ/g, "I");
+            str = str.replace(/Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ/g, "O");
+            str = str.replace(/Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ/g, "U");
+            str = str.replace(/Ỳ|Ý|Ỵ|Ỷ|Ỹ/g, "Y");
+            str = str.replace(/Đ/g, "D");
+            return str;
+        }
+
+        function createSlug(str) {
+            return removeVietnameseTones(str)
+                .toLowerCase()
+                .trim()
+                .replace(/[^a-z0-9 -]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-');
+        }
+
+        function renderMatrix() {
+            const tableBody = document.getElementById('matrixTableBody');
+            tableBody.innerHTML = '';
+
+            const baseName = document.getElementById('productName').value || (currentArchetype === 'shoes' ? 'SNEAKER' : 'APPAREL');
+            const baseSlug = createSlug(baseName).toUpperCase() || 'PROD';
+            const basePrice = parseInt(document.getElementById('productPrice').value || presets[currentArchetype].defaultPrice, 10);
+            const defaultStock = parseInt(document.getElementById('bulkStockInput').value || 10, 10);
+
+            let rowCount = 0;
+            selectedColors.forEach(color => {
+                const colorCode = removeVietnameseTones(color).toUpperCase().replace(/[^A-Z0-9]/g, '-').replace(/-+/g, '-');
+                selectedSizes.forEach(size => {
+                    const rowId = `rowVariant_${rowCount}`;
+                    const sku = `${baseSlug}-${colorCode}-${size}`;
+
+                    const tr = document.createElement('tr');
+                    tr.id = rowId;
+                    tr.innerHTML = `
+                        <td>
+                            <input type="text" name="Variants[${rowCount}].SKU" value="${sku}" class="form-control adm-input-dark font-monospace text-uppercase py-1" style="font-size: 0.74rem;" required />
+                        </td>
+                        <td>
+                            <span class="adm-pill gray fw-bold" style="font-size: 0.76rem;">${size}</span>
+                            <input type="hidden" name="Variants[${rowCount}].Size" value="${size}" />
+                        </td>
+                        <td>
+                            <span class="fw-semibold" style="font-size: 0.8rem;">${color}</span>
+                            <input type="hidden" name="Variants[${rowCount}].Color" value="${color}" />
+                        </td>
+                        <td>
+                            <input type="number" min="1000" step="1000" name="Variants[${rowCount}].Price" value="${basePrice}" class="form-control adm-input-dark py-1" style="font-size: 0.78rem;" required />
+                        </td>
+                        <td>
+                            <input type="number" min="0" name="Variants[${rowCount}].StockQuantity" value="${defaultStock}" class="form-control adm-input-dark py-1 stock-input" style="font-size: 0.78rem; font-weight: 600;" required />
+                            <input type="hidden" name="Variants[${rowCount}].IsActive" value="true" />
+                        </td>
+                        <td class="text-end">
+                            <button type="button" class="btn btn-sm btn-link text-danger p-0 text-decoration-none" onclick="removeVariantRow('${rowId}')" title="Xóa hàng">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </td>
+                    `;
+                    tableBody.appendChild(tr);
+                    rowCount++;
                 });
             });
-            ['dragleave', 'drop'].forEach(evt => {
-                dz.addEventListener(evt, (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    dz.classList.remove('dragover');
-                });
-            });
-            dz.addEventListener('drop', (e) => {
-                const files = e.dataTransfer.files;
-                if (files && files.length > 0) {
-                    input.files = files;
-                    handleSlotFileSelect(slot, input);
-                }
+
+            document.getElementById('lblVariantCount').textContent = `${rowCount} phân loại`;
+        }
+
+        function removeVariantRow(rowId) {
+            const row = document.getElementById(rowId);
+            row?.remove();
+            const count = document.querySelectorAll('#matrixTableBody tr').length;
+            document.getElementById('lblVariantCount').textContent = `${count} phân loại`;
+        }
+
+        document.getElementById('btnApplyBulkStock')?.addEventListener('click', () => {
+            const bulkVal = parseInt(document.getElementById('bulkStockInput').value || 10, 10);
+            document.querySelectorAll('#matrixTableBody .stock-input').forEach(input => {
+                input.value = bulkVal;
             });
         });
 
-        // CATEGORY CHANGE LISTENER TO AUTOMATICALLY SWITCH STUDIO PROTOCOL
-        const categorySelect = document.getElementById('productCategory');
-        categorySelect?.addEventListener('change', () => {
-            const opt = categorySelect.options[categorySelect.selectedIndex];
-            const catName = opt ? opt.text.toLowerCase() : '';
-            const isShoe = catName.includes('giày') || catName.includes('shoe') || catName.includes('sandal') || catName.includes('boot');
-            setStudioProtocol(isShoe ? 'footwear' : 'apparel');
+        // Sync matrix on name or price change
+        document.getElementById('productName')?.addEventListener('blur', renderMatrix);
+        document.getElementById('productPrice')?.addEventListener('input', () => {
+            const newPrice = parseInt(document.getElementById('productPrice').value || 0, 10);
+            document.querySelectorAll('#matrixTableBody input[name*="Price"]').forEach(input => {
+                input.value = newPrice;
+            });
         });
 
-        // Initialize Studio with default category state
-        setStudioProtocol('apparel');
+        // PRODUCT TYPE TOGGLE
+        const btnTypeVariants = document.getElementById('btnTypeVariants');
+        const btnTypeSimple = document.getElementById('btnTypeSimple');
+        const radioVariants = document.getElementById('radioVariants');
+        const radioSimple = document.getElementById('radioSimple');
+        const panelMatrixVariants = document.getElementById('panelMatrixVariants');
+        const cardInventoryMatrix = document.getElementById('cardInventoryMatrix');
+        const panelSimpleProduct = document.getElementById('panelSimpleProduct');
+
+        btnTypeVariants?.addEventListener('click', () => {
+            radioVariants.checked = true;
+            btnTypeVariants.classList.add('active');
+            btnTypeSimple.classList.remove('active');
+            panelMatrixVariants.classList.remove('d-none');
+            cardInventoryMatrix.classList.remove('d-none');
+            panelSimpleProduct.classList.add('d-none');
+        });
+
+        btnTypeSimple?.addEventListener('click', () => {
+            radioSimple.checked = true;
+            btnTypeSimple.classList.add('active');
+            btnTypeVariants.classList.remove('active');
+            panelMatrixVariants.classList.add('d-none');
+            cardInventoryMatrix.classList.add('d-none');
+            panelSimpleProduct.classList.remove('d-none');
+        });
+
+        // INITIALIZE ON LOAD: DEFAULT FOOTWEAR
+        document.addEventListener('DOMContentLoaded', () => {
+            selectArchetype('shoes');
+        });
     </script>
 }
