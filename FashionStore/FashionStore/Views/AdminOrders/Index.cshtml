@@ -3,7 +3,7 @@
 @using FashionStore.Services.Implementations
 
 @{
-    ViewData["Title"] = "Quản lý & Hàng đợi Đơn hàng";
+    ViewData["Title"] = "Hàng đợi Đơn hàng";
     var currentStatus = ViewBag.SelectedStatus as OrderStatus?;
     var currentPaymentStatus = ViewBag.PaymentStatus as PaymentStatus?;
     var currentPaymentMethod = ViewBag.PaymentMethod as PaymentMethod?;
@@ -25,242 +25,79 @@
     decimal avgOrderValue = ViewBag.AvgOrderValue ?? 0m;
 }
 
-<!-- 1. EXECUTIVE HEADER -->
-<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
-    <div>
-        <div class="d-flex align-items-center gap-2 mb-1 text-muted" style="font-size: 13px;">
-            <span class="adm-pulse-dot"></span>
-            <span class="fw-semibold text-uppercase" style="letter-spacing: 0.06em;">HNMT ATELIER · ORDER MANAGEMENT</span>
-            <span class="text-secondary">/</span>
-            <span class="badge bg-light text-dark border px-2 py-1" style="font-size: 12px; font-weight: 600;">@ViewBag.Count đơn</span>
-        </div>
-        <h1 style="font-size: 24px; font-weight: 800; letter-spacing: -0.03em; color: #09090B; margin: 0;">Quản lý Đơn hàng & Điều phối</h1>
-    </div>
-    <div class="d-flex align-items-center gap-2">
-        <button type="button" class="adm-btn-modern-secondary" onclick="exportOrdersToCSV()" title="Xuất dữ liệu đơn hàng ra CSV">
-            <i class="bi bi-download"></i>
-            <span>Xuất CSV</span>
-        </button>
-        <a asp-action="Index" class="adm-btn-modern-secondary" title="Làm mới dữ liệu">
-            <i class="bi bi-arrow-clockwise"></i>
-            <span>Làm mới</span>
-        </a>
-    </div>
-</div>
-
-<!-- 2. MODERN OPERATIONAL KPI METRICS STRIP (4 CARDS) -->
-<div class="adm-order-kpi-grid">
-    <!-- KPI 1: CHỜ DUYỆT -->
-    <a asp-action="Index" asp-route-status="@OrderStatus.PendingConfirmation" class="adm-stat-card-v2 @(currentStatus == OrderStatus.PendingConfirmation ? "border-dark shadow-sm" : "")">
-        <div class="adm-stat-header-v2">
-            <div class="adm-stat-title-v2 text-warning">
-                <i class="bi bi-lightning-charge-fill"></i>
-                <span>Cần xử lý gấp</span>
+<!-- 1. EXECUTIVE HEADER (DASHBOARD STANDARD) -->
+<div class="adm-header-block mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1 adm-meta-crumb">
+                <span class="adm-pulse-dot"></span>
+                <span class="adm-kicker-text">HNMT ATELIER · VẬN HÀNH</span>
+                <span class="adm-meta-divider">/</span>
+                <span class="adm-order-count-badge">@ViewBag.Count đơn</span>
             </div>
-            <div class="adm-stat-icon-v2 adm-stat-icon-amber">
-                <i class="bi bi-hourglass-split"></i>
-            </div>
+            <h1 class="adm-title-main">Hàng đợi Đơn hàng</h1>
         </div>
-        <div class="adm-stat-number-v2 text-warning">
-            @countPending.ToString("N0") <span style="font-size: 15px; font-weight: 500; color: #71717A;">đơn</span>
-        </div>
-        <div class="adm-stat-footer-v2">
-            Tổng tiền: <strong>@pendingAmount.ToString("N0") ₫</strong>
-        </div>
-    </a>
-
-    <!-- KPI 2: ĐANG GIAO -->
-    <a asp-action="Index" asp-route-status="@OrderStatus.Shipping" class="adm-stat-card-v2 @(currentStatus == OrderStatus.Shipping ? "border-dark shadow-sm" : "")">
-        <div class="adm-stat-header-v2">
-            <div class="adm-stat-title-v2 text-primary">
-                <i class="bi bi-truck"></i>
-                <span>Đang luân chuyển</span>
-            </div>
-            <div class="adm-stat-icon-v2 adm-stat-icon-blue">
-                <i class="bi bi-box-seam"></i>
-            </div>
-        </div>
-        <div class="adm-stat-number-v2 text-primary">
-            @countShipping.ToString("N0") <span style="font-size: 15px; font-weight: 500; color: #71717A;">đơn</span>
-        </div>
-        <div class="adm-stat-footer-v2">
-            Kho & Shipper đang điều phối
-        </div>
-    </a>
-
-    <!-- KPI 3: HOÀN TẤT -->
-    <a asp-action="Index" asp-route-status="@OrderStatus.Delivered" class="adm-stat-card-v2 @(currentStatus == OrderStatus.Delivered ? "border-dark shadow-sm" : "")">
-        <div class="adm-stat-header-v2">
-            <div class="adm-stat-title-v2 text-success">
-                <i class="bi bi-check-circle-fill"></i>
-                <span>Giao thành công</span>
-            </div>
-            <div class="adm-stat-icon-v2 adm-stat-icon-emerald">
-                <i class="bi bi-cash-stack"></i>
-            </div>
-        </div>
-        <div class="adm-stat-number-v2 text-success">
-            @countDelivered.ToString("N0") <span style="font-size: 15px; font-weight: 500; color: #71717A;">đơn</span>
-        </div>
-        <div class="adm-stat-footer-v2">
-            Đã thu: <strong>@deliveredAmount.ToString("N0") ₫</strong>
-        </div>
-    </a>
-
-    <!-- KPI 4: AOV -->
-    <div class="adm-stat-card-v2">
-        <div class="adm-stat-header-v2">
-            <div class="adm-stat-title-v2" style="color: #7C3AED;">
-                <i class="bi bi-gem"></i>
-                <span>Giá trị trung bình</span>
-            </div>
-            <div class="adm-stat-icon-v2 adm-stat-icon-purple">
-                <i class="bi bi-graph-up-arrow"></i>
-            </div>
-        </div>
-        <div class="adm-stat-number-v2" style="color: #7C3AED;">
-            @avgOrderValue.ToString("N0") <span style="font-size: 15px; font-weight: 500; color: #71717A;">₫/đơn</span>
-        </div>
-        <div class="adm-stat-footer-v2">
-            Tổng <strong>@countAll.ToString("N0")</strong> đơn trên toàn hệ thống
+        <div class="d-flex align-items-center gap-2">
+            <button type="button" class="adm-action-btn adm-btn-secondary" onclick="exportOrdersToCSV()" title="Xuất dữ liệu đơn hàng ra CSV">
+                <i class="bi bi-file-earmark-excel"></i> <span>Xuất CSV</span>
+            </button>
+            <a asp-action="Index" class="adm-action-btn adm-btn-secondary" title="Làm mới dữ liệu">
+                <i class="bi bi-arrow-clockwise"></i> <span>Làm mới</span>
+            </a>
         </div>
     </div>
-</div>
 
-<!-- 3. LINEAR & APPLE SEGMENTED CONTROL: STATUS TABS -->
-<div class="adm-status-tabs-wrap">
-    <div class="adm-modern-segmented">
-        <a asp-action="Index"
-           asp-route-search="@currentSearch"
-           asp-route-from="@currentFrom"
-           asp-route-to="@currentTo"
-           asp-route-sort="@currentSort"
-           class="adm-modern-tab @(currentStatus == null ? "active" : "")">
-            <span>Tất cả</span>
-            <span class="adm-tab-badge">@countAll</span>
-        </a>
-
-        <a asp-action="Index"
-           asp-route-status="@OrderStatus.PendingConfirmation"
-           asp-route-search="@currentSearch"
-           asp-route-from="@currentFrom"
-           asp-route-to="@currentTo"
-           asp-route-sort="@currentSort"
-           class="adm-modern-tab @(currentStatus == OrderStatus.PendingConfirmation ? "active" : "")">
-            <span>Chờ duyệt</span>
-            <span class="adm-tab-badge @(countPending > 0 ? "badge-alert" : "")">@countPending</span>
-        </a>
-
-        <a asp-action="Index"
-           asp-route-status="@OrderStatus.Confirmed"
-           asp-route-search="@currentSearch"
-           asp-route-from="@currentFrom"
-           asp-route-to="@currentTo"
-           asp-route-sort="@currentSort"
-           class="adm-modern-tab @(currentStatus == OrderStatus.Confirmed ? "active" : "")">
-            <span>Đã duyệt</span>
-            <span class="adm-tab-badge">@countConfirmed</span>
-        </a>
-
-        <a asp-action="Index"
-           asp-route-status="@OrderStatus.Shipping"
-           asp-route-search="@currentSearch"
-           asp-route-from="@currentFrom"
-           asp-route-to="@currentTo"
-           asp-route-sort="@currentSort"
-           class="adm-modern-tab @(currentStatus == OrderStatus.Shipping ? "active" : "")">
-            <span>Đang giao</span>
-            <span class="adm-tab-badge">@countShipping</span>
-        </a>
-
-        <a asp-action="Index"
-           asp-route-status="@OrderStatus.Delivered"
-           asp-route-search="@currentSearch"
-           asp-route-from="@currentFrom"
-           asp-route-to="@currentTo"
-           asp-route-sort="@currentSort"
-           class="adm-modern-tab @(currentStatus == OrderStatus.Delivered ? "active" : "")">
-            <span>Đã giao</span>
-            <span class="adm-tab-badge">@countDelivered</span>
-        </a>
-
-        <a asp-action="Index"
-           asp-route-status="@OrderStatus.Cancelled"
-           asp-route-search="@currentSearch"
-           asp-route-from="@currentFrom"
-           asp-route-to="@currentTo"
-           asp-route-sort="@currentSort"
-           class="adm-modern-tab @(currentStatus == OrderStatus.Cancelled ? "active" : "")">
-            <span>Đã hủy</span>
-            <span class="adm-tab-badge">@countCancelled</span>
-        </a>
-    </div>
-</div>
-
-<!-- 4. STREAMLINED COMPOUND FILTER TOOLBAR -->
-<form asp-action="Index" method="get" class="adm-orders-toolbar-v2">
-    @if (currentStatus.HasValue)
-    {
-        <input type="hidden" name="status" value="@currentStatus.Value" />
-    }
-
-    <div class="d-flex flex-wrap align-items-center gap-2">
-        <!-- SEARCH -->
-        <div class="adm-search-input-group-v2">
-            <i class="bi bi-search"></i>
-            <input type="text"
-                   name="search"
-                   maxlength="100"
-                   value="@currentSearch"
-                   placeholder="Tìm theo mã đơn (FS...), tên khách hàng, số điện thoại..."
-                   class="adm-search-input-v2" />
+    <!-- UNIFIED FILTER STRIP (APPLE SEGMENTED CONTROL + COMPOUND CONTROLS) -->
+    <form asp-action="Index" method="get" class="adm-filter-toolbar">
+        <!-- 1. Apple Segmented Control for Status -->
+        <div class="adm-segmented-control" role="group" aria-label="Lọc trạng thái">
+            <a asp-action="Index" asp-route-search="@currentSearch" asp-route-from="@currentFrom" asp-route-to="@currentTo" asp-route-sort="@currentSort"
+               class="adm-segment @(currentStatus == null ? "active" : "")">Tất cả (@countAll)</a>
+            <a asp-action="Index" asp-route-status="@OrderStatus.PendingConfirmation" asp-route-search="@currentSearch" asp-route-from="@currentFrom" asp-route-to="@currentTo" asp-route-sort="@currentSort"
+               class="adm-segment @(currentStatus == OrderStatus.PendingConfirmation ? "active" : "")">Chờ duyệt (@countPending)</a>
+            <a asp-action="Index" asp-route-status="@OrderStatus.Confirmed" asp-route-search="@currentSearch" asp-route-from="@currentFrom" asp-route-to="@currentTo" asp-route-sort="@currentSort"
+               class="adm-segment @(currentStatus == OrderStatus.Confirmed ? "active" : "")">Đã duyệt (@countConfirmed)</a>
+            <a asp-action="Index" asp-route-status="@OrderStatus.Shipping" asp-route-search="@currentSearch" asp-route-from="@currentFrom" asp-route-to="@currentTo" asp-route-sort="@currentSort"
+               class="adm-segment @(currentStatus == OrderStatus.Shipping ? "active" : "")">Đang giao (@countShipping)</a>
+            <a asp-action="Index" asp-route-status="@OrderStatus.Delivered" asp-route-search="@currentSearch" asp-route-from="@currentFrom" asp-route-to="@currentTo" asp-route-sort="@currentSort"
+               class="adm-segment @(currentStatus == OrderStatus.Delivered ? "active" : "")">Đã giao (@countDelivered)</a>
+            <a asp-action="Index" asp-route-status="@OrderStatus.Cancelled" asp-route-search="@currentSearch" asp-route-from="@currentFrom" asp-route-to="@currentTo" asp-route-sort="@currentSort"
+               class="adm-segment @(currentStatus == OrderStatus.Cancelled ? "active" : "")">Đã hủy (@countCancelled)</a>
         </div>
 
-        <!-- PAYMENT STATUS -->
-        <select name="paymentStatus" class="adm-filter-select-v2" onchange="this.form.submit()">
-            <option value="">Thanh toán: Tất cả</option>
-            @foreach (var val in Enum.GetValues<PaymentStatus>())
-            {
-                <option value="@val" selected="@(currentPaymentStatus == val)">@val</option>
-            }
-        </select>
+        @if (currentStatus.HasValue)
+        {
+            <input type="hidden" name="status" value="@currentStatus.Value" />
+        }
 
-        <!-- PAYMENT METHOD -->
-        <select name="paymentMethod" class="adm-filter-select-v2" onchange="this.form.submit()">
-            <option value="">Phương thức: Tất cả</option>
-            @foreach (var val in Enum.GetValues<PaymentMethod>())
-            {
-                <option value="@val" selected="@(currentPaymentMethod == val)">@val</option>
-            }
-        </select>
+        <!-- 2. Search Input -->
+        <div class="d-inline-flex align-items-center" style="position: relative;">
+            <input type="text" name="search" maxlength="100" value="@currentSearch"
+                   placeholder="Tìm mã đơn, tên, SĐT..."
+                   class="form-control adm-input-dark"
+                   style="height: 36px; font-size: 0.8rem; width: 220px; padding-left: 32px; border-radius: 8px;" />
+            <i class="bi bi-search text-muted" style="position: absolute; left: 10px; font-size: 0.8rem; pointer-events: none;"></i>
+        </div>
 
-        <!-- DATE COMPOUND RANGE -->
+        <!-- 3. Cohesive Date Range Input Compound -->
         <div class="adm-date-compound">
             <i class="bi bi-calendar3 adm-date-icon"></i>
-            <input type="date"
-                   name="from"
-                   value="@currentFrom"
-                   class="adm-date-native"
-                   title="Từ ngày" />
-            <span class="adm-date-arrow">–</span>
-            <input type="date"
-                   name="to"
-                   value="@currentTo"
-                   class="adm-date-native"
-                   title="Đến ngày" />
+            <input type="date" name="from" value="@currentFrom" class="adm-date-native" aria-label="Từ ngày" />
+            <span class="adm-date-arrow"><i class="bi bi-arrow-right"></i></span>
+            <input type="date" name="to" value="@currentTo" class="adm-date-native" aria-label="Đến ngày" />
             <button type="submit" class="adm-date-apply-btn" title="Áp dụng ngày">
-                <i class="bi bi-arrow-right-short"></i>
+                <i class="bi bi-check-lg"></i>
             </button>
         </div>
 
-        <!-- SORT -->
-        <select name="sort" class="adm-filter-select-v2" onchange="this.form.submit()">
+        <!-- 4. Sort Dropdown -->
+        <select name="sort" class="form-select adm-input-dark" style="height: 36px; font-size: 0.8rem; width: auto; border-radius: 8px;" onchange="this.form.submit()">
             <option value="">Sắp xếp: Mới nhất</option>
             <option value="oldest" selected="@(currentSort == "oldest")">Cũ nhất</option>
             <option value="amount" selected="@(currentSort == "amount")">Tổng tiền cao nhất</option>
         </select>
 
-        <!-- RESET GHOST BUTTON -->
+        <!-- 5. Reset Ghost Button -->
         @if (!string.IsNullOrEmpty(currentSearch) || currentStatus.HasValue || currentPaymentStatus.HasValue || currentPaymentMethod.HasValue || !string.IsNullOrEmpty(currentFrom) || !string.IsNullOrEmpty(currentTo) || !string.IsNullOrEmpty(currentSort))
         {
             <a asp-action="Index" class="adm-reset-ghost-btn" title="Đặt lại bộ lọc">
@@ -268,18 +105,99 @@
                 <span>Đặt lại</span>
             </a>
         }
-    </div>
-</form>
+    </form>
+</div>
 
-<!-- 5. ORDERS DATA TABLE -->
+<!-- 2. HERO KPI METRICS (4 TILES - DASHBOARD STRIPE STYLE) -->
+<div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-3 mb-4">
+    <!-- KPI 1: CHỜ DUYỆT -->
+    <div class="col">
+        <a asp-action="Index" asp-route-status="@OrderStatus.PendingConfirmation" class="text-decoration-none">
+            <div class="adm-kpi-card @(currentStatus == OrderStatus.PendingConfirmation ? "border-dark shadow-sm" : "")">
+                <div class="adm-kpi-top">
+                    <h2 class="adm-kpi-label">Đơn hàng chờ duyệt</h2>
+                    <div class="adm-kpi-chip amber" title="Cần duyệt ngay">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                </div>
+                <div class="adm-kpi-number">
+                    @countPending <span class="adm-kpi-unit">đơn</span>
+                </div>
+                <div class="adm-kpi-footer">
+                    <span>Tổng giá trị: <strong>@pendingAmount.ToString("N0") ₫</strong></span>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- KPI 2: ĐANG GIAO -->
+    <div class="col">
+        <a asp-action="Index" asp-route-status="@OrderStatus.Shipping" class="text-decoration-none">
+            <div class="adm-kpi-card @(currentStatus == OrderStatus.Shipping ? "border-dark shadow-sm" : "")">
+                <div class="adm-kpi-top">
+                    <h2 class="adm-kpi-label">Đang luân chuyển</h2>
+                    <div class="adm-kpi-chip blue" title="Đang giao">
+                        <i class="bi bi-truck"></i>
+                    </div>
+                </div>
+                <div class="adm-kpi-number">
+                    @countShipping <span class="adm-kpi-unit">đơn</span>
+                </div>
+                <div class="adm-kpi-footer">
+                    <span>Kho & Shipper đang giao</span>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- KPI 3: HOÀN TẤT GIAO HÀNG -->
+    <div class="col">
+        <a asp-action="Index" asp-route-status="@OrderStatus.Delivered" class="text-decoration-none">
+            <div class="adm-kpi-card @(currentStatus == OrderStatus.Delivered ? "border-dark shadow-sm" : "")">
+                <div class="adm-kpi-top">
+                    <h2 class="adm-kpi-label">Giao thành công</h2>
+                    <div class="adm-kpi-chip emerald" title="Đã đối soát">
+                        <i class="bi bi-check2-circle"></i>
+                    </div>
+                </div>
+                <div class="adm-kpi-number">
+                    @countDelivered <span class="adm-kpi-unit">đơn</span>
+                </div>
+                <div class="adm-kpi-footer">
+                    <span>Đã thu: <strong class="text-success">@deliveredAmount.ToString("N0") ₫</strong></span>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- KPI 4: AOV -->
+    <div class="col">
+        <div class="adm-kpi-card">
+            <div class="adm-kpi-top">
+                <h2 class="adm-kpi-label">Giá trị trung bình (AOV)</h2>
+                <div class="adm-kpi-chip purple" title="AOV">
+                    <i class="bi bi-graph-up-arrow"></i>
+                </div>
+            </div>
+            <div class="adm-kpi-number">
+                @avgOrderValue.ToString("N0") <span class="adm-kpi-unit">₫</span>
+            </div>
+            <div class="adm-kpi-footer">
+                <span>Tổng đơn: <strong>@countAll đơn toàn sàn</strong></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 3. ORDERS DATA TABLE (EXACT DASHBOARD REPLICA) -->
 @if (!Model.Any())
 {
-    <div class="adm-card text-center py-5 border">
+    <div class="adm-card text-center py-5">
         <i class="bi bi-inbox fs-1 text-muted d-block mb-3"></i>
-        <h5 class="fw-bold adm-heading" style="font-size: 16px;">Không tìm thấy đơn hàng nào</h5>
-        <p class="text-muted" style="font-size: 13.5px;">Không có đơn hàng nào khớp với các tiêu chí tìm kiếm hiện tại.</p>
-        <a asp-action="Index" class="adm-btn-modern-secondary d-inline-flex mt-2">
-            <span>Xem toàn bộ đơn hàng</span>
+        <h5 class="fw-bold adm-heading">Không có đơn hàng nào trong mục này</h5>
+        <p class="text-muted small">Tất cả các đơn đã được điều phối hoặc chưa có giao dịch phát sinh.</p>
+        <a asp-action="Index" class="btn adm-btn-outline mt-2">
+            Xem toàn bộ đơn hàng
         </a>
     </div>
 }
@@ -290,180 +208,131 @@ else
         <input type="hidden" name="newStatus" value="@OrderStatus.Confirmed" />
         <input type="hidden" name="returnUrl" value="@Context.Request.Path@Context.Request.QueryString" />
 
-        <div class="adm-card p-0 overflow-hidden mb-4 border" style="border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+        <div class="adm-card p-0 overflow-hidden mb-4">
             <div class="table-responsive">
-                <table class="adm-table-v2 mb-0" id="ordersTable">
+                <table class="adm-table mb-0" id="ordersTable">
                     <thead>
                         <tr>
-                            <th class="adm-checkbox-th">
-                                <input type="checkbox" id="masterCheckbox" class="adm-check-v2" title="Chọn tất cả đơn" />
+                            <th style="width: 44px; padding-left: 20px;">
+                                <input type="checkbox" id="masterCheckbox" class="form-check-input" title="Chọn tất cả" style="cursor: pointer;" />
                             </th>
-                            <th style="min-width: 170px;">MÃ ĐƠN HÀNG</th>
-                            <th style="min-width: 140px;">NGÀY ĐẶT</th>
-                            <th style="min-width: 210px;">KHÁCH HÀNG</th>
-                            <th style="min-width: 160px;">THANH TOÁN</th>
-                            <th style="min-width: 140px;">TỔNG TIỀN</th>
-                            <th style="min-width: 130px;">TRẠNG THÁI</th>
-                            <th class="text-end pe-4" style="min-width: 170px;">THAO TÁC</th>
+                            <th style="width: 220px;">MÃ ĐƠN HÀNG</th>
+                            <th style="width: 200px;">KHÁCH HÀNG</th>
+                            <th style="width: 140px;">PHƯƠNG THỨC</th>
+                            <th style="width: 160px;">TỔNG TIỀN</th>
+                            <th style="width: 150px;">TRẠNG THÁI</th>
+                            <th class="text-end pe-4" style="width: 150px;">THAO TÁC</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var order in Model)
                         {
                             var isPending = order.Status == OrderStatus.PendingConfirmation;
-                            var customerInitial = !string.IsNullOrEmpty(order.ReceiverName)
-                                ? order.ReceiverName.Trim().Substring(0, 1).ToUpper()
-                                : "K";
+                            var shortCode = order.OrderCode.Length > 12
+                                ? "#" + order.OrderCode.Substring(order.OrderCode.Length - 10)
+                                : "#" + order.OrderCode;
 
-                            <tr style="@(isPending ? "background: #FFFDF7;" : "")">
+                            <tr>
                                 <!-- CHECKBOX -->
-                                <td class="adm-checkbox-td">
-                                    <input type="checkbox" name="ids" value="@order.Id" class="adm-check-v2 order-row-checkbox" data-order-code="@order.OrderCode" />
+                                <td style="padding-left: 20px;">
+                                    <input type="checkbox" name="ids" value="@order.Id" class="form-check-input order-row-checkbox" style="cursor: pointer;" />
                                 </td>
 
-                                <!-- ORDER CODE -->
+                                <!-- ORDER CODE & TIME (EXACT DASHBOARD STYLE) -->
                                 <td>
                                     <div class="d-flex align-items-center gap-2">
-                                        <a asp-action="Details" asp-route-id="@order.Id" class="fw-bold text-dark text-decoration-none" style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 14px;">
-                                            @order.OrderCode
-                                        </a>
-                                        <button type="button" class="adm-copy-btn-v2" onclick="copyAdmText(this, '@order.OrderCode')" title="Sao chép mã đơn">
-                                            <i class="bi bi-copy" style="font-size: 12px;"></i>
+                                        <span class="fw-bold adm-heading font-monospace" style="font-size: 0.85rem;" title="@order.OrderCode">@shortCode</span>
+                                        <button type="button" class="btn btn-sm p-0 text-muted" onclick="copyAdmText(this, '@order.OrderCode')" title="Sao chép toàn bộ mã đơn: @order.OrderCode">
+                                            <i class="bi bi-copy" style="font-size: 0.75rem;"></i>
                                         </button>
                                     </div>
-                                    <div class="text-muted" style="font-size: 12px; margin-top: 1px;">Atelier Official</div>
+                                    <div class="text-muted" style="font-size: 0.72rem;">@AdminReportService.ToVietnamTime(order.CreatedAt).ToString("dd/MM/yyyy HH:mm")</div>
                                 </td>
 
-                                <!-- CREATED AT -->
-                                <td>
-                                    <div class="text-dark fw-bold" style="font-size: 13.5px;">@AdminReportService.ToVietnamTime(order.CreatedAt).ToString("dd/MM/yyyy")</div>
-                                    <div class="text-muted" style="font-size: 12.5px; font-family: ui-monospace, monospace;">@AdminReportService.ToVietnamTime(order.CreatedAt).ToString("HH:mm:ss")</div>
-                                </td>
-
-                                <!-- CUSTOMER -->
+                                <!-- CUSTOMER (EXACT DASHBOARD STYLE) -->
                                 <td>
                                     <div class="d-flex align-items-center gap-2">
-                                        <div class="adm-avatar-v2">@customerInitial</div>
+                                        <div class="adm-avatar-sm">
+                                            @(string.IsNullOrWhiteSpace(order.ReceiverName) ? "K" : order.ReceiverName.Substring(0, 1).ToUpper())
+                                        </div>
                                         <div>
-                                            <div class="fw-bold text-dark" style="font-size: 14px;">@order.ReceiverName</div>
-                                            <a href="tel:@order.Phone" class="text-secondary text-decoration-none" style="font-size: 13px; font-family: ui-monospace, monospace;" title="Gọi điện">
-                                                <i class="bi bi-telephone me-1" style="font-size: 11px;"></i>@order.Phone
-                                            </a>
+                                            <div class="fw-semibold adm-heading" style="font-size: 0.84rem;">@order.ReceiverName</div>
+                                            <div class="text-muted" style="font-size: 0.72rem;">@order.Phone</div>
                                         </div>
                                     </div>
                                 </td>
 
-                                <!-- PAYMENT -->
+                                <!-- PAYMENT (EXACT DASHBOARD STYLE) -->
                                 <td>
-                                    <div class="d-flex flex-column gap-1">
-                                        @if (order.PaymentMethod == PaymentMethod.VietQR)
-                                        {
-                                            <span style="display: inline-flex; align-items: center; gap: 4px; background: #F0F9FF; color: #0284C7; border: 1px solid #BAE6FD; border-radius: 6px; font-size: 12px; font-weight: 600; padding: 2px 8px; width: fit-content;">
-                                                <i class="bi bi-qr-code"></i> VietQR
-                                            </span>
-                                        }
-                                        else
-                                        {
-                                            <span style="display: inline-flex; align-items: center; gap: 4px; background: #F4F4F5; color: #52525B; border: 1px solid #E4E4E7; border-radius: 6px; font-size: 12px; font-weight: 600; padding: 2px 8px; width: fit-content;">
-                                                <i class="bi bi-cash"></i> COD
-                                            </span>
-                                        }
-
-                                        <div style="font-size: 13px;">
-                                            @if (order.PaymentStatus == PaymentStatus.Paid)
-                                            {
-                                                <span class="text-success fw-semibold"><i class="bi bi-check-circle-fill me-1" style="font-size: 11px;"></i>Đã thanh toán</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="text-secondary"><i class="bi bi-clock me-1" style="font-size: 11px;"></i>Chưa thanh toán</span>
-                                            }
-                                        </div>
-                                    </div>
+                                    @if (order.PaymentMethod == PaymentMethod.VietQR)
+                                    {
+                                        <span class="badge" style="background: rgba(2, 132, 199, 0.1); color: #0284C7; border: 1px solid rgba(2, 132, 199, 0.25);">
+                                            <i class="bi bi-qr-code me-1"></i> VietQR
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge" style="background: var(--adm-bg-soft); color: var(--adm-ink-muted); border: 1px solid var(--adm-border);">
+                                            <i class="bi bi-cash me-1"></i> Tiền mặt COD
+                                        </span>
+                                    }
                                 </td>
 
-                                <!-- TOTAL AMOUNT -->
+                                <!-- AMOUNT (EXACT DASHBOARD STYLE) -->
                                 <td>
-                                    <div class="fw-bold text-dark" style="font-size: 15px; letter-spacing: -0.02em;">
+                                    <span class="fw-bold adm-heading text-nowrap" style="font-size: 0.9rem;">
                                         @order.TotalAmount.ToString("N0") ₫
-                                    </div>
-                                    <div class="text-muted" style="font-size: 12.5px;">@(order.Items?.Count ?? 0) món</div>
+                                    </span>
                                 </td>
 
-                                <!-- STATUS PILL -->
+                                <!-- STATUS PILL (EXACT DASHBOARD STYLE) -->
                                 <td>
                                     @switch (order.Status)
                                     {
                                         case OrderStatus.PendingConfirmation:
-                                            <span class="adm-tag-status adm-tag-amber">
-                                                <span class="adm-tag-dot"></span>
-                                                <span>Chờ duyệt</span>
-                                            </span>
+                                            <span class="adm-pill adm-pill-amber">Chờ duyệt</span>
                                             break;
                                         case OrderStatus.Confirmed:
-                                            <span class="adm-tag-status adm-tag-blue">
-                                                <span class="adm-tag-dot"></span>
-                                                <span>Đã duyệt</span>
-                                            </span>
+                                            <span class="adm-pill adm-pill-blue">Đã duyệt</span>
                                             break;
                                         case OrderStatus.Processing:
-                                            <span class="adm-tag-status adm-tag-blue">
-                                                <span class="adm-tag-dot"></span>
-                                                <span>Xử lý kho</span>
-                                            </span>
+                                            <span class="adm-pill adm-pill-blue">Xử lý kho</span>
                                             break;
                                         case OrderStatus.Shipping:
-                                            <span class="adm-tag-status adm-tag-blue">
-                                                <span class="adm-tag-dot"></span>
-                                                <span>Đang giao</span>
-                                            </span>
+                                            <span class="adm-pill adm-pill-blue">Đang giao</span>
                                             break;
                                         case OrderStatus.Delivered:
-                                            <span class="adm-tag-status adm-tag-emerald">
-                                                <span class="adm-tag-dot"></span>
-                                                <span>Đã giao</span>
-                                            </span>
+                                            <span class="adm-pill adm-pill-emerald">Đã giao</span>
                                             break;
                                         case OrderStatus.Cancelled:
-                                            <span class="adm-tag-status adm-tag-rose">
-                                                <span class="adm-tag-dot"></span>
-                                                <span>Đã hủy</span>
-                                            </span>
+                                            <span class="adm-pill adm-pill-rose">Đã hủy</span>
                                             break;
                                         case OrderStatus.DeliveryFailed:
-                                            <span class="adm-tag-status adm-tag-rose">
-                                                <span class="adm-tag-dot"></span>
-                                                <span>Giao thất bại</span>
-                                            </span>
+                                            <span class="adm-pill adm-pill-rose">Giao thất bại</span>
                                             break;
                                         default:
-                                            <span class="adm-tag-status adm-tag-faint">
-                                                <span class="adm-tag-dot"></span>
-                                                <span>@order.Status</span>
-                                            </span>
+                                            <span class="adm-pill adm-pill-faint">@order.Status</span>
                                             break;
                                     }
                                 </td>
 
-                                <!-- ACTIONS -->
+                                <!-- ACTIONS (EXACT DASHBOARD STYLE) -->
                                 <td class="text-end pe-4">
-                                    <div class="d-inline-flex align-items-center gap-2">
+                                    <div class="d-inline-flex align-items-center gap-1">
                                         @if (isPending)
                                         {
                                             <button type="submit"
                                                     formaction="@Url.Action("UpdateStatus", "AdminOrders", new { id = order.Id, newStatus = OrderStatus.Confirmed, returnUrl = Context.Request.Path + Context.Request.QueryString })"
-                                                    class="adm-btn-table-primary"
-                                                    title="Duyệt đơn ngay lập tức">
-                                                <i class="bi bi-check2"></i>
-                                                <span>Duyệt đơn</span>
+                                                    class="adm-btn-table-action"
+                                                    style="background: #0F172A !important; color: #FFFFFF !important; border-color: #0F172A !important;"
+                                                    title="Duyệt đơn nhanh">
+                                                <i class="bi bi-check-lg"></i> <span>Duyệt</span>
                                             </button>
                                         }
 
                                         <a asp-action="Details" asp-route-id="@order.Id"
-                                           class="adm-btn-table-secondary"
-                                           title="Xem chi tiết đơn hàng">
-                                            <i class="bi bi-arrow-up-right"></i>
-                                            <span>Xem</span>
+                                           class="adm-btn-table-action" title="Chi tiết đơn hàng">
+                                            <i class="bi bi-eye"></i> <span>Chi tiết</span>
                                         </a>
                                     </div>
                                 </td>
@@ -475,23 +344,23 @@ else
         </div>
 
         <!-- FLOATING BATCH ACTION DOCK -->
-        <div class="adm-batch-dock-v2" id="batchDock">
-            <div class="adm-batch-text-v2">
-                <i class="bi bi-check-circle-fill text-success me-1"></i>
+        <div class="adm-batch-dock" id="batchDock">
+            <div class="adm-batch-text">
+                <i class="bi bi-check2-circle text-success me-1"></i>
                 Đã chọn <strong id="batchSelectedCount" class="text-white">0</strong> đơn hàng
             </div>
-            <button type="submit" class="adm-batch-btn-v2" title="Duyệt tất cả các đơn đã chọn">
-                <i class="bi bi-check2-all"></i>
+            <button type="submit" class="adm-batch-btn-primary" title="Duyệt tất cả các đơn đã chọn">
+                <i class="bi bi-check-all"></i>
                 <span>Duyệt nhanh tất cả</span>
             </button>
-            <button type="button" class="adm-batch-cancel-v2" onclick="clearBatchSelection()">
+            <button type="button" class="adm-batch-btn-ghost" onclick="clearBatchSelection()">
                 Bỏ chọn
             </button>
         </div>
     </form>
 }
 
-<!-- 6. MODERN PAGINATION -->
+<!-- 4. PAGINATION -->
 @if (ViewBag.PageCount > 1)
 {
     var routes = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
@@ -505,15 +374,15 @@ else
     <nav class="d-flex align-items-center justify-content-center gap-2 my-4" aria-label="Phân trang đơn hàng">
         @if (pageNum > 1)
         {
-            <a asp-action="Index" asp-all-route-data="routes" asp-route-page="@(pageNum - 1)" class="adm-btn-modern-secondary">
-                <i class="bi bi-chevron-left"></i> Trước
+            <a asp-action="Index" asp-all-route-data="routes" asp-route-page="@(pageNum - 1)" class="adm-action-btn adm-btn-secondary">
+                <i class="bi bi-chevron-left"></i> Trang trước
             </a>
         }
-        <span class="px-3 py-1 font-monospace text-dark fw-bold small" style="font-size: 13px;">Trang @(pageNum) / @ViewBag.PageCount</span>
+        <span class="px-3 py-1 font-monospace text-dark fw-bold small">Trang @(pageNum) / @ViewBag.PageCount</span>
         @if (pageNum < ViewBag.PageCount)
         {
-            <a asp-action="Index" asp-all-route-data="routes" asp-route-page="@(pageNum + 1)" class="adm-btn-modern-secondary">
-                Sau <i class="bi bi-chevron-right"></i>
+            <a asp-action="Index" asp-all-route-data="routes" asp-route-page="@(pageNum + 1)" class="adm-action-btn adm-btn-secondary">
+                Trang sau <i class="bi bi-chevron-right"></i>
             </a>
         }
     </nav>
@@ -521,7 +390,6 @@ else
 
 @section Scripts {
     <script>
-        // Checkbox Master & Row Selection
         const masterCheckbox = document.getElementById('masterCheckbox');
         const rowCheckboxes = document.querySelectorAll('.order-row-checkbox');
         const batchDock = document.getElementById('batchDock');
@@ -558,7 +426,6 @@ else
             updateBatchState();
         }
 
-        // Copy Order Code with Feedback
         function copyAdmText(btn, text) {
             if (!navigator.clipboard) return;
             navigator.clipboard.writeText(text).then(() => {
@@ -571,7 +438,6 @@ else
             });
         }
 
-        // Export Table to CSV
         function exportOrdersToCSV() {
             const table = document.getElementById('ordersTable');
             if (!table) return;
