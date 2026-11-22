@@ -38,7 +38,7 @@
             if (dirty || content.contains(document.activeElement)
                 || document.querySelector('.modal.show, .dropdown-menu.show')
                 || (window.getSelection()?.toString() ?? '').length) {
-                status.textContent = 'Tạm dừng cập nhật khi đang thao tác';
+                status.textContent = 'Tạm dừng khi thao tác';
                 return;
             }
             busy = true;
@@ -49,7 +49,7 @@
             });
             if (response.status === 401 || response.status === 403 || response.redirected) {
                 submitting = true;
-                status.textContent = 'Phiên làm việc đã thay đổi. Vui lòng tải lại trang.';
+                status.textContent = 'Phiên làm việc đã hết hạn';
                 return;
             }
             if (!response.ok) throw new Error('refresh');
@@ -65,13 +65,13 @@
                 window.scrollTo(scroll.x, scroll.y);
             }
             failures = 0;
-            status.textContent = `Đã cập nhật lúc ${new Date().toLocaleTimeString('vi-VN')}`;
+            status.textContent = 'Trực tiếp';
         } catch {
             failures++;
-            status.textContent = 'Kết nối gián đoạn · đang tự kết nối lại';
+            status.textContent = 'Đang kết nối lại';
         } finally {
             busy = false;
-            if (!submitting) timer = setTimeout(refresh, Math.min(30000, 5000 * (1 + failures)));
+            if (!submitting) timer = setTimeout(refresh, Math.min(30000, 4000 * (1 + failures)));
         }
     }
     document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });

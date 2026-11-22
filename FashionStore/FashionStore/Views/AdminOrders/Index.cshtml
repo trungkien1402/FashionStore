@@ -47,9 +47,8 @@
         </div>
     </div>
 
-    <!-- UNIFIED FILTER STRIP (APPLE SEGMENTED CONTROL + COMPOUND CONTROLS) -->
-    <form asp-action="Index" method="get" class="adm-filter-toolbar">
-        <!-- 1. Apple Segmented Control for Status -->
+    <!-- TIER 1: APPLE SEGMENTED CONTROL TABS (STANDALONE FULL ROW) -->
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <div class="adm-segmented-control" role="group" aria-label="Lọc trạng thái">
             <a asp-action="Index" asp-route-search="@currentSearch" asp-route-from="@currentFrom" asp-route-to="@currentTo" asp-route-sort="@currentSort"
                class="adm-segment @(currentStatus == null ? "active" : "")">Tất cả (@countAll)</a>
@@ -64,23 +63,26 @@
             <a asp-action="Index" asp-route-status="@OrderStatus.Cancelled" asp-route-search="@currentSearch" asp-route-from="@currentFrom" asp-route-to="@currentTo" asp-route-sort="@currentSort"
                class="adm-segment @(currentStatus == OrderStatus.Cancelled ? "active" : "")">Đã hủy (@countCancelled)</a>
         </div>
+    </div>
 
+    <!-- TIER 2: SEARCH INPUT STRETCHED TO FIT + COMPOUND CONTROLS (BALANCED HORIZONTAL ROW) -->
+    <form asp-action="Index" method="get" class="d-flex flex-wrap align-items-center gap-2">
         @if (currentStatus.HasValue)
         {
             <input type="hidden" name="status" value="@currentStatus.Value" />
         }
 
-        <!-- 2. Search Input -->
-        <div class="d-inline-flex align-items-center" style="position: relative;">
+        <!-- 1. Stretched Search Input -->
+        <div class="d-flex align-items-center flex-grow-1" style="position: relative; min-width: 260px;">
             <input type="text" name="search" maxlength="100" value="@currentSearch"
-                   placeholder="Tìm mã đơn, tên, SĐT..."
-                   class="form-control adm-input-dark"
-                   style="height: 36px; font-size: 0.8rem; width: 220px; padding-left: 32px; border-radius: 8px;" />
-            <i class="bi bi-search text-muted" style="position: absolute; left: 10px; font-size: 0.8rem; pointer-events: none;"></i>
+                   placeholder="Tìm kiếm theo mã đơn, người nhận hoặc số điện thoại..."
+                   class="form-control adm-input-dark w-100"
+                   style="height: 38px; font-size: 0.85rem; padding-left: 38px; padding-right: 14px; border-radius: 8px;" />
+            <i class="bi bi-search text-muted" style="position: absolute; left: 14px; font-size: 0.85rem; pointer-events: none;"></i>
         </div>
 
-        <!-- 3. Cohesive Date Range Input Compound -->
-        <div class="adm-date-compound">
+        <!-- 2. Cohesive Date Range Input Compound -->
+        <div class="adm-date-compound" style="height: 38px;">
             <i class="bi bi-calendar3 adm-date-icon"></i>
             <input type="date" name="from" value="@currentFrom" class="adm-date-native" aria-label="Từ ngày" />
             <span class="adm-date-arrow"><i class="bi bi-arrow-right"></i></span>
@@ -90,25 +92,24 @@
             </button>
         </div>
 
-        <!-- 4. Sort Dropdown -->
-        <select name="sort" class="form-select adm-input-dark" style="height: 36px; font-size: 0.8rem; width: auto; border-radius: 8px;" onchange="this.form.submit()">
+        <!-- 3. Sort Dropdown -->
+        <select name="sort" class="form-select adm-input-dark" style="height: 38px; font-size: 0.85rem; width: auto; min-width: 170px; border-radius: 8px;" onchange="this.form.submit()">
             <option value="">Sắp xếp: Mới nhất</option>
             <option value="oldest" selected="@(currentSort == "oldest")">Cũ nhất</option>
             <option value="amount" selected="@(currentSort == "amount")">Tổng tiền cao nhất</option>
         </select>
 
-        <!-- 5. Reset Ghost Button -->
+        <!-- 4. Reset Ghost Button -->
         @if (!string.IsNullOrEmpty(currentSearch) || currentStatus.HasValue || currentPaymentStatus.HasValue || currentPaymentMethod.HasValue || !string.IsNullOrEmpty(currentFrom) || !string.IsNullOrEmpty(currentTo) || !string.IsNullOrEmpty(currentSort))
         {
-            <a asp-action="Index" class="adm-reset-ghost-btn" title="Đặt lại bộ lọc">
-                <i class="bi bi-arrow-counterclockwise"></i>
-                <span>Đặt lại</span>
+            <a asp-action="Index" class="adm-reset-ghost-btn" style="height: 38px;" title="Đặt lại bộ lọc">
+                <i class="bi bi-arrow-counterclockwise"></i> <span>Đặt lại</span>
             </a>
         }
     </form>
 </div>
 
-<!-- 2. HERO KPI METRICS (4 TILES - DASHBOARD STRIPE STYLE) -->
+<!-- 2. HERO KPI METRICS (4 TILES - EXACT DASHBOARD REPLICA) -->
 <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-3 mb-4">
     <!-- KPI 1: CHỜ DUYỆT -->
     <div class="col">
@@ -189,7 +190,7 @@
     </div>
 </div>
 
-<!-- 3. ORDERS DATA TABLE (EXACT DASHBOARD REPLICA) -->
+<!-- 3. ORDERS DATA TABLE (EXACT DASHBOARD STYLE & TYPOGRAPHY) -->
 @if (!Model.Any())
 {
     <div class="adm-card text-center py-5">
@@ -203,161 +204,137 @@
 }
 else
 {
-    <form id="batchOrderForm" asp-action="BatchUpdateStatus" method="post">
-        @Html.AntiForgeryToken()
-        <input type="hidden" name="newStatus" value="@OrderStatus.Confirmed" />
-        <input type="hidden" name="returnUrl" value="@Context.Request.Path@Context.Request.QueryString" />
+    <div class="adm-card p-0 overflow-hidden mb-4">
+        <div class="table-responsive">
+            <table class="adm-table mb-0" id="ordersTable">
+                <thead>
+                    <tr>
+                        <th style="width: 220px;">MÃ ĐƠN HÀNG</th>
+                        <th style="width: 200px;">KHÁCH HÀNG</th>
+                        <th style="width: 140px;">PHƯƠNG THỨC</th>
+                        <th style="width: 160px;">TỔNG TIỀN</th>
+                        <th style="width: 150px;">TRẠNG THÁI</th>
+                        <th class="text-end pe-4" style="width: 160px;">THAO TÁC</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model)
+                    {
+                        var isPending = order.Status == OrderStatus.PendingConfirmation;
+                        var shortCode = order.OrderCode.Length > 12
+                            ? "#" + order.OrderCode.Substring(order.OrderCode.Length - 10)
+                            : "#" + order.OrderCode;
 
-        <div class="adm-card p-0 overflow-hidden mb-4">
-            <div class="table-responsive">
-                <table class="adm-table mb-0" id="ordersTable">
-                    <thead>
                         <tr>
-                            <th style="width: 44px; padding-left: 20px;">
-                                <input type="checkbox" id="masterCheckbox" class="form-check-input" title="Chọn tất cả" style="cursor: pointer;" />
-                            </th>
-                            <th style="width: 220px;">MÃ ĐƠN HÀNG</th>
-                            <th style="width: 200px;">KHÁCH HÀNG</th>
-                            <th style="width: 140px;">PHƯƠNG THỨC</th>
-                            <th style="width: 160px;">TỔNG TIỀN</th>
-                            <th style="width: 150px;">TRẠNG THÁI</th>
-                            <th class="text-end pe-4" style="width: 150px;">THAO TÁC</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var order in Model)
-                        {
-                            var isPending = order.Status == OrderStatus.PendingConfirmation;
-                            var shortCode = order.OrderCode.Length > 12
-                                ? "#" + order.OrderCode.Substring(order.OrderCode.Length - 10)
-                                : "#" + order.OrderCode;
+                            <!-- ORDER CODE & TIME (EXACT DASHBOARD REPLICA) -->
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="fw-bold adm-heading font-monospace" style="font-size: 0.85rem;" title="@order.OrderCode">@shortCode</span>
+                                    <button type="button" class="btn btn-sm p-0 text-muted" onclick="copyAdmText(this, '@order.OrderCode')" title="Sao chép toàn bộ mã đơn: @order.OrderCode">
+                                        <i class="bi bi-copy" style="font-size: 0.75rem;"></i>
+                                    </button>
+                                </div>
+                                <div class="text-muted" style="font-size: 0.72rem;">@AdminReportService.ToVietnamTime(order.CreatedAt).ToString("dd/MM/yyyy HH:mm")</div>
+                            </td>
 
-                            <tr>
-                                <!-- CHECKBOX -->
-                                <td style="padding-left: 20px;">
-                                    <input type="checkbox" name="ids" value="@order.Id" class="form-check-input order-row-checkbox" style="cursor: pointer;" />
-                                </td>
-
-                                <!-- ORDER CODE & TIME (EXACT DASHBOARD STYLE) -->
-                                <td>
-                                    <div class="d-flex align-items-center gap-2">
-                                        <span class="fw-bold adm-heading font-monospace" style="font-size: 0.85rem;" title="@order.OrderCode">@shortCode</span>
-                                        <button type="button" class="btn btn-sm p-0 text-muted" onclick="copyAdmText(this, '@order.OrderCode')" title="Sao chép toàn bộ mã đơn: @order.OrderCode">
-                                            <i class="bi bi-copy" style="font-size: 0.75rem;"></i>
-                                        </button>
+                            <!-- CUSTOMER (EXACT DASHBOARD REPLICA) -->
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="adm-avatar-sm">
+                                        @(string.IsNullOrWhiteSpace(order.ReceiverName) ? "K" : order.ReceiverName.Substring(0, 1).ToUpper())
                                     </div>
-                                    <div class="text-muted" style="font-size: 0.72rem;">@AdminReportService.ToVietnamTime(order.CreatedAt).ToString("dd/MM/yyyy HH:mm")</div>
-                                </td>
-
-                                <!-- CUSTOMER (EXACT DASHBOARD STYLE) -->
-                                <td>
-                                    <div class="d-flex align-items-center gap-2">
-                                        <div class="adm-avatar-sm">
-                                            @(string.IsNullOrWhiteSpace(order.ReceiverName) ? "K" : order.ReceiverName.Substring(0, 1).ToUpper())
-                                        </div>
-                                        <div>
-                                            <div class="fw-semibold adm-heading" style="font-size: 0.84rem;">@order.ReceiverName</div>
-                                            <div class="text-muted" style="font-size: 0.72rem;">@order.Phone</div>
-                                        </div>
+                                    <div>
+                                        <div class="fw-semibold adm-heading" style="font-size: 0.84rem;">@order.ReceiverName</div>
+                                        <div class="text-muted" style="font-size: 0.72rem;">@order.Phone</div>
                                     </div>
-                                </td>
+                                </div>
+                            </td>
 
-                                <!-- PAYMENT (EXACT DASHBOARD STYLE) -->
-                                <td>
-                                    @if (order.PaymentMethod == PaymentMethod.VietQR)
-                                    {
-                                        <span class="badge" style="background: rgba(2, 132, 199, 0.1); color: #0284C7; border: 1px solid rgba(2, 132, 199, 0.25);">
-                                            <i class="bi bi-qr-code me-1"></i> VietQR
-                                        </span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge" style="background: var(--adm-bg-soft); color: var(--adm-ink-muted); border: 1px solid var(--adm-border);">
-                                            <i class="bi bi-cash me-1"></i> Tiền mặt COD
-                                        </span>
-                                    }
-                                </td>
-
-                                <!-- AMOUNT (EXACT DASHBOARD STYLE) -->
-                                <td>
-                                    <span class="fw-bold adm-heading text-nowrap" style="font-size: 0.9rem;">
-                                        @order.TotalAmount.ToString("N0") ₫
+                            <!-- PAYMENT (EXACT DASHBOARD REPLICA) -->
+                            <td>
+                                @if (order.PaymentMethod == PaymentMethod.VietQR)
+                                {
+                                    <span class="badge" style="background: rgba(2, 132, 199, 0.1); color: #0284C7; border: 1px solid rgba(2, 132, 199, 0.25);">
+                                        <i class="bi bi-qr-code me-1"></i> VietQR
                                     </span>
-                                </td>
+                                }
+                                else
+                                {
+                                    <span class="badge" style="background: var(--adm-bg-soft); color: var(--adm-ink-muted); border: 1px solid var(--adm-border);">
+                                        <i class="bi bi-cash me-1"></i> Tiền mặt COD
+                                    </span>
+                                }
+                            </td>
 
-                                <!-- STATUS PILL (EXACT DASHBOARD STYLE) -->
-                                <td>
-                                    @switch (order.Status)
+                            <!-- AMOUNT (EXACT DASHBOARD REPLICA) -->
+                            <td>
+                                <span class="fw-bold adm-heading text-nowrap" style="font-size: 0.9rem;">
+                                    @order.TotalAmount.ToString("N0") ₫
+                                </span>
+                            </td>
+
+                            <!-- STATUS PILL (EXACT DASHBOARD REPLICA) -->
+                            <td>
+                                @switch (order.Status)
+                                {
+                                    case OrderStatus.PendingConfirmation:
+                                        <span class="adm-pill adm-pill-amber">Chờ duyệt</span>
+                                        break;
+                                    case OrderStatus.Confirmed:
+                                        <span class="adm-pill adm-pill-blue">Đã duyệt</span>
+                                        break;
+                                    case OrderStatus.Processing:
+                                        <span class="adm-pill adm-pill-blue">Xử lý kho</span>
+                                        break;
+                                    case OrderStatus.Shipping:
+                                        <span class="adm-pill adm-pill-blue">Đang giao</span>
+                                        break;
+                                    case OrderStatus.Delivered:
+                                        <span class="adm-pill adm-pill-emerald">Đã giao</span>
+                                        break;
+                                    case OrderStatus.Cancelled:
+                                        <span class="adm-pill adm-pill-rose">Đã hủy</span>
+                                        break;
+                                    case OrderStatus.DeliveryFailed:
+                                        <span class="adm-pill adm-pill-rose">Giao thất bại</span>
+                                        break;
+                                    default:
+                                        <span class="adm-pill adm-pill-faint">@order.Status</span>
+                                        break;
+                                }
+                            </td>
+
+                            <!-- ACTIONS (EXACT DASHBOARD REPLICA) -->
+                            <td class="text-end pe-4">
+                                <div class="d-inline-flex align-items-center gap-1">
+                                    @if (isPending)
                                     {
-                                        case OrderStatus.PendingConfirmation:
-                                            <span class="adm-pill adm-pill-amber">Chờ duyệt</span>
-                                            break;
-                                        case OrderStatus.Confirmed:
-                                            <span class="adm-pill adm-pill-blue">Đã duyệt</span>
-                                            break;
-                                        case OrderStatus.Processing:
-                                            <span class="adm-pill adm-pill-blue">Xử lý kho</span>
-                                            break;
-                                        case OrderStatus.Shipping:
-                                            <span class="adm-pill adm-pill-blue">Đang giao</span>
-                                            break;
-                                        case OrderStatus.Delivered:
-                                            <span class="adm-pill adm-pill-emerald">Đã giao</span>
-                                            break;
-                                        case OrderStatus.Cancelled:
-                                            <span class="adm-pill adm-pill-rose">Đã hủy</span>
-                                            break;
-                                        case OrderStatus.DeliveryFailed:
-                                            <span class="adm-pill adm-pill-rose">Giao thất bại</span>
-                                            break;
-                                        default:
-                                            <span class="adm-pill adm-pill-faint">@order.Status</span>
-                                            break;
-                                    }
-                                </td>
-
-                                <!-- ACTIONS (EXACT DASHBOARD STYLE) -->
-                                <td class="text-end pe-4">
-                                    <div class="d-inline-flex align-items-center gap-1">
-                                        @if (isPending)
-                                        {
+                                        <form asp-action="UpdateStatus" method="post" class="d-inline m-0">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@order.Id" />
+                                            <input type="hidden" name="newStatus" value="@OrderStatus.Confirmed" />
+                                            <input type="hidden" name="returnUrl" value="@Context.Request.Path@Context.Request.QueryString" />
                                             <button type="submit"
-                                                    formaction="@Url.Action("UpdateStatus", "AdminOrders", new { id = order.Id, newStatus = OrderStatus.Confirmed, returnUrl = Context.Request.Path + Context.Request.QueryString })"
                                                     class="adm-btn-table-action"
                                                     style="background: #0F172A !important; color: #FFFFFF !important; border-color: #0F172A !important;"
-                                                    title="Duyệt đơn nhanh">
+                                                    title="Duyệt đơn ngay">
                                                 <i class="bi bi-check-lg"></i> <span>Duyệt</span>
                                             </button>
-                                        }
+                                        </form>
+                                    }
 
-                                        <a asp-action="Details" asp-route-id="@order.Id"
-                                           class="adm-btn-table-action" title="Chi tiết đơn hàng">
-                                            <i class="bi bi-eye"></i> <span>Chi tiết</span>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+                                    <a asp-action="Details" asp-route-id="@order.Id"
+                                       class="adm-btn-table-action" title="Chi tiết đơn hàng">
+                                        <i class="bi bi-eye"></i> <span>Chi tiết</span>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
-
-        <!-- FLOATING BATCH ACTION DOCK -->
-        <div class="adm-batch-dock" id="batchDock">
-            <div class="adm-batch-text">
-                <i class="bi bi-check2-circle text-success me-1"></i>
-                Đã chọn <strong id="batchSelectedCount" class="text-white">0</strong> đơn hàng
-            </div>
-            <button type="submit" class="adm-batch-btn-primary" title="Duyệt tất cả các đơn đã chọn">
-                <i class="bi bi-check-all"></i>
-                <span>Duyệt nhanh tất cả</span>
-            </button>
-            <button type="button" class="adm-batch-btn-ghost" onclick="clearBatchSelection()">
-                Bỏ chọn
-            </button>
-        </div>
-    </form>
+    </div>
 }
 
 <!-- 4. PAGINATION -->
@@ -390,42 +367,6 @@ else
 
 @section Scripts {
     <script>
-        const masterCheckbox = document.getElementById('masterCheckbox');
-        const rowCheckboxes = document.querySelectorAll('.order-row-checkbox');
-        const batchDock = document.getElementById('batchDock');
-        const batchSelectedCount = document.getElementById('batchSelectedCount');
-
-        function updateBatchState() {
-            const checkedCount = document.querySelectorAll('.order-row-checkbox:checked').length;
-            if (batchSelectedCount) batchSelectedCount.textContent = checkedCount;
-
-            if (checkedCount > 0) {
-                batchDock?.classList.add('show');
-            } else {
-                batchDock?.classList.remove('show');
-            }
-
-            if (masterCheckbox && rowCheckboxes.length > 0) {
-                masterCheckbox.checked = checkedCount === rowCheckboxes.length;
-                masterCheckbox.indeterminate = checkedCount > 0 && checkedCount < rowCheckboxes.length;
-            }
-        }
-
-        masterCheckbox?.addEventListener('change', function () {
-            rowCheckboxes.forEach(cb => cb.checked = masterCheckbox.checked);
-            updateBatchState();
-        });
-
-        rowCheckboxes.forEach(cb => {
-            cb.addEventListener('change', updateBatchState);
-        });
-
-        function clearBatchSelection() {
-            if (masterCheckbox) masterCheckbox.checked = false;
-            rowCheckboxes.forEach(cb => cb.checked = false);
-            updateBatchState();
-        }
-
         function copyAdmText(btn, text) {
             if (!navigator.clipboard) return;
             navigator.clipboard.writeText(text).then(() => {
@@ -448,7 +389,7 @@ else
             for (let i = 0; i < rows.length; i++) {
                 const row = [];
                 const cols = rows[i].querySelectorAll('th, td');
-                for (let j = 1; j < cols.length - 1; j++) {
+                for (let j = 0; j < cols.length - 1; j++) {
                     let text = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, ' ').replace(/\s+/g, ' ').trim();
                     text = text.replace(/"/g, '""');
                     row.push('"' + text + '"');
