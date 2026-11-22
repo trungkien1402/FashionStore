@@ -71,20 +71,21 @@ public class AdminProductVariantsController : Controller
     // GET: /AdminProductVariants/Create?productId=1
     public async Task<IActionResult> Create(int productId)
     {
-        var productExists = await _context.Products
-            .AnyAsync(p => p.Id == productId);
+        var product = await _context.Products
+            .Include(p => p.Category)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(p => p.Id == productId);
 
-        if (!productExists)
+        if (product == null)
             return NotFound();
 
-        var product = await _context.Products
-            .AsNoTracking()
-            .FirstAsync(p => p.Id == productId);
+        ViewBag.Product = product;
 
         return View(new ProductVariantViewModel
         {
             ProductId = productId,
             Price = product.Price,
+            StockQuantity = 10,
             IsActive = true
         });
     }
@@ -94,17 +95,21 @@ public class AdminProductVariantsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(ProductVariantViewModel model)
     {
+        var product = await _context.Products
+            .Include(p => p.Category)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(p => p.Id == model.ProductId);
+
+        if (product == null)
+            return NotFound();
+
+        ViewBag.Product = product;
+
         if (await _context.ProductVariants.AnyAsync(
                 v => v.SKU == (model.SKU ?? "").Trim()))
         {
             ModelState.AddModelError(nameof(model.SKU), "SKU này đã tồn tại.");
         }
-
-        var productExists = await _context.Products
-            .AnyAsync(p => p.Id == model.ProductId);
-
-        if (!productExists)
-            return NotFound();
 
         if (!ModelState.IsValid)
             return View(model);
@@ -135,11 +140,15 @@ public class AdminProductVariantsController : Controller
     public async Task<IActionResult> Edit(int id)
     {
         var variant = await _context.ProductVariants
+            .Include(v => v.Product)
+            .ThenInclude(p => p.Category)
             .AsNoTracking()
             .FirstOrDefaultAsync(v => v.Id == id);
 
         if (variant == null)
             return NotFound();
+
+        ViewBag.Product = variant.Product;
 
         return View(new ProductVariantViewModel
         {
@@ -160,10 +169,14 @@ public class AdminProductVariantsController : Controller
     public async Task<IActionResult> Edit(ProductVariantViewModel model)
     {
         var variant = await _context.ProductVariants
+            .Include(v => v.Product)
+            .ThenInclude(p => p.Category)
             .FirstOrDefaultAsync(v => v.Id == model.Id);
 
         if (variant == null)
             return NotFound();
+
+        ViewBag.Product = variant.Product;
 
         if (await _context.ProductVariants.AnyAsync(v =>
                 v.SKU == (model.SKU ?? "").Trim() && v.Id != model.Id))

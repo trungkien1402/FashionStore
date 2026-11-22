@@ -1,99 +1,511 @@
-﻿@model FashionStore.Models.ViewModels.ProductVariantViewModel
+@model FashionStore.Models.ViewModels.ProductVariantViewModel
 
 @{
-    ViewData["Title"] = "Thêm biến thể";
+    ViewData["Title"] = "Thêm biến thể sản phẩm";
+    var product = ViewBag.Product as FashionStore.Models.Entities.Product;
+    var basePrice = product?.Price ?? Model.Price;
+
+    string ResolveColorCss(string? colorName)
+    {
+        if (string.IsNullOrWhiteSpace(colorName)) return "#18181B";
+        var norm = colorName.Trim().ToLowerInvariant();
+
+        if (norm.Contains('/') || norm.Contains('&'))
+        {
+            var parts = norm.Split(new[] { '/', '&' }, StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length >= 2)
+            {
+                var h1 = SingleColorHex(parts[0].Trim());
+                var h2 = SingleColorHex(parts[1].Trim());
+                return $"linear-gradient(135deg, {h1} 50%, {h2} 50%)";
+            }
+        }
+        return SingleColorHex(norm);
+    }
+
+    string SingleColorHex(string name) => name switch
+    {
+        "đen" or "black" => "#18181B",
+        "trắng" or "white" => "#FFFFFF",
+        "xám" or "ghi" or "gray" or "grey" => "#71717A",
+        "be" or "kem" or "cream" or "beige" or "yến mạch" => "#E5D9C5",
+        "nâu" or "brown" or "cafe" => "#78350F",
+        "xanh navy" or "navy" or "xanh đen" => "#1E3A8A",
+        "xanh rêu" or "rêu" or "olive" => "#4D7C0F",
+        "xanh lá" or "green" => "#16A34A",
+        "xanh dương" or "xanh" or "blue" => "#2563EB",
+        "xanh cobalt" or "cobalt" => "#1D4ED8",
+        "xanh mint" or "mint" => "#6EE7B7",
+        "xanh bơ" => "#A3E635",
+        "đỏ" or "red" => "#DC2626",
+        "đỏ rượu" or "burgundy" or "maroon" => "#881337",
+        "hồng" or "pink" => "#F472B6",
+        "hồng pastel" => "#FBCFE8",
+        "cam" or "orange" => "#EA580C",
+        "vàng" or "yellow" => "#EAB308",
+        "tím" or "purple" => "#7C3AED",
+        "bạc" or "silver" => "#CBD5E1",
+        "vàng đồng" or "gold" => "#D97706",
+        _ => "#71717A"
+    };
+
+    var quickColors = new[]
+    {
+        "Đen", "Trắng", "Xám", "Be", "Nâu", "Xanh Navy", "Xanh Rêu", "Đỏ", "Hồng", "Đen / Cam", "Trắng / Xanh"
+    };
+
+    var quickSizesClothing = new[] { "XS", "S", "M", "L", "XL", "2XL", "3XL", "Free Size" };
+    var quickSizesShoe = new[] { "38", "39", "40", "41", "42", "43", "44" };
 }
 
-<section class="container py-5">
-    <div class="mb-4">
-        <a asp-action="Index" asp-route-productId="@Model.ProductId"
-           class="text-muted text-decoration-none">← Quay lại</a>
+<style>
+    .adm-chip-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+    .adm-chip-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.78rem;
+        font-weight: 500;
+        border: 1px solid var(--adm-border);
+        background: var(--adm-surface);
+        color: var(--adm-text-secondary);
+        cursor: pointer;
+        transition: all 0.15s ease;
+        user-select: none;
+    }
+    .adm-chip-btn:hover {
+        border-color: var(--adm-gold);
+        color: var(--adm-gold);
+        background: rgba(212, 175, 55, 0.05);
+    }
+    .adm-chip-btn.active {
+        border-color: #18181B;
+        background: #18181B;
+        color: #FFFFFF;
+        font-weight: 600;
+    }
+    .adm-color-dot-sm {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 1px solid rgba(0,0,0,0.15);
+        display: inline-block;
+        flex-shrink: 0;
+    }
+    .adm-preview-card {
+        background: #FFFFFF;
+        border: 1px solid var(--adm-border);
+        border-radius: 12px;
+        padding: 20px;
+        position: sticky;
+        top: 24px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    }
+</style>
 
-        <h1 class="mt-3" style="font-family:'Playfair Display',serif;">
-            Thêm biến thể sản phẩm
-        </h1>
+<!-- 1. BREADCRUMB & HEADER -->
+<div class="mb-4">
+    <div class="d-flex align-items-center gap-2 mb-2">
+        <a asp-action="Index" asp-route-productId="@Model.ProductId" class="adm-btn-action-secondary" style="height: 32px; padding: 0 12px; font-size: 0.78rem;">
+            <i class="bi bi-arrow-left"></i>
+            <span>Quay lại Danh sách Biến thể</span>
+        </a>
+        <span class="text-muted" style="font-size: 0.75rem;">/</span>
+        <span class="text-muted" style="font-size: 0.75rem;">HNMT ATELIER · THÊM BIẾN THỂ</span>
     </div>
 
-    <div class="border p-4">
-        <form asp-action="Create" method="post">
-            @Html.AntiForgeryToken()
-            <input type="hidden" asp-for="ProductId" />
-
-            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label asp-for="SKU" class="form-label">Mã SKU</label>
-                    <input asp-for="SKU" class="form-control"
-                           placeholder="VD: AT001-M-DEN" />
-                    <span asp-validation-for="SKU" class="text-danger"></span>
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <div class="d-flex align-items-center gap-3">
+            @if (product != null && !string.IsNullOrWhiteSpace(product.ImageUrl))
+            {
+                <img src="@product.ImageUrl" alt="@product.Name" class="adm-prod-thumb" style="width: 52px; height: 52px;" onerror="this.src='/images/placeholder-product.png'" />
+            }
+            <div>
+                <div class="d-flex align-items-center gap-2 mb-1 adm-meta-crumb">
+                    <span class="adm-pulse-dot"></span>
+                    <span class="adm-kicker-text">INVENTORY SPECS &amp; SIZING</span>
+                    <span class="adm-meta-divider">/</span>
+                    <span class="adm-order-count-badge">@(product?.Category?.Name ?? "Sản phẩm")</span>
                 </div>
-
-                <div class="col-md-6">
-                    <label asp-for="Size" class="form-label">Kích thước</label>
-                    <select asp-for="Size" class="form-select">
-                        <option value="">-- Chọn Size --</option>
-                        <option value="S">S</option>
-                        <option value="M">M</option>
-                        <option value="L">L</option>
-                        <option value="XL">XL</option>
-                        <option value="XXL">XXL</option>
-                        <option value="Free Size">Free Size</option>
-                    </select>
-                    <span asp-validation-for="Size" class="text-danger"></span>
-                </div>
-
-                <div class="col-md-6">
-                    <label asp-for="Color" class="form-label">Màu sắc</label>
-                    <select asp-for="Color" class="form-select">
-                        <option value="">-- Chọn màu --</option>
-                        <option value="Đen">Đen</option>
-                        <option value="Trắng">Trắng</option>
-                        <option value="Đỏ">Đỏ</option>
-                        <option value="Xanh">Xanh</option>
-                        <option value="Be">Be</option>
-                        <option value="Nâu">Nâu</option>
-                        <option value="Hồng">Hồng</option>
-                    </select>
-                    <span asp-validation-for="Color" class="text-danger"></span>
-                </div>
-
-                <div class="col-md-6">
-                    <label asp-for="Price" class="form-label">Giá bán (VNĐ)</label>
-                    <input asp-for="Price" type="number" min="1" step="1000"
-                           class="form-control" />
-                    <span asp-validation-for="Price" class="text-danger"></span>
-                </div>
-
-                <div class="col-md-6">
-                    <label asp-for="StockQuantity" class="form-label">Số lượng tồn kho</label>
-                    <input asp-for="StockQuantity" type="number" min="0"
-                           class="form-control" />
-                    <span asp-validation-for="StockQuantity" class="text-danger"></span>
-                </div>
-
-                <div class="col-12">
-                    <div class="form-check">
-                        <input asp-for="IsActive" class="form-check-input" />
-                        <label asp-for="IsActive" class="form-check-label">
-                            Kích hoạt biến thể
-                        </label>
-                    </div>
+                <div class="d-flex align-items-center gap-2">
+                    <h1 class="adm-title-main mb-0" style="font-size: 1.35rem; font-weight: 700; letter-spacing: -0.01em;">
+                        Thêm Biến thể Sản phẩm
+                    </h1>
+                    @if (product != null)
+                    {
+                        <span class="adm-pill gray" style="font-size: 0.78rem; font-weight: 600;">
+                            Giá gốc: @product.Price.ToString("N0") ₫
+                        </span>
+                    }
                 </div>
             </div>
-
-            <hr />
-
-            <button type="submit" class="btn btn-dark px-4">
-                Lưu biến thể
-            </button>
-
-            <a asp-action="Index" asp-route-productId="@Model.ProductId"
-               class="btn btn-outline-secondary">Hủy</a>
-        </form>
+        </div>
     </div>
-</section>
+</div>
+
+<!-- 2. MAIN FORM & LIVE PREVIEW -->
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="adm-card p-4">
+            <form asp-action="Create" method="post" id="variantForm">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="ProductId" />
+                <input type="hidden" id="productBaseSlug" value="@(product?.Slug ?? "prod-" + Model.ProductId)" />
+                <input type="hidden" id="productBasePrice" value="@((long)basePrice)" />
+
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4"></div>
+
+                <!-- SECTION 1: ATTRIBUTES & SKU -->
+                <div class="mb-4 pb-4 border-bottom border-light">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <span style="font-size: 0.72rem; font-weight: 700; letter-spacing: 0.15em; color: var(--adm-gold); text-transform: uppercase;">
+                            1. THUỘC TÍNH PHÂN LOẠI (SIZE &amp; COLOR)
+                        </span>
+                        <span class="text-muted" style="font-size: 0.75rem;">Click chip để chọn nhanh</span>
+                    </div>
+
+                    <!-- SIZE PICKER -->
+                    <div class="mb-3">
+                        <label asp-for="Size" class="adm-form-label mb-1">Kích thước (Size) *</label>
+                        <div class="d-flex gap-2 mb-2">
+                            <input asp-for="Size" id="sizeInput" class="form-control adm-input-dark" placeholder="VD: L hoặc 42" required style="max-width: 200px;" />
+                        </div>
+                        <div class="d-flex flex-column gap-1">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="text-muted" style="font-size: 0.72rem; min-width: 50px;">Quần áo:</span>
+                                <div class="adm-chip-group">
+                                    @foreach (var s in quickSizesClothing)
+                                    {
+                                        <span class="adm-chip-btn size-chip" data-size="@s" onclick="selectSize('@s')">@s</span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2 mt-1">
+                                <span class="text-muted" style="font-size: 0.72rem; min-width: 50px;">Giày dép:</span>
+                                <div class="adm-chip-group">
+                                    @foreach (var s in quickSizesShoe)
+                                    {
+                                        <span class="adm-chip-btn size-chip" data-size="@s" onclick="selectSize('@s')">@s</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <span asp-validation-for="Size" class="text-danger small mt-1 d-block"></span>
+                    </div>
+
+                    <!-- COLOR PICKER -->
+                    <div class="mb-3 mt-4">
+                        <label asp-for="Color" class="adm-form-label mb-1">Màu sắc (Color) *</label>
+                        <div class="d-flex gap-2 mb-2 align-items-center">
+                            <input asp-for="Color" id="colorInput" class="form-control adm-input-dark" placeholder="VD: Đen hoặc Be / Xanh" required style="max-width: 240px;" />
+                            <span id="currentColorDot" class="adm-color-dot-sm" style="width: 24px; height: 24px; background: #18181B;"></span>
+                        </div>
+                        <div class="adm-chip-group mt-1">
+                            @foreach (var c in quickColors)
+                            {
+                                var swatchStyle = ResolveColorCss(c);
+                                <span class="adm-chip-btn color-chip" data-color="@c" onclick="selectColor('@c')">
+                                    <span class="adm-color-dot-sm" style="background: @swatchStyle;"></span>
+                                    <span>@c</span>
+                                </span>
+                            }
+                        </div>
+                        <span asp-validation-for="Color" class="text-danger small mt-1 d-block"></span>
+                    </div>
+
+                    <!-- SKU GENERATOR -->
+                    <div class="mt-4">
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                            <label asp-for="SKU" class="adm-form-label mb-0">Mã SKU Quản lý *</label>
+                            <button type="button" class="btn btn-link text-decoration-none p-0" onclick="autoGenerateSKU()" style="font-size: 0.75rem; color: var(--adm-gold); font-weight: 600;">
+                                <i class="bi bi-magic me-1"></i> Tự động gợi ý SKU
+                            </button>
+                        </div>
+                        <div class="input-group">
+                            <input asp-for="SKU" id="skuInput" class="form-control adm-input-dark font-monospace text-uppercase" placeholder="VD: OAT-BOXY-JACKET-L-YENMACH" required />
+                            <button type="button" class="btn btn-outline-secondary" onclick="autoGenerateSKU()" title="Tạo lại SKU theo Size và Màu">
+                                <i class="bi bi-arrow-repeat"></i> Gợi ý
+                            </button>
+                        </div>
+                        <div class="text-muted small mt-1" style="font-size: 0.72rem;">
+                            Định dạng khuyến nghị: <code>[SLUG]-[SIZE]-[COLOR]</code>, đảm bảo tính duy nhất toàn hệ thống.
+                        </div>
+                        <span asp-validation-for="SKU" class="text-danger small mt-1 d-block"></span>
+                    </div>
+                </div>
+
+                <!-- SECTION 2: PRICING & INVENTORY -->
+                <div class="mb-4">
+                    <span style="font-size: 0.72rem; font-weight: 700; letter-spacing: 0.15em; color: var(--adm-gold); text-transform: uppercase;" class="d-block mb-3">
+                        2. ĐỊNH GIÁ &amp; KHO HÀNG
+                    </span>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Price" class="adm-form-label">Giá bán riêng cho biến thể (VNĐ) *</label>
+                            <div class="input-group">
+                                <input asp-for="Price" id="priceInput" type="number" min="1000" step="1000" class="form-control adm-input-dark" value="@((long)Model.Price)" required />
+                                <span class="input-group-text border-start-0" style="background: var(--adm-surface); border-color: var(--adm-border); color: var(--adm-gold); font-weight: 600;">
+                                    ₫
+                                </span>
+                            </div>
+                            <span asp-validation-for="Price" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="StockQuantity" class="adm-form-label">Số lượng tồn kho ban đầu *</label>
+                            <input asp-for="StockQuantity" id="stockInput" type="number" min="0" class="form-control adm-input-dark" value="@Model.StockQuantity" required />
+                            <span asp-validation-for="StockQuantity" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                    </div>
+
+                    <!-- ACTIVE STATUS SWITCH -->
+                    <div class="p-3 rounded border border-light d-flex align-items-center justify-content-between" style="background: var(--adm-surface);">
+                        <div>
+                            <label class="fw-semibold adm-heading mb-0 d-block" for="IsActive" style="cursor: pointer; font-size: 0.88rem;">
+                                Mở bán ngay biến thể này
+                            </label>
+                            <span class="text-muted" style="font-size: 0.75rem;">Cho phép khách hàng xem và đặt mua phiên bản này trên cửa hàng</span>
+                        </div>
+                        <div class="form-check form-switch m-0 p-0">
+                            <input asp-for="IsActive" class="form-check-input" type="checkbox" role="switch" id="IsActive" checked style="cursor: pointer; width: 2.8em; height: 1.4em;" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ACTIONS -->
+                <div class="pt-3 border-top border-light d-flex align-items-center gap-2">
+                    <button type="submit" class="adm-action-btn adm-btn-primary" style="height: 40px; padding: 0 20px; font-size: 0.82rem; font-weight: 600;">
+                        <i class="bi bi-check2"></i>
+                        <span>Lưu biến thể mới</span>
+                    </button>
+                    <a asp-action="Index" asp-route-productId="@Model.ProductId" class="adm-btn-action-secondary" style="height: 40px; padding: 0 16px; font-size: 0.82rem;">
+                        Hủy bỏ
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- PREVIEW SIDEBAR -->
+    <div class="col-lg-4">
+        <div class="adm-preview-card">
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <span class="adm-pulse-dot"></span>
+                <span style="font-size: 0.72rem; font-weight: 700; letter-spacing: 0.15em; color: var(--adm-gold); text-transform: uppercase;">
+                    XEM TRƯỚC BIẾN THỂ
+                </span>
+            </div>
+
+            <div class="text-center p-3 mb-3 rounded" style="background: var(--adm-surface);">
+                @if (product != null && !string.IsNullOrWhiteSpace(product.ImageUrl))
+                {
+                    <img src="@product.ImageUrl" alt="@product.Name" class="img-fluid rounded mb-2" style="max-height: 140px; object-fit: contain;" onerror="this.src='/images/placeholder-product.png'" />
+                }
+                <div class="fw-bold" style="font-size: 0.95rem; color: var(--adm-heading);">@(product?.Name ?? "Tên sản phẩm")</div>
+                <div class="text-muted small">@(product?.Category?.Name ?? "Danh mục")</div>
+            </div>
+
+            <div class="d-flex flex-column gap-2" style="font-size: 0.82rem;">
+                <div class="d-flex justify-content-between align-items-center py-2 border-bottom border-light">
+                    <span class="text-muted">Mã SKU:</span>
+                    <span class="font-monospace fw-bold" id="prevSKU">--</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center py-2 border-bottom border-light">
+                    <span class="text-muted">Kích thước:</span>
+                    <span class="fw-bold adm-pill gray" id="prevSize">--</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center py-2 border-bottom border-light">
+                    <span class="text-muted">Màu sắc:</span>
+                    <span class="d-inline-flex align-items-center gap-1 fw-bold">
+                        <span id="prevColorDot" class="adm-color-dot-sm" style="background: #18181B;"></span>
+                        <span id="prevColor">--</span>
+                    </span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center py-2 border-bottom border-light">
+                    <span class="text-muted">Giá bán:</span>
+                    <span class="fw-bold text-dark" id="prevPrice" style="font-size: 0.95rem;">-- ₫</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center py-2 border-bottom border-light">
+                    <span class="text-muted">Tồn kho ban đầu:</span>
+                    <span class="fw-bold" id="prevStock">10</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center py-2">
+                    <span class="text-muted">Trạng thái:</span>
+                    <span id="prevStatus" class="adm-pill green">Đang bán</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        const colorHexMap = {
+            "đen": "#18181B", "black": "#18181B",
+            "trắng": "#FFFFFF", "white": "#FFFFFF",
+            "xám": "#71717A", "ghi": "#71717A", "gray": "#71717A", "grey": "#71717A",
+            "be": "#E5D9C5", "kem": "#E5D9C5", "beige": "#E5D9C5", "yến mạch": "#E5D9C5",
+            "nâu": "#78350F", "brown": "#78350F", "cafe": "#78350F",
+            "xanh navy": "#1E3A8A", "navy": "#1E3A8A", "xanh đen": "#1E3A8A",
+            "xanh rêu": "#4D7C0F", "rêu": "#4D7C0F", "olive": "#4D7C0F",
+            "xanh lá": "#16A34A", "green": "#16A34A",
+            "xanh dương": "#2563EB", "xanh": "#2563EB", "blue": "#2563EB",
+            "xanh cobalt": "#1D4ED8", "cobalt": "#1D4ED8",
+            "xanh mint": "#6EE7B7", "mint": "#6EE7B7",
+            "xanh bơ": "#A3E635",
+            "đỏ": "#DC2626", "red": "#DC2626",
+            "đỏ rượu": "#881337", "burgundy": "#881337", "maroon": "#881337",
+            "hồng": "#F472B6", "pink": "#F472B6",
+            "hồng pastel": "#FBCFE8",
+            "cam": "#EA580C", "orange": "#EA580C",
+            "vàng": "#EAB308", "yellow": "#EAB308",
+            "tím": "#7C3AED", "purple": "#7C3AED",
+            "bạc": "#CBD5E1", "silver": "#CBD5E1",
+            "vàng đồng": "#D97706", "gold": "#D97706"
+        };
+
+        function resolveColor(name) {
+            if (!name) return "#18181B";
+            const norm = name.trim().toLowerCase();
+            if (norm.includes('/') || norm.includes('&')) {
+                const parts = norm.split(/[/&]/).map(p => p.trim());
+                if (parts.length >= 2) {
+                    const h1 = colorHexMap[parts[0]] || "#71717A";
+                    const h2 = colorHexMap[parts[1]] || "#71717A";
+                    return `linear-gradient(135deg, ${h1} 50%, ${h2} 50%)`;
+                }
+            }
+            return colorHexMap[norm] || "#71717A";
+        }
+
+        function removeVietnameseTones(str) {
+            str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
+            str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
+            str = str.replace(/ì|í|ị|ỉ|ĩ/g, "i");
+            str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o");
+            str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u");
+            str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
+            str = str.replace(/đ/g, "d");
+            str = str.replace(/À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ/g, "A");
+            str = str.replace(/È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ/g, "E");
+            str = str.replace(/Ì|Í|Ị|Ỉ|Ĩ/g, "I");
+            str = str.replace(/Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ/g, "O");
+            str = str.replace(/Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ/g, "U");
+            str = str.replace(/Ỳ|Ý|Ỵ|Ỷ|Ỹ/g, "Y");
+            str = str.replace(/Đ/g, "D");
+            return str;
+        }
+
+        function selectSize(val) {
+            document.getElementById('sizeInput').value = val;
+            document.querySelectorAll('.size-chip').forEach(el => {
+                el.classList.toggle('active', el.dataset.size === val);
+            });
+            updatePreview();
+            if (!document.getElementById('skuInput').value || document.getElementById('skuInput').dataset.autogen === "true") {
+                autoGenerateSKU();
+            }
+        }
+
+        function selectColor(val) {
+            document.getElementById('colorInput').value = val;
+            document.querySelectorAll('.color-chip').forEach(el => {
+                el.classList.toggle('active', el.dataset.color === val);
+            });
+            updateColorDot(val);
+            updatePreview();
+            if (!document.getElementById('skuInput').value || document.getElementById('skuInput').dataset.autogen === "true") {
+                autoGenerateSKU();
+            }
+        }
+
+        function updateColorDot(val) {
+            const css = resolveColor(val);
+            const dot = document.getElementById('currentColorDot');
+            const prevDot = document.getElementById('prevColorDot');
+            if (dot) dot.style.background = css;
+            if (prevDot) prevDot.style.background = css;
+        }
+
+        function autoGenerateSKU() {
+            const baseSlug = (document.getElementById('productBaseSlug')?.value || 'PROD').toUpperCase();
+            const size = (document.getElementById('sizeInput')?.value || '').trim().toUpperCase();
+            const colorRaw = (document.getElementById('colorInput')?.value || '').trim();
+            const colorClean = removeVietnameseTones(colorRaw).toUpperCase().replace(/[^A-Z0-9]/g, '-').replace(/-+/g, '-');
+
+            let parts = [baseSlug];
+            if (size) parts.push(size);
+            if (colorClean) parts.push(colorClean);
+
+            const generated = parts.join('-');
+            const skuInput = document.getElementById('skuInput');
+            skuInput.value = generated;
+            skuInput.dataset.autogen = "true";
+            updatePreview();
+        }
+
+        function updatePreview() {
+            const sku = document.getElementById('skuInput')?.value || '--';
+            const size = document.getElementById('sizeInput')?.value || '--';
+            const color = document.getElementById('colorInput')?.value || '--';
+            const price = parseInt(document.getElementById('priceInput')?.value || 0, 10);
+            const stock = document.getElementById('stockInput')?.value || '0';
+            const isActive = document.getElementById('IsActive')?.checked;
+
+            document.getElementById('prevSKU').textContent = sku || '--';
+            document.getElementById('prevSize').textContent = size || '--';
+            document.getElementById('prevColor').textContent = color || '--';
+            document.getElementById('prevPrice').textContent = price.toLocaleString('vi-VN') + ' ₫';
+            document.getElementById('prevStock').textContent = stock;
+
+            const prevStatus = document.getElementById('prevStatus');
+            if (isActive) {
+                prevStatus.className = 'adm-pill green';
+                prevStatus.textContent = 'Đang bán';
+            } else {
+                prevStatus.className = 'adm-pill gray';
+                prevStatus.textContent = 'Tạm ẩn';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const skuInput = document.getElementById('skuInput');
+            const sizeInput = document.getElementById('sizeInput');
+            const colorInput = document.getElementById('colorInput');
+            const priceInput = document.getElementById('priceInput');
+            const stockInput = document.getElementById('stockInput');
+            const activeInput = document.getElementById('IsActive');
+
+            skuInput?.addEventListener('input', () => {
+                skuInput.dataset.autogen = "false";
+                updatePreview();
+            });
+            sizeInput?.addEventListener('input', () => {
+                document.querySelectorAll('.size-chip').forEach(el => {
+                    el.classList.toggle('active', el.dataset.size === sizeInput.value);
+                });
+                updatePreview();
+            });
+            colorInput?.addEventListener('input', () => {
+                document.querySelectorAll('.color-chip').forEach(el => {
+                    el.classList.toggle('active', el.dataset.color === colorInput.value);
+                });
+                updateColorDot(colorInput.value);
+                updatePreview();
+            });
+            priceInput?.addEventListener('input', updatePreview);
+            stockInput?.addEventListener('input', updatePreview);
+            activeInput?.addEventListener('change', updatePreview);
+
+            updatePreview();
+        });
+    </script>
 }
