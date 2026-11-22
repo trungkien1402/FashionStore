@@ -89,6 +89,20 @@ public class AdminProductsController : Controller
         var products = await ordered.ThenBy(p => p.Id)
             .Skip((filter.Page - 1) * pageSize).Take(pageSize).ToListAsync();
         var variants = _context.ProductVariants.AsNoTracking().Where(v => v.IsActive);
+
+        var baseRows = _context.Products.AsNoTracking().Select(p => new
+        {
+            p.Id,
+            p.IsActive,
+            TotalStock = p.Variants.Where(v => v.IsActive).Sum(v => (long?)v.StockQuantity) ?? 0
+        });
+
+        ViewBag.CountAll = await _context.Products.CountAsync();
+        ViewBag.CountActive = await _context.Products.CountAsync(p => p.IsActive);
+        ViewBag.CountInactive = await _context.Products.CountAsync(p => !p.IsActive);
+        ViewBag.CountLowStock = await baseRows.CountAsync(p => p.IsActive && p.TotalStock > 0 && p.TotalStock <= 5);
+        ViewBag.CountOutOfStock = await baseRows.CountAsync(p => p.TotalStock == 0);
+
         return View(new AdminProductList(
             filter, products, count, pageCount, await _context.Products.AnyAsync(),
             await _context.ListedAdminCategories().OrderBy(c => c.Name).ThenBy(c => c.Id).ToListAsync(),
