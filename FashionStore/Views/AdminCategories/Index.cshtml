@@ -9,19 +9,63 @@
 }
 
 <style>
+    /* EXACT SQUARE ICON BUTTONS - PREVENT ANY STRETCHING */
+    .adm-icon-btn {
+        width: 32px !important;
+        height: 32px !important;
+        min-width: 32px !important;
+        min-height: 32px !important;
+        max-width: 32px !important;
+        max-height: 32px !important;
+        padding: 0 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border-radius: 8px !important;
+        border: 1px solid #E2E8F0 !important;
+        background: #FFFFFF !important;
+        color: #475569 !important;
+        transition: all 0.15s ease !important;
+        font-size: 0.85rem !important;
+        line-height: 1 !important;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.03) !important;
+        cursor: pointer;
+        text-decoration: none !important;
+    }
+    .adm-icon-btn:hover {
+        background: #F8FAFC !important;
+        border-color: #CBD5E1 !important;
+        color: #0F172A !important;
+    }
+    .adm-icon-btn.active {
+        background: #0F172A !important;
+        border-color: #0F172A !important;
+        color: #FFFFFF !important;
+    }
+    .adm-icon-btn.text-danger:hover {
+        background: #FEF2F2 !important;
+        border-color: #FECDD3 !important;
+        color: #E11D48 !important;
+    }
+    .adm-icon-btn.text-success:hover {
+        background: #F0FDF4 !important;
+        border-color: #BBF7D0 !important;
+        color: #16A34A !important;
+    }
+
     .adm-cat-avatar-stack {
         display: inline-flex;
         align-items: center;
         flex-direction: row;
     }
     .adm-cat-avatar-stack img {
-        width: 38px;
-        height: 38px;
+        width: 36px;
+        height: 36px;
         border-radius: 8px;
         border: 2px solid #FFFFFF;
         object-fit: cover;
-        margin-left: -10px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        margin-left: -8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.06);
         background: #F8FAFC;
         transition: transform 0.2s ease, z-index 0.2s ease;
     }
@@ -29,9 +73,10 @@
         margin-left: 0;
     }
     .adm-cat-avatar-stack img:hover {
-        transform: translateY(-3px) scale(1.1);
+        transform: translateY(-2px) scale(1.1);
         z-index: 10;
     }
+
     .adm-cat-card-modern {
         background: #FFFFFF;
         border: 1px solid #E2E8F0;
@@ -62,7 +107,7 @@
     }
 </style>
 
-<!-- 1. EXECUTIVE HEADER (ATELIER STANDARD) -->
+<!-- 1. EXECUTIVE HEADER (CLEAN - NO MISPLACED SWITCHER HERE) -->
 <div class="adm-header-block mb-4">
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
         <div>
@@ -75,16 +120,6 @@
             <h1 class="adm-title-main">Danh mục Sản phẩm</h1>
         </div>
         <div class="d-flex align-items-center gap-2">
-            <!-- VIEW SWITCHER -->
-            <div class="adm-segmented-control me-2" role="group">
-                <button type="button" class="adm-segment" id="admBtnCatGrid" onclick="toggleCatView('grid')" aria-pressed="false">
-                    <i class="bi bi-grid-fill me-1"></i> Lưới ảnh
-                </button>
-                <button type="button" class="adm-segment active" id="admBtnCatTable" onclick="toggleCatView('table')" aria-pressed="true">
-                    <i class="bi bi-list-ul me-1"></i> Bảng chi tiết
-                </button>
-            </div>
-
             <a asp-action="Create" class="adm-action-btn adm-btn-primary">
                 <i class="bi bi-plus-lg"></i> <span>Thêm danh mục</span>
             </a>
@@ -112,35 +147,55 @@
         </div>
     </div>
 
-    <!-- TIER 2: SEARCH INPUT & SORTS -->
-    <form asp-action="Index" method="get" class="d-flex flex-wrap align-items-center gap-2">
-        @if (!string.IsNullOrEmpty(currentStatus))
-        {
-            <input type="hidden" name="status" value="@currentStatus" />
-        }
+    <!-- TIER 2: SEARCH INPUT, SORTS & PROPERLY POSITIONED VIEW SWITCHER -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+        <form asp-action="Index" method="get" class="d-flex flex-wrap align-items-center gap-2 flex-grow-1">
+            @if (!string.IsNullOrEmpty(currentStatus))
+            {
+                <input type="hidden" name="status" value="@currentStatus" />
+            }
 
-        <div class="adm-search-input-group-v2 flex-grow-1" style="min-width: 260px;">
-            <i class="bi bi-search"></i>
-            <input type="text" name="keyword" maxlength="100" value="@currentKeyword"
-                   placeholder="Tìm kiếm danh mục theo tên hoặc đường dẫn slug..."
-                   class="adm-search-input-v2"
-                   style="padding-left: 42px !important; padding-right: 14px !important;" />
+            <div class="adm-search-input-group-v2 flex-grow-1" style="min-width: 240px; max-width: 480px;">
+                <i class="bi bi-search"></i>
+                <input type="text" name="keyword" maxlength="100" value="@currentKeyword"
+                       placeholder="Tìm kiếm danh mục theo tên hoặc đường dẫn slug..."
+                       class="adm-search-input-v2"
+                       style="padding-left: 42px !important; padding-right: 14px !important;" />
+            </div>
+
+            <select name="sort" class="form-select adm-input-dark" style="height: 38px; font-size: 0.85rem; width: auto; min-width: 170px; border-radius: 8px;" onchange="this.form.submit()">
+                <option value="">Sắp xếp: Tên A–Z</option>
+                <option value="name-desc" selected="@(currentSort == "name-desc")">Tên Z–A</option>
+                <option value="products" selected="@(currentSort == "products")">Nhiều sản phẩm nhất</option>
+            </select>
+
+            @if (!string.IsNullOrWhiteSpace(currentKeyword) || !string.IsNullOrEmpty(currentStatus) || !string.IsNullOrEmpty(currentSort))
+            {
+                <a asp-action="Index" class="adm-action-btn adm-btn-secondary" style="height: 38px;" title="Đặt lại bộ lọc">
+                    <i class="bi bi-x-lg"></i> <span>Đặt lại</span>
+                </a>
+            }
+        </form>
+
+        <!-- VIEW SWITCHER: POSITIONED NATURALLY IN TOOLBAR FAR RIGHT -->
+        <div class="d-flex align-items-center gap-1 p-1 rounded-3" style="background: var(--adm-surface-hover, #F8FAFC); border: 1px solid var(--adm-border, #E2E8F0);" role="group" aria-label="Kiểu hiển thị">
+            <button type="button" class="adm-icon-btn active" id="admBtnCatTable" onclick="toggleCatView('table')" title="Xem dạng bảng chi tiết">
+                <i class="bi bi-list-ul"></i>
+            </button>
+            <button type="button" class="adm-icon-btn" id="admBtnCatGrid" onclick="toggleCatView('grid')" title="Xem dạng lưới ảnh">
+                <i class="bi bi-grid-fill"></i>
+            </button>
         </div>
-
-        <select name="sort" class="form-select adm-input-dark" style="height: 38px; font-size: 0.85rem; width: auto; min-width: 180px; border-radius: 8px;" onchange="this.form.submit()">
-            <option value="">Sắp xếp: Tên A–Z</option>
-            <option value="name-desc" selected="@(currentSort == "name-desc")">Tên Z–A</option>
-            <option value="products" selected="@(currentSort == "products")">Nhiều sản phẩm nhất</option>
-        </select>
-
-        @if (!string.IsNullOrWhiteSpace(currentKeyword) || !string.IsNullOrEmpty(currentStatus) || !string.IsNullOrEmpty(currentSort))
-        {
-            <a asp-action="Index" class="adm-action-btn adm-btn-secondary" style="height: 38px;" title="Đặt lại bộ lọc">
-                <i class="bi bi-x-lg"></i> <span>Đặt lại</span>
-            </a>
-        }
-    </form>
+    </div>
 </div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mb-4 shadow-sm" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
 
 @if (!Model.Any())
 {
@@ -162,7 +217,7 @@ else
                 <thead>
                     <tr>
                         <th class="ps-4">DANH MỤC THỜI TRANG</th>
-                        <th>SLUG</th>
+                        <th>SLUG SEO</th>
                         <th>MẪU TIÊU BIỂU</th>
                         <th>SỐ LƯỢNG SẢN PHẨM</th>
                         <th>TRẠNG THÁI</th>
@@ -249,21 +304,21 @@ else
                             <td class="text-end pe-4">
                                 <div class="d-inline-flex gap-1 align-items-center">
                                     <a asp-controller="AdminProducts" asp-action="Index" asp-route-categoryId="@item.Category.Id"
-                                       class="adm-action-btn adm-btn-secondary py-1 px-3" style="font-size: 0.78rem;" title="Xem sản phẩm trong danh mục">
+                                       class="adm-action-btn adm-btn-secondary py-1 px-3" style="font-size: 0.78rem; height: 32px;" title="Xem sản phẩm trong danh mục">
                                         <i class="bi bi-box-seam me-1"></i> Xem SP (@item.ProductCount)
                                     </a>
 
                                     <a asp-action="Edit" asp-route-id="@item.Category.Id"
-                                       class="adm-action-btn adm-btn-secondary py-1 px-2" style="font-size: 0.78rem;" title="Sửa danh mục">
+                                       class="adm-icon-btn" title="Sửa danh mục">
                                         <i class="bi bi-pencil"></i>
                                     </a>
 
                                     <form asp-action="ToggleActive" asp-route-id="@item.Category.Id"
                                           asp-route-keyword="@currentKeyword" asp-route-status="@currentStatus"
-                                          asp-route-sort="@currentSort" asp-route-page="@ViewBag.Page" method="post" class="d-inline">
+                                          asp-route-sort="@currentSort" asp-route-page="@ViewBag.Page" method="post" class="d-inline m-0 p-0">
                                         @Html.AntiForgeryToken()
                                         <input type="hidden" name="isActive" value="@((!item.Category.IsActive).ToString())" />
-                                        <button type="submit" class="adm-action-btn adm-btn-secondary py-1 px-2 @(item.Category.IsActive ? "" : "text-success")" style="font-size: 0.78rem;"
+                                        <button type="submit" class="adm-icon-btn @(item.Category.IsActive ? "" : "text-success")"
                                                 title="@(item.Category.IsActive ? "Tắt danh mục" : "Bật danh mục")">
                                             <i class="bi @(item.Category.IsActive ? "bi-eye-slash" : "bi-eye")"></i>
                                         </button>
@@ -277,7 +332,7 @@ else
         </div>
     </div>
 
-    <!-- 2. GRID VIEW (REFINED LOOKBOOK CARDS) -->
+    <!-- 2. GRID VIEW (REFINED LOOKBOOK CARDS WITH BALANCED 1:1 SQUARE ACTION BUTTONS) -->
     <div id="admCatGrid" class="d-none mb-4">
         <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4">
             @foreach (var item in Model)
@@ -353,16 +408,16 @@ else
 
                                 <div class="d-flex align-items-center gap-1">
                                     <a asp-action="Edit" asp-route-id="@item.Category.Id"
-                                       class="adm-action-btn adm-btn-secondary py-1 px-2" style="font-size: 0.78rem;" title="Sửa danh mục">
+                                       class="adm-icon-btn" title="Sửa danh mục">
                                         <i class="bi bi-pencil"></i>
                                     </a>
 
                                     <form asp-action="ToggleActive" asp-route-id="@item.Category.Id"
                                           asp-route-keyword="@currentKeyword" asp-route-status="@currentStatus"
-                                          asp-route-sort="@currentSort" asp-route-page="@ViewBag.Page" method="post" class="d-inline">
+                                          asp-route-sort="@currentSort" asp-route-page="@ViewBag.Page" method="post" class="d-inline m-0 p-0">
                                         @Html.AntiForgeryToken()
                                         <input type="hidden" name="isActive" value="@((!item.Category.IsActive).ToString())" />
-                                        <button type="submit" class="adm-action-btn adm-btn-secondary py-1 px-2" style="font-size: 0.78rem;"
+                                        <button type="submit" class="adm-icon-btn @(item.Category.IsActive ? "" : "text-success")"
                                                 title="@(item.Category.IsActive ? "Tắt danh mục" : "Bật danh mục")">
                                             <i class="bi @(item.Category.IsActive ? "bi-eye-slash" : "bi-eye")"></i>
                                         </button>
@@ -410,25 +465,13 @@ else
             if (mode === 'grid') {
                 if (grid) grid.classList.remove('d-none');
                 if (table) table.classList.add('d-none');
-                if (btnG) {
-                    btnG.classList.add('active');
-                    btnG.setAttribute('aria-pressed', 'true');
-                }
-                if (btnT) {
-                    btnT.classList.remove('active');
-                    btnT.setAttribute('aria-pressed', 'false');
-                }
+                if (btnG) btnG.classList.add('active');
+                if (btnT) btnT.classList.remove('active');
             } else {
                 if (grid) grid.classList.add('d-none');
                 if (table) table.classList.remove('d-none');
-                if (btnT) {
-                    btnT.classList.add('active');
-                    btnT.setAttribute('aria-pressed', 'true');
-                }
-                if (btnG) {
-                    btnG.classList.remove('active');
-                    btnG.setAttribute('aria-pressed', 'false');
-                }
+                if (btnT) btnT.classList.add('active');
+                if (btnG) btnG.classList.remove('active');
             }
             localStorage.setItem('hnmt_adm_cat_view', mode);
         }

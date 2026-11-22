@@ -4,6 +4,30 @@
     ViewData["Title"] = "Thêm danh mục mới";
 }
 
+<style>
+    .adm-cat-upload-dropzone {
+        border: 2px dashed #CBD5E1;
+        border-radius: 12px;
+        background: #F8FAFC;
+        padding: 24px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        position: relative;
+    }
+    .adm-cat-upload-dropzone:hover {
+        border-color: #0F172A;
+        background: #F1F5F9;
+    }
+    .adm-cat-upload-preview {
+        max-height: 180px;
+        width: 100%;
+        object-fit: cover;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+</style>
+
 <!-- EXECUTIVE HEADER -->
 <div class="adm-header-block mb-4">
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
@@ -25,15 +49,15 @@
 </div>
 
 <div class="row g-4">
-    <!-- LEFT COLUMN: FORM INPUTS -->
+    <!-- LEFT COLUMN: FORM INPUTS WITH IMAGE UPLOAD -->
     <div class="col-lg-7">
         <div class="adm-card shadow-sm">
             <div class="d-flex align-items-center gap-2 mb-3 pb-3 border-bottom border-secondary border-opacity-10">
                 <i class="bi bi-tags fs-5" style="color: var(--adm-gold, #D97706);"></i>
-                <h5 class="fw-bold mb-0 adm-heading">Thông tin Danh mục Thời trang</h5>
+                <h5 class="fw-bold mb-0 adm-heading">Thông tin & Ảnh Bìa Danh mục</h5>
             </div>
 
-            <form asp-action="Create" method="post" id="catForm">
+            <form asp-action="Create" method="post" enctype="multipart/form-data" id="catForm">
                 @Html.AntiForgeryToken()
 
                 <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4 shadow-sm"></div>
@@ -46,7 +70,7 @@
                 </div>
 
                 <!-- QUICK PRESET SUGGESTIONS -->
-                <div class="mb-4">
+                <div class="mb-3">
                     <label class="text-muted small fw-semibold d-block mb-2">Gợi ý danh mục thời trang nhanh:</label>
                     <div class="d-flex flex-wrap gap-2">
                         <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Áo Khoác & Outerwear', 'ao-khoac-outerwear')">+ Áo Khoác & Outerwear</button>
@@ -62,7 +86,7 @@
                 <!-- SLUG -->
                 <div class="mb-4">
                     <div class="d-flex justify-content-between align-items-center mb-1">
-                        <label asp-for="Slug" class="adm-form-label fw-bold mb-0">Đường dẫn tĩnh (Slug) - Tự động tạo chuẩn SEO</label>
+                        <label asp-for="Slug" class="adm-form-label fw-bold mb-0">Đường dẫn tĩnh (Slug) - Tự động chuẩn SEO</label>
                         <button type="button" class="btn btn-sm p-0 text-muted" onclick="autoSlugFromName()" title="Tạo lại từ tên danh mục" style="font-size: 0.75rem;">
                             <i class="bi bi-arrow-repeat me-1"></i>Tự tạo
                         </button>
@@ -77,6 +101,37 @@
                         Nếu để trống, hệ thống sẽ tự động tạo slug không dấu từ tên danh mục.
                     </div>
                     <span asp-validation-for="Slug" class="text-danger small mt-1 d-block"></span>
+                </div>
+
+                <!-- ẢNH ĐẠI DIỆN / BÌA LOOKBOOK DANH MỤC -->
+                <div class="mb-4">
+                    <label class="adm-form-label fw-bold mb-1">Ảnh bìa / Ảnh đại diện danh mục (Lookbook Cover)</label>
+                    <div class="text-muted small mb-2" style="font-size: 0.75rem;">Tải lên ảnh bìa đại diện cho danh mục (định dạng PNG, JPG, WEBP tối đa 10 MB).</div>
+
+                    <input type="file" asp-for="CoverImage" id="catCoverInput" accept="image/png, image/jpeg, image/webp" class="d-none" onchange="handleCoverSelected(this)" />
+
+                    <!-- DROPZONE -->
+                    <div id="dropzoneBox" class="adm-cat-upload-dropzone" onclick="document.getElementById('catCoverInput').click()">
+                        <div id="dropzonePlaceholder">
+                            <div style="width: 48px; height: 48px; border-radius: 50%; background: #E2E8F0; display: inline-flex; align-items: center; justify-content: center; font-size: 1.4rem; color: #475569; margin-bottom: 8px;">
+                                <i class="bi bi-cloud-arrow-up-fill"></i>
+                            </div>
+                            <div class="fw-semibold adm-heading" style="font-size: 0.9rem;">Bấm để chọn ảnh bìa danh mục hoặc kéo thả vào đây</div>
+                            <div class="text-muted small mt-1" style="font-size: 0.75rem;">PNG, JPG, WEBP chất lượng cao</div>
+                        </div>
+
+                        <div id="dropzonePreviewWrap" class="d-none position-relative">
+                            <img id="dropzoneImg" src="" alt="Cover Preview" class="adm-cat-upload-preview" />
+                            <div class="mt-2 d-flex justify-content-center gap-2">
+                                <button type="button" class="btn btn-sm btn-outline-dark py-1 px-3" onclick="event.stopPropagation(); document.getElementById('catCoverInput').click()">
+                                    <i class="bi bi-arrow-repeat me-1"></i> Đổi ảnh khác
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-danger py-1 px-3" onclick="event.stopPropagation(); removeCoverImage()">
+                                    <i class="bi bi-trash me-1"></i> Xóa ảnh
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- SWITCH KÍCH HOẠT -->
@@ -115,18 +170,21 @@
 
             <!-- SIMULATED CATEGORY CARD -->
             <div class="border rounded-3 overflow-hidden shadow-sm" style="background: #FFFFFF;">
-                <div style="height: 140px; background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%); position: relative; display: flex; align-items: center; justify-content: center;">
-                    <div style="width: 52px; height: 52px; border-radius: 50%; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: #F59E0B;">
+                <div id="previewBanner" style="height: 160px; background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                    <img id="previewBannerImg" src="" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: none;" />
+                    <div id="previewBannerOverlay" style="position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(15,23,42,0.85) 100%); display: none;"></div>
+
+                    <div id="previewIconFallback" style="width: 52px; height: 52px; border-radius: 50%; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: #F59E0B; z-index: 1;">
                         <i class="bi bi-tag-fill"></i>
                     </div>
 
-                    <div class="position-absolute top-0 end-0 m-2">
+                    <div class="position-absolute top-0 end-0 m-2" style="z-index: 2;">
                         <span id="previewStatusBadge" class="adm-pill adm-pill-emerald shadow-sm">Đang bật</span>
                     </div>
 
-                    <div class="position-absolute bottom-0 start-0 m-2 text-white">
+                    <div class="position-absolute bottom-0 start-0 m-2 text-white" style="z-index: 2;">
                         <span class="badge" style="background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); font-size: 0.68rem; border: 1px solid rgba(255,255,255,0.2);">
-                            Atelier Collection
+                            Atelier Lookbook
                         </span>
                     </div>
                 </div>
@@ -155,9 +213,9 @@
                     <i class="bi bi-lightbulb me-1 text-warning"></i> Quy chuẩn Danh mục Atelier:
                 </div>
                 <ul class="text-muted small ps-3 mb-0" style="font-size: 0.78rem; line-height: 1.6;">
+                    <li><strong>Ảnh bìa Lookbook:</strong> Tải lên ảnh ngang tỷ lệ 16:9 với độ phân giải tốt để hiển thị sắc nét trên trang chủ.</li>
                     <li><strong>Slug chuẩn SEO:</strong> Sử dụng chữ thường, không dấu, nối bằng dấu gạch ngang (<code>-</code>).</li>
                     <li><strong>Gán sản phẩm:</strong> Sau khi tạo, bạn có thể chuyển sang trang <em>Sản phẩm</em> hoặc <em>Product Studio</em> để chọn danh mục này.</li>
-                    <li><strong>Ảnh Lookbook:</strong> Hệ thống tự động lấy ảnh đại diện của sản phẩm mới nhất thuộc danh mục này làm bìa Lookbook.</li>
                 </ul>
             </div>
         </div>
@@ -201,6 +259,14 @@
         const previewSlug = document.getElementById('previewCatSlug');
         const previewStatus = document.getElementById('previewStatusBadge');
 
+        const coverFileInput = document.getElementById('catCoverInput');
+        const dropzonePlaceholder = document.getElementById('dropzonePlaceholder');
+        const dropzonePreviewWrap = document.getElementById('dropzonePreviewWrap');
+        const dropzoneImg = document.getElementById('dropzoneImg');
+        const previewBannerImg = document.getElementById('previewBannerImg');
+        const previewBannerOverlay = document.getElementById('previewBannerOverlay');
+        const previewIconFallback = document.getElementById('previewIconFallback');
+
         slugInput.addEventListener('input', () => {
             userTouchedSlug = true;
             updateLivePreview();
@@ -224,6 +290,38 @@
             slugInput.value = slug;
             userTouchedSlug = true;
             updateLivePreview();
+        }
+
+        function handleCoverSelected(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const dataUrl = e.target.result;
+                    // Update dropzone preview
+                    dropzoneImg.src = dataUrl;
+                    dropzonePlaceholder.classList.add('d-none');
+                    dropzonePreviewWrap.classList.remove('d-none');
+
+                    // Update live preview card
+                    previewBannerImg.src = dataUrl;
+                    previewBannerImg.style.display = 'block';
+                    previewBannerOverlay.style.display = 'block';
+                    previewIconFallback.style.display = 'none';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function removeCoverImage() {
+            coverFileInput.value = "";
+            dropzoneImg.src = "";
+            dropzonePreviewWrap.classList.add('d-none');
+            dropzonePlaceholder.classList.remove('d-none');
+
+            previewBannerImg.src = "";
+            previewBannerImg.style.display = 'none';
+            previewBannerOverlay.style.display = 'none';
+            previewIconFallback.style.display = 'flex';
         }
 
         function updateLivePreview() {

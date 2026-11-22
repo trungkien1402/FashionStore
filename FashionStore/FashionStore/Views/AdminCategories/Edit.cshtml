@@ -6,15 +6,44 @@
     var productCount = (int)(ViewBag.ProductCount ?? 0);
     var activeProductCount = (int)(ViewBag.ActiveProductCount ?? 0);
 
-    var coverPath = $"images/category-covers/{Model.Slug}.png";
-    if (!HostingEnvironment.WebRootFileProvider.GetFileInfo(coverPath).Exists)
+    var existingImg = Model.ExistingImageUrl;
+    if (string.IsNullOrEmpty(existingImg))
     {
-        coverPath = $"images/category-covers/{Model.Slug}.webp";
+        var coverPath = $"images/category-covers/{Model.Slug}.png";
+        if (!HostingEnvironment.WebRootFileProvider.GetFileInfo(coverPath).Exists)
+        {
+            coverPath = $"images/category-covers/{Model.Slug}.webp";
+        }
+        if (HostingEnvironment.WebRootFileProvider.GetFileInfo(coverPath).Exists)
+        {
+            existingImg = Url.Content($"~/{coverPath}");
+        }
     }
-    var imageUrl = HostingEnvironment.WebRootFileProvider.GetFileInfo(coverPath).Exists
-        ? Url.Content($"~/{coverPath}")
-        : null;
 }
+
+<style>
+    .adm-cat-upload-dropzone {
+        border: 2px dashed #CBD5E1;
+        border-radius: 12px;
+        background: #F8FAFC;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        position: relative;
+    }
+    .adm-cat-upload-dropzone:hover {
+        border-color: #0F172A;
+        background: #F1F5F9;
+    }
+    .adm-cat-upload-preview {
+        max-height: 180px;
+        width: 100%;
+        object-fit: cover;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+</style>
 
 <!-- EXECUTIVE HEADER -->
 <div class="adm-header-block mb-4">
@@ -40,15 +69,15 @@
 </div>
 
 <div class="row g-4">
-    <!-- LEFT COLUMN: FORM INPUTS -->
+    <!-- LEFT COLUMN: FORM INPUTS WITH COVER IMAGE UPLOAD -->
     <div class="col-lg-7">
         <div class="adm-card shadow-sm">
             <div class="d-flex align-items-center gap-2 mb-3 pb-3 border-bottom border-secondary border-opacity-10">
                 <i class="bi bi-pencil-square fs-5" style="color: var(--adm-gold, #D97706);"></i>
-                <h5 class="fw-bold mb-0 adm-heading">Cập nhật Chi tiết Danh mục</h5>
+                <h5 class="fw-bold mb-0 adm-heading">Cập nhật Chi tiết & Ảnh Bìa Danh mục</h5>
             </div>
 
-            <form asp-action="Edit" asp-route-id="@Model.Id" method="post" id="catForm">
+            <form asp-action="Edit" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data" id="catForm">
                 @Html.AntiForgeryToken()
                 <input type="hidden" asp-for="Id" />
 
@@ -79,6 +108,37 @@
                         Thay đổi slug có thể ảnh hưởng đến các liên kết cũ của khách hàng.
                     </div>
                     <span asp-validation-for="Slug" class="text-danger small mt-1 d-block"></span>
+                </div>
+
+                <!-- ẢNH ĐẠI DIỆN / BÌA LOOKBOOK DANH MỤC -->
+                <div class="mb-4">
+                    <label class="adm-form-label fw-bold mb-1">Ảnh bìa / Ảnh đại diện danh mục (Lookbook Cover)</label>
+                    <div class="text-muted small mb-2" style="font-size: 0.75rem;">Tải ảnh bìa mới để thay thế ảnh hiện tại (PNG, JPG, WEBP tối đa 10 MB).</div>
+
+                    <input type="file" asp-for="CoverImage" id="catCoverInput" accept="image/png, image/jpeg, image/webp" class="d-none" onchange="handleCoverSelected(this)" />
+
+                    <!-- DROPZONE -->
+                    <div id="dropzoneBox" class="adm-cat-upload-dropzone" onclick="document.getElementById('catCoverInput').click()">
+                        <div id="dropzonePlaceholder" class="@(!string.IsNullOrEmpty(existingImg) ? "d-none" : "")">
+                            <div style="width: 44px; height: 44px; border-radius: 50%; background: #E2E8F0; display: inline-flex; align-items: center; justify-content: center; font-size: 1.3rem; color: #475569; margin-bottom: 8px;">
+                                <i class="bi bi-cloud-arrow-up-fill"></i>
+                            </div>
+                            <div class="fw-semibold adm-heading" style="font-size: 0.88rem;">Bấm để tải ảnh bìa mới hoặc kéo thả vào đây</div>
+                            <div class="text-muted small mt-1" style="font-size: 0.75rem;">PNG, JPG, WEBP</div>
+                        </div>
+
+                        <div id="dropzonePreviewWrap" class="@(!string.IsNullOrEmpty(existingImg) ? "" : "d-none") position-relative">
+                            <img id="dropzoneImg" src="@(existingImg ?? "")" alt="Cover Preview" class="adm-cat-upload-preview" />
+                            <div class="mt-2 d-flex justify-content-center gap-2">
+                                <button type="button" class="btn btn-sm btn-outline-dark py-1 px-3" onclick="event.stopPropagation(); document.getElementById('catCoverInput').click()">
+                                    <i class="bi bi-arrow-repeat me-1"></i> Thay đổi ảnh bìa
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-danger py-1 px-3" onclick="event.stopPropagation(); removeCoverImage()">
+                                    <i class="bi bi-x-circle me-1"></i> Bỏ chọn ảnh mới
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- SWITCH KÍCH HOẠT -->
@@ -117,28 +177,21 @@
 
             <!-- SIMULATED CATEGORY CARD -->
             <div class="border rounded-3 overflow-hidden shadow-sm" style="background: #FFFFFF;">
-                <div style="height: 150px; background: #0F172A; position: relative; overflow: hidden;">
-                    @if (!string.IsNullOrEmpty(imageUrl))
-                    {
-                        <img src="@imageUrl" alt="" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'" />
-                        <div style="position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(15,23,42,0.85) 100%);"></div>
-                    }
-                    else
-                    {
-                        <div class="d-flex align-items-center justify-content-center h-100" style="background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);">
-                            <div style="width: 52px; height: 52px; border-radius: 50%; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: #F59E0B;">
-                                <i class="bi bi-tag-fill"></i>
-                            </div>
-                        </div>
-                    }
+                <div id="previewBanner" style="height: 160px; background: #0F172A; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                    <img id="previewBannerImg" src="@(existingImg ?? "")" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: @(!string.IsNullOrEmpty(existingImg) ? "block" : "none");" />
+                    <div id="previewBannerOverlay" style="position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(15,23,42,0.85) 100%); display: @(!string.IsNullOrEmpty(existingImg) ? "block" : "none");"></div>
 
-                    <div class="position-absolute top-0 end-0 m-2">
+                    <div id="previewIconFallback" style="width: 52px; height: 52px; border-radius: 50%; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); display: @(string.IsNullOrEmpty(existingImg) ? "flex" : "none"); align-items: center; justify-content: center; font-size: 1.4rem; color: #F59E0B; z-index: 1;">
+                        <i class="bi bi-tag-fill"></i>
+                    </div>
+
+                    <div class="position-absolute top-0 end-0 m-2" style="z-index: 2;">
                         <span id="previewStatusBadge" class="adm-pill @(Model.IsActive ? "adm-pill-emerald" : "adm-pill-faint") shadow-sm">
                             @(Model.IsActive ? "Đang bật" : "Đang tắt")
                         </span>
                     </div>
 
-                    <div class="position-absolute bottom-0 start-0 m-2 text-white">
+                    <div class="position-absolute bottom-0 start-0 m-2 text-white" style="z-index: 2;">
                         <span class="badge" style="background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); font-size: 0.68rem; border: 1px solid rgba(255,255,255,0.2);">
                             Atelier Lookbook
                         </span>
@@ -217,6 +270,16 @@
         const previewSlug = document.getElementById('previewCatSlug');
         const previewStatus = document.getElementById('previewStatusBadge');
 
+        const coverFileInput = document.getElementById('catCoverInput');
+        const dropzonePlaceholder = document.getElementById('dropzonePlaceholder');
+        const dropzonePreviewWrap = document.getElementById('dropzonePreviewWrap');
+        const dropzoneImg = document.getElementById('dropzoneImg');
+        const previewBannerImg = document.getElementById('previewBannerImg');
+        const previewBannerOverlay = document.getElementById('previewBannerOverlay');
+        const previewIconFallback = document.getElementById('previewIconFallback');
+
+        const initialImgSrc = "@(existingImg ?? "")";
+
         nameInput.addEventListener('input', () => {
             updateLivePreview();
         });
@@ -228,6 +291,49 @@
         function autoSlugFromName() {
             slugInput.value = slugify(nameInput.value);
             updateLivePreview();
+        }
+
+        function handleCoverSelected(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const dataUrl = e.target.result;
+                    // Update dropzone preview
+                    dropzoneImg.src = dataUrl;
+                    dropzonePlaceholder.classList.add('d-none');
+                    dropzonePreviewWrap.classList.remove('d-none');
+
+                    // Update live preview card
+                    previewBannerImg.src = dataUrl;
+                    previewBannerImg.style.display = 'block';
+                    previewBannerOverlay.style.display = 'block';
+                    previewIconFallback.style.display = 'none';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function removeCoverImage() {
+            coverFileInput.value = "";
+            if (initialImgSrc) {
+                dropzoneImg.src = initialImgSrc;
+                dropzonePreviewWrap.classList.remove('d-none');
+                dropzonePlaceholder.classList.add('d-none');
+
+                previewBannerImg.src = initialImgSrc;
+                previewBannerImg.style.display = 'block';
+                previewBannerOverlay.style.display = 'block';
+                previewIconFallback.style.display = 'none';
+            } else {
+                dropzoneImg.src = "";
+                dropzonePreviewWrap.classList.add('d-none');
+                dropzonePlaceholder.classList.remove('d-none');
+
+                previewBannerImg.src = "";
+                previewBannerImg.style.display = 'none';
+                previewBannerOverlay.style.display = 'none';
+                previewIconFallback.style.display = 'flex';
+            }
         }
 
         function updateLivePreview() {

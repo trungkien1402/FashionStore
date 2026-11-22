@@ -15,10 +15,40 @@ namespace FashionStore.Controllers;
 public class AdminCategoriesController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly Microsoft.AspNetCore.Hosting.IWebHostEnvironment _environment;
 
-    public AdminCategoriesController(ApplicationDbContext context)
+    public AdminCategoriesController(ApplicationDbContext context, Microsoft.AspNetCore.Hosting.IWebHostEnvironment environment)
     {
         _context = context;
+        _environment = environment;
+    }
+
+    private async Task SaveCoverImageAsync(Microsoft.AspNetCore.Http.IFormFile file, string slug)
+    {
+        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+        var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+        if (!allowedExtensions.Contains(ext)) return;
+        if (file.Length > 10 * 1024 * 1024) return;
+
+        var folder = Path.Combine(_environment.WebRootPath, "images", "category-covers");
+        if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+
+        var targetFile = Path.Combine(folder, $"{slug}.png");
+        await using (var stream = new FileStream(targetFile, FileMode.Create))
+        {
+            await file.CopyToAsync(stream);
+        }
+
+        try
+        {
+            var dualFolder = Path.Combine(_environment.ContentRootPath, "..", "FashionStore", "wwwroot", "images", "category-covers");
+            if (Directory.Exists(dualFolder))
+            {
+                var dualTarget = Path.Combine(dualFolder, $"{slug}.png");
+                System.IO.File.Copy(targetFile, dualTarget, true);
+            }
+        }
+        catch { }
     }
 
     // GET: /AdminCategories
@@ -144,6 +174,11 @@ public class AdminCategoriesController : Controller
             return View(model);
         }
 
+        if (model.CoverImage != null && model.CoverImage.Length > 0)
+        {
+            await SaveCoverImageAsync(model.CoverImage, slug);
+        }
+
         var category = new Category
         {
             Name = model.Name.Trim(),
@@ -176,12 +211,28 @@ public class AdminCategoriesController : Controller
         ViewBag.ProductCount = await _context.Products.CountAsync(p => p.CategoryId == id);
         ViewBag.ActiveProductCount = await _context.Products.CountAsync(p => p.CategoryId == id && p.IsActive);
 
+        var coverPng = Path.Combine("images", "category-covers", $"{category.Slug}.png");
+        string? existingUrl = null;
+        if (System.IO.File.Exists(Path.Combine(_environment.WebRootPath, coverPng)))
+        {
+            existingUrl = "/" + coverPng.Replace('\\', '/');
+        }
+        else
+        {
+            var coverWebp = Path.Combine("images", "category-covers", $"{category.Slug}.webp");
+            if (System.IO.File.Exists(Path.Combine(_environment.WebRootPath, coverWebp)))
+            {
+                existingUrl = "/" + coverWebp.Replace('\\', '/');
+            }
+        }
+
         var model = new AdminCategoryViewModel
         {
             Id = category.Id,
             Name = category.Name,
             Slug = category.Slug,
-            IsActive = category.IsActive
+            IsActive = category.IsActive,
+            ExistingImageUrl = existingUrl
         };
 
         return View(model);
@@ -212,6 +263,7 @@ public class AdminCategoriesController : Controller
             return NotFound();
         }
 
+        var oldSlug = category.Slug;
         var slugSource = string.IsNullOrWhiteSpace(model.Slug)
             ? model.Name
             : model.Slug;
@@ -240,6 +292,25 @@ public class AdminCategoriesController : Controller
             );
 
             return View(model);
+        }
+
+        if (model.CoverImage != null && model.CoverImage.Length > 0)
+        {
+            await SaveCoverImageAsync(model.CoverImage, slug);
+        }
+        else if (oldSlug != slug)
+        {
+            var folder = Path.Combine(_environment.WebRootPath, "images", "category-covers");
+            foreach (var ext in new[] { ".png", ".webp", ".jpg" })
+            {
+                var oldFile = Path.Combine(folder, $"{oldSlug}{ext}");
+                if (System.IO.File.Exists(oldFile))
+                {
+                    var newFile = Path.Combine(folder, $"{slug}{ext}");
+                    System.IO.File.Move(oldFile, newFile, true);
+                    break;
+                }
+            }
         }
 
         category.Name = model.Name.Trim();
