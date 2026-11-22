@@ -3,32 +3,7 @@
 @using FashionStore.Models.Enums
 
 @{
-    ViewData["Title"] = "Chi tiết đơn hàng " + Model.OrderCode;
-
-    var nextStatuses = new List<OrderStatus>();
-    switch (Model.Status)
-    {
-        case OrderStatus.PendingConfirmation:
-            nextStatuses.Add(OrderStatus.Confirmed);
-            nextStatuses.Add(OrderStatus.Cancelled);
-            break;
-        case OrderStatus.Confirmed:
-            nextStatuses.Add(OrderStatus.Processing);
-            nextStatuses.Add(OrderStatus.Cancelled);
-            break;
-        case OrderStatus.Processing:
-            nextStatuses.Add(OrderStatus.Shipping);
-            nextStatuses.Add(OrderStatus.Cancelled);
-            break;
-        case OrderStatus.Shipping:
-            nextStatuses.Add(OrderStatus.Delivered);
-            nextStatuses.Add(OrderStatus.DeliveryFailed);
-            break;
-        case OrderStatus.DeliveryFailed:
-            nextStatuses.Add(OrderStatus.Shipping);
-            nextStatuses.Add(OrderStatus.Returned);
-            break;
-    }
+    ViewData["Title"] = "Chi tiết đơn hàng #" + Model.OrderCode;
 
     string GetStatusName(OrderStatus status) => status switch
     {
@@ -57,101 +32,274 @@
     var shipments = ViewBag.Shipments as List<Shipment> ?? new List<Shipment>();
     var histories = ViewBag.StatusHistories as List<OrderStatusHistory> ?? new List<OrderStatusHistory>();
     var paymentHistories = ViewBag.PaymentHistories as List<PaymentHistory> ?? new List<PaymentHistory>();
+    int customerOrderCount = ViewBag.CustomerOrderCount is int count ? count : 1;
+
+    // Helper timestamps from histories
+    string GetHistoryTime(OrderStatus st)
+    {
+        var h = histories.FirstOrDefault(x => x.NewStatus == st);
+        return h != null ? h.CreatedAt.ToLocalTime().ToString("dd/MM HH:mm") : "";
+    }
+
+    // Stepper logic
+    bool isCancelled = Model.Status == OrderStatus.Cancelled;
+    bool isDeliveryFailed = Model.Status == OrderStatus.DeliveryFailed;
+    bool isReturned = Model.Status == OrderStatus.Returned;
+
+    int currentStep = Model.Status switch
+    {
+        OrderStatus.PendingConfirmation => 1,
+        OrderStatus.Confirmed => 2,
+        OrderStatus.Processing => 3,
+        OrderStatus.Shipping => 4,
+        OrderStatus.Delivered => 5,
+        _ => 1
+    };
+
+    int progressPercent = Model.Status switch
+    {
+        OrderStatus.PendingConfirmation => 0,
+        OrderStatus.Confirmed => 25,
+        OrderStatus.Processing => 50,
+        OrderStatus.Shipping => 75,
+        OrderStatus.Delivered => 100,
+        _ => 0
+    };
 }
 
-@if ((User.IsInRole("Admin") || User.IsInRole("Manager")) && Model.Status is OrderStatus.Delivered or OrderStatus.Returned)
-{
-    <div class="mb-3">
-        <a asp-controller="AdminOperations" asp-action="Returns" asp-route-id="@Model.Id" class="adm-btn-outline">Xử lý đổi trả</a>
-    </div>
-}
-
-<!-- HEADER -->
+<!-- 1. BREADCRUMB & HEADER -->
 <div class="mb-4">
-    <a asp-action="Index" class="adm-btn-outline py-1 px-3 mb-3 d-inline-flex" style="font-size: 0.8rem;">
-        <i class="bi bi-arrow-left"></i>
-        <span>Quay lại Hàng đợi Đơn hàng</span>
-    </a>
+    <div class="d-flex align-items-center gap-2 mb-2">
+        <a asp-action="Index" class="adm-btn-action-secondary" style="height: 32px; padding: 0 12px; font-size: 0.78rem;">
+            <i class="bi bi-arrow-left"></i>
+            <span>Hàng đợi đơn hàng</span>
+        </a>
+        <span class="text-muted" style="font-size: 0.75rem;">/</span>
+        <span class="text-muted" style="font-size: 0.75rem;">HNMT ATELIER · VẬN HÀNH</span>
+    </div>
 
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
         <div>
-            <div class="d-flex align-items-center gap-2 mb-1">
-                <span style="font-size: 0.68rem; font-weight: 700; letter-spacing: 0.28em; color: var(--adm-gold); text-transform: uppercase;">
-                    ORDER FULFILLMENT FILE
-                </span>
-                <span style="width: 4px; height: 4px; border-radius: 50%; background: var(--adm-gold);"></span>
-                <span class="text-muted small">@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span>
-            </div>
-            <div class="d-flex align-items-center gap-2">
-                <h2 class="fw-bold mb-0 adm-heading font-monospace" style="letter-spacing: -0.01em;">@Model.OrderCode</h2>
-                <button type="button" class="btn btn-sm adm-btn-outline p-1 px-2" onclick="copyAdmText(this, '@Model.OrderCode')" title="Sao chép mã đơn">
+            <div class="d-flex align-items-center flex-wrap gap-2">
+                <h1 class="adm-title-main mb-0 font-monospace" style="font-size: 1.35rem; font-weight: 700; letter-spacing: -0.01em;">
+                    #@Model.OrderCode
+                </h1>
+                <button type="button" class="btn btn-sm adm-btn-table-action" onclick="copyAdmText(this, '@Model.OrderCode')" title="Sao chép mã đơn" style="height: 28px; padding: 0 8px;">
                     <i class="bi bi-copy"></i>
                 </button>
+
+                <!-- STATUS PILL -->
+                @if (Model.Status == OrderStatus.PendingConfirmation)
+                {
+                    <span class="adm-pill amber">
+                        <span class="adm-pill-dot amber"></span> Chờ xác nhận
+                    </span>
+                }
+                else if (Model.Status == OrderStatus.Confirmed)
+                {
+                    <span class="adm-pill blue">
+                        <span class="adm-pill-dot blue"></span> Đã xác nhận
+                    </span>
+                }
+                else if (Model.Status == OrderStatus.Processing)
+                {
+                    <span class="adm-pill blue">
+                        <span class="adm-pill-dot blue"></span> Đang xử lý kho
+                    </span>
+                }
+                else if (Model.Status == OrderStatus.Shipping)
+                {
+                    <span class="adm-pill blue">
+                        <span class="adm-pill-dot blue"></span> Đang giao hàng
+                    </span>
+                }
+                else if (Model.Status == OrderStatus.Delivered)
+                {
+                    <span class="adm-pill green">
+                        <span class="adm-pill-dot green"></span> Đã giao thành công
+                    </span>
+                }
+                else if (Model.Status == OrderStatus.Cancelled)
+                {
+                    <span class="adm-pill rose">
+                        <span class="adm-pill-dot rose"></span> Đã hủy
+                    </span>
+                }
+                else
+                {
+                    <span class="adm-pill rose">
+                        <span class="adm-pill-dot rose"></span> @GetStatusName(Model.Status)
+                    </span>
+                }
+
+                <span class="text-muted" style="font-size: 0.75rem;">
+                    Đặt lúc @Model.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                </span>
             </div>
         </div>
 
         <div class="d-flex align-items-center gap-2">
-            @if (Model.Status == OrderStatus.Confirmed || Model.Status == OrderStatus.Processing || Model.Status == OrderStatus.Shipping)
+            @if ((User.IsInRole("Admin") || User.IsInRole("Manager")) && (Model.Status is OrderStatus.Delivered or OrderStatus.Returned))
             {
-                <a asp-controller="AdminShipments" asp-action="Create" asp-route-orderId="@Model.Id" class="adm-btn-atelier py-2 px-3">
-                    <i class="bi bi-truck"></i>
-                    <span>Tạo lượt giao hàng</span>
+                <a asp-controller="AdminOperations" asp-action="Returns" asp-route-id="@Model.Id" class="adm-btn-action-secondary" style="height: 36px;">
+                    <i class="bi bi-arrow-return-left"></i>
+                    <span>Xử lý đổi trả</span>
                 </a>
             }
 
-            <button type="button" onclick="window.print()" class="btn adm-btn-outline py-2 px-3">
+            <button type="button" onclick="window.print()" class="adm-btn-action-secondary" style="height: 36px;" title="In phiếu đóng gói">
                 <i class="bi bi-printer"></i>
-                <span>In đơn</span>
+                <span>In đơn hàng</span>
             </button>
         </div>
     </div>
 </div>
 
+<!-- 2. ORDER PROGRESS STEPPER -->
+<div class="adm-stepper-wrap">
+    @if (isCancelled)
+    {
+        <div class="d-flex align-items-center justify-content-between p-2">
+            <div class="d-flex align-items-center gap-3">
+                <div class="adm-step-node" style="background: #EF4444; border-color: #EF4444; color: #FFF;">
+                    <i class="bi bi-x-lg"></i>
+                </div>
+                <div>
+                    <div class="fw-bold text-danger" style="font-size: 0.88rem;">Đơn hàng đã bị hủy</div>
+                    <div class="text-muted" style="font-size: 0.74rem;">
+                        @(histories.LastOrDefault(h => h.NewStatus == OrderStatus.Cancelled)?.Note ?? "Đơn hàng đã kết thúc và được hoàn kho tự động.")
+                    </div>
+                </div>
+            </div>
+            <span class="text-muted font-monospace" style="font-size: 0.74rem;">
+                @GetHistoryTime(OrderStatus.Cancelled)
+            </span>
+        </div>
+    }
+    else
+    {
+        <div class="adm-stepper">
+            <div class="adm-stepper-track"></div>
+            <div class="adm-stepper-progress" style="width: calc(@progressPercent% * 0.85);"></div>
+
+            <!-- STEP 1: ĐẶT HÀNG -->
+            <div class="adm-step-item completed">
+                <div class="adm-step-node">
+                    <i class="bi bi-check-lg"></i>
+                </div>
+                <div class="adm-step-title">Đặt hàng</div>
+                <div class="adm-step-time">@Model.CreatedAt.ToLocalTime().ToString("dd/MM HH:mm")</div>
+            </div>
+
+            <!-- STEP 2: XÁC NHẬN -->
+            <div class="adm-step-item @(currentStep >= 2 ? "completed" : "") @(currentStep == 1 ? "active" : "")">
+                <div class="adm-step-node">
+                    @if (currentStep >= 2) { <i class="bi bi-check-lg"></i> } else { <span>2</span> }
+                </div>
+                <div class="adm-step-title">Xác nhận</div>
+                <div class="adm-step-time">@GetHistoryTime(OrderStatus.Confirmed)</div>
+            </div>
+
+            <!-- STEP 3: XỬ LÝ KHO -->
+            <div class="adm-step-item @(currentStep >= 3 ? "completed" : "") @(currentStep == 2 ? "active" : "")">
+                <div class="adm-step-node">
+                    @if (currentStep >= 3) { <i class="bi bi-check-lg"></i> } else { <span>3</span> }
+                </div>
+                <div class="adm-step-title">Xử lý kho</div>
+                <div class="adm-step-time">@GetHistoryTime(OrderStatus.Processing)</div>
+            </div>
+
+            <!-- STEP 4: ĐANG GIAO -->
+            <div class="adm-step-item @(currentStep >= 4 ? "completed" : "") @(currentStep == 3 ? "active" : "")">
+                <div class="adm-step-node">
+                    @if (currentStep >= 4) { <i class="bi bi-check-lg"></i> } else { <span>4</span> }
+                </div>
+                <div class="adm-step-title">Đang giao</div>
+                <div class="adm-step-time">@GetHistoryTime(OrderStatus.Shipping)</div>
+            </div>
+
+            <!-- STEP 5: HOÀN TẤT -->
+            <div class="adm-step-item @(currentStep >= 5 ? "completed" : "") @(currentStep == 4 ? "active" : "")">
+                <div class="adm-step-node">
+                    @if (currentStep >= 5) { <i class="bi bi-check-lg"></i> } else { <span>5</span> }
+                </div>
+                <div class="adm-step-title">Hoàn tất</div>
+                <div class="adm-step-time">@GetHistoryTime(OrderStatus.Delivered)</div>
+            </div>
+        </div>
+    }
+</div>
+
 <div class="row g-4">
-    <!-- LEFT MAIN COLUMN: ORDER ITEMS, PAYMENT & SHIPMENTS -->
+    <!-- LEFT MAIN COLUMN: PRODUCTS, PAYMENT & SHIPMENTS -->
     <div class="col-lg-8">
 
-        <!-- ORDER ITEMS TABLE -->
+        <!-- 1. ORDER ITEMS CARD -->
         <div class="adm-card mb-4 p-0 overflow-hidden">
-            <div class="p-3 border-bottom border-secondary border-opacity-10 d-flex justify-content-between align-items-center">
-                <h5 class="fw-bold mb-0 adm-heading">
-                    <i class="bi bi-bag me-2" style="color: var(--adm-gold);"></i>Sản phẩm đã đặt (@Model.Items.Count)
-                </h5>
-                <span class="badge" style="background: var(--adm-surface-hover); color: var(--adm-ink); border: 1px solid var(--adm-border);">
-                    TỔNG SỐ LƯỢNG: @Model.Items.Sum(i => i.Quantity)
+            <div class="p-3 border-bottom d-flex justify-content-between align-items-center" style="border-color: var(--adm-border) !important;">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-bag-check" style="color: #0F172A; font-size: 1rem;"></i>
+                    <h2 class="fw-bold mb-0" style="font-size: 0.92rem; color: var(--adm-ink);">
+                        Sản phẩm đã đặt (@Model.Items.Count)
+                    </h2>
+                </div>
+                <span class="adm-pill gray">
+                    Tổng: @Model.Items.Sum(i => i.Quantity) món
                 </span>
             </div>
 
             <div class="table-responsive">
-                <table class="adm-table mb-0">
+                <table class="table align-middle mb-0" style="border-color: var(--adm-border);">
                     <thead>
-                        <tr>
-                            <th class="ps-4">SẢN PHẨM</th>
-                            <th>MÃ SKU</th>
-                            <th>PHÂN LOẠI</th>
-                            <th>ĐƠN GIÁ</th>
-                            <th>SỐ LƯỢNG</th>
-                            <th class="text-end pe-4">THÀNH TIỀN</th>
+                        <tr style="background: var(--adm-surface-hover); font-size: 0.72rem; color: var(--adm-ink-muted); letter-spacing: 0.05em; text-transform: uppercase;">
+                            <th class="ps-3 py-2" style="font-weight: 700;">Sản phẩm</th>
+                            <th class="py-2" style="font-weight: 700;">Mã SKU</th>
+                            <th class="py-2" style="font-weight: 700;">Phân loại</th>
+                            <th class="py-2 text-end" style="font-weight: 700;">Đơn giá</th>
+                            <th class="py-2 text-center" style="font-weight: 700;">SL</th>
+                            <th class="py-2 pe-3 text-end" style="font-weight: 700;">Thành tiền</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var item in Model.Items)
                         {
-                            <tr>
-                                <td class="ps-4">
-                                    <div class="fw-bold adm-heading">@item.ProductName</div>
+                            var imgUrl = item.ProductVariant?.Product?.ImageUrl;
+                            <tr style="border-bottom: 1px solid var(--adm-border); font-size: 0.84rem;">
+                                <td class="ps-3 py-3">
+                                    <div class="d-flex align-items-center gap-3">
+                                        @if (!string.IsNullOrEmpty(imgUrl))
+                                        {
+                                            <img src="@imgUrl" alt="@item.ProductName" class="adm-prod-thumb" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                                            <div class="adm-prod-thumb-placeholder" style="display: none;">
+                                                <i class="bi bi-tag"></i>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="adm-prod-thumb-placeholder">
+                                                <i class="bi bi-tag"></i>
+                                            </div>
+                                        }
+                                        <div>
+                                            <div class="fw-bold" style="color: var(--adm-ink); line-height: 1.35;">@item.ProductName</div>
+                                        </div>
+                                    </div>
                                 </td>
                                 <td>
-                                    <span class="font-monospace text-muted small">@item.SKU</span>
+                                    <span class="font-monospace text-muted" style="font-size: 0.75rem;">@item.SKU</span>
                                 </td>
                                 <td>
-                                    <span class="badge" style="background: var(--adm-surface-hover); color: var(--adm-ink); border: 1px solid var(--adm-border);">
-                                        Size: @item.Size | @item.Color
+                                    <span class="adm-pill gray" style="font-size: 0.72rem;">
+                                        Size: @item.Size · @item.Color
                                     </span>
                                 </td>
-                                <td>@item.UnitPrice.ToString("N0") ₫</td>
-                                <td class="fw-bold adm-heading">@item.Quantity</td>
-                                <td class="text-end pe-4 fw-bold" style="color: var(--adm-gold);">
+                                <td class="text-end" style="color: var(--adm-ink); font-weight: 500;">
+                                    @item.UnitPrice.ToString("N0") ₫
+                                </td>
+                                <td class="text-center fw-bold" style="color: var(--adm-ink);">
+                                    @item.Quantity
+                                </td>
+                                <td class="text-end pe-3 fw-bold" style="color: var(--adm-ink); font-size: 0.88rem;">
                                     @((item.UnitPrice * item.Quantity).ToString("N0")) ₫
                                 </td>
                             </tr>
@@ -161,28 +309,28 @@
             </div>
 
             <!-- PRICE BREAKDOWN FOOTER -->
-            <div class="p-4 border-top border-secondary border-opacity-10 bg-opacity-10" style="background: var(--adm-surface-hover);">
+            <div class="p-3" style="background: var(--adm-surface-hover); border-top: 1px solid var(--adm-border);">
                 <div class="row justify-content-end">
                     <div class="col-md-6 col-lg-5">
-                        <div class="d-flex justify-content-between mb-2 small">
+                        <div class="d-flex justify-content-between mb-2" style="font-size: 0.82rem;">
                             <span class="text-muted">Tạm tính hàng hóa:</span>
-                            <span class="adm-heading fw-semibold">@Model.SubTotal.ToString("N0") ₫</span>
+                            <span class="fw-semibold" style="color: var(--adm-ink);">@Model.SubTotal.ToString("N0") ₫</span>
                         </div>
-                        <div class="d-flex justify-content-between mb-2 small">
+                        <div class="d-flex justify-content-between mb-2" style="font-size: 0.82rem;">
                             <span class="text-muted">Phí vận chuyển:</span>
-                            <span class="adm-heading fw-semibold">@Model.ShippingFee.ToString("N0") ₫</span>
+                            <span class="fw-semibold" style="color: var(--adm-ink);">@Model.ShippingFee.ToString("N0") ₫</span>
                         </div>
                         @if (Model.DiscountAmount > 0)
                         {
-                            <div class="d-flex justify-content-between mb-2 small text-danger">
+                            <div class="d-flex justify-content-between mb-2 text-danger" style="font-size: 0.82rem;">
                                 <span>Khuyến mại giảm giá:</span>
                                 <span class="fw-semibold">-@Model.DiscountAmount.ToString("N0") ₫</span>
                             </div>
                         }
                         <hr class="my-2" style="border-color: var(--adm-border);" />
                         <div class="d-flex justify-content-between align-items-center">
-                            <span class="fw-bold adm-heading">TỔNG THANH TOÁN:</span>
-                            <span class="fs-4 fw-bold" style="color: var(--adm-gold);">
+                            <span class="fw-bold" style="font-size: 0.86rem; color: var(--adm-ink);">TỔNG CỘNG:</span>
+                            <span class="fw-bold" style="font-size: 1.15rem; color: #0F172A;">
                                 @Model.TotalAmount.ToString("N0") ₫
                             </span>
                         </div>
@@ -191,157 +339,164 @@
             </div>
         </div>
 
-        <!-- PAYMENT MANAGEMENT CARD -->
+        <!-- 2. PAYMENT MANAGEMENT CARD -->
         <div class="adm-card mb-4">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="fw-bold mb-0 adm-heading">
-                    <i class="bi bi-credit-card me-2" style="color: var(--adm-gold);"></i>Quản lý Thanh toán
-                </h5>
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-credit-card-2-front" style="color: #0F172A; font-size: 1rem;"></i>
+                    <h2 class="fw-bold mb-0" style="font-size: 0.92rem; color: var(--adm-ink);">Quản lý Thanh toán</h2>
+                </div>
+
                 @if (Model.PaymentMethod == PaymentMethod.VietQR)
                 {
-                    <span class="badge" style="background: rgba(2, 132, 199, 0.12); color: var(--adm-cyan); border: 1px solid rgba(2, 132, 199, 0.3);">
+                    <span class="adm-pill blue">
                         <i class="bi bi-qr-code me-1"></i> VietQR Chuyển khoản
                     </span>
                 }
                 else
                 {
-                    <span class="badge" style="background: var(--adm-surface-hover); color: var(--adm-ink-muted); border: 1px solid var(--adm-border);">
+                    <span class="adm-pill gray">
                         <i class="bi bi-cash me-1"></i> Tiền mặt khi nhận (COD)
                     </span>
                 }
             </div>
 
-            <div class="row g-3 mb-3">
-                <div class="col-md-6">
-                    <div class="p-3 rounded-3" style="background: var(--adm-surface-hover); border: 1px solid var(--adm-border);">
-                        <div class="text-muted small">Trạng thái thanh toán hiện tại</div>
-                        <div class="fs-5 fw-bold mt-1">
-                            @if (Model.PaymentStatus == PaymentStatus.Paid)
-                            {
-                                <span class="text-success"><i class="bi bi-check-circle-fill me-1"></i>Đã thanh toán thành công</span>
-                            }
-                            else if (Model.PaymentStatus == PaymentStatus.Pending)
-                            {
-                                <span class="text-warning"><i class="bi bi-clock-history me-1"></i>Chờ xác nhận tiền</span>
-                            }
-                            else if (Model.PaymentStatus == PaymentStatus.Failed)
-                            {
-                                <span class="text-danger"><i class="bi bi-x-circle-fill me-1"></i>Thanh toán thất bại</span>
-                            }
-                            else
-                            {
-                                <span class="text-info"><i class="bi bi-arrow-counterclockwise me-1"></i>Đã hoàn tiền</span>
-                            }
-                        </div>
+            <!-- PAYMENT STATUS BAR -->
+            <div class="p-3 rounded-3 mb-3 d-flex flex-wrap align-items-center justify-content-between gap-3"
+                 style="background: var(--adm-surface-hover); border: 1px solid var(--adm-border);">
+                <div>
+                    <div class="text-muted" style="font-size: 0.72rem; text-transform: uppercase; font-weight: 600; letter-spacing: 0.04em;">Trạng thái thanh toán</div>
+                    <div class="mt-1 d-flex align-items-center gap-2">
+                        @if (Model.PaymentStatus == PaymentStatus.Paid)
+                        {
+                            <span class="adm-pill green" style="font-size: 0.82rem;">
+                                <i class="bi bi-check-circle-fill me-1"></i> Đã thanh toán thành công
+                            </span>
+                        }
+                        else if (Model.PaymentStatus == PaymentStatus.Pending)
+                        {
+                            <span class="adm-pill amber" style="font-size: 0.82rem;">
+                                <i class="bi bi-clock-history me-1"></i> Chờ xác nhận tiền
+                            </span>
+                        }
+                        else if (Model.PaymentStatus == PaymentStatus.Failed)
+                        {
+                            <span class="adm-pill rose" style="font-size: 0.82rem;">
+                                <i class="bi bi-x-circle-fill me-1"></i> Thanh toán thất bại
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="adm-pill blue" style="font-size: 0.82rem;">
+                                <i class="bi bi-arrow-counterclockwise me-1"></i> Đã hoàn tiền
+                            </span>
+                        }
                     </div>
                 </div>
 
-                <div class="col-md-6 d-flex align-items-center">
-                    <!-- PAYMENT ACTION BUTTONS -->
-                    @if ((User.IsInRole("Admin") || User.IsInRole("Manager")) && Model.PaymentStatus is PaymentStatus.Pending or PaymentStatus.Failed)
-                    {
-                        <div class="d-flex flex-wrap gap-2 w-100">
-                            <form asp-action="UpdatePaymentStatus" asp-route-id="@Model.Id" method="post" class="flex-grow-1"
-                                  onsubmit="return confirm('Bạn đã đối soát tài khoản ngân hàng và xác nhận ĐÃ NHẬN TIỀN?');">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="newStatus" value="@((int)PaymentStatus.Paid)" />
-                                <button type="submit" class="btn btn-success w-100 py-2 fw-semibold">
-                                    <i class="bi bi-check-circle me-1"></i> Xác nhận ĐÃ NHẬN TIỀN
-                                </button>
-                            </form>
-
-                            <form asp-action="UpdatePaymentStatus" asp-route-id="@Model.Id" method="post"
-                                  onsubmit="return confirm('Ghi nhận thanh toán thất bại?');">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="newStatus" value="@((int)PaymentStatus.Failed)" />
-                                <button type="submit" class="btn btn-outline-danger py-2 px-3" title="Báo lỗi">
-                                    <i class="bi bi-x-lg"></i>
-                                </button>
-                            </form>
-                        </div>
-                    }
-                    else if ((User.IsInRole("Admin") || User.IsInRole("Manager")) && Model.PaymentStatus == PaymentStatus.Paid &&
-                            (Model.Status == OrderStatus.Cancelled || Model.Status == OrderStatus.DeliveryFailed || Model.Status == OrderStatus.Returned))
-                    {
-                        <form asp-action="UpdatePaymentStatus" asp-route-id="@Model.Id" method="post" class="w-100"
-                              onsubmit="return confirm('Bạn đã thực hiện hoàn tiền thực tế cho khách hàng chưa?');">
+                <!-- ACTIONS IF PENDING / FAILED -->
+                @if ((User.IsInRole("Admin") || User.IsInRole("Manager")) && Model.PaymentStatus is PaymentStatus.Pending or PaymentStatus.Failed)
+                {
+                    <div class="d-flex align-items-center gap-2">
+                        <form asp-action="UpdatePaymentStatus" asp-route-id="@Model.Id" method="post"
+                              onsubmit="return confirm('Bạn đã đối soát tài khoản và xác nhận ĐÃ NHẬN TIỀN?');">
                             @Html.AntiForgeryToken()
-                            <input type="hidden" name="newStatus" value="@((int)PaymentStatus.Refunded)" />
-                            <button type="submit" class="btn btn-warning w-100 py-2 fw-bold">
-                                <i class="bi bi-arrow-counterclockwise me-1"></i> Xác nhận ĐÃ HOÀN TIỀN
+                            <input type="hidden" name="newStatus" value="@((int)PaymentStatus.Paid)" />
+                            <button type="submit" class="adm-btn-action-primary" style="height: 34px; padding: 0 14px; font-size: 0.78rem;">
+                                <i class="bi bi-check-lg"></i>
+                                <span>Xác nhận đã nhận tiền</span>
                             </button>
                         </form>
-                    }
-                    else if (Model.PaymentStatus == PaymentStatus.Paid)
-                    {
-                        <div class="text-muted small">
-                            <i class="bi bi-shield-check text-success fs-5 me-1 align-middle"></i>
-                            Giao dịch thanh toán hợp lệ và đã hoàn tất.
-                        </div>
-                    }
-                </div>
 
-                @if (paymentHistories.Any())
-                {
-                    <div class="mt-4 pt-3 border-top border-secondary border-opacity-10">
-                        <div class="d-flex align-items-center justify-content-between mb-2">
-                            <h6 class="fw-bold adm-heading mb-0" style="font-size: 0.85rem;">
-                                <i class="bi bi-clock-history me-1 text-warning"></i> Nhật ký thanh toán &amp; Giao dịch (@paymentHistories.Count)
-                            </h6>
-                        </div>
-                        <div class="table-responsive">
-                            <table class="table table-sm table-borderless mb-0" style="font-size: 0.78rem;">
-                                <thead>
-                                    <tr class="text-muted border-bottom border-secondary border-opacity-10">
-                                        <th>Thời gian</th>
-                                        <th>Sự kiện</th>
-                                        <th>Số tiền</th>
-                                        <th>Chuyển đổi</th>
-                                        <th>Người thực hiện</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var ph in paymentHistories)
-                                    {
-                                        var eventLabel = ph.Event switch
-                                        {
-                                            "Created" => "Tạo yêu cầu thanh toán",
-                                            "TransferReported" => "Khách báo đã chuyển khoản",
-                                            "StatusChanged" => "Thay đổi trạng thái",
-                                            "WebhookPaymentReceived" => "Webhook tự động xác nhận",
-                                            "ReturnRefundConfirmed" => "Xác nhận hoàn tiền",
-                                            _ => ph.Event
-                                        };
-                                        <tr class="border-bottom border-secondary border-opacity-10">
-                                            <td class="text-nowrap text-muted">@ph.CreatedAt.AddHours(7).ToString("dd/MM/yyyy HH:mm")</td>
-                                            <td><span class="badge bg-secondary bg-opacity-25 text-white">@eventLabel</span></td>
-                                            <td class="fw-bold font-monospace" style="color: var(--adm-gold);">@ph.Amount.ToString("N0") ₫</td>
-                                            <td>
-                                                <span class="text-muted">@ph.OldStatus</span>
-                                                <i class="bi bi-arrow-right mx-1 small"></i>
-                                                <span class="fw-bold @(ph.NewStatus == PaymentStatus.Paid ? "text-success" : ph.NewStatus == PaymentStatus.Refunded ? "text-warning" : "text-danger")">@ph.NewStatus</span>
-                                            </td>
-                                            <td class="text-muted">@(ph.ActorUser?.FullName ?? (string.IsNullOrEmpty(ph.ActorUserId) ? "Hệ thống" : "Admin"))</td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
+                        <form asp-action="UpdatePaymentStatus" asp-route-id="@Model.Id" method="post"
+                              onsubmit="return confirm('Ghi nhận thanh toán thất bại?');">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="newStatus" value="@((int)PaymentStatus.Failed)" />
+                            <button type="submit" class="adm-btn-action-danger" style="height: 34px; padding: 0 12px; font-size: 0.78rem;" title="Báo thanh toán thất bại">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </form>
                     </div>
                 }
+                else if ((User.IsInRole("Admin") || User.IsInRole("Manager")) && Model.PaymentStatus == PaymentStatus.Paid &&
+                        (Model.Status == OrderStatus.Cancelled || Model.Status == OrderStatus.DeliveryFailed || Model.Status == OrderStatus.Returned))
+                {
+                    <form asp-action="UpdatePaymentStatus" asp-route-id="@Model.Id" method="post"
+                          onsubmit="return confirm('Bạn đã thực hiện hoàn tiền thực tế cho khách hàng?');">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="newStatus" value="@((int)PaymentStatus.Refunded)" />
+                        <button type="submit" class="adm-btn-action-secondary" style="height: 34px; padding: 0 14px; font-size: 0.78rem;">
+                            <i class="bi bi-arrow-counterclockwise"></i>
+                            <span>Xác nhận đã hoàn tiền</span>
+                        </button>
+                    </form>
+                }
             </div>
+
+            <!-- PAYMENT HISTORY LOG -->
+            @if (paymentHistories.Any())
+            {
+                <div class="mt-3 pt-3 border-top" style="border-color: var(--adm-border) !important;">
+                    <div class="text-muted mb-2" style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase;">
+                        Nhật ký thanh toán (@paymentHistories.Count)
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm mb-0" style="font-size: 0.76rem; border-color: var(--adm-border);">
+                            <thead>
+                                <tr class="text-muted" style="border-bottom: 1px solid var(--adm-border);">
+                                    <th>Thời gian</th>
+                                    <th>Sự kiện</th>
+                                    <th>Số tiền</th>
+                                    <th>Chuyển đổi</th>
+                                    <th>Thực hiện bởi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var ph in paymentHistories)
+                                {
+                                    var eventLabel = ph.Event switch
+                                    {
+                                        "Created" => "Tạo thanh toán",
+                                        "TransferReported" => "Khách báo chuyển khoản",
+                                        "StatusChanged" => "Thay đổi trạng thái",
+                                        "WebhookPaymentReceived" => "Webhook tự động",
+                                        "ReturnRefundConfirmed" => "Hoàn tiền",
+                                        _ => ph.Event
+                                    };
+                                    <tr style="border-bottom: 1px solid var(--adm-border);">
+                                        <td class="text-muted font-monospace">@ph.CreatedAt.ToLocalTime().ToString("dd/MM HH:mm")</td>
+                                        <td><span class="adm-pill gray" style="font-size: 0.68rem;">@eventLabel</span></td>
+                                        <td class="fw-bold" style="color: var(--adm-ink);">@ph.Amount.ToString("N0") ₫</td>
+                                        <td>
+                                            <span class="text-muted">@ph.OldStatus</span>
+                                            <i class="bi bi-arrow-right mx-1 text-muted" style="font-size: 0.65rem;"></i>
+                                            <span class="fw-semibold @(ph.NewStatus == PaymentStatus.Paid ? "text-success" : ph.NewStatus == PaymentStatus.Refunded ? "text-warning" : "text-danger")">@ph.NewStatus</span>
+                                        </td>
+                                        <td class="text-muted">@(ph.ActorUser?.FullName ?? (string.IsNullOrEmpty(ph.ActorUserId) ? "Hệ thống" : "Admin"))</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
         </div>
 
-        <!-- SHIPMENTS CARD -->
+        <!-- 3. SHIPMENTS CARD -->
         <div class="adm-card mb-4">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="fw-bold mb-0 adm-heading">
-                    <i class="bi bi-truck me-2" style="color: var(--adm-gold);"></i>Lượt Giao hàng Liên kết (@shipments.Count)
-                </h5>
-                @if (Model.Status == OrderStatus.Confirmed || Model.Status == OrderStatus.Processing || Model.Status == OrderStatus.Shipping)
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-truck" style="color: #0F172A; font-size: 1rem;"></i>
+                    <h2 class="fw-bold mb-0" style="font-size: 0.92rem; color: var(--adm-ink);">
+                        Lượt Giao hàng Liên kết (@shipments.Count)
+                    </h2>
+                </div>
+
+                @if (Model.Status == OrderStatus.Confirmed || Model.Status == OrderStatus.Processing)
                 {
-                    <a asp-controller="AdminShipments" asp-action="Create" asp-route-orderId="@Model.Id" class="btn btn-sm adm-btn-outline">
-                        <i class="bi bi-plus-circle me-1"></i> Phân công Shipper
+                    <a asp-controller="AdminShipments" asp-action="Create" asp-route-orderId="@Model.Id" class="adm-btn-action-primary" style="height: 32px; padding: 0 12px; font-size: 0.78rem; width: auto;">
+                        <i class="bi bi-plus-lg"></i>
+                        <span>Phân công Shipper</span>
                     </a>
                 }
             </div>
@@ -349,38 +504,38 @@
             @if (shipments.Any())
             {
                 <div class="table-responsive">
-                    <table class="adm-table mb-0">
+                    <table class="table align-middle mb-0" style="font-size: 0.82rem; border-color: var(--adm-border);">
                         <thead>
-                            <tr>
-                                <th>MÃ VẬN ĐƠN</th>
-                                <th>SHIPPER PHỤ TRÁCH</th>
-                                <th>TIỀN THU COD</th>
-                                <th>TRẠNG THÁI</th>
-                                <th class="text-end">THAO TÁC</th>
+                            <tr style="background: var(--adm-surface-hover); font-size: 0.72rem; color: var(--adm-ink-muted); text-transform: uppercase;">
+                                <th class="ps-3 py-2">Mã vận đơn</th>
+                                <th class="py-2">Shipper</th>
+                                <th class="py-2">Tiền COD</th>
+                                <th class="py-2">Trạng thái</th>
+                                <th class="py-2 pe-3 text-end">Thao tác</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var sh in shipments)
                             {
-                                <tr>
-                                    <td>
-                                        <span class="font-monospace fw-bold" style="color: var(--adm-cyan);">@sh.TrackingCode</span>
+                                <tr style="border-bottom: 1px solid var(--adm-border);">
+                                    <td class="ps-3 py-2 font-monospace fw-bold" style="color: #0F172A;">
+                                        @sh.TrackingCode
                                     </td>
                                     <td>
-                                        <div class="fw-semibold adm-heading">@(sh.Shipper?.FullName ?? "Chưa rõ")</div>
-                                        <div class="text-muted small">@(sh.Shipper?.PhoneNumber ?? "")</div>
+                                        <div class="fw-semibold" style="color: var(--adm-ink);">@(sh.Shipper?.FullName ?? "Chưa phân công")</div>
+                                        <div class="text-muted" style="font-size: 0.72rem;">@(sh.Shipper?.PhoneNumber ?? "")</div>
                                     </td>
-                                    <td class="fw-bold" style="color: var(--adm-gold);">
+                                    <td class="fw-bold" style="color: var(--adm-ink);">
                                         @(sh.CODAmount > 0 ? sh.CODAmount.ToString("N0") + " ₫" : "0 ₫")
                                     </td>
                                     <td>
-                                        <span class="badge" style="background: var(--adm-surface-hover); color: var(--adm-ink); border: 1px solid var(--adm-border);">
+                                        <span class="adm-pill @(sh.Status == ShipmentStatus.Delivered ? "green" : sh.Status == ShipmentStatus.Failed ? "rose" : "blue")">
                                             @GetShipmentStatusName(sh.Status)
                                         </span>
                                     </td>
-                                    <td class="text-end">
-                                        <a asp-controller="AdminShipments" asp-action="Details" asp-route-id="@sh.Id" class="btn btn-sm adm-btn-outline py-1 px-2">
-                                            Xem vận đơn <i class="bi bi-arrow-right ms-1"></i>
+                                    <td class="pe-3 text-end">
+                                        <a asp-controller="AdminShipments" asp-action="Details" asp-route-id="@sh.Id" class="adm-btn-action-secondary" style="height: 28px; padding: 0 10px; font-size: 0.75rem;">
+                                            Xem vận đơn <i class="bi bi-chevron-right ms-1"></i>
                                         </a>
                                     </td>
                                 </tr>
@@ -391,7 +546,7 @@
             }
             else
             {
-                <div class="text-muted small py-2">
+                <div class="text-muted p-3 text-center" style="font-size: 0.8rem; background: var(--adm-surface-hover); border-radius: 8px;">
                     <i class="bi bi-info-circle me-1"></i> Chưa có lượt vận chuyển nào được tạo cho đơn hàng này.
                 </div>
             }
@@ -399,115 +554,310 @@
 
     </div>
 
-    <!-- RIGHT SIDEBAR: RECIPIENT INFO, STATUS TRANSITION & TIMELINE -->
+    <!-- RIGHT SIDEBAR: ACTION CENTER, CUSTOMER PROFILE, AUDIT TRAIL -->
     <div class="col-lg-4">
 
-        <!-- STATUS TRANSITION CARD -->
-        <div class="adm-card mb-4">
-            <h5 class="fw-bold mb-3 adm-heading">
-                <i class="bi bi-arrow-repeat me-2" style="color: var(--adm-gold);"></i>Điều phối Trạng thái
-            </h5>
-
-            <div class="p-3 rounded-3 mb-3" style="background: var(--adm-surface-hover); border: 1px solid var(--adm-border);">
-                <div class="text-muted small">Trạng thái hiện tại:</div>
-                <div class="fs-5 fw-bold adm-heading mt-1">@GetStatusName(Model.Status)</div>
+        <!-- 1. ACTION CENTER CARD (DIRECT 1-CLICK CONTEXTUAL ACTIONS) -->
+        <div class="adm-card mb-4" style="border: 2px solid #0F172A !important;">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-lightning-charge-fill text-warning"></i>
+                    <h2 class="fw-bold mb-0" style="font-size: 0.92rem; color: var(--adm-ink);">Thao tác Đơn hàng</h2>
+                </div>
+                <span class="text-muted" style="font-size: 0.72rem;">1-Click</span>
             </div>
 
-            @if (nextStatuses.Any())
+            <!-- ACTION FLOW BY STATUS -->
+            @if (Model.Status == OrderStatus.PendingConfirmation)
             {
-                <form asp-action="UpdateStatus" method="post"
-                      onsubmit="return confirm('Bạn có chắc muốn chuyển trạng thái đơn hàng này?');">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="id" value="@Model.Id" />
+                <div class="mb-3">
+                    @if (Model.PaymentMethod == PaymentMethod.VietQR && Model.PaymentStatus != PaymentStatus.Paid)
+                    {
+                        <div class="alert alert-warning py-2 px-3 mb-3 border-0" style="font-size: 0.76rem; background: rgba(245, 158, 11, 0.12); color: #B45309; border-radius: 8px;">
+                            <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                            Đơn VietQR chưa xác nhận nhận tiền.
+                        </div>
+                    }
 
-                    <div class="mb-3">
-                        <label class="adm-form-label">Chuyển sang trạng thái tiếp theo:</label>
-                        <select name="newStatus" class="form-select adm-input-dark" required>
-                            @foreach (var st in nextStatuses)
-                            {
-                                <option value="@((int)st)">@GetStatusName(st)</option>
-                            }
-                        </select>
+                    <form asp-action="UpdateStatus" method="post" class="mb-2"
+                          onsubmit="return confirm('Xác nhận DUYỆT ĐƠN HÀNG #@Model.OrderCode ngay?');">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <input type="hidden" name="newStatus" value="@((int)OrderStatus.Confirmed)" />
+                        <button type="submit" class="adm-btn-action-primary" style="height: 40px;">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Duyệt đơn hàng ngay</span>
+                        </button>
+                    </form>
+
+                    @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+                    {
+                        <button type="button" class="adm-btn-action-danger w-100" data-bs-toggle="modal" data-bs-target="#cancelOrderModal">
+                            <i class="bi bi-x-circle"></i>
+                            <span>Hủy đơn hàng này</span>
+                        </button>
+                    }
+                </div>
+            }
+            else if (Model.Status == OrderStatus.Confirmed)
+            {
+                <div class="mb-3">
+                    <form asp-action="UpdateStatus" method="post" class="mb-2">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <input type="hidden" name="newStatus" value="@((int)OrderStatus.Processing)" />
+                        <button type="submit" class="adm-btn-action-primary" style="height: 40px;">
+                            <i class="bi bi-box-seam"></i>
+                            <span>Chuyển sang Đóng gói &amp; Xử lý kho</span>
+                        </button>
+                    </form>
+
+                    <a asp-controller="AdminShipments" asp-action="Create" asp-route-orderId="@Model.Id" class="adm-btn-action-secondary w-100 mb-2">
+                        <i class="bi bi-truck"></i>
+                        <span>Phân công Shipper giao ngay</span>
+                    </a>
+
+                    @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+                    {
+                        <button type="button" class="adm-btn-action-danger w-100" data-bs-toggle="modal" data-bs-target="#cancelOrderModal">
+                            <i class="bi bi-x-circle"></i>
+                            <span>Hủy đơn hàng</span>
+                        </button>
+                    }
+                </div>
+            }
+            else if (Model.Status == OrderStatus.Processing)
+            {
+                <div class="mb-3">
+                    <a asp-controller="AdminShipments" asp-action="Create" asp-route-orderId="@Model.Id" class="adm-btn-action-primary mb-2" style="height: 40px;">
+                        <i class="bi bi-truck"></i>
+                        <span>Bàn giao Shipper &amp; Tạo vận đơn</span>
+                    </a>
+
+                    <form asp-action="UpdateStatus" method="post" class="mb-2">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <input type="hidden" name="newStatus" value="@((int)OrderStatus.Shipping)" />
+                        <button type="submit" class="adm-btn-action-secondary w-100">
+                            <i class="bi bi-arrow-right-circle"></i>
+                            <span>Chuyển sang Đang giao</span>
+                        </button>
+                    </form>
+
+                    @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+                    {
+                        <button type="button" class="adm-btn-action-danger w-100" data-bs-toggle="modal" data-bs-target="#cancelOrderModal">
+                            <i class="bi bi-x-circle"></i>
+                            <span>Hủy đơn hàng</span>
+                        </button>
+                    }
+                </div>
+            }
+            else if (Model.Status == OrderStatus.Shipping)
+            {
+                <div class="mb-3">
+                    <div class="p-2 rounded mb-3" style="background: var(--adm-surface-hover); font-size: 0.78rem;">
+                        <i class="bi bi-info-circle text-primary me-1"></i>
+                        Đơn đang được vận chuyển. Kết quả giao nhận được đồng bộ từ Shipper.
                     </div>
 
-                    <button type="submit" class="btn adm-btn-atelier w-100 py-2 justify-content-center">
-                        <i class="bi bi-check2-circle"></i>
-                        <span>Cập nhật trạng thái</span>
-                    </button>
-                </form>
+                    <form asp-action="UpdateStatus" method="post" class="mb-2"
+                          onsubmit="return confirm('Xác nhận đơn hàng đã GIAO THÀNH CÔNG?');">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <input type="hidden" name="newStatus" value="@((int)OrderStatus.Delivered)" />
+                        <button type="submit" class="adm-btn-action-primary" style="height: 40px; background: #059669 !important; border-color: #059669 !important;">
+                            <i class="bi bi-check2-circle"></i>
+                            <span>Xác nhận Giao thành công</span>
+                        </button>
+                    </form>
+
+                    <form asp-action="UpdateStatus" method="post"
+                          onsubmit="return confirm('Ghi nhận giao hàng THẤT BẠI?');">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <input type="hidden" name="newStatus" value="@((int)OrderStatus.DeliveryFailed)" />
+                        <button type="submit" class="adm-btn-action-danger w-100">
+                            <i class="bi bi-exclamation-octagon"></i>
+                            <span>Báo Giao thất bại</span>
+                        </button>
+                    </form>
+                </div>
+            }
+            else if (Model.Status == OrderStatus.DeliveryFailed)
+            {
+                <div class="mb-3">
+                    <div class="alert alert-danger py-2 px-3 mb-3 border-0" style="font-size: 0.78rem;">
+                        <i class="bi bi-exclamation-circle-fill me-1"></i>
+                        Giao hàng không thành công.
+                    </div>
+
+                    <form asp-action="UpdateStatus" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <input type="hidden" name="newStatus" value="@((int)OrderStatus.Returned)" />
+                        <button type="submit" class="adm-btn-action-primary" style="height: 40px;">
+                            <i class="bi bi-box-arrow-in-left"></i>
+                            <span>Xác nhận đã nhận hàng hoàn về kho</span>
+                        </button>
+                    </form>
+                </div>
             }
             else
             {
-                <div class="text-muted small">
-                    <i class="bi bi-lock me-1"></i> Đơn hàng đã ở trạng thái kết thúc, không thể chuyển đổi thêm.
+                <div class="text-center py-3 text-muted" style="font-size: 0.8rem;">
+                    <i class="bi bi-check2-all text-success fs-4 d-block mb-1"></i>
+                    Đơn hàng đã ở trạng thái kết thúc.
                 </div>
             }
         </div>
 
-        <!-- RECIPIENT CARD -->
+        <!-- 2. CUSTOMER & DELIVERY INFO CARD -->
         <div class="adm-card mb-4">
-            <h5 class="fw-bold mb-3 adm-heading">
-                <i class="bi bi-person me-2" style="color: var(--adm-gold);"></i>Thông tin Nhận hàng
-            </h5>
-
-            <div class="mb-2">
-                <div class="text-muted small">Người nhận:</div>
-                <div class="fw-bold adm-heading">@Model.ReceiverName</div>
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <i class="bi bi-person-badge" style="color: #0F172A; font-size: 1rem;"></i>
+                <h2 class="fw-bold mb-0" style="font-size: 0.92rem; color: var(--adm-ink);">Khách hàng &amp; Giao nhận</h2>
             </div>
 
-            <div class="mb-2">
-                <div class="text-muted small">Số điện thoại:</div>
-                <div class="font-monospace fw-semibold adm-heading">@Model.Phone</div>
+            <!-- CUSTOMER MINI PROFILE -->
+            <div class="d-flex align-items-center gap-3 pb-3 mb-3 border-bottom" style="border-color: var(--adm-border) !important;">
+                <div class="adm-cust-avatar">
+                    @(!string.IsNullOrEmpty(Model.ReceiverName) ? Model.ReceiverName.Substring(0, 1).ToUpper() : "K")
+                </div>
+                <div class="flex-grow-1 overflow-hidden">
+                    <div class="fw-bold text-truncate" style="font-size: 0.88rem; color: var(--adm-ink);">
+                        @Model.ReceiverName
+                    </div>
+                    <div class="d-flex align-items-center gap-2 mt-1">
+                        <span class="adm-pill @(customerOrderCount > 1 ? "blue" : "gray")" style="font-size: 0.7rem;">
+                            @(customerOrderCount > 1 ? $"Khách quen · {customerOrderCount} đơn" : "Khách hàng mới")
+                        </span>
+                    </div>
+                </div>
             </div>
+
+            <!-- CONTACT DETAILS -->
+            <div class="mb-3">
+                <div class="text-muted" style="font-size: 0.72rem; text-transform: uppercase; font-weight: 600;">Số điện thoại</div>
+                <div class="d-flex align-items-center justify-content-between mt-1">
+                    <a href="tel:@Model.Phone" class="fw-bold font-monospace text-decoration-none" style="font-size: 0.88rem; color: #0F172A;">
+                        <i class="bi bi-telephone me-1 text-muted"></i>@Model.Phone
+                    </a>
+                    <button type="button" class="btn btn-sm adm-btn-table-action" onclick="copyAdmText(this, '@Model.Phone')" title="Sao chép SĐT" style="height: 26px; padding: 0 8px;">
+                        <i class="bi bi-copy"></i>
+                    </button>
+                </div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.User?.Email))
+            {
+                <div class="mb-3">
+                    <div class="text-muted" style="font-size: 0.72rem; text-transform: uppercase; font-weight: 600;">Email tài khoản</div>
+                    <div class="text-truncate mt-1" style="font-size: 0.82rem; color: var(--adm-ink);">
+                        <i class="bi bi-envelope me-1 text-muted"></i>@Model.User.Email
+                    </div>
+                </div>
+            }
 
             <div class="mb-0">
-                <div class="text-muted small">Địa chỉ nhận hàng:</div>
-                <div class="adm-text-contrast small">@Model.Address</div>
+                <div class="text-muted" style="font-size: 0.72rem; text-transform: uppercase; font-weight: 600;">Địa chỉ giao hàng</div>
+                <div class="p-2 rounded mt-1" style="background: var(--adm-surface-hover); font-size: 0.82rem; color: var(--adm-ink); line-height: 1.45;">
+                    <i class="bi bi-geo-alt me-1 text-danger"></i>@Model.Address
+                </div>
             </div>
         </div>
 
-        <!-- ORDER STATUS TIMELINE -->
+        <!-- 3. TIMELINE & AUDIT TRAIL -->
         <div class="adm-card mb-4">
-            <h5 class="fw-bold mb-3 adm-heading">
-                <i class="bi bi-clock-history me-2" style="color: var(--adm-gold);"></i>Lịch sử Xử lý (Timeline)
-            </h5>
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-clock-history" style="color: #0F172A; font-size: 1rem;"></i>
+                    <h2 class="fw-bold mb-0" style="font-size: 0.92rem; color: var(--adm-ink);">Lịch sử Xử lý</h2>
+                </div>
+                <span class="text-muted font-monospace" style="font-size: 0.72rem;">@histories.Count mốc</span>
+            </div>
 
             @if (histories.Any())
             {
-                <div class="adm-timeline">
+                <div class="adm-audit-trail">
                     @for (int i = 0; i < histories.Count; i++)
                     {
                         var h = histories[i];
                         var isLatest = i == histories.Count - 1;
-
-                        <div class="adm-timeline-item">
-                            <div class="adm-timeline-dot @(isLatest ? "active" : "")"></div>
-                            <div class="adm-timeline-content">
-                                <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <span class="fw-bold adm-heading small">@GetStatusName(h.NewStatus)</span>
-                                    <span class="text-muted font-monospace" style="font-size: 0.7rem;">
-                                        @h.CreatedAt.ToLocalTime().ToString("dd/MM HH:mm")
-                                    </span>
-                                </div>
-                                <div class="text-muted" style="font-size: 0.75rem;">
-                                    Bởi: <strong class="adm-text-contrast">@(h.ChangedByUser?.FullName ?? "Hệ thống")</strong>
-                                </div>
-                                @if (!string.IsNullOrWhiteSpace(h.Note))
-                                {
-                                    <div class="text-muted small mt-1" style="font-size: 0.72rem;">@h.Note</div>
-                                }
+                        <div class="adm-audit-node @(isLatest ? "latest" : "")">
+                            <div class="adm-audit-dot"></div>
+                            <div class="adm-audit-header">
+                                <span class="adm-audit-title">@GetStatusName(h.NewStatus)</span>
+                                <span class="adm-audit-time">@h.CreatedAt.ToLocalTime().ToString("dd/MM HH:mm")</span>
                             </div>
+                            <div class="adm-audit-meta">
+                                Bởi: <strong>@(h.ChangedByUser?.FullName ?? "Hệ thống")</strong>
+                            </div>
+                            @if (!string.IsNullOrWhiteSpace(h.Note))
+                            {
+                                <div class="text-muted mt-1" style="font-size: 0.72rem;">@h.Note</div>
+                            }
                         </div>
                     }
                 </div>
             }
             else
             {
-                <div class="text-muted small py-2">
-                    Chưa có lịch sử chuyển đổi trạng thái nào.
+                <div class="text-muted text-center py-2" style="font-size: 0.78rem;">
+                    Chưa có lịch sử trạng thái.
                 </div>
             }
         </div>
 
     </div>
 </div>
+
+<!-- CANCEL ORDER MODAL -->
+<div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-labelledby="cancelOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 12px; border: 1px solid var(--adm-border);">
+            <div class="modal-header border-bottom" style="border-color: var(--adm-border) !important;">
+                <h5 class="modal-title fw-bold" id="cancelOrderModalLabel" style="font-size: 0.95rem; color: var(--adm-ink);">
+                    <i class="bi bi-exclamation-triangle-fill text-danger me-2"></i> Xác nhận Hủy đơn hàng #@Model.OrderCode
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="UpdateStatus" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Id" />
+                <input type="hidden" name="newStatus" value="@((int)OrderStatus.Cancelled)" />
+                <div class="modal-body" style="font-size: 0.84rem;">
+                    <p class="text-muted mb-3">
+                        Bạn có chắc chắn muốn hủy đơn hàng này không? Sau khi hủy:
+                    </p>
+                    <ul class="text-muted ps-3 mb-3" style="font-size: 0.8rem;">
+                        <li>Toàn bộ số lượng sản phẩm trong đơn sẽ được tự động hoàn lại tồn kho.</li>
+                        <li>Trạng thái đơn hàng sẽ chuyển sang "Đã hủy" và không thể hoàn tác.</li>
+                    </ul>
+                </div>
+                <div class="modal-footer border-top" style="border-color: var(--adm-border) !important;">
+                    <button type="button" class="adm-btn-action-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="adm-btn-action-danger">
+                        <i class="bi bi-x-circle me-1"></i> Xác nhận Hủy đơn
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function copyAdmText(btn, text) {
+            if (!navigator.clipboard) return;
+            navigator.clipboard.writeText(text).then(() => {
+                const icon = btn.querySelector('i');
+                if (icon) {
+                    const originalClass = icon.className;
+                    icon.className = 'bi bi-check-lg text-success';
+                    setTimeout(() => { icon.className = originalClass; }, 1500);
+                }
+            });
+        }
+    </script>
+}

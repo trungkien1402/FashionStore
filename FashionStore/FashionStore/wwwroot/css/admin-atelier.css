@@ -3486,3 +3486,307 @@ body.adm-body {
         grid-template-columns: 1fr;
     }
 }
+
+/* ================= ORDER DETAILS ATELIER 2026 ================= */
+.adm-stepper-wrap {
+    background: var(--adm-surface);
+    border: 1px solid var(--adm-border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    box-shadow: var(--adm-card-shadow);
+}
+
+.adm-stepper {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    position: relative;
+}
+
+.adm-stepper-track {
+    position: absolute;
+    top: 14px;
+    left: 40px;
+    right: 40px;
+    height: 2px;
+    background: var(--adm-border);
+    z-index: 1;
+}
+
+.adm-stepper-progress {
+    position: absolute;
+    top: 14px;
+    left: 40px;
+    height: 2px;
+    background: #0F172A;
+    z-index: 2;
+    transition: width 0.3s ease;
+}
+
+[data-theme="dark"] .adm-stepper-progress {
+    background: #38BDF8;
+}
+
+.adm-step-item {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    flex: 1;
+}
+
+.adm-step-node {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--adm-surface);
+    border: 2px solid var(--adm-border);
+    color: var(--adm-ink-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem;
+    font-weight: 700;
+    transition: all 0.2s ease;
+    margin-bottom: 8px;
+}
+
+.adm-step-item.completed .adm-step-node {
+    background: #0F172A;
+    border-color: #0F172A;
+    color: #FFFFFF;
+}
+
+[data-theme="dark"] .adm-step-item.completed .adm-step-node {
+    background: #38BDF8;
+    border-color: #38BDF8;
+    color: #09090B;
+}
+
+.adm-step-item.active .adm-step-node {
+    background: #FFFFFF;
+    border-color: #0F172A;
+    color: #0F172A;
+    box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.12);
+}
+
+[data-theme="dark"] .adm-step-item.active .adm-step-node {
+    background: #09090B;
+    border-color: #38BDF8;
+    color: #38BDF8;
+    box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.2);
+}
+
+.adm-step-item.cancelled .adm-step-node {
+    background: #EF4444;
+    border-color: #EF4444;
+    color: #FFFFFF;
+}
+
+.adm-step-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--adm-ink);
+    margin-bottom: 2px;
+}
+
+.adm-step-time {
+    font-size: 0.68rem;
+    color: var(--adm-ink-muted);
+    font-family: var(--adm-mono);
+}
+
+/* THUMBNAIL & PRODUCT ROW */
+.adm-prod-thumb {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: #F1F5F9;
+    border: 1px solid var(--adm-border);
+    flex-shrink: 0;
+}
+
+.adm-prod-thumb-placeholder {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    background: #F1F5F9;
+    border: 1px solid var(--adm-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94A3B8;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+[data-theme="dark"] .adm-prod-thumb-placeholder {
+    background: #18181B;
+    border-color: #27272A;
+}
+
+/* SMART ACTION BUTTONS */
+.adm-btn-action-primary {
+    background: #0F172A !important;
+    color: #FFFFFF !important;
+    border: 1px solid #0F172A !important;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 9px 16px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.15s ease;
+    width: 100%;
+    cursor: pointer;
+}
+
+.adm-btn-action-primary:hover {
+    background: #1E293B !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+}
+
+[data-theme="dark"] .adm-btn-action-primary {
+    background: #38BDF8 !important;
+    color: #09090B !important;
+    border-color: #38BDF8 !important;
+}
+
+[data-theme="dark"] .adm-btn-action-primary:hover {
+    background: #7DD3FC !important;
+}
+
+.adm-btn-action-secondary {
+    background: var(--adm-surface) !important;
+    color: var(--adm-ink) !important;
+    border: 1px solid var(--adm-border) !important;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.15s ease;
+    cursor: pointer;
+}
+
+.adm-btn-action-secondary:hover {
+    background: var(--adm-surface-hover) !important;
+    border-color: var(--adm-ink-muted) !important;
+}
+
+.adm-btn-action-danger {
+    background: transparent !important;
+    color: #DC2626 !important;
+    border: 1px solid rgba(220, 38, 38, 0.25) !important;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.15s ease;
+    cursor: pointer;
+}
+
+.adm-btn-action-danger:hover {
+    background: rgba(220, 38, 38, 0.08) !important;
+    border-color: #DC2626 !important;
+}
+
+/* CUSTOMER CARD */
+.adm-cust-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #0F172A;
+    color: #FFFFFF;
+    font-size: 0.95rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+[data-theme="dark"] .adm-cust-avatar {
+    background: #38BDF8;
+    color: #09090B;
+}
+
+/* MINIMAL TIMELINE ATELIER */
+.adm-audit-trail {
+    position: relative;
+    padding-left: 20px;
+}
+
+.adm-audit-trail::before {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    bottom: 6px;
+    width: 2px;
+    background: var(--adm-border);
+}
+
+.adm-audit-node {
+    position: relative;
+    padding-bottom: 16px;
+}
+
+.adm-audit-node:last-child {
+    padding-bottom: 0;
+}
+
+.adm-audit-dot {
+    position: absolute;
+    left: -20px;
+    top: 4px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--adm-surface);
+    border: 2px solid var(--adm-border);
+}
+
+.adm-audit-node.latest .adm-audit-dot {
+    background: #10B981;
+    border-color: #10B981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+.adm-audit-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2px;
+}
+
+.adm-audit-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--adm-ink);
+}
+
+.adm-audit-time {
+    font-size: 0.7rem;
+    color: var(--adm-ink-muted);
+    font-family: var(--adm-mono);
+}
+
+.adm-audit-meta {
+    font-size: 0.74rem;
+    color: var(--adm-ink-muted);
+}

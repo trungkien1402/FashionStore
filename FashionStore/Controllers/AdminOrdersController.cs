@@ -129,7 +129,10 @@ public class AdminOrdersController : Controller
     public async Task<IActionResult> Details(int id)
     {
         var order = await _context.Orders
+            .Include(o => o.User)
             .Include(o => o.Items)
+                .ThenInclude(i => i.ProductVariant)
+                    .ThenInclude(v => v.Product)
             .AsNoTracking()
             .FirstOrDefaultAsync(o => o.Id == id);
 
@@ -165,6 +168,15 @@ public class AdminOrdersController : Controller
             .ToListAsync();
 
         ViewBag.Shipments = shipments;
+
+        if (!string.IsNullOrEmpty(order.UserId))
+        {
+            ViewBag.CustomerOrderCount = await _context.Orders.CountAsync(o => o.UserId == order.UserId);
+        }
+        else
+        {
+            ViewBag.CustomerOrderCount = 1;
+        }
 
         return View(order);
     }
