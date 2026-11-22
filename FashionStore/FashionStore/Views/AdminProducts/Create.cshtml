@@ -713,7 +713,10 @@
         let currentBackdrop = 'atelier'; // 'atelier' | 'white' | 'transparent'
         let currentThemeColor = '#5C3A21';
         let activeSlot = 1; // 1 | 2 | 3
-        const originalDataUrls = { 1: null, 2: null, 3: null };
+        const rawDataUrls = { 1: null, 2: null, 3: null };
+        const activeDataUrls = { 1: null, 2: null, 3: null };
+        const isCutState = { 1: false, 2: false, 3: false };
+        const originalDataUrls = rawDataUrls;
 
         const presets = {
             shoes: {
@@ -1067,15 +1070,17 @@
             const img = document.getElementById('stageImg');
             const placeholder = document.getElementById('stagePlaceholder');
             const viewport = document.getElementById('stageViewport');
-            const dataUrl = originalDataUrls[activeSlot];
+            const dataUrl = activeDataUrls[activeSlot];
+            const isCut = isCutState[activeSlot];
 
             if (dataUrl) {
                 img.src = dataUrl;
                 img.classList.remove('d-none');
+                img.classList.toggle('is-transparent', !!isCut);
                 placeholder.classList.add('d-none');
                 viewport.classList.add('has-image');
                 document.getElementById('btnStageMagic').disabled = false;
-                document.getElementById('btnStageReset').disabled = false;
+                document.getElementById('btnStageReset').disabled = !rawDataUrls[activeSlot];
                 document.getElementById('btnStageRemove').disabled = false;
             } else {
                 img.src = '#';
@@ -1104,31 +1109,58 @@
                 }
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    originalDataUrls[slot] = e.target.result;
+                    const dataUrl = e.target.result;
+                    rawDataUrls[slot] = dataUrl;
+                    activeDataUrls[slot] = dataUrl;
+                    isCutState[slot] = false;
                     const thumbBox = document.getElementById(`thumbBox${slot}`);
-                    thumbBox.innerHTML = `<img src="${e.target.result}" class="adm-angle-thumb-preview" alt="Slot ${slot}" />`;
-                    const img = document.getElementById('stageImg');
-                    img.classList.remove('is-transparent');
-                    updateStageDisplay();
+                    if (thumbBox) {
+                        thumbBox.innerHTML = `<img src="${dataUrl}" class="adm-angle-thumb-preview" alt="Slot ${slot}" />`;
+                    }
+                    if (slot === activeSlot) {
+                        updateStageDisplay();
+                    }
                 };
                 reader.readAsDataURL(file);
             }
         }
 
-        function resetStageImage() {
-            if (originalDataUrls[activeSlot]) {
-                const img = document.getElementById('stageImg');
-                img.src = originalDataUrls[activeSlot];
-                img.classList.remove('is-transparent');
-                updateStageBackdrop();
+        async function resetStageImage() {
+            if (rawDataUrls[activeSlot]) {
+                const rawUrl = rawDataUrls[activeSlot];
+                activeDataUrls[activeSlot] = rawUrl;
+                isCutState[activeSlot] = false;
+
+                try {
+                    const res = await fetch(rawUrl);
+                    const blob = await res.blob();
+                    const rawFile = new File([blob], `raw-slot-${activeSlot}.jpg`, { type: blob.type || 'image/jpeg' });
+                    const dt = new DataTransfer();
+                    dt.items.add(rawFile);
+                    const input = document.getElementById(`realInputSlot${activeSlot}`);
+                    if (input) input.files = dt.files;
+                } catch (e) {
+                    console.error(e);
+                }
+
+                const thumbBox = document.getElementById(`thumbBox${activeSlot}`);
+                if (thumbBox) {
+                    thumbBox.innerHTML = `<img src="${rawUrl}" class="adm-angle-thumb-preview" alt="Slot ${activeSlot}" />`;
+                }
+                updateStageDisplay();
             }
         }
 
         function removeStageImage() {
             const input = document.getElementById(`realInputSlot${activeSlot}`);
             if (input) input.value = '';
-            originalDataUrls[activeSlot] = null;
-            document.getElementById(`thumbBox${activeSlot}`).innerHTML = `<span class="text-muted small" style="font-size: 0.65rem;">Trống</span>`;
+            rawDataUrls[activeSlot] = null;
+            activeDataUrls[activeSlot] = null;
+            isCutState[activeSlot] = false;
+            const thumbBox = document.getElementById(`thumbBox${activeSlot}`);
+            if (thumbBox) {
+                thumbBox.innerHTML = `<span class="text-muted small" style="font-size: 0.65rem;">Trống</span>`;
+            }
             updateStageDisplay();
         }
 
@@ -1137,9 +1169,9 @@
             const input = document.getElementById(`realInputSlot${activeSlot}`);
             let fileToProcess = input?.files && input.files[0] ? input.files[0] : null;
 
-            if (!fileToProcess && originalDataUrls[activeSlot]) {
+            if (!fileToProcess && activeDataUrls[activeSlot]) {
                 try {
-                    const res = await fetch(originalDataUrls[activeSlot]);
+                    const res = await fetch(activeDataUrls[activeSlot]);
                     const blob = await res.blob();
                     fileToProcess = new File([blob], `input-${activeSlot}.jpg`, { type: blob.type || 'image/jpeg' });
                 } catch (e) {
@@ -1169,25 +1201,36 @@
                 }
 
                 const transparentBlob = await response.blob();
-                const transparentUrl = URL.createObjectURL(transparentBlob);
+                
+                // Read as base64 DataURL so it persists reliably when switching between slots
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const transparentUrl = e.target.result;
+                    activeDataUrls[activeSlot] = transparentUrl;
+                    isCutState[activeSlot] = true;
 
-                // Show transparent image directly in stage viewport
-                const stageImg = document.getElementById('stageImg');
-                stageImg.src = transparentUrl;
-                stageImg.classList.add('is-transparent');
-                document.getElementById(`thumbBox${activeSlot}`).innerHTML = `<img src="${transparentUrl}" class="adm-angle-thumb-preview" alt="Slot ${activeSlot}" />`;
+                    // Update thumbnail preview
+                    const thumbBox = document.getElementById(`thumbBox${activeSlot}`);
+                    if (thumbBox) {
+                        thumbBox.innerHTML = `<img src="${transparentUrl}" class="adm-angle-thumb-preview" alt="Slot ${activeSlot}" />`;
+                    }
 
-                // Assign to real file input via DataTransfer
-                const processedFile = new File([transparentBlob], `transparent-slot-${activeSlot}.png`, { type: 'image/png' });
-                const dt = new DataTransfer();
-                dt.items.add(processedFile);
-                input.files = dt.files;
+                    // Assign to real file input via DataTransfer
+                    const processedFile = new File([transparentBlob], `transparent-slot-${activeSlot}.png`, { type: 'image/png' });
+                    const dt = new DataTransfer();
+                    dt.items.add(processedFile);
+                    input.files = dt.files;
 
-                btn.innerHTML = '<i class="bi bi-check2"></i> Đã tách nền AI!';
-                setTimeout(() => {
-                    btn.innerHTML = originalBtnHtml;
-                    btn.disabled = false;
-                }, 2000);
+                    // Re-render stage display for active slot
+                    updateStageDisplay();
+
+                    btn.innerHTML = '<i class="bi bi-check2"></i> Đã tách nền AI!';
+                    setTimeout(() => {
+                        btn.innerHTML = originalBtnHtml;
+                        btn.disabled = false;
+                    }, 2000);
+                };
+                reader.readAsDataURL(transparentBlob);
 
             } catch (err) {
                 console.error(err);
