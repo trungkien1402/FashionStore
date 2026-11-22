@@ -31,10 +31,18 @@ public class AdminProductViewModel
     public int CategoryId { get; set; }
 
     public IFormFile? ImageFile { get; set; }
+    public IFormFile? ImageBackFile { get; set; }
+    public IFormFile? ImageSideFile { get; set; }
+    public IFormFile? ImagePairFile { get; set; }
 
     public string? CurrentImageUrl { get; set; }
 
     public bool IsActive { get; set; } = true;
+
+    /// <summary>
+    /// Backdrop studio: "atelier" (ấm), "white" (trắng), "transparent" (trong suốt)
+    /// </summary>
+    public string StudioBackdrop { get; set; } = "atelier";
 
     /// <summary>
     /// "variants" (nhiều size/màu) hoặc "simple" (freesize)

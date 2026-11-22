@@ -282,36 +282,156 @@
         <!-- RIGHT COLUMN: MEDIA, PREVIEW & SUBMIT -->
         <div class="col-lg-4">
 
-            <!-- CARD 1: MEDIA UPLOAD -->
-            <div class="adm-card mb-4">
-                <div class="d-flex align-items-center gap-2 mb-3">
-                    <i class="bi bi-image text-primary" style="font-size: 1rem;"></i>
-                    <h2 class="fw-bold mb-0" style="font-size: 0.92rem; color: var(--adm-ink);">Hình ảnh Đại diện *</h2>
+            <!-- CARD 1: ATELIER PHOTO STUDIO & BACKGROUND ENGINE -->
+            <div class="adm-card mb-4" style="border: 1px solid var(--adm-border);">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-camera text-primary" style="font-size: 1.05rem;"></i>
+                        <div>
+                            <h2 class="fw-bold mb-0" style="font-size: 0.92rem; color: var(--adm-ink);">
+                                Studio &amp; Chuẩn hóa Ảnh
+                            </h2>
+                        </div>
+                    </div>
+                    <span id="studioProtocolBadge" class="badge" style="background: #18181B; color: #FAF8F5; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em; padding: 4px 8px;">
+                        ÁO / QUẦN (3 GÓC)
+                    </span>
                 </div>
 
-                <!-- DRAG & DROP ZONE -->
-                <div class="adm-dropzone mb-2" id="dropZone" onclick="document.getElementById('productImageFile').click()">
-                    <input asp-for="ImageFile" type="file" id="productImageFile" class="visually-hidden"
-                           accept=".jpg,.jpeg,.png,.webp" required onchange="handleFileSelect(this)" />
-
-                    <!-- PLACEHOLDER STATE -->
-                    <div id="dropPlaceholder">
-                        <i class="bi bi-cloud-arrow-up" style="font-size: 2rem; color: var(--adm-ink-muted);"></i>
-                        <div class="fw-semibold mt-2" style="font-size: 0.84rem; color: var(--adm-ink);">
-                            Kéo thả ảnh vào đây hoặc duyệt file
-                        </div>
-                        <div class="text-muted mt-1" style="font-size: 0.72rem;">
-                            Hỗ trợ JPG, PNG, WEBP (Tối đa 5MB)
-                        </div>
+                <!-- STUDIO BACKDROP SELECTOR -->
+                <div class="p-2 mb-3 rounded-2" style="background: var(--adm-surface-hover); border: 1px solid var(--adm-border);">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="text-muted small" style="font-size: 0.68rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em;">
+                            Phông nền Studio:
+                        </span>
+                        <span class="text-muted" style="font-size: 0.68rem;">Đồng bộ toàn web</span>
                     </div>
-
-                    <!-- PREVIEW STATE -->
-                    <div id="dropPreview" class="d-none position-relative">
-                        <img id="previewImg" src="#" alt="Preview" class="rounded-2" style="width: 100%; max-height: 240px; object-fit: contain; background: #F8FAFC;" />
-                        <button type="button" class="btn btn-sm btn-dark position-absolute top-0 end-0 m-2 rounded-circle" style="width: 28px; height: 28px; padding: 0;" onclick="removeImage(event)" title="Xóa ảnh">
-                            <i class="bi bi-x-lg"></i>
+                    <div class="d-flex gap-1" id="backdropButtonGroup">
+                        <button type="button" class="btn btn-sm adm-chip-btn active flex-fill justify-content-center backdrop-btn" data-backdrop="atelier" onclick="selectBackdrop('atelier')">
+                            <span style="width: 10px; height: 10px; border-radius: 50%; background: #FAF8F5; border: 1px solid #D4AF37; display: inline-block;"></span>
+                            <span style="font-size: 0.72rem;">Atelier Ấm</span>
+                        </button>
+                        <button type="button" class="btn btn-sm adm-chip-btn flex-fill justify-content-center backdrop-btn" data-backdrop="white" onclick="selectBackdrop('white')">
+                            <span style="width: 10px; height: 10px; border-radius: 50%; background: #FFFFFF; border: 1px solid #CBD5E1; display: inline-block;"></span>
+                            <span style="font-size: 0.72rem;">Trắng Tinh</span>
+                        </button>
+                        <button type="button" class="btn btn-sm adm-chip-btn flex-fill justify-content-center backdrop-btn" data-backdrop="transparent" onclick="selectBackdrop('transparent')">
+                            <span style="width: 10px; height: 10px; border-radius: 50%; background: repeating-conic-gradient(#808080 0% 25%, transparent 0% 50%) 50%/6px 6px; display: inline-block;"></span>
+                            <span style="font-size: 0.72rem;">Trong suốt</span>
                         </button>
                     </div>
+                    <input type="hidden" asp-for="StudioBackdrop" id="studioBackdropInput" value="atelier" />
+                </div>
+
+                <!-- PROTOCOL SLOT TABS -->
+                <div class="d-flex gap-1 mb-2 border-bottom pb-2" style="border-color: var(--adm-border) !important;">
+                    <button type="button" class="adm-chip-btn slot-tab-btn active flex-fill justify-content-center" data-slot="1" onclick="switchSlot(1)">
+                        <span id="tab1Title">Mặt trước *</span>
+                    </button>
+                    <button type="button" class="adm-chip-btn slot-tab-btn flex-fill justify-content-center" data-slot="2" onclick="switchSlot(2)">
+                        <span id="tab2Title">Mặt sau</span>
+                    </button>
+                    <button type="button" class="adm-chip-btn slot-tab-btn flex-fill justify-content-center" data-slot="3" onclick="switchSlot(3)">
+                        <span id="tab3Title">Bên hông</span>
+                    </button>
+                </div>
+
+                <!-- HIDDEN FILE INPUTS FOR 3 SLOTS -->
+                <input asp-for="ImageFile" type="file" id="inputSlot1" class="d-none" accept=".jpg,.jpeg,.png,.webp" required onchange="handleSlotFileSelect(1, this)" />
+                <input asp-for="ImageBackFile" type="file" id="inputSlot2" class="d-none" accept=".jpg,.jpeg,.png,.webp" onchange="handleSlotFileSelect(2, this)" />
+                <input asp-for="ImageSideFile" type="file" id="inputSlot3" class="d-none" accept=".jpg,.jpeg,.png,.webp" onchange="handleSlotFileSelect(3, this)" />
+
+                <!-- SLOT 1 CONTAINER -->
+                <div class="slot-pane" id="paneSlot1">
+                    <div class="adm-dropzone mb-2" id="dropZone1" onclick="triggerSlotUpload(1)">
+                        <div id="placeholder1" class="text-center py-3">
+                            <div id="ghostIcon1" class="mb-2"></div>
+                            <div class="fw-semibold" id="slot1TitleText" style="font-size: 0.82rem; color: var(--adm-ink);">
+                                Tải ảnh Mặt trước
+                            </div>
+                            <div class="text-muted small mt-1" id="slot1DescText" style="font-size: 0.7rem;">
+                                Chụp phẳng phiu nhìn thẳng, thấy trọn vẹn phom dáng
+                            </div>
+                        </div>
+                        <div id="previewContainer1" class="d-none position-relative">
+                            <img id="previewImg1" src="#" alt="Slot 1" class="rounded-2" style="width: 100%; max-height: 220px; object-fit: contain; transition: all 0.2s;" />
+                            <button type="button" class="btn btn-sm btn-dark position-absolute top-0 end-0 m-2 rounded-circle" style="width: 26px; height: 26px; padding: 0;" onclick="removeSlotImage(1, event)" title="Xóa">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="button" id="btnMagic1" class="adm-btn-action-primary flex-fill justify-content-center py-1" style="height: 32px; font-size: 0.74rem;" onclick="processMagicBackdrop(1)" disabled>
+                            <i class="bi bi-magic me-1"></i> Tách nền &amp; Gắn Studio
+                        </button>
+                        <button type="button" id="btnReset1" class="adm-btn-action-secondary py-1" style="height: 32px; font-size: 0.74rem;" onclick="resetSlotImage(1)" title="Ảnh gốc" disabled>
+                            <i class="bi bi-arrow-counterclockwise"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SLOT 2 CONTAINER -->
+                <div class="slot-pane d-none" id="paneSlot2">
+                    <div class="adm-dropzone mb-2" id="dropZone2" onclick="triggerSlotUpload(2)">
+                        <div id="placeholder2" class="text-center py-3">
+                            <div id="ghostIcon2" class="mb-2"></div>
+                            <div class="fw-semibold" id="slot2TitleText" style="font-size: 0.82rem; color: var(--adm-ink);">
+                                Tải ảnh Mặt sau
+                            </div>
+                            <div class="text-muted small mt-1" id="slot2DescText" style="font-size: 0.7rem;">
+                                Chụp lưng áo/quần hoặc góc xoay 180°
+                            </div>
+                        </div>
+                        <div id="previewContainer2" class="d-none position-relative">
+                            <img id="previewImg2" src="#" alt="Slot 2" class="rounded-2" style="width: 100%; max-height: 220px; object-fit: contain; transition: all 0.2s;" />
+                            <button type="button" class="btn btn-sm btn-dark position-absolute top-0 end-0 m-2 rounded-circle" style="width: 26px; height: 26px; padding: 0;" onclick="removeSlotImage(2, event)" title="Xóa">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="button" id="btnMagic2" class="adm-btn-action-primary flex-fill justify-content-center py-1" style="height: 32px; font-size: 0.74rem;" onclick="processMagicBackdrop(2)" disabled>
+                            <i class="bi bi-magic me-1"></i> Tách nền &amp; Gắn Studio
+                        </button>
+                        <button type="button" id="btnReset2" class="adm-btn-action-secondary py-1" style="height: 32px; font-size: 0.74rem;" onclick="resetSlotImage(2)" title="Ảnh gốc" disabled>
+                            <i class="bi bi-arrow-counterclockwise"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SLOT 3 CONTAINER -->
+                <div class="slot-pane d-none" id="paneSlot3">
+                    <div class="adm-dropzone mb-2" id="dropZone3" onclick="triggerSlotUpload(3)">
+                        <div id="placeholder3" class="text-center py-3">
+                            <div id="ghostIcon3" class="mb-2"></div>
+                            <div class="fw-semibold" id="slot3TitleText" style="font-size: 0.82rem; color: var(--adm-ink);">
+                                Tải ảnh Bên hông
+                            </div>
+                            <div class="text-muted small mt-1" id="slot3DescText" style="font-size: 0.7rem;">
+                                Góc nhìn sườn áo hoặc chi tiết đường kim mũi chỉ
+                            </div>
+                        </div>
+                        <div id="previewContainer3" class="d-none position-relative">
+                            <img id="previewImg3" src="#" alt="Slot 3" class="rounded-2" style="width: 100%; max-height: 220px; object-fit: contain; transition: all 0.2s;" />
+                            <button type="button" class="btn btn-sm btn-dark position-absolute top-0 end-0 m-2 rounded-circle" style="width: 26px; height: 26px; padding: 0;" onclick="removeSlotImage(3, event)" title="Xóa">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="button" id="btnMagic3" class="adm-btn-action-primary flex-fill justify-content-center py-1" style="height: 32px; font-size: 0.74rem;" onclick="processMagicBackdrop(3)" disabled>
+                            <i class="bi bi-magic me-1"></i> Tách nền &amp; Gắn Studio
+                        </button>
+                        <button type="button" id="btnReset3" class="adm-btn-action-secondary py-1" style="height: 32px; font-size: 0.74rem;" onclick="resetSlotImage(3)" title="Ảnh gốc" disabled>
+                            <i class="bi bi-arrow-counterclockwise"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STATUS SUMMARY OF SLOTS -->
+                <div class="mt-3 pt-2 border-top d-flex align-items-center justify-content-between" style="border-color: var(--adm-border) !important; font-size: 0.72rem;">
+                    <span class="text-muted">Tiến độ studio:</span>
+                    <span id="studioProgressText" class="fw-bold" style="color: var(--adm-ink);">0/3 ảnh đã tải</span>
                 </div>
                 <span asp-validation-for="ImageFile" class="text-danger small mt-1 d-block" style="font-size: 0.74rem;"></span>
             </div>
@@ -632,39 +752,111 @@
         // INITIAL RENDER
         renderMatrix();
 
-        // 5. IMAGE DRAG AND DROP & PREVIEW
-        const dropZone = document.getElementById('dropZone');
-        const fileInput = document.getElementById('productImageFile');
-        const dropPlaceholder = document.getElementById('dropPlaceholder');
-        const dropPreview = document.getElementById('dropPreview');
-        const previewImg = document.getElementById('previewImg');
+        // 5. ATELIER PHOTO STUDIO & BACKGROUND ENGINE
+        let currentStudioProtocol = 'apparel';
+        let currentBackdrop = 'atelier';
+        let activeSlot = 1;
+        const originalDataUrls = { 1: null, 2: null, 3: null };
 
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropZone.addEventListener(eventName, (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                dropZone.classList.add('dragover');
-            });
-        });
+        const ghostSvg = {
+            shirtFront: `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg>`,
+            shirtBack: `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/><line x1="12" y1="2" x2="12" y2="7"/></svg>`,
+            shirtSide: `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M7 6h10"/><path d="M11 10h2"/></svg>`,
+            shoePair: `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 17h18a2 2 0 0 0 2-2v-1c0-2-2-4-5-4l-4-2-3 1c-2 1-3 2.5-3 5v1a2 2 0 0 0 2 2z"/><path d="M5 21h17a1 1 0 0 0 1-1v-1c0-1.5-1.5-3-4-3l-4-1.5-3 .8c-1.5.8-2.5 2-2.5 4v.7"/><circle cx="10" cy="13" r="1"/></svg>`,
+            shoeSide: `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 17h20v1.5a1.5 1.5 0 0 1-1.5 1.5H3.5A1.5 1.5 0 0 1 2 18.5V17z"/><path d="M2 17c0-3 1.5-5.5 4-6.5l6-3 5 2.5c2.5 1.5 3 4 3 7"/><path d="M9 14h5"/></svg>`,
+            shoeSole: `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="5" ry="9"/><path d="M12 5v14"/><path d="M8 9h8"/><path d="M8 15h8"/></svg>`
+        };
 
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                dropZone.classList.remove('dragover');
-            });
-        });
+        function setStudioProtocol(protocol) {
+            currentStudioProtocol = protocol;
+            const badge = document.getElementById('studioProtocolBadge');
+            const tab1 = document.getElementById('tab1Title');
+            const tab2 = document.getElementById('tab2Title');
+            const tab3 = document.getElementById('tab3Title');
 
-        dropZone.addEventListener('drop', (e) => {
-            const dt = e.dataTransfer;
-            const files = dt.files;
-            if (files && files.length > 0) {
-                fileInput.files = files;
-                handleFileSelect(fileInput);
+            if (protocol === 'footwear') {
+                badge.textContent = 'GIÀY DÉP (2 ĐÔI & 1 BÊN)';
+                badge.style.background = '#854D0E';
+                tab1.textContent = '2 Đôi Nghệ Thuật *';
+                tab2.textContent = 'Nghiêng 1 Bên';
+                tab3.textContent = 'Đế & Chi tiết';
+
+                document.getElementById('ghostIcon1').innerHTML = ghostSvg.shoePair;
+                document.getElementById('slot1TitleText').textContent = 'Ảnh 2 Đôi Xếp Nghệ Thuật (Hero)';
+                document.getElementById('slot1DescText').textContent = '2 chiếc xếp chéo góc 45° chuẩn ảnh bìa tạp chí Showroom';
+
+                document.getElementById('ghostIcon2').innerHTML = ghostSvg.shoeSide;
+                document.getElementById('slot2TitleText').textContent = 'Ảnh Nghiêng 1 Bên (Lateral Side)';
+                document.getElementById('slot2DescText').textContent = 'Ảnh chụp góc ngang cạnh ngoài, thấy rõ phom dáng đế & thân';
+
+                document.getElementById('ghostIcon3').innerHTML = ghostSvg.shoeSole;
+                document.getElementById('slot3TitleText').textContent = 'Ảnh Cận Cảnh / Mặt Đế Giày';
+                document.getElementById('slot3DescText').textContent = 'Góc nhìn từ trên xuống hoặc bề mặt đế giày sắc nét';
+            } else {
+                badge.textContent = 'ÁO / QUẦN (3 GÓC)';
+                badge.style.background = '#18181B';
+                tab1.textContent = 'Mặt trước *';
+                tab2.textContent = 'Mặt sau';
+                tab3.textContent = 'Bên hông';
+
+                document.getElementById('ghostIcon1').innerHTML = ghostSvg.shirtFront;
+                document.getElementById('slot1TitleText').textContent = 'Ảnh Mặt Trước (Front Hero)';
+                document.getElementById('slot1DescText').textContent = 'Chụp phẳng phiu nhìn thẳng, thấy trọn vẹn phom dáng';
+
+                document.getElementById('ghostIcon2').innerHTML = ghostSvg.shirtBack;
+                document.getElementById('slot2TitleText').textContent = 'Ảnh Mặt Sau (Back View)';
+                document.getElementById('slot2DescText').textContent = 'Chụp lưng áo/quần hoặc góc xoay 180°';
+
+                document.getElementById('ghostIcon3').innerHTML = ghostSvg.shirtSide;
+                document.getElementById('slot3TitleText').textContent = 'Ảnh Bên Hông (Side Profile)';
+                document.getElementById('slot3DescText').textContent = 'Góc nhìn sườn áo hoặc chi tiết đường kim mũi chỉ';
             }
-        });
+        }
 
-        function handleFileSelect(input) {
+        function switchSlot(slotNum) {
+            activeSlot = slotNum;
+            document.querySelectorAll('.slot-tab-btn').forEach(btn => {
+                btn.classList.toggle('active', parseInt(btn.dataset.slot, 10) === slotNum);
+            });
+            document.querySelectorAll('.slot-pane').forEach((pane, idx) => {
+                pane.classList.toggle('d-none', (idx + 1) !== slotNum);
+            });
+        }
+
+        function triggerSlotUpload(slot) {
+            const input = document.getElementById(`inputSlot${slot}`);
+            input?.click();
+        }
+
+        function selectBackdrop(type) {
+            currentBackdrop = type;
+            document.getElementById('studioBackdropInput').value = type;
+            document.querySelectorAll('.backdrop-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.backdrop === type);
+            });
+            [1, 2, 3].forEach(slot => {
+                if (originalDataUrls[slot]) {
+                    applyStudioBackdropToImg(slot);
+                }
+            });
+        }
+
+        function applyStudioBackdropToImg(slot) {
+            const img = document.getElementById(`previewImg${slot}`);
+            if (!img) return;
+            if (currentBackdrop === 'atelier') {
+                img.style.background = 'linear-gradient(180deg, #FAF8F5 0%, #F3EDE2 100%)';
+                img.style.filter = 'drop-shadow(0 14px 18px rgba(40, 30, 20, 0.12))';
+            } else if (currentBackdrop === 'white') {
+                img.style.background = '#FFFFFF';
+                img.style.filter = 'drop-shadow(0 10px 14px rgba(0, 0, 0, 0.08))';
+            } else {
+                img.style.background = 'repeating-conic-gradient(#E2E8F0 0% 25%, #FFFFFF 0% 50%) 50%/12px 12px';
+                img.style.filter = 'none';
+            }
+        }
+
+        function handleSlotFileSelect(slot, input) {
             if (input.files && input.files[0]) {
                 const file = input.files[0];
                 if (file.size > 5 * 1024 * 1024) {
@@ -674,20 +866,213 @@
                 }
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    previewImg.src = e.target.result;
-                    dropPlaceholder.classList.add('d-none');
-                    dropPreview.classList.remove('d-none');
-                }
+                    originalDataUrls[slot] = e.target.result;
+                    const img = document.getElementById(`previewImg${slot}`);
+                    img.src = e.target.result;
+                    document.getElementById(`placeholder${slot}`).classList.add('d-none');
+                    document.getElementById(`previewContainer${slot}`).classList.remove('d-none');
+                    document.getElementById(`btnMagic${slot}`).disabled = false;
+                    document.getElementById(`btnReset${slot}`).disabled = false;
+                    applyStudioBackdropToImg(slot);
+                    updateStudioProgress();
+                };
                 reader.readAsDataURL(file);
             }
         }
 
-        function removeImage(e) {
-            e.stopPropagation();
-            fileInput.value = '';
-            previewImg.src = '#';
-            dropPreview.classList.add('d-none');
-            dropPlaceholder.classList.remove('d-none');
+        function resetSlotImage(slot) {
+            if (originalDataUrls[slot]) {
+                const img = document.getElementById(`previewImg${slot}`);
+                img.src = originalDataUrls[slot];
+                applyStudioBackdropToImg(slot);
+            }
         }
+
+        function removeSlotImage(slot, e) {
+            e.stopPropagation();
+            const input = document.getElementById(`inputSlot${slot}`);
+            if (input) input.value = '';
+            originalDataUrls[slot] = null;
+            const img = document.getElementById(`previewImg${slot}`);
+            if (img) img.src = '#';
+            document.getElementById(`previewContainer${slot}`).classList.add('d-none');
+            document.getElementById(`placeholder${slot}`).classList.remove('d-none');
+            document.getElementById(`btnMagic${slot}`).disabled = true;
+            document.getElementById(`btnReset${slot}`).disabled = true;
+            updateStudioProgress();
+        }
+
+        function updateStudioProgress() {
+            let count = 0;
+            [1, 2, 3].forEach(s => {
+                if (originalDataUrls[s]) count++;
+            });
+            const lbl = document.getElementById('studioProgressText');
+            if (lbl) {
+                lbl.textContent = `${count}/3 ảnh đã tải`;
+                lbl.style.color = count > 0 ? '#16A34A' : 'var(--adm-ink)';
+            }
+        }
+
+        // SMART CLIENT-SIDE STUDIO CANVASES (BACKGROUND REMOVAL & CONTACT SHADOW)
+        function processMagicBackdrop(slot) {
+            const src = originalDataUrls[slot];
+            if (!src) return;
+
+            const btn = document.getElementById(`btnMagic${slot}`);
+            const originalBtnHtml = btn.innerHTML;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Đang xử lý...';
+            btn.disabled = true;
+
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = img.naturalWidth || 800;
+                canvas.height = img.naturalHeight || 800;
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const d = imgData.data;
+
+                // Sample corner pixels
+                const samples = [
+                    0, 1, 2, // top-left
+                    (canvas.width - 1) * 4,
+                    ((canvas.height - 1) * canvas.width) * 4,
+                    ((canvas.height - 1) * canvas.width + (canvas.width - 1)) * 4
+                ];
+                let bgR = 0, bgG = 0, bgB = 0;
+                samples.forEach(idx => {
+                    bgR += d[idx];
+                    bgG += d[idx + 1];
+                    bgB += d[idx + 2];
+                });
+                bgR /= 4; bgG /= 4; bgB /= 4;
+
+                const tol = 38;
+                for (let i = 0; i < d.length; i += 4) {
+                    const dist = Math.sqrt((d[i] - bgR)**2 + (d[i+1] - bgG)**2 + (d[i+2] - bgB)**2);
+                    if (dist < tol) {
+                        d[i + 3] = 0;
+                    } else if (dist < tol + 16) {
+                        d[i + 3] = Math.round(((dist - tol) / 16) * 255);
+                    }
+                }
+                ctx.putImageData(imgData, 0, 0);
+
+                // Build Final Composite Studio
+                const sCanvas = document.createElement('canvas');
+                const sCtx = sCanvas.getContext('2d');
+                sCanvas.width = canvas.width;
+                sCanvas.height = canvas.height;
+
+                if (currentBackdrop === 'atelier') {
+                    const g = sCtx.createRadialGradient(
+                        sCanvas.width / 2, sCanvas.height * 0.45, 40,
+                        sCanvas.width / 2, sCanvas.height / 2, sCanvas.width * 0.75
+                    );
+                    g.addColorStop(0, '#FAF8F5');
+                    g.addColorStop(0.7, '#F3EDE2');
+                    g.addColorStop(1, '#EFE8DE');
+                    sCtx.fillStyle = g;
+                    sCtx.fillRect(0, 0, sCanvas.width, sCanvas.height);
+
+                    // Contact shadow ellipse
+                    sCtx.save();
+                    sCtx.scale(1, 0.22);
+                    const sGrad = sCtx.createRadialGradient(
+                        sCanvas.width / 2, (sCanvas.height * 0.88) / 0.22, 10,
+                        sCanvas.width / 2, (sCanvas.height * 0.88) / 0.22, sCanvas.width * 0.38
+                    );
+                    sGrad.addColorStop(0, 'rgba(40, 30, 20, 0.25)');
+                    sGrad.addColorStop(0.5, 'rgba(50, 40, 30, 0.08)');
+                    sGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                    sCtx.fillStyle = sGrad;
+                    sCtx.beginPath();
+                    sCtx.arc(sCanvas.width / 2, (sCanvas.height * 0.88) / 0.22, sCanvas.width * 0.38, 0, Math.PI * 2);
+                    sCtx.fill();
+                    sCtx.restore();
+
+                    // Soft ambient drop-shadow
+                    sCtx.shadowColor = 'rgba(30, 20, 15, 0.12)';
+                    sCtx.shadowBlur = 20;
+                    sCtx.shadowOffsetY = 10;
+                    sCtx.drawImage(canvas, 0, 0);
+                } else if (currentBackdrop === 'white') {
+                    sCtx.fillStyle = '#FFFFFF';
+                    sCtx.fillRect(0, 0, sCanvas.width, sCanvas.height);
+                    sCtx.shadowColor = 'rgba(0, 0, 0, 0.08)';
+                    sCtx.shadowBlur = 18;
+                    sCtx.shadowOffsetY = 8;
+                    sCtx.drawImage(canvas, 0, 0);
+                } else {
+                    sCtx.drawImage(canvas, 0, 0);
+                }
+
+                sCanvas.toBlob(blob => {
+                    const processedUrl = sCanvas.toDataURL('image/png');
+                    const preview = document.getElementById(`previewImg${slot}`);
+                    preview.src = processedUrl;
+                    applyStudioBackdropToImg(slot);
+
+                    // Re-assign to file input using DataTransfer
+                    const fileInput = document.getElementById(`inputSlot${slot}`);
+                    const file = new File([blob], `studio-slot-${slot}.png`, { type: 'image/png' });
+                    const dt = new DataTransfer();
+                    dt.items.add(file);
+                    fileInput.files = dt.files;
+
+                    btn.innerHTML = '<i class="bi bi-check2"></i> Đã chuẩn hóa';
+                    setTimeout(() => {
+                        btn.innerHTML = originalBtnHtml;
+                        btn.disabled = false;
+                    }, 1500);
+                }, 'image/png');
+            };
+            img.src = src;
+        }
+
+        // DRAG AND DROP SETUP FOR ALL 3 SLOTS
+        [1, 2, 3].forEach(slot => {
+            const dz = document.getElementById(`dropZone${slot}`);
+            const input = document.getElementById(`inputSlot${slot}`);
+            if (!dz || !input) return;
+
+            ['dragenter', 'dragover'].forEach(evt => {
+                dz.addEventListener(evt, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dz.classList.add('dragover');
+                });
+            });
+            ['dragleave', 'drop'].forEach(evt => {
+                dz.addEventListener(evt, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dz.classList.remove('dragover');
+                });
+            });
+            dz.addEventListener('drop', (e) => {
+                const files = e.dataTransfer.files;
+                if (files && files.length > 0) {
+                    input.files = files;
+                    handleSlotFileSelect(slot, input);
+                }
+            });
+        });
+
+        // CATEGORY CHANGE LISTENER TO AUTOMATICALLY SWITCH STUDIO PROTOCOL
+        const categorySelect = document.getElementById('productCategory');
+        categorySelect?.addEventListener('change', () => {
+            const opt = categorySelect.options[categorySelect.selectedIndex];
+            const catName = opt ? opt.text.toLowerCase() : '';
+            const isShoe = catName.includes('giày') || catName.includes('shoe') || catName.includes('sandal') || catName.includes('boot');
+            setStudioProtocol(isShoe ? 'footwear' : 'apparel');
+        });
+
+        // Initialize Studio with default category state
+        setStudioProtocol('apparel');
     </script>
 }

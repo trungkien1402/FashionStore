@@ -147,6 +147,38 @@ public class AdminProductsController : Controller
         try
         {
             var imageUrl = await SaveImageAsync(model.ImageFile!);
+            string? backUrl = model.ImageBackFile != null ? await SaveImageAsync(model.ImageBackFile) : null;
+            string? sideUrl = model.ImageSideFile != null ? await SaveImageAsync(model.ImageSideFile) : null;
+            string? pairUrl = model.ImagePairFile != null ? await SaveImageAsync(model.ImagePairFile) : null;
+
+            var category = await _context.Categories.FindAsync(model.CategoryId);
+            var catSlug = category?.Slug?.ToLower() ?? "";
+            var catName = category?.Name?.ToLower() ?? "";
+            var isShoe = catSlug.Contains("giay") || catName.Contains("giày") || catSlug.Contains("shoe");
+
+            var photoObj = new
+            {
+                Front = imageUrl,
+                Side = sideUrl ?? imageUrl,
+                Back = backUrl ?? imageUrl,
+                Pair = pairUrl ?? imageUrl
+            };
+
+            var metaColors = (model.Variants != null && model.Variants.Any())
+                ? model.Variants.Select(v => v.Color).Distinct().Where(c => !string.IsNullOrWhiteSpace(c)).Select(c => new[] { c, "#18181B" }).ToArray()
+                : new[] { new[] { "Tiêu chuẩn", "#18181B" } };
+
+            var metaSizes = (model.Variants != null && model.Variants.Any())
+                ? model.Variants.Select(v => v.Size).Distinct().Where(s => !string.IsNullOrWhiteSpace(s)).ToArray()
+                : new[] { "FreeSize" };
+
+            var metaObj = new
+            {
+                Colors = metaColors,
+                Photos = new[] { photoObj },
+                Sizes = metaSizes,
+                Details = new { studioBackdrop = model.StudioBackdrop ?? "atelier" }
+            };
 
             var product = new Product
             {
@@ -156,6 +188,9 @@ public class AdminProductsController : Controller
                 Price = model.Price,
                 CategoryId = model.CategoryId,
                 ImageUrl = imageUrl,
+                ShowroomKind = isShoe ? "giay" : "ao",
+                ShowroomAudience = "men",
+                ShowroomMetadata = System.Text.Json.JsonSerializer.Serialize(metaObj, ShowroomCatalog.JsonOptions),
                 IsActive = model.IsActive,
                 CreatedAt = DateTime.UtcNow
             };
