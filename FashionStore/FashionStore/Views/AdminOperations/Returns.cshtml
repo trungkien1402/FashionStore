@@ -1,0 +1,234 @@
+@model List<FashionStore.Models.Entities.MerchandiseReturn>
+@using FashionStore.Models.Entities
+@using FashionStore.Services.Implementations
+
+@{
+    ViewData["Title"] = "Quản lý Đổi trả & RMA";
+    int? orderId = ViewBag.OrderId;
+    var selectedState = ViewBag.ReturnStatus as ReturnState?;
+}
+
+<!-- EXECUTIVE HEADER -->
+<div class="adm-header-block mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1 adm-meta-crumb">
+                <span class="adm-pulse-dot"></span>
+                <span class="adm-kicker-text">HNMT ATELIER · KINH DOANH</span>
+                <span class="adm-meta-divider">/</span>
+                <span class="adm-order-count-badge">@Model.Count yêu cầu</span>
+            </div>
+            <h1 class="adm-title-main">Quản lý Đổi trả & Hoàn tiền (RMA)</h1>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <a asp-action="Returns" class="adm-action-btn adm-btn-secondary" title="Làm mới">
+                <i class="bi bi-arrow-clockwise"></i> <span>Làm mới</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- TIER 1: SEGMENTED CONTROLS -->
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <div class="adm-segmented-control" role="group" aria-label="Lọc trạng thái đổi trả">
+            <a asp-action="Returns" asp-route-id="@orderId"
+               class="adm-segment @(selectedState == null ? "active" : "")">Tất cả</a>
+            @foreach (var state in Enum.GetValues<ReturnState>())
+            {
+                <a asp-action="Returns" asp-route-id="@orderId" asp-route-status="@state"
+                   class="adm-segment @(selectedState == state ? "active" : "")">
+                   @ReturnRequests.Label(state)
+                </a>
+            }
+        </div>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mb-4 shadow-sm" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show mb-4 shadow-sm" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (orderId.HasValue && ViewBag.ReturnStatus == null && Model.Count == 0)
+{
+    <div class="adm-card mb-4 shadow-sm">
+        <div class="d-flex align-items-center gap-2 mb-3 pb-3 border-bottom border-secondary border-opacity-10">
+            <i class="bi bi-plus-circle fs-5" style="color: var(--adm-gold, #D97706);"></i>
+            <h5 class="fw-bold mb-0 adm-heading">Tiếp nhận yêu cầu đổi trả cho đơn #@orderId</h5>
+        </div>
+        <form asp-action="RequestReturn" method="post" class="row g-3">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="orderId" value="@orderId" />
+            <div class="col-md-6">
+                <label for="reason" class="adm-form-label fw-bold">Lý do đổi trả <span class="text-danger">*</span></label>
+                <input id="reason" name="reason" maxlength="500" required class="form-control adm-input-dark" placeholder="VD: Khách mặc không vừa size, sản phẩm lỗi chỉ may..." />
+            </div>
+            <div class="col-md-6">
+                <label for="evidence" class="adm-form-label fw-bold">Mô tả bằng chứng / Link ảnh</label>
+                <input id="evidence" name="evidence" maxlength="500" class="form-control adm-input-dark" placeholder="VD: Đã kiểm tra ảnh chụp qua Zalo..." />
+            </div>
+            <div class="col-12 text-end">
+                <button type="submit" class="adm-action-btn adm-btn-primary py-2 px-4">
+                    <i class="bi bi-check2 me-1"></i> Tiếp nhận yêu cầu
+                </button>
+            </div>
+        </form>
+    </div>
+}
+
+@if (!Model.Any() && ViewBag.OrderId == null)
+{
+    <div class="adm-card text-center py-5">
+        <i class="bi bi-arrow-counterclockwise fs-1 text-muted d-block mb-3"></i>
+        <h5 class="fw-bold adm-heading">Không có yêu cầu đổi trả nào</h5>
+        <p class="text-muted small mb-0">Khách hàng có thể gửi yêu cầu đổi trả từ chi tiết đơn hàng đã giao thành công.</p>
+    </div>
+}
+
+@foreach (var row in Model)
+{
+    <div class="adm-card mb-4 shadow-sm">
+        <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3 pb-3 border-bottom border-secondary border-opacity-10">
+            <div>
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <span class="small text-muted">Đơn hàng:</span>
+                    <a asp-controller="AdminOrders" asp-action="Details" asp-route-id="@row.OrderId" class="fw-bold font-monospace adm-heading text-decoration-none fs-6">
+                        #@row.Order.OrderCode
+                    </a>
+                    <span class="text-muted">·</span>
+                    <span class="text-muted small">Tiếp nhận: @AdminReportService.ToVietnamTime(row.CreatedAt).ToString("dd/MM/yyyy HH:mm")</span>
+                </div>
+                <div class="text-muted small">Người nhận: <strong>@row.Order.ReceiverName</strong> · SĐT: @row.Order.Phone</div>
+            </div>
+
+            <div>
+                @switch (row.State)
+                {
+                    case ReturnState.Requested:
+                        <span class="adm-pill adm-pill-amber fs-6"><i class="bi bi-clock me-1"></i>Chờ duyệt</span>
+                        break;
+                    case ReturnState.Approved:
+                        <span class="adm-pill adm-pill-blue fs-6"><i class="bi bi-truck me-1"></i>Đã duyệt - Chờ nhận hàng</span>
+                        break;
+                    case ReturnState.Received:
+                        <span class="adm-pill adm-pill-blue fs-6"><i class="bi bi-box-seam me-1"></i>Đã nhận - Chờ hoàn tiền</span>
+                        break;
+                    case ReturnState.Refunded:
+                        <span class="adm-pill adm-pill-emerald fs-6"><i class="bi bi-check-circle me-1"></i>Đã hoàn tiền</span>
+                        break;
+                    case ReturnState.Rejected:
+                        <span class="adm-pill adm-pill-rose fs-6"><i class="bi bi-x-circle me-1"></i>Đã từ chối</span>
+                        break;
+                }
+            </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+            <div class="col-md-6">
+                <div class="p-3 rounded-3" style="background: var(--adm-surface-hover, #F8FAFC); border: 1px solid var(--adm-border, #E2E8F0);">
+                    <div class="text-muted small fw-semibold">Lý do đổi trả từ khách:</div>
+                    <div class="adm-heading mt-1" style="font-size: 0.9rem;">@row.Reason</div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="p-3 rounded-3" style="background: var(--adm-surface-hover, #F8FAFC); border: 1px solid var(--adm-border, #E2E8F0);">
+                    <div class="text-muted small fw-semibold">Bằng chứng / Ghi nhận:</div>
+                    <div class="adm-heading mt-1" style="font-size: 0.9rem;">@(string.IsNullOrEmpty(row.Evidence) ? "Không có đính kèm" : row.Evidence)</div>
+                </div>
+            </div>
+        </div>
+
+        @if (row.RefundAmount > 0)
+        {
+            <div class="p-3 rounded-3 mb-3 d-flex align-items-center justify-content-between" style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2);">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-cash-stack fs-5 text-success"></i>
+                    <span class="fw-semibold text-success">Số tiền đã hoàn cho khách:</span>
+                </div>
+                <strong class="font-monospace text-success fs-5">@row.RefundAmount.ToString("N0") ₫</strong>
+            </div>
+        }
+
+        <!-- ACTION FORM -->
+        @if (row.State is ReturnState.Requested or ReturnState.Approved ||
+             (row.State == ReturnState.Received && row.Order.PaymentStatus == FashionStore.Models.Enums.PaymentStatus.Paid))
+        {
+            <div class="p-3 rounded-3 mb-3" style="background: var(--adm-surface-hover, #F8FAFC); border: 1px solid var(--adm-border, #E2E8F0);">
+                <form asp-action="UpdateReturn" asp-route-id="@row.Id" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="mb-3">
+                        <label class="adm-form-label fw-bold">Ghi chú xử lý <span class="text-danger">*</span></label>
+                        <textarea name="note" rows="2" maxlength="500" required class="form-control adm-input-dark" placeholder="Ghi nhận tình trạng sản phẩm, biên bản hoặc mã ủy nhiệm chi..."></textarea>
+                    </div>
+
+                    <div class="d-flex flex-wrap align-items-center gap-2">
+                        @if (row.State == ReturnState.Requested)
+                        {
+                            <button type="submit" name="state" value="Approved" class="adm-action-btn adm-btn-primary">
+                                <i class="bi bi-check2 me-1"></i> Duyệt đổi trả
+                            </button>
+                            <button type="submit" name="state" value="Rejected" class="adm-action-btn adm-btn-secondary text-danger">
+                                <i class="bi bi-x-lg me-1"></i> Từ chối
+                            </button>
+                        }
+                        else if (row.State == ReturnState.Approved)
+                        {
+                            <div class="form-check me-3">
+                                <input type="checkbox" name="restock" value="true" class="form-check-input" id="restock_@row.Id" checked />
+                                <label class="form-check-label small fw-semibold" for="restock_@row.Id">Hàng nguyên vẹn, nhập lại số tồn kho</label>
+                            </div>
+                            <button type="submit" name="state" value="Received" class="adm-action-btn adm-btn-primary">
+                                <i class="bi bi-box-arrow-in-down me-1"></i> Xác nhận đã nhận & kiểm định
+                            </button>
+                            <button type="submit" name="state" value="Rejected" class="adm-action-btn adm-btn-secondary text-danger">
+                                <i class="bi bi-x-circle me-1"></i> Từ chối sau kiểm định
+                            </button>
+                        }
+                        else
+                        {
+                            <div class="d-flex flex-wrap align-items-center gap-2 w-100">
+                                <div class="flex-grow-1">
+                                    <input name="refundReference" maxlength="100" required class="form-control adm-input-dark" placeholder="Mã giao dịch / Mã chứng từ hoàn tiền thực tế..." />
+                                </div>
+                                <button type="submit" name="state" value="Refunded" class="adm-action-btn adm-btn-primary"
+                                        onclick="return confirm('Bạn đã hoàn đủ @row.Order.TotalAmount.ToString("N0") ₫ cho khách qua phương thức thanh toán thực tế?')">
+                                    <i class="bi bi-cash-coin me-1"></i> Xác nhận hoàn tiền (@row.Order.TotalAmount.ToString("N0") ₫)
+                                </button>
+                            </div>
+                        }
+                    </div>
+                </form>
+            </div>
+        }
+
+        <!-- EVENT HISTORY -->
+        <details class="pt-2 border-top border-secondary border-opacity-10">
+            <summary class="text-muted small fw-semibold cursor-pointer" style="cursor: pointer;">
+                <i class="bi bi-clock-history me-1"></i> Lịch sử xử lý tiến trình (@row.Events.Count sự kiện)
+            </summary>
+            <div class="mt-3 ps-3 border-start border-2 border-secondary border-opacity-25">
+                @foreach (var item in row.Events.OrderBy(e => e.Id))
+                {
+                    <div class="mb-2 small">
+                        <span class="text-muted font-monospace">@AdminReportService.ToVietnamTime(item.CreatedAt).ToString("dd/MM/yyyy HH:mm")</span>
+                        <span class="mx-1">·</span>
+                        <strong class="adm-heading">@ReturnRequests.Label(item.State)</strong>
+                        <span class="mx-1">·</span>
+                        <span class="adm-text-contrast">@item.Note</span>
+                    </div>
+                }
+            </div>
+        </details>
+    </div>
+}

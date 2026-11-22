@@ -1,42 +1,176 @@
 @model List<FashionStore.Models.Entities.ProductVariant>
-@{ ViewData["Title"] = "Kho hàng"; }
-<header class="adm-dashboard-header mb-4"><h1>Kho hàng</h1></header>
-<form asp-action="Inventory" method="get" class="adm-filter-bar d-flex flex-wrap align-items-center gap-3 mb-4">
-    <input name="search" value="@ViewBag.Search" maxlength="100" aria-label="Tìm SKU hoặc sản phẩm" placeholder="SKU hoặc tên sản phẩm" class="form-control adm-input-dark w-auto" />
-    <label class="d-flex align-items-center gap-2 fw-semibold text-danger cursor-pointer">
-        <input type="checkbox" name="low" value="true" checked="@(ViewBag.Low == true)" class="form-check-input mt-0" /> 
-        <span>&#9888; Các sản phẩm sắp hết hàng (Mức tồn an toàn &le; 5)</span>
-    </label>
-    <button class="adm-btn-atelier">Lọc</button>
-</form>
-<div class="adm-card table-responsive p-0">
-<table class="adm-table mb-0">
-    <thead><tr><th>Sản phẩm</th><th>SKU</th><th>Size</th><th>Màu</th><th>Tồn kho &amp; Cảnh báo</th><th></th></tr></thead>
-    <tbody>
-    @foreach (var row in Model)
-    {
-        <tr>
-            <td><strong>@row.Product.Name</strong></td>
-            <td><code>@row.SKU</code></td>
-            <td>@row.Size</td>
-            <td>@row.Color</td>
-            <td>
-                @if (row.StockQuantity <= 5)
-                {
-                    <span class="badge bg-danger text-white py-1 px-2 fw-bold shadow-sm">
-                        <i class="bi bi-exclamation-triangle-fill me-1"></i>[&#9888; Cần nhập thêm hàng] (Còn @row.StockQuantity)
-                    </span>
-                }
-                else
-                {
-                    <span class="fw-bold font-monospace">@row.StockQuantity</span>
-                }
-            </td>
-            <td><a asp-action="Stock" asp-route-id="@row.Id" class="adm-btn-outline py-1 px-2" style="font-size: 0.75rem;">Xem &amp; điều chỉnh</a></td>
-        </tr>
-    }
-    @if (Model.Count == 0) { <tr><td colspan="6" class="text-center py-4 text-muted">Không có biến thể khớp bộ lọc.</td></tr> }
-    </tbody>
-</table>
+
+@{
+    ViewData["Title"] = "Kho hàng & Tồn kho";
+    var isLow = ViewBag.Low == true;
+    var search = ViewBag.Search as string;
+    var lowCount = Model.Count(v => v.StockQuantity <= 5);
+}
+
+<!-- EXECUTIVE HEADER -->
+<div class="adm-header-block mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1 adm-meta-crumb">
+                <span class="adm-pulse-dot"></span>
+                <span class="adm-kicker-text">HNMT ATELIER · KINH DOANH</span>
+                <span class="adm-meta-divider">/</span>
+                <span class="adm-order-count-badge">@Model.Count biến thể</span>
+            </div>
+            <h1 class="adm-title-main">Kiểm kê & Tồn kho Sản phẩm</h1>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <a asp-action="Forecast" class="adm-action-btn adm-btn-secondary" title="Dự báo tồn kho">
+                <i class="bi bi-graph-up-arrow"></i> <span>Kế hoạch nhập hàng</span>
+            </a>
+            <a asp-action="Inventory" class="adm-action-btn adm-btn-secondary" title="Làm mới">
+                <i class="bi bi-arrow-clockwise"></i> <span>Làm mới</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- TIER 1: SEGMENTED CONTROLS -->
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <div class="adm-segmented-control" role="group" aria-label="Lọc mức tồn kho">
+            <a asp-action="Inventory" asp-route-search="@search"
+               class="adm-segment @(!isLow ? "active" : "")">
+               Tất cả biến thể
+            </a>
+            <a asp-action="Inventory" asp-route-low="true" asp-route-search="@search"
+               class="adm-segment @(isLow ? "active" : "")">
+               <i class="bi bi-exclamation-triangle-fill me-1" style="color: #E11D48;"></i> Sắp hết hàng (&le; 5)
+            </a>
+        </div>
+    </div>
+
+    <!-- TIER 2: SEARCH INPUT -->
+    <form asp-action="Inventory" method="get" class="d-flex flex-wrap align-items-center gap-2">
+        @if (isLow)
+        {
+            <input type="hidden" name="low" value="true" />
+        }
+
+        <div class="adm-search-input-group-v2 flex-grow-1" style="min-width: 260px;">
+            <i class="bi bi-search"></i>
+            <input type="text" name="search" maxlength="100" value="@search"
+                   placeholder="Tìm kiếm theo mã SKU hoặc tên sản phẩm..."
+                   class="adm-search-input-v2"
+                   style="padding-left: 42px !important; padding-right: 14px !important;" />
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(search) || isLow)
+        {
+            <a asp-action="Inventory" class="adm-action-btn adm-btn-secondary" style="height: 38px;" title="Đặt lại bộ lọc">
+                <i class="bi bi-x-lg"></i> <span>Đặt lại</span>
+            </a>
+        }
+    </form>
 </div>
-<p class="text-muted small mt-2">Hiển thị tối đa 100 biến thể, ưu tiên tồn kho thấp.</p>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mb-4 shadow-sm" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (!Model.Any())
+{
+    <div class="adm-card text-center py-5">
+        <i class="bi bi-boxes fs-1 text-muted d-block mb-3"></i>
+        <h5 class="fw-bold adm-heading">Không có biến thể nào khớp bộ lọc</h5>
+        <p class="text-muted small mb-0">Thử tìm theo từ khóa SKU khác hoặc kiểm tra toàn bộ kho hàng.</p>
+    </div>
+}
+else
+{
+    <div class="adm-card p-0 overflow-hidden mb-4">
+        <div class="table-responsive">
+            <table class="adm-table mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">SẢN PHẨM & SKU</th>
+                        <th>PHÂN LOẠI</th>
+                        <th>GIÁ NIÊM YẾT</th>
+                        <th>TỒN KHO HIỆN TẠI</th>
+                        <th>TRẠNG THÁI</th>
+                        <th class="text-end pe-4">THAO TÁC</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in Model)
+                    {
+                        var productImg = row.Product?.ImageUrl ?? "/images/placeholder.svg";
+                        <tr>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="rounded-2 overflow-hidden flex-shrink-0" style="width: 44px; height: 44px; background: #F8FAFC; border: 1px solid #E2E8F0;">
+                                        <img src="@productImg" alt="@row.Product?.Name" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/placeholder.svg'" />
+                                    </div>
+                                    <div>
+                                        <a asp-controller="AdminProducts" asp-action="Edit" asp-route-id="@row.ProductId" class="fw-bold adm-heading text-decoration-none" style="font-size: 0.88rem;">
+                                            @row.Product?.Name
+                                        </a>
+                                        <div class="font-monospace text-muted mt-0.5" style="font-size: 0.75rem;">
+                                            <code>@row.SKU</code>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center gap-1">
+                                    <span class="badge" style="background: var(--adm-surface-hover, #F8FAFC); color: var(--adm-ink, #0F172A); border: 1px solid var(--adm-border, #CBD5E1); font-size: 0.75rem;">
+                                        Size @row.Size
+                                    </span>
+                                    <span class="badge" style="background: var(--adm-surface-hover, #F8FAFC); color: var(--adm-ink, #0F172A); border: 1px solid var(--adm-border, #CBD5E1); font-size: 0.75rem;">
+                                        @row.Color
+                                    </span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="font-monospace fw-semibold adm-heading">@row.Price.ToString("N0") ₫</span>
+                            </td>
+                            <td>
+                                @if (row.StockQuantity == 0)
+                                {
+                                    <span class="adm-pill adm-pill-rose font-monospace fw-bold">
+                                        <i class="bi bi-x-circle me-1"></i>Hết hàng (0)
+                                    </span>
+                                }
+                                else if (row.StockQuantity <= 5)
+                                {
+                                    <span class="adm-pill adm-pill-amber font-monospace fw-bold">
+                                        <i class="bi bi-exclamation-triangle me-1"></i>Sắp hết (Còn @row.StockQuantity)
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="adm-pill adm-pill-emerald font-monospace fw-bold">
+                                        Còn @row.StockQuantity
+                                    </span>
+                                }
+                            </td>
+                            <td>
+                                @if (row.IsActive)
+                                {
+                                    <span class="adm-pill adm-pill-emerald">Kinh doanh</span>
+                                }
+                                else
+                                {
+                                    <span class="adm-pill adm-pill-faint">Ngừng bán</span>
+                                }
+                            </td>
+                            <td class="text-end pe-4">
+                                <a asp-action="Stock" asp-route-id="@row.Id" class="adm-action-btn adm-btn-secondary py-1 px-3" style="font-size: 0.78rem;" title="Xem lịch sử & điều chỉnh tồn">
+                                    <i class="bi bi-sliders me-1"></i> Điều chỉnh
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <p class="text-muted small">Hiển thị tối đa 100 biến thể, ưu tiên biến thể có số tồn thấp nhất.</p>
+}

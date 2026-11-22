@@ -1,19 +1,155 @@
 @model List<FashionStore.Models.Entities.ProductReview>
-@{ ViewData["Title"] = "Đánh giá sản phẩm"; }
-<header class="adm-dashboard-header mb-4"><h1>Đánh giá sản phẩm</h1></header>
-<div class="adm-card table-responsive p-0"><table class="adm-table mb-0">
-<thead><tr><th>Sản phẩm</th><th>Điểm</th><th>Nội dung</th><th>Trạng thái</th><th></th></tr></thead>
-<tbody>
-@foreach (var row in Model)
-{
-    <tr><td>@row.Product.Name</td><td>@row.Rating / 5</td><td class="text-break">@row.Comment</td>
-    <td>@(row.IsVisible ? "Hiển thị" : "Ẩn") @if (row.IsReported) { <span class="text-danger">Có báo cáo</span> }</td><td>
-        <form asp-action="ModerateReview" asp-route-id="@row.Id" method="post" class="d-flex gap-2">
-            <button name="visible" value="true" class="adm-btn-outline">Hiển thị</button>
-            <button name="visible" value="false" class="adm-btn-outline">Ẩn</button>
-        </form>
-    </td></tr>
+
+@{
+    ViewData["Title"] = "Đánh giá Sản phẩm & Kiểm duyệt";
+    var visibleCount = Model.Count(r => r.IsVisible);
+    var reportedCount = Model.Count(r => r.IsReported);
 }
-@if (Model.Count == 0) { <tr><td colspan="5">Chưa có đánh giá.</td></tr> }
-</tbody>
-</table></div>
+
+<!-- EXECUTIVE HEADER -->
+<div class="adm-header-block mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1 adm-meta-crumb">
+                <span class="adm-pulse-dot"></span>
+                <span class="adm-kicker-text">HNMT ATELIER · KINH DOANH</span>
+                <span class="adm-meta-divider">/</span>
+                <span class="adm-order-count-badge">@Model.Count đánh giá</span>
+            </div>
+            <h1 class="adm-title-main">Kiểm duyệt Đánh giá Khách hàng</h1>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <a asp-action="Reviews" class="adm-action-btn adm-btn-secondary" title="Làm mới">
+                <i class="bi bi-arrow-clockwise"></i> <span>Làm mới</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- SUMMARY METRICS -->
+    <div class="d-flex flex-wrap align-items-center gap-3">
+        <div class="p-2 px-3 rounded-2" style="background: var(--adm-surface-hover, #F8FAFC); border: 1px solid var(--adm-border, #E2E8F0); font-size: 0.85rem;">
+            <span class="text-muted">Tổng nhận xét:</span>
+            <strong class="adm-heading ms-1">@Model.Count</strong>
+        </div>
+        <div class="p-2 px-3 rounded-2" style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); font-size: 0.85rem;">
+            <span class="text-success fw-semibold">Đang hiển thị:</span>
+            <strong class="text-success ms-1">@visibleCount</strong>
+        </div>
+        @if (reportedCount > 0)
+        {
+            <div class="p-2 px-3 rounded-2" style="background: rgba(225, 29, 72, 0.08); border: 1px solid rgba(225, 29, 72, 0.2); font-size: 0.85rem;">
+                <span class="text-danger fw-semibold"><i class="bi bi-flag-fill me-1"></i>Bị báo cáo:</span>
+                <strong class="text-danger ms-1">@reportedCount</strong>
+            </div>
+        }
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mb-4 shadow-sm" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (!Model.Any())
+{
+    <div class="adm-card text-center py-5">
+        <i class="bi bi-chat-square-quote fs-1 text-muted d-block mb-3"></i>
+        <h5 class="fw-bold adm-heading">Chưa có đánh giá nào từ khách hàng</h5>
+        <p class="text-muted small mb-0">Các đánh giá sản phẩm sau khi mua sẽ xuất hiện tại đây để quản trị viên kiểm duyệt.</p>
+    </div>
+}
+else
+{
+    <div class="adm-card p-0 overflow-hidden mb-4">
+        <div class="table-responsive">
+            <table class="adm-table mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">SẢN PHẨM</th>
+                        <th>ĐÁNH GIÁ (SAO)</th>
+                        <th>NỘI DUNG NHẬN XÉT</th>
+                        <th>TRẠNG THÁI</th>
+                        <th>THỜI GIAN</th>
+                        <th class="text-end pe-4">THAO TÁC DUYỆT</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in Model)
+                    {
+                        var productImg = row.Product?.ImageUrl ?? "/images/placeholder.svg";
+                        <tr>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="rounded-2 overflow-hidden flex-shrink-0" style="width: 44px; height: 44px; background: #F8FAFC; border: 1px solid #E2E8F0;">
+                                        <img src="@productImg" alt="@row.Product?.Name" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/placeholder.svg'" />
+                                    </div>
+                                    <div>
+                                        <a asp-controller="AdminProducts" asp-action="Edit" asp-route-id="@row.ProductId" class="fw-bold adm-heading text-decoration-none" style="font-size: 0.88rem;">
+                                            @row.Product?.Name
+                                        </a>
+                                        <div class="text-muted font-monospace" style="font-size: 0.72rem;">ID: #@row.ProductId</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center gap-1">
+                                    @for (int s = 1; s <= 5; s++)
+                                    {
+                                        <i class="bi bi-star-fill" style="font-size: 0.82rem; color: @(s <= row.Rating ? "#F59E0B" : "#CBD5E1");"></i>
+                                    }
+                                    <span class="ms-1 fw-bold adm-heading font-monospace" style="font-size: 0.85rem;">@row.Rating.0</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="p-2 rounded-2" style="background: var(--adm-surface-hover, #F8FAFC); border: 1px solid var(--adm-border, #E2E8F0); max-width: 380px;">
+                                    <p class="mb-0 text-break" style="font-size: 0.85rem; line-height: 1.5;">@row.Comment</p>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex flex-column gap-1">
+                                    @if (row.IsVisible)
+                                    {
+                                        <span class="adm-pill adm-pill-emerald">Đang hiển thị</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="adm-pill adm-pill-faint">Đang ẩn</span>
+                                    }
+
+                                    @if (row.IsReported)
+                                    {
+                                        <span class="adm-pill adm-pill-rose"><i class="bi bi-flag-fill me-1"></i>Bị báo cáo</span>
+                                    }
+                                </div>
+                            </td>
+                            <td>
+                                <div class="adm-text-contrast small">@row.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")</div>
+                                <div class="text-muted font-monospace" style="font-size: 0.72rem;">@row.CreatedAt.ToLocalTime().ToString("HH:mm")</div>
+                            </td>
+                            <td class="text-end pe-4">
+                                <form asp-action="ModerateReview" asp-route-id="@row.Id" method="post" class="d-inline-flex gap-2">
+                                    @Html.AntiForgeryToken()
+                                    @if (!row.IsVisible)
+                                    {
+                                        <button type="submit" name="visible" value="true" class="adm-action-btn adm-btn-secondary py-1 px-3" style="font-size: 0.78rem;">
+                                            <i class="bi bi-eye me-1"></i> Hiện
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button type="submit" name="visible" value="false" class="adm-action-btn adm-btn-secondary py-1 px-3" style="font-size: 0.78rem;">
+                                            <i class="bi bi-eye-slash me-1"></i> Ẩn
+                                        </button>
+                                    }
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

@@ -1,0 +1,119 @@
+@model List<FashionStore.Models.Entities.Order>
+@using FashionStore.Models.Enums
+@using FashionStore.Services.Implementations
+
+@{
+    ViewData["Title"] = $"Lịch sử mua hàng - {ViewBag.Name}";
+    var totalSpent = Model.Where(o => o.PaymentStatus == PaymentStatus.Paid).Sum(o => o.TotalAmount);
+}
+
+<!-- EXECUTIVE HEADER -->
+<div class="adm-header-block mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1 adm-meta-crumb">
+                <span class="adm-pulse-dot"></span>
+                <span class="adm-kicker-text">HNMT ATELIER · KHÁCH HÀNG</span>
+                <span class="adm-meta-divider">/</span>
+                <span class="adm-order-count-badge">@Model.Count đơn hàng</span>
+            </div>
+            <h1 class="adm-title-main">Hồ sơ: @ViewBag.Name</h1>
+        </div>
+        <div>
+            <a asp-action="Customers" class="adm-action-btn adm-btn-secondary">
+                <i class="bi bi-arrow-left"></i> <span>Quay lại danh sách</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- SUMMARY METRICS -->
+    <div class="d-flex flex-wrap align-items-center gap-3">
+        <div class="p-2 px-3 rounded-2" style="background: var(--adm-surface-hover, #F8FAFC); border: 1px solid var(--adm-border, #E2E8F0); font-size: 0.85rem;">
+            <span class="text-muted">Tổng đơn đã đặt:</span>
+            <strong class="adm-heading ms-1">@Model.Count</strong>
+        </div>
+        <div class="p-2 px-3 rounded-2" style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); font-size: 0.85rem;">
+            <span class="text-success fw-semibold">Tổng giá trị đã thanh toán:</span>
+            <strong class="text-success font-monospace ms-1">@totalSpent.ToString("N0") ₫</strong>
+        </div>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="adm-card text-center py-5">
+        <i class="bi bi-bag-x fs-1 text-muted d-block mb-3"></i>
+        <h5 class="fw-bold adm-heading">Khách hàng chưa phát sinh đơn hàng nào</h5>
+    </div>
+}
+else
+{
+    <div class="adm-card p-0 overflow-hidden mb-4">
+        <div class="table-responsive">
+            <table class="adm-table mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">MÃ ĐƠN HÀNG</th>
+                        <th>NGÀY ĐẶT</th>
+                        <th>TRẠNG THÁI ĐƠN</th>
+                        <th>THANH TOÁN</th>
+                        <th class="text-end">TỔNG TIỀN</th>
+                        <th class="text-end pe-4">THAO TÁC</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in Model)
+                    {
+                        <tr>
+                            <td class="ps-4">
+                                <a asp-controller="AdminOrders" asp-action="Details" asp-route-id="@row.Id" class="font-monospace fw-bold text-decoration-none adm-heading" style="font-size: 0.88rem;">
+                                    #@row.OrderCode
+                                </a>
+                            </td>
+                            <td>
+                                <div class="adm-text-contrast small">@AdminReportService.ToVietnamTime(row.CreatedAt).ToString("dd/MM/yyyy")</div>
+                                <div class="text-muted font-monospace" style="font-size: 0.72rem;">@AdminReportService.ToVietnamTime(row.CreatedAt).ToString("HH:mm")</div>
+                            </td>
+                            <td>
+                                @switch (row.Status)
+                                {
+                                    case OrderStatus.PendingConfirmation:
+                                        <span class="adm-pill adm-pill-amber">Chờ duyệt</span>
+                                        break;
+                                    case OrderStatus.Confirmed:
+                                        <span class="adm-pill adm-pill-blue">Đã duyệt</span>
+                                        break;
+                                    case OrderStatus.Shipping:
+                                        <span class="adm-pill adm-pill-blue">Đang giao</span>
+                                        break;
+                                    case OrderStatus.Delivered:
+                                        <span class="adm-pill adm-pill-emerald">Đã giao</span>
+                                        break;
+                                    case OrderStatus.Cancelled:
+                                        <span class="adm-pill adm-pill-rose">Đã hủy</span>
+                                        break;
+                                    default:
+                                        <span class="adm-pill adm-pill-faint">@AdminReportService.GetStatusName(row.Status)</span>
+                                        break;
+                                }
+                            </td>
+                            <td>
+                                <span class="badge @(row.PaymentStatus == PaymentStatus.Paid ? "bg-success bg-opacity-10 text-success border border-success border-opacity-25" : "bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25")" style="font-size: 0.75rem;">
+                                    @row.PaymentStatus
+                                </span>
+                            </td>
+                            <td class="text-end font-monospace fw-bold" style="color: var(--adm-gold, #D97706);">
+                                @row.TotalAmount.ToString("N0") ₫
+                            </td>
+                            <td class="text-end pe-4">
+                                <a asp-controller="AdminOrders" asp-action="Details" asp-route-id="@row.Id" class="adm-action-btn adm-btn-secondary py-1 px-3" style="font-size: 0.78rem;">
+                                    Chi tiết đơn <i class="bi bi-chevron-right ms-1"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

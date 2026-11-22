@@ -18,71 +18,75 @@
     };
 }
 
-<header class="adm-dashboard-header mb-4">
-    <div><h1>Vận chuyển</h1><p class="adm-dashboard-period">@ViewBag.Count vận đơn</p></div>
-    <a asp-controller="AdminOrders" asp-action="Index" class="adm-btn-outline">Xem đơn hàng</a>
-</header>
-
-<!-- STATUS TABS -->
-<div class="adm-tabs">
-    <a asp-action="Index" class="adm-tab-item @(selectedStatus == null ? "active" : "")">
-        Tất cả vận đơn (@ViewBag.Count)
-    </a>
-    <a asp-action="Index" asp-route-status="@((int)ShipmentStatus.Assigned)" 
-       class="adm-tab-item @(selectedStatus == ShipmentStatus.Assigned ? "active" : "")">
-        Chờ lấy hàng
-    </a>
-    <a asp-action="Index" asp-route-status="@((int)ShipmentStatus.InTransit)" 
-       class="adm-tab-item @(selectedStatus == ShipmentStatus.InTransit ? "active" : "")">
-        <i class="bi bi-truck me-1" style="color: var(--adm-cyan);"></i> Đang giao
-    </a>
-    <a asp-action="Index" asp-route-status="@((int)ShipmentStatus.Delivered)" 
-       class="adm-tab-item @(selectedStatus == ShipmentStatus.Delivered ? "active" : "")">
-        <i class="bi bi-check-circle me-1" style="color: var(--adm-emerald);"></i> Giao thành công
-    </a>
-    <a asp-action="Index" asp-route-status="@((int)ShipmentStatus.Failed)" 
-       class="adm-tab-item @(selectedStatus == ShipmentStatus.Failed ? "active" : "")">
-        <i class="bi bi-x-circle me-1" style="color: var(--adm-crimson);"></i> Giao thất bại
-    </a>
-    <a asp-action="Index" asp-route-status="@((int)ShipmentStatus.Returned)" 
-       class="adm-tab-item @(selectedStatus == ShipmentStatus.Returned ? "active" : "")">
-        <i class="bi bi-arrow-return-left me-1" style="color: var(--adm-ink-muted);"></i> Đã hoàn kho
-    </a>
-</div>
-
-<!-- FILTER BAR -->
-<div class="adm-filter-bar mb-4">
-    <form asp-action="Index" method="get" class="row g-2 align-items-center">
-        <div class="col-md-6">
-            <div class="input-group">
-                <span class="input-group-text">
-                    <i class="bi bi-search"></i>
-                </span>
-                <input type="text" name="search" maxlength="100" aria-label="Tìm vận đơn" value="@search"
-                       class="form-control" 
-                       placeholder="Tìm mã vận đơn, mã đơn, tên shipper, SĐT..." />
+<!-- 1. EXECUTIVE HEADER (ATELIER STANDARD) -->
+<div class="adm-header-block mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1 adm-meta-crumb">
+                <span class="adm-pulse-dot"></span>
+                <span class="adm-kicker-text">HNMT ATELIER · VẬN HÀNH</span>
+                <span class="adm-meta-divider">/</span>
+                <span class="adm-order-count-badge">@ViewBag.Count vận đơn</span>
             </div>
+            <h1 class="adm-title-main">Điều phối Vận chuyển</h1>
         </div>
-
-        <div class="col-md-4">
-            <select name="status" class="form-select">
-                <option value="">Tất cả trạng thái vận chuyển</option>
-                @foreach (ShipmentStatus st in Enum.GetValues(typeof(ShipmentStatus)))
-                {
-                    <option value="@((int)st)" selected="@(selectedStatus == st)">@GetShipmentStatusName(st)</option>
-                }
-            </select>
-        </div>
-
-        <div class="col-md-2 d-flex gap-2">
-            <button type="submit" class="btn adm-btn-atelier flex-grow-1 justify-content-center">
-                <i class="bi bi-funnel"></i> Lọc
-            </button>
-
-            <a asp-action="Index" class="btn adm-btn-outline" title="Đặt lại bộ lọc">
-                <i class="bi bi-arrow-counterclockwise"></i>
+        <div class="d-flex align-items-center gap-2">
+            <a asp-controller="AdminOrders" asp-action="Index" class="adm-action-btn adm-btn-secondary" title="Xem danh sách đơn hàng">
+                <i class="bi bi-receipt"></i> <span>Xem đơn hàng</span>
+            </a>
+            <a asp-action="Index" class="adm-action-btn adm-btn-secondary" title="Làm mới danh sách">
+                <i class="bi bi-arrow-clockwise"></i> <span>Làm mới</span>
             </a>
         </div>
+    </div>
+
+    <!-- TIER 1: SEGMENTED CONTROLS -->
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <div class="adm-segmented-control" role="group" aria-label="Lọc trạng thái vận đơn">
+            <a asp-action="Index" asp-route-search="@search"
+               class="adm-segment @(selectedStatus == null ? "active" : "")">Tất cả</a>
+            <a asp-action="Index" asp-route-status="@((int)ShipmentStatus.Assigned)" asp-route-search="@search"
+               class="adm-segment @(selectedStatus == ShipmentStatus.Assigned ? "active" : "")">Chờ lấy hàng</a>
+            <a asp-action="Index" asp-route-status="@((int)ShipmentStatus.InTransit)" asp-route-search="@search"
+               class="adm-segment @(selectedStatus == ShipmentStatus.InTransit ? "active" : "")">Đang giao</a>
+            <a asp-action="Index" asp-route-status="@((int)ShipmentStatus.Delivered)" asp-route-search="@search"
+               class="adm-segment @(selectedStatus == ShipmentStatus.Delivered ? "active" : "")">Giao thành công</a>
+            <a asp-action="Index" asp-route-status="@((int)ShipmentStatus.Failed)" asp-route-search="@search"
+               class="adm-segment @(selectedStatus == ShipmentStatus.Failed ? "active" : "")">Giao thất bại</a>
+            <a asp-action="Index" asp-route-status="@((int)ShipmentStatus.Returned)" asp-route-search="@search"
+               class="adm-segment @(selectedStatus == ShipmentStatus.Returned ? "active" : "")">Đã hoàn kho</a>
+        </div>
+    </div>
+
+    <!-- TIER 2: SEARCH INPUT & CONTROLS -->
+    <form asp-action="Index" method="get" class="d-flex flex-wrap align-items-center gap-2">
+        @if (selectedStatus.HasValue)
+        {
+            <input type="hidden" name="status" value="@((int)selectedStatus.Value)" />
+        }
+
+        <div class="adm-search-input-group-v2 flex-grow-1" style="min-width: 260px;">
+            <i class="bi bi-search"></i>
+            <input type="text" name="search" maxlength="100" value="@search"
+                   placeholder="Tìm kiếm theo mã vận đơn, mã đơn, tên Shipper, SĐT..."
+                   class="adm-search-input-v2"
+                   style="padding-left: 42px !important; padding-right: 14px !important;" />
+        </div>
+
+        <select name="status" class="form-select adm-input-dark" style="height: 38px; font-size: 0.85rem; width: auto; min-width: 200px; border-radius: 8px;" onchange="this.form.submit()">
+            <option value="">Tất cả trạng thái</option>
+            @foreach (ShipmentStatus st in Enum.GetValues(typeof(ShipmentStatus)))
+            {
+                <option value="@((int)st)" selected="@(selectedStatus == st)">@GetShipmentStatusName(st)</option>
+            }
+        </select>
+
+        @if (!string.IsNullOrWhiteSpace(search) || selectedStatus.HasValue)
+        {
+            <a asp-action="Index" class="adm-action-btn adm-btn-secondary" style="height: 38px;" title="Xóa bộ lọc">
+                <i class="bi bi-x-lg"></i> <span>Đặt lại</span>
+            </a>
+        }
     </form>
 </div>
 
@@ -93,7 +97,7 @@
         <i class="bi bi-truck fs-1 text-muted d-block mb-3"></i>
         <h5 class="fw-bold adm-heading">Chưa có vận đơn nào phù hợp</h5>
         <p class="text-muted small">Hãy chuyển sang danh sách Đơn hàng để tạo lượt phân công giao hàng cho Shipper.</p>
-        <a asp-controller="AdminOrders" asp-action="Index" class="btn adm-btn-atelier mt-2">
+        <a asp-controller="AdminOrders" asp-action="Index" class="adm-action-btn adm-btn-primary d-inline-flex mx-auto mt-2">
             <i class="bi bi-receipt me-1"></i> Xem danh sách đơn cần giao
         </a>
     </div>
@@ -120,7 +124,7 @@ else
                         <tr>
                             <td class="ps-4">
                                 <div class="d-flex align-items-center gap-1">
-                                    <span class="font-monospace fw-bold" style="color: var(--adm-cyan); font-size: 0.88rem;">@sh.TrackingCode</span>
+                                    <span class="font-monospace fw-bold" style="color: var(--adm-gold, #D97706); font-size: 0.88rem;">@sh.TrackingCode</span>
                                     <button type="button" class="btn btn-sm p-0 text-muted" onclick="copyAdmText(this, '@sh.TrackingCode')" title="Sao chép mã vận đơn">
                                         <i class="bi bi-copy" style="font-size: 0.75rem;"></i>
                                     </button>
@@ -129,7 +133,7 @@ else
                             <td>
                                 <a asp-controller="AdminOrders" asp-action="Details" asp-route-id="@sh.OrderId" 
                                    class="font-monospace fw-semibold text-decoration-none adm-heading" title="Xem chi tiết đơn hàng">
-                                    @sh.Order?.OrderCode
+                                    #@sh.Order?.OrderCode
                                 </a>
                                 <div class="text-muted small">@sh.Order?.ReceiverName</div>
                             </td>
@@ -140,12 +144,12 @@ else
                             <td>
                                 @if (sh.CODAmount > 0)
                                 {
-                                    <div class="fw-bold text-danger">@sh.CODAmount.ToString("N0") ₫</div>
-                                    <span class="badge" style="background: rgba(225, 29, 72, 0.1); color: #be123c; font-size: 0.68rem;">Thu tiền mặt</span>
+                                    <div class="fw-bold text-danger font-monospace">@sh.CODAmount.ToString("N0") ₫</div>
+                                    <span class="badge" style="background: rgba(225, 29, 72, 0.1); color: #be123c; font-size: 0.68rem; font-weight: 600;">Thu tiền mặt</span>
                                 }
                                 else
                                 {
-                                    <span class="fw-bold text-success">0 ₫</span>
+                                    <span class="fw-bold text-success font-monospace">0 ₫</span>
                                     <div class="text-muted" style="font-size: 0.72rem;">Đã thanh toán trước</div>
                                 }
                             </td>
@@ -177,7 +181,7 @@ else
                             </td>
                             <td class="text-end pe-4">
                                 <a asp-action="Details" asp-route-id="@sh.Id"
-                                   class="btn btn-sm adm-btn-outline py-1 px-3" style="font-size: 0.78rem;" title="Xem chi tiết vận đơn">
+                                   class="adm-action-btn adm-btn-secondary py-1 px-3" style="font-size: 0.78rem;" title="Xem chi tiết vận đơn">
                                     Chi tiết <i class="bi bi-chevron-right ms-1"></i>
                                 </a>
                             </td>
@@ -189,13 +193,20 @@ else
     </div>
 }
 
-
 @if (ViewBag.PageCount > 1)
 {
     var current = (int)ViewBag.Page;
-    <nav class="d-flex align-items-center justify-content-center gap-3" aria-label="Phân trang vận đơn">
-        @if (current > 1) { <a asp-action="Index" asp-route-page="@(current - 1)" asp-route-search="@search" asp-route-status="@selectedStatus" class="adm-btn-outline">Trang trước</a> }
-        <span>Trang @current / @ViewBag.PageCount</span>
-        @if (current < ViewBag.PageCount) { <a asp-action="Index" asp-route-page="@(current + 1)" asp-route-search="@search" asp-route-status="@selectedStatus" class="adm-btn-outline">Trang sau</a> }
+    <nav class="d-flex align-items-center justify-content-center gap-3 my-4" aria-label="Phân trang vận đơn">
+        @if (current > 1) { 
+            <a asp-action="Index" asp-route-page="@(current - 1)" asp-route-search="@search" asp-route-status="@selectedStatus" class="adm-action-btn adm-btn-secondary">
+                <i class="bi bi-chevron-left me-1"></i> Trang trước
+            </a> 
+        }
+        <span class="text-muted small fw-semibold">Trang @current / @ViewBag.PageCount</span>
+        @if (current < ViewBag.PageCount) { 
+            <a asp-action="Index" asp-route-page="@(current + 1)" asp-route-search="@search" asp-route-status="@selectedStatus" class="adm-action-btn adm-btn-secondary">
+                Trang sau <i class="bi bi-chevron-right ms-1"></i>
+            </a> 
+        }
     </nav>
 }

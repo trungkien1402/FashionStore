@@ -1,0 +1,125 @@
+@model FashionStore.Controllers.ImportPreview
+
+@{
+    ViewData["Title"] = "Nhập danh mục sản phẩm từ Excel";
+}
+
+<!-- EXECUTIVE HEADER -->
+<div class="adm-header-block mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1 adm-meta-crumb">
+                <span class="adm-pulse-dot"></span>
+                <span class="adm-kicker-text">HNMT ATELIER · KINH DOANH</span>
+                <span class="adm-meta-divider">/</span>
+                <span class="adm-order-count-badge">BATCH IMPORT</span>
+            </div>
+            <h1 class="adm-title-main">Nhập Sản Phẩm Hàng Loạt (Excel)</h1>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <a asp-action="ImportTemplate" class="adm-action-btn adm-btn-secondary">
+                <i class="bi bi-file-earmark-arrow-down"></i> <span>Tải tệp mẫu (.xlsx)</span>
+            </a>
+            <a asp-controller="AdminProducts" asp-action="Index" class="adm-action-btn adm-btn-secondary">
+                <i class="bi bi-box-seam"></i> <span>Về danh sách sản phẩm</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- FILE UPLOAD CARD -->
+<div class="adm-card shadow-sm mb-4">
+    <div class="d-flex align-items-center gap-2 mb-3 pb-3 border-bottom border-secondary border-opacity-10">
+        <i class="bi bi-file-earmark-excel fs-5" style="color: #10B981;"></i>
+        <h5 class="fw-bold mb-0 adm-heading">Tải lên tệp bảng tính Excel (.xlsx)</h5>
+    </div>
+
+    <form asp-action="Import" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        <div class="row g-3 align-items-center">
+            <div class="col-md-6">
+                <input name="file" type="file" accept=".xlsx" required aria-label="Tệp sản phẩm Excel" class="form-control adm-input-dark" />
+                <div class="text-muted small mt-1" style="font-size: 0.75rem;">
+                    Dung lượng tối đa 2 MB, tối đa 500 dòng. Các dòng có cùng slug sẽ được tự động gom thành biến thể của một sản phẩm.
+                </div>
+            </div>
+            <div class="col-md-6 d-flex gap-2 justify-content-md-end">
+                <button type="submit" name="apply" value="false" class="adm-action-btn adm-btn-secondary py-2 px-3">
+                    <i class="bi bi-eye me-1"></i> Kiểm tra trước
+                </button>
+                <button type="submit" name="apply" value="true" class="adm-action-btn adm-btn-primary py-2 px-4">
+                    <i class="bi bi-cloud-arrow-up me-1"></i> Nhập vào hệ thống
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+@if (Model.Applied)
+{
+    <div class="alert alert-success alert-dismissible fade show mb-4 shadow-sm" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> Nhập thành công <strong>@Model.Rows.Count</strong> biến thể sản phẩm vào hệ thống Showroom.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (Model.Errors.Count > 0)
+{
+    <div class="alert alert-danger shadow-sm mb-4">
+        <div class="fw-bold mb-2"><i class="bi bi-exclamation-triangle-fill me-2"></i>Phát hiện lỗi định dạng dữ liệu trong tệp Excel:</div>
+        <ul class="mb-0 ps-3">
+            @foreach (var error in Model.Errors)
+            {
+                <li>@error</li>
+            }
+        </ul>
+    </div>
+}
+else if (!Model.Applied && Model.Rows.Count > 0)
+{
+    <div class="alert alert-info shadow-sm mb-4">
+        <i class="bi bi-info-circle-fill me-2"></i> Toàn bộ <strong>@Model.Rows.Count</strong> dòng hợp lệ. Bấm <strong>"Nhập vào hệ thống"</strong> để áp dụng thay đổi vào cơ sở dữ liệu.
+    </div>
+}
+
+@if (Model.Rows.Count > 0)
+{
+    <div class="adm-card p-0 overflow-hidden mb-4 shadow-sm">
+        <div class="p-3 border-bottom border-secondary border-opacity-10 d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0 adm-heading fs-6">
+                <i class="bi bi-table me-2" style="color: var(--adm-gold, #D97706);"></i>Dữ liệu xem trước (@Model.Rows.Count dòng)
+            </h5>
+            <span class="badge" style="background: var(--adm-surface-hover, #F8FAFC); color: var(--adm-ink, #0F172A); border: 1px solid var(--adm-border, #CBD5E1);">Preview</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="adm-table mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-3" style="width: 70px;">DÒNG</th>
+                        <th>TÊN SẢN PHẨM</th>
+                        <th>MÃ SKU</th>
+                        <th>SIZE</th>
+                        <th>MÀU</th>
+                        <th class="text-end">GIÁ (₫)</th>
+                        <th class="text-end pe-3">TỒN KHO</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in Model.Rows)
+                    {
+                        <tr>
+                            <td class="ps-3 font-monospace text-muted">#@row.Line</td>
+                            <td class="fw-bold adm-heading">@row.Name</td>
+                            <td><code class="font-monospace">@row.Sku</code></td>
+                            <td><span class="badge" style="background: var(--adm-surface-hover, #F8FAFC); color: var(--adm-ink, #0F172A); border: 1px solid var(--adm-border, #CBD5E1);">@row.Size</span></td>
+                            <td><span class="badge" style="background: var(--adm-surface-hover, #F8FAFC); color: var(--adm-ink, #0F172A); border: 1px solid var(--adm-border, #CBD5E1);">@row.Color</span></td>
+                            <td class="text-end font-monospace fw-bold" style="color: var(--adm-gold, #D97706);">@row.Price.ToString("N0")</td>
+                            <td class="text-end pe-3 font-monospace fw-bold adm-heading">@row.Stock</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

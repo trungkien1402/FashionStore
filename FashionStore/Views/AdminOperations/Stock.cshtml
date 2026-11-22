@@ -1,26 +1,156 @@
 @model FashionStore.Models.Entities.ProductVariant
 @using FashionStore.Models.Entities
 @using FashionStore.Services.Implementations
-@{ ViewData["Title"] = "Điều chỉnh tồn kho"; }
-<header class="adm-dashboard-header mb-4">
-    <div><h1>@Model.Product.Name</h1><p class="adm-dashboard-period">@Model.SKU · @Model.Size · @Model.Color</p></div>
-    <a asp-action="Inventory" class="adm-btn-outline">Về kho hàng</a>
-</header>
-<form asp-action="AdjustStock" asp-route-id="@Model.Id" method="post" class="adm-filter-bar row g-3 mx-0 mb-4">
-    <input type="hidden" name="expected" value="@Model.StockQuantity" />
-    <div class="col-md-3"><label for="quantity">Số tồn sau kiểm đếm</label><input id="quantity" name="quantity" type="number" min="0" value="@Model.StockQuantity" required class="form-control adm-input-dark" /></div>
-    <div class="col-md-6"><label for="reason">Lý do</label><input id="reason" name="reason" maxlength="250" required class="form-control adm-input-dark" /></div>
-    <div class="col-md-auto align-self-end"><button class="adm-btn-atelier">Lưu tồn kho</button></div>
-</form>
-<h2 class="adm-heading h5">Lịch sử nhập, xuất và điều chỉnh</h2>
-<div class="adm-card table-responsive p-0">
-<table class="adm-table mb-0">
-<thead><tr><th>Thời điểm</th><th>Trước</th><th>Sau</th><th>Lý do</th><th>Mã người thao tác</th></tr></thead>
-<tbody>
-@foreach (var row in (List<StockMovement>)ViewBag.History)
-{
-    <tr><td>@AdminReportService.ToVietnamTime(row.CreatedAt).ToString("dd/MM/yyyy HH:mm")</td><td>@row.Before</td><td>@row.After</td><td>@row.Reason</td><td>@row.ActorId</td></tr>
+
+@{
+    ViewData["Title"] = $"Điều chỉnh tồn kho - {Model.SKU}";
+    var history = (List<StockMovement>)ViewBag.History ?? new List<StockMovement>();
 }
-</tbody>
-</table>
+
+<!-- EXECUTIVE HEADER -->
+<div class="adm-header-block mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1 adm-meta-crumb">
+                <span class="adm-pulse-dot"></span>
+                <span class="adm-kicker-text">HNMT ATELIER · KHO HÀNG</span>
+                <span class="adm-meta-divider">/</span>
+                <span class="adm-order-count-badge">SKU: @Model.SKU</span>
+            </div>
+            <h1 class="adm-title-main">@Model.Product?.Name</h1>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <a asp-action="Inventory" class="adm-action-btn adm-btn-secondary">
+                <i class="bi bi-arrow-left"></i> <span>Quay lại kho hàng</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mb-4 shadow-sm" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show mb-4 shadow-sm" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="row g-4">
+    <!-- LEFT: ADJUSTMENT FORM -->
+    <div class="col-lg-5">
+        <div class="adm-card shadow-sm mb-4">
+            <div class="d-flex align-items-center gap-2 mb-3 pb-3 border-bottom border-secondary border-opacity-10">
+                <i class="bi bi-sliders fs-5" style="color: var(--adm-gold, #D97706);"></i>
+                <h5 class="fw-bold mb-0 adm-heading">Điều chỉnh số lượng tồn</h5>
+            </div>
+
+            <div class="p-3 rounded-3 mb-4" style="background: var(--adm-surface-hover, #F8FAFC); border: 1px solid var(--adm-border, #E2E8F0);">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-muted small">Tồn kho hiện tại</div>
+                        <div class="fs-2 fw-bold font-monospace adm-heading mt-1">@Model.StockQuantity</div>
+                    </div>
+                    <div class="text-end">
+                        <span class="badge" style="background: #F1F5F9; color: #0F172A; border: 1px solid #CBD5E1;">Size: @Model.Size</span>
+                        <div class="badge mt-1" style="background: #F1F5F9; color: #0F172A; border: 1px solid #CBD5E1;">Màu: @Model.Color</div>
+                    </div>
+                </div>
+            </div>
+
+            <form asp-action="AdjustStock" asp-route-id="@Model.Id" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="expected" value="@Model.StockQuantity" />
+
+                <div class="mb-3">
+                    <label for="quantity" class="adm-form-label fw-bold">Số tồn thực tế sau kiểm đếm <span class="text-danger">*</span></label>
+                    <input id="quantity" name="quantity" type="number" min="0" value="@Model.StockQuantity" required class="form-control adm-input-dark font-monospace fs-5" />
+                </div>
+
+                <div class="mb-4">
+                    <label for="reason" class="adm-form-label fw-bold">Lý do điều chỉnh <span class="text-danger">*</span></label>
+                    <textarea id="reason" name="reason" maxlength="250" required rows="3" class="form-control adm-input-dark" placeholder="VD: Kiểm kê định kỳ, sai lệch kiểm đếm, bù trừ hư hại vận chuyển..."></textarea>
+                </div>
+
+                <button type="submit" class="adm-action-btn adm-btn-primary w-100 py-2 justify-content-center">
+                    <i class="bi bi-check2 me-1"></i> Ghi nhận điều chỉnh
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- RIGHT: HISTORY TABLE -->
+    <div class="col-lg-7">
+        <div class="adm-card shadow-sm p-0 overflow-hidden">
+            <div class="p-3 border-bottom border-secondary border-opacity-10 d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-clock-history fs-5" style="color: var(--adm-gold, #D97706);"></i>
+                    <h5 class="fw-bold mb-0 adm-heading">Lịch sử Biến động Tồn kho</h5>
+                </div>
+                <span class="badge" style="background: var(--adm-surface-hover, #F8FAFC); color: var(--adm-ink, #0F172A); border: 1px solid var(--adm-border, #CBD5E1);">@history.Count lượt</span>
+            </div>
+
+            @if (!history.Any())
+            {
+                <div class="p-4 text-center text-muted small">
+                    Chưa có lịch sử biến động cho biến thể này.
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="adm-table mb-0">
+                        <thead>
+                            <tr>
+                                <th class="ps-3">THỜI ĐIỂM</th>
+                                <th>THAY ĐỔI</th>
+                                <th>LÝ DO</th>
+                                <th class="text-end pe-3">NGƯỜI THỰC HIỆN</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var row in history)
+                            {
+                                var delta = row.After - row.Before;
+                                <tr>
+                                    <td class="ps-3">
+                                        <div class="adm-text-contrast small">@AdminReportService.ToVietnamTime(row.CreatedAt).ToString("dd/MM/yyyy")</div>
+                                        <div class="text-muted font-monospace" style="font-size: 0.72rem;">@AdminReportService.ToVietnamTime(row.CreatedAt).ToString("HH:mm")</div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-1 font-monospace small">
+                                            <span class="text-muted">@row.Before</span>
+                                            <i class="bi bi-arrow-right text-muted" style="font-size: 0.75rem;"></i>
+                                            <strong class="adm-heading">@row.After</strong>
+                                            @if (delta > 0)
+                                            {
+                                                <span class="badge bg-success bg-opacity-10 text-success ms-1">+@delta</span>
+                                            }
+                                            else if (delta < 0)
+                                            {
+                                                <span class="badge bg-danger bg-opacity-10 text-danger ms-1">@delta</span>
+                                            }
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="small adm-text-contrast">@row.Reason</span>
+                                    </td>
+                                    <td class="text-end pe-3">
+                                        <span class="font-monospace text-muted small" style="font-size: 0.75rem;">@(row.ActorId ?? "Hệ thống")</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
 </div>

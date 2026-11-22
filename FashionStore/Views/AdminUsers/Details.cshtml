@@ -3,49 +3,50 @@
     ViewData["Title"] = "Chi tiết tài khoản - " + Model.User.FullName;
     var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
     var isSelf = Model.User.Id == currentUserId;
+    var initial = !string.IsNullOrWhiteSpace(Model.User.FullName) ? Model.User.FullName.Substring(0, 1).ToUpper() : "U";
 }
 
-<div class="mb-4">
-    <a asp-action="Index" class="adm-btn-outline py-1 px-3 mb-3 d-inline-flex" style="font-size: 0.8rem;">
-        <i class="bi bi-arrow-left me-1"></i> Quay lại danh sách tài khoản
-    </a>
-
-    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+<!-- EXECUTIVE HEADER -->
+<div class="adm-header-block mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
         <div>
-            <div class="d-flex align-items-center gap-2 mb-1">
-                <span style="font-size: 0.68rem; font-weight: 700; letter-spacing: 0.28em; color: var(--adm-gold); text-transform: uppercase;">
-                    USER PROFILE &amp; ROLES
-                </span>
-                <span style="width: 4px; height: 4px; border-radius: 50%; background: var(--adm-gold);"></span>
-                <span class="text-muted small">ID: @Model.User.Id</span>
+            <div class="d-flex align-items-center gap-2 mb-1 adm-meta-crumb">
+                <span class="adm-pulse-dot"></span>
+                <span class="adm-kicker-text">HNMT ATELIER · QUẢN TRỊ</span>
+                <span class="adm-meta-divider">/</span>
+                <span class="adm-order-count-badge">TÀI KHOẢN #@Model.User.Id[..Math.Min(Model.User.Id.Length, 8)]...</span>
             </div>
-            <h2 class="fw-bold mb-0 adm-heading">@Model.User.FullName</h2>
+            <h1 class="adm-title-main">@Model.User.FullName</h1>
         </div>
-
-        @if (!isSelf)
-        {
-            <form asp-action="ToggleLock" asp-route-id="@Model.User.Id" method="post"
-                  onsubmit="return confirm('@(Model.User.IsActive ? "Khóa tài khoản này?" : "Mở khóa tài khoản này?")');">
-                @Html.AntiForgeryToken()
-                <button type="submit" class="btn @(Model.User.IsActive ? "btn-outline-danger" : "btn-outline-success")">
-                    <i class="bi @(Model.User.IsActive ? "bi-lock" : "bi-unlock") me-1"></i>
-                    @(Model.User.IsActive ? "Khóa tài khoản" : "Mở khóa tài khoản")
-                </button>
-            </form>
-        }
+        <div class="d-flex align-items-center gap-2">
+            <a asp-action="Index" class="adm-action-btn adm-btn-secondary">
+                <i class="bi bi-arrow-left"></i> <span>Quay lại danh sách</span>
+            </a>
+            @if (!isSelf)
+            {
+                <form asp-action="ToggleLock" asp-route-id="@Model.User.Id" method="post" class="d-inline"
+                      onsubmit="return confirm('@(Model.User.IsActive ? "Khóa tài khoản này?" : "Mở khóa tài khoản này?")');">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="adm-action-btn adm-btn-secondary @(Model.User.IsActive ? "text-danger" : "text-success")">
+                        <i class="bi @(Model.User.IsActive ? "bi-lock" : "bi-unlock") me-1"></i>
+                        @(Model.User.IsActive ? "Khóa tài khoản" : "Mở khóa tài khoản")
+                    </button>
+                </form>
+            }
+        </div>
     </div>
 </div>
 
 @if (TempData["Success"] != null)
 {
-    <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+    <div class="alert alert-success alert-dismissible fade show mb-4 shadow-sm" role="alert">
         <i class="bi bi-check-circle-fill me-2"></i>@TempData["Success"]
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 }
 @if (TempData["Error"] != null)
 {
-    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+    <div class="alert alert-danger alert-dismissible fade show mb-4 shadow-sm" role="alert">
         <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["Error"]
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
@@ -54,10 +55,10 @@
 <div class="row g-4 mb-4">
     <!-- LEFT: PROFILE & METRICS -->
     <div class="col-lg-4">
-        <div class="adm-card mb-4">
+        <div class="adm-card shadow-sm mb-4">
             <div class="text-center py-3">
-                <div style="width: 68px; height: 68px; border-radius: 50%; background: #1e293b; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.6rem; margin: 0 auto 12px;">
-                    @(string.IsNullOrWhiteSpace(Model.User.FullName) ? "U" : Model.User.FullName.Substring(0, 1).ToUpper())
+                <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3 fw-bold" style="width: 72px; height: 72px; background: #0F172A; color: #F8FAFC; font-size: 1.8rem;">
+                    @initial
                 </div>
                 <h5 class="fw-bold adm-heading mb-1">@Model.User.FullName</h5>
                 <div class="text-muted small mb-2">@Model.User.Email</div>
@@ -68,7 +69,7 @@
                     }
                     else
                     {
-                        <span class="adm-pill adm-pill-faint text-danger fw-bold">Đã bị khóa</span>
+                        <span class="adm-pill adm-pill-rose font-bold">Đã bị khóa</span>
                     }
                 </div>
             </div>
@@ -82,18 +83,18 @@
                 </div>
                 <div class="d-flex justify-content-between">
                     <span class="text-muted">Số điện thoại:</span>
-                    <strong>@(string.IsNullOrEmpty(Model.User.PhoneNumber) ? "Chưa có" : Model.User.PhoneNumber)</strong>
+                    <strong class="font-monospace">@(string.IsNullOrEmpty(Model.User.PhoneNumber) ? "Chưa có" : Model.User.PhoneNumber)</strong>
                 </div>
                 <div class="d-flex justify-content-between">
                     <span class="text-muted">Ngày tạo:</span>
                     <span>@Model.User.CreatedAt.AddHours(7).ToString("dd/MM/yyyy HH:mm")</span>
                 </div>
-                <div class="d-flex justify-content-between">
+                <div class="d-flex justify-content-between align-items-center">
                     <span class="text-muted">Vai trò hiện tại:</span>
-                    <div>
+                    <div class="d-flex flex-wrap gap-1 justify-content-end">
                         @foreach (var r in Model.Roles)
                         {
-                            <span class="badge bg-primary me-1">@r</span>
+                            <span class="badge" style="background: rgba(37, 99, 235, 0.15); color: #2563EB;">@r</span>
                         }
                     </div>
                 </div>
@@ -103,15 +104,15 @@
         <!-- STATS TILES -->
         <div class="row g-3">
             <div class="col-6">
-                <div class="adm-card p-3 text-center">
+                <div class="adm-card p-3 text-center shadow-sm">
                     <div class="text-muted small text-uppercase">Đơn hàng</div>
-                    <div class="fs-4 fw-bold adm-heading mt-1">@Model.OrderCount</div>
+                    <div class="fs-3 fw-bold font-monospace adm-heading mt-1">@Model.OrderCount</div>
                 </div>
             </div>
             <div class="col-6">
-                <div class="adm-card p-3 text-center">
-                    <div class="text-muted small text-uppercase">Đã chi tiêu</div>
-                    <div class="fs-5 fw-bold mt-1" style="color: var(--adm-gold);">@Model.TotalSpent.ToString("N0") ₫</div>
+                <div class="adm-card p-3 text-center shadow-sm">
+                    <div class="text-muted small text-uppercase">Tổng chi tiêu</div>
+                    <div class="fs-4 fw-bold font-monospace mt-1" style="color: var(--adm-gold, #D97706);">@Model.TotalSpent.ToString("N0") ₫</div>
                 </div>
             </div>
         </div>
@@ -120,39 +121,47 @@
     <!-- RIGHT: ROLE & SECURITY & ORDERS -->
     <div class="col-lg-8">
         <!-- ROLE MANAGEMENT -->
-        <div class="adm-card mb-4">
-            <h5 class="fw-bold adm-heading mb-3"><i class="bi bi-shield-lock me-2" style="color: var(--adm-gold);"></i>Phân quyền tài khoản</h5>
+        <div class="adm-card shadow-sm mb-4">
+            <div class="d-flex align-items-center gap-2 mb-3 pb-3 border-bottom border-secondary border-opacity-10">
+                <i class="bi bi-shield-lock fs-5" style="color: var(--adm-gold, #D97706);"></i>
+                <h5 class="fw-bold mb-0 adm-heading">Phân quyền tài khoản</h5>
+            </div>
+
             <form asp-action="UpdateRole" method="post" class="d-flex flex-wrap align-items-center gap-3">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="id" value="@Model.User.Id" />
                 <div class="flex-grow-1" style="min-width: 200px;">
-                    <select name="newRole" class="form-select">
+                    <select name="newRole" class="form-select adm-input-dark">
                         @foreach (var r in new[] { "Admin", "Manager", "Staff", "Shipper", "Customer" })
                         {
                             <option value="@r" selected="@(Model.Roles.Contains(r))">@r</option>
                         }
                     </select>
                 </div>
-                <button type="submit" class="btn adm-btn-atelier"
-                        onsubmit="return confirm('Xác nhận cập nhật vai trò cho người dùng?');">
-                    <i class="bi bi-check-lg me-1"></i> Lưu vai trò mới
+                <button type="submit" class="adm-action-btn adm-btn-primary py-2 px-3"
+                        onclick="return confirm('Xác nhận cập nhật vai trò mới cho người dùng này?');">
+                    <i class="bi bi-check2 me-1"></i> Lưu vai trò mới
                 </button>
             </form>
-            <div class="text-muted small mt-2">
-                * Quản trị viên (Admin) có đầy đủ quyền hạn tối cao. Manager: quản lý bán hàng &amp; danh mục. Staff: nhân viên vận hành. Shipper: giao nhận đơn hàng. Customer: khách hàng mua sắm.
+            <div class="text-muted small mt-2" style="font-size: 0.75rem;">
+                * Admin: toàn quyền quản trị tối cao. Manager: quản lý nghiệp vụ bán hàng. Staff: nhân viên vận hành. Shipper: giao nhận hàng. Customer: khách hàng mua sắm.
             </div>
         </div>
 
         <!-- RESET PASSWORD -->
-        <div class="adm-card mb-4">
-            <h5 class="fw-bold adm-heading mb-3"><i class="bi bi-key me-2" style="color: var(--adm-gold);"></i>Đặt lại mật khẩu</h5>
+        <div class="adm-card shadow-sm mb-4">
+            <div class="d-flex align-items-center gap-2 mb-3 pb-3 border-bottom border-secondary border-opacity-10">
+                <i class="bi bi-key fs-5" style="color: var(--adm-gold, #D97706);"></i>
+                <h5 class="fw-bold mb-0 adm-heading">Đặt lại mật khẩu</h5>
+            </div>
+
             <form asp-action="ResetPassword" method="post" class="d-flex flex-wrap align-items-center gap-3">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="id" value="@Model.User.Id" />
                 <div class="flex-grow-1" style="min-width: 200px;">
-                    <input type="password" name="newPassword" class="form-control" placeholder="Nhập mật khẩu mới (tối thiểu 6 ký tự)..." required minlength="6" />
+                    <input type="password" name="newPassword" class="form-control adm-input-dark font-monospace" placeholder="Nhập mật khẩu mới (tối thiểu 6 ký tự)..." required minlength="6" />
                 </div>
-                <button type="submit" class="btn adm-btn-outline"
+                <button type="submit" class="adm-action-btn adm-btn-secondary py-2 px-3"
                         onclick="return confirm('Bạn có chắc chắn muốn đặt lại mật khẩu cho tài khoản này?');">
                     <i class="bi bi-arrow-repeat me-1"></i> Cập nhật mật khẩu
                 </button>
@@ -160,11 +169,15 @@
         </div>
 
         <!-- RECENT ORDERS -->
-        <div class="adm-card p-0 overflow-hidden">
+        <div class="adm-card p-0 overflow-hidden shadow-sm">
             <div class="p-3 border-bottom border-secondary border-opacity-10 d-flex justify-content-between align-items-center">
-                <h5 class="fw-bold adm-heading mb-0"><i class="bi bi-bag-check me-2" style="color: var(--adm-gold);"></i>Lịch sử đặt hàng gần đây</h5>
-                <span class="text-muted small">@Model.RecentOrders.Count đơn hàng</span>
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-bag-check fs-5" style="color: var(--adm-gold, #D97706);"></i>
+                    <h5 class="fw-bold mb-0 adm-heading fs-6">Lịch sử đặt hàng gần đây</h5>
+                </div>
+                <span class="badge" style="background: var(--adm-surface-hover, #F8FAFC); color: var(--adm-ink, #0F172A); border: 1px solid var(--adm-border, #CBD5E1);">@Model.RecentOrders.Count đơn hàng</span>
             </div>
+
             @if (Model.RecentOrders.Any())
             {
                 <div class="table-responsive">
@@ -173,7 +186,7 @@
                             <tr>
                                 <th class="ps-4">MÃ ĐƠN</th>
                                 <th>NGÀY ĐẶT</th>
-                                <th>TỔNG TIỀN</th>
+                                <th class="text-end">TỔNG TIỀN</th>
                                 <th>TRẠNG THÁI</th>
                                 <th>THANH TOÁN</th>
                                 <th class="text-end pe-4">CHI TIẾT</th>
@@ -184,21 +197,27 @@
                             {
                                 <tr>
                                     <td class="ps-4">
-                                        <span class="font-monospace fw-bold" style="color: var(--adm-cyan);">@o.OrderCode</span>
-                                    </td>
-                                    <td>@o.CreatedAt.AddHours(7).ToString("dd/MM/yyyy HH:mm")</td>
-                                    <td class="fw-bold" style="color: var(--adm-gold);">@o.TotalAmount.ToString("N0") ₫</td>
-                                    <td>
-                                        <span class="badge bg-secondary">@o.Status</span>
+                                        <a asp-controller="AdminOrders" asp-action="Details" asp-route-id="@o.Id" class="font-monospace fw-bold text-decoration-none adm-heading" style="color: var(--adm-gold, #D97706);">
+                                            #@o.OrderCode
+                                        </a>
                                     </td>
                                     <td>
-                                        <span class="badge @(o.PaymentStatus == FashionStore.Models.Enums.PaymentStatus.Paid ? "bg-success" : "bg-warning text-dark")">
+                                        <span class="text-muted small">@o.CreatedAt.AddHours(7).ToString("dd/MM/yyyy HH:mm")</span>
+                                    </td>
+                                    <td class="text-end font-monospace fw-bold adm-heading">
+                                        @o.TotalAmount.ToString("N0") ₫
+                                    </td>
+                                    <td>
+                                        <span class="badge" style="background: var(--adm-surface-hover, #F8FAFC); color: var(--adm-ink, #0F172A); border: 1px solid var(--adm-border, #CBD5E1);">@o.Status</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge @(o.PaymentStatus == FashionStore.Models.Enums.PaymentStatus.Paid ? "bg-success bg-opacity-10 text-success border border-success border-opacity-25" : "bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25")">
                                             @o.PaymentStatus
                                         </span>
                                     </td>
                                     <td class="text-end pe-4">
-                                        <a asp-controller="AdminOrders" asp-action="Details" asp-route-id="@o.Id" class="btn btn-sm adm-btn-outline py-1 px-2">
-                                            <i class="bi bi-eye"></i>
+                                        <a asp-controller="AdminOrders" asp-action="Details" asp-route-id="@o.Id" class="adm-action-btn adm-btn-secondary py-1 px-2" style="font-size: 0.78rem;">
+                                            <i class="bi bi-chevron-right"></i>
                                         </a>
                                     </td>
                                 </tr>

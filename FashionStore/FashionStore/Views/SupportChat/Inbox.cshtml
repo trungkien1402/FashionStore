@@ -1,0 +1,63 @@
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Chat hỗ trợ trực tuyến";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/support-chat.css" asp-append-version="true" />
+}
+
+<!-- EXECUTIVE HEADER -->
+<div class="adm-header-block mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1 adm-meta-crumb">
+                <span class="adm-pulse-dot"></span>
+                <span class="adm-kicker-text">HNMT ATELIER · VẬN HÀNH</span>
+                <span class="adm-meta-divider">/</span>
+                <span class="adm-order-count-badge">TRỰC TUYẾN</span>
+            </div>
+            <h1 class="adm-title-main">Chat Hỗ trợ Khách hàng</h1>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <a asp-controller="AdminSupportRequests" asp-action="Index" class="adm-action-btn adm-btn-secondary">
+                <i class="bi bi-inbox"></i> <span>Yêu cầu hỗ trợ (Ticket)</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="support-inbox shadow-sm" data-support-chat data-queue="@Url.Action("Queue")" data-thread="@Url.Action("Thread")" data-close="@Url.Action("Close")">
+    <nav class="support-queue adm-card p-0" aria-label="Cuộc trò chuyện">
+        <div class="p-3 border-bottom border-secondary border-opacity-10 d-flex align-items-center justify-content-between">
+            <h5 class="fw-bold mb-0 adm-heading fs-6">
+                <i class="bi bi-chat-left-dots me-2" style="color: var(--adm-gold, #D97706);"></i>Hộp thư đến
+            </h5>
+            <span class="badge" style="background: var(--adm-surface-hover, #F8FAFC); color: var(--adm-ink, #0F172A); border: 1px solid var(--adm-border, #CBD5E1);">Realtime</span>
+        </div>
+        <div data-chat-queue class="p-2"></div>
+    </nav>
+    <section class="support-room adm-card p-0 overflow-hidden" aria-label="Nội dung cuộc trò chuyện">
+        <header class="support-chat-head p-3 border-bottom border-secondary border-opacity-10 d-flex justify-content-between align-items-center" style="background: var(--adm-surface, #FFFFFF);">
+            <strong data-chat-title class="adm-heading fs-6">Chọn một cuộc trò chuyện</strong>
+            <button type="button" class="adm-action-btn adm-btn-secondary py-1 px-3" data-chat-close-thread hidden style="font-size: 0.78rem;">
+                <i class="bi bi-check2-circle me-1"></i> Đóng yêu cầu
+            </button>
+        </header>
+        <div class="p-3" style="min-height: 380px;">
+            <partial name="_SupportChatMessages" />
+        </div>
+        <form asp-action="Reply" method="post" class="support-compose p-3 border-top border-secondary border-opacity-10" hidden novalidate style="background: var(--adm-surface, #FFFFFF);">
+            <label class="visually-hidden" for="supportReply">Tin nhắn trả lời</label>
+            <div class="d-flex align-items-center gap-2">
+                <textarea id="supportReply" name="message" rows="2" maxlength="1000" required placeholder="Nhập nội dung trả lời khách hàng…" class="form-control adm-input-dark flex-grow-1" style="resize: none;"></textarea>
+                <button type="submit" class="adm-action-btn adm-btn-primary py-2 px-3 align-self-end" aria-label="Gửi trả lời" style="height: 48px;">
+                    <i class="bi bi-send-fill" aria-hidden="true"></i>
+                </button>
+            </div>
+        </form>
+    </section>
+</div>
+
+@section Scripts {
+    <script src="~/js/support-chat.js" asp-append-version="true"></script>
+}

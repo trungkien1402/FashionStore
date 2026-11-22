@@ -1,0 +1,265 @@
+@model FashionStore.Controllers.VoucherPage
+@using FashionStore.Services.Implementations
+
+@{
+    ViewData["Title"] = "Chương trình Khuyến mãi & Voucher";
+    var categoryNames = Model.Categories.ToDictionary(c => c.Id, c => c.Label);
+    var productNames = Model.Products.ToDictionary(p => p.Id, p => p.Label);
+    var activeCount = Model.Vouchers.Count(v => v.IsActive);
+}
+
+<!-- EXECUTIVE HEADER -->
+<div class="adm-header-block mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1 adm-meta-crumb">
+                <span class="adm-pulse-dot"></span>
+                <span class="adm-kicker-text">HNMT ATELIER · KINH DOANH</span>
+                <span class="adm-meta-divider">/</span>
+                <span class="adm-order-count-badge">@Model.Vouchers.Count mã voucher</span>
+            </div>
+            <h1 class="adm-title-main">Quản lý Khuyến mãi & Voucher</h1>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <a asp-action="Promotions" class="adm-action-btn adm-btn-secondary" title="Làm mới">
+                <i class="bi bi-arrow-clockwise"></i> <span>Làm mới</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- SUMMARY METRICS -->
+    <div class="d-flex flex-wrap align-items-center gap-3">
+        <div class="p-2 px-3 rounded-2" style="background: var(--adm-surface-hover, #F8FAFC); border: 1px solid var(--adm-border, #E2E8F0); font-size: 0.85rem;">
+            <span class="text-muted">Tổng mã đã tạo:</span>
+            <strong class="adm-heading ms-1">@Model.Vouchers.Count</strong>
+        </div>
+        <div class="p-2 px-3 rounded-2" style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); font-size: 0.85rem;">
+            <span class="text-success fw-semibold">Đang hoạt động:</span>
+            <strong class="text-success ms-1">@activeCount</strong>
+        </div>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mb-4 shadow-sm" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show mb-4 shadow-sm" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<!-- CREATE VOUCHER ACCORDION / CARD -->
+<div class="adm-card shadow-sm mb-4">
+    <div class="d-flex align-items-center gap-2 mb-3 pb-3 border-bottom border-secondary border-opacity-10">
+        <i class="bi bi-ticket-perforated fs-5" style="color: var(--adm-gold, #D97706);"></i>
+        <h5 class="fw-bold mb-0 adm-heading">Tạo Mã Giảm Giá Mới</h5>
+    </div>
+
+    <form asp-action="CreateVoucher" method="post">
+        @Html.AntiForgeryToken()
+        <div class="row g-3">
+            <div class="col-6 col-md-3">
+                <label for="code" class="adm-form-label fw-bold">Mã Voucher <span class="text-danger">*</span></label>
+                <input id="code" name="code" type="text" maxlength="40" required class="form-control adm-input-dark font-monospace text-uppercase" placeholder="HNMT-SUMMER50" />
+            </div>
+            <div class="col-6 col-md-3">
+                <label for="start" class="adm-form-label fw-bold">Từ ngày <span class="text-danger">*</span></label>
+                <input id="start" name="start" type="date" required class="form-control adm-input-dark" />
+            </div>
+            <div class="col-6 col-md-3">
+                <label for="end" class="adm-form-label fw-bold">Đến hết ngày <span class="text-danger">*</span></label>
+                <input id="end" name="end" type="date" required class="form-control adm-input-dark" />
+            </div>
+            <div class="col-6 col-md-3">
+                <label for="value" class="adm-form-label fw-bold">Mức giảm <span class="text-danger">*</span></label>
+                <input id="value" name="value" type="number" min="1" required class="form-control adm-input-dark font-monospace" placeholder="10 hoặc 50000" />
+            </div>
+
+            <div class="col-6 col-md-3">
+                <label for="minimum" class="adm-form-label">Đơn tối thiểu (₫)</label>
+                <input id="minimum" name="minimum" type="number" min="0" value="0" required class="form-control adm-input-dark font-monospace" />
+            </div>
+            <div class="col-6 col-md-3">
+                <label for="maximum" class="adm-form-label">Giảm tối đa (₫)</label>
+                <input id="maximum" name="maximum" type="number" min="1" class="form-control adm-input-dark font-monospace" placeholder="Để trống nếu không giới hạn" />
+            </div>
+            <div class="col-6 col-md-3">
+                <label for="totalLimit" class="adm-form-label">Tổng lượt dùng <span class="text-danger">*</span></label>
+                <input id="totalLimit" name="totalLimit" type="number" min="1" value="100" required class="form-control adm-input-dark font-monospace" />
+            </div>
+            <div class="col-6 col-md-3">
+                <label for="customerLimit" class="adm-form-label">Lượt / khách <span class="text-danger">*</span></label>
+                <input id="customerLimit" name="customerLimit" type="number" min="1" value="1" required class="form-control adm-input-dark font-monospace" />
+            </div>
+
+            <div class="col-12 col-md-4">
+                <label for="voucherScope" class="adm-form-label fw-bold">Phạm vi áp dụng</label>
+                <select id="voucherScope" name="scope" class="form-select adm-input-dark">
+                    <option value="all">Toàn bộ cửa hàng</option>
+                    <option value="category">Một danh mục</option>
+                    <option value="product">Một sản phẩm cụ thể</option>
+                </select>
+            </div>
+
+            <div class="col-12 col-md-4" id="voucherCategoryFields" hidden>
+                <label for="categoryId" class="adm-form-label">Chọn danh mục</label>
+                <select id="categoryId" name="categoryId" class="form-select adm-input-dark" disabled>
+                    <option value="">-- Chọn danh mục --</option>
+                    @foreach (var category in Model.Categories.Where(c => c.Active))
+                    {
+                        <option value="@category.Id">@category.Label</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-12 col-md-8" id="voucherProductFields" hidden>
+                <label for="voucherProductSearch" class="adm-form-label">Tìm nhanh sản phẩm</label>
+                <input id="voucherProductSearch" type="search" maxlength="100" class="form-control adm-input-dark mb-2"
+                       placeholder="Nhập tên hoặc slug sản phẩm..." />
+                <select id="productId" name="productId" class="form-select adm-input-dark" disabled>
+                    <option value="">-- Chọn sản phẩm --</option>
+                    @foreach (var product in Model.Products.Where(p => p.Active))
+                    {
+                        <option value="@product.Id">@product.Label</option>
+                    }
+                </select>
+                <p id="voucherProductEmpty" class="small text-muted mt-1 mb-0" role="status" hidden>Không tìm thấy sản phẩm khớp.</p>
+            </div>
+
+            <div class="col-12 d-flex flex-wrap justify-content-between align-items-center pt-3 border-top border-secondary border-opacity-10 gap-3">
+                <div class="form-check">
+                    <input name="percentage" type="checkbox" value="true" class="form-check-input" id="percentage" />
+                    <label class="form-check-label fw-semibold adm-heading" for="percentage">Mức giảm tính theo phần trăm (%)</label>
+                </div>
+
+                <button type="submit" class="adm-action-btn adm-btn-primary py-2 px-4">
+                    <i class="bi bi-plus-lg me-1"></i> Tạo mã Voucher
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- VOUCHERS TABLE -->
+@if (!Model.Vouchers.Any())
+{
+    <div class="adm-card text-center py-5">
+        <i class="bi bi-ticket-detailed fs-1 text-muted d-block mb-3"></i>
+        <h5 class="fw-bold adm-heading">Chưa có mã giảm giá nào</h5>
+        <p class="text-muted small mb-0">Tạo mã giảm giá phía trên để thu hút khách hàng và tri ân thành viên.</p>
+    </div>
+}
+else
+{
+    <div class="adm-card p-0 overflow-hidden mb-4">
+        <div class="table-responsive">
+            <table class="adm-table mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">MÃ VOUCHER</th>
+                        <th>THỜI HẠN HIỆU LỰC</th>
+                        <th>MỨC GIẢM</th>
+                        <th>PHẠM VI</th>
+                        <th>GIỚI HẠN</th>
+                        <th>TRẠNG THÁI</th>
+                        <th>MINIGAME REWARD</th>
+                        <th class="text-end pe-4">THAO TÁC</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in Model.Vouchers)
+                    {
+                        <tr>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center gap-1">
+                                    <span class="font-monospace fw-bold fs-6" style="color: var(--adm-gold, #D97706);">@row.Code</span>
+                                    <button type="button" class="btn btn-sm p-0 text-muted" onclick="copyAdmText(this, '@row.Code')" title="Sao chép mã">
+                                        <i class="bi bi-copy" style="font-size: 0.75rem;"></i>
+                                    </button>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="adm-text-contrast small">@AdminReportService.ToVietnamTime(row.StartsAt).ToString("dd/MM/yyyy") – @AdminReportService.ToVietnamTime(row.EndsAt).AddDays(-1).ToString("dd/MM/yyyy")</div>
+                            </td>
+                            <td>
+                                <span class="badge font-monospace" style="background: rgba(245, 158, 11, 0.15); color: #B45309; font-size: 0.85rem; font-weight: 700;">
+                                    @row.Value.ToString("N0")@(row.IsPercentage ? "%" : " ₫")
+                                </span>
+                            </td>
+                            <td>
+                                @if (row.ProductId is int productId)
+                                {
+                                    <span class="small adm-heading">@productNames.GetValueOrDefault(productId, "Sản phẩm đã bị gỡ")</span>
+                                }
+                                else if (row.CategoryId is int categoryId)
+                                {
+                                    <span class="small adm-heading">Danh mục: @categoryNames.GetValueOrDefault(categoryId, "Danh mục đã bị gỡ")</span>
+                                }
+                                else
+                                {
+                                    <span class="adm-pill adm-pill-faint">Toàn bộ shop</span>
+                                }
+                            </td>
+                            <td>
+                                <span class="text-muted small">@row.TotalLimit lượt (max @row.CustomerLimit/khách)</span>
+                            </td>
+                            <td>
+                                @if (row.IsActive)
+                                {
+                                    <span class="adm-pill adm-pill-emerald">Đang bật</span>
+                                }
+                                else
+                                {
+                                    <span class="adm-pill adm-pill-faint">Đang tắt</span>
+                                }
+                            </td>
+                            <td>
+                                @if (row.IsPercentage)
+                                {
+                                    <form asp-action="SetGameReward" asp-route-id="@row.Id" method="post" class="d-flex gap-1 align-items-center">
+                                        @Html.AntiForgeryToken()
+                                        <select name="score" class="form-select adm-input-dark py-1 px-2" style="font-size: 0.75rem; width: auto;" aria-label="Mốc điểm cho mã @row.Code">
+                                            <option value="">Không gán</option>
+                                            @foreach (var score in new[] { 60, 75, 90 })
+                                            {
+                                                <option value="@score" selected="@(row.GameMinimumScore == score)">Điểm &ge; @score</option>
+                                            }
+                                        </select>
+                                        <button type="submit" class="adm-action-btn adm-btn-secondary py-1 px-2" style="font-size: 0.75rem;" title="Lưu mốc minigame">
+                                            <i class="bi bi-save"></i>
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small">—</span>
+                                }
+                            </td>
+                            <td class="text-end pe-4">
+                                <form asp-action="SetVoucherActive" asp-route-id="@row.Id" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="active" value="@((!row.IsActive).ToString())" />
+                                    <button type="submit" class="adm-action-btn adm-btn-secondary py-1 px-3" style="font-size: 0.78rem;">
+                                        @(row.IsActive ? "Tắt" : "Bật")
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script src="~/js/admin-voucher-scope.js" asp-append-version="true"></script>
+}

@@ -1,11 +1,92 @@
 @model FashionStore.Models.Entities.StoreSettings
-@{ ViewData["Title"] = "Cài đặt cửa hàng"; }
-<header class="adm-dashboard-header mb-4"><h1>Cài đặt cửa hàng</h1></header>
-<form asp-action="Settings" method="post" class="adm-form-card">
-    <div class="mb-3"><label asp-for="StoreName">Tên cửa hàng</label><input asp-for="StoreName" required maxlength="100" class="form-control adm-input-dark" /></div>
-    <div class="mb-3"><label asp-for="ShippingFee">Phí giao hàng (₫)</label><input asp-for="ShippingFee" type="number" min="0" required class="form-control adm-input-dark" /></div>
-    <div class="mb-3"><label asp-for="FreeShippingThreshold">Ngưỡng miễn phí giao hàng (₫)</label><input asp-for="FreeShippingThreshold" type="number" min="0" class="form-control adm-input-dark" /></div>
-    <div class="mb-3"><label asp-for="ReturnWindowDays">Số ngày nhận đổi trả</label><input asp-for="ReturnWindowDays" type="number" min="1" max="365" required class="form-control adm-input-dark" /></div>
-    <div class="mb-3"><label asp-for="ReturnPolicy">Chính sách đổi trả</label><textarea asp-for="ReturnPolicy" maxlength="1000" rows="4" class="form-control adm-input-dark"></textarea></div>
-    <button class="adm-btn-atelier">Lưu cài đặt</button>
-</form>
+
+@{
+    ViewData["Title"] = "Cài đặt Vận hành Cửa hàng";
+}
+
+<!-- EXECUTIVE HEADER -->
+<div class="adm-header-block mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1 adm-meta-crumb">
+                <span class="adm-pulse-dot"></span>
+                <span class="adm-kicker-text">HNMT ATELIER · QUẢN TRỊ</span>
+                <span class="adm-meta-divider">/</span>
+                <span class="adm-order-count-badge">CẤU HÌNH</span>
+            </div>
+            <h1 class="adm-title-main">Cài đặt Hệ thống & Chính sách</h1>
+        </div>
+        <div>
+            <a asp-action="Settings" class="adm-action-btn adm-btn-secondary" title="Làm mới">
+                <i class="bi bi-arrow-clockwise"></i> <span>Làm mới</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mb-4 shadow-sm" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show mb-4 shadow-sm" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="adm-card shadow-sm">
+            <div class="d-flex align-items-center gap-2 mb-3 pb-3 border-bottom border-secondary border-opacity-10">
+                <i class="bi bi-gear fs-5" style="color: var(--adm-gold, #D97706);"></i>
+                <h5 class="fw-bold mb-0 adm-heading">Chính sách Bán hàng & Phí Vận chuyển</h5>
+            </div>
+
+            <form asp-action="Settings" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="mb-3">
+                    <label asp-for="StoreName" class="adm-form-label fw-bold">Tên thương hiệu cửa hàng <span class="text-danger">*</span></label>
+                    <input asp-for="StoreName" required maxlength="100" class="form-control adm-input-dark" placeholder="HNMT ATELIER & SHOWROOM" />
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="ShippingFee" class="adm-form-label fw-bold">Phí giao hàng tiêu chuẩn (₫) <span class="text-danger">*</span></label>
+                        <input asp-for="ShippingFee" type="number" min="0" required class="form-control adm-input-dark font-monospace" />
+                        <div class="text-muted small mt-1" style="font-size: 0.75rem;">Mức phí ship mặc định áp dụng cho mọi đơn hàng.</div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="FreeShippingThreshold" class="adm-form-label fw-bold">Ngưỡng miễn phí giao hàng (₫)</label>
+                        <input asp-for="FreeShippingThreshold" type="number" min="0" class="form-control adm-input-dark font-monospace" placeholder="Ví dụ: 500000" />
+                        <div class="text-muted small mt-1" style="font-size: 0.75rem;">Đơn hàng có giá trị &ge; số tiền này sẽ được freeship 100%.</div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ReturnWindowDays" class="adm-form-label fw-bold">Thời hạn cho phép gửi yêu cầu đổi trả (Số ngày) <span class="text-danger">*</span></label>
+                    <input asp-for="ReturnWindowDays" type="number" min="1" max="365" required class="form-control adm-input-dark font-monospace" style="max-width: 200px;" />
+                    <div class="text-muted small mt-1" style="font-size: 0.75rem;">Tính từ ngày đơn hàng chuyển sang trạng thái "Đã giao thành công".</div>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="ReturnPolicy" class="adm-form-label fw-bold">Điều khoản & Quy định đổi trả hàng</label>
+                    <textarea asp-for="ReturnPolicy" maxlength="1000" rows="5" class="form-control adm-input-dark" placeholder="Mô tả chi tiết điều kiện đổi trả: Hàng còn nguyên tem mác, chưa qua giặt tẩy, có video mở kiện hàng..."></textarea>
+                </div>
+
+                <div class="pt-3 border-top border-secondary border-opacity-10 text-end">
+                    <button type="submit" class="adm-action-btn adm-btn-primary py-2 px-4">
+                        <i class="bi bi-save me-1"></i> Lưu cấu hình cài đặt
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

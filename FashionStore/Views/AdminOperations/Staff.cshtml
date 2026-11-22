@@ -1,25 +1,139 @@
 @model List<FashionStore.Models.Entities.ApplicationUser>
-@{ ViewData["Title"] = "Nhân viên"; var roles = (ILookup<string, string?>)ViewBag.Roles; }
-<header class="adm-dashboard-header mb-4"><h1>Nhân viên</h1></header>
-<div class="adm-card table-responsive p-0"><table class="adm-table mb-0">
-<thead><tr><th>Nhân viên</th><th>Vai trò</th><th>Đổi vai trò vận hành</th></tr></thead>
-<tbody>
-@foreach (var user in Model)
-{
-    <tr><td>@user.FullName</td><td>@string.Join(", ", roles[user.Id])</td><td>
-    @if (!roles[user.Id].Contains("Admin"))
-    {
-        <form asp-action="SetStaffRole" asp-route-id="@user.Id" method="post" class="d-flex gap-2">
-            <select name="role" aria-label="Vai trò mới" class="form-select adm-input-dark">
-                @foreach (var role in new[] { "Manager", "Staff", "Shipper" })
-                {
-                    <option value="@role" selected="@roles[user.Id].Contains(role)">@role</option>
-                }
-            </select>
-            <button class="adm-btn-outline">Lưu</button>
-        </form>
-    }
-    </td></tr>
+
+@{
+    ViewData["Title"] = "Quản trị Nhân viên & Vận hành";
+    var roles = (ILookup<string, string?>)ViewBag.Roles;
 }
-</tbody>
-</table></div>
+
+<!-- EXECUTIVE HEADER -->
+<div class="adm-header-block mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1 adm-meta-crumb">
+                <span class="adm-pulse-dot"></span>
+                <span class="adm-kicker-text">HNMT ATELIER · QUẢN TRỊ</span>
+                <span class="adm-meta-divider">/</span>
+                <span class="adm-order-count-badge">@Model.Count nhân sự</span>
+            </div>
+            <h1 class="adm-title-main">Đội ngũ Nhân viên & Phân quyền</h1>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <a asp-controller="AdminUsers" asp-action="Index" class="adm-action-btn adm-btn-secondary">
+                <i class="bi bi-people"></i> <span>Tất cả tài khoản</span>
+            </a>
+            <a asp-action="Staff" class="adm-action-btn adm-btn-secondary" title="Làm mới">
+                <i class="bi bi-arrow-clockwise"></i> <span>Làm mới</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mb-4 shadow-sm" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show mb-4 shadow-sm" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="adm-card p-0 overflow-hidden mb-4 shadow-sm">
+    <div class="p-3 border-bottom border-secondary border-opacity-10 d-flex justify-content-between align-items-center">
+        <h5 class="fw-bold mb-0 adm-heading fs-6">
+            <i class="bi bi-shield-lock me-2" style="color: var(--adm-gold, #D97706);"></i>Danh sách Nhân viên Vận hành
+        </h5>
+        <span class="badge" style="background: var(--adm-surface-hover, #F8FAFC); color: var(--adm-ink, #0F172A); border: 1px solid var(--adm-border, #CBD5E1);">Active Staff</span>
+    </div>
+
+    <div class="table-responsive">
+        <table class="adm-table mb-0">
+            <thead>
+                <tr>
+                    <th class="ps-4">NHÂN SỰ</th>
+                    <th>EMAIL & SĐT</th>
+                    <th>VAI TRÒ HIỆN TẠI</th>
+                    <th class="text-end pe-4" style="min-width: 280px;">ĐIỀU CHỈNH VAI TRÒ VẬN HÀNH</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    var initial = !string.IsNullOrEmpty(user.FullName) ? user.FullName.Substring(0, 1).ToUpper() : "S";
+                    var isAdmin = roles[user.Id].Contains("Admin");
+                    <tr>
+                        <td class="ps-4">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 fw-bold" style="width: 38px; height: 38px; background: #0F172A; color: #F8FAFC; font-size: 0.9rem;">
+                                    @initial
+                                </div>
+                                <div>
+                                    <div class="fw-bold adm-heading">@user.FullName</div>
+                                    <div class="text-muted font-monospace" style="font-size: 0.72rem;">ID: @user.Id[..Math.Min(user.Id.Length, 8)]...</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="small adm-heading">@user.Email</div>
+                            <div class="text-muted font-monospace small" style="font-size: 0.75rem;">@(string.IsNullOrEmpty(user.PhoneNumber) ? "Chưa có SĐT" : user.PhoneNumber)</div>
+                        </td>
+                        <td>
+                            <div class="d-flex flex-wrap gap-1">
+                                @foreach (var r in roles[user.Id])
+                                {
+                                    @switch (r)
+                                    {
+                                        case "Admin":
+                                            <span class="adm-pill adm-pill-amber fw-bold"><i class="bi bi-award-fill me-1"></i>Admin</span>
+                                            break;
+                                        case "Manager":
+                                            <span class="adm-pill adm-pill-blue">Quản lý (Manager)</span>
+                                            break;
+                                        case "Staff":
+                                            <span class="adm-pill adm-pill-emerald">Nhân viên (Staff)</span>
+                                            break;
+                                        case "Shipper":
+                                            <span class="adm-pill adm-pill-faint"><i class="bi bi-truck me-1"></i>Giao hàng (Shipper)</span>
+                                            break;
+                                        default:
+                                            <span class="adm-pill adm-pill-faint">@r</span>
+                                            break;
+                                    }
+                                }
+                            </div>
+                        </td>
+                        <td class="text-end pe-4">
+                            @if (!isAdmin)
+                            {
+                                <form asp-action="SetStaffRole" asp-route-id="@user.Id" method="post" class="d-inline-flex gap-2 justify-content-end align-items-center">
+                                    @Html.AntiForgeryToken()
+                                    <select name="role" aria-label="Vai trò mới" class="form-select adm-input-dark py-1 px-2" style="font-size: 0.82rem; width: auto; min-width: 140px;">
+                                        @foreach (var role in new[] { "Manager", "Staff", "Shipper" })
+                                        {
+                                            <option value="@role" selected="@roles[user.Id].Contains(role)">@role</option>
+                                        }
+                                    </select>
+                                    <button type="submit" class="adm-action-btn adm-btn-secondary py-1 px-3" style="font-size: 0.78rem;">
+                                        <i class="bi bi-check2 me-1"></i> Lưu
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span class="badge" style="background: rgba(245, 158, 11, 0.1); color: #B45309; font-size: 0.75rem;">
+                                    <i class="bi bi-lock-fill me-1"></i>Cấp Admin Tối Cao
+                                </span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

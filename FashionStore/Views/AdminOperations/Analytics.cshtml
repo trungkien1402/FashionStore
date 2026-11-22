@@ -1,36 +1,110 @@
 @model FashionStore.Controllers.OperationsAnalytics
+
 @{
-    ViewData["Title"] = "Phân tích bán hàng";
+    ViewData["Title"] = "Phân tích Bán hàng & Hiệu quả";
     var report = Model.Report;
     var cancellationRate = report.TotalOrders == 0 ? 0m : (decimal)report.CancelledOrders / report.TotalOrders;
 }
-<header class="adm-dashboard-header adm-overview-header mb-3">
-    <div><h1>Phân tích bán hàng</h1><p class="adm-dashboard-period">@report.StartDate.ToString("dd/MM/yyyy") – @report.EndDate.ToString("dd/MM/yyyy") · Giờ Việt Nam</p></div>
-    <a asp-action="Forecast" class="adm-btn-atelier"><i class="bi bi-graph-up" aria-hidden="true"></i> Doanh thu và dự báo nhập hàng</a>
-</header>
-<div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-3 mb-4 adm-kpi-grid">
-    @foreach (var metric in new[] {
-        ("bi-receipt", "Tổng đơn trong kỳ", report.TotalOrders.ToString("N0")),
-        ("bi-truck", "Đơn đã giao", report.DeliveredOrders.ToString("N0")),
-        ("bi-x-circle", "Tỷ lệ hủy theo ngày đặt", cancellationRate.ToString("P1")),
-        ("bi-arrow-counterclockwise", "Hoàn tiền ghi nhận", Model.Refunds.ToString("N0") + " ₫") })
-    {
-        <div class="col">
-            <section class="adm-card adm-kpi-card h-100">
-                <div class="d-flex justify-content-between align-items-start gap-2">
-                    <div><h2 class="h6 adm-heading">@metric.Item2</h2><strong class="adm-kpi-value">@metric.Item3</strong></div>
-                    <span class="adm-kpi-icon gold"><i class="bi @metric.Item1" aria-hidden="true"></i></span>
-                </div>
-            </section>
+
+<!-- EXECUTIVE HEADER -->
+<div class="adm-header-block mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1 adm-meta-crumb">
+                <span class="adm-pulse-dot"></span>
+                <span class="adm-kicker-text">HNMT ATELIER · KINH DOANH</span>
+                <span class="adm-meta-divider">/</span>
+                <span class="adm-order-count-badge">@report.StartDate.ToString("dd/MM/yyyy") – @report.EndDate.ToString("dd/MM/yyyy")</span>
+            </div>
+            <h1 class="adm-title-main">Báo cáo & Phân tích Vận hành</h1>
         </div>
-    }
+        <div class="d-flex align-items-center gap-2">
+            <a asp-action="Forecast" class="adm-action-btn adm-btn-primary">
+                <i class="bi bi-graph-up-arrow"></i> <span>Dự báo & Nhập hàng</span>
+            </a>
+            <a asp-action="Analytics" class="adm-action-btn adm-btn-secondary" title="Làm mới">
+                <i class="bi bi-arrow-clockwise"></i> <span>Làm mới</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- 4 EXECUTIVE KPI METRICS -->
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-3 mb-4">
+        <div class="col">
+            <div class="adm-card p-3 shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="text-muted small fw-semibold">Tổng đơn trong kỳ</div>
+                        <div class="fs-3 fw-bold font-monospace adm-heading mt-1">@report.TotalOrders.ToString("N0")</div>
+                    </div>
+                    <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(59, 130, 246, 0.1); color: #2563EB; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                        <i class="bi bi-receipt"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="adm-card p-3 shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="text-muted small fw-semibold">Đơn giao thành công</div>
+                        <div class="fs-3 fw-bold font-monospace adm-heading mt-1" style="color: #10B981;">@report.DeliveredOrders.ToString("N0")</div>
+                    </div>
+                    <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(16, 185, 129, 0.1); color: #10B981; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                        <i class="bi bi-truck"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="adm-card p-3 shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="text-muted small fw-semibold">Tỷ lệ hủy đơn</div>
+                        <div class="fs-3 fw-bold font-monospace adm-heading mt-1 @(cancellationRate > 0.1m ? "text-danger" : "text-muted")">@cancellationRate.ToString("P1")</div>
+                    </div>
+                    <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(239, 68, 68, 0.1); color: #EF4444; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                        <i class="bi bi-x-circle"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="adm-card p-3 shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="text-muted small fw-semibold">Hoàn tiền ghi nhận</div>
+                        <div class="fs-3 fw-bold font-monospace adm-heading mt-1" style="color: var(--adm-gold, #D97706);">@Model.Refunds.ToString("N0") ₫</div>
+                    </div>
+                    <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(245, 158, 11, 0.1); color: #D97706; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<section id="best-selling-products" class="adm-card p-3 mb-3" aria-labelledby="best-selling-heading">
-    <h2 id="best-selling-heading" class="h5 adm-heading">Sản phẩm được mua nhiều nhất</h2>
-    <p class="text-muted small">Top 50 theo số lượng đã giao, tính theo ngày đặt trong kỳ và cộng tất cả size, màu.</p>
-    @if (Model.BestSellingProducts.Count == 0)
+
+<!-- BEST SELLING PRODUCTS (TOP RANKING) -->
+<div id="best-selling-products" class="adm-card p-0 overflow-hidden mb-4 shadow-sm">
+    <div class="p-3 border-bottom border-secondary border-opacity-10 d-flex justify-content-between align-items-center">
+        <div>
+            <h5 class="fw-bold mb-0 adm-heading">
+                <i class="bi bi-trophy me-2" style="color: var(--adm-gold, #D97706);"></i>Top Sản phẩm Bán chạy nhất
+            </h5>
+            <div class="text-muted small mt-0.5">Xếp hạng theo số lượng đã giao thành công trong kỳ (cộng gộp tất cả size, màu)</div>
+        </div>
+        <span class="badge" style="background: var(--adm-surface-hover, #F8FAFC); color: var(--adm-ink, #0F172A); border: 1px solid var(--adm-border, #CBD5E1);">Top @Model.BestSellingProducts.Count</span>
+    </div>
+
+    @if (!Model.BestSellingProducts.Any())
     {
-        <div class="p-3 text-muted">Chưa có sản phẩm nào trong đơn đã giao của kỳ này.</div>
+        <div class="p-4 text-center text-muted small">
+            Chưa có sản phẩm nào trong đơn đã giao thành công của kỳ này.
+        </div>
     }
     else
     {
@@ -38,65 +112,142 @@
             <table class="adm-table mb-0">
                 <thead>
                     <tr>
-                        <th scope="col">Hạng</th>
-                        <th scope="col">Sản phẩm</th>
-                        <th scope="col" class="text-end">Số lượng đã giao</th>
-                        <th scope="col" class="text-end">Số đơn đã giao</th>
+                        <th class="ps-4" style="width: 80px;">THỨ HẠNG</th>
+                        <th>SẢN PHẨM</th>
+                        <th class="text-end">SỐ LƯỢNG ĐÃ GIAO</th>
+                        <th class="text-end pe-4">SỐ ĐƠN HOÀN TẤT</th>
                     </tr>
                 </thead>
                 <tbody>
                     @for (var index = 0; index < Model.BestSellingProducts.Count; index++)
                     {
                         var product = Model.BestSellingProducts[index];
+                        var rank = index + 1;
                         <tr>
-                            <td>@(index + 1)</td>
-                            <th scope="row">
-                                <a asp-controller="AdminProducts" asp-action="Edit" asp-route-id="@product.ProductId">@product.Name</a>
-                            </th>
-                            <td class="text-end fw-semibold">@product.Quantity.ToString("N0")</td>
-                            <td class="text-end">@product.OrderCount.ToString("N0")</td>
+                            <td class="ps-4">
+                                @if (rank == 1)
+                                {
+                                    <span class="badge rounded-circle p-2" style="background: #F59E0B; color: #FFF; width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;">1</span>
+                                }
+                                else if (rank == 2)
+                                {
+                                    <span class="badge rounded-circle p-2" style="background: #94A3B8; color: #FFF; width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;">2</span>
+                                }
+                                else if (rank == 3)
+                                {
+                                    <span class="badge rounded-circle p-2" style="background: #D97706; color: #FFF; width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;">3</span>
+                                }
+                                else
+                                {
+                                    <span class="font-monospace text-muted fw-bold ps-2">#@rank</span>
+                                }
+                            </td>
+                            <td>
+                                <a asp-controller="AdminProducts" asp-action="Edit" asp-route-id="@product.ProductId" class="fw-bold adm-heading text-decoration-none">
+                                    @product.Name
+                                </a>
+                            </td>
+                            <td class="text-end font-monospace fw-bold fs-6 adm-heading">
+                                @product.Quantity.ToString("N0")
+                            </td>
+                            <td class="text-end pe-4 font-monospace text-muted">
+                                @product.OrderCount.ToString("N0") đơn
+                            </td>
                         </tr>
                     }
                 </tbody>
             </table>
         </div>
     }
-</section>
-<div class="row g-3">
+</div>
+
+<!-- 2 COLUMNS: POPULAR VARIANTS & VOUCHER EFFECTIVENESS -->
+<div class="row g-4">
+    <!-- LEFT: POPULAR SIZES & COLORS -->
     <div class="col-12 col-xl-6">
-        <section class="adm-card p-3 h-100" aria-labelledby="variant-heading">
-            <h2 id="variant-heading" class="h5 adm-heading">Size và màu bán chạy</h2>
-            <p class="text-muted small">Xếp theo số lượng đã giao.</p>
+        <div class="adm-card p-0 overflow-hidden shadow-sm h-100">
+            <div class="p-3 border-bottom border-secondary border-opacity-10">
+                <h5 class="fw-bold mb-0 adm-heading fs-6">
+                    <i class="bi bi-palette me-2" style="color: var(--adm-gold, #D97706);"></i>Size & Màu Sắc Phổ Biến
+                </h5>
+                <div class="text-muted small mt-0.5">Biến thể được đặt mua và giao thành công nhiều nhất</div>
+            </div>
+
             <div class="table-responsive">
                 <table class="adm-table mb-0">
-                    <thead><tr><th scope="col">Size</th><th scope="col">Màu</th><th scope="col" class="text-end">Số lượng</th></tr></thead>
+                    <thead>
+                        <tr>
+                            <th class="ps-3">SIZE</th>
+                            <th>MÀU SẮC</th>
+                            <th class="text-end pe-3">SỐ LƯỢNG ĐÃ GIAO</th>
+                        </tr>
+                    </thead>
                     <tbody>
                         @foreach (var row in Model.Variants)
                         {
-                            <tr><td>@row.Size</td><td>@row.Color</td><td class="text-end">@row.Units.ToString("N0")</td></tr>
+                            <tr>
+                                <td class="ps-3">
+                                    <span class="badge" style="background: var(--adm-surface-hover, #F8FAFC); color: var(--adm-ink, #0F172A); border: 1px solid var(--adm-border, #CBD5E1);">@row.Size</span>
+                                </td>
+                                <td>
+                                    <span class="badge" style="background: var(--adm-surface-hover, #F8FAFC); color: var(--adm-ink, #0F172A); border: 1px solid var(--adm-border, #CBD5E1);">@row.Color</span>
+                                </td>
+                                <td class="text-end pe-3 font-monospace fw-bold adm-heading">
+                                    @row.Units.ToString("N0")
+                                </td>
+                            </tr>
                         }
-                        @if (Model.Variants.Count == 0) { <tr><td colspan="3" class="text-muted">Kỳ này chưa có biến thể nào đã giao.</td></tr> }
+                        @if (!Model.Variants.Any())
+                        {
+                            <tr><td colspan="3" class="text-muted text-center py-3">Kỳ này chưa có biến thể nào đã giao.</td></tr>
+                        }
                     </tbody>
                 </table>
             </div>
-        </section>
+        </div>
     </div>
+
+    <!-- RIGHT: VOUCHER REDEMPTION -->
     <div class="col-12 col-xl-6">
-        <section class="adm-card p-3 h-100" aria-labelledby="voucher-heading">
-            <h2 id="voucher-heading" class="h5 adm-heading">Hiệu quả mã giảm giá</h2>
-            <p class="text-muted small">Lượt áp dụng và tổng giá trị giảm theo ngày đặt.</p>
+        <div class="adm-card p-0 overflow-hidden shadow-sm h-100">
+            <div class="p-3 border-bottom border-secondary border-opacity-10">
+                <h5 class="fw-bold mb-0 adm-heading fs-6">
+                    <i class="bi bi-tag me-2" style="color: var(--adm-gold, #D97706);"></i>Hiệu Quả Mã Giảm Giá
+                </h5>
+                <div class="text-muted small mt-0.5">Số lượt áp dụng và tổng chiết khấu cho khách hàng</div>
+            </div>
+
             <div class="table-responsive">
                 <table class="adm-table mb-0">
-                    <thead><tr><th scope="col">Mã</th><th scope="col" class="text-end">Lượt áp dụng</th><th scope="col" class="text-end">Giá trị giảm</th></tr></thead>
+                    <thead>
+                        <tr>
+                            <th class="ps-3">MÃ VOUCHER</th>
+                            <th class="text-center">LƯỢT ÁP DỤNG</th>
+                            <th class="text-end pe-3">TỔNG TIỀN GIẢM</th>
+                        </tr>
+                    </thead>
                     <tbody>
                         @foreach (var row in Model.Vouchers)
                         {
-                            <tr><th scope="row">@row.Code</th><td class="text-end">@row.Uses.ToString("N0")</td><td class="text-end">@row.Discount.ToString("N0") ₫</td></tr>
+                            <tr>
+                                <td class="ps-3 font-monospace fw-bold" style="color: var(--adm-gold, #D97706);">
+                                    @row.Code
+                                </td>
+                                <td class="text-center font-monospace">
+                                    <span class="badge" style="background: var(--adm-surface-hover, #F8FAFC); color: var(--adm-ink, #0F172A); border: 1px solid var(--adm-border, #CBD5E1);">@row.Uses.ToString("N0")</span>
+                                </td>
+                                <td class="text-end pe-3 font-monospace fw-bold adm-heading">
+                                    @row.Discount.ToString("N0") ₫
+                                </td>
+                            </tr>
                         }
-                        @if (Model.Vouchers.Count == 0) { <tr><td colspan="3" class="text-muted">Chưa có mã giảm giá.</td></tr> }
+                        @if (!Model.Vouchers.Any())
+                        {
+                            <tr><td colspan="3" class="text-muted text-center py-3">Chưa có mã giảm giá nào được sử dụng.</td></tr>
+                        }
                     </tbody>
                 </table>
             </div>
-        </section>
+        </div>
     </div>
 </div>

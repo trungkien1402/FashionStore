@@ -75,6 +75,8 @@ public class AdminShipmentsController : Controller
         var shipment = await _context.Shipments
             .Include(s => s.Order)
                 .ThenInclude(o => o.Items)
+                    .ThenInclude(i => i.ProductVariant)
+                        .ThenInclude(v => v.Product)
             .Include(s => s.Shipper)
             .Include(s => s.Histories.OrderByDescending(h => h.CreatedAt))
                 .ThenInclude(h => h.ChangedByUser)

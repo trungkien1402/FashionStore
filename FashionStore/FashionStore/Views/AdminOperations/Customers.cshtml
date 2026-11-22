@@ -1,0 +1,141 @@
+@model List<FashionStore.Controllers.CustomerSummary>
+@using FashionStore.Services.Implementations
+
+@{
+    ViewData["Title"] = "Quản lý Khách hàng & CRM";
+    var current = (int)ViewBag.Page;
+    var search = ViewBag.Search as string;
+}
+
+<!-- EXECUTIVE HEADER -->
+<div class="adm-header-block mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1 adm-meta-crumb">
+                <span class="adm-pulse-dot"></span>
+                <span class="adm-kicker-text">HNMT ATELIER · KINH DOANH</span>
+                <span class="adm-meta-divider">/</span>
+                <span class="adm-order-count-badge">@ViewBag.Count khách hàng</span>
+            </div>
+            <h1 class="adm-title-main">Hồ sơ Khách hàng & CRM</h1>
+        </div>
+        <div>
+            <a asp-action="Customers" class="adm-action-btn adm-btn-secondary" title="Làm mới">
+                <i class="bi bi-arrow-clockwise"></i> <span>Làm mới</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- SEARCH INPUT -->
+    <form asp-action="Customers" method="get" class="d-flex flex-wrap align-items-center gap-2">
+        <div class="adm-search-input-group-v2 flex-grow-1" style="min-width: 260px;">
+            <i class="bi bi-search"></i>
+            <input type="text" name="search" maxlength="100" value="@search"
+                   placeholder="Tìm kiếm khách hàng theo họ tên, email..."
+                   class="adm-search-input-v2"
+                   style="padding-left: 42px !important; padding-right: 14px !important;" />
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(search))
+        {
+            <a asp-action="Customers" class="adm-action-btn adm-btn-secondary" style="height: 38px;" title="Đặt lại bộ lọc">
+                <i class="bi bi-x-lg"></i> <span>Đặt lại</span>
+            </a>
+        }
+    </form>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="adm-card text-center py-5">
+        <i class="bi bi-people fs-1 text-muted d-block mb-3"></i>
+        <h5 class="fw-bold adm-heading">Không tìm thấy khách hàng</h5>
+        <p class="text-muted small mb-0">Thử tìm kiếm với họ tên hoặc địa chỉ email khác.</p>
+    </div>
+}
+else
+{
+    <div class="adm-card p-0 overflow-hidden mb-4">
+        <div class="table-responsive">
+            <table class="adm-table mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">KHÁCH HÀNG</th>
+                        <th>EMAIL LIÊN HỆ</th>
+                        <th class="text-center">SỐ ĐƠN HÀNG</th>
+                        <th class="text-end">TỔNG CHI TIÊU (ĐÃ TT)</th>
+                        <th>ĐƠN GẦN NHẤT</th>
+                        <th class="text-end pe-4">THAO TÁC</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in Model)
+                    {
+                        var initial = !string.IsNullOrEmpty(row.Name) ? row.Name.Substring(0, 1).ToUpper() : "U";
+                        <tr>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 fw-bold" style="width: 38px; height: 38px; background: #0F172A; color: #F8FAFC; font-size: 0.9rem;">
+                                        @initial
+                                    </div>
+                                    <div>
+                                        <a asp-action="Customer" asp-route-id="@row.Id" class="fw-bold adm-heading text-decoration-none" style="font-size: 0.9rem;">
+                                            @row.Name
+                                        </a>
+                                        <div class="text-muted font-monospace" style="font-size: 0.72rem;">ID: @row.Id[..Math.Min(row.Id.Length, 8)]...</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="text-muted small">@row.Email</span>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge" style="background: var(--adm-surface-hover, #F8FAFC); color: var(--adm-ink, #0F172A); border: 1px solid var(--adm-border, #CBD5E1); font-size: 0.78rem; font-weight: 600;">
+                                    @row.Orders đơn
+                                </span>
+                            </td>
+                            <td class="text-end font-monospace fw-bold" style="color: var(--adm-gold, #D97706);">
+                                @row.PaidAmount.ToString("N0") ₫
+                            </td>
+                            <td>
+                                @if (row.LastOrder is { } date)
+                                {
+                                    <div class="adm-text-contrast small">@AdminReportService.ToVietnamTime(date).ToString("dd/MM/yyyy")</div>
+                                    <div class="text-muted font-monospace" style="font-size: 0.72rem;">@AdminReportService.ToVietnamTime(date).ToString("HH:mm")</div>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small">—</span>
+                                }
+                            </td>
+                            <td class="text-end pe-4">
+                                <a asp-action="Customer" asp-route-id="@row.Id" class="adm-action-btn adm-btn-secondary py-1 px-3" style="font-size: 0.78rem;" title="Xem lịch sử mua hàng">
+                                    Lịch sử đơn <i class="bi bi-chevron-right ms-1"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+@if (ViewBag.PageCount > 1)
+{
+    <nav class="d-flex align-items-center justify-content-center gap-3 my-4" aria-label="Phân trang khách hàng">
+        @if (current > 1)
+        {
+            <a asp-route-page="@(current - 1)" asp-route-search="@search" class="adm-action-btn adm-btn-secondary">
+                <i class="bi bi-chevron-left me-1"></i> Trang trước
+            </a>
+        }
+        <span class="text-muted small fw-semibold">Trang @current / @ViewBag.PageCount</span>
+        @if (current < ViewBag.PageCount)
+        {
+            <a asp-route-page="@(current + 1)" asp-route-search="@search" class="adm-action-btn adm-btn-secondary">
+                Trang sau <i class="bi bi-chevron-right ms-1"></i>
+            </a>
+        }
+    </nav>
+}

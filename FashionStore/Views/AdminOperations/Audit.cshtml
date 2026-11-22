@@ -1,16 +1,81 @@
 @model List<FashionStore.Models.Entities.AdminAuditEvent>
 @using FashionStore.Services.Implementations
-@{ ViewData["Title"] = "Nhật ký quản trị"; }
-<header class="adm-dashboard-header mb-4"><h1>Nhật ký quản trị</h1></header>
-<div class="adm-card table-responsive p-0">
-<table class="adm-table mb-0">
-<thead><tr><th>Thời điểm</th><th>Thao tác</th><th>Đối tượng</th><th>Mã người thao tác</th><th>Chi tiết</th></tr></thead>
-<tbody>
-@foreach (var row in Model)
-{
-    <tr><td>@AdminReportService.ToVietnamTime(row.CreatedAt).ToString("dd/MM/yyyy HH:mm")</td><td>@row.Action</td><td>@row.Target</td><td>@row.ActorId</td><td>@row.Detail</td></tr>
+
+@{
+    ViewData["Title"] = "Nhật ký Hoạt động Quản trị";
 }
-@if (Model.Count == 0) { <tr><td colspan="5">Chưa có thao tác được ghi nhận.</td></tr> }
-</tbody>
-</table>
+
+<!-- EXECUTIVE HEADER -->
+<div class="adm-header-block mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1 adm-meta-crumb">
+                <span class="adm-pulse-dot"></span>
+                <span class="adm-kicker-text">HNMT ATELIER · QUẢN TRỊ</span>
+                <span class="adm-meta-divider">/</span>
+                <span class="adm-order-count-badge">@Model.Count sự kiện</span>
+            </div>
+            <h1 class="adm-title-main">Nhật ký Hoạt động Quản trị (Audit Trail)</h1>
+        </div>
+        <div>
+            <a asp-action="Audit" class="adm-action-btn adm-btn-secondary" title="Làm mới">
+                <i class="bi bi-arrow-clockwise"></i> <span>Làm mới</span>
+            </a>
+        </div>
+    </div>
 </div>
+
+@if (!Model.Any())
+{
+    <div class="adm-card text-center py-5">
+        <i class="bi bi-journal-text fs-1 text-muted d-block mb-3"></i>
+        <h5 class="fw-bold adm-heading">Chưa có thao tác nào được ghi nhận</h5>
+        <p class="text-muted small mb-0">Các hoạt động nhạy cảm như đổi vai trò, duyệt hoàn tiền, tạo voucher sẽ được hệ thống lưu vết tự động.</p>
+    </div>
+}
+else
+{
+    <div class="adm-card p-0 overflow-hidden mb-4 shadow-sm">
+        <div class="table-responsive">
+            <table class="adm-table mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">THỜI ĐIỂM</th>
+                        <th>HÀNH ĐỘNG (ACTION)</th>
+                        <th>ĐỐI TƯỢNG (TARGET)</th>
+                        <th>NGƯỜI THỰC HIỆN</th>
+                        <th class="pe-4">CHI TIẾT THAY ĐỔI</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in Model)
+                    {
+                        <tr>
+                            <td class="ps-4">
+                                <div class="adm-text-contrast small">@AdminReportService.ToVietnamTime(row.CreatedAt).ToString("dd/MM/yyyy")</div>
+                                <div class="text-muted font-monospace" style="font-size: 0.72rem;">@AdminReportService.ToVietnamTime(row.CreatedAt).ToString("HH:mm:ss")</div>
+                            </td>
+                            <td>
+                                <span class="badge font-monospace" style="background: rgba(37, 99, 235, 0.1); color: #2563EB; font-size: 0.75rem; border: 1px solid rgba(37, 99, 235, 0.2);">
+                                    @row.Action
+                                </span>
+                            </td>
+                            <td>
+                                <span class="font-monospace fw-bold adm-heading">@row.Target</span>
+                            </td>
+                            <td>
+                                <span class="font-monospace text-muted small" style="font-size: 0.75rem;">@(row.ActorId ?? "Hệ thống")</span>
+                            </td>
+                            <td class="pe-4">
+                                <div class="text-muted small text-break" style="font-size: 0.8rem; max-width: 450px;">
+                                    @row.Detail
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <p class="text-muted small">Hiển thị 100 sự kiện quản trị hệ thống gần đây nhất.</p>
+}

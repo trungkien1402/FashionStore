@@ -1,13 +1,113 @@
-@{ ViewData["Title"] = "Thông báo vận hành"; }
-<header class="adm-dashboard-header mb-4"><h1>Thông báo vận hành</h1><a asp-action="Alerts" class="adm-btn-outline">Làm mới</a></header>
-<div class="row row-cols-1 row-cols-md-2 g-3">
-    <div class="col"><a asp-controller="AdminOrders" asp-action="Index" asp-route-status="PendingConfirmation" class="adm-card p-3 d-block">Đơn chờ xác nhận <strong>@ViewBag.NewOrders</strong></a></div>
-    <div class="col"><a asp-action="Inventory" asp-route-low="true" class="adm-card p-3 d-block border-danger border-opacity-50">
-        <div class="d-flex justify-content-between align-items-center">
-            <span>&#9888; Biến thể sắp hết hàng (&le; 5)</span>
-            <span class="badge bg-danger text-white fs-6">[&#9888; Cần nhập thêm hàng: @ViewBag.LowStock]</span>
+@{
+    ViewData["Title"] = "Thông báo Vận hành & Cảnh báo";
+}
+
+<!-- EXECUTIVE HEADER -->
+<div class="adm-header-block mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1 adm-meta-crumb">
+                <span class="adm-pulse-dot"></span>
+                <span class="adm-kicker-text">HNMT ATELIER · KINH DOANH</span>
+                <span class="adm-meta-divider">/</span>
+                <span class="adm-order-count-badge">TRUNG TÂM CẢNH BÁO</span>
+            </div>
+            <h1 class="adm-title-main">Thông báo Vận hành</h1>
         </div>
-    </a></div>
-    <div class="col"><a asp-controller="AdminShipments" asp-action="Index" asp-route-status="Failed" class="adm-card p-3 d-block">Vận đơn giao thất bại <strong>@ViewBag.FailedShipments</strong></a></div>
-    <div class="col"><a asp-action="Returns" class="adm-card p-3 d-block">Yêu cầu đổi trả chờ duyệt <strong>@ViewBag.PendingReturns</strong></a></div>
+        <div>
+            <a asp-action="Alerts" class="adm-action-btn adm-btn-secondary" title="Làm mới cảnh báo">
+                <i class="bi bi-arrow-clockwise"></i> <span>Làm mới</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- 1. ĐƠN HÀNG MỚI CHỜ DUYỆT -->
+    <div class="col-md-6">
+        <a asp-controller="AdminOrders" asp-action="Index" asp-route-status="PendingConfirmation" class="adm-card p-4 d-block text-decoration-none shadow-sm h-100" style="transition: all 0.2s ease;">
+            <div class="d-flex align-items-start justify-content-between mb-3">
+                <div class="d-flex align-items-center gap-3">
+                    <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(245, 158, 11, 0.12); color: #D97706; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+                        <i class="bi bi-receipt"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold adm-heading mb-0 fs-6">Đơn hàng chờ xác nhận</h5>
+                        <div class="text-muted small mt-0.5">Khách hàng vừa đặt, cần duyệt chuyển kho</div>
+                    </div>
+                </div>
+                <span class="adm-pill adm-pill-amber fs-6">@ViewBag.NewOrders</span>
+            </div>
+            <div class="d-flex align-items-center justify-content-between pt-3 border-top border-secondary border-opacity-10 text-muted small">
+                <span>Duyệt và xuất kho ngay</span>
+                <span class="fw-bold" style="color: var(--adm-gold, #D97706);">Xử lý đơn &rarr;</span>
+            </div>
+        </a>
+    </div>
+
+    <!-- 2. BIẾN THỂ SẮP HẾT HÀNG -->
+    <div class="col-md-6">
+        <a asp-action="Inventory" asp-route-low="true" class="adm-card p-4 d-block text-decoration-none shadow-sm h-100" style="transition: all 0.2s ease; border-color: rgba(225, 29, 72, 0.3);">
+            <div class="d-flex align-items-start justify-content-between mb-3">
+                <div class="d-flex align-items-center gap-3">
+                    <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(225, 29, 72, 0.12); color: #E11D48; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+                        <i class="bi bi-exclamation-triangle"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold adm-heading mb-0 fs-6">Biến thể sắp hết hàng (&le; 5)</h5>
+                        <div class="text-muted small mt-0.5">Tồn kho xuống mức báo động, cần bổ sung</div>
+                    </div>
+                </div>
+                <span class="adm-pill adm-pill-rose fs-6">@ViewBag.LowStock mã</span>
+            </div>
+            <div class="d-flex align-items-center justify-content-between pt-3 border-top border-secondary border-opacity-10 text-muted small">
+                <span>Cần nhập thêm vào kho Showroom</span>
+                <span class="fw-bold text-danger">Xem kho hàng &rarr;</span>
+            </div>
+        </a>
+    </div>
+
+    <!-- 3. VẬN ĐƠN THẤT BẠI -->
+    <div class="col-md-6">
+        <a asp-controller="AdminShipments" asp-action="Index" asp-route-status="Failed" class="adm-card p-4 d-block text-decoration-none shadow-sm h-100" style="transition: all 0.2s ease;">
+            <div class="d-flex align-items-start justify-content-between mb-3">
+                <div class="d-flex align-items-center gap-3">
+                    <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(239, 68, 68, 0.12); color: #EF4444; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+                        <i class="bi bi-truck"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold adm-heading mb-0 fs-6">Vận đơn giao thất bại</h5>
+                        <div class="text-muted small mt-0.5">Shipper không thể phát hàng, cần hỗ trợ</div>
+                    </div>
+                </div>
+                <span class="adm-pill adm-pill-rose fs-6">@ViewBag.FailedShipments</span>
+            </div>
+            <div class="d-flex align-items-center justify-content-between pt-3 border-top border-secondary border-opacity-10 text-muted small">
+                <span>Liên hệ khách hàng & điều phối lại</span>
+                <span class="fw-bold text-danger">Kiểm tra vận đơn &rarr;</span>
+            </div>
+        </a>
+    </div>
+
+    <!-- 4. YÊU CẦU ĐỔI TRẢ CHỜ DUYỆT -->
+    <div class="col-md-6">
+        <a asp-action="Returns" class="adm-card p-4 d-block text-decoration-none shadow-sm h-100" style="transition: all 0.2s ease;">
+            <div class="d-flex align-items-start justify-content-between mb-3">
+                <div class="d-flex align-items-center gap-3">
+                    <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(59, 130, 246, 0.12); color: #2563EB; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold adm-heading mb-0 fs-6">Yêu cầu đổi trả chờ duyệt</h5>
+                        <div class="text-muted small mt-0.5">Khách gửi form RMA hoàn hàng & bảo hành</div>
+                    </div>
+                </div>
+                <span class="adm-pill adm-pill-blue fs-6">@ViewBag.PendingReturns</span>
+            </div>
+            <div class="d-flex align-items-center justify-content-between pt-3 border-top border-secondary border-opacity-10 text-muted small">
+                <span>Thẩm định lý do & xử lý đổi trả</span>
+                <span class="fw-bold text-primary">Xem danh sách RMA &rarr;</span>
+            </div>
+        </a>
+    </div>
 </div>

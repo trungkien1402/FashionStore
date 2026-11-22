@@ -1,192 +1,240 @@
 @model FashionStore.Models.ViewModels.AdminUserListViewModel
 @{
-    ViewData["Title"] = "Quản lý tài khoản";
+    ViewData["Title"] = "Quản lý Tài khoản & Phân quyền";
     var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 }
 
-<header class="adm-dashboard-header mb-4">
-    <div>
-        <p class="adm-dashboard-kicker">&#9670; &nbsp; QUẢN TRỊ HỆ THỐNG</p>
-        <h1>Quản lý tài khoản &amp; Phân quyền</h1>
-        <p class="adm-dashboard-period">Tổng cộng: @Model.TotalCount tài khoản người dùng</p>
+<!-- EXECUTIVE HEADER -->
+<div class="adm-header-block mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1 adm-meta-crumb">
+                <span class="adm-pulse-dot"></span>
+                <span class="adm-kicker-text">HNMT ATELIER · QUẢN TRỊ</span>
+                <span class="adm-meta-divider">/</span>
+                <span class="adm-order-count-badge">@Model.TotalCount người dùng</span>
+            </div>
+            <h1 class="adm-title-main">Tài khoản & Phân quyền Người dùng</h1>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <a asp-action="Index" class="adm-action-btn adm-btn-secondary" title="Làm mới">
+                <i class="bi bi-arrow-clockwise"></i> <span>Làm mới</span>
+            </a>
+        </div>
     </div>
-</header>
+
+    <!-- TIER 1: SEGMENTED CONTROLS FOR ROLES -->
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <div class="adm-segmented-control" role="group" aria-label="Lọc theo vai trò">
+            <a asp-action="Index" asp-route-search="@Model.Search" asp-route-isActive="@Model.IsActive" asp-route-sort="@Model.Sort"
+               class="adm-segment @(string.IsNullOrEmpty(Model.Role) ? "active" : "")">Tất cả vai trò</a>
+            @foreach (var r in Model.AvailableRoles)
+            {
+                <a asp-action="Index" asp-route-role="@r" asp-route-search="@Model.Search" asp-route-isActive="@Model.IsActive" asp-route-sort="@Model.Sort"
+                   class="adm-segment @(Model.Role == r ? "active" : "")">@r</a>
+            }
+        </div>
+    </div>
+
+    <!-- TIER 2: SEARCH INPUT & FILTERS -->
+    <form asp-action="Index" method="get" class="d-flex flex-wrap align-items-center gap-2">
+        @if (!string.IsNullOrEmpty(Model.Role))
+        {
+            <input type="hidden" name="role" value="@Model.Role" />
+        }
+
+        <div class="adm-search-input-group-v2 flex-grow-1" style="min-width: 260px;">
+            <i class="bi bi-search"></i>
+            <input type="text" name="search" maxlength="100" value="@Model.Search"
+                   placeholder="Tìm kiếm theo họ tên, email hoặc số điện thoại..."
+                   class="adm-search-input-v2"
+                   style="padding-left: 42px !important; padding-right: 14px !important;" />
+        </div>
+
+        <select name="isActive" class="form-select adm-input-dark" style="height: 38px; font-size: 0.85rem; width: auto; min-width: 150px; border-radius: 8px;" onchange="this.form.submit()">
+            <option value="">Tất cả trạng thái</option>
+            <option value="true" selected="@(Model.IsActive == true)">Đang hoạt động</option>
+            <option value="false" selected="@(Model.IsActive == false)">Đã bị khóa</option>
+        </select>
+
+        <select name="sort" class="form-select adm-input-dark" style="height: 38px; font-size: 0.85rem; width: auto; min-width: 160px; border-radius: 8px;" onchange="this.form.submit()">
+            <option value="" selected="@(string.IsNullOrEmpty(Model.Sort))">Sắp xếp: Mới nhất</option>
+            <option value="oldest" selected="@(Model.Sort == "oldest")">Cũ nhất</option>
+            <option value="name" selected="@(Model.Sort == "name")">Tên A-Z</option>
+        </select>
+
+        @if (!string.IsNullOrWhiteSpace(Model.Search) || !string.IsNullOrEmpty(Model.Role) || Model.IsActive.HasValue)
+        {
+            <a asp-action="Index" class="adm-action-btn adm-btn-secondary" style="height: 38px;" title="Đặt lại bộ lọc">
+                <i class="bi bi-x-lg"></i> <span>Đặt lại</span>
+            </a>
+        }
+    </form>
+</div>
 
 @if (TempData["Success"] != null)
 {
-    <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+    <div class="alert alert-success alert-dismissible fade show mb-4 shadow-sm" role="alert">
         <i class="bi bi-check-circle-fill me-2"></i>@TempData["Success"]
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 }
 @if (TempData["Error"] != null)
 {
-    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+    <div class="alert alert-danger alert-dismissible fade show mb-4 shadow-sm" role="alert">
         <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["Error"]
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 }
 
-<!-- FILTER BAR -->
-<div class="adm-filter-bar mb-4">
-    <form asp-action="Index" method="get" class="row g-3">
-        <div class="col-md-4">
-            <label class="d-none d-md-block text-muted small">Tìm kiếm</label>
-            <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-search"></i></span>
-                <input type="text" name="search" value="@Model.Search" class="form-control" placeholder="Tên, email hoặc số điện thoại..." />
-            </div>
-        </div>
-        <div class="col-md-3">
-            <label class="d-none d-md-block text-muted small">Vai trò</label>
-            <select name="role" class="form-select">
-                <option value="">Tất cả vai trò</option>
-                @foreach (var r in Model.AvailableRoles)
-                {
-                    <option value="@r" selected="@(Model.Role == r)">@r</option>
-                }
-            </select>
-        </div>
-        <div class="col-md-2">
-            <label class="d-none d-md-block text-muted small">Trạng thái</label>
-            <select name="isActive" class="form-select">
-                <option value="">Tất cả</option>
-                <option value="true" selected="@(Model.IsActive == true)">Hoạt động</option>
-                <option value="false" selected="@(Model.IsActive == false)">Đã khóa</option>
-            </select>
-        </div>
-        <div class="col-md-2">
-            <label class="d-none d-md-block text-muted small">Sắp xếp</label>
-            <select name="sort" class="form-select">
-                <option value="" selected="@(string.IsNullOrEmpty(Model.Sort))">Mới nhất</option>
-                <option value="oldest" selected="@(Model.Sort == "oldest")">Cũ nhất</option>
-                <option value="name" selected="@(Model.Sort == "name")">Tên A-Z</option>
-            </select>
-        </div>
-        <div class="col-md-1 d-flex align-items-end">
-            <button type="submit" class="btn adm-btn-atelier w-100 justify-content-center">
-                <i class="bi bi-funnel"></i>
-            </button>
-        </div>
-    </form>
-</div>
-
 <!-- USERS TABLE -->
-<div class="adm-card p-0 overflow-hidden mb-4">
-    <div class="table-responsive">
-        <table class="adm-table mb-0">
-            <thead>
-                <tr>
-                    <th class="ps-4">NGƯỜI DÙNG</th>
-                    <th>SỐ ĐIỆN THOẠI</th>
-                    <th>VAI TRÒ</th>
-                    <th>ĐƠN HÀNG</th>
-                    <th>TỔNG CHI TIÊU</th>
-                    <th>NGÀY ĐĂNG KÝ</th>
-                    <th>TRẠNG THÁI</th>
-                    <th class="text-end pe-4">THAO TÁC</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var user in Model.Users)
-                {
-                    var isSelf = user.Id == currentUserId;
-                    <tr>
-                        <td class="ps-4">
-                            <div class="d-flex align-items-center gap-2">
-                                <div style="width: 36px; height: 36px; border-radius: 50%; background: #1e293b; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem;">
-                                    @(string.IsNullOrWhiteSpace(user.FullName) ? "U" : user.FullName.Substring(0, 1).ToUpper())
-                                </div>
-                                <div>
-                                    <div class="fw-bold adm-heading">
-                                        @user.FullName
-                                        @if (isSelf)
-                                        {
-                                            <span class="badge bg-primary bg-opacity-75 ms-1" style="font-size: 0.65rem;">Bạn</span>
-                                        }
-                                    </div>
-                                    <div class="text-muted small">@user.Email</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td>@(string.IsNullOrEmpty(user.PhoneNumber) ? "—" : user.PhoneNumber)</td>
-                        <td>
-                            @foreach (var r in user.Roles)
-                            {
-                                var badgeClass = r switch
-                                {
-                                    "Admin" => "badge bg-warning text-dark fw-bold",
-                                    "Manager" => "badge bg-info text-dark",
-                                    "Staff" => "badge bg-primary",
-                                    "Shipper" => "badge bg-success",
-                                    _ => "badge bg-secondary"
-                                };
-                                <span class="@badgeClass me-1">@r</span>
-                            }
-                        </td>
-                        <td><span class="fw-bold font-monospace">@user.OrderCount</span> đơn</td>
-                        <td><span class="fw-bold" style="color: var(--adm-gold);">@user.TotalSpent.ToString("N0") ₫</span></td>
-                        <td><span class="text-muted small">@user.CreatedAt.AddHours(7).ToString("dd/MM/yyyy HH:mm")</span></td>
-                        <td>
-                            @if (user.IsActive)
-                            {
-                                <span class="adm-pill adm-pill-emerald">Hoạt động</span>
-                            }
-                            else
-                            {
-                                <span class="adm-pill adm-pill-faint text-danger fw-bold">Đã khóa</span>
-                            }
-                        </td>
-                        <td class="text-end pe-4">
-                            <div class="d-inline-flex gap-1">
-                                <a asp-action="Details" asp-route-id="@user.Id" class="btn btn-sm adm-btn-outline py-1 px-2" title="Xem chi tiết &amp; phân quyền">
-                                    <i class="bi bi-eye"></i>
-                                </a>
-                                @if (!isSelf)
-                                {
-                                    <form asp-action="ToggleLock" asp-route-id="@user.Id" method="post" class="d-inline"
-                                          onsubmit="return confirm('@(user.IsActive ? "Khóa tài khoản " + user.FullName + "?" : "Mở khóa tài khoản " + user.FullName + "?")');">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-sm @(user.IsActive ? "btn-outline-danger" : "btn-outline-success") py-1 px-2"
-                                                title="@(user.IsActive ? "Khóa tài khoản" : "Mở khóa tài khoản")">
-                                            <i class="bi @(user.IsActive ? "bi-lock" : "bi-unlock")"></i>
-                                        </button>
-                                    </form>
-                                }
-                            </div>
-                        </td>
-                    </tr>
-                }
-                @if (!Model.Users.Any())
-                {
-                    <tr>
-                        <td colspan="8" class="text-center py-5 text-muted">
-                            <i class="bi bi-people fs-2 d-block mb-2"></i>
-                            Không tìm thấy tài khoản nào khớp với điều kiện lọc.
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+@if (!Model.Users.Any())
+{
+    <div class="adm-card text-center py-5">
+        <i class="bi bi-people fs-1 text-muted d-block mb-3"></i>
+        <h5 class="fw-bold adm-heading">Không tìm thấy tài khoản nào khớp bộ lọc</h5>
+        <p class="text-muted small mb-0">Thử thay đổi từ khóa tìm kiếm hoặc chọn tất cả vai trò.</p>
     </div>
-</div>
+}
+else
+{
+    <div class="adm-card p-0 overflow-hidden mb-4 shadow-sm">
+        <div class="table-responsive">
+            <table class="adm-table mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">NGƯỜI DÙNG</th>
+                        <th>SỐ ĐIỆN THOẠI</th>
+                        <th>VAI TRÒ</th>
+                        <th class="text-center">ĐƠN HÀNG</th>
+                        <th class="text-end">TỔNG CHI TIÊU</th>
+                        <th>NGÀY TẠO</th>
+                        <th>TRẠNG THÁI</th>
+                        <th class="text-end pe-4">THAO TÁC</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model.Users)
+                    {
+                        var isSelf = user.Id == currentUserId;
+                        var initial = !string.IsNullOrWhiteSpace(user.FullName) ? user.FullName.Substring(0, 1).ToUpper() : "U";
+                        <tr>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 fw-bold" style="width: 38px; height: 38px; background: #0F172A; color: #F8FAFC; font-size: 0.9rem;">
+                                        @initial
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold adm-heading">
+                                            @user.FullName
+                                            @if (isSelf)
+                                            {
+                                                <span class="badge ms-1" style="background: rgba(37, 99, 235, 0.15); color: #2563EB; font-size: 0.65rem;">Bạn</span>
+                                            }
+                                        </div>
+                                        <div class="text-muted small" style="font-size: 0.75rem;">@user.Email</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="font-monospace small">@(string.IsNullOrEmpty(user.PhoneNumber) ? "—" : user.PhoneNumber)</span>
+                            </td>
+                            <td>
+                                <div class="d-flex flex-wrap gap-1">
+                                    @foreach (var r in user.Roles)
+                                    {
+                                        @switch (r)
+                                        {
+                                            case "Admin":
+                                                <span class="adm-pill adm-pill-amber fw-bold"><i class="bi bi-award-fill me-1"></i>Admin</span>
+                                                break;
+                                            case "Manager":
+                                                <span class="adm-pill adm-pill-blue">Manager</span>
+                                                break;
+                                            case "Staff":
+                                                <span class="adm-pill adm-pill-emerald">Staff</span>
+                                                break;
+                                            case "Shipper":
+                                                <span class="adm-pill adm-pill-faint"><i class="bi bi-truck me-1"></i>Shipper</span>
+                                                break;
+                                            default:
+                                                <span class="adm-pill adm-pill-faint">@r</span>
+                                                break;
+                                        }
+                                    }
+                                </div>
+                            </td>
+                            <td class="text-center font-monospace">
+                                <span class="badge" style="background: var(--adm-surface-hover, #F8FAFC); color: var(--adm-ink, #0F172A); border: 1px solid var(--adm-border, #CBD5E1);">@user.OrderCount đơn</span>
+                            </td>
+                            <td class="text-end font-monospace fw-bold" style="color: var(--adm-gold, #D97706);">
+                                @user.TotalSpent.ToString("N0") ₫
+                            </td>
+                            <td>
+                                <span class="text-muted small">@user.CreatedAt.AddHours(7).ToString("dd/MM/yyyy")</span>
+                            </td>
+                            <td>
+                                @if (user.IsActive)
+                                {
+                                    <span class="adm-pill adm-pill-emerald">Hoạt động</span>
+                                }
+                                else
+                                {
+                                    <span class="adm-pill adm-pill-rose font-bold">Đã khóa</span>
+                                }
+                            </td>
+                            <td class="text-end pe-4">
+                                <div class="d-inline-flex gap-1 align-items-center">
+                                    <a asp-action="Details" asp-route-id="@user.Id" class="adm-action-btn adm-btn-secondary py-1 px-2" style="font-size: 0.78rem;" title="Xem chi tiết &amp; phân quyền">
+                                        <i class="bi bi-sliders"></i>
+                                    </a>
+                                    @if (!isSelf)
+                                    {
+                                        <form asp-action="ToggleLock" asp-route-id="@user.Id" method="post" class="d-inline"
+                                              onsubmit="return confirm('@(user.IsActive ? "Khóa tài khoản " + user.FullName + "?" : "Mở khóa tài khoản " + user.FullName + "?")');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="adm-action-btn adm-btn-secondary py-1 px-2 @(user.IsActive ? "text-danger" : "text-success")" style="font-size: 0.78rem;"
+                                                    title="@(user.IsActive ? "Khóa tài khoản" : "Mở khóa tài khoản")">
+                                                <i class="bi @(user.IsActive ? "bi-lock" : "bi-unlock")"></i>
+                                            </button>
+                                        </form>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
 
 <!-- PAGINATION -->
 @if (Model.PageCount > 1)
 {
-    <nav aria-label="Page navigation" class="d-flex justify-content-center">
-        <ul class="pagination pagination-sm">
-            @for (var p = 1; p <= Model.PageCount; p++)
-            {
-                <li class="page-item @(p == Model.Page ? "active" : "")">
-                    <a class="page-link" asp-action="Index"
-                       asp-route-page="@p"
-                       asp-route-search="@Model.Search"
-                       asp-route-role="@Model.Role"
-                       asp-route-isActive="@Model.IsActive"
-                       asp-route-sort="@Model.Sort">@p</a>
-                </li>
-            }
-        </ul>
+    <nav class="d-flex align-items-center justify-content-center gap-3 my-4" aria-label="Phân trang người dùng">
+        @if (Model.Page > 1)
+        {
+            <a asp-action="Index"
+               asp-route-page="@(Model.Page - 1)"
+               asp-route-search="@Model.Search"
+               asp-route-role="@Model.Role"
+               asp-route-isActive="@Model.IsActive"
+               asp-route-sort="@Model.Sort" class="adm-action-btn adm-btn-secondary">
+               <i class="bi bi-chevron-left me-1"></i> Trang trước
+            </a>
+        }
+        <span class="text-muted small fw-semibold">Trang @Model.Page / @Model.PageCount</span>
+        @if (Model.Page < Model.PageCount)
+        {
+            <a asp-action="Index"
+               asp-route-page="@(Model.Page + 1)"
+               asp-route-search="@Model.Search"
+               asp-route-role="@Model.Role"
+               asp-route-isActive="@Model.IsActive"
+               asp-route-sort="@Model.Sort" class="adm-action-btn adm-btn-secondary">
+               Trang sau <i class="bi bi-chevron-right ms-1"></i>
+            </a>
+        }
     </nav>
 }
