@@ -1096,7 +1096,9 @@
         }
 
         function triggerActiveSlotUpload() {
-            document.getElementById(`realInputSlot${activeSlot}`)?.click();
+            if (!activeDataUrls[activeSlot]) {
+                document.getElementById(`realInputSlot${activeSlot}`)?.click();
+            }
         }
 
         function handleStageFileSelect(slot, input) {
@@ -1202,27 +1204,30 @@
 
                 const transparentBlob = await response.blob();
                 
-                // Read as base64 DataURL so it persists reliably when switching between slots
+                const targetSlot = activeSlot;
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const transparentUrl = e.target.result;
-                    activeDataUrls[activeSlot] = transparentUrl;
-                    isCutState[activeSlot] = true;
+                    activeDataUrls[targetSlot] = transparentUrl;
+                    isCutState[targetSlot] = true;
 
                     // Update thumbnail preview
-                    const thumbBox = document.getElementById(`thumbBox${activeSlot}`);
+                    const thumbBox = document.getElementById(`thumbBox${targetSlot}`);
                     if (thumbBox) {
-                        thumbBox.innerHTML = `<img src="${transparentUrl}" class="adm-angle-thumb-preview" alt="Slot ${activeSlot}" />`;
+                        thumbBox.innerHTML = `<img src="${transparentUrl}" class="adm-angle-thumb-preview" alt="Slot ${targetSlot}" />`;
                     }
 
                     // Assign to real file input via DataTransfer
-                    const processedFile = new File([transparentBlob], `transparent-slot-${activeSlot}.png`, { type: 'image/png' });
+                    const processedFile = new File([transparentBlob], `transparent-slot-${targetSlot}.png`, { type: 'image/png' });
                     const dt = new DataTransfer();
                     dt.items.add(processedFile);
-                    input.files = dt.files;
+                    const targetInput = document.getElementById(`realInputSlot${targetSlot}`);
+                    if (targetInput) targetInput.files = dt.files;
 
                     // Re-render stage display for active slot
-                    updateStageDisplay();
+                    if (activeSlot === targetSlot) {
+                        updateStageDisplay();
+                    }
 
                     btn.innerHTML = '<i class="bi bi-check2"></i> Đã tách nền AI!';
                     setTimeout(() => {
