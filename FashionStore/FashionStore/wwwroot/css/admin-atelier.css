@@ -3843,3 +3843,37 @@ body.adm-body {
 [data-theme="dark"] .adm-dropzone:hover, [data-theme="dark"] .adm-dropzone.dragover {
     border-color: #38BDF8;
 }
+
+/* SWATCH DOT IN ADMIN */
+.adm-swatch-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    vertical-align: middle;
+}
+
+.adm-color-picker-mini {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    background: transparent;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.adm-color-picker-mini::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.adm-color-picker-mini::-webkit-color-swatch {
+    border: 2px solid var(--adm-border);
+    border-radius: 50%;
+}

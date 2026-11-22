@@ -185,23 +185,54 @@
                     <div class="mb-3 p-3 rounded-3" style="background: var(--adm-surface-hover); border: 1px solid var(--adm-border);">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <label class="text-muted small mb-0" style="font-size: 0.72rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.04em;">
-                                2. Chọn các màu sắc (Colors)
+                                2. Chọn các màu sắc (Colors / Phối màu giày)
                             </label>
                             <span class="text-muted" style="font-size: 0.7rem;">Click để chọn nhanh</span>
                         </div>
 
                         <div class="d-flex flex-wrap align-items-center gap-1 mb-2">
-                            @foreach (var c in new[] { "Đen", "Trắng", "Xám", "Be", "Xanh Navy", "Nâu", "Xanh Rêu" })
-                            {
-                                <button type="button" class="adm-chip-btn color-chip @(c == "Đen" ? "active" : "")" data-color="@c">
-                                    <span>@c</span>
-                                </button>
-                            }
+                            <button type="button" class="adm-chip-btn color-chip active" data-color="Đen">
+                                <span class="adm-swatch-dot" style="background: #18181B;"></span>
+                                <span>Đen</span>
+                            </button>
+                            <button type="button" class="adm-chip-btn color-chip" data-color="Trắng">
+                                <span class="adm-swatch-dot" style="background: #FFFFFF; border: 1px solid #CBD5E1;"></span>
+                                <span>Trắng</span>
+                            </button>
+                            <button type="button" class="adm-chip-btn color-chip" data-color="Xám">
+                                <span class="adm-swatch-dot" style="background: #71717A;"></span>
+                                <span>Xám</span>
+                            </button>
+                            <button type="button" class="adm-chip-btn color-chip" data-color="Be">
+                                <span class="adm-swatch-dot" style="background: #E5D9C5;"></span>
+                                <span>Be</span>
+                            </button>
+                            <button type="button" class="adm-chip-btn color-chip" data-color="Xanh Navy">
+                                <span class="adm-swatch-dot" style="background: #1E3A8A;"></span>
+                                <span>Xanh Navy</span>
+                            </button>
+                            <button type="button" class="adm-chip-btn color-chip" data-color="Nâu">
+                                <span class="adm-swatch-dot" style="background: #78350F;"></span>
+                                <span>Nâu</span>
+                            </button>
+                            <button type="button" class="adm-chip-btn color-chip" data-color="Xanh Rêu">
+                                <span class="adm-swatch-dot" style="background: #4D7C0F;"></span>
+                                <span>Xanh Rêu</span>
+                            </button>
+                            <button type="button" class="adm-chip-btn color-chip" data-color="Đen / Cam">
+                                <span class="adm-swatch-dot" style="background: linear-gradient(135deg, #18181B 50%, #EA580C 50%);"></span>
+                                <span>Đen / Cam</span>
+                            </button>
+                            <button type="button" class="adm-chip-btn color-chip" data-color="Trắng / Xanh">
+                                <span class="adm-swatch-dot" style="background: linear-gradient(135deg, #FFFFFF 50%, #2563EB 50%); border: 1px solid #CBD5E1;"></span>
+                                <span>Trắng / Xanh</span>
+                            </button>
                         </div>
 
-                        <!-- CUSTOM COLOR INPUT -->
+                        <!-- CUSTOM COLOR INPUT WITH MINI COLOR PICKER -->
                         <div class="d-flex align-items-center gap-2 mt-2 pt-2 border-top" style="border-color: var(--adm-border) !important;">
-                            <input type="text" id="customColorInput" placeholder="Thêm màu khác (VD: Xanh Cobalt, Đỏ Rượu...)" class="form-control adm-input-dark" style="height: 32px; font-size: 0.78rem; max-width: 280px;" />
+                            <input type="color" id="customColorPicker" value="#7C3AED" class="adm-color-picker-mini" title="Chọn màu trực quan" />
+                            <input type="text" id="customColorInput" placeholder="Tên màu (VD: Tím Khói, Xanh Rêu Phối Cam...)" class="form-control adm-input-dark" style="height: 32px; font-size: 0.78rem; max-width: 280px;" />
                             <button type="button" id="btnAddCustomColor" class="adm-btn-action-secondary" style="height: 32px; padding: 0 12px; font-size: 0.76rem;">
                                 <i class="bi bi-plus-lg"></i> Thêm màu
                             </button>
@@ -351,6 +382,44 @@
         // 2. ACTIVE SIZES AND COLORS STATE
         let activeSizes = ['S', 'M', 'L'];
         let activeColors = ['Đen'];
+        const customColorHexMap = {};
+
+        const FASHION_COLOR_MAP = {
+            "đen": "#18181B", "black": "#18181B",
+            "trắng": "#FFFFFF", "white": "#FFFFFF",
+            "xám": "#71717A", "ghi": "#71717A", "gray": "#71717A",
+            "be": "#E5D9C5", "kem": "#E5D9C5", "cream": "#E5D9C5", "beige": "#E5D9C5",
+            "nâu": "#78350F", "brown": "#78350F",
+            "xanh navy": "#1E3A8A", "navy": "#1E3A8A",
+            "xanh rêu": "#4D7C0F", "olive": "#4D7C0F",
+            "xanh lá": "#16A34A", "green": "#16A34A",
+            "xanh dương": "#2563EB", "blue": "#2563EB",
+            "xanh cobalt": "#1D4ED8", "cobalt": "#1D4ED8",
+            "xanh mint": "#6EE7B7", "mint": "#6EE7B7",
+            "xanh bơ": "#A3E635",
+            "đỏ": "#DC2626", "red": "#DC2626",
+            "đỏ rượu": "#881337", "burgundy": "#881337",
+            "hồng": "#F472B6", "pink": "#F472B6",
+            "hồng pastel": "#FBCFE8",
+            "cam": "#EA580C", "orange": "#EA580C",
+            "vàng": "#EAB308", "yellow": "#EAB308",
+            "tím": "#7C3AED", "purple": "#7C3AED"
+        };
+
+        function getColorStyle(name) {
+            if (!name) return '#71717A';
+            if (customColorHexMap[name]) return customColorHexMap[name];
+            const norm = name.toLowerCase().trim();
+            if (norm.includes('/') || norm.includes('&')) {
+                const parts = norm.split(/[/&]/);
+                if (parts.length >= 2) {
+                    const c1 = FASHION_COLOR_MAP[parts[0].trim()] || '#18181B';
+                    const c2 = FASHION_COLOR_MAP[parts[1].trim()] || '#2563EB';
+                    return `linear-gradient(135deg, ${c1} 50%, ${c2} 50%)`;
+                }
+            }
+            return FASHION_COLOR_MAP[norm] || '#71717A';
+        }
 
         function initChips() {
             document.querySelectorAll('.size-chip').forEach(btn => {
@@ -390,7 +459,6 @@
             if (!val) return;
             if (!activeSizes.includes(val)) {
                 activeSizes.push(val);
-                // Create a new chip in the UI
                 const newChip = document.createElement('button');
                 newChip.type = 'button';
                 newChip.className = 'adm-chip-btn size-chip active';
@@ -415,15 +483,20 @@
         // ADD CUSTOM COLOR
         document.getElementById('btnAddCustomColor')?.addEventListener('click', () => {
             const input = document.getElementById('customColorInput');
+            const picker = document.getElementById('customColorPicker');
             const val = input.value.trim();
             if (!val) return;
+
+            const chosenHex = picker ? picker.value : '#7C3AED';
+            customColorHexMap[val] = chosenHex;
+
             if (!activeColors.includes(val)) {
                 activeColors.push(val);
                 const newChip = document.createElement('button');
                 newChip.type = 'button';
                 newChip.className = 'adm-chip-btn color-chip active';
                 newChip.setAttribute('data-color', val);
-                newChip.innerHTML = `<span>${val}</span>`;
+                newChip.innerHTML = `<span class="adm-swatch-dot" style="background: ${chosenHex};"></span><span>${val}</span>`;
                 newChip.addEventListener('click', () => {
                     if (newChip.classList.contains('active')) {
                         newChip.classList.remove('active');
@@ -472,13 +545,18 @@
                     const sizeSlug = makeSlug(size).toUpperCase();
                     const colorSlug = makeSlug(color).toUpperCase();
                     const generatedSku = `${baseSlug}-${sizeSlug}-${colorSlug}`;
+                    const cStyle = getColorStyle(color);
+                    const isWhite = color.toLowerCase().includes('trắng');
 
                     html += `
                         <tr id="rowVariant_${index}" style="border-bottom: 1px solid var(--adm-border);">
                             <td class="ps-3 py-2">
                                 <div class="d-flex align-items-center gap-2">
                                     <span class="adm-pill gray" style="font-size: 0.74rem; font-weight: 600;">Size: ${size}</span>
-                                    <span class="adm-pill gray" style="font-size: 0.74rem;">${color}</span>
+                                    <span class="adm-pill gray d-flex align-items-center gap-1" style="font-size: 0.74rem;">
+                                        <span class="adm-swatch-dot" style="background: ${cStyle}; ${isWhite ? 'border: 1px solid #CBD5E1;' : ''}"></span>
+                                        <span>${color}</span>
+                                    </span>
                                     <input type="hidden" name="Variants[${index}].Size" value="${size}" />
                                     <input type="hidden" name="Variants[${index}].Color" value="${color}" />
                                     <input type="hidden" name="Variants[${index}].IsActive" value="true" />

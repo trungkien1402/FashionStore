@@ -70,6 +70,50 @@
         return idx >= 0 ? idx : 999;
     }
 
+    string ResolveColorCss(string? colorName)
+    {
+        if (string.IsNullOrWhiteSpace(colorName)) return "#18181B";
+        var norm = colorName.Trim().ToLowerInvariant();
+
+        if (norm.Contains('/') || norm.Contains('&'))
+        {
+            var parts = norm.Split(new[] { '/', '&' }, StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length >= 2)
+            {
+                var h1 = SingleColorHex(parts[0].Trim());
+                var h2 = SingleColorHex(parts[1].Trim());
+                return $"linear-gradient(135deg, {h1} 50%, {h2} 50%)";
+            }
+        }
+        return SingleColorHex(norm);
+    }
+
+    string SingleColorHex(string name) => name switch
+    {
+        "đen" or "black" => "#18181B",
+        "trắng" or "white" => "#FFFFFF",
+        "xám" or "ghi" or "gray" or "grey" => "#71717A",
+        "be" or "kem" or "cream" or "beige" => "#E5D9C5",
+        "nâu" or "brown" or "cafe" => "#78350F",
+        "xanh navy" or "navy" or "xanh đen" => "#1E3A8A",
+        "xanh rêu" or "rêu" or "olive" => "#4D7C0F",
+        "xanh lá" or "green" => "#16A34A",
+        "xanh dương" or "xanh" or "blue" => "#2563EB",
+        "xanh cobalt" or "cobalt" => "#1D4ED8",
+        "xanh mint" or "mint" => "#6EE7B7",
+        "xanh bơ" => "#A3E635",
+        "đỏ" or "red" => "#DC2626",
+        "đỏ rượu" or "burgundy" or "maroon" => "#881337",
+        "hồng" or "pink" => "#F472B6",
+        "hồng pastel" => "#FBCFE8",
+        "cam" or "orange" => "#EA580C",
+        "vàng" or "yellow" => "#EAB308",
+        "tím" or "purple" => "#7C3AED",
+        "bạc" or "silver" => "#CBD5E1",
+        "vàng đồng" or "gold" => "#D97706",
+        _ => "#71717A"
+    };
+
     var variants = product.Variants?
         .Where(v => v.IsActive)
         .OrderBy(v => GetColorRank(v.Color))
@@ -201,7 +245,7 @@
                                     @for (int cIdx = 0; cIdx < distinctColors.Count; cIdx++)
                                     {
                                         var cName = distinctColors[cIdx];
-                                        var hex = colorHexMap.TryGetValue(cName, out var foundHex) ? foundHex : "#1f2937";
+                                        var hex = colorHexMap.TryGetValue(cName, out var foundHex) ? foundHex : ResolveColorCss(cName);
                                         var photoFront = cIdx < colorPhotos.Count ? colorPhotos[cIdx].Front : product.ImageUrl;
                                         var photoBack = cIdx < colorPhotos.Count ? (colorPhotos[cIdx].Back ?? "") : "";
                                         <button type="button"
@@ -209,7 +253,7 @@
                                                 data-color="@cName"
                                                 data-front="@photoFront"
                                                 data-back="@photoBack">
-                                            <span class="hnmt-pdp-swatch-dot" style="background-color: @hex;"></span>
+                                            <span class="hnmt-pdp-swatch-dot" style="background: @hex;"></span>
                                             <span>@cName</span>
                                         </button>
                                     }

@@ -345,6 +345,12 @@
     border-radius: 50%;
     border: 1px solid rgba(0, 0, 0, 0.18);
     flex-shrink: 0;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.hnmt-pdp-color-chip.is-active .hnmt-pdp-swatch-dot {
+    box-shadow: 0 0 0 2px #ffffff;
+    transform: scale(1.15);
 }
 
 .hnmt-pdp-size-btn {
