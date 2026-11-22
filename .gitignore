@@ -62,3 +62,5 @@ desktop.ini
 # Documents & Planning files
 *.txt
 Ke_hoach_hoan_thien_FashionStore.txt
+
+**/__pycache__/
