@@ -1,13 +1,11 @@
-@model List<FashionStore.Models.Entities.ProductVariant>
+@model FashionStore.Models.ViewModels.AdminInventoryViewModel
 
 @{
     ViewData["Title"] = "Kho hàng & Tồn kho";
-    var isLow = ViewBag.Low == true;
-    var search = ViewBag.Search as string;
-    var lowCount = Model.Count(v => v.StockQuantity <= 5);
+    var currentFilter = Model.Filter ?? "all";
 }
 
-<!-- EXECUTIVE HEADER -->
+<!-- 1. EXECUTIVE HEADER -->
 <div class="adm-header-block mb-4">
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
         <div>
@@ -15,56 +13,215 @@
                 <span class="adm-pulse-dot"></span>
                 <span class="adm-kicker-text">HNMT ATELIER · KINH DOANH</span>
                 <span class="adm-meta-divider">/</span>
-                <span class="adm-order-count-badge">@Model.Count biến thể</span>
+                <span class="adm-order-count-badge">@Model.TotalItems biến thể</span>
             </div>
-            <h1 class="adm-title-main">Kiểm kê & Tồn kho Sản phẩm</h1>
+            <h1 class="adm-title-main">Kiểm kê &amp; Tồn kho Sản phẩm</h1>
         </div>
         <div class="d-flex align-items-center gap-2">
-            <a asp-action="Forecast" class="adm-btn-table-action text-decoration-none" style="height: 34px; padding: 0 14px; font-size: 0.8rem; font-weight: 500;" title="Dự báo tồn kho">
-                <i class="bi bi-graph-up-arrow me-1"></i> Kế hoạch nhập hàng
+            <a asp-action="Forecast" class="adm-action-btn adm-btn-secondary" title="Dự báo tồn kho">
+                <i class="bi bi-graph-up-arrow"></i> <span>Dự báo nhập hàng</span>
             </a>
-            <a asp-action="Inventory" class="adm-btn-table-action text-decoration-none" style="height: 34px; padding: 0 14px; font-size: 0.8rem; font-weight: 500;" title="Làm mới">
-                <i class="bi bi-arrow-clockwise me-1"></i> Làm mới
+            <a asp-action="Import" class="adm-action-btn adm-btn-secondary" title="Nhập hàng loạt bằng Excel">
+                <i class="bi bi-file-earmark-excel"></i> <span>Nhập Excel</span>
+            </a>
+            <a asp-action="Inventory" class="adm-action-btn adm-btn-secondary" title="Làm mới">
+                <i class="bi bi-arrow-clockwise"></i> <span>Làm mới</span>
             </a>
         </div>
     </div>
 
-    <!-- TIER 1: SEGMENTED CONTROLS -->
+    <!-- 2. WAREHOUSE OVERVIEW KPI CARDS -->
+    <div class="row g-3 mb-4">
+        <!-- 1. TỔNG SẢN PHẨM LƯU KHO -->
+        <div class="col-sm-6 col-xl-3">
+            <div class="adm-card p-3 shadow-sm h-100 d-flex flex-column justify-content-between" style="border-left: 3px solid #2563EB;">
+                <div>
+                    <div class="d-flex align-items-start justify-content-between mb-2">
+                        <div class="d-flex align-items-center gap-2">
+                            <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(37, 99, 235, 0.12); color: #2563EB; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+                                <i class="bi bi-boxes"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold adm-heading mb-0" style="font-size: 0.86rem;">Tổng hàng lưu kho</h6>
+                                <div class="text-muted" style="font-size: 0.72rem;">@Model.TotalVariants mã SKU</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fs-4 fw-bold font-monospace adm-heading mt-1" style="color: #0F172A;">
+                        @Model.TotalStockQuantity.ToString("N0") <span style="font-size: 0.8rem; font-weight: 500; color: #64748B;">sản phẩm</span>
+                    </div>
+                </div>
+                <div class="pt-2 border-top border-secondary border-opacity-10 d-flex align-items-center justify-content-between text-muted" style="font-size: 0.72rem;">
+                    <span>Tổng tồn thực tế</span>
+                    <span class="badge bg-light text-dark border">Toàn showroom</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. TỔNG GIÁ TRỊ TÀI SẢN KHO -->
+        <div class="col-sm-6 col-xl-3">
+            <div class="adm-card p-3 shadow-sm h-100 d-flex flex-column justify-content-between" style="border-left: 3px solid #10B981;">
+                <div>
+                    <div class="d-flex align-items-start justify-content-between mb-2">
+                        <div class="d-flex align-items-center gap-2">
+                            <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(16, 185, 129, 0.12); color: #10B981; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+                                <i class="bi bi-cash-stack"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold adm-heading mb-0" style="font-size: 0.86rem;">Giá trị vốn kho</h6>
+                                <div class="text-muted" style="font-size: 0.72rem;">Theo giá niêm yết</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fs-4 fw-bold font-monospace adm-heading mt-1" style="color: #0F172A;">
+                        @Model.TotalAssetValue.ToString("N0") <span style="font-size: 0.8rem; font-weight: 500; color: #64748B;">₫</span>
+                    </div>
+                </div>
+                <div class="pt-2 border-top border-secondary border-opacity-10 d-flex align-items-center justify-content-between text-muted" style="font-size: 0.72rem;">
+                    <span>Tài sản lưu động</span>
+                    <span class="badge bg-success bg-opacity-10 text-success fw-bold">Active Assets</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. MÃ HẾT HÀNG (0 SP) -->
+        <div class="col-sm-6 col-xl-3">
+            <div class="adm-card p-3 shadow-sm h-100 d-flex flex-column justify-content-between" style="border-left: 3px solid #E11D48;">
+                <div>
+                    <div class="d-flex align-items-start justify-content-between mb-2">
+                        <div class="d-flex align-items-center gap-2">
+                            <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(225, 29, 72, 0.12); color: #E11D48; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+                                <i class="bi bi-x-circle"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold adm-heading mb-0" style="font-size: 0.86rem;">Đã hết hàng (0)</h6>
+                                <div class="text-muted" style="font-size: 0.72rem;">Cần nhập gấp</div>
+                            </div>
+                        </div>
+                        <span class="adm-pill @(Model.OutOfStockCount > 0 ? "adm-pill-rose fw-bold" : "adm-pill-faint")" style="font-size: 0.8rem;">
+                            @Model.OutOfStockCount mã
+                        </span>
+                    </div>
+                    <div class="fs-4 fw-bold font-monospace adm-heading mt-1 text-danger">
+                        @Model.OutOfStockCount <span style="font-size: 0.8rem; font-weight: 500; color: #E11D48;">mã SKU cạn tồn</span>
+                    </div>
+                </div>
+                <div class="pt-2 border-top border-secondary border-opacity-10 d-flex align-items-center justify-content-between">
+                    <span class="text-muted" style="font-size: 0.72rem;">Ưu tiên bổ sung</span>
+                    <a asp-action="Inventory" asp-route-filter="out" class="adm-btn-table-action text-decoration-none" style="height: 26px; font-size: 0.72rem; padding: 0 8px;">
+                        <span>Lọc mã cạn</span> <i class="bi bi-chevron-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. MÃ SẮP CẠN KHO (1-5 SP) -->
+        <div class="col-sm-6 col-xl-3">
+            <div class="adm-card p-3 shadow-sm h-100 d-flex flex-column justify-content-between" style="border-left: 3px solid #F59E0B;">
+                <div>
+                    <div class="d-flex align-items-start justify-content-between mb-2">
+                        <div class="d-flex align-items-center gap-2">
+                            <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(245, 158, 11, 0.12); color: #D97706; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+                                <i class="bi bi-exclamation-triangle"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold adm-heading mb-0" style="font-size: 0.86rem;">Sắp hết hàng (1-5)</h6>
+                                <div class="text-muted" style="font-size: 0.72rem;">Mức báo động</div>
+                            </div>
+                        </div>
+                        <span class="adm-pill @(Model.LowStockCount > 0 ? "adm-pill-amber fw-bold" : "adm-pill-faint")" style="font-size: 0.8rem;">
+                            @Model.LowStockCount mã
+                        </span>
+                    </div>
+                    <div class="fs-4 fw-bold font-monospace adm-heading mt-1" style="color: #D97706;">
+                        @Model.LowStockCount <span style="font-size: 0.8rem; font-weight: 500; color: #D97706;">mã SKU chạm đáy</span>
+                    </div>
+                </div>
+                <div class="pt-2 border-top border-secondary border-opacity-10 d-flex align-items-center justify-content-between">
+                    <span class="text-muted" style="font-size: 0.72rem;">Kế hoạch nhập</span>
+                    <a asp-action="Inventory" asp-route-filter="low" class="adm-btn-table-action text-decoration-none" style="height: 26px; font-size: 0.72rem; padding: 0 8px;">
+                        <span>Lọc mã thấp</span> <i class="bi bi-chevron-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. TIER 1: SEGMENTED CONTROLS -->
     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
         <div class="adm-segmented-control" role="group" aria-label="Lọc mức tồn kho">
-            <a asp-action="Inventory" asp-route-search="@search"
-               class="adm-segment @(!isLow ? "active" : "")">
-               Tất cả biến thể
+            <a asp-action="Inventory" asp-route-filter="all" asp-route-search="@Model.Search" asp-route-categoryId="@Model.CategoryId" asp-route-sort="@Model.Sort"
+               class="adm-segment @(currentFilter == "all" ? "active" : "")">
+                Tất cả biến thể (@Model.TotalVariants)
             </a>
-            <a asp-action="Inventory" asp-route-low="true" asp-route-search="@search"
-               class="adm-segment @(isLow ? "active" : "")">
-               <i class="bi bi-exclamation-triangle-fill me-1" style="color: #E11D48;"></i> Sắp hết hàng (&le; 5)
+            <a asp-action="Inventory" asp-route-filter="out" asp-route-search="@Model.Search" asp-route-categoryId="@Model.CategoryId" asp-route-sort="@Model.Sort"
+               class="adm-segment @(currentFilter == "out" ? "active" : "")">
+                Hết hàng (@Model.OutOfStockCount)
+            </a>
+            <a asp-action="Inventory" asp-route-filter="low" asp-route-search="@Model.Search" asp-route-categoryId="@Model.CategoryId" asp-route-sort="@Model.Sort"
+               class="adm-segment @(currentFilter == "low" ? "active" : "")">
+                Sắp hết (@Model.LowStockCount)
+            </a>
+            <a asp-action="Inventory" asp-route-filter="healthy" asp-route-search="@Model.Search" asp-route-categoryId="@Model.CategoryId" asp-route-sort="@Model.Sort"
+               class="adm-segment @(currentFilter == "healthy" ? "active" : "")">
+                Còn dồi dào (@Model.HealthyStockCount)
             </a>
         </div>
     </div>
 
-    <!-- TIER 2: SEARCH INPUT -->
+    <!-- 4. TIER 2: SEARCH & ADVANCED FILTERS -->
     <form asp-action="Inventory" method="get" class="d-flex flex-wrap align-items-center gap-2">
-        @if (isLow)
-        {
-            <input type="hidden" name="low" value="true" />
-        }
+        <input type="hidden" name="filter" value="@currentFilter" />
 
-        <div class="adm-search-input-group-v2 flex-grow-1" style="min-width: 260px;">
+        <!-- SEARCH INPUT -->
+        <div class="adm-search-input-group-v2 flex-grow-1" style="min-width: 240px;">
             <i class="bi bi-search"></i>
-            <input type="text" name="search" maxlength="100" value="@search"
+            <input type="text" name="search" maxlength="100" value="@Model.Search"
                    placeholder="Tìm kiếm theo mã SKU hoặc tên sản phẩm..."
                    class="adm-search-input-v2"
                    style="padding-left: 42px !important; padding-right: 14px !important;" />
         </div>
 
-        @if (!string.IsNullOrWhiteSpace(search) || isLow)
+        <!-- CATEGORY SELECT -->
+        <select name="categoryId" class="form-select"
+                style="height: 38px !important; width: auto; min-width: 170px; font-size: 0.82rem !important; border-radius: 8px !important;"
+                onchange="this.form.submit()">
+            <option value="">-- Tất cả danh mục --</option>
+            @foreach (var c in Model.Categories)
+            {
+                <option value="@c.Id" selected="@(Model.CategoryId == c.Id)">@c.Name</option>
+            }
+        </select>
+
+        <!-- SORT SELECT -->
+        <select name="sort" class="form-select"
+                style="height: 38px !important; width: auto; min-width: 170px; font-size: 0.82rem !important; border-radius: 8px !important;"
+                onchange="this.form.submit()">
+            <option value="stock_asc" selected="@(Model.Sort == "stock_asc")">Tồn kho: Thấp &rarr; Cao</option>
+            <option value="stock_desc" selected="@(Model.Sort == "stock_desc")">Tồn kho: Cao &rarr; Thấp</option>
+            <option value="price_desc" selected="@(Model.Sort == "price_desc")">Giá: Cao &rarr; Thấp</option>
+            <option value="name_asc" selected="@(Model.Sort == "name_asc")">Tên: A &rarr; Z</option>
+        </select>
+
+        <button type="submit" class="adm-action-btn adm-btn-secondary" style="height: 38px;" title="Áp dụng tìm kiếm">
+            <i class="bi bi-funnel"></i> <span>Lọc</span>
+        </button>
+
+        @if (!string.IsNullOrWhiteSpace(Model.Search) || currentFilter != "all" || Model.CategoryId.HasValue)
         {
             <a asp-action="Inventory" class="adm-action-btn adm-btn-secondary" style="height: 38px;" title="Đặt lại bộ lọc">
                 <i class="bi bi-x-lg"></i> <span>Đặt lại</span>
             </a>
         }
     </form>
+</div>
+
+<!-- SUCCESS ALERT -->
+<div id="ajaxToast" class="alert alert-success shadow-sm mb-4 d-none" role="alert">
+    <div class="d-flex align-items-center gap-2">
+        <i class="bi bi-check-circle-fill"></i>
+        <span id="ajaxToastMsg">Đã cập nhật tồn kho thành công.</span>
+    </div>
 </div>
 
 @if (TempData["Success"] != null)
@@ -75,82 +232,109 @@
     </div>
 }
 
-@if (!Model.Any())
+<!-- DATA TABLE -->
+@if (!Model.Items.Any())
 {
-    <div class="adm-card text-center py-5">
+    <div class="adm-card text-center py-5 shadow-sm">
         <i class="bi bi-boxes fs-1 text-muted d-block mb-3"></i>
-        <h5 class="fw-bold adm-heading">Không có biến thể nào khớp bộ lọc</h5>
-        <p class="text-muted small mb-0">Thử tìm theo từ khóa SKU khác hoặc kiểm tra toàn bộ kho hàng.</p>
+        <h5 class="fw-bold adm-heading">Không có biến thể nào khớp với bộ lọc</h5>
+        <p class="text-muted small mb-3">Thử thay đổi từ khóa tìm kiếm, mức lọc hoặc đặt lại bộ lọc để xem toàn bộ kho.</p>
+        <a asp-action="Inventory" class="adm-btn-table-action text-decoration-none d-inline-flex align-items-center" style="height: 34px; padding: 0 16px;">
+            <i class="bi bi-arrow-clockwise me-1"></i> Xem lại tất cả biến thể
+        </a>
     </div>
 }
 else
 {
-    <div class="adm-card p-0 overflow-hidden mb-4">
+    <div class="adm-card p-0 overflow-hidden mb-4 shadow-sm">
         <div class="table-responsive">
             <table class="adm-table mb-0">
                 <thead>
                     <tr>
-                        <th class="ps-4">SẢN PHẨM & SKU</th>
+                        <th class="ps-4">SẢN PHẨM &amp; MÃ SKU</th>
                         <th>PHÂN LOẠI</th>
-                        <th>GIÁ NIÊM YẾT</th>
-                        <th>TỒN KHO HIỆN TẠI</th>
+                        <th class="text-end">GIÁ NIÊM YẾT</th>
+                        <th class="text-end">TỔNG GIÁ TRỊ TỒN</th>
+                        <th class="text-center">TỒN KHO THỰC TẾ</th>
                         <th>TRẠNG THÁI</th>
-                        <th class="text-end pe-4">THAO TÁC</th>
+                        <th class="text-end pe-4" style="min-width: 140px;">THAO TÁC</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var row in Model)
+                    @foreach (var row in Model.Items)
                     {
-                        var productImg = row.Product?.ImageUrl ?? "/images/placeholder.svg";
-                        <tr>
+                        var productImg = row.ProductImage ?? "/images/placeholder.svg";
+                        <tr id="row-variant-@row.Id">
+                            <!-- 1. PRODUCT & SKU -->
                             <td class="ps-4">
                                 <div class="d-flex align-items-center gap-3">
                                     <div class="rounded-2 overflow-hidden flex-shrink-0" style="width: 44px; height: 44px; background: #F8FAFC; border: 1px solid #E2E8F0;">
-                                        <img src="@productImg" alt="@row.Product?.Name" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/placeholder.svg'" />
+                                        <img src="@productImg" alt="@row.ProductName" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/placeholder.svg'" />
                                     </div>
-                                    <div>
-                                        <a asp-controller="AdminProducts" asp-action="Edit" asp-route-id="@row.ProductId" class="fw-bold adm-heading text-decoration-none" style="font-size: 0.88rem;">
-                                            @row.Product?.Name
+                                    <div class="min-w-0">
+                                        <a asp-controller="AdminProducts" asp-action="Edit" asp-route-id="@row.ProductId" class="fw-bold adm-heading text-decoration-none text-truncate d-block" style="font-size: 0.88rem; max-width: 280px;" title="@row.ProductName">
+                                            @row.ProductName
                                         </a>
-                                        <div class="font-monospace text-muted mt-0.5" style="font-size: 0.75rem;">
-                                            <code>@row.SKU</code>
+                                        <div class="d-flex align-items-center gap-2 mt-0.5">
+                                            <code class="font-monospace" style="color: #475569; font-weight: 600; font-size: 0.74rem;">@row.Sku</code>
+                                            @if (!string.IsNullOrEmpty(row.CategoryName))
+                                            {
+                                                <span class="text-muted" style="font-size: 0.72rem;">&middot; @row.CategoryName</span>
+                                            }
                                         </div>
                                     </div>
                                 </div>
                             </td>
+
+                            <!-- 2. VARIANT ATTRIBUTES -->
                             <td>
-                                <div class="d-flex align-items-center gap-1">
-                                    <span class="badge" style="background: var(--adm-surface-hover, #F8FAFC); color: var(--adm-ink, #0F172A); border: 1px solid var(--adm-border, #CBD5E1); font-size: 0.75rem;">
+                                <div class="d-flex flex-wrap align-items-center gap-1">
+                                    <span class="badge" style="background: #F1F5F9; color: #0F172A; border: 1px solid #CBD5E1; font-size: 0.75rem; font-weight: 600;">
                                         Size @row.Size
                                     </span>
-                                    <span class="badge" style="background: var(--adm-surface-hover, #F8FAFC); color: var(--adm-ink, #0F172A); border: 1px solid var(--adm-border, #CBD5E1); font-size: 0.75rem;">
+                                    <span class="badge" style="background: #F1F5F9; color: #0F172A; border: 1px solid #CBD5E1; font-size: 0.75rem; font-weight: 500;">
                                         @row.Color
                                     </span>
                                 </div>
                             </td>
-                            <td>
-                                <span class="font-monospace fw-semibold adm-heading">@row.Price.ToString("N0") ₫</span>
+
+                            <!-- 3. UNIT PRICE -->
+                            <td class="text-end">
+                                <span class="font-monospace fw-semibold adm-heading" style="font-size: 0.86rem;">
+                                    @row.Price.ToString("N0") ₫
+                                </span>
                             </td>
-                            <td>
+
+                            <!-- 4. TOTAL ASSET VALUE -->
+                            <td class="text-end">
+                                <span class="font-monospace fw-bold" id="val-variant-@row.Id" style="font-size: 0.86rem; color: #0F172A;">
+                                    @row.AssetValue.ToString("N0") ₫
+                                </span>
+                            </td>
+
+                            <!-- 5. REAL STOCK QUANTITY (HIGH CONTRAST) -->
+                            <td class="text-center" id="stock-cell-@row.Id">
                                 @if (row.StockQuantity == 0)
                                 {
-                                    <span class="adm-pill adm-pill-rose font-monospace fw-bold">
-                                        <i class="bi bi-x-circle me-1"></i>Hết hàng (0)
+                                    <span class="adm-pill adm-pill-rose font-monospace fw-bold shadow-sm" style="font-size: 0.84rem; padding: 4px 12px;">
+                                        HẾT HÀNG: 0
                                     </span>
                                 }
                                 else if (row.StockQuantity <= 5)
                                 {
-                                    <span class="adm-pill adm-pill-amber font-monospace fw-bold">
-                                        <i class="bi bi-exclamation-triangle me-1"></i>Sắp hết (Còn @row.StockQuantity)
+                                    <span class="adm-pill adm-pill-amber font-monospace fw-bold shadow-sm" style="font-size: 0.84rem; padding: 4px 12px;">
+                                        SẮP HẾT: @row.StockQuantity
                                     </span>
                                 }
                                 else
                                 {
-                                    <span class="adm-pill adm-pill-emerald font-monospace fw-bold">
-                                        Còn @row.StockQuantity
+                                    <span class="adm-pill adm-pill-emerald font-monospace fw-bold shadow-sm" style="font-size: 0.84rem; padding: 4px 12px;">
+                                        CÒN: @row.StockQuantity
                                     </span>
                                 }
                             </td>
+
+                            <!-- 6. BUSINESS STATUS -->
                             <td>
                                 @if (row.IsActive)
                                 {
@@ -161,10 +345,20 @@ else
                                     <span class="adm-pill adm-pill-faint">Ngừng bán</span>
                                 }
                             </td>
+
+                            <!-- 7. ACTIONS -->
                             <td class="text-end pe-4">
-                                <div class="d-inline-flex justify-content-end">
-                                    <a asp-action="Stock" asp-route-id="@row.Id" class="adm-btn-table-action text-decoration-none" style="height: 30px; font-size: 0.76rem; padding: 0 10px;" title="Xem lịch sử &amp; điều chỉnh tồn">
+                                <div class="d-inline-flex align-items-center gap-1.5 justify-content-end">
+                                    <button type="button" class="adm-btn-table-action"
+                                            style="height: 30px; font-size: 0.76rem; padding: 0 10px; font-weight: 600;"
+                                            onclick="openQuickAdjustModal(@row.Id, '@Html.Raw(Html.Encode(row.ProductName))', '@Html.Raw(Html.Encode(row.Sku))', '@row.Size', '@Html.Raw(Html.Encode(row.Color))', @row.StockQuantity, @row.Price, '@productImg')"
+                                            title="Điều chỉnh số lượng tồn ngay tại đây">
                                         <i class="bi bi-sliders me-1"></i> Điều chỉnh
+                                    </button>
+                                    <a asp-action="Stock" asp-route-id="@row.Id" class="adm-btn-table-action text-decoration-none"
+                                       style="height: 30px; width: 30px; padding: 0; justify-content: center;"
+                                       title="Xem lịch sử thẻ kho &amp; biến động">
+                                        <i class="bi bi-clock-history"></i>
                                     </a>
                                 </div>
                             </td>
@@ -173,6 +367,253 @@ else
                 </tbody>
             </table>
         </div>
+
+        <!-- 5. PAGINATION -->
+        @if (Model.TotalPages > 1)
+        {
+            <div class="p-3 border-top border-secondary border-opacity-10 d-flex flex-wrap align-items-center justify-content-between gap-3">
+                <div class="text-muted small" style="font-size: 0.76rem;">
+                    Hiển thị <strong>@((Model.Page - 1) * Model.PageSize + 1)</strong> - <strong>@(Math.Min(Model.Page * Model.PageSize, Model.TotalItems))</strong> trong tổng số <strong>@Model.TotalItems</strong> biến thể
+                </div>
+
+                <div class="d-flex align-items-center gap-1">
+                    @if (Model.Page > 1)
+                    {
+                        <a asp-action="Inventory" asp-route-page="@(Model.Page - 1)" asp-route-filter="@currentFilter" asp-route-search="@Model.Search" asp-route-categoryId="@Model.CategoryId" asp-route-sort="@Model.Sort"
+                           class="adm-btn-table-action text-decoration-none" style="height: 30px; padding: 0 10px; font-size: 0.76rem;">
+                            &larr; Trước
+                        </a>
+                    }
+
+                    @for (int p = Math.Max(1, Model.Page - 2); p <= Math.Min(Model.TotalPages, Model.Page + 2); p++)
+                    {
+                        <a asp-action="Inventory" asp-route-page="@p" asp-route-filter="@currentFilter" asp-route-search="@Model.Search" asp-route-categoryId="@Model.CategoryId" asp-route-sort="@Model.Sort"
+                           class="adm-btn-table-action text-decoration-none @(p == Model.Page ? "active" : "")"
+                           style="height: 30px; width: 32px; padding: 0; justify-content: center; font-size: 0.78rem; font-weight: 600; @(p == Model.Page ? "background: #0F172A !important; color: #FFFFFF !important; border-color: #0F172A !important;" : "")">
+                            @p
+                        </a>
+                    }
+
+                    @if (Model.Page < Model.TotalPages)
+                    {
+                        <a asp-action="Inventory" asp-route-page="@(Model.Page + 1)" asp-route-filter="@currentFilter" asp-route-search="@Model.Search" asp-route-categoryId="@Model.CategoryId" asp-route-sort="@Model.Sort"
+                           class="adm-btn-table-action text-decoration-none" style="height: 30px; padding: 0 10px; font-size: 0.76rem;">
+                            Sau &rarr;
+                        </a>
+                    }
+                </div>
+            </div>
+        }
     </div>
-    <p class="text-muted small">Hiển thị tối đa 100 biến thể, ưu tiên biến thể có số tồn thấp nhất.</p>
 }
+
+<!-- QUICK ADJUST STOCK MODAL (INLINE POPUP) -->
+<div class="modal fade" id="quickStockModal" tabindex="-1" aria-labelledby="quickStockModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow" style="border-radius: 12px; border: 1px solid var(--adm-border, #CBD5E1);">
+            <div class="modal-header border-bottom border-secondary border-opacity-10 py-3">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-sliders fs-5" style="color: #2563EB;"></i>
+                    <h5 class="modal-title fw-bold adm-heading fs-6" id="quickStockModalLabel">Điều chỉnh Số lượng Tồn kho</h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form id="quickAdjustForm" onsubmit="submitQuickAdjust(event)">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="modalVariantId" name="id" value="" />
+                <input type="hidden" id="modalExpectedStock" name="expected" value="" />
+                <input type="hidden" id="modalUnitPrice" value="" />
+
+                <div class="modal-body p-4">
+                    <!-- PRODUCT SNAPSHOT -->
+                    <div class="p-3 rounded-3 mb-3 d-flex align-items-center gap-3" style="background: var(--adm-surface-hover, #F8FAFC); border: 1px solid var(--adm-border, #E2E8F0);">
+                        <div class="rounded-2 overflow-hidden flex-shrink-0" style="width: 48px; height: 48px; background: #FFFFFF; border: 1px solid #E2E8F0;">
+                            <img id="modalProductImg" src="/images/placeholder.svg" alt="" style="width: 100%; height: 100%; object-fit: cover;" />
+                        </div>
+                        <div class="flex-grow-1 min-w-0">
+                            <div class="fw-bold adm-heading text-truncate" id="modalProductName" style="font-size: 0.9rem;">Tên sản phẩm</div>
+                            <div class="d-flex flex-wrap align-items-center gap-1.5 mt-1">
+                                <span class="badge" id="modalSizeBadge" style="background: #F1F5F9; color: #0F172A; border: 1px solid #CBD5E1; font-size: 0.72rem;">Size XL</span>
+                                <span class="badge" id="modalColorBadge" style="background: #F1F5F9; color: #0F172A; border: 1px solid #CBD5E1; font-size: 0.72rem;">Đen</span>
+                                <code class="font-monospace small" id="modalSkuCode" style="font-size: 0.72rem;">SKU-001</code>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STOCK INPUT WITH PLUS/MINUS BUTTONS -->
+                    <div class="mb-3">
+                        <label class="adm-form-label fw-bold mb-1.5 d-flex justify-content-between align-items-center" style="font-size: 0.84rem;">
+                            <span>Số tồn kho thực tế sau kiểm đếm <span class="text-danger">*</span></span>
+                            <span class="text-muted small" style="font-size: 0.74rem;">Hiện tại: <strong id="modalCurrentStockText" class="font-monospace text-dark">0</strong> sp</span>
+                        </label>
+                        <div class="input-group">
+                            <button class="btn btn-outline-secondary" type="button" onclick="stepStock(-1)" style="width: 42px;">
+                                <i class="bi bi-dash-lg"></i>
+                            </button>
+                            <input id="modalQuantityInput" name="quantity" type="number" min="0" required
+                                   class="form-control text-center font-monospace fw-bold fs-5" style="height: 42px;" />
+                            <button class="btn btn-outline-secondary" type="button" onclick="stepStock(1)" style="width: 42px;">
+                                <i class="bi bi-plus-lg"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- REASON INPUT & SUGGESTION TAGS -->
+                    <div class="mb-2">
+                        <label class="adm-form-label fw-bold mb-1.5" style="font-size: 0.84rem;">
+                            Lý do điều chỉnh tồn <span class="text-danger">*</span>
+                        </label>
+                        <textarea id="modalReasonInput" name="reason" rows="2" maxlength="250" required
+                                  class="form-control" style="font-size: 0.82rem; border-radius: 8px;"
+                                  placeholder="Nhập lý do kiểm kê, sai lệch hoặc chọn gợi ý bên dưới..."></textarea>
+                    </div>
+
+                    <!-- QUICK SUGGESTION CHIPS -->
+                    <div class="d-flex flex-wrap gap-1.5 pt-1">
+                        <span class="badge bg-light text-secondary border" style="cursor: pointer; font-size: 0.72rem; padding: 4px 8px;" onclick="setReason('Kiểm kê định kỳ Showroom')">
+                            + Kiểm kê định kỳ
+                        </span>
+                        <span class="badge bg-light text-secondary border" style="cursor: pointer; font-size: 0.72rem; padding: 4px 8px;" onclick="setReason('Nhập bổ sung từ xưởng may')">
+                            + Nhập bổ sung xưởng
+                        </span>
+                        <span class="badge bg-light text-secondary border" style="cursor: pointer; font-size: 0.72rem; padding: 4px 8px;" onclick="setReason('Hao hụt / hàng mẫu trưng bày')">
+                            + Hao hụt / hàng mẫu
+                        </span>
+                        <span class="badge bg-light text-secondary border" style="cursor: pointer; font-size: 0.72rem; padding: 4px 8px;" onclick="setReason('Nhận hàng đổi trả từ khách')">
+                            + Nhận hàng đổi trả
+                        </span>
+                    </div>
+
+                    <div id="modalErrorAlert" class="alert alert-danger p-2 small mt-3 d-none mb-0"></div>
+                </div>
+
+                <div class="modal-footer border-top border-secondary border-opacity-10 py-2.5 px-4 justify-content-between">
+                    <a id="modalHistoryLink" href="#" class="text-muted small text-decoration-none" title="Xem lịch sử biến động">
+                        <i class="bi bi-clock-history me-1"></i> Xem thẻ kho
+                    </a>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="adm-btn-table-action" data-bs-dismiss="modal" style="height: 36px; padding: 0 14px;">
+                            Hủy
+                        </button>
+                        <button type="submit" id="modalSubmitBtn" class="adm-btn-table-action"
+                                style="height: 36px; padding: 0 16px; font-weight: 600; background: #0F172A !important; color: #FFFFFF !important; border-color: #0F172A !important;">
+                            <i class="bi bi-check2 me-1"></i> Lưu số tồn mới
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    let bsModalInstance = null;
+
+    function openQuickAdjustModal(id, name, sku, size, color, currentStock, price, img) {
+        document.getElementById('modalVariantId').value = id;
+        document.getElementById('modalExpectedStock').value = currentStock;
+        document.getElementById('modalQuantityInput').value = currentStock;
+        document.getElementById('modalCurrentStockText').textContent = currentStock;
+        document.getElementById('modalProductName').textContent = name;
+        document.getElementById('modalSkuCode').textContent = sku;
+        document.getElementById('modalSizeBadge').textContent = 'Size ' + size;
+        document.getElementById('modalColorBadge').textContent = color;
+        document.getElementById('modalUnitPrice').value = price;
+        document.getElementById('modalProductImg').src = img || '/images/placeholder.svg';
+        document.getElementById('modalReasonInput').value = '';
+        document.getElementById('modalErrorAlert').classList.add('d-none');
+        document.getElementById('modalHistoryLink').href = '/AdminOperations/Stock/' + id;
+
+        const modalEl = document.getElementById('quickStockModal');
+        if (!bsModalInstance) {
+            bsModalInstance = new bootstrap.Modal(modalEl);
+        }
+        bsModalInstance.show();
+    }
+
+    function stepStock(delta) {
+        const input = document.getElementById('modalQuantityInput');
+        let val = parseInt(input.value) || 0;
+        val = Math.max(0, val + delta);
+        input.value = val;
+    }
+
+    function setReason(text) {
+        document.getElementById('modalReasonInput').value = text;
+    }
+
+    async function submitQuickAdjust(event) {
+        event.preventDefault();
+        const form = document.getElementById('quickAdjustForm');
+        const submitBtn = document.getElementById('modalSubmitBtn');
+        const errorAlert = document.getElementById('modalErrorAlert');
+        const variantId = document.getElementById('modalVariantId').value;
+        const expected = document.getElementById('modalExpectedStock').value;
+        const quantity = document.getElementById('modalQuantityInput').value;
+        const reason = document.getElementById('modalReasonInput').value;
+        const unitPrice = parseFloat(document.getElementById('modalUnitPrice').value) || 0;
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Đang lưu...';
+        errorAlert.classList.add('d-none');
+
+        try {
+            const formData = new FormData(form);
+            const response = await fetch('/AdminOperations/AdjustStock', {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                },
+                body: formData
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                // Update DOM table row in real time
+                const newStock = parseInt(data.newStock);
+                const stockCell = document.getElementById('stock-cell-' + variantId);
+                const valCell = document.getElementById('val-variant-' + variantId);
+
+                if (stockCell) {
+                    if (newStock === 0) {
+                        stockCell.innerHTML = '<span class="adm-pill adm-pill-rose font-monospace fw-bold shadow-sm" style="font-size: 0.84rem; padding: 4px 12px;">HẾT HÀNG: 0</span>';
+                    } else if (newStock <= 5) {
+                        stockCell.innerHTML = '<span class="adm-pill adm-pill-amber font-monospace fw-bold shadow-sm" style="font-size: 0.84rem; padding: 4px 12px;">SẮP HẾT: ' + newStock + '</span>';
+                    } else {
+                        stockCell.innerHTML = '<span class="adm-pill adm-pill-emerald font-monospace fw-bold shadow-sm" style="font-size: 0.84rem; padding: 4px 12px;">CÒN: ' + newStock + '</span>';
+                    }
+                }
+
+                if (valCell && unitPrice > 0) {
+                    const newAssetVal = newStock * unitPrice;
+                    valCell.textContent = newAssetVal.toLocaleString('vi-VN') + ' ₫';
+                }
+
+                // Show toast
+                const toast = document.getElementById('ajaxToast');
+                const toastMsg = document.getElementById('ajaxToastMsg');
+                if (toast && toastMsg) {
+                    toastMsg.textContent = 'Đã cập nhật tồn kho mã ' + document.getElementById('modalSkuCode').textContent + ' thành ' + newStock + ' sản phẩm.';
+                    toast.classList.remove('d-none');
+                    setTimeout(() => toast.classList.add('d-none'), 4000);
+                }
+
+                // Hide modal
+                if (bsModalInstance) {
+                    bsModalInstance.hide();
+                }
+            } else {
+                errorAlert.textContent = data.message || 'Không thể lưu tồn kho.';
+                errorAlert.classList.remove('d-none');
+            }
+        } catch (err) {
+            errorAlert.textContent = 'Đã xảy ra lỗi kết nối. Vui lòng thử lại.';
+            errorAlert.classList.remove('d-none');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="bi bi-check2 me-1"></i> Lưu số tồn mới';
+        }
+    }
+</script>

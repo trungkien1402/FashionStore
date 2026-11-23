@@ -18,20 +18,105 @@ public partial class AdminOperationsController(ApplicationDbContext db) : Contro
     private string? Actor => User.FindFirstValue(ClaimTypes.NameIdentifier);
 
     [HttpGet]
-    public async Task<IActionResult> Inventory(string? search, bool low = false)
+    public async Task<IActionResult> Inventory(string? search, string? filter = "all", int? categoryId = null, string sort = "stock_asc", int page = 1)
     {
-        var query = db.ProductVariants.AsNoTracking().Include(v => v.Product).AsQueryable();
+        filter = string.IsNullOrWhiteSpace(filter) ? "all" : filter.Trim().ToLowerInvariant();
+        sort = string.IsNullOrWhiteSpace(sort) ? "stock_asc" : sort.Trim().ToLowerInvariant();
         var term = search?.Trim();
         if (!string.IsNullOrEmpty(term))
-        {
             term = term[..Math.Min(term.Length, 100)];
+
+        // 1. Calculate Warehouse KPIs
+        var totalVariants = await db.ProductVariants.CountAsync();
+        var totalStockQuantity = await db.ProductVariants.SumAsync(v => (int?)v.StockQuantity) ?? 0;
+        var totalAssetValue = await db.ProductVariants.SumAsync(v => (decimal?)(v.Price * v.StockQuantity)) ?? 0;
+        var outOfStockCount = await db.ProductVariants.CountAsync(v => v.StockQuantity == 0);
+        var lowStockCount = await db.ProductVariants.CountAsync(v => v.StockQuantity > 0 && v.StockQuantity <= 5);
+        var healthyStockCount = await db.ProductVariants.CountAsync(v => v.StockQuantity > 5);
+
+        // 2. Query with filters
+        var query = db.ProductVariants.AsNoTracking()
+            .Include(v => v.Product)
+            .ThenInclude(p => p.Category)
+            .AsQueryable();
+
+        if (!string.IsNullOrEmpty(term))
+        {
             query = query.Where(v => v.SKU.Contains(term) || v.Product.Name.Contains(term));
         }
-        if (low)
-            query = query.Where(v => v.IsActive && v.StockQuantity <= 5);
-        ViewBag.Search = term;
-        ViewBag.Low = low;
-        return View(await query.OrderBy(v => v.StockQuantity).ThenBy(v => v.Id).Take(100).ToListAsync());
+
+        if (categoryId.HasValue && categoryId.Value > 0)
+        {
+            query = query.Where(v => v.Product.CategoryId == categoryId.Value);
+        }
+
+        query = filter switch
+        {
+            "out" => query.Where(v => v.StockQuantity == 0),
+            "low" => query.Where(v => v.StockQuantity > 0 && v.StockQuantity <= 5),
+            "healthy" => query.Where(v => v.StockQuantity > 5),
+            _ => query
+        };
+
+        var totalItems = await query.CountAsync();
+
+        // 3. Sorting
+        query = sort switch
+        {
+            "stock_desc" => query.OrderByDescending(v => v.StockQuantity).ThenBy(v => v.Id),
+            "price_desc" => query.OrderByDescending(v => v.Price).ThenBy(v => v.Id),
+            "name_asc" => query.OrderBy(v => v.Product.Name).ThenBy(v => v.Id),
+            _ => query.OrderBy(v => v.StockQuantity).ThenBy(v => v.Id)
+        };
+
+        // 4. Pagination (25 items per page)
+        const int pageSize = 25;
+        page = Math.Max(1, page);
+        var items = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(v => new AdminInventoryItem
+            {
+                Id = v.Id,
+                ProductId = v.ProductId,
+                ProductName = v.Product.Name,
+                ProductSlug = v.Product.Slug,
+                ProductImage = v.Product.ImageUrl,
+                CategoryName = v.Product.Category.Name,
+                Sku = v.SKU,
+                Size = v.Size,
+                Color = v.Color,
+                Price = v.Price,
+                StockQuantity = v.StockQuantity,
+                IsActive = v.IsActive
+            })
+            .ToListAsync();
+
+        var categories = await db.Categories.AsNoTracking()
+            .Where(c => c.IsActive)
+            .OrderBy(c => c.Name)
+            .ToListAsync();
+
+        var vm = new AdminInventoryViewModel
+        {
+            TotalVariants = totalVariants,
+            TotalStockQuantity = totalStockQuantity,
+            TotalAssetValue = totalAssetValue,
+            OutOfStockCount = outOfStockCount,
+            LowStockCount = lowStockCount,
+            HealthyStockCount = healthyStockCount,
+            Filter = filter,
+            Search = term,
+            CategoryId = categoryId,
+            Sort = sort,
+            Page = page,
+            PageSize = pageSize,
+            TotalItems = totalItems,
+            Items = items,
+            Categories = categories
+        };
+
+        return View(vm);
     }
 
     [HttpGet]
@@ -48,13 +133,28 @@ public partial class AdminOperationsController(ApplicationDbContext db) : Contro
     public async Task<IActionResult> AdjustStock(int id, int expected, int quantity, string? reason)
     {
         reason = reason?.Trim();
+        var isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest" ||
+                     Request.Headers.Accept.ToString().Contains("application/json");
+
         if (!ModelState.IsValid || quantity < 0 || reason is null or { Length: 0 or > 250 })
+        {
+            if (isAjax) return Json(new { success = false, message = "Nhập số tồn hợp lệ (>= 0) và lý do tối đa 250 ký tự." });
             return Error(nameof(Stock), "Nhập số tồn hợp lệ và lý do tối đa 250 ký tự.", id);
+        }
 
         var variant = await db.ProductVariants.SingleOrDefaultAsync(v => v.Id == id);
-        if (variant == null) return NotFound();
+        if (variant == null)
+        {
+            if (isAjax) return Json(new { success = false, message = "Không tìm thấy biến thể sản phẩm." });
+            return NotFound();
+        }
+
         if (expected != variant.StockQuantity)
+        {
+            if (isAjax) return Json(new { success = false, message = $"Số tồn vừa thay đổi trên hệ thống (hiện là {variant.StockQuantity}). Vui lòng tải lại trang." });
             return Error(nameof(Stock), "Tồn kho vừa thay đổi. Kiểm tra lại số lượng trước khi lưu.", id);
+        }
+
         db.StockReason = reason;
         db.StockActorId = Actor;
         variant.StockQuantity = quantity;
@@ -64,8 +164,21 @@ public partial class AdminOperationsController(ApplicationDbContext db) : Contro
         }
         catch (DbUpdateConcurrencyException)
         {
+            if (isAjax) return Json(new { success = false, message = "Tồn kho vừa thay đổi do xung đột dữ liệu. Vui lòng thử lại." });
             return Error(nameof(Stock), "Tồn kho vừa thay đổi. Vui lòng thử lại.", id);
         }
+
+        if (isAjax)
+        {
+            return Json(new
+            {
+                success = true,
+                id = id,
+                newStock = quantity,
+                message = "Đã cập nhật số tồn kho thành công."
+            });
+        }
+
         return Success(nameof(Stock), "Đã ghi nhận số tồn.", id);
     }
 
