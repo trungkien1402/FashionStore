@@ -363,9 +363,9 @@ public partial class AdminOperationsController(ApplicationDbContext db) : Contro
             notifications.Add(new AdminNotificationItem
             {
                 Type = "Order",
-                Title = $"Đơn hàng #{order.OrderCode} chờ xác nhận xuất kho",
-                Description = $"Khách nhận: {order.ReceiverName} ({order.Phone}) · Giá trị đơn: {order.TotalAmount:N0} ₫. Vui lòng xác nhận để chuyển đơn sang bộ phận điều phối vận chuyển.",
-                BadgeText = "Chờ xác nhận",
+                Title = $"Đơn hàng mới #{order.OrderCode}",
+                Description = $"Khách: {order.ReceiverName} · SĐT: {order.Phone} · Trị giá: {order.TotalAmount:N0} ₫ (COD)",
+                BadgeText = "Chờ duyệt",
                 BadgeClass = "adm-pill-amber",
                 Icon = "bi-receipt",
                 IconColor = "#D97706",
@@ -392,16 +392,16 @@ public partial class AdminOperationsController(ApplicationDbContext db) : Contro
             notifications.Add(new AdminNotificationItem
             {
                 Type = "Stock",
-                Title = isOut ? $"Hết hàng: {v.Product?.Name} ({v.Size} · {v.Color})" : $"Cảnh báo tồn thấp: {v.Product?.Name} ({v.Size} · {v.Color})",
-                Description = $"Mã SKU {v.SKU} hiện chỉ còn {v.StockQuantity} sản phẩm trong kho Showroom. Cần lập kế hoạch nhập bổ sung để tránh gián đoạn kinh doanh.",
-                BadgeText = isOut ? "Hết hàng (0)" : $"Còn lại {v.StockQuantity}",
+                Title = v.Product?.Name ?? "Sản phẩm",
+                Description = $"Phân loại: {v.Size} · {v.Color} | SKU: {v.SKU} | Tồn thực tế: {v.StockQuantity} sản phẩm",
+                BadgeText = isOut ? "Hết hàng (0)" : $"Tồn thấp ({v.StockQuantity})",
                 BadgeClass = isOut ? "adm-pill-rose" : "adm-pill-amber",
                 Icon = "bi-boxes",
                 IconColor = isOut ? "#E11D48" : "#D97706",
                 IconBg = isOut ? "rgba(225, 29, 72, 0.12)" : "rgba(245, 158, 11, 0.12)",
                 Timestamp = DateTime.UtcNow,
                 ActionUrl = $"/AdminOperations/Stock/{v.Id}",
-                ActionText = "Cập nhật tồn",
+                ActionText = "Nhập kho",
                 IsUrgent = isOut
             });
         }
@@ -416,12 +416,12 @@ public partial class AdminOperationsController(ApplicationDbContext db) : Contro
 
         foreach (var ship in failedShipments)
         {
-            var noteDetail = string.IsNullOrWhiteSpace(ship.Note) ? "" : $": \"{ship.Note}\"";
+            var noteDetail = string.IsNullOrWhiteSpace(ship.Note) ? "" : $" · Lý do: {ship.Note}";
             notifications.Add(new AdminNotificationItem
             {
                 Type = "Shipment",
-                Title = $"Giao không thành công: Vận đơn #{ship.TrackingCode}",
-                Description = $"Đơn hàng #{ship.Order?.OrderCode} giao thất bại{noteDetail}. Cần kiểm tra lý do và điều phối lại Shipper giao lại.",
+                Title = $"Vận đơn #{ship.TrackingCode}",
+                Description = $"Đơn hàng #{ship.Order?.OrderCode}{noteDetail}",
                 BadgeText = "Giao thất bại",
                 BadgeClass = "adm-pill-rose",
                 Icon = "bi-truck",
@@ -429,7 +429,7 @@ public partial class AdminOperationsController(ApplicationDbContext db) : Contro
                 IconBg = "rgba(239, 68, 68, 0.12)",
                 Timestamp = ship.UpdatedAt,
                 ActionUrl = $"/AdminShipments/Details/{ship.Id}",
-                ActionText = "Điều phối lại",
+                ActionText = "Điều phối",
                 IsUrgent = true
             });
         }
@@ -447,8 +447,8 @@ public partial class AdminOperationsController(ApplicationDbContext db) : Contro
             notifications.Add(new AdminNotificationItem
             {
                 Type = "Return",
-                Title = $"Yêu cầu đổi trả RMA mới: Đơn #{ret.Order?.OrderCode}",
-                Description = $"Khách hàng gửi yêu cầu đổi/trả với lý do: \"{ret.Reason}\". Vui lòng thẩm định tình trạng sản phẩm và đối soát chính sách trả hàng 14 ngày.",
+                Title = $"Yêu cầu RMA: Đơn #{ret.Order?.OrderCode}",
+                Description = $"Lý do: {ret.Reason}",
                 BadgeText = "Chờ thẩm định",
                 BadgeClass = "adm-pill-blue",
                 Icon = "bi-arrow-counterclockwise",
@@ -456,7 +456,7 @@ public partial class AdminOperationsController(ApplicationDbContext db) : Contro
                 IconBg = "rgba(37, 99, 235, 0.12)",
                 Timestamp = ret.CreatedAt,
                 ActionUrl = "/AdminOperations/Returns",
-                ActionText = "Thẩm định RMA",
+                ActionText = "Thẩm định",
                 IsUrgent = true
             });
         }
@@ -474,8 +474,8 @@ public partial class AdminOperationsController(ApplicationDbContext db) : Contro
             notifications.Add(new AdminNotificationItem
             {
                 Type = "Review",
-                Title = $"Đánh giá bị báo cáo vi phạm: {rev.Product?.Name}",
-                Description = $"Đánh giá {rev.Rating}★ từ khách hàng: \"{rev.Comment}\". Vui lòng kiểm duyệt nội dung trước khi xuất bản ra trang chi tiết sản phẩm.",
+                Title = $"Đánh giá {rev.Rating}★: {rev.Product?.Name}",
+                Description = $"Nội dung: \"{rev.Comment}\"",
                 BadgeText = "Bị báo cáo",
                 BadgeClass = "adm-pill-rose",
                 Icon = "bi-chat-square-quote",
@@ -487,6 +487,12 @@ public partial class AdminOperationsController(ApplicationDbContext db) : Contro
                 IsUrgent = true
             });
         }
+
+        // Recent Audit Events
+        var recentEvents = await db.AdminAuditEvents.AsNoTracking()
+            .OrderByDescending(e => e.Id)
+            .Take(5)
+            .ToListAsync();
 
         // Filter
         var filteredList = filter switch
@@ -510,7 +516,8 @@ public partial class AdminOperationsController(ApplicationDbContext db) : Contro
             FailedShipmentsCount = failedShipmentsCount,
             PendingReturnsCount = pendingReturnsCount,
             CurrentFilter = filter,
-            Notifications = sortedList
+            Notifications = sortedList,
+            RecentEvents = recentEvents
         };
 
         return View(vm);

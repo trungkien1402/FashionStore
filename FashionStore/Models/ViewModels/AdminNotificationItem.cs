@@ -1,3 +1,5 @@
+using FashionStore.Models.Entities;
+
 namespace FashionStore.Models.ViewModels;
 
 public class AdminNotificationItem
@@ -10,7 +12,7 @@ public class AdminNotificationItem
     public string BadgeClass { get; set; } = "";
     public string Icon { get; set; } = "bi-bell";
     public string IconColor { get; set; } = "#F59E0B";
-    public string IconBg { get; set; } = "rgba(245, 158, 11, 0.12)";
+    public string IconBg = "rgba(245, 158, 11, 0.12)";
     public DateTime Timestamp { get; set; }
     public string ActionUrl { get; set; } = "";
     public string ActionText { get; set; } = "Xem chi tiết";
@@ -26,4 +28,5 @@ public class AdminAlertsViewModel
     public int TotalAlertsCount => NewOrdersCount + (LowStockCount > 0 ? 1 : 0) + FailedShipmentsCount + PendingReturnsCount;
     public string CurrentFilter { get; set; } = "all";
     public List<AdminNotificationItem> Notifications { get; set; } = [];
+    public List<AdminAuditEvent> RecentEvents { get; set; } = [];
 }

@@ -16,7 +16,7 @@
     }
 }
 
-<!-- EXECUTIVE HEADER -->
+<!-- 1. EXECUTIVE HEADER -->
 <div class="adm-header-block mb-4">
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
         <div>
@@ -29,32 +29,32 @@
             <h1 class="adm-title-main">Thông báo &amp; Cảnh báo Vận hành</h1>
         </div>
         <div class="d-flex align-items-center gap-2">
-            <a asp-action="Inventory" class="adm-btn-table-action text-decoration-none" style="height: 38px; padding: 0 16px; background: #0F172A !important; color: #FFFFFF !important; border-color: #0F172A !important; font-size: 0.82rem; font-weight: 600;" title="Chuyển sang trang kiểm kê kho hàng">
-                <i class="bi bi-boxes me-1"></i> Quản lý kho hàng
+            <a asp-action="Inventory" class="adm-action-btn adm-btn-secondary" title="Chuyển sang kiểm kê kho hàng">
+                <i class="bi bi-boxes"></i> <span>Kho hàng</span>
             </a>
-            <a asp-action="Alerts" asp-route-filter="@currentFilter" class="adm-btn-table-action text-decoration-none" style="height: 38px; padding: 0 14px; font-size: 0.82rem; font-weight: 500;" title="Làm mới bảng thông báo">
-                <i class="bi bi-arrow-clockwise me-1"></i> Làm mới
+            <a asp-action="Alerts" asp-route-filter="@currentFilter" class="adm-action-btn adm-btn-secondary" title="Làm mới bảng thông báo">
+                <i class="bi bi-arrow-clockwise"></i> <span>Làm mới</span>
             </a>
         </div>
     </div>
 
-    <!-- 4 SUMMARY COMMAND CARDS -->
+    <!-- 2. SUMMARY KPI COMMAND CARDS -->
     <div class="row g-3 mb-4">
-        <!-- 1. ĐƠN CHỜ XÁC NHẬN -->
+        <!-- 1. ĐƠN CHỜ DUYỆT -->
         <div class="col-sm-6 col-xl-3">
             <div class="adm-card p-3 shadow-sm h-100 d-flex flex-column justify-content-between" style="border-left: 3px solid #F59E0B;">
                 <div>
                     <div class="d-flex align-items-start justify-content-between mb-2">
                         <div class="d-flex align-items-center gap-2">
-                            <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(245, 158, 11, 0.12); color: #D97706; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                            <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(245, 158, 11, 0.12); color: #D97706; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
                                 <i class="bi bi-receipt"></i>
                             </div>
                             <div>
-                                <h6 class="fw-bold adm-heading mb-0" style="font-size: 0.88rem;">Đơn chờ duyệt</h6>
+                                <h6 class="fw-bold adm-heading mb-0" style="font-size: 0.86rem;">Đơn chờ duyệt</h6>
                                 <div class="text-muted" style="font-size: 0.72rem;">Chờ xuất kho</div>
                             </div>
                         </div>
-                        <span class="adm-pill @(Model.NewOrdersCount > 0 ? "adm-pill-amber fw-bold" : "adm-pill-faint")" style="font-size: 0.82rem;">
+                        <span class="adm-pill @(Model.NewOrdersCount > 0 ? "adm-pill-amber fw-bold" : "adm-pill-faint")" style="font-size: 0.8rem;">
                             @Model.NewOrdersCount
                         </span>
                     </div>
@@ -62,7 +62,7 @@
                 <div class="pt-2 border-top border-secondary border-opacity-10 d-flex align-items-center justify-content-between">
                     <span class="text-muted" style="font-size: 0.72rem;">Luồng đơn mới</span>
                     <a asp-controller="AdminOrders" asp-action="Index" asp-route-status="PendingConfirmation"
-                       class="adm-btn-table-action text-decoration-none" style="height: 28px; font-size: 0.74rem; padding: 0 10px;" title="Xử lý đơn hàng chờ duyệt">
+                       class="adm-btn-table-action text-decoration-none" style="height: 28px; font-size: 0.74rem; padding: 0 10px;" title="Xử lý đơn chờ duyệt">
                         <span>Xử lý đơn</span> <i class="bi bi-chevron-right ms-1"></i>
                     </a>
                 </div>
@@ -75,21 +75,21 @@
                 <div>
                     <div class="d-flex align-items-start justify-content-between mb-2">
                         <div class="d-flex align-items-center gap-2">
-                            <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(225, 29, 72, 0.12); color: #E11D48; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                            <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(225, 29, 72, 0.12); color: #E11D48; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
                                 <i class="bi bi-boxes"></i>
                             </div>
                             <div>
-                                <h6 class="fw-bold adm-heading mb-0" style="font-size: 0.88rem;">Sắp hết hàng (≤ 5)</h6>
+                                <h6 class="fw-bold adm-heading mb-0" style="font-size: 0.86rem;">Sắp hết hàng (≤ 5)</h6>
                                 <div class="text-muted" style="font-size: 0.72rem;">Tồn kho báo động</div>
                             </div>
                         </div>
-                        <span class="adm-pill @(Model.LowStockCount > 0 ? "adm-pill-rose fw-bold" : "adm-pill-faint")" style="font-size: 0.82rem;">
+                        <span class="adm-pill @(Model.LowStockCount > 0 ? "adm-pill-rose fw-bold" : "adm-pill-faint")" style="font-size: 0.8rem;">
                             @Model.LowStockCount mã
                         </span>
                     </div>
                 </div>
                 <div class="pt-2 border-top border-secondary border-opacity-10 d-flex align-items-center justify-content-between">
-                    <span class="text-muted" style="font-size: 0.72rem;">Kho hàng</span>
+                    <span class="text-muted" style="font-size: 0.72rem;">Tồn kho showroom</span>
                     <a asp-action="Inventory" asp-route-low="true"
                        class="adm-btn-table-action text-decoration-none" style="height: 28px; font-size: 0.74rem; padding: 0 10px;" title="Xem các mã sắp hết tại kho">
                         <span>Xem kho</span> <i class="bi bi-chevron-right ms-1"></i>
@@ -104,15 +104,15 @@
                 <div>
                     <div class="d-flex align-items-start justify-content-between mb-2">
                         <div class="d-flex align-items-center gap-2">
-                            <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(239, 68, 68, 0.12); color: #EF4444; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                            <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(239, 68, 68, 0.12); color: #EF4444; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
                                 <i class="bi bi-truck"></i>
                             </div>
                             <div>
-                                <h6 class="fw-bold adm-heading mb-0" style="font-size: 0.88rem;">Giao thất bại</h6>
+                                <h6 class="fw-bold adm-heading mb-0" style="font-size: 0.86rem;">Giao thất bại</h6>
                                 <div class="text-muted" style="font-size: 0.72rem;">Cần điều phối lại</div>
                             </div>
                         </div>
-                        <span class="adm-pill @(Model.FailedShipmentsCount > 0 ? "adm-pill-rose fw-bold" : "adm-pill-faint")" style="font-size: 0.82rem;">
+                        <span class="adm-pill @(Model.FailedShipmentsCount > 0 ? "adm-pill-rose fw-bold" : "adm-pill-faint")" style="font-size: 0.8rem;">
                             @Model.FailedShipmentsCount
                         </span>
                     </div>
@@ -133,15 +133,15 @@
                 <div>
                     <div class="d-flex align-items-start justify-content-between mb-2">
                         <div class="d-flex align-items-center gap-2">
-                            <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(37, 99, 235, 0.12); color: #2563EB; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                            <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(37, 99, 235, 0.12); color: #2563EB; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
                                 <i class="bi bi-arrow-counterclockwise"></i>
                             </div>
                             <div>
-                                <h6 class="fw-bold adm-heading mb-0" style="font-size: 0.88rem;">Đổi trả RMA</h6>
+                                <h6 class="fw-bold adm-heading mb-0" style="font-size: 0.86rem;">Đổi trả RMA</h6>
                                 <div class="text-muted" style="font-size: 0.72rem;">Yêu cầu khách gửi</div>
                             </div>
                         </div>
-                        <span class="adm-pill @(Model.PendingReturnsCount > 0 ? "adm-pill-blue fw-bold" : "adm-pill-faint")" style="font-size: 0.82rem;">
+                        <span class="adm-pill @(Model.PendingReturnsCount > 0 ? "adm-pill-blue fw-bold" : "adm-pill-faint")" style="font-size: 0.8rem;">
                             @Model.PendingReturnsCount
                         </span>
                     </div>
@@ -157,185 +157,160 @@
         </div>
     </div>
 
-    <!-- FILTER SEGMENT TABS -->
-    <div class="d-flex flex-wrap align-items-center gap-2 mb-4 p-1.5 rounded-3" style="background: var(--adm-surface, #F8FAFC); border: 1px solid var(--adm-border, #E2E8F0); width: fit-content;">
-        <a asp-action="Alerts" asp-route-filter="all"
-           class="adm-btn-table-action text-decoration-none @(currentFilter == "all" ? "active" : "")"
-           style="height: 34px; padding: 0 14px; font-size: 0.8rem; font-weight: 600; @(currentFilter == "all" ? "background: #0F172A !important; color: #FFFFFF !important; border-color: #0F172A !important;" : "")">
-            Tất cả
-            <span class="badge ms-1.5 rounded-pill @(currentFilter == "all" ? "bg-light text-dark" : "bg-secondary bg-opacity-10 text-muted")" style="font-size: 0.72rem;">
-                @Model.Notifications.Count
-            </span>
-        </a>
-        <a asp-action="Alerts" asp-route-filter="orders"
-           class="adm-btn-table-action text-decoration-none @(currentFilter == "orders" ? "active" : "")"
-           style="height: 34px; padding: 0 14px; font-size: 0.8rem; font-weight: 600; @(currentFilter == "orders" ? "background: #0F172A !important; color: #FFFFFF !important; border-color: #0F172A !important;" : "")">
-            <i class="bi bi-receipt me-1"></i> Đơn hàng
-            @if (Model.NewOrdersCount > 0)
-            {
-                <span class="badge ms-1.5 rounded-pill @(currentFilter == "orders" ? "bg-warning text-dark" : "bg-warning text-dark")" style="font-size: 0.72rem;">
-                    @Model.NewOrdersCount
-                </span>
-            }
-        </a>
-        <a asp-action="Alerts" asp-route-filter="stock"
-           class="adm-btn-table-action text-decoration-none @(currentFilter == "stock" ? "active" : "")"
-           style="height: 34px; padding: 0 14px; font-size: 0.8rem; font-weight: 600; @(currentFilter == "stock" ? "background: #0F172A !important; color: #FFFFFF !important; border-color: #0F172A !important;" : "")">
-            <i class="bi bi-boxes me-1"></i> Kho hàng
-            @if (Model.LowStockCount > 0)
-            {
-                <span class="badge ms-1.5 rounded-pill @(currentFilter == "stock" ? "bg-danger text-white" : "bg-danger text-white")" style="font-size: 0.72rem;">
-                    @Model.LowStockCount
-                </span>
-            }
-        </a>
-        <a asp-action="Alerts" asp-route-filter="shipment"
-           class="adm-btn-table-action text-decoration-none @(currentFilter == "shipment" ? "active" : "")"
-           style="height: 34px; padding: 0 14px; font-size: 0.8rem; font-weight: 600; @(currentFilter == "shipment" ? "background: #0F172A !important; color: #FFFFFF !important; border-color: #0F172A !important;" : "")">
-            <i class="bi bi-truck me-1"></i> Vận chuyển
-            @if (Model.FailedShipmentsCount > 0)
-            {
-                <span class="badge ms-1.5 rounded-pill @(currentFilter == "shipment" ? "bg-danger text-white" : "bg-danger text-white")" style="font-size: 0.72rem;">
-                    @Model.FailedShipmentsCount
-                </span>
-            }
-        </a>
-        <a asp-action="Alerts" asp-route-filter="returns"
-           class="adm-btn-table-action text-decoration-none @(currentFilter == "returns" ? "active" : "")"
-           style="height: 34px; padding: 0 14px; font-size: 0.8rem; font-weight: 600; @(currentFilter == "returns" ? "background: #0F172A !important; color: #FFFFFF !important; border-color: #0F172A !important;" : "")">
-            <i class="bi bi-arrow-counterclockwise me-1"></i> Đổi trả &amp; Đánh giá
-            @if (Model.PendingReturnsCount > 0)
-            {
-                <span class="badge ms-1.5 rounded-pill @(currentFilter == "returns" ? "bg-primary text-white" : "bg-primary text-white")" style="font-size: 0.72rem;">
-                    @Model.PendingReturnsCount
-                </span>
-            }
-        </a>
+    <!-- 3. SEGMENTED FILTER CONTROLS (TIER 1 ATELIER STANDARD) -->
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <div class="adm-segmented-control" role="group" aria-label="Bộ lọc thông báo">
+            <a asp-action="Alerts" asp-route-filter="all"
+               class="adm-segment @(currentFilter == "all" ? "active" : "")">
+                Tất cả
+            </a>
+            <a asp-action="Alerts" asp-route-filter="orders"
+               class="adm-segment @(currentFilter == "orders" ? "active" : "")">
+                Đơn hàng @(Model.NewOrdersCount > 0 ? $"({Model.NewOrdersCount})" : "")
+            </a>
+            <a asp-action="Alerts" asp-route-filter="stock"
+               class="adm-segment @(currentFilter == "stock" ? "active" : "")">
+                Kho hàng @(Model.LowStockCount > 0 ? $"({Model.LowStockCount})" : "")
+            </a>
+            <a asp-action="Alerts" asp-route-filter="shipment"
+               class="adm-segment @(currentFilter == "shipment" ? "active" : "")">
+                Vận chuyển @(Model.FailedShipmentsCount > 0 ? $"({Model.FailedShipmentsCount})" : "")
+            </a>
+            <a asp-action="Alerts" asp-route-filter="returns"
+               class="adm-segment @(currentFilter == "returns" ? "active" : "")">
+                Đổi trả &amp; Đánh giá @(Model.PendingReturnsCount > 0 ? $"({Model.PendingReturnsCount})" : "")
+            </a>
+        </div>
     </div>
 </div>
 
-<!-- 2-COLUMN MAIN FEED & SIDEBAR -->
+<!-- 4. TWO-COLUMN LAYOUT: MAIN FEED & SIDEBAR -->
 <div class="row g-4">
-    <!-- LEFT: NOTIFICATION FEED LIST (8 cols) -->
+    <!-- LEFT: NOTIFICATION FEED (8 cols) -->
     <div class="col-lg-8">
-        @if (Model.Notifications.Any())
-        {
-            <div class="d-flex flex-column gap-3">
-                @foreach (var item in Model.Notifications)
-                {
-                    <div class="adm-card p-3 shadow-sm d-flex flex-wrap flex-md-nowrap align-items-center justify-content-between gap-3"
-                         style="border-left: 3px solid @(item.IsUrgent ? item.IconColor : "var(--adm-border, #CBD5E1)"); transition: transform 0.15s ease, box-shadow 0.15s ease;">
-                        <div class="d-flex align-items-start gap-3 flex-grow-1">
-                            <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
-                                 style="width: 44px; height: 44px; background: @item.IconBg; color: @item.IconColor; font-size: 1.25rem;">
-                                <i class="bi @item.Icon"></i>
-                            </div>
-                            <div class="flex-grow-1">
-                                <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
-                                    <span class="fw-bold adm-heading" style="font-size: 0.9rem;">@item.Title</span>
-                                    <span class="adm-pill @item.BadgeClass" style="font-size: 0.72rem;">
-                                        @item.BadgeText
-                                    </span>
-                                </div>
-                                <div class="text-muted mb-2" style="font-size: 0.8rem; line-height: 1.45;">
-                                    @item.Description
-                                </div>
-                                <div class="d-flex align-items-center gap-2 text-muted" style="font-size: 0.72rem;">
-                                    <i class="bi bi-clock"></i>
-                                    <span>@FormatTime(item.Timestamp)</span>
-                                    @if (item.IsUrgent)
-                                    {
-                                        <span class="text-danger fw-semibold">· Cần xử lý sớm</span>
-                                    }
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="flex-shrink-0 align-self-end align-self-md-center">
-                            <a href="@item.ActionUrl" class="adm-btn-table-action text-decoration-none" style="height: 34px; font-size: 0.78rem; font-weight: 600; padding: 0 14px;" title="@item.ActionText">
-                                <span>@item.ActionText</span> <i class="bi bi-chevron-right ms-1"></i>
-                            </a>
-                        </div>
-                    </div>
-                }
-            </div>
-        }
-        else
-        {
-            <div class="adm-card p-5 text-center shadow-sm">
-                <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
-                     style="width: 56px; height: 56px; background: #F0FDF4; color: #16A34A; font-size: 1.6rem;">
-                    <i class="bi bi-check-circle-fill"></i>
+        <div class="adm-card p-0 overflow-hidden shadow-sm">
+            <div class="p-3 border-bottom border-secondary border-opacity-10 d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-bell text-muted"></i>
+                    <h5 class="fw-bold mb-0 adm-heading" style="font-size: 0.88rem;">Danh sách Thông báo &amp; Cảnh báo</h5>
                 </div>
-                <h5 class="fw-bold adm-heading mb-1" style="font-size: 1.05rem;">Không có thông báo mới</h5>
-                <p class="text-muted small mb-3" style="max-width: 420px; margin: 0 auto;">
-                    Mục này hiện không có cảnh báo hoặc sự cố nào cần xử lý. Toàn bộ quy trình vận hành Showroom đang hoạt động bình thường.
-                </p>
-                <a asp-action="Alerts" asp-route-filter="all" class="adm-btn-table-action text-decoration-none d-inline-flex align-items-center" style="height: 34px; padding: 0 16px; font-size: 0.8rem;">
-                    <i class="bi bi-arrow-left me-1"></i> Xem tất cả thông báo
-                </a>
+                <span class="adm-pill adm-pill-faint" style="font-size: 0.72rem;">@Model.Notifications.Count mục</span>
             </div>
-        }
+
+            @if (Model.Notifications.Any())
+            {
+                <div class="d-flex flex-column">
+                    @foreach (var item in Model.Notifications)
+                    {
+                        <div class="p-3 border-bottom border-secondary border-opacity-10 d-flex align-items-center justify-content-between gap-3 adm-feed-row"
+                             style="transition: background-color 0.15s ease;">
+                            <div class="d-flex align-items-center gap-3 flex-grow-1 min-w-0">
+                                <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                                     style="width: 38px; height: 38px; background: @item.IconBg; color: @item.IconColor; font-size: 1.15rem;">
+                                    <i class="bi @item.Icon"></i>
+                                </div>
+                                <div class="flex-grow-1 min-w-0">
+                                    <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                                        <span class="fw-bold adm-heading text-truncate" style="font-size: 0.86rem;">@item.Title</span>
+                                        <span class="adm-pill @item.BadgeClass" style="font-size: 0.7rem; padding: 2px 8px;">
+                                            @item.BadgeText
+                                        </span>
+                                        <span class="text-muted ms-auto pe-2" style="font-size: 0.72rem;">
+                                            <i class="bi bi-clock me-1"></i>@FormatTime(item.Timestamp)
+                                        </span>
+                                    </div>
+                                    <div class="text-muted text-truncate" style="font-size: 0.78rem;">
+                                        @item.Description
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex-shrink-0 ps-2">
+                                <a href="@item.ActionUrl" class="adm-btn-table-action text-decoration-none" style="height: 32px; font-size: 0.76rem; padding: 0 12px;" title="@item.ActionText">
+                                    <span>@item.ActionText</span> <i class="bi bi-chevron-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="p-5 text-center text-muted">
+                    <i class="bi bi-check-circle text-success fs-2 d-block mb-2"></i>
+                    <div class="fw-bold adm-heading mb-1" style="font-size: 0.95rem;">Không có thông báo mới</div>
+                    <div class="small text-muted">Hiện tại không có sự cố hoặc cảnh báo nào trong danh mục này.</div>
+                </div>
+            }
+        </div>
     </div>
 
-    <!-- RIGHT: HEALTH & FAST ACCESS SHORTCUTS (4 cols) -->
+    <!-- RIGHT: RECENT OPERATIONS LOG & FAST SHORTCUTS (4 cols) -->
     <div class="col-lg-4">
-        <!-- SYSTEM HEALTH & SUMMARY -->
-        <div class="adm-card shadow-sm p-4 mb-4">
-            <div class="d-flex align-items-center gap-2 mb-3 pb-3 border-bottom border-secondary border-opacity-10">
-                <i class="bi bi-shield-check fs-5" style="color: #10B981;"></i>
-                <h5 class="fw-bold mb-0 adm-heading fs-6">Sức khỏe Hệ thống Showroom</h5>
+        <!-- 1. RECENT OPERATIONS AUDIT LOG -->
+        <div class="adm-card shadow-sm p-0 overflow-hidden mb-4">
+            <div class="p-3 border-bottom border-secondary border-opacity-10 d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-clock-history text-muted"></i>
+                    <h5 class="fw-bold mb-0 adm-heading" style="font-size: 0.88rem;">Nhật ký Vận hành Gần đây</h5>
+                </div>
+                <a asp-action="Audit" class="text-muted small text-decoration-none" style="font-size: 0.75rem;" title="Xem tất cả nhật ký">
+                    Tất cả &rarr;
+                </a>
             </div>
 
-            <div class="d-flex flex-column gap-3">
-                <div class="d-flex align-items-center justify-content-between p-2.5 rounded-2" style="background: var(--adm-surface, #F8FAFC); border: 1px solid var(--adm-border, #E2E8F0);">
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="rounded-circle" style="width: 8px; height: 8px; background: #10B981;"></span>
-                        <span class="small fw-semibold adm-heading">Đồng bộ Kho &amp; Đơn</span>
+            @if (Model.RecentEvents.Any())
+            {
+                <div class="p-3">
+                    <div class="d-flex flex-column gap-3">
+                        @foreach (var ev in Model.RecentEvents)
+                        {
+                            <div class="d-flex align-items-start gap-2.5 pb-2.5 border-bottom border-secondary border-opacity-10 last-border-0">
+                                <span class="adm-pulse-dot flex-shrink-0 mt-1.5"></span>
+                                <div class="flex-grow-1" style="font-size: 0.78rem;">
+                                    <div class="d-flex justify-content-between align-items-center mb-0.5">
+                                        <strong class="adm-heading font-monospace">@ev.Action</strong>
+                                        <span class="text-muted font-monospace" style="font-size: 0.7rem;">@ev.CreatedAt.AddHours(7).ToString("HH:mm · dd/MM")</span>
+                                    </div>
+                                    <div class="text-muted text-break" style="line-height: 1.4;">
+                                        @ev.Detail
+                                    </div>
+                                </div>
+                            </div>
+                        }
                     </div>
-                    <span class="badge bg-success bg-opacity-10 text-success fw-bold" style="font-size: 0.72rem;">Thời gian thực</span>
                 </div>
-
-                <div class="d-flex align-items-center justify-content-between p-2.5 rounded-2" style="background: var(--adm-surface, #F8FAFC); border: 1px solid var(--adm-border, #E2E8F0);">
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="rounded-circle" style="width: 8px; height: 8px; background: #2563EB;"></span>
-                        <span class="small fw-semibold adm-heading">Điều phối Vận chuyển</span>
-                    </div>
-                    <span class="badge bg-primary bg-opacity-10 text-primary fw-bold" style="font-size: 0.72rem;">Tự động phân bổ</span>
+            }
+            else
+            {
+                <div class="p-4 text-center text-muted small">
+                    Chưa có ghi nhận thao tác mới.
                 </div>
-
-                <div class="d-flex align-items-center justify-content-between p-2.5 rounded-2" style="background: var(--adm-surface, #F8FAFC); border: 1px solid var(--adm-border, #E2E8F0);">
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="rounded-circle" style="width: 8px; height: 8px; background: #F59E0B;"></span>
-                        <span class="small fw-semibold adm-heading">Chính sách Đổi trả 14 ngày</span>
-                    </div>
-                    <span class="badge bg-warning bg-opacity-10 text-dark fw-bold" style="font-size: 0.72rem;">Thẩm định RMA</span>
-                </div>
-            </div>
+            }
         </div>
 
-        <!-- FAST ACCESS SHORTCUTS -->
-        <div class="adm-card shadow-sm p-4">
-            <div class="d-flex align-items-center gap-2 mb-3 pb-3 border-bottom border-secondary border-opacity-10">
-                <i class="bi bi-lightning-charge fs-5" style="color: #F59E0B;"></i>
-                <h5 class="fw-bold mb-0 adm-heading fs-6">Phím tắt Nghiệp vụ Vận hành</h5>
+        <!-- 2. FAST ACTION SHORTCUTS -->
+        <div class="adm-card shadow-sm p-3">
+            <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom border-secondary border-opacity-10">
+                <i class="bi bi-lightning-charge text-muted"></i>
+                <h5 class="fw-bold mb-0 adm-heading" style="font-size: 0.88rem;">Lối tắt Nghiệp vụ</h5>
             </div>
 
             <div class="d-flex flex-column gap-2">
                 <a asp-action="Inventory" class="adm-btn-table-action justify-content-between text-decoration-none py-2 px-3" style="height: auto; font-size: 0.8rem;">
-                    <span><i class="bi bi-boxes me-2" style="color: #2563EB;"></i> Kiểm kê &amp; Tồn kho Showroom</span>
+                    <span><i class="bi bi-boxes me-2 text-muted"></i> Kiểm kê &amp; Tồn kho Showroom</span>
                     <i class="bi bi-chevron-right text-muted"></i>
                 </a>
                 <a asp-controller="AdminShipments" asp-action="Index" class="adm-btn-table-action justify-content-between text-decoration-none py-2 px-3" style="height: auto; font-size: 0.8rem;">
-                    <span><i class="bi bi-truck me-2" style="color: #10B981;"></i> Điều phối &amp; Quản lý Shipper</span>
+                    <span><i class="bi bi-truck me-2 text-muted"></i> Điều phối Giao nhận Shipper</span>
                     <i class="bi bi-chevron-right text-muted"></i>
                 </a>
                 <a asp-action="Reviews" class="adm-btn-table-action justify-content-between text-decoration-none py-2 px-3" style="height: auto; font-size: 0.8rem;">
-                    <span><i class="bi bi-chat-square-quote me-2" style="color: #D97706;"></i> Kiểm duyệt Đánh giá Sản phẩm</span>
+                    <span><i class="bi bi-chat-square-quote me-2 text-muted"></i> Kiểm duyệt Đánh giá</span>
                     <i class="bi bi-chevron-right text-muted"></i>
                 </a>
                 <a asp-action="Settings" class="adm-btn-table-action justify-content-between text-decoration-none py-2 px-3" style="height: auto; font-size: 0.8rem;">
-                    <span><i class="bi bi-sliders me-2" style="color: #8B5CF6;"></i> Cài đặt Hệ thống &amp; Phí vận chuyển</span>
+                    <span><i class="bi bi-sliders me-2 text-muted"></i> Cấu hình Chính sách Vận hành</span>
                     <i class="bi bi-chevron-right text-muted"></i>
                 </a>
             </div>
