@@ -226,7 +226,9 @@ else
                                 {
                                     <form asp-action="SetGameReward" asp-route-id="@row.Id" method="post" class="d-flex gap-1 align-items-center">
                                         @Html.AntiForgeryToken()
-                                        <select name="score" class="form-select adm-input-dark py-1 px-2" style="font-size: 0.75rem; width: auto; height: 30px;" aria-label="Mốc điểm cho mã @row.Code">
+                                        <select name="score" class="form-select"
+                                                style="height: 30px !important; min-height: 30px !important; width: auto; font-size: 0.75rem !important; padding: 0 24px 0 8px !important; border-radius: 6px !important; background-color: var(--adm-surface, #FFFFFF) !important; color: var(--adm-ink, #0F172A) !important; border: 1px solid var(--adm-border, #CBD5E1) !important; line-height: 28px !important;"
+                                                aria-label="Mốc điểm cho mã @row.Code">
                                             <option value="">Không gán</option>
                                             @foreach (var score in new[] { 60, 75, 90 })
                                             {
