@@ -1,5 +1,15 @@
+@using FashionStore.Models.Entities
 @{
-    ViewData["Title"] = "Thông báo Vận hành & Cảnh báo";
+    ViewData["Title"] = "Trung tâm Cảnh báo Vận hành";
+    int newOrders = ViewBag.NewOrders ?? 0;
+    int lowStock = ViewBag.LowStock ?? 0;
+    int failedShipments = ViewBag.FailedShipments ?? 0;
+    int pendingReturns = ViewBag.PendingReturns ?? 0;
+    var criticalVariants = ViewBag.CriticalVariants as List<ProductVariant> ?? new List<ProductVariant>();
+    var pendingOrders = ViewBag.PendingOrders as List<Order> ?? new List<Order>();
+    var recentEvents = ViewBag.RecentEvents as List<AdminAuditEvent> ?? new List<AdminAuditEvent>();
+
+    int totalUrgent = (newOrders > 0 ? 1 : 0) + (lowStock > 0 ? 1 : 0) + (failedShipments > 0 ? 1 : 0) + (pendingReturns > 0 ? 1 : 0);
 }
 
 <!-- EXECUTIVE HEADER -->
@@ -10,104 +20,415 @@
                 <span class="adm-pulse-dot"></span>
                 <span class="adm-kicker-text">HNMT ATELIER · KINH DOANH</span>
                 <span class="adm-meta-divider">/</span>
-                <span class="adm-order-count-badge">TRUNG TÂM CẢNH BÁO</span>
+                <span class="adm-order-count-badge">TRUNG TÂM CHỈ HUY &amp; CẢNH BÁO</span>
             </div>
-            <h1 class="adm-title-main">Thông báo Vận hành</h1>
+            <h1 class="adm-title-main">Trung tâm Cảnh báo Vận hành</h1>
         </div>
-        <div>
-            <a asp-action="Alerts" class="adm-btn-table-action text-decoration-none" style="height: 34px; padding: 0 14px; font-size: 0.8rem; font-weight: 500;" title="Làm mới cảnh báo">
+        <div class="d-flex align-items-center gap-2">
+            <a asp-action="Inventory" class="adm-btn-table-action text-decoration-none" style="height: 38px; padding: 0 16px; background: #0F172A !important; color: #FFFFFF !important; border-color: #0F172A !important; font-size: 0.82rem; font-weight: 600;" title="Kiểm kê toàn bộ kho hàng">
+                <i class="bi bi-boxes me-1"></i> Kiểm kê kho hàng
+            </a>
+            <a asp-action="Alerts" class="adm-btn-table-action text-decoration-none" style="height: 38px; padding: 0 14px; font-size: 0.82rem; font-weight: 500;" title="Làm mới cảnh báo">
                 <i class="bi bi-arrow-clockwise me-1"></i> Làm mới
             </a>
         </div>
     </div>
-</div>
 
-<div class="row g-4">
-    <!-- 1. ĐƠN HÀNG MỚI CHỜ DUYỆT -->
-    <div class="col-md-6">
-        <a asp-controller="AdminOrders" asp-action="Index" asp-route-status="PendingConfirmation" class="adm-card p-4 d-block text-decoration-none shadow-sm h-100" style="transition: all 0.2s ease;">
-            <div class="d-flex align-items-start justify-content-between mb-3">
-                <div class="d-flex align-items-center gap-3">
-                    <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(245, 158, 11, 0.12); color: #D97706; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
-                        <i class="bi bi-receipt"></i>
+    <!-- HEALTH & INCIDENT STATUS BANNER -->
+    @if (totalUrgent > 0)
+    {
+        <div class="p-3 rounded-3 d-flex flex-wrap align-items-center justify-content-between gap-3 shadow-sm"
+             style="background: #FFFBEB; border: 1px solid #FDE68A;">
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                     style="width: 40px; height: 40px; background: #F59E0B; color: #FFFFFF; font-size: 1.2rem;">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                </div>
+                <div>
+                    <div class="fw-bold adm-heading mb-0" style="font-size: 0.92rem; color: #92400E;">
+                        Cần xử lý @totalUrgent vấn đề vận hành quan trọng
                     </div>
-                    <div>
-                        <h5 class="fw-bold adm-heading mb-0 fs-6">Đơn hàng chờ xác nhận</h5>
-                        <div class="text-muted small mt-0.5">Khách hàng vừa đặt, cần duyệt chuyển kho</div>
+                    <div class="small" style="color: #B45309; font-size: 0.78rem;">
+                        @(lowStock > 0 ? $"{lowStock} mã sản phẩm tồn kho xuống mức báo động (≤ 5)." : "")
+                        @(newOrders > 0 ? $" Có {newOrders} đơn hàng mới cần duyệt." : "")
+                        @(failedShipments > 0 ? $" Có {failedShipments} vận đơn giao không thành công." : "")
+                        @(pendingReturns > 0 ? $" Có {pendingReturns} yêu cầu đổi trả đang chờ xử lý." : "")
                     </div>
                 </div>
-                <span class="adm-pill adm-pill-amber fs-6">@ViewBag.NewOrders</span>
             </div>
-            <div class="d-flex align-items-center justify-content-between pt-3 border-top border-secondary border-opacity-10 text-muted small">
-                <span>Duyệt và xuất kho ngay</span>
-                <span class="fw-bold" style="color: var(--adm-gold, #D97706);">Xử lý đơn &rarr;</span>
+            <span class="adm-pill adm-pill-amber fw-bold shadow-sm" style="font-size: 0.78rem;">
+                <span class="adm-pulse-dot me-1"></span> Cần chú ý
+            </span>
+        </div>
+    }
+    else
+    {
+        <div class="p-3 rounded-3 d-flex align-items-center justify-content-between shadow-sm"
+             style="background: #F0FDF4; border: 1px solid #BBF7D0;">
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                     style="width: 40px; height: 40px; background: #10B981; color: #FFFFFF; font-size: 1.2rem;">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+                <div>
+                    <div class="fw-bold adm-heading mb-0" style="font-size: 0.92rem; color: #166534;">
+                        Toàn bộ luồng vận hành đang ổn định
+                    </div>
+                    <div class="small" style="color: #15803D; font-size: 0.78rem;">
+                        Không phát hiện đơn hàng ứ đọng, vận đơn lỗi hoặc sự cố tồn kho khẩn cấp.
+                    </div>
+                </div>
             </div>
-        </a>
+            <span class="adm-pill adm-pill-emerald fw-bold shadow-sm" style="font-size: 0.78rem;">
+                ● Hoạt động tốt
+            </span>
+        </div>
+    }
+</div>
+
+<!-- 4 COMMAND CARDS -->
+<div class="row g-3 mb-4">
+    <!-- 1. ĐƠN HÀNG MỚI CHỜ DUYỆT -->
+    <div class="col-sm-6 col-xl-3">
+        <div class="adm-card p-3 shadow-sm h-100 d-flex flex-column justify-content-between" style="border-left: 3px solid #F59E0B;">
+            <div>
+                <div class="d-flex align-items-start justify-content-between mb-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(245, 158, 11, 0.12); color: #D97706; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                            <i class="bi bi-receipt"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold adm-heading mb-0" style="font-size: 0.88rem;">Đơn chờ xác nhận</h6>
+                            <div class="text-muted" style="font-size: 0.72rem;">Chờ duyệt xuất kho</div>
+                        </div>
+                    </div>
+                    <span class="adm-pill @(newOrders > 0 ? "adm-pill-amber fw-bold" : "adm-pill-faint")" style="font-size: 0.82rem;">
+                        @newOrders
+                    </span>
+                </div>
+            </div>
+            <div class="pt-2 border-top border-secondary border-opacity-10 d-flex align-items-center justify-content-between">
+                <span class="text-muted" style="font-size: 0.72rem;">Luồng đóng gói</span>
+                <a asp-controller="AdminOrders" asp-action="Index" asp-route-status="PendingConfirmation"
+                   class="adm-btn-table-action text-decoration-none" style="height: 28px; font-size: 0.74rem; padding: 0 10px;" title="Xử lý đơn hàng chờ duyệt">
+                    <span>Xử lý đơn</span> <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
     </div>
 
     <!-- 2. BIẾN THỂ SẮP HẾT HÀNG -->
-    <div class="col-md-6">
-        <a asp-action="Inventory" asp-route-low="true" class="adm-card p-4 d-block text-decoration-none shadow-sm h-100" style="transition: all 0.2s ease; border-color: rgba(225, 29, 72, 0.3);">
-            <div class="d-flex align-items-start justify-content-between mb-3">
-                <div class="d-flex align-items-center gap-3">
-                    <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(225, 29, 72, 0.12); color: #E11D48; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
-                        <i class="bi bi-exclamation-triangle"></i>
+    <div class="col-sm-6 col-xl-3">
+        <div class="adm-card p-3 shadow-sm h-100 d-flex flex-column justify-content-between" style="border-left: 3px solid #E11D48;">
+            <div>
+                <div class="d-flex align-items-start justify-content-between mb-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(225, 29, 72, 0.12); color: #E11D48; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                            <i class="bi bi-boxes"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold adm-heading mb-0" style="font-size: 0.88rem;">Sắp hết hàng (≤ 5)</h6>
+                            <div class="text-muted" style="font-size: 0.72rem;">Tồn kho báo động</div>
+                        </div>
                     </div>
-                    <div>
-                        <h5 class="fw-bold adm-heading mb-0 fs-6">Biến thể sắp hết hàng (&le; 5)</h5>
-                        <div class="text-muted small mt-0.5">Tồn kho xuống mức báo động, cần bổ sung</div>
-                    </div>
+                    <span class="adm-pill @(lowStock > 0 ? "adm-pill-rose fw-bold" : "adm-pill-faint")" style="font-size: 0.82rem;">
+                        @lowStock mã
+                    </span>
                 </div>
-                <span class="adm-pill adm-pill-rose fs-6">@ViewBag.LowStock mã</span>
             </div>
-            <div class="d-flex align-items-center justify-content-between pt-3 border-top border-secondary border-opacity-10 text-muted small">
-                <span>Cần nhập thêm vào kho Showroom</span>
-                <span class="fw-bold text-danger">Xem kho hàng &rarr;</span>
+            <div class="pt-2 border-top border-secondary border-opacity-10 d-flex align-items-center justify-content-between">
+                <span class="text-muted" style="font-size: 0.72rem;">Kế hoạch nhập</span>
+                <a asp-action="Inventory" asp-route-low="true"
+                   class="adm-btn-table-action text-decoration-none" style="height: 28px; font-size: 0.74rem; padding: 0 10px;" title="Xem các mã sắp hết">
+                    <span>Xem kho</span> <i class="bi bi-arrow-right ms-1"></i>
+                </a>
             </div>
-        </a>
+        </div>
     </div>
 
     <!-- 3. VẬN ĐƠN THẤT BẠI -->
-    <div class="col-md-6">
-        <a asp-controller="AdminShipments" asp-action="Index" asp-route-status="Failed" class="adm-card p-4 d-block text-decoration-none shadow-sm h-100" style="transition: all 0.2s ease;">
-            <div class="d-flex align-items-start justify-content-between mb-3">
-                <div class="d-flex align-items-center gap-3">
-                    <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(239, 68, 68, 0.12); color: #EF4444; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
-                        <i class="bi bi-truck"></i>
+    <div class="col-sm-6 col-xl-3">
+        <div class="adm-card p-3 shadow-sm h-100 d-flex flex-column justify-content-between" style="border-left: 3px solid #EF4444;">
+            <div>
+                <div class="d-flex align-items-start justify-content-between mb-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(239, 68, 68, 0.12); color: #EF4444; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                            <i class="bi bi-truck"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold adm-heading mb-0" style="font-size: 0.88rem;">Giao thất bại</h6>
+                            <div class="text-muted" style="font-size: 0.72rem;">Cần điều phối lại</div>
+                        </div>
                     </div>
-                    <div>
-                        <h5 class="fw-bold adm-heading mb-0 fs-6">Vận đơn giao thất bại</h5>
-                        <div class="text-muted small mt-0.5">Shipper không thể phát hàng, cần hỗ trợ</div>
-                    </div>
+                    <span class="adm-pill @(failedShipments > 0 ? "adm-pill-rose fw-bold" : "adm-pill-faint")" style="font-size: 0.82rem;">
+                        @failedShipments
+                    </span>
                 </div>
-                <span class="adm-pill adm-pill-rose fs-6">@ViewBag.FailedShipments</span>
             </div>
-            <div class="d-flex align-items-center justify-content-between pt-3 border-top border-secondary border-opacity-10 text-muted small">
-                <span>Liên hệ khách hàng & điều phối lại</span>
-                <span class="fw-bold text-danger">Kiểm tra vận đơn &rarr;</span>
+            <div class="pt-2 border-top border-secondary border-opacity-10 d-flex align-items-center justify-content-between">
+                <span class="text-muted" style="font-size: 0.72rem;">Hỗ trợ Shipper</span>
+                <a asp-controller="AdminShipments" asp-action="Index" asp-route-status="Failed"
+                   class="adm-btn-table-action text-decoration-none" style="height: 28px; font-size: 0.74rem; padding: 0 10px;" title="Xem vận đơn giao thất bại">
+                    <span>Vận đơn</span> <i class="bi bi-arrow-right ms-1"></i>
+                </a>
             </div>
-        </a>
+        </div>
     </div>
 
     <!-- 4. YÊU CẦU ĐỔI TRẢ CHỜ DUYỆT -->
-    <div class="col-md-6">
-        <a asp-action="Returns" class="adm-card p-4 d-block text-decoration-none shadow-sm h-100" style="transition: all 0.2s ease;">
-            <div class="d-flex align-items-start justify-content-between mb-3">
-                <div class="d-flex align-items-center gap-3">
-                    <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(59, 130, 246, 0.12); color: #2563EB; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
-                        <i class="bi bi-arrow-counterclockwise"></i>
+    <div class="col-sm-6 col-xl-3">
+        <div class="adm-card p-3 shadow-sm h-100 d-flex flex-column justify-content-between" style="border-left: 3px solid #2563EB;">
+            <div>
+                <div class="d-flex align-items-start justify-content-between mb-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(37, 99, 235, 0.12); color: #2563EB; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                            <i class="bi bi-arrow-counterclockwise"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold adm-heading mb-0" style="font-size: 0.88rem;">Đổi trả chờ duyệt</h6>
+                            <div class="text-muted" style="font-size: 0.72rem;">Yêu cầu RMA khách gửi</div>
+                        </div>
                     </div>
-                    <div>
-                        <h5 class="fw-bold adm-heading mb-0 fs-6">Yêu cầu đổi trả chờ duyệt</h5>
-                        <div class="text-muted small mt-0.5">Khách gửi form RMA hoàn hàng & bảo hành</div>
+                    <span class="adm-pill @(pendingReturns > 0 ? "adm-pill-blue fw-bold" : "adm-pill-faint")" style="font-size: 0.82rem;">
+                        @pendingReturns
+                    </span>
+                </div>
+            </div>
+            <div class="pt-2 border-top border-secondary border-opacity-10 d-flex align-items-center justify-content-between">
+                <span class="text-muted" style="font-size: 0.72rem;">Hậu mãi &amp; bảo hành</span>
+                <a asp-action="Returns"
+                   class="adm-btn-table-action text-decoration-none" style="height: 28px; font-size: 0.74rem; padding: 0 10px;" title="Xử lý yêu cầu đổi trả">
+                    <span>Xử lý RMA</span> <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 2-COLUMN COMMAND CENTER LAYOUT -->
+<div class="row g-4">
+    <!-- LEFT: IMMEDIATE TRIAGE & ACTION LISTS (8 cols) -->
+    <div class="col-lg-8">
+        <!-- 1. LIVE CRITICAL LOW-STOCK QUEUE -->
+        <div class="adm-card p-0 overflow-hidden shadow-sm mb-4">
+            <div class="p-3 border-bottom border-secondary border-opacity-10 d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-exclamation-octagon fs-5" style="color: #E11D48;"></i>
+                    <h5 class="fw-bold mb-0 adm-heading fs-6">Biến thể Tồn kho Thấp nhất Cần Bổ sung Ngay</h5>
+                </div>
+                <a asp-action="Inventory" asp-route-low="true" class="adm-btn-table-action text-decoration-none" style="height: 28px; font-size: 0.74rem; padding: 0 10px;">
+                    Xem tất cả @lowStock mã <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+
+            @if (criticalVariants.Any())
+            {
+                <div class="table-responsive">
+                    <table class="adm-table mb-0">
+                        <thead>
+                            <tr>
+                                <th class="ps-4">SẢN PHẨM &amp; MÃ SKU</th>
+                                <th>PHÂN LOẠI</th>
+                                <th class="text-end">GIÁ NIÊM YẾT</th>
+                                <th class="text-center">TỒN THỰC TẾ</th>
+                                <th class="text-end pe-4">ĐIỀU CHỈNH</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var v in criticalVariants)
+                            {
+                                var productImg = v.Product?.ImageUrl ?? "/images/placeholder.svg";
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="rounded-2 overflow-hidden flex-shrink-0" style="width: 40px; height: 40px; background: #F8FAFC; border: 1px solid #E2E8F0;">
+                                                <img src="@productImg" alt="@v.Product?.Name" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/images/placeholder.svg'" />
+                                            </div>
+                                            <div>
+                                                <a asp-controller="AdminProducts" asp-action="Edit" asp-route-id="@v.ProductId" class="fw-bold adm-heading text-decoration-none" style="font-size: 0.86rem;">
+                                                    @v.Product?.Name
+                                                </a>
+                                                <div class="font-monospace text-muted" style="font-size: 0.72rem;"><code>@v.SKU</code></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-1">
+                                            <span class="badge" style="background: var(--adm-surface-hover, #F8FAFC); color: var(--adm-ink, #0F172A); border: 1px solid var(--adm-border, #CBD5E1); font-size: 0.75rem;">
+                                                @v.Size
+                                            </span>
+                                            <span class="badge" style="background: var(--adm-surface-hover, #F8FAFC); color: var(--adm-ink, #0F172A); border: 1px solid var(--adm-border, #CBD5E1); font-size: 0.75rem;">
+                                                @v.Color
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td class="text-end font-monospace fw-semibold" style="font-size: 0.84rem;">
+                                        @v.Price.ToString("N0") ₫
+                                    </td>
+                                    <td class="text-center">
+                                        @if (v.StockQuantity == 0)
+                                        {
+                                            <span class="adm-pill adm-pill-rose font-monospace fw-bold" style="font-size: 0.76rem;">
+                                                Hết hàng (0)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="adm-pill adm-pill-amber font-monospace fw-bold" style="font-size: 0.76rem;">
+                                                Còn @v.StockQuantity
+                                            </span>
+                                        }
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <a asp-action="Stock" asp-route-id="@v.Id" class="adm-btn-table-action text-decoration-none" style="height: 30px; font-size: 0.76rem; padding: 0 10px;" title="Cập nhật số tồn cho biến thể này">
+                                            <i class="bi bi-sliders me-1"></i> Điều chỉnh
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="p-4 text-center text-muted small">
+                    <i class="bi bi-check-circle text-success fs-4 d-block mb-2"></i>
+                    Không có biến thể nào có số lượng tồn kho dưới 5.
+                </div>
+            }
+        </div>
+
+        <!-- 2. PENDING ORDERS (IF ANY) -->
+        @if (pendingOrders.Any())
+        {
+            <div class="adm-card p-0 overflow-hidden shadow-sm mb-4">
+                <div class="p-3 border-bottom border-secondary border-opacity-10 d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-receipt fs-5" style="color: var(--adm-gold, #D97706);"></i>
+                        <h5 class="fw-bold mb-0 adm-heading fs-6">Đơn Hàng Mới Chờ Duyệt Sang Kho</h5>
+                    </div>
+                    <a asp-controller="AdminOrders" asp-action="Index" asp-route-status="PendingConfirmation" class="adm-btn-table-action text-decoration-none" style="height: 28px; font-size: 0.74rem; padding: 0 10px;">
+                        Tất cả đơn chờ (@newOrders) <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="adm-table mb-0">
+                        <thead>
+                            <tr>
+                                <th class="ps-4">MÃ ĐƠN</th>
+                                <th>NGÀY ĐẶT</th>
+                                <th>KHÁCH NHẬN</th>
+                                <th class="text-end">TỔNG TIỀN</th>
+                                <th class="text-end pe-4">DUYỆT</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var o in pendingOrders)
+                            {
+                                <tr>
+                                    <td class="ps-4">
+                                        <a asp-controller="AdminOrders" asp-action="Details" asp-route-id="@o.Id" class="font-monospace fw-bold adm-heading text-decoration-none" style="color: var(--adm-gold, #D97706);">
+                                            #@o.OrderCode
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted small">@o.CreatedAt.AddHours(7).ToString("dd/MM/yyyy HH:mm")</span>
+                                    </td>
+                                    <td>
+                                        <div class="fw-semibold adm-heading small">@o.ReceiverName</div>
+                                        <div class="text-muted small font-monospace" style="font-size: 0.72rem;">@o.Phone</div>
+                                    </td>
+                                    <td class="text-end font-monospace fw-bold adm-heading">
+                                        @o.TotalAmount.ToString("N0") ₫
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <a asp-controller="AdminOrders" asp-action="Details" asp-route-id="@o.Id" class="adm-btn-table-action text-decoration-none" title="Duyệt đơn hàng">
+                                            <i class="bi bi-eye"></i> <span>Chi tiết</span>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- RIGHT: OPERATIONS ACTIVITY FEED & QUICK SHORTCUTS (4 cols) -->
+    <div class="col-lg-4">
+        <!-- RECENT OPERATIONS ACTIVITY FEED -->
+        <div class="adm-card shadow-sm p-0 overflow-hidden mb-4">
+            <div class="p-3 border-bottom border-secondary border-opacity-10 d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-activity fs-5" style="color: var(--adm-gold, #D97706);"></i>
+                    <h5 class="fw-bold mb-0 adm-heading fs-6">Nhật ký Vận hành Mới nhất</h5>
+                </div>
+                <a asp-action="Audit" class="text-muted small text-decoration-none" title="Xem tất cả nhật ký">
+                    Xem tất cả &rarr;
+                </a>
+            </div>
+
+            @if (recentEvents.Any())
+            {
+                <div class="p-3">
+                    <div class="d-flex flex-column gap-3">
+                        @foreach (var ev in recentEvents)
+                        {
+                            <div class="d-flex align-items-start gap-2 pb-2 border-bottom border-secondary border-opacity-10 last-border-0">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 mt-0.5"
+                                     style="width: 24px; height: 24px; background: rgba(15, 23, 42, 0.08); color: #0F172A; font-size: 0.75rem;">
+                                    <i class="bi bi-dot"></i>
+                                </div>
+                                <div class="flex-grow-1 small">
+                                    <div class="d-flex justify-content-between align-items-center mb-0.5">
+                                        <strong class="adm-heading font-monospace" style="font-size: 0.78rem;">@ev.Action</strong>
+                                        <span class="text-muted font-monospace" style="font-size: 0.7rem;">@ev.CreatedAt.AddHours(7).ToString("HH:mm")</span>
+                                    </div>
+                                    <div class="text-muted text-break" style="font-size: 0.75rem; line-height: 1.4;">
+                                        @ev.Detail
+                                    </div>
+                                </div>
+                            </div>
+                        }
                     </div>
                 </div>
-                <span class="adm-pill adm-pill-blue fs-6">@ViewBag.PendingReturns</span>
+            }
+            else
+            {
+                <div class="p-4 text-center text-muted small">
+                    Chưa có nhật ký hoạt động nào được ghi nhận.
+                </div>
+            }
+        </div>
+
+        <!-- QUICK ATELIER ACTION SHORTCUTS -->
+        <div class="adm-card shadow-sm">
+            <div class="d-flex align-items-center gap-2 mb-3 pb-3 border-bottom border-secondary border-opacity-10">
+                <i class="bi bi-lightning-charge fs-5" style="color: var(--adm-gold, #D97706);"></i>
+                <h5 class="fw-bold mb-0 adm-heading fs-6">Lối tắt Vận hành Nhanh</h5>
             </div>
-            <div class="d-flex align-items-center justify-content-between pt-3 border-top border-secondary border-opacity-10 text-muted small">
-                <span>Thẩm định lý do & xử lý đổi trả</span>
-                <span class="fw-bold text-primary">Xem danh sách RMA &rarr;</span>
+
+            <div class="d-flex flex-column gap-2">
+                <a asp-action="Forecast" class="adm-btn-table-action justify-content-between text-decoration-none py-2 px-3" style="height: auto; font-size: 0.8rem;">
+                    <span><i class="bi bi-graph-up-arrow me-2" style="color: #2563EB;"></i> Kế hoạch dự báo nhập hàng</span>
+                    <i class="bi bi-chevron-right text-muted"></i>
+                </a>
+                <a asp-action="Import" class="adm-btn-table-action justify-content-between text-decoration-none py-2 px-3" style="height: auto; font-size: 0.8rem;">
+                    <span><i class="bi bi-file-earmark-arrow-up me-2" style="color: #10B981;"></i> Nhập sản phẩm từ Excel</span>
+                    <i class="bi bi-chevron-right text-muted"></i>
+                </a>
+                <a asp-action="Promotions" class="adm-btn-table-action justify-content-between text-decoration-none py-2 px-3" style="height: auto; font-size: 0.8rem;">
+                    <span><i class="bi bi-ticket-perforated me-2" style="color: #D97706;"></i> Cấu hình Voucher khuyến mãi</span>
+                    <i class="bi bi-chevron-right text-muted"></i>
+                </a>
+                <a asp-action="Analytics" class="adm-btn-table-action justify-content-between text-decoration-none py-2 px-3" style="height: auto; font-size: 0.8rem;">
+                    <span><i class="bi bi-bar-chart me-2" style="color: #8B5CF6;"></i> Báo cáo doanh số &amp; hiệu quả</span>
+                    <i class="bi bi-chevron-right text-muted"></i>
+                </a>
             </div>
-        </a>
+        </div>
     </div>
 </div>

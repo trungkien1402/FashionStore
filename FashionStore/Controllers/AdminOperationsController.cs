@@ -345,6 +345,29 @@ public partial class AdminOperationsController(ApplicationDbContext db) : Contro
         ViewBag.LowStock = await db.ProductVariants.CountAsync(v => v.IsActive && v.StockQuantity <= 5);
         ViewBag.FailedShipments = await db.Shipments.CountAsync(s => s.Status == ShipmentStatus.Failed);
         ViewBag.PendingReturns = await db.MerchandiseReturns.CountAsync(r => r.State == ReturnState.Requested);
+
+        ViewBag.CriticalVariants = await db.ProductVariants
+            .Include(v => v.Product)
+            .Where(v => v.IsActive && v.StockQuantity <= 5)
+            .OrderBy(v => v.StockQuantity)
+            .ThenBy(v => v.Id)
+            .Take(8)
+            .AsNoTracking()
+            .ToListAsync();
+
+        ViewBag.PendingOrders = await db.Orders
+            .Where(o => o.Status == OrderStatus.PendingConfirmation)
+            .OrderByDescending(o => o.CreatedAt)
+            .Take(5)
+            .AsNoTracking()
+            .ToListAsync();
+
+        ViewBag.RecentEvents = await db.AdminAuditEvents
+            .OrderByDescending(e => e.Id)
+            .Take(6)
+            .AsNoTracking()
+            .ToListAsync();
+
         return View();
     }
 
