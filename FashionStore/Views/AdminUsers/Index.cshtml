@@ -184,16 +184,19 @@ else
                                 }
                             </td>
                             <td class="text-end pe-4">
-                                <div class="d-inline-flex gap-1 align-items-center">
-                                    <a asp-action="Details" asp-route-id="@user.Id" class="adm-action-btn adm-btn-secondary py-1 px-2" style="font-size: 0.78rem;" title="Xem chi tiết &amp; phân quyền">
+                                <div class="d-inline-flex gap-1 align-items-center justify-content-end">
+                                    <a asp-action="Details" asp-route-id="@user.Id"
+                                       class="adm-btn-table-action" style="height: 30px; width: 30px; padding: 0; justify-content: center;"
+                                       title="Xem chi tiết &amp; phân quyền">
                                         <i class="bi bi-sliders"></i>
                                     </a>
                                     @if (!isSelf)
                                     {
-                                        <form asp-action="ToggleLock" asp-route-id="@user.Id" method="post" class="d-inline"
+                                        <form asp-action="ToggleLock" asp-route-id="@user.Id" method="post" class="d-inline m-0 p-0"
                                               onsubmit="return confirm('@(user.IsActive ? "Khóa tài khoản " + user.FullName + "?" : "Mở khóa tài khoản " + user.FullName + "?")');">
                                             @Html.AntiForgeryToken()
-                                            <button type="submit" class="adm-action-btn adm-btn-secondary py-1 px-2 @(user.IsActive ? "text-danger" : "text-success")" style="font-size: 0.78rem;"
+                                            <button type="submit" class="adm-btn-table-action @(user.IsActive ? "text-danger" : "text-success")"
+                                                    style="height: 30px; width: 30px; padding: 0; justify-content: center;"
                                                     title="@(user.IsActive ? "Khóa tài khoản" : "Mở khóa tài khoản")">
                                                 <i class="bi @(user.IsActive ? "bi-lock" : "bi-unlock")"></i>
                                             </button>

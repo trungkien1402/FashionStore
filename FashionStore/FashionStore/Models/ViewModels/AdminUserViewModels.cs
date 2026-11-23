@@ -34,6 +34,8 @@ public class AdminUserDetailsViewModel
     public ApplicationUser User { get; set; } = null!;
     public List<string> Roles { get; set; } = [];
     public List<Order> RecentOrders { get; set; } = [];
+    public List<FashionStore.Models.Entities.Shipment> AssignedShipments { get; set; } = [];
     public decimal TotalSpent { get; set; }
     public int OrderCount { get; set; }
+    public int ShipmentCount { get; set; }
 }

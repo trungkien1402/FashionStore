@@ -155,13 +155,30 @@ public class AdminUsersController : Controller
 
         var orderCount = await _context.Orders.CountAsync(o => o.UserId == id);
 
+        var isShipper = roles.Contains("Shipper");
+        List<FashionStore.Models.Entities.Shipment> shipments = [];
+        var shipmentCount = 0;
+        if (isShipper)
+        {
+            shipments = await _context.Shipments
+                .Include(s => s.Order)
+                .Where(s => s.ShipperId == id)
+                .OrderByDescending(s => s.CreatedAt)
+                .Take(20)
+                .AsNoTracking()
+                .ToListAsync();
+            shipmentCount = await _context.Shipments.CountAsync(s => s.ShipperId == id);
+        }
+
         var model = new AdminUserDetailsViewModel
         {
             User = user,
             Roles = roles.ToList(),
             RecentOrders = orders,
+            AssignedShipments = shipments,
             TotalSpent = totalSpent,
-            OrderCount = orderCount
+            OrderCount = orderCount,
+            ShipmentCount = shipmentCount
         };
 
         return View(model);

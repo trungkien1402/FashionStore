@@ -19,15 +19,15 @@
             <h1 class="adm-title-main">@Model.User.FullName</h1>
         </div>
         <div class="d-flex align-items-center gap-2">
-            <a asp-action="Index" class="adm-action-btn adm-btn-secondary">
-                <i class="bi bi-arrow-left"></i> <span>Quay lại danh sách</span>
+            <a asp-action="Index" class="adm-btn-table-action text-decoration-none" style="height: 34px; padding: 0 14px; font-size: 0.8rem; font-weight: 500;">
+                <i class="bi bi-arrow-left me-1"></i> Quay lại danh sách
             </a>
             @if (!isSelf)
             {
-                <form asp-action="ToggleLock" asp-route-id="@Model.User.Id" method="post" class="d-inline"
+                <form asp-action="ToggleLock" asp-route-id="@Model.User.Id" method="post" class="d-inline m-0 p-0"
                       onsubmit="return confirm('@(Model.User.IsActive ? "Khóa tài khoản này?" : "Mở khóa tài khoản này?")');">
                     @Html.AntiForgeryToken()
-                    <button type="submit" class="adm-action-btn adm-btn-secondary @(Model.User.IsActive ? "text-danger" : "text-success")">
+                    <button type="submit" class="adm-btn-table-action @(Model.User.IsActive ? "text-danger" : "text-success")" style="height: 34px; padding: 0 14px; font-size: 0.8rem; font-weight: 500;">
                         <i class="bi @(Model.User.IsActive ? "bi-lock" : "bi-unlock") me-1"></i>
                         @(Model.User.IsActive ? "Khóa tài khoản" : "Mở khóa tài khoản")
                     </button>
@@ -103,18 +103,51 @@
 
         <!-- STATS TILES -->
         <div class="row g-3">
-            <div class="col-6">
-                <div class="adm-card p-3 text-center shadow-sm">
-                    <div class="text-muted small text-uppercase">Đơn hàng</div>
-                    <div class="fs-3 fw-bold font-monospace adm-heading mt-1">@Model.OrderCount</div>
+            @if (Model.Roles.Contains("Shipper"))
+            {
+                <div class="col-6">
+                    <div class="adm-card p-3 text-center shadow-sm">
+                        <div class="text-muted small text-uppercase">Vận đơn</div>
+                        <div class="fs-3 fw-bold font-monospace adm-heading mt-1" style="color: var(--adm-gold, #D97706);">@Model.ShipmentCount</div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-6">
-                <div class="adm-card p-3 text-center shadow-sm">
-                    <div class="text-muted small text-uppercase">Tổng chi tiêu</div>
-                    <div class="fs-4 fw-bold font-monospace mt-1" style="color: var(--adm-gold, #D97706);">@Model.TotalSpent.ToString("N0") ₫</div>
+                <div class="col-6">
+                    <div class="adm-card p-3 text-center shadow-sm">
+                        <div class="text-muted small text-uppercase">Đơn cá nhân</div>
+                        <div class="fs-3 fw-bold font-monospace adm-heading mt-1">@Model.OrderCount</div>
+                    </div>
                 </div>
-            </div>
+            }
+            else if (Model.Roles.Contains("Admin") || Model.Roles.Contains("Manager"))
+            {
+                <div class="col-6">
+                    <div class="adm-card p-3 text-center shadow-sm">
+                        <div class="text-muted small text-uppercase">Đặc quyền</div>
+                        <div class="fs-4 fw-bold font-monospace adm-heading mt-1" style="color: var(--adm-gold, #D97706);">Toàn quyền</div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="adm-card p-3 text-center shadow-sm">
+                        <div class="text-muted small text-uppercase">Đơn cá nhân</div>
+                        <div class="fs-3 fw-bold font-monospace adm-heading mt-1">@Model.OrderCount</div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="col-6">
+                    <div class="adm-card p-3 text-center shadow-sm">
+                        <div class="text-muted small text-uppercase">Đơn hàng</div>
+                        <div class="fs-3 fw-bold font-monospace adm-heading mt-1">@Model.OrderCount</div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="adm-card p-3 text-center shadow-sm">
+                        <div class="text-muted small text-uppercase">Tổng chi tiêu</div>
+                        <div class="fs-4 fw-bold font-monospace mt-1" style="color: var(--adm-gold, #D97706);">@Model.TotalSpent.ToString("N0") ₫</div>
+                    </div>
+                </div>
+            }
         </div>
     </div>
 
@@ -138,7 +171,7 @@
                         }
                     </select>
                 </div>
-                <button type="submit" class="adm-action-btn adm-btn-primary py-2 px-3"
+                <button type="submit" class="adm-btn-table-action" style="height: 38px; padding: 0 16px; font-size: 0.82rem; font-weight: 600; background: #0F172A !important; color: #FFFFFF !important; border-color: #0F172A !important;"
                         onclick="return confirm('Xác nhận cập nhật vai trò mới cho người dùng này?');">
                     <i class="bi bi-check2 me-1"></i> Lưu vai trò mới
                 </button>
@@ -161,12 +194,84 @@
                 <div class="flex-grow-1" style="min-width: 200px;">
                     <input type="password" name="newPassword" class="form-control adm-input-dark font-monospace" placeholder="Nhập mật khẩu mới (tối thiểu 6 ký tự)..." required minlength="6" />
                 </div>
-                <button type="submit" class="adm-action-btn adm-btn-secondary py-2 px-3"
+                <button type="submit" class="adm-btn-table-action" style="height: 38px; padding: 0 16px; font-size: 0.82rem; font-weight: 500;"
                         onclick="return confirm('Bạn có chắc chắn muốn đặt lại mật khẩu cho tài khoản này?');">
                     <i class="bi bi-arrow-repeat me-1"></i> Cập nhật mật khẩu
                 </button>
             </form>
         </div>
+
+        @if (Model.Roles.Contains("Shipper"))
+        {
+            <!-- SHIPPER ASSIGNED SHIPMENTS -->
+            <div class="adm-card p-0 overflow-hidden shadow-sm mb-4">
+                <div class="p-3 border-bottom border-secondary border-opacity-10 d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-truck fs-5" style="color: var(--adm-gold, #D97706);"></i>
+                        <h5 class="fw-bold mb-0 adm-heading fs-6">Vận đơn phụ trách giao hàng</h5>
+                    </div>
+                    <span class="badge" style="background: var(--adm-surface-hover, #F8FAFC); color: var(--adm-ink, #0F172A); border: 1px solid var(--adm-border, #CBD5E1);">@Model.AssignedShipments.Count vận đơn</span>
+                </div>
+
+                @if (Model.AssignedShipments.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="adm-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="ps-4">MÃ VẬN ĐƠN</th>
+                                    <th>ĐƠN HÀNG</th>
+                                    <th class="text-end">TIỀN THU (COD)</th>
+                                    <th>TRẠNG THÁI</th>
+                                    <th>NGÀY TẠO</th>
+                                    <th class="text-end pe-4">CHI TIẾT</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var sh in Model.AssignedShipments)
+                                {
+                                    <tr>
+                                        <td class="ps-4 font-monospace fw-bold adm-heading">
+                                            @sh.TrackingCode
+                                        </td>
+                                        <td>
+                                            <a asp-controller="AdminOrders" asp-action="Details" asp-route-id="@sh.OrderId"
+                                               class="font-monospace text-decoration-none" style="color: var(--adm-gold, #D97706);">
+                                                #@sh.Order?.OrderCode
+                                            </a>
+                                            <div class="text-muted small">@sh.Order?.ReceiverName</div>
+                                        </td>
+                                        <td class="text-end font-monospace fw-bold adm-heading">
+                                            @(sh.Order?.PaymentMethod == FashionStore.Models.Enums.PaymentMethod.COD && sh.Order.PaymentStatus != FashionStore.Models.Enums.PaymentStatus.Paid ? (sh.Order.TotalAmount.ToString("N0") + " ₫") : "0 ₫")
+                                        </td>
+                                        <td>
+                                            <span class="adm-pill adm-pill-emerald">@sh.Status</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-muted small">@sh.CreatedAt.AddHours(7).ToString("dd/MM/yyyy HH:mm")</span>
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <div class="d-inline-flex justify-content-end">
+                                                <a asp-controller="AdminShipments" asp-action="Details" asp-route-id="@sh.Id"
+                                                   class="adm-btn-table-action text-decoration-none" title="Chi tiết vận đơn">
+                                                    <i class="bi bi-eye"></i> <span>Chi tiết</span>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-4 text-muted small">
+                        Shipper này chưa được phân công vận đơn nào.
+                    </div>
+                }
+            </div>
+        }
 
         <!-- RECENT ORDERS -->
         <div class="adm-card p-0 overflow-hidden shadow-sm">
@@ -216,9 +321,12 @@
                                         </span>
                                     </td>
                                     <td class="text-end pe-4">
-                                        <a asp-controller="AdminOrders" asp-action="Details" asp-route-id="@o.Id" class="adm-action-btn adm-btn-secondary py-1 px-2" style="font-size: 0.78rem;">
-                                            <i class="bi bi-chevron-right"></i>
-                                        </a>
+                                        <div class="d-inline-flex justify-content-end">
+                                            <a asp-controller="AdminOrders" asp-action="Details" asp-route-id="@o.Id"
+                                               class="adm-btn-table-action text-decoration-none" title="Chi tiết đơn hàng">
+                                                <i class="bi bi-eye"></i> <span>Chi tiết</span>
+                                            </a>
+                                        </div>
                                     </td>
                                 </tr>
                             }
