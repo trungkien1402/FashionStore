@@ -20,8 +20,8 @@
             <h1 class="adm-title-main">@Model.Product?.Name</h1>
         </div>
         <div class="d-flex align-items-center gap-2">
-            <a asp-action="Inventory" class="adm-action-btn adm-btn-secondary">
-                <i class="bi bi-arrow-left"></i> <span>Quay lại kho hàng</span>
+            <a asp-action="Inventory" class="adm-btn-table-action text-decoration-none" style="height: 34px; padding: 0 14px; font-size: 0.8rem; font-weight: 500;">
+                <i class="bi bi-arrow-left me-1"></i> Quay lại kho hàng
             </a>
         </div>
     </div>
@@ -79,8 +79,8 @@
                     <textarea id="reason" name="reason" maxlength="250" required rows="3" class="form-control adm-input-dark" placeholder="VD: Kiểm kê định kỳ, sai lệch kiểm đếm, bù trừ hư hại vận chuyển..."></textarea>
                 </div>
 
-                <button type="submit" class="adm-action-btn adm-btn-primary w-100 py-2 justify-content-center">
-                    <i class="bi bi-check2 me-1"></i> Ghi nhận điều chỉnh
+                <button type="submit" class="adm-btn-table-action w-100 justify-content-center" style="height: 38px; font-size: 0.84rem; font-weight: 600; background: #0F172A !important; color: #FFFFFF !important; border-color: #0F172A !important;">
+                    <i class="bi bi-check2 me-1"></i> Ghi nhận điều chỉnh tồn kho
                 </button>
             </form>
         </div>

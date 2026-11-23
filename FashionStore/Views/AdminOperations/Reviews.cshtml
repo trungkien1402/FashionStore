@@ -19,8 +19,8 @@
             <h1 class="adm-title-main">Kiểm duyệt Đánh giá Khách hàng</h1>
         </div>
         <div class="d-flex align-items-center gap-2">
-            <a asp-action="Reviews" class="adm-action-btn adm-btn-secondary" title="Làm mới">
-                <i class="bi bi-arrow-clockwise"></i> <span>Làm mới</span>
+            <a asp-action="Reviews" class="adm-btn-table-action text-decoration-none" style="height: 34px; padding: 0 14px; font-size: 0.8rem; font-weight: 500;" title="Làm mới">
+                <i class="bi bi-arrow-clockwise me-1"></i> Làm mới
             </a>
         </div>
     </div>
@@ -130,17 +130,17 @@ else
                                 <div class="text-muted font-monospace" style="font-size: 0.72rem;">@row.CreatedAt.ToLocalTime().ToString("HH:mm")</div>
                             </td>
                             <td class="text-end pe-4">
-                                <form asp-action="ModerateReview" asp-route-id="@row.Id" method="post" class="d-inline-flex gap-2">
+                                <form asp-action="ModerateReview" asp-route-id="@row.Id" method="post" class="d-inline-flex gap-2 justify-content-end">
                                     @Html.AntiForgeryToken()
                                     @if (!row.IsVisible)
                                     {
-                                        <button type="submit" name="visible" value="true" class="adm-action-btn adm-btn-secondary py-1 px-3" style="font-size: 0.78rem;">
+                                        <button type="submit" name="visible" value="true" class="adm-btn-table-action text-success" style="height: 30px; font-size: 0.76rem; padding: 0 10px;" title="Duyệt hiển thị nhận xét">
                                             <i class="bi bi-eye me-1"></i> Hiện
                                         </button>
                                     }
                                     else
                                     {
-                                        <button type="submit" name="visible" value="false" class="adm-action-btn adm-btn-secondary py-1 px-3" style="font-size: 0.78rem;">
+                                        <button type="submit" name="visible" value="false" class="adm-btn-table-action text-danger" style="height: 30px; font-size: 0.76rem; padding: 0 10px;" title="Ẩn nhận xét này">
                                             <i class="bi bi-eye-slash me-1"></i> Ẩn
                                         </button>
                                     }

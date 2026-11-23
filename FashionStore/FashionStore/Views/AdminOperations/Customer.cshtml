@@ -20,8 +20,8 @@
             <h1 class="adm-title-main">Hồ sơ: @ViewBag.Name</h1>
         </div>
         <div>
-            <a asp-action="Customers" class="adm-action-btn adm-btn-secondary">
-                <i class="bi bi-arrow-left"></i> <span>Quay lại danh sách</span>
+            <a asp-action="Customers" class="adm-btn-table-action text-decoration-none" style="height: 34px; padding: 0 14px; font-size: 0.8rem; font-weight: 500;">
+                <i class="bi bi-arrow-left me-1"></i> Quay lại danh sách
             </a>
         </div>
     </div>
@@ -106,9 +106,11 @@ else
                                 @row.TotalAmount.ToString("N0") ₫
                             </td>
                             <td class="text-end pe-4">
-                                <a asp-controller="AdminOrders" asp-action="Details" asp-route-id="@row.Id" class="adm-action-btn adm-btn-secondary py-1 px-3" style="font-size: 0.78rem;">
-                                    Chi tiết đơn <i class="bi bi-chevron-right ms-1"></i>
-                                </a>
+                                <div class="d-inline-flex justify-content-end">
+                                    <a asp-controller="AdminOrders" asp-action="Details" asp-route-id="@row.Id" class="adm-btn-table-action text-decoration-none" title="Chi tiết đơn hàng">
+                                        <i class="bi bi-eye"></i> <span>Chi tiết</span>
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                     }

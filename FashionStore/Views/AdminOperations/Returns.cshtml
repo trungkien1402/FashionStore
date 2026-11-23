@@ -21,8 +21,8 @@
             <h1 class="adm-title-main">Quản lý Đổi trả & Hoàn tiền (RMA)</h1>
         </div>
         <div class="d-flex align-items-center gap-2">
-            <a asp-action="Returns" class="adm-action-btn adm-btn-secondary" title="Làm mới">
-                <i class="bi bi-arrow-clockwise"></i> <span>Làm mới</span>
+            <a asp-action="Returns" class="adm-btn-table-action text-decoration-none" style="height: 34px; padding: 0 14px; font-size: 0.8rem; font-weight: 500;" title="Làm mới">
+                <i class="bi bi-arrow-clockwise me-1"></i> Làm mới
             </a>
         </div>
     </div>
@@ -175,10 +175,10 @@
                     <div class="d-flex flex-wrap align-items-center gap-2">
                         @if (row.State == ReturnState.Requested)
                         {
-                            <button type="submit" name="state" value="Approved" class="adm-action-btn adm-btn-primary">
+                            <button type="submit" name="state" value="Approved" class="adm-btn-table-action" style="height: 34px; padding: 0 14px; font-size: 0.8rem; font-weight: 600; background: #0F172A !important; color: #FFFFFF !important; border-color: #0F172A !important;">
                                 <i class="bi bi-check2 me-1"></i> Duyệt đổi trả
                             </button>
-                            <button type="submit" name="state" value="Rejected" class="adm-action-btn adm-btn-secondary text-danger">
+                            <button type="submit" name="state" value="Rejected" class="adm-btn-table-action text-danger" style="height: 34px; padding: 0 14px; font-size: 0.8rem; font-weight: 500;">
                                 <i class="bi bi-x-lg me-1"></i> Từ chối
                             </button>
                         }
@@ -188,10 +188,10 @@
                                 <input type="checkbox" name="restock" value="true" class="form-check-input" id="restock_@row.Id" checked />
                                 <label class="form-check-label small fw-semibold" for="restock_@row.Id">Hàng nguyên vẹn, nhập lại số tồn kho</label>
                             </div>
-                            <button type="submit" name="state" value="Received" class="adm-action-btn adm-btn-primary">
-                                <i class="bi bi-box-arrow-in-down me-1"></i> Xác nhận đã nhận & kiểm định
+                            <button type="submit" name="state" value="Received" class="adm-btn-table-action" style="height: 34px; padding: 0 14px; font-size: 0.8rem; font-weight: 600; background: #0F172A !important; color: #FFFFFF !important; border-color: #0F172A !important;">
+                                <i class="bi bi-box-arrow-in-down me-1"></i> Xác nhận đã nhận &amp; kiểm định
                             </button>
-                            <button type="submit" name="state" value="Rejected" class="adm-action-btn adm-btn-secondary text-danger">
+                            <button type="submit" name="state" value="Rejected" class="adm-btn-table-action text-danger" style="height: 34px; padding: 0 14px; font-size: 0.8rem; font-weight: 500;">
                                 <i class="bi bi-x-circle me-1"></i> Từ chối sau kiểm định
                             </button>
                         }
@@ -201,7 +201,7 @@
                                 <div class="flex-grow-1">
                                     <input name="refundReference" maxlength="100" required class="form-control adm-input-dark" placeholder="Mã giao dịch / Mã chứng từ hoàn tiền thực tế..." />
                                 </div>
-                                <button type="submit" name="state" value="Refunded" class="adm-action-btn adm-btn-primary"
+                                <button type="submit" name="state" value="Refunded" class="adm-btn-table-action" style="height: 38px; padding: 0 18px; font-size: 0.82rem; font-weight: 600; background: #0F172A !important; color: #FFFFFF !important; border-color: #0F172A !important;"
                                         onclick="return confirm('Bạn đã hoàn đủ @row.Order.TotalAmount.ToString("N0") ₫ cho khách qua phương thức thanh toán thực tế?')">
                                     <i class="bi bi-cash-coin me-1"></i> Xác nhận hoàn tiền (@row.Order.TotalAmount.ToString("N0") ₫)
                                 </button>

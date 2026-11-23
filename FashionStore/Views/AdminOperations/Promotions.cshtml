@@ -21,8 +21,8 @@
             <h1 class="adm-title-main">Quản lý Khuyến mãi & Voucher</h1>
         </div>
         <div class="d-flex align-items-center gap-2">
-            <a asp-action="Promotions" class="adm-action-btn adm-btn-secondary" title="Làm mới">
-                <i class="bi bi-arrow-clockwise"></i> <span>Làm mới</span>
+            <a asp-action="Promotions" class="adm-btn-table-action text-decoration-none" style="height: 34px; padding: 0 14px; font-size: 0.8rem; font-weight: 500;" title="Làm mới">
+                <i class="bi bi-arrow-clockwise me-1"></i> Làm mới
             </a>
         </div>
     </div>
@@ -140,7 +140,7 @@
                     <label class="form-check-label fw-semibold adm-heading" for="percentage">Mức giảm tính theo phần trăm (%)</label>
                 </div>
 
-                <button type="submit" class="adm-action-btn adm-btn-primary py-2 px-4">
+                <button type="submit" class="adm-btn-table-action" style="height: 38px; padding: 0 20px; font-size: 0.84rem; font-weight: 600; background: #0F172A !important; color: #FFFFFF !important; border-color: #0F172A !important;">
                     <i class="bi bi-plus-lg me-1"></i> Tạo mã Voucher
                 </button>
             </div>
@@ -226,14 +226,14 @@ else
                                 {
                                     <form asp-action="SetGameReward" asp-route-id="@row.Id" method="post" class="d-flex gap-1 align-items-center">
                                         @Html.AntiForgeryToken()
-                                        <select name="score" class="form-select adm-input-dark py-1 px-2" style="font-size: 0.75rem; width: auto;" aria-label="Mốc điểm cho mã @row.Code">
+                                        <select name="score" class="form-select adm-input-dark py-1 px-2" style="font-size: 0.75rem; width: auto; height: 30px;" aria-label="Mốc điểm cho mã @row.Code">
                                             <option value="">Không gán</option>
                                             @foreach (var score in new[] { 60, 75, 90 })
                                             {
                                                 <option value="@score" selected="@(row.GameMinimumScore == score)">Điểm &ge; @score</option>
                                             }
                                         </select>
-                                        <button type="submit" class="adm-action-btn adm-btn-secondary py-1 px-2" style="font-size: 0.75rem;" title="Lưu mốc minigame">
+                                        <button type="submit" class="adm-btn-table-action" style="height: 30px; width: 30px; padding: 0; justify-content: center;" title="Lưu mốc minigame">
                                             <i class="bi bi-save"></i>
                                         </button>
                                     </form>
@@ -247,8 +247,10 @@ else
                                 <form asp-action="SetVoucherActive" asp-route-id="@row.Id" method="post" class="d-inline">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="active" value="@((!row.IsActive).ToString())" />
-                                    <button type="submit" class="adm-action-btn adm-btn-secondary py-1 px-3" style="font-size: 0.78rem;">
-                                        @(row.IsActive ? "Tắt" : "Bật")
+                                    <button type="submit" class="adm-btn-table-action @(row.IsActive ? "text-danger" : "text-success")"
+                                            style="height: 30px; width: 30px; padding: 0; justify-content: center;"
+                                            title="@(row.IsActive ? "Tắt voucher" : "Bật voucher")">
+                                        <i class="bi @(row.IsActive ? "bi-eye-slash" : "bi-eye")"></i>
                                     </button>
                                 </form>
                             </td>
