@@ -304,12 +304,14 @@ else
                             <td class="text-end pe-4">
                                 <div class="d-inline-flex gap-1 align-items-center">
                                     <a asp-controller="AdminProducts" asp-action="Index" asp-route-categoryId="@item.Category.Id"
-                                       class="adm-action-btn adm-btn-secondary py-1 px-3" style="font-size: 0.78rem; height: 32px;" title="Xem sản phẩm trong danh mục">
-                                        <i class="bi bi-box-seam me-1"></i> Xem SP (@item.ProductCount)
+                                       class="adm-btn-table-action text-decoration-none"
+                                       style="height: 30px; font-size: 0.76rem; background: #0F172A !important; color: #FFFFFF !important; border-color: #0F172A !important; padding: 0 10px;"
+                                       title="Xem sản phẩm trong danh mục">
+                                        <i class="bi bi-box-seam me-1"></i> Sản phẩm (@item.ProductCount)
                                     </a>
 
                                     <a asp-action="Edit" asp-route-id="@item.Category.Id"
-                                       class="adm-icon-btn" title="Sửa danh mục">
+                                       class="adm-btn-table-action" style="height: 30px; width: 30px; padding: 0; justify-content: center;" title="Sửa danh mục">
                                         <i class="bi bi-pencil"></i>
                                     </a>
 
@@ -318,9 +320,9 @@ else
                                           asp-route-sort="@currentSort" asp-route-page="@ViewBag.Page" method="post" class="d-inline m-0 p-0">
                                         @Html.AntiForgeryToken()
                                         <input type="hidden" name="isActive" value="@((!item.Category.IsActive).ToString())" />
-                                        <button type="submit" class="adm-icon-btn @(item.Category.IsActive ? "" : "text-success")"
+                                        <button type="submit" class="adm-btn-table-action" style="height: 30px; width: 30px; padding: 0; justify-content: center;"
                                                 title="@(item.Category.IsActive ? "Tắt danh mục" : "Bật danh mục")">
-                                            <i class="bi @(item.Category.IsActive ? "bi-eye-slash" : "bi-eye")"></i>
+                                            <i class="bi @(item.Category.IsActive ? "bi-eye" : "bi-eye-slash text-danger")"></i>
                                         </button>
                                     </form>
                                 </div>
@@ -400,15 +402,17 @@ else
                                 </div>
                             </div>
 
-                            <div class="pt-2 border-top border-secondary border-opacity-10 d-flex justify-content-between align-items-center">
+                            <div class="pt-2 border-top d-flex justify-content-between align-items-center gap-2" style="border-color: var(--adm-border) !important;">
                                 <a asp-controller="AdminProducts" asp-action="Index" asp-route-categoryId="@item.Category.Id"
-                                   class="text-decoration-none small fw-semibold d-inline-flex align-items-center gap-1" style="color: var(--adm-gold, #D97706);">
-                                    <span>Xem sản phẩm</span> <i class="bi bi-arrow-right"></i>
+                                   class="adm-btn-table-action flex-grow-1 justify-content-center text-decoration-none"
+                                   style="height: 30px; font-size: 0.76rem; background: #0F172A !important; color: #FFFFFF !important; border-color: #0F172A !important;"
+                                   title="Xem danh sách sản phẩm trong danh mục">
+                                    <i class="bi bi-box-seam me-1"></i> Sản phẩm (@item.ProductCount)
                                 </a>
 
-                                <div class="d-flex align-items-center gap-1">
+                                <div class="d-flex gap-1">
                                     <a asp-action="Edit" asp-route-id="@item.Category.Id"
-                                       class="adm-icon-btn" title="Sửa danh mục">
+                                       class="adm-btn-table-action" style="height: 30px; width: 30px; padding: 0; justify-content: center;" title="Chỉnh sửa danh mục">
                                         <i class="bi bi-pencil"></i>
                                     </a>
 
@@ -417,9 +421,9 @@ else
                                           asp-route-sort="@currentSort" asp-route-page="@ViewBag.Page" method="post" class="d-inline m-0 p-0">
                                         @Html.AntiForgeryToken()
                                         <input type="hidden" name="isActive" value="@((!item.Category.IsActive).ToString())" />
-                                        <button type="submit" class="adm-icon-btn @(item.Category.IsActive ? "" : "text-success")"
+                                        <button type="submit" class="adm-btn-table-action" style="height: 30px; width: 30px; padding: 0; justify-content: center;"
                                                 title="@(item.Category.IsActive ? "Tắt danh mục" : "Bật danh mục")">
-                                            <i class="bi @(item.Category.IsActive ? "bi-eye-slash" : "bi-eye")"></i>
+                                            <i class="bi @(item.Category.IsActive ? "bi-eye" : "bi-eye-slash text-danger")"></i>
                                         </button>
                                     </form>
                                 </div>
