@@ -203,9 +203,11 @@ else
                                 }
                             </td>
                             <td class="text-end pe-4">
-                                <a asp-action="Details" asp-route-id="@item.Id" class="adm-action-btn adm-btn-secondary py-1 px-3" style="font-size: 0.78rem;" title="Xem chi tiết ticket">
-                                    Chi tiết <i class="bi bi-chevron-right ms-1"></i>
-                                </a>
+                                <div class="d-inline-flex gap-1 justify-content-end">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="adm-btn-table-action" title="Xem chi tiết ticket">
+                                        <i class="bi bi-eye"></i> <span>Chi tiết</span>
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                     }

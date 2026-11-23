@@ -875,8 +875,8 @@ body.adm-body {
 }
 
 /* STANDALONE CONTROLS */
-.adm-body .form-control:not(.input-group > .form-control),
-.adm-body .adm-input-dark:not(.input-group > .adm-input-dark),
+.adm-body .form-control:not(.input-group > .form-control):not(textarea),
+.adm-body .adm-input-dark:not(.input-group > .adm-input-dark):not(textarea),
 .adm-body .form-select {
     width: 100%;
     height: 38px !important;
@@ -890,9 +890,26 @@ body.adm-body {
     transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
 }
 
-[data-theme="dark"] .adm-body .form-control:not(.input-group > .form-control),
-[data-theme="dark"] .adm-body .adm-input-dark:not(.input-group > .adm-input-dark),
-[data-theme="dark"] .adm-body .form-select {
+.adm-body textarea.form-control,
+.adm-body textarea.adm-input-dark {
+    width: 100%;
+    height: auto !important;
+    min-height: 85px !important;
+    padding: 10px 12px !important;
+    background-color: var(--adm-surface) !important;
+    border: 1px solid var(--adm-border) !important;
+    border-radius: 8px !important;
+    color: var(--adm-ink) !important;
+    font-size: 0.86rem !important;
+    line-height: 1.5 !important;
+    resize: vertical;
+}
+
+[data-theme="dark"] .adm-body .form-control:not(.input-group > .form-control):not(textarea),
+[data-theme="dark"] .adm-body .adm-input-dark:not(.input-group > .adm-input-dark):not(textarea),
+[data-theme="dark"] .adm-body .form-select,
+[data-theme="dark"] .adm-body textarea.form-control,
+[data-theme="dark"] .adm-body textarea.adm-input-dark {
     background-color: var(--adm-surface) !important;
     border-color: var(--adm-border) !important;
     color: var(--adm-ink) !important;
@@ -900,6 +917,8 @@ body.adm-body {
 
 .adm-body .form-control:not(.input-group > .form-control):focus,
 .adm-body .adm-input-dark:not(.input-group > .adm-input-dark):focus,
+.adm-body textarea.form-control:focus,
+.adm-body textarea.adm-input-dark:focus,
 .adm-body .form-select:focus {
     border-color: #0F172A !important;
     box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.08) !important;
@@ -908,6 +927,8 @@ body.adm-body {
 
 [data-theme="dark"] .adm-body .form-control:not(.input-group > .form-control):focus,
 [data-theme="dark"] .adm-body .adm-input-dark:not(.input-group > .adm-input-dark):focus,
+[data-theme="dark"] .adm-body textarea.form-control:focus,
+[data-theme="dark"] .adm-body textarea.adm-input-dark:focus,
 [data-theme="dark"] .adm-body .form-select:focus {
     border-color: #38BDF8 !important;
     box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15) !important;
