@@ -3,6 +3,7 @@ using System.Security.Claims;
 using FashionStore.Data;
 using FashionStore.Models.Entities;
 using FashionStore.Models.Enums;
+using FashionStore.Models.ViewModels;
 using FashionStore.Services.Implementations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -339,36 +340,180 @@ public partial class AdminOperationsController(ApplicationDbContext db) : Contro
         RedirectToAction(nameof(Analytics), null, null, "best-selling-products");
 
     [HttpGet]
-    public async Task<IActionResult> Alerts()
+    public async Task<IActionResult> Alerts(string? filter = "all")
     {
-        ViewBag.NewOrders = await db.Orders.CountAsync(o => o.Status == OrderStatus.PendingConfirmation);
-        ViewBag.LowStock = await db.ProductVariants.CountAsync(v => v.IsActive && v.StockQuantity <= 5);
-        ViewBag.FailedShipments = await db.Shipments.CountAsync(s => s.Status == ShipmentStatus.Failed);
-        ViewBag.PendingReturns = await db.MerchandiseReturns.CountAsync(r => r.State == ReturnState.Requested);
+        filter = string.IsNullOrWhiteSpace(filter) ? "all" : filter.Trim().ToLowerInvariant();
 
-        ViewBag.CriticalVariants = await db.ProductVariants
+        var newOrdersCount = await db.Orders.CountAsync(o => o.Status == OrderStatus.PendingConfirmation);
+        var lowStockCount = await db.ProductVariants.CountAsync(v => v.IsActive && v.StockQuantity <= 5);
+        var failedShipmentsCount = await db.Shipments.CountAsync(s => s.Status == ShipmentStatus.Failed);
+        var pendingReturnsCount = await db.MerchandiseReturns.CountAsync(r => r.State == ReturnState.Requested);
+
+        var notifications = new List<AdminNotificationItem>();
+
+        // 1. Pending Orders
+        var pendingOrders = await db.Orders.AsNoTracking()
+            .Where(o => o.Status == OrderStatus.PendingConfirmation)
+            .OrderByDescending(o => o.CreatedAt)
+            .Take(15)
+            .ToListAsync();
+
+        foreach (var order in pendingOrders)
+        {
+            notifications.Add(new AdminNotificationItem
+            {
+                Type = "Order",
+                Title = $"Đơn hàng #{order.OrderCode} chờ xác nhận xuất kho",
+                Description = $"Khách nhận: {order.ReceiverName} ({order.Phone}) · Giá trị đơn: {order.TotalAmount:N0} ₫. Vui lòng xác nhận để chuyển đơn sang bộ phận điều phối vận chuyển.",
+                BadgeText = "Chờ xác nhận",
+                BadgeClass = "adm-pill-amber",
+                Icon = "bi-receipt",
+                IconColor = "#D97706",
+                IconBg = "rgba(245, 158, 11, 0.12)",
+                Timestamp = order.CreatedAt,
+                ActionUrl = $"/AdminOrders/Details/{order.Id}",
+                ActionText = "Duyệt đơn",
+                IsUrgent = true
+            });
+        }
+
+        // 2. Low Stock Variants (Top critical)
+        var criticalVariants = await db.ProductVariants.AsNoTracking()
             .Include(v => v.Product)
             .Where(v => v.IsActive && v.StockQuantity <= 5)
             .OrderBy(v => v.StockQuantity)
             .ThenBy(v => v.Id)
-            .Take(8)
-            .AsNoTracking()
+            .Take(15)
             .ToListAsync();
 
-        ViewBag.PendingOrders = await db.Orders
-            .Where(o => o.Status == OrderStatus.PendingConfirmation)
-            .OrderByDescending(o => o.CreatedAt)
-            .Take(5)
-            .AsNoTracking()
+        foreach (var v in criticalVariants)
+        {
+            var isOut = v.StockQuantity == 0;
+            notifications.Add(new AdminNotificationItem
+            {
+                Type = "Stock",
+                Title = isOut ? $"Hết hàng: {v.Product?.Name} ({v.Size} · {v.Color})" : $"Cảnh báo tồn thấp: {v.Product?.Name} ({v.Size} · {v.Color})",
+                Description = $"Mã SKU {v.SKU} hiện chỉ còn {v.StockQuantity} sản phẩm trong kho Showroom. Cần lập kế hoạch nhập bổ sung để tránh gián đoạn kinh doanh.",
+                BadgeText = isOut ? "Hết hàng (0)" : $"Còn lại {v.StockQuantity}",
+                BadgeClass = isOut ? "adm-pill-rose" : "adm-pill-amber",
+                Icon = "bi-boxes",
+                IconColor = isOut ? "#E11D48" : "#D97706",
+                IconBg = isOut ? "rgba(225, 29, 72, 0.12)" : "rgba(245, 158, 11, 0.12)",
+                Timestamp = DateTime.UtcNow,
+                ActionUrl = $"/AdminOperations/Stock/{v.Id}",
+                ActionText = "Cập nhật tồn",
+                IsUrgent = isOut
+            });
+        }
+
+        // 3. Failed Shipments
+        var failedShipments = await db.Shipments.AsNoTracking()
+            .Include(s => s.Order)
+            .Where(s => s.Status == ShipmentStatus.Failed)
+            .OrderByDescending(s => s.UpdatedAt)
+            .Take(10)
             .ToListAsync();
 
-        ViewBag.RecentEvents = await db.AdminAuditEvents
-            .OrderByDescending(e => e.Id)
-            .Take(6)
-            .AsNoTracking()
+        foreach (var ship in failedShipments)
+        {
+            var noteDetail = string.IsNullOrWhiteSpace(ship.Note) ? "" : $": \"{ship.Note}\"";
+            notifications.Add(new AdminNotificationItem
+            {
+                Type = "Shipment",
+                Title = $"Giao không thành công: Vận đơn #{ship.TrackingCode}",
+                Description = $"Đơn hàng #{ship.Order?.OrderCode} giao thất bại{noteDetail}. Cần kiểm tra lý do và điều phối lại Shipper giao lại.",
+                BadgeText = "Giao thất bại",
+                BadgeClass = "adm-pill-rose",
+                Icon = "bi-truck",
+                IconColor = "#EF4444",
+                IconBg = "rgba(239, 68, 68, 0.12)",
+                Timestamp = ship.UpdatedAt,
+                ActionUrl = $"/AdminShipments/Details/{ship.Id}",
+                ActionText = "Điều phối lại",
+                IsUrgent = true
+            });
+        }
+
+        // 4. Pending Merchandise Returns
+        var pendingReturns = await db.MerchandiseReturns.AsNoTracking()
+            .Include(r => r.Order)
+            .Where(r => r.State == ReturnState.Requested)
+            .OrderByDescending(r => r.CreatedAt)
+            .Take(10)
             .ToListAsync();
 
-        return View();
+        foreach (var ret in pendingReturns)
+        {
+            notifications.Add(new AdminNotificationItem
+            {
+                Type = "Return",
+                Title = $"Yêu cầu đổi trả RMA mới: Đơn #{ret.Order?.OrderCode}",
+                Description = $"Khách hàng gửi yêu cầu đổi/trả với lý do: \"{ret.Reason}\". Vui lòng thẩm định tình trạng sản phẩm và đối soát chính sách trả hàng 14 ngày.",
+                BadgeText = "Chờ thẩm định",
+                BadgeClass = "adm-pill-blue",
+                Icon = "bi-arrow-counterclockwise",
+                IconColor = "#2563EB",
+                IconBg = "rgba(37, 99, 235, 0.12)",
+                Timestamp = ret.CreatedAt,
+                ActionUrl = "/AdminOperations/Returns",
+                ActionText = "Thẩm định RMA",
+                IsUrgent = true
+            });
+        }
+
+        // 5. Reported Reviews
+        var reportedReviews = await db.ProductReviews.AsNoTracking()
+            .Include(r => r.Product)
+            .Where(r => r.IsReported)
+            .OrderByDescending(r => r.CreatedAt)
+            .Take(10)
+            .ToListAsync();
+
+        foreach (var rev in reportedReviews)
+        {
+            notifications.Add(new AdminNotificationItem
+            {
+                Type = "Review",
+                Title = $"Đánh giá bị báo cáo vi phạm: {rev.Product?.Name}",
+                Description = $"Đánh giá {rev.Rating}★ từ khách hàng: \"{rev.Comment}\". Vui lòng kiểm duyệt nội dung trước khi xuất bản ra trang chi tiết sản phẩm.",
+                BadgeText = "Bị báo cáo",
+                BadgeClass = "adm-pill-rose",
+                Icon = "bi-chat-square-quote",
+                IconColor = "#E11D48",
+                IconBg = "rgba(225, 29, 72, 0.12)",
+                Timestamp = rev.CreatedAt,
+                ActionUrl = "/AdminOperations/Reviews",
+                ActionText = "Kiểm duyệt",
+                IsUrgent = true
+            });
+        }
+
+        // Filter
+        var filteredList = filter switch
+        {
+            "orders" => notifications.Where(n => n.Type == "Order").ToList(),
+            "stock" => notifications.Where(n => n.Type == "Stock").ToList(),
+            "shipment" => notifications.Where(n => n.Type == "Shipment").ToList(),
+            "returns" => notifications.Where(n => n.Type is "Return" or "Review").ToList(),
+            _ => notifications
+        };
+
+        var sortedList = filteredList
+            .OrderByDescending(n => n.IsUrgent)
+            .ThenByDescending(n => n.Timestamp)
+            .ToList();
+
+        var vm = new AdminAlertsViewModel
+        {
+            NewOrdersCount = newOrdersCount,
+            LowStockCount = lowStockCount,
+            FailedShipmentsCount = failedShipmentsCount,
+            PendingReturnsCount = pendingReturnsCount,
+            CurrentFilter = filter,
+            Notifications = sortedList
+        };
+
+        return View(vm);
     }
 
     [HttpGet, Authorize(Roles = "Admin")]
