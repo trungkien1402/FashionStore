@@ -3,6 +3,9 @@
 @{
     ViewData["Title"] = "Quản trị Nhân viên & Vận hành";
     var roles = (ILookup<string, string?>)ViewBag.Roles;
+    var adminCount = Model.Count(u => roles[u.Id].Contains("Admin"));
+    var shipperCount = Model.Count(u => roles[u.Id].Contains("Shipper"));
+    var staffCount = Model.Count(u => roles[u.Id].Contains("Staff") || roles[u.Id].Contains("Manager"));
 }
 
 <!-- EXECUTIVE HEADER -->
@@ -13,16 +16,16 @@
                 <span class="adm-pulse-dot"></span>
                 <span class="adm-kicker-text">HNMT ATELIER · QUẢN TRỊ</span>
                 <span class="adm-meta-divider">/</span>
-                <span class="adm-order-count-badge">@Model.Count nhân sự</span>
+                <span class="adm-order-count-badge">@Model.Count NHÂN SỰ VẬN HÀNH</span>
             </div>
             <h1 class="adm-title-main">Đội ngũ Nhân viên & Phân quyền</h1>
         </div>
         <div class="d-flex align-items-center gap-2">
-            <a asp-controller="AdminUsers" asp-action="Index" class="adm-action-btn adm-btn-secondary">
-                <i class="bi bi-people"></i> <span>Tất cả tài khoản</span>
+            <a asp-controller="AdminUsers" asp-action="Index" class="adm-btn-table-action text-decoration-none" style="height: 34px; padding: 0 14px; font-size: 0.8rem; font-weight: 500;" title="Quản lý toàn bộ danh sách tài khoản">
+                <i class="bi bi-people me-1"></i> Tất cả tài khoản
             </a>
-            <a asp-action="Staff" class="adm-action-btn adm-btn-secondary" title="Làm mới">
-                <i class="bi bi-arrow-clockwise"></i> <span>Làm mới</span>
+            <a asp-action="Staff" class="adm-btn-table-action text-decoration-none" style="height: 34px; padding: 0 14px; font-size: 0.8rem; font-weight: 500;" title="Làm mới danh sách">
+                <i class="bi bi-arrow-clockwise me-1"></i> Làm mới
             </a>
         </div>
     </div>
@@ -44,12 +47,57 @@
     </div>
 }
 
+<!-- TOP METRIC CARDS -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-lg-4">
+        <div class="adm-card p-3 shadow-sm">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small text-uppercase">Tổng nhân sự</div>
+                    <div class="fs-3 fw-bold font-monospace adm-heading mt-1">@Model.Count</div>
+                </div>
+                <div class="rounded-3 d-flex align-items-center justify-content-center" style="width: 44px; height: 44px; background: rgba(15, 23, 42, 0.06); color: #0F172A; font-size: 1.3rem;">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-4">
+        <div class="adm-card p-3 shadow-sm">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small text-uppercase">Quản trị viên (Admin)</div>
+                    <div class="fs-3 fw-bold font-monospace mt-1" style="color: #D97706;">@adminCount</div>
+                </div>
+                <div class="rounded-3 d-flex align-items-center justify-content-center" style="width: 44px; height: 44px; background: rgba(217, 119, 6, 0.1); color: #D97706; font-size: 1.3rem;">
+                    <i class="bi bi-shield-lock-fill"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-4">
+        <div class="adm-card p-3 shadow-sm">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted small text-uppercase">Đội ngũ Shipper</div>
+                    <div class="fs-3 fw-bold font-monospace mt-1" style="color: #2563EB;">@shipperCount</div>
+                </div>
+                <div class="rounded-3 d-flex align-items-center justify-content-center" style="width: 44px; height: 44px; background: rgba(37, 99, 235, 0.1); color: #2563EB; font-size: 1.3rem;">
+                    <i class="bi bi-truck"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- STAFF TABLE -->
 <div class="adm-card p-0 overflow-hidden mb-4 shadow-sm">
     <div class="p-3 border-bottom border-secondary border-opacity-10 d-flex justify-content-between align-items-center">
-        <h5 class="fw-bold mb-0 adm-heading fs-6">
-            <i class="bi bi-shield-lock me-2" style="color: var(--adm-gold, #D97706);"></i>Danh sách Nhân viên Vận hành
-        </h5>
-        <span class="badge" style="background: var(--adm-surface-hover, #F8FAFC); color: var(--adm-ink, #0F172A); border: 1px solid var(--adm-border, #CBD5E1);">Active Staff</span>
+        <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-person-badge fs-5" style="color: var(--adm-gold, #D97706);"></i>
+            <h5 class="fw-bold mb-0 adm-heading fs-6">Danh sách Nhân viên Vận hành Showroom</h5>
+        </div>
+        <span class="badge" style="background: var(--adm-surface-hover, #F8FAFC); color: var(--adm-ink, #0F172A); border: 1px solid var(--adm-border, #CBD5E1);">Active Personnel</span>
     </div>
 
     <div class="table-responsive">
@@ -57,9 +105,9 @@
             <thead>
                 <tr>
                     <th class="ps-4">NHÂN SỰ</th>
-                    <th>EMAIL & SĐT</th>
+                    <th>EMAIL &amp; SĐT</th>
                     <th>VAI TRÒ HIỆN TẠI</th>
-                    <th class="text-end pe-4" style="min-width: 280px;">ĐIỀU CHỈNH VAI TRÒ VẬN HÀNH</th>
+                    <th class="text-end pe-4" style="min-width: 320px;">ĐIỀU CHỈNH VAI TRÒ &amp; THAO TÁC</th>
                 </tr>
             </thead>
             <tbody>
@@ -109,27 +157,38 @@
                             </div>
                         </td>
                         <td class="text-end pe-4">
-                            @if (!isAdmin)
-                            {
-                                <form asp-action="SetStaffRole" asp-route-id="@user.Id" method="post" class="d-inline-flex gap-2 justify-content-end align-items-center">
-                                    @Html.AntiForgeryToken()
-                                    <select name="role" aria-label="Vai trò mới" class="form-select adm-input-dark py-1 px-2" style="font-size: 0.82rem; width: auto; min-width: 140px;">
-                                        @foreach (var role in new[] { "Manager", "Staff", "Shipper" })
-                                        {
-                                            <option value="@role" selected="@roles[user.Id].Contains(role)">@role</option>
-                                        }
-                                    </select>
-                                    <button type="submit" class="adm-action-btn adm-btn-secondary py-1 px-3" style="font-size: 0.78rem;">
-                                        <i class="bi bi-check2 me-1"></i> Lưu
-                                    </button>
-                                </form>
-                            }
-                            else
-                            {
-                                <span class="badge" style="background: rgba(245, 158, 11, 0.1); color: #B45309; font-size: 0.75rem;">
-                                    <i class="bi bi-lock-fill me-1"></i>Cấp Admin Tối Cao
-                                </span>
-                            }
+                            <div class="d-inline-flex gap-2 justify-content-end align-items-center">
+                                @if (!isAdmin)
+                                {
+                                    <form asp-action="SetStaffRole" asp-route-id="@user.Id" method="post" class="d-inline-flex gap-2 align-items-center m-0 p-0">
+                                        @Html.AntiForgeryToken()
+                                        <select name="role" aria-label="Vai trò mới" class="form-select adm-input-dark" style="font-size: 0.8rem; height: 32px; width: auto; min-width: 130px; padding: 4px 8px;">
+                                            @foreach (var role in new[] { "Manager", "Staff", "Shipper" })
+                                            {
+                                                <option value="@role" selected="@roles[user.Id].Contains(role)">@role</option>
+                                            }
+                                        </select>
+                                        <button type="submit" class="adm-btn-table-action"
+                                                style="height: 32px; padding: 0 12px; font-size: 0.76rem; background: #0F172A !important; color: #FFFFFF !important; border-color: #0F172A !important; font-weight: 600;"
+                                                title="Lưu vai trò mới">
+                                            <i class="bi bi-check2 me-1"></i> Lưu
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <span class="adm-pill adm-pill-amber fw-bold" style="font-size: 0.76rem;">
+                                        <i class="bi bi-lock-fill me-1"></i>Cấp Admin Tối Cao
+                                    </span>
+                                }
+
+                                <a asp-controller="AdminUsers" asp-action="Details" asp-route-id="@user.Id"
+                                   class="adm-btn-table-action text-decoration-none"
+                                   style="height: 32px; width: 32px; padding: 0; justify-content: center;"
+                                   title="Xem hồ sơ chi tiết &amp; lịch sử">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            </div>
                         </td>
                     </tr>
                 }

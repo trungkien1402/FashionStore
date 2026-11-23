@@ -12,13 +12,19 @@
                 <span class="adm-pulse-dot"></span>
                 <span class="adm-kicker-text">HNMT ATELIER · QUẢN TRỊ</span>
                 <span class="adm-meta-divider">/</span>
-                <span class="adm-order-count-badge">CẤU HÌNH</span>
+                <span class="adm-order-count-badge">CẤU HÌNH HỆ THỐNG</span>
             </div>
             <h1 class="adm-title-main">Cài đặt Hệ thống & Chính sách</h1>
         </div>
-        <div>
-            <a asp-action="Settings" class="adm-action-btn adm-btn-secondary" title="Làm mới">
-                <i class="bi bi-arrow-clockwise"></i> <span>Làm mới</span>
+        <div class="d-flex align-items-center gap-2">
+            <button type="button" onclick="document.getElementById('settingsForm').submit();"
+                    class="adm-btn-table-action"
+                    style="height: 38px; padding: 0 16px; background: #0F172A !important; color: #FFFFFF !important; border-color: #0F172A !important; font-size: 0.82rem; font-weight: 600;"
+                    title="Lưu cấu hình cài đặt">
+                <i class="bi bi-check2 me-1"></i> Lưu cấu hình
+            </button>
+            <a asp-action="Settings" class="adm-btn-table-action text-decoration-none" style="height: 38px; padding: 0 14px; font-size: 0.82rem;" title="Làm mới cài đặt">
+                <i class="bi bi-arrow-clockwise me-1"></i> Làm mới
             </a>
         </div>
     </div>
@@ -40,53 +46,125 @@
     </div>
 }
 
-<div class="row">
-    <div class="col-lg-8">
-        <div class="adm-card shadow-sm">
-            <div class="d-flex align-items-center gap-2 mb-3 pb-3 border-bottom border-secondary border-opacity-10">
-                <i class="bi bi-gear fs-5" style="color: var(--adm-gold, #D97706);"></i>
-                <h5 class="fw-bold mb-0 adm-heading">Chính sách Bán hàng & Phí Vận chuyển</h5>
-            </div>
+<form asp-action="Settings" method="post" id="settingsForm">
+    @Html.AntiForgeryToken()
 
-            <form asp-action="Settings" method="post">
-                @Html.AntiForgeryToken()
+    <div class="row g-4">
+        <!-- LEFT: FORM CONFIGURATION -->
+        <div class="col-lg-8">
+            <!-- 1. CHÍNH SÁCH BÁN HÀNG & PHÍ GIAO HÀNG -->
+            <div class="adm-card shadow-sm mb-4">
+                <div class="d-flex align-items-center gap-2 mb-3 pb-3 border-bottom border-secondary border-opacity-10">
+                    <i class="bi bi-truck fs-5" style="color: var(--adm-gold, #D97706);"></i>
+                    <h5 class="fw-bold mb-0 adm-heading">Chính sách Bán hàng & Phí Vận chuyển</h5>
+                </div>
 
                 <div class="mb-3">
                     <label asp-for="StoreName" class="adm-form-label fw-bold">Tên thương hiệu cửa hàng <span class="text-danger">*</span></label>
                     <input asp-for="StoreName" required maxlength="100" class="form-control adm-input-dark" placeholder="HNMT ATELIER & SHOWROOM" />
+                    <div class="text-muted small mt-1" style="font-size: 0.75rem;">Tên hiển thị chính thức trên hóa đơn, email xác nhận đơn và tiêu đề website.</div>
                 </div>
 
-                <div class="row g-3 mb-3">
+                <div class="row g-3">
                     <div class="col-md-6">
                         <label asp-for="ShippingFee" class="adm-form-label fw-bold">Phí giao hàng tiêu chuẩn (₫) <span class="text-danger">*</span></label>
-                        <input asp-for="ShippingFee" type="number" min="0" required class="form-control adm-input-dark font-monospace" />
-                        <div class="text-muted small mt-1" style="font-size: 0.75rem;">Mức phí ship mặc định áp dụng cho mọi đơn hàng.</div>
+                        <input asp-for="ShippingFee" type="number" min="0" required class="form-control adm-input-dark" />
+                        <div class="text-muted small mt-1" style="font-size: 0.75rem;">Mức phí ship mặc định áp dụng cho đơn hàng thông thường.</div>
                     </div>
 
                     <div class="col-md-6">
                         <label asp-for="FreeShippingThreshold" class="adm-form-label fw-bold">Ngưỡng miễn phí giao hàng (₫)</label>
-                        <input asp-for="FreeShippingThreshold" type="number" min="0" class="form-control adm-input-dark font-monospace" placeholder="Ví dụ: 500000" />
-                        <div class="text-muted small mt-1" style="font-size: 0.75rem;">Đơn hàng có giá trị &ge; số tiền này sẽ được freeship 100%.</div>
+                        <input asp-for="FreeShippingThreshold" type="number" min="0" class="form-control adm-input-dark" placeholder="Ví dụ: 500000" />
+                        <div class="text-muted small mt-1" style="font-size: 0.75rem;">Đơn hàng có tổng giá trị &ge; mức này sẽ được freeship 100%.</div>
                     </div>
+                </div>
+            </div>
+
+            <!-- 2. CHÍNH SÁCH ĐỔI TRẢ & HOÀN TIỀN -->
+            <div class="adm-card shadow-sm mb-4">
+                <div class="d-flex align-items-center gap-2 mb-3 pb-3 border-bottom border-secondary border-opacity-10">
+                    <i class="bi bi-arrow-return-left fs-5" style="color: var(--adm-gold, #D97706);"></i>
+                    <h5 class="fw-bold mb-0 adm-heading">Chính sách Đổi trả & Hoàn tiền</h5>
                 </div>
 
                 <div class="mb-3">
                     <label asp-for="ReturnWindowDays" class="adm-form-label fw-bold">Thời hạn cho phép gửi yêu cầu đổi trả (Số ngày) <span class="text-danger">*</span></label>
-                    <input asp-for="ReturnWindowDays" type="number" min="1" max="365" required class="form-control adm-input-dark font-monospace" style="max-width: 200px;" />
-                    <div class="text-muted small mt-1" style="font-size: 0.75rem;">Tính từ ngày đơn hàng chuyển sang trạng thái "Đã giao thành công".</div>
+                    <div style="max-width: 220px;">
+                        <input asp-for="ReturnWindowDays" type="number" min="1" max="365" required class="form-control adm-input-dark" />
+                    </div>
+                    <div class="text-muted small mt-1" style="font-size: 0.75rem;">Tính từ thời điểm đơn hàng được cập nhật trạng thái "Giao thành công".</div>
                 </div>
 
-                <div class="mb-4">
+                <div class="mb-2">
                     <label asp-for="ReturnPolicy" class="adm-form-label fw-bold">Điều khoản & Quy định đổi trả hàng</label>
-                    <textarea asp-for="ReturnPolicy" maxlength="1000" rows="5" class="form-control adm-input-dark" placeholder="Mô tả chi tiết điều kiện đổi trả: Hàng còn nguyên tem mác, chưa qua giặt tẩy, có video mở kiện hàng..."></textarea>
+                    <textarea asp-for="ReturnPolicy" maxlength="1000" rows="4" class="form-control adm-input-dark"
+                              placeholder="Mô tả chi tiết điều kiện đổi trả: Hàng còn nguyên tem mác, chưa qua giặt tẩy, có video mở kiện hàng..."></textarea>
+                    <div class="text-muted small mt-1" style="font-size: 0.75rem;">Nội dung này được hiển thị công khai tại trang Chính sách đổi trả để khách hàng tham khảo.</div>
+                </div>
+            </div>
+
+            <!-- ACTION BAR -->
+            <div class="d-flex justify-content-end gap-2 pt-2">
+                <button type="submit" class="adm-btn-table-action"
+                        style="height: 38px; padding: 0 20px; background: #0F172A !important; color: #FFFFFF !important; border-color: #0F172A !important; font-size: 0.84rem; font-weight: 600;">
+                    <i class="bi bi-check2 me-1"></i> Lưu cấu hình cài đặt
+                </button>
+            </div>
+        </div>
+
+        <!-- RIGHT: LIVE METRICS & ATELIER BEST PRACTICES -->
+        <div class="col-lg-4">
+            <!-- STATUS SUMMARY CARD -->
+            <div class="adm-card shadow-sm mb-4">
+                <div class="d-flex align-items-center gap-2 mb-3 pb-3 border-bottom border-secondary border-opacity-10">
+                    <i class="bi bi-shop fs-5" style="color: var(--adm-gold, #D97706);"></i>
+                    <h5 class="fw-bold mb-0 adm-heading">Tổng quan Showroom</h5>
                 </div>
 
-                <div class="pt-3 border-top border-secondary border-opacity-10 text-end">
-                    <button type="submit" class="adm-action-btn adm-btn-primary py-2 px-4">
-                        <i class="bi bi-save me-1"></i> Lưu cấu hình cài đặt
-                    </button>
+                <div class="d-flex flex-column gap-3 small">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-muted">Trạng thái Showroom:</span>
+                        <span class="adm-pill adm-pill-emerald shadow-sm">● Đang mở bán</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-muted">Phí ship hiện tại:</span>
+                        <strong class="adm-heading font-monospace">@Model.ShippingFee.ToString("N0") ₫</strong>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-muted">Ngưỡng Freeship:</span>
+                        <strong class="font-monospace" style="color: var(--adm-gold, #D97706);">
+                            @(Model.FreeShippingThreshold.HasValue ? Model.FreeShippingThreshold.Value.ToString("N0") + " ₫" : "Chưa đặt")
+                        </strong>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-muted">Hạn đổi trả:</span>
+                        <span class="badge" style="background: var(--adm-surface-hover, #F8FAFC); color: var(--adm-ink, #0F172A); border: 1px solid var(--adm-border, #CBD5E1);">@Model.ReturnWindowDays ngày</span>
+                    </div>
                 </div>
-            </form>
+            </div>
+
+            <!-- ATELIER GUIDE CARD -->
+            <div class="adm-card shadow-sm">
+                <div class="d-flex align-items-center gap-2 mb-3 pb-3 border-bottom border-secondary border-opacity-10">
+                    <i class="bi bi-lightbulb fs-5" style="color: var(--adm-gold, #D97706);"></i>
+                    <h5 class="fw-bold mb-0 adm-heading">Gợi ý Vận hành Atelier</h5>
+                </div>
+
+                <div class="d-flex flex-column gap-3 small text-muted" style="line-height: 1.6;">
+                    <div>
+                        <strong class="adm-heading d-block mb-1">💡 Tối ưu giá trị giỏ hàng (AOV):</strong>
+                        Đặt ngưỡng miễn phí giao hàng cao hơn giá trị trung bình mỗi đơn từ 15% - 25% sẽ kích thích khách hàng mua thêm phụ kiện hoặc sản phẩm bổ trợ.
+                    </div>
+                    <div class="pt-2 border-top border-secondary border-opacity-10">
+                        <strong class="adm-heading d-block mb-1">📦 Đồng bộ đơn vị vận chuyển:</strong>
+                        Phí ship này được áp dụng tự động trong toàn bộ luồng Checkout và đồng bộ trực tiếp vào module Điều phối Shipper.
+                    </div>
+                    <div class="pt-2 border-top border-secondary border-opacity-10">
+                        <strong class="adm-heading d-block mb-1">🛡️ Bảo chứng thương hiệu:</strong>
+                        Thời hạn đổi trả 14 - 30 ngày giúp gia tăng đáng kể uy tín thương hiệu đối với dòng thời trang cao cấp.
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+</form>
