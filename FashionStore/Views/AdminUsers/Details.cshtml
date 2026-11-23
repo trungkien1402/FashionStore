@@ -192,7 +192,7 @@
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="id" value="@Model.User.Id" />
                 <div class="flex-grow-1" style="min-width: 200px;">
-                    <input type="password" name="newPassword" class="form-control adm-input-dark font-monospace" placeholder="Nhập mật khẩu mới (tối thiểu 6 ký tự)..." required minlength="6" />
+                    <input type="password" name="newPassword" class="form-control adm-input-dark" placeholder="Nhập mật khẩu mới (tối thiểu 6 ký tự)..." required minlength="6" />
                 </div>
                 <button type="submit" class="adm-btn-table-action" style="height: 38px; padding: 0 16px; font-size: 0.82rem; font-weight: 500;"
                         onclick="return confirm('Bạn có chắc chắn muốn đặt lại mật khẩu cho tài khoản này?');">
