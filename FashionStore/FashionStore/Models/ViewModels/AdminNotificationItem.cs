@@ -8,6 +8,13 @@ public class AdminNotificationItem
     public string Type { get; set; } = "Order"; // "Order", "Stock", "Shipment", "Return", "Review", "System"
     public string Title { get; set; } = "";
     public string Description { get; set; } = "";
+    public string? Subtitle { get; set; }
+    public string? Sku { get; set; }
+    public string? Size { get; set; }
+    public string? Color { get; set; }
+    public int? StockQuantity { get; set; }
+    public string? HighlightText { get; set; }
+    public string? HighlightClass { get; set; }
     public string BadgeText { get; set; } = "";
     public string BadgeClass { get; set; } = "";
     public string Icon { get; set; } = "bi-bell";

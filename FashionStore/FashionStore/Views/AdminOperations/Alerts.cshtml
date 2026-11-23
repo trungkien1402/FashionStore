@@ -202,30 +202,94 @@
                 <div class="d-flex flex-column">
                     @foreach (var item in Model.Notifications)
                     {
-                        <div class="p-3 border-bottom border-secondary border-opacity-10 d-flex align-items-center justify-content-between gap-3 adm-feed-row"
+                        <div class="p-3 border-bottom border-secondary border-opacity-10 d-flex flex-wrap flex-md-nowrap align-items-center justify-content-between gap-3 adm-feed-row"
                              style="transition: background-color 0.15s ease;">
+                            <!-- LEFT: ICON & METADATA -->
                             <div class="d-flex align-items-center gap-3 flex-grow-1 min-w-0">
                                 <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
-                                     style="width: 38px; height: 38px; background: @item.IconBg; color: @item.IconColor; font-size: 1.15rem;">
+                                     style="width: 42px; height: 42px; background: @item.IconBg; color: @item.IconColor; font-size: 1.2rem;">
                                     <i class="bi @item.Icon"></i>
                                 </div>
                                 <div class="flex-grow-1 min-w-0">
-                                    <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
-                                        <span class="fw-bold adm-heading text-truncate" style="font-size: 0.86rem;">@item.Title</span>
-                                        <span class="adm-pill @item.BadgeClass" style="font-size: 0.7rem; padding: 2px 8px;">
-                                            @item.BadgeText
-                                        </span>
+                                    <!-- TITLE & TIME -->
+                                    <div class="d-flex flex-wrap align-items-center gap-2 mb-1.5">
+                                        <span class="fw-bold adm-heading text-truncate" style="font-size: 0.9rem;">@item.Title</span>
                                         <span class="text-muted ms-auto pe-2" style="font-size: 0.72rem;">
                                             <i class="bi bi-clock me-1"></i>@FormatTime(item.Timestamp)
                                         </span>
                                     </div>
-                                    <div class="text-muted text-truncate" style="font-size: 0.78rem;">
-                                        @item.Description
-                                    </div>
+
+                                    <!-- VARIANT BADGES OR DETAILS SUBTITLE -->
+                                    @if (item.Type == "Stock")
+                                    {
+                                        <div class="d-flex flex-wrap align-items-center gap-2">
+                                            @if (!string.IsNullOrEmpty(item.Size))
+                                            {
+                                                <span class="badge" style="background: #F1F5F9; color: #0F172A; border: 1px solid #CBD5E1; font-size: 0.74rem; font-weight: 600;">
+                                                    Size @item.Size
+                                                </span>
+                                            }
+                                            @if (!string.IsNullOrEmpty(item.Color))
+                                            {
+                                                <span class="badge" style="background: #F1F5F9; color: #0F172A; border: 1px solid #CBD5E1; font-size: 0.74rem; font-weight: 500;">
+                                                    @item.Color
+                                                </span>
+                                            }
+                                            @if (!string.IsNullOrEmpty(item.Sku))
+                                            {
+                                                <span class="text-muted font-monospace" style="font-size: 0.74rem;">
+                                                    SKU: <code style="color: #475569; font-weight: 600;">@item.Sku</code>
+                                                </span>
+                                            }
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="text-muted text-truncate" style="font-size: 0.78rem;">
+                                            @item.Subtitle
+                                        </div>
+                                    }
                                 </div>
                             </div>
 
-                            <div class="flex-shrink-0 ps-2">
+                            <!-- RIGHT: PROMINENT KEY HIGHLIGHT BADGE + ACTION BUTTON -->
+                            <div class="d-flex align-items-center gap-3 flex-shrink-0 ps-md-2 ms-auto ms-md-0">
+                                @if (item.Type == "Stock")
+                                {
+                                    <div class="text-end">
+                                        @if (item.StockQuantity == 0)
+                                        {
+                                            <span class="adm-pill adm-pill-rose font-monospace fw-bold shadow-sm" style="font-size: 0.84rem; padding: 4px 12px; display: inline-flex; align-items: center; gap: 5px;">
+                                                <span class="rounded-circle" style="width: 7px; height: 7px; background: #E11D48;"></span>
+                                                HẾT HÀNG: 0
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="adm-pill adm-pill-amber font-monospace fw-bold shadow-sm" style="font-size: 0.84rem; padding: 4px 12px; display: inline-flex; align-items: center; gap: 5px;">
+                                                <span class="rounded-circle" style="width: 7px; height: 7px; background: #D97706;"></span>
+                                                TỒN KHO: @item.StockQuantity
+                                            </span>
+                                        }
+                                    </div>
+                                }
+                                else if (item.Type == "Order")
+                                {
+                                    <div class="text-end">
+                                        <span class="adm-pill adm-pill-amber font-monospace fw-bold shadow-sm" style="font-size: 0.84rem; padding: 4px 12px;">
+                                            @item.HighlightText
+                                        </span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="text-end">
+                                        <span class="adm-pill @item.HighlightClass font-monospace fw-bold shadow-sm" style="font-size: 0.84rem; padding: 4px 12px;">
+                                            @item.HighlightText
+                                        </span>
+                                    </div>
+                                }
+
                                 <a href="@item.ActionUrl" class="adm-btn-table-action text-decoration-none" style="height: 32px; font-size: 0.76rem; padding: 0 12px;" title="@item.ActionText">
                                     <span>@item.ActionText</span> <i class="bi bi-chevron-right ms-1"></i>
                                 </a>
@@ -262,14 +326,17 @@
             @if (Model.RecentEvents.Any())
             {
                 <div class="p-3">
-                    <div class="d-flex flex-column gap-3">
+                    <div class="d-flex flex-column">
                         @foreach (var ev in Model.RecentEvents)
                         {
-                            <div class="d-flex align-items-start gap-2.5 pb-2.5 border-bottom border-secondary border-opacity-10 last-border-0">
-                                <span class="adm-pulse-dot flex-shrink-0 mt-1.5"></span>
+                            <div class="d-flex align-items-start pb-2 mb-2 border-bottom border-secondary border-opacity-10 last-border-0">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 me-2 mt-1"
+                                     style="width: 22px; height: 22px; background: rgba(16, 185, 129, 0.12); color: #10B981; font-size: 0.75rem;">
+                                    <i class="bi bi-check2"></i>
+                                </div>
                                 <div class="flex-grow-1" style="font-size: 0.78rem;">
                                     <div class="d-flex justify-content-between align-items-center mb-0.5">
-                                        <strong class="adm-heading font-monospace">@ev.Action</strong>
+                                        <strong class="adm-heading font-monospace" style="color: #0F172A;">@ev.Action</strong>
                                         <span class="text-muted font-monospace" style="font-size: 0.7rem;">@ev.CreatedAt.AddHours(7).ToString("HH:mm · dd/MM")</span>
                                     </div>
                                     <div class="text-muted text-break" style="line-height: 1.4;">
@@ -298,7 +365,7 @@
 
             <div class="d-flex flex-column gap-2">
                 <a asp-action="Inventory" class="adm-btn-table-action justify-content-between text-decoration-none py-2 px-3" style="height: auto; font-size: 0.8rem;">
-                    <span><i class="bi bi-boxes me-2 text-muted"></i> Kiểm kê &amp; Tồn kho Showroom</span>
+                    <span><i class="bi bi-boxes me-2 text-muted"></i> Quản lý &amp; Kiểm kê Kho</span>
                     <i class="bi bi-chevron-right text-muted"></i>
                 </a>
                 <a asp-controller="AdminShipments" asp-action="Index" class="adm-btn-table-action justify-content-between text-decoration-none py-2 px-3" style="height: auto; font-size: 0.8rem;">
