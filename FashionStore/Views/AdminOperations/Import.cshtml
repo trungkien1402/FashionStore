@@ -17,57 +17,177 @@
             <h1 class="adm-title-main">Nhập Sản Phẩm Hàng Loạt (Excel)</h1>
         </div>
         <div class="d-flex align-items-center gap-2">
-            <a asp-action="ImportTemplate" class="adm-btn-table-action text-decoration-none" style="height: 34px; padding: 0 14px; font-size: 0.8rem; font-weight: 500;">
-                <i class="bi bi-file-earmark-arrow-down me-1"></i> Tải tệp mẫu (.xlsx)
+            <a asp-action="ImportTemplate" class="adm-action-btn adm-btn-secondary" title="Tải file Excel mẫu">
+                <i class="bi bi-file-earmark-arrow-down"></i> <span>Tải tệp mẫu (.xlsx)</span>
             </a>
-            <a asp-controller="AdminProducts" asp-action="Index" class="adm-btn-table-action text-decoration-none" style="height: 34px; padding: 0 14px; font-size: 0.8rem; font-weight: 500;">
-                <i class="bi bi-box-seam me-1"></i> Về danh sách sản phẩm
+            <a asp-controller="AdminProducts" asp-action="Index" class="adm-action-btn adm-btn-secondary" title="Về danh sách sản phẩm">
+                <i class="bi bi-box-seam"></i> <span>Danh sách sản phẩm</span>
             </a>
         </div>
     </div>
 </div>
 
-<!-- FILE UPLOAD CARD -->
-<div class="adm-card shadow-sm mb-4">
-    <div class="d-flex align-items-center gap-2 mb-3 pb-3 border-bottom border-secondary border-opacity-10">
-        <i class="bi bi-file-earmark-excel fs-5" style="color: #10B981;"></i>
-        <h5 class="fw-bold mb-0 adm-heading">Tải lên tệp bảng tính Excel (.xlsx)</h5>
+<!-- 2-COLUMN LAYOUT: UPLOAD ZONE (8 COLS) & TEMPLATE SPECS (4 COLS) -->
+<div class="row g-4 mb-4">
+    <!-- LEFT: DROPZONE UPLOAD FORM (8 cols) -->
+    <div class="col-lg-8">
+        <div class="adm-card shadow-sm p-4 h-100 d-flex flex-column justify-content-between">
+            <div>
+                <div class="d-flex align-items-center gap-2 mb-3 pb-3 border-bottom border-secondary border-opacity-10">
+                    <i class="bi bi-file-earmark-excel fs-5" style="color: #10B981;"></i>
+                    <h5 class="fw-bold mb-0 adm-heading fs-6">Tải lên tệp bảng tính Excel (.xlsx)</h5>
+                </div>
+
+                <form asp-action="Import" method="post" enctype="multipart/form-data" id="importForm">
+                    @Html.AntiForgeryToken()
+
+                    <!-- INTERACTIVE DROPZONE -->
+                    <div id="dropZone" class="p-4 rounded-3 text-center mb-3"
+                         style="border: 2px dashed var(--adm-border, #CBD5E1); background: var(--adm-surface-hover, #F8FAFC); cursor: pointer; transition: all 0.2s ease;">
+                        <input id="excelFileInput" name="file" type="file" accept=".xlsx" required class="d-none" />
+
+                        <div id="dropZoneIdle">
+                            <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                                 style="width: 56px; height: 56px; background: rgba(16, 185, 129, 0.12); color: #10B981; font-size: 1.6rem;">
+                                <i class="bi bi-cloud-arrow-up"></i>
+                            </div>
+                            <h6 class="fw-bold adm-heading mb-1" style="font-size: 0.95rem;">
+                                Kéo &amp; thả tệp Excel (.xlsx) vào đây
+                            </h6>
+                            <p class="text-muted small mb-2" style="font-size: 0.78rem;">
+                                hoặc <span class="fw-semibold text-primary" style="text-decoration: underline;">bấm để duyệt tệp từ máy tính</span>
+                            </p>
+                            <span class="badge bg-secondary bg-opacity-10 text-muted" style="font-size: 0.72rem;">
+                                Định dạng .xlsx · Dung lượng tối đa 2 MB · Tối đa 500 dòng
+                            </span>
+                        </div>
+
+                        <div id="dropZoneSelected" class="d-none">
+                            <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-2"
+                                 style="width: 48px; height: 48px; background: rgba(16, 185, 129, 0.15); color: #10B981; font-size: 1.4rem;">
+                                <i class="bi bi-file-earmark-check"></i>
+                            </div>
+                            <div class="fw-bold adm-heading mb-1" id="selectedFileName" style="font-size: 0.92rem;">
+                                ten_tep.xlsx
+                            </div>
+                            <div class="text-muted small mb-2 font-monospace" id="selectedFileSize" style="font-size: 0.75rem;">
+                                0 KB
+                            </div>
+                            <span class="btn btn-sm btn-outline-secondary py-0 px-2" style="font-size: 0.74rem;">
+                                Chọn tệp khác
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- ACTION BUTTONS -->
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 pt-2 border-top border-secondary border-opacity-10">
+                        <span class="text-muted small" style="font-size: 0.76rem;">
+                            <i class="bi bi-info-circle me-1"></i> Khuyên dùng <strong>Kiểm tra trước</strong> để đối soát lỗi trước khi ghi dữ liệu.
+                        </span>
+                        <div class="d-flex align-items-center gap-2 ms-auto">
+                            <button type="submit" name="apply" value="false" class="adm-btn-table-action"
+                                    style="height: 36px; padding: 0 16px; font-size: 0.8rem; font-weight: 500;" title="Kiểm tra tính hợp lệ">
+                                <i class="bi bi-eye me-1.5"></i> Kiểm tra trước
+                            </button>
+                            <button type="submit" name="apply" value="true" class="adm-btn-table-action"
+                                    style="height: 36px; padding: 0 18px; font-size: 0.8rem; font-weight: 600; background: #0F172A !important; color: #FFFFFF !important; border-color: #0F172A !important;"
+                                    title="Nhập chính thức vào kho">
+                                <i class="bi bi-database-check me-1.5"></i> Nhập vào hệ thống
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
-    <form asp-action="Import" method="post" enctype="multipart/form-data">
-        @Html.AntiForgeryToken()
-        <div class="row g-3 align-items-center">
-            <div class="col-md-6">
-                <input name="file" type="file" accept=".xlsx" required aria-label="Tệp sản phẩm Excel" class="form-control adm-input-dark" />
-                <div class="text-muted small mt-1" style="font-size: 0.75rem;">
-                    Dung lượng tối đa 2 MB, tối đa 500 dòng. Các dòng có cùng slug sẽ được tự động gom thành biến thể của một sản phẩm.
+    <!-- RIGHT: TEMPLATE SPECIFICATION & SMART GROUPING (4 cols) -->
+    <div class="col-lg-4">
+        <!-- 1. TEMPLATE SPECS -->
+        <div class="adm-card shadow-sm p-4 mb-3">
+            <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-secondary border-opacity-10">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-columns-gap text-muted"></i>
+                    <h6 class="fw-bold mb-0 adm-heading" style="font-size: 0.88rem;">8 Cột Dữ liệu Chuẩn (.xlsx)</h6>
+                </div>
+                <a asp-action="ImportTemplate" class="text-primary text-decoration-none small fw-semibold" style="font-size: 0.75rem;">
+                    <i class="bi bi-download"></i> Tải mẫu
+                </a>
+            </div>
+
+            <div class="d-flex flex-column gap-2" style="font-size: 0.76rem;">
+                <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-secondary border-opacity-10">
+                    <span class="fw-semibold adm-heading">1. Tên sản phẩm</span>
+                    <span class="text-muted">Tối đa 150 ký tự</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-secondary border-opacity-10">
+                    <span class="fw-semibold adm-heading">2. Slug</span>
+                    <span class="text-muted font-monospace">duong-dan-seo</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-secondary border-opacity-10">
+                    <span class="fw-semibold adm-heading">3. Danh mục ID</span>
+                    <span class="text-muted">Mã số danh mục (số)</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-secondary border-opacity-10">
+                    <span class="fw-semibold adm-heading">4. Giá</span>
+                    <span class="text-muted font-monospace">VNĐ (không dấu chấm)</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-secondary border-opacity-10">
+                    <span class="fw-semibold adm-heading">5. SKU</span>
+                    <span class="text-muted font-monospace">Mã biến thể duy nhất</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-secondary border-opacity-10">
+                    <span class="fw-semibold adm-heading">6. Size &amp; 7. Màu</span>
+                    <span class="text-muted">Phân loại (XL, Đen...)</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center py-1">
+                    <span class="fw-semibold adm-heading">8. Tồn kho</span>
+                    <span class="text-muted">Số nguyên &ge; 0</span>
                 </div>
             </div>
-            <div class="col-md-6 d-flex gap-2 justify-content-md-end">
-                <button type="submit" name="apply" value="false" class="adm-btn-table-action" style="height: 38px; padding: 0 16px; font-size: 0.82rem; font-weight: 500;">
-                    <i class="bi bi-eye me-1"></i> Kiểm tra trước
-                </button>
-                <button type="submit" name="apply" value="true" class="adm-btn-table-action" style="height: 38px; padding: 0 18px; font-size: 0.82rem; font-weight: 600; background: #0F172A !important; color: #FFFFFF !important; border-color: #0F172A !important;">
-                    <i class="bi bi-cloud-arrow-up me-1"></i> Nhập vào hệ thống
-                </button>
-            </div>
         </div>
-    </form>
+
+        <!-- 2. SMART GROUPING RULE -->
+        <div class="adm-card shadow-sm p-4">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <i class="bi bi-lightbulb text-warning fs-5"></i>
+                <h6 class="fw-bold mb-0 adm-heading" style="font-size: 0.88rem;">Cơ chế Tự động Gom Biến thể</h6>
+            </div>
+            <p class="text-muted mb-0" style="font-size: 0.78rem; line-height: 1.45;">
+                Các dòng có <strong>cùng giá trị Slug</strong> sẽ được hệ thống tự động gộp thành <strong>1 sản phẩm</strong>. Mỗi dòng là 1 biến thể với Size, Màu, SKU và Số lượng tồn kho riêng.
+            </p>
+        </div>
+    </div>
 </div>
 
+<!-- STATUS ALERTS & PREVIEW DATA TABLE -->
 @if (Model.Applied)
 {
-    <div class="alert alert-success alert-dismissible fade show mb-4 shadow-sm" role="alert">
-        <i class="bi bi-check-circle-fill me-2"></i> Nhập thành công <strong>@Model.Rows.Count</strong> biến thể sản phẩm vào hệ thống Showroom.
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div class="alert alert-success alert-dismissible fade show mb-4 shadow-sm d-flex align-items-center gap-3 p-3 rounded-3" role="alert">
+        <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+             style="width: 38px; height: 38px; background: #10B981; color: #FFFFFF; font-size: 1.2rem;">
+            <i class="bi bi-check-lg"></i>
+        </div>
+        <div>
+            <div class="fw-bold adm-heading mb-0" style="font-size: 0.92rem; color: #065F46;">
+                Nhập kho thành công!
+            </div>
+            <div class="small" style="color: #047857; font-size: 0.78rem;">
+                Đã thêm <strong>@Model.Rows.Count</strong> biến thể sản phẩm mới vào cơ sở dữ liệu Showroom.
+            </div>
+        </div>
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 }
 
 @if (Model.Errors.Count > 0)
 {
-    <div class="alert alert-danger shadow-sm mb-4">
-        <div class="fw-bold mb-2"><i class="bi bi-exclamation-triangle-fill me-2"></i>Phát hiện lỗi định dạng dữ liệu trong tệp Excel:</div>
-        <ul class="mb-0 ps-3">
+    <div class="adm-card p-4 mb-4 shadow-sm" style="border-left: 4px solid #EF4444; background: #FEF2F2;">
+        <div class="d-flex align-items-center gap-2 mb-2 text-danger fw-bold" style="font-size: 0.9rem;">
+            <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+            <span>Phát hiện @Model.Errors.Count điểm cần sửa trong tệp Excel:</span>
+        </div>
+        <ul class="mb-0 ps-3 text-danger" style="font-size: 0.8rem; line-height: 1.5;">
             @foreach (var error in Model.Errors)
             {
                 <li>@error</li>
@@ -77,8 +197,21 @@
 }
 else if (!Model.Applied && Model.Rows.Count > 0)
 {
-    <div class="alert alert-info shadow-sm mb-4">
-        <i class="bi bi-info-circle-fill me-2"></i> Toàn bộ <strong>@Model.Rows.Count</strong> dòng hợp lệ. Bấm <strong>"Nhập vào hệ thống"</strong> để áp dụng thay đổi vào cơ sở dữ liệu.
+    <div class="adm-card p-3 mb-4 shadow-sm d-flex align-items-center justify-content-between gap-3" style="border-left: 4px solid #3B82F6; background: #EFF6FF;">
+        <div class="d-flex align-items-center gap-3">
+            <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                 style="width: 36px; height: 36px; background: #3B82F6; color: #FFFFFF; font-size: 1.1rem;">
+                <i class="bi bi-info-circle-fill"></i>
+            </div>
+            <div>
+                <div class="fw-bold adm-heading mb-0" style="font-size: 0.9rem; color: #1E40AF;">
+                    Tất cả @Model.Rows.Count dòng dữ liệu đều hợp lệ!
+                </div>
+                <div class="small" style="color: #1D4ED8; font-size: 0.78rem;">
+                    Bấm nút <strong>"Nhập vào hệ thống"</strong> ở trên để nạp chính thức vào cơ sở dữ liệu.
+                </div>
+            </div>
+        </div>
     </div>
 }
 
@@ -86,36 +219,52 @@ else if (!Model.Applied && Model.Rows.Count > 0)
 {
     <div class="adm-card p-0 overflow-hidden mb-4 shadow-sm">
         <div class="p-3 border-bottom border-secondary border-opacity-10 d-flex justify-content-between align-items-center">
-            <h5 class="fw-bold mb-0 adm-heading fs-6">
-                <i class="bi bi-table me-2" style="color: var(--adm-gold, #D97706);"></i>Dữ liệu xem trước (@Model.Rows.Count dòng)
-            </h5>
-            <span class="badge" style="background: var(--adm-surface-hover, #F8FAFC); color: var(--adm-ink, #0F172A); border: 1px solid var(--adm-border, #CBD5E1);">Preview</span>
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-table text-muted"></i>
+                <h5 class="fw-bold mb-0 adm-heading fs-6">
+                    Bảng xem trước dữ liệu nhập (@Model.Rows.Count dòng)
+                </h5>
+            </div>
+            <span class="adm-pill adm-pill-emerald" style="font-size: 0.72rem;">Preview Sẵn Sàng</span>
         </div>
 
         <div class="table-responsive">
             <table class="adm-table mb-0">
                 <thead>
                     <tr>
-                        <th class="ps-3" style="width: 70px;">DÒNG</th>
+                        <th class="ps-4" style="width: 70px;">DÒNG</th>
                         <th>TÊN SẢN PHẨM</th>
                         <th>MÃ SKU</th>
-                        <th>SIZE</th>
-                        <th>MÀU</th>
-                        <th class="text-end">GIÁ (₫)</th>
-                        <th class="text-end pe-3">TỒN KHO</th>
+                        <th>PHÂN LOẠI</th>
+                        <th class="text-end">GIÁ NIÊM YẾT</th>
+                        <th class="text-end pe-4">TỒN BAN ĐẦU</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var row in Model.Rows)
                     {
                         <tr>
-                            <td class="ps-3 font-monospace text-muted">#@row.Line</td>
+                            <td class="ps-4 font-monospace text-muted" style="font-size: 0.78rem;">#@row.Line</td>
                             <td class="fw-bold adm-heading">@row.Name</td>
-                            <td><code class="font-monospace">@row.Sku</code></td>
-                            <td><span class="badge" style="background: var(--adm-surface-hover, #F8FAFC); color: var(--adm-ink, #0F172A); border: 1px solid var(--adm-border, #CBD5E1);">@row.Size</span></td>
-                            <td><span class="badge" style="background: var(--adm-surface-hover, #F8FAFC); color: var(--adm-ink, #0F172A); border: 1px solid var(--adm-border, #CBD5E1);">@row.Color</span></td>
-                            <td class="text-end font-monospace fw-bold" style="color: var(--adm-gold, #D97706);">@row.Price.ToString("N0")</td>
-                            <td class="text-end pe-3 font-monospace fw-bold adm-heading">@row.Stock</td>
+                            <td><code class="font-monospace" style="color: #0F172A; font-weight: 600;">@row.Sku</code></td>
+                            <td>
+                                <div class="d-flex align-items-center gap-1">
+                                    <span class="badge" style="background: #F1F5F9; color: #0F172A; border: 1px solid #CBD5E1; font-size: 0.74rem;">
+                                        @row.Size
+                                    </span>
+                                    <span class="badge" style="background: #F1F5F9; color: #0F172A; border: 1px solid #CBD5E1; font-size: 0.74rem;">
+                                        @row.Color
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="text-end font-monospace fw-bold" style="color: var(--adm-ink, #0F172A); font-size: 0.84rem;">
+                                @row.Price.ToString("N0") ₫
+                            </td>
+                            <td class="text-end pe-4">
+                                <span class="adm-pill @(row.Stock > 0 ? "adm-pill-emerald" : "adm-pill-rose") font-monospace fw-bold" style="font-size: 0.78rem;">
+                                    @row.Stock sp
+                                </span>
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -123,3 +272,64 @@ else if (!Model.Applied && Model.Rows.Count > 0)
         </div>
     </div>
 }
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('excelFileInput');
+        const idleView = document.getElementById('dropZoneIdle');
+        const selectedView = document.getElementById('dropZoneSelected');
+        const fileNameEl = document.getElementById('selectedFileName');
+        const fileSizeEl = document.getElementById('selectedFileSize');
+
+        if (!dropZone || !fileInput) return;
+
+        // Click to open file chooser
+        dropZone.addEventListener('click', function () {
+            fileInput.click();
+        });
+
+        // Drag and Drop
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.style.borderColor = '#10B981';
+                dropZone.style.backgroundColor = 'rgba(16, 185, 129, 0.05)';
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.style.borderColor = 'var(--adm-border, #CBD5E1)';
+                dropZone.style.backgroundColor = 'var(--adm-surface-hover, #F8FAFC)';
+            }, false);
+        });
+
+        dropZone.addEventListener('drop', function (e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                handleFileSelect(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', function () {
+            if (this.files.length > 0) {
+                handleFileSelect(this.files[0]);
+            }
+        });
+
+        function handleFileSelect(file) {
+            if (!file) return;
+            fileNameEl.textContent = file.name;
+            const sizeKB = (file.size / 1024).toFixed(1);
+            fileSizeEl.textContent = sizeKB > 1024 ? (sizeKB / 1024).toFixed(2) + ' MB' : sizeKB + ' KB';
+            idleView.classList.add('d-none');
+            selectedView.classList.remove('d-none');
+        }
+    });
+</script>
