@@ -7,51 +7,80 @@
 .style-game-float {
     position: fixed;
     z-index: 95;
-    left: clamp(.75rem, 2vw, 1.75rem);
-    bottom: max(1.2rem, env(safe-area-inset-bottom));
+    left: clamp(1rem, 2.5vw, 1.75rem);
+    bottom: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    background: #0f172a;
+    color: #ffffff;
+    border-radius: 99rem;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    animation: styleGameSlideIn 0.35s ease-out;
 }
-.style-game-float[hidden] { display: none; }
+
+@keyframes styleGameSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.style-game-float:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.35);
+}
+
+.style-game-float[hidden] {
+    display: none !important;
+}
 
 .style-game-launcher {
     display: inline-flex;
     align-items: center;
-    gap: .5rem;
-    padding: .55rem 1rem;
-    border: 1px solid #0f172a;
-    border-radius: 99rem;
-    background: #0f172a;
+    gap: .55rem;
+    padding: .65rem 1rem .65rem 1.15rem;
     color: #ffffff;
-    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.2);
     text-decoration: none;
     font-size: .84rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all .2s ease;
+    background: transparent;
+    border: none;
 }
+
 .style-game-launcher:hover {
-    background: #1e293b;
-    color: #ffffff;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.3);
+    color: #f8fafc;
+}
+
+.style-game-icon {
+    font-size: .95rem;
+    color: #f59e0b;
 }
 
 .style-game-close {
-    position: absolute;
-    top: -5px;
-    right: -5px;
+    background: transparent;
+    border: 0;
+    border-left: 1px solid rgba(255, 255, 255, 0.15);
+    color: #94a3b8;
+    padding: .65rem .75rem;
+    font-size: .75rem;
+    cursor: pointer;
     display: grid;
     place-items: center;
-    width: 1.35rem;
-    height: 1.35rem;
-    border: 1px solid #e2e8f0;
-    border-radius: 50%;
-    background: #ffffff;
-    color: #64748b;
-    cursor: pointer;
-    font-size: .65rem;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: color 0.15s ease, background-color 0.15s ease;
 }
-.style-game-close:hover { color: #0f172a; }
+
+.style-game-close:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+}
 
 /* ==========================================================================
    STUDIO PAGE STYLES (MATCHING WEBSITE THEME)

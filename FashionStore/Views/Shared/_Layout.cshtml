@@ -212,6 +212,19 @@
     <script src="~/js/home-filter.js?v=home_filter_v5" asp-append-version="true"></script>
     <script src="~/js/auth-modal.js?v=auth_v1" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    @if (!string.Equals(ViewContext.RouteData.Values["controller"]?.ToString(), "StyleGame", StringComparison.OrdinalIgnoreCase))
+    {
+        <div class="style-game-float" data-style-game-float hidden>
+            <a asp-controller="StyleGame" asp-action="Index" class="style-game-launcher" draggable="false" aria-label="Chơi thiết kế để nhận voucher">
+                <i class="bi bi-gift-fill style-game-icon"></i>
+                <span class="style-game-label">Chơi nhận voucher</span>
+            </a>
+            <button type="button" class="style-game-close" aria-label="Đóng" title="Đóng">
+                <i class="bi bi-x-lg" aria-hidden="true"></i>
+            </button>
+        </div>
+        <script src="~/js/style-game-launcher.js" asp-append-version="true" defer></script>
+    }
     <partial name="_SupportChatWidget" />
     <script src="~/js/support-chat.js" asp-append-version="true" defer></script>
 </body>
