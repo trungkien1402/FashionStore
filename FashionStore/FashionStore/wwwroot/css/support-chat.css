@@ -324,31 +324,49 @@
     margin: 0 0 1.15rem;
 }
 
-.support-chat-guest a {
-    display: inline-flex;
+.support-guest-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    width: 100%;
+    padding: 0 1rem;
+    box-sizing: border-box;
+}
+
+.support-guest-actions a {
+    display: flex;
     align-items: center;
     justify-content: center;
-    gap: .45rem;
+    gap: .5rem;
     font-size: .84rem;
     font-weight: 600;
-    padding: .6rem 1.2rem;
-    background: #0f172a;
-    color: #ffffff;
+    padding: .65rem 1.2rem;
     border-radius: .55rem;
     text-decoration: none;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0 !important;
 }
 
-.support-chat-guest a:hover {
+.support-guest-actions .btn-login-support {
+    background: #0f172a;
+    color: #ffffff;
+    border: 1px solid #0f172a;
+}
+
+.support-guest-actions .btn-login-support:hover {
     background: #1e293b;
+    color: #ffffff;
 }
 
-.support-chat-guest .support-btn-alt {
+.support-guest-actions .btn-hotline-support {
     background: #f1f5f9;
     color: #0f172a;
     border: 1px solid #e2e8f0;
 }
 
-.support-chat-guest .support-btn-alt:hover {
+.support-guest-actions .btn-hotline-support:hover {
     background: #e2e8f0;
     color: #0f172a;
 }

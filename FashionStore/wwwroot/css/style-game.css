@@ -3,28 +3,20 @@
    Clean, modern, black & white e-commerce aesthetic
    ========================================================================== */
 
-/* --- FLOATING GAME LAUNCHER (BOTTOM-LEFT) --- */
+/* --- FLOATING GAME LAUNCHER (ROUND CIRCULAR GIFT BADGE) --- */
 .style-game-float {
     position: fixed;
     z-index: 95;
     left: clamp(1rem, 2.5vw, 1.75rem);
     bottom: 1.5rem;
-    display: inline-flex;
-    align-items: center;
-    background: #0f172a;
-    color: #ffffff;
-    border-radius: 99rem;
-    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.25);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    overflow: hidden;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    animation: styleGameSlideIn 0.35s ease-out;
+    display: block;
+    animation: styleGameSlideIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 @keyframes styleGameSlideIn {
     from {
         opacity: 0;
-        transform: translateY(12px) scale(0.95);
+        transform: translateY(16px) scale(0.85);
     }
     to {
         opacity: 1;
@@ -32,60 +24,95 @@
     }
 }
 
-.style-game-float:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.35);
-}
-
 .style-game-float[hidden] {
     display: none !important;
 }
 
 .style-game-launcher {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: .55rem;
-    padding: .35rem .95rem .35rem .6rem;
-    color: #ffffff;
+    justify-content: center;
+    position: relative;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 25%, #fff4fa, #f5b8e5 70%);
+    box-shadow: 0 8px 24px rgba(113, 39, 86, 0.35), inset 0 0 0 1px rgba(255, 255, 255, 0.7);
     text-decoration: none;
-    font-size: .84rem;
-    font-weight: 600;
     cursor: pointer;
-    background: transparent;
-    border: none;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+    user-select: none;
+    touch-action: none;
+    box-sizing: border-box;
 }
 
 .style-game-launcher:hover {
-    color: #f8fafc;
+    transform: scale(1.08) translateY(-2px);
+    box-shadow: 0 12px 30px rgba(113, 39, 86, 0.45);
 }
 
-.style-game-label {
-    line-height: 1;
+.style-game-launcher:active {
+    transform: scale(0.96);
+}
+
+/* Tooltip hover label */
+.style-game-hover-label {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
     white-space: nowrap;
+    padding: 5px 11px;
+    border-radius: 8px;
+    background: #0f172a;
+    color: #ffffff;
+    font-size: 0.76rem;
+    font-weight: 600;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 10;
 }
 
-/* --- ANIMATED GIFT BOX (3D GRADIENT + PLAYFUL GREET BOUNCE) --- */
+.style-game-hover-label::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -4px;
+    border-width: 4px;
+    border-style: solid;
+    border-color: #0f172a transparent transparent transparent;
+}
+
+.style-game-launcher:hover .style-game-hover-label,
+.style-game-launcher:focus-visible .style-game-hover-label {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* 3D Animated Gift Box Inside */
 .style-game-gift {
     position: relative;
-    width: 2.5rem;
-    height: 2.5rem;
-    flex-shrink: 0;
-    border-radius: 50%;
-    background: radial-gradient(circle at 35% 25%, #fff4fa, #f5b8e5 70%);
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6), 0 2px 6px rgba(0, 0, 0, 0.25);
+    width: 48px;
+    height: 48px;
+    display: block;
     transform: rotate(-8deg);
-    display: inline-block;
+    flex-shrink: 0;
 }
 
 .style-gift-box {
     position: absolute;
-    left: .48rem;
-    top: 1.05rem;
-    width: 1.5rem;
-    height: 1.05rem;
-    border-radius: .08rem .08rem .2rem .2rem;
+    left: 9px;
+    top: 20px;
+    width: 29px;
+    height: 20px;
+    border-radius: 2px 2px 4px 4px;
     background: linear-gradient(100deg, #ff9bc3, #f84993 55%, #c92472);
-    box-shadow: 1px 2px 3px rgba(162, 22, 89, 0.3);
+    box-shadow: 2px 3px 4px rgba(162, 22, 89, 0.3);
 }
 
 .style-gift-box::after,
@@ -99,65 +126,66 @@
 
 .style-gift-lid {
     position: absolute;
-    left: .35rem;
-    top: .8rem;
-    width: 1.75rem;
-    height: .35rem;
-    border-radius: .1rem;
+    left: 6px;
+    top: 15px;
+    width: 35px;
+    height: 7px;
+    border-radius: 2px;
     background: linear-gradient(100deg, #ffc0d9, #ff6aa8 60%, #df347f);
-    box-shadow: 0 1px 2px rgba(145, 27, 72, 0.3);
+    box-shadow: 0 2px 2px rgba(145, 27, 72, 0.3);
 }
 
 .style-gift-bow::before,
 .style-gift-bow::after {
     content: "";
     position: absolute;
-    top: .4rem;
-    width: .65rem;
-    height: .4rem;
-    border: 2px solid #fff9f6;
+    top: 7px;
+    width: 12px;
+    height: 9px;
+    border: 2.5px solid #fff9f6;
     box-shadow: 0 1px 2px rgba(126, 53, 106, 0.3);
 }
 
 .style-gift-bow::before {
-    left: .62rem;
+    left: 11px;
     border-radius: 80% 80% 0 80%;
     transform: rotate(24deg);
 }
 
 .style-gift-bow::after {
-    left: 1.2rem;
+    left: 23px;
     border-radius: 80% 80% 80% 0;
     transform: rotate(-24deg);
 }
 
 .style-gift-pencil {
     position: absolute;
-    right: -.05rem;
-    bottom: .05rem;
+    right: 0px;
+    bottom: 1px;
     display: grid;
     place-items: center;
-    width: 1rem;
-    height: 1rem;
+    width: 19px;
+    height: 19px;
     background: #fff6cf;
     color: #713f7d;
-    border: 1.5px solid #ffffff;
+    border: 2px solid #ffffff;
     border-radius: 50%;
-    font-size: .52rem;
+    font-size: 9px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
 }
 
 .style-gift-spark {
     position: absolute;
-    right: .05rem;
-    top: .05rem;
+    right: 2px;
+    top: 2px;
     color: #ffffff;
-    text-shadow: 0 1px 3px #7d297e;
-    font-size: .65rem;
+    text-shadow: 0 1px 4px #7d297e;
+    font-size: 11px;
 }
 
 @media (prefers-reduced-motion: no-preference) {
     .style-game-float:not([hidden]) .style-game-gift {
-        animation: style-gift-greet 1.6s ease-in-out infinite;
+        animation: style-gift-greet 1.8s ease-in-out infinite;
     }
     @keyframes style-gift-greet {
         0%, 100% { transform: rotate(-8deg); }
@@ -166,22 +194,30 @@
     }
 }
 
+/* Close button positioned neatly at top-right edge */
 .style-game-close {
-    background: transparent;
-    border: 0;
-    border-left: 1px solid rgba(255, 255, 255, 0.15);
-    color: #94a3b8;
-    padding: .65rem .75rem;
-    font-size: .75rem;
-    cursor: pointer;
+    position: absolute;
+    top: -4px;
+    right: -4px;
     display: grid;
     place-items: center;
-    transition: color 0.15s ease, background-color 0.15s ease;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #e2e8f0;
+    border-radius: 50%;
+    background: #ffffff;
+    color: #64748b;
+    cursor: pointer;
+    font-size: 9px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    transition: all 0.15s ease;
+    z-index: 2;
 }
 
 .style-game-close:hover {
-    color: #ffffff;
-    background: rgba(255, 255, 255, 0.1);
+    color: #0f172a;
+    background: #f8fafc;
+    transform: scale(1.1);
 }
 
 /* ==========================================================================
