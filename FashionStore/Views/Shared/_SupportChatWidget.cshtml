@@ -1,7 +1,10 @@
+@inject FashionStore.Services.AdminPresenceService PresenceService
 @{
     var customerChat = User.IsInRole("Customer");
+    var isBackOffice = FashionStore.Services.AccessRoles.CanUseBackOffice(User);
+    var isAdminOnline = PresenceService.IsAnyAdminOnline();
 }
-<div class="support-widget" data-support-chat data-thread="@Url.Action("Thread", "SupportChat")">
+<div class="support-widget" data-support-chat data-thread="@Url.Action("Thread", "SupportChat")" data-admin-online-url="@Url.Action("AdminOnline", "SupportChat")" data-admin-presence-sse-url="@Url.Action("PresenceStream", "SupportChat")">
     <!-- MAIN SUPPORT PANEL -->
     <section class="support-panel" id="storeSupportPanel" aria-label="Trung tâm hỗ trợ khách hàng" hidden>
         <!-- HEADER -->
@@ -10,7 +13,10 @@
                 <span class="support-avatar"><i class="bi bi-headset" aria-hidden="true"></i></span>
                 <div>
                     <strong>Hỗ trợ khách hàng</strong>
-                    <small>HNMTSHOP · Trực tuyến</small>
+                    <small data-admin-status>
+                        <span class="admin-presence-dot @(isAdminOnline ? "is-online" : "")" data-admin-status-dot></span>
+                        <span>HNMTSHOP · </span><span data-admin-status-text style="color: @(isAdminOnline ? "#22c55e" : "#94a3b8")">@(isAdminOnline ? "Đang hoạt động" : "Vắng mặt")</span>
+                    </small>
                 </div>
             </div>
             <button type="button" data-chat-hide aria-label="Thu gọn"><i class="bi bi-x-lg" aria-hidden="true"></i></button>

@@ -233,5 +233,10 @@
     }
     <partial name="_SupportChatWidget" />
     <script src="~/js/support-chat.js" asp-append-version="true" defer></script>
+    @if (FashionStore.Services.AccessRoles.CanUseBackOffice(User))
+    {
+        <div data-admin-presence-tracker data-heartbeat-url="@Url.Action("Heartbeat", "SupportChat")" data-away-url="@Url.Action("AdminAway", "SupportChat")" hidden></div>
+        <script src="~/js/admin-presence-tracker.js" asp-append-version="true" defer></script>
+    }
 </body>
 </html>

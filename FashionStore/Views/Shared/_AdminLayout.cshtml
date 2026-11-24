@@ -256,6 +256,8 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/admin-atelier.js" asp-append-version="true"></script>
     <script src="~/js/admin-live.js" asp-append-version="true"></script>
+    <div data-admin-presence-tracker data-heartbeat-url="@Url.Action("Heartbeat", "SupportChat")" data-away-url="@Url.Action("AdminAway", "SupportChat")" hidden></div>
+    <script src="~/js/admin-presence-tracker.js" asp-append-version="true" defer></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

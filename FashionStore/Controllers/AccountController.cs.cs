@@ -206,8 +206,10 @@ public class AccountController : Controller
     [HttpPost]
     [Authorize]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Logout()
+    public async Task<IActionResult> Logout([FromServices] FashionStore.Services.AdminPresenceService presence)
     {
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? User.Identity?.Name;
+        presence.Remove(userId);
         _cartService.ClearSessionCart();
         await _signInManager.SignOutAsync();
 

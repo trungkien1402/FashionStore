@@ -115,9 +115,26 @@
 }
 
 .support-brand small {
-    display: block;
+    display: inline-flex;
+    align-items: center;
     color: #94a3b8;
     font-size: .72rem;
+}
+
+.admin-presence-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: #94a3b8;
+    margin-right: 5px;
+    flex-shrink: 0;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.admin-presence-dot.is-online {
+    background-color: #22c55e;
+    box-shadow: 0 0 6px rgba(34, 197, 94, 0.7);
 }
 
 .support-chat-head button {
