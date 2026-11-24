@@ -8,16 +8,19 @@
 
     // --- CÁC BỘ SƯU TẬP GIÀY (SNEAKER COLLECTIONS) CÓ THỂ ĐỔI QUA LẠI BẰNG NÚT BẤM ---
     const ITEMS_PER_GRID = 6;
-    const audienceCollections = JSON.parse(document.getElementById("showroomCatalog").textContent).shoes;
+    const catalogEl = document.getElementById("showroomCatalog");
+    let rawCatalog = null;
+    try { rawCatalog = catalogEl ? JSON.parse(catalogEl.textContent) : null; } catch (e) {}
+    const audienceCollections = rawCatalog?.shoes || { men: [], women: [], girls: [], boy: [] };
     const audiencePages = Object.fromEntries(Object.entries(audienceCollections).map(([audience, collections]) => [
         audience,
-        collections.flatMap(collection => {
-            const pageCount = Math.ceil(collection.items.length / ITEMS_PER_GRID);
+        (collections || []).flatMap(collection => {
+            const pageCount = Math.ceil((collection.items || []).length / ITEMS_PER_GRID);
             return Array.from({ length: pageCount }, (_, page) => ({
                 ...collection,
                 collectionTitle: collection.title,
                 title: pageCount > 1 ? `${collection.title} ${page + 1}/${pageCount}` : collection.title,
-                items: collection.items.slice(page * ITEMS_PER_GRID, (page + 1) * ITEMS_PER_GRID)
+                items: (collection.items || []).slice(page * ITEMS_PER_GRID, (page + 1) * ITEMS_PER_GRID)
             }));
         })
     ]));

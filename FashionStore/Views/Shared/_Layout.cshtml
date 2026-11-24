@@ -25,7 +25,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/css/fashionstore.css?v=signature_cats_v2" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/shipper.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/atelier.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/atelier.css?v=center_responsive_v7" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/account-dropdown.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/store3d.css?v=badge_perfect_v20" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/clothing-rail.css?v=spotlight_v2" asp-append-version="true" />
@@ -54,6 +54,18 @@
     <!-- NAVBAR (URBNMIND EXACT: LOGO, CENTER LINKS, ICONS, BUY NOW)    -->
     <!-- ============================================================== -->
     <header class="urbn-header @(isHome || isLookbook ? "urbn-header-hidden" : "")">
+        <div class="urbn-top-announcement">
+            <div class="urbn-container">
+                <div class="urbn-top-announcement-inner">
+                    <div class="urbn-top-ticker">
+                        <span><i class="bi bi-lightning-charge-fill text-warning me-1"></i> <strong>FREESHIP</strong> ĐƠN TỪ 500.000₫ &bull; ĐỔI SIZE 30 NGÀY TẬN NƠI &bull; CAM KẾT CHÍNH HÃNG 100%</span>
+                    </div>
+                    <div class="urbn-top-contact">
+                        <a href="tel:19008888"><i class="bi bi-telephone-fill me-1"></i> Hotline: <strong>1900 8888</strong></a>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="urbn-container">
             <nav class="urbn-nav">
 
@@ -199,14 +211,16 @@
     <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
     <script type="module" src="https://unpkg.com/@@splinetool/viewer@1.9.72/build/spline-viewer.js"></script>
 
+    <!-- Showroom Catalog Data (Embedded JSON for 3D Showroom, Rail & Sneaker Vault) -->
+    <partial name="_ShowroomCatalog" />
+
     <!-- HNMTSHOP Core Scripts -->
     <script src="~/js/hnmt3d-engine.js" asp-append-version="true"></script>
-    <script src="~/js/atelier.js" asp-append-version="true"></script>
-    <script src="~/js/site.js?v=cat_signatures_v1" asp-append-version="true"></script>
-    <script src="~/js/store3d.js?v=pants_rail_v25" asp-append-version="true"></script>
-    <partial name="_ShowroomCatalog" />
-    <script src="~/js/clothing-rail.js?v=pants_rail_v25" asp-append-version="true"></script>
-    <script src="~/js/sneaker-vault.js?v=uniform_font_v43" asp-append-version="true"></script>
+    <script src="~/js/atelier.js?v=center_responsive_v7" asp-append-version="true"></script>
+    <script src="~/js/site.js?v=quick_size_v3" asp-append-version="true"></script>
+    <script src="~/js/store3d.js?v=pdp_3d_v2" asp-append-version="true"></script>
+    <script src="~/js/clothing-rail.js?v=pdp_3d_v2" asp-append-version="true"></script>
+    <script src="~/js/sneaker-vault.js?v=pdp_3d_v2" asp-append-version="true"></script>
     <script src="~/js/account-dropdown.js" asp-append-version="true"></script>
     <script src="~/js/hnmt-cart-drawer.js?v=cart_v1" asp-append-version="true"></script>
     <script src="~/js/home-filter.js?v=home_filter_v5" asp-append-version="true"></script>

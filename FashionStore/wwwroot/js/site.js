@@ -11,6 +11,7 @@
         initializeCountdown();
         initializeCartDrawer();
         initializeAjaxAddToCart();
+        initializeHomeSizePicker();
     });
 
     // 0. Đồng bộ nhãn chữ ký Danh Mục Nổi Bật (Title Case: Women, Girls, Men, Boy)
@@ -63,8 +64,8 @@
         const secsEl = document.getElementById('cdSecs');
         if (!daysEl || !hoursEl || !minsEl || !secsEl) return;
 
-        // Target: 190 days from now
-        const targetDate = new Date(Date.now() + (190 * 24 * 3600 + 4 * 3600 + 38 * 60 + 13) * 1000);
+        // Target: Đợt Drop Giới Hạn tuần này (2 ngày 14 giờ)
+        const targetDate = new Date(Date.now() + (2 * 24 * 3600 + 14 * 3600 + 35 * 60 + 20) * 1000);
 
         function update() {
             const now = new Date();
@@ -267,6 +268,110 @@
                 btn.innerHTML = originalContent;
                 btn.disabled = false;
                 showFsToast(err.message, 'danger');
+            }
+        });
+    }
+
+    // 4. Quick Size Picker cho Thẻ sản phẩm trang chủ ("Sản Phẩm Mới Ra Mắt")
+    function initializeHomeSizePicker() {
+        document.addEventListener('click', function (e) {
+            // Toggle mở/đóng size drawer khi click "Thêm giỏ"
+            const toggleBtn = e.target.closest('[data-action="toggle-size-picker"]');
+            if (toggleBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const card = toggleBtn.closest('.hnmt-drop-card');
+                if (!card) return;
+
+                const wasOpen = card.classList.contains('size-picker-open');
+                // Đóng tất cả các picker khác đang mở
+                document.querySelectorAll('.hnmt-drop-card.size-picker-open').forEach(c => {
+                    if (c !== card) c.classList.remove('size-picker-open');
+                });
+
+                if (!wasOpen) {
+                    card.classList.add('size-picker-open');
+                } else {
+                    card.classList.remove('size-picker-open');
+                }
+                return;
+            }
+
+            // Đóng size drawer khi bấm nút close X
+            const closeBtn = e.target.closest('.hnmt-size-drawer-close');
+            if (closeBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+                const card = closeBtn.closest('.hnmt-drop-card');
+                if (card) card.classList.remove('size-picker-open');
+                return;
+            }
+
+            // Xử lý chọn size và thêm vào giỏ hàng
+            const pillBtn = e.target.closest('.hnmt-size-pill-btn');
+            if (pillBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                if (pillBtn.disabled || pillBtn.classList.contains('disabled') || pillBtn.classList.contains('is-loading')) {
+                    return;
+                }
+
+                const productId = pillBtn.getAttribute('data-product-id');
+                const variantId = pillBtn.getAttribute('data-variant-id');
+                const size = pillBtn.getAttribute('data-size') || 'M';
+                const productName = pillBtn.getAttribute('data-product-name') || 'Sản phẩm';
+                const card = pillBtn.closest('.hnmt-drop-card');
+
+                const originalText = pillBtn.innerHTML;
+                pillBtn.classList.add('is-loading');
+                pillBtn.innerHTML = '<span class="spinner-border spinner-border-sm" style="width:12px;height:12px;border-width:2px;" role="status"></span>';
+
+                fetch('/Cart/AddAjax', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        productId: parseInt(productId, 10),
+                        variantId: variantId ? parseInt(variantId, 10) : null,
+                        size: size,
+                        quantity: 1
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        pillBtn.innerHTML = '&#10003;';
+                        pillBtn.classList.remove('is-loading');
+                        pillBtn.classList.add('is-added');
+
+                        showFsToast(`Đã thêm ${productName} (Size ${size}) vào giỏ hàng!`, 'success');
+
+                        setTimeout(() => {
+                            if (card) card.classList.remove('size-picker-open');
+                            pillBtn.innerHTML = originalText;
+                            pillBtn.classList.remove('is-added');
+                            if (window.openFsCartDrawer) {
+                                window.openFsCartDrawer();
+                            }
+                        }, 400);
+                    } else {
+                        throw new Error(data.message || 'Không thể thêm vào giỏ.');
+                    }
+                })
+                .catch(err => {
+                    pillBtn.innerHTML = originalText;
+                    pillBtn.classList.remove('is-loading');
+                    showFsToast(err.message || 'Lỗi khi thêm giỏ hàng.', 'danger');
+                });
+                return;
+            }
+
+            // Click ra ngoài bất kỳ card nào: đóng tất cả size drawers
+            if (!e.target.closest('.hnmt-drop-card')) {
+                document.querySelectorAll('.hnmt-drop-card.size-picker-open').forEach(c => {
+                    c.classList.remove('size-picker-open');
+                });
             }
         });
     }
