@@ -12,9 +12,81 @@ namespace FashionStore.Controllers;
 [Authorize]
 [AutoValidateAntiforgeryToken]
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-public class SupportChatController(ApplicationDbContext db) : Controller
+public class SupportChatController(ApplicationDbContext db, AdminPresenceService presence) : Controller
 {
     private string Actor => User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
+    // ── Trạng thái admin thực tế ──────────────────────────────────────────────
+
+    /// <summary>Endpoint PUBLIC – SSE stream push realtime trạng thái admin trực tiếp tới khách hàng không cần reload.</summary>
+    [AllowAnonymous, HttpGet, IgnoreAntiforgeryToken]
+    [ResponseCache(Duration = 0, NoStore = true)]
+    public async Task PresenceStream(CancellationToken ct)
+    {
+        Response.Headers.ContentType = "text/event-stream";
+        Response.Headers.CacheControl = "no-cache";
+        Response.Headers.Connection = "keep-alive";
+
+        var channel = System.Threading.Channels.Channel.CreateUnbounded<bool>();
+        void Handler(bool isOnline) => channel.Writer.TryWrite(isOnline);
+
+        presence.OnPresenceChanged += Handler;
+        try
+        {
+            var initial = presence.IsAnyAdminOnline();
+            await Response.WriteAsync($"data: {{\"online\": {initial.ToString().ToLowerInvariant()}}}\n\n", ct);
+            await Response.Body.FlushAsync(ct);
+
+            while (!ct.IsCancellationRequested)
+            {
+                using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+                timeoutCts.CancelAfter(TimeSpan.FromSeconds(15));
+                try
+                {
+                    var isOnline = await channel.Reader.ReadAsync(timeoutCts.Token);
+                    await Response.WriteAsync($"data: {{\"online\": {isOnline.ToString().ToLowerInvariant()}}}\n\n", ct);
+                    await Response.Body.FlushAsync(ct);
+                }
+                catch (OperationCanceledException) when (!ct.IsCancellationRequested)
+                {
+                    await Response.WriteAsync(": keepalive\n\n", ct);
+                    await Response.Body.FlushAsync(ct);
+                }
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // Client closed connection
+        }
+        finally
+        {
+            presence.OnPresenceChanged -= Handler;
+        }
+    }
+
+    /// <summary>Endpoint PUBLIC – fallback polling kiểm tra admin online.</summary>
+    [AllowAnonymous, HttpGet, IgnoreAntiforgeryToken]
+    [ResponseCache(Duration = 0, NoStore = true)]
+    public IActionResult AdminOnline() =>
+        Json(new { online = presence.IsAnyAdminOnline() });
+
+    /// <summary>Endpoint PRIVATE – admin/staff gửi heartbeat khi đang tương tác tích cực.</summary>
+    [AcceptVerbs("GET", "POST"), Authorize(Roles = AccessRoles.BackOffice), IgnoreAntiforgeryToken]
+    public IActionResult Heartbeat()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.Identity?.Name;
+        presence.Heartbeat(userId);
+        return Ok();
+    }
+
+    /// <summary>Endpoint PRIVATE – admin/staff chuyển sang vắng mặt (khi không lăn chuột 20s hoặc ẩn tab).</summary>
+    [AcceptVerbs("GET", "POST"), Authorize(Roles = AccessRoles.BackOffice), IgnoreAntiforgeryToken]
+    public IActionResult AdminAway()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.Identity?.Name;
+        presence.Remove(userId);
+        return Ok();
+    }
 
     [HttpGet, Authorize(Roles = AccessRoles.BackOffice)]
     public IActionResult Inbox() => View();

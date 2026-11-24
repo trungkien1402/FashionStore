@@ -100,6 +100,7 @@ builder.Services.Configure<SePayOptions>(builder.Configuration.GetSection(SePayO
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<AdminReportService>();
 builder.Services.AddSingleton<VietnamAddresses>();
+builder.Services.AddSingleton<FashionStore.Services.AdminPresenceService>();
 
 builder.Services.AddRateLimiter(options =>
 {
