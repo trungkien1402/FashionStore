@@ -6,6 +6,7 @@ using FashionStore.Models.ViewModels;
 using FashionStore.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace FashionStore.Controllers;
 
@@ -36,6 +37,8 @@ public class HomeController : Controller
             .Take(8)
             .ToList();
 
+        ViewBag.PublishedCollections = await _context.LookbookCollections.AsNoTracking()
+            .Where(c => c.IsPublished).OrderByDescending(c => c.Id).ToListAsync();
         return View(latestProducts);
     }
 
@@ -50,6 +53,14 @@ public class HomeController : Controller
     public IActionResult SizeGuide()
     {
         return View();
+    }
+
+    [HttpGet("/collections/{id:int}")]
+    public async Task<IActionResult> ManagedLookbook(int id)
+    {
+        var collection = await _context.LookbookCollections.AsNoTracking().Include(c => c.Looks)
+            .SingleOrDefaultAsync(c => c.Id == id && c.IsPublished);
+        return collection == null ? NotFound() : View(await LookbookCatalog.BuildAsync(_context, collection));
     }
 
     [HttpGet("/contact")]

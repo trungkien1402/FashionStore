@@ -1,0 +1,195 @@
+@model LookbookCollectionForm
+@{
+    ViewData["Title"] = Model.Id == 0 ? "Tạo bộ sưu tập" : Model.Name;
+    var looks = Model.Looks.OrderBy(l => l.SortOrder).ThenBy(l => l.Id).ToList();
+    var backgrounds = new (LookbookBackground Value, string Label, string First, string Second)[]
+    {
+        (LookbookBackground.None, "Không màu", "#ffffff", "#ffffff"),
+        (LookbookBackground.Noir, "Xám lạnh · Noir Unit", "#eef0f3", "#cbd0d8"),
+        (LookbookBackground.Sunwash, "Kem ấm · Sun-Washed", "#faf7f0", "#ded5c2"),
+        (LookbookBackground.Blue, "Xanh lam nhạt", "#f5faff", "#c5d8ed"),
+        (LookbookBackground.Rose, "Hồng phấn", "#fff8fa", "#e7cdd7"),
+        (LookbookBackground.Sage, "Xanh sage × kem", "#d2e1cf", "#f4edd9"),
+        (LookbookBackground.Lavender, "Tím lavender × xám", "#ddd0ed", "#e6e9ef"),
+        (LookbookBackground.Peach, "Cam đào × be", "#f3ccb6", "#f3e5d4"),
+        (LookbookBackground.Mint, "Xanh mint × xanh lam", "#c8e8df", "#d6e8f5"),
+        (LookbookBackground.Sand, "Be cát × nâu nhạt", "#f0e3cd", "#d4b79b"),
+    };
+}
+
+@section Styles {
+    <style>
+        .collection-backgrounds { min-width: 0; }
+        .collection-swatches { display: flex; flex-wrap: wrap; gap: .45rem; }
+        .collection-swatch {
+            display: grid; place-items: center; width: 28px; height: 28px; font-size: .75rem;
+            border: 2px solid #fff; border-radius: 50%; cursor: pointer;
+            background: linear-gradient(135deg, var(--first) 50%, var(--second) 50%);
+            box-shadow: 0 2px 7px #0003; color: #142339;
+        }
+        .collection-swatch .bi-check-lg { visibility: hidden; }
+        .collection-swatches input:checked + label { outline: 2px solid #0085ca; outline-offset: 2px; }
+        .collection-swatches input:checked + label .bi-check-lg { visibility: visible; }
+        .collection-swatches input:focus-visible + label { outline: 2px solid #142339; outline-offset: 4px; }
+        .collection-color-picker { width: 34px; height: 30px; padding: 3px; }
+        .collection-custom-radio:checked + label { background: #142339; color: #fff; }
+        .collection-custom-radio:focus-visible + label { outline: 2px solid #0085ca; outline-offset: 2px; }
+    </style>
+}
+<a asp-action="Index" class="adm-btn-action-secondary mb-3"><i class="bi bi-arrow-left"></i> Bộ sưu tập</a>
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h1 class="h4 mb-0">@ViewData["Title"]</h1>
+    @if (Model.Id > 0)
+    {
+        <div class="d-flex gap-2">
+            <a asp-action="Preview" asp-route-id="@Model.Id" target="_blank" rel="noopener" class="adm-btn-action-secondary">Xem trước</a>
+            <form asp-action="Publish" method="post">
+                <input type="hidden" name="id" value="@Model.Id" />
+                <input type="hidden" name="published" value="@((!Model.IsPublished).ToString().ToLowerInvariant())" />
+                <button class="adm-action-btn adm-btn-primary">@(Model.IsPublished ? "Chuyển về nháp" : "Đăng bộ sưu tập")</button>
+            </form>
+        </div>
+    }
+</div>
+@if (TempData["Error"] is string error)
+{
+    <div class="alert alert-danger">@error</div>
+}
+<form asp-action="Edit" method="post" enctype="multipart/form-data" class="adm-card p-3 mb-4">
+    <input asp-for="Id" type="hidden" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="row g-3">
+        <div class="col-md-6 d-flex flex-column">
+            <span class="form-label">Ảnh bìa</span>
+            <div class="position-relative flex-grow-1 rounded-3 border mb-2 overflow-hidden" style="min-height: 210px; background: var(--adm-bg-soft);">
+                <img id="coverPreview" src="@(Model.CoverUrl.Length > 0 ? Model.CoverUrl : null)"
+                     class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover"
+                     alt="Ảnh bìa bộ sưu tập" hidden="@(Model.CoverUrl.Length == 0)" />
+                <div id="coverPlaceholder" class="position-absolute top-50 start-50 translate-middle text-center text-muted"
+                     hidden="@(Model.CoverUrl.Length > 0)">
+                    <i class="bi bi-image fs-3 d-block mb-1" aria-hidden="true"></i>
+                    <span class="small">Chưa có ảnh bìa</span>
+                </div>
+            </div>
+            <div class="adm-image-picker d-flex flex-wrap align-items-center gap-2 border rounded-3 p-2">
+                <input asp-for="Cover" type="file" accept=".png,.jpg,.jpeg,.webp" class="visually-hidden" aria-describedby="coverFileName" />
+                <label asp-for="Cover" class="adm-btn-action-secondary m-0" style="cursor:pointer">
+                    <i class="bi bi-cloud-arrow-up" aria-hidden="true"></i> @(Model.CoverUrl.Length > 0 ? "Đổi ảnh bìa" : "Tải ảnh bìa")
+                </label>
+                <span id="coverFileName" class="small text-muted text-break" aria-live="polite">PNG, JPG hoặc WebP · Tối đa 5 MB</span>
+            </div>
+            <span asp-validation-for="Cover" class="text-danger"></span>
+        </div>
+        <div class="col-md-6 d-flex flex-column">
+            <label asp-for="Name" class="form-label">Tên bộ sưu tập</label>
+            <input asp-for="Name" class="form-control adm-input-dark" required />
+            <span asp-validation-for="Name" class="text-danger"></span>
+            <label asp-for="Description" class="form-label mt-3">Mô tả</label>
+            <textarea asp-for="Description" rows="4" class="form-control adm-input-dark"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+            <fieldset class="collection-backgrounds border rounded-3 px-3 py-2 mt-3 mb-0">
+                <legend class="float-none w-auto px-2 mb-0 fs-6 fw-bold">Gam màu nền bộ sưu tập</legend>
+                <div class="collection-swatches">
+                    @foreach (var swatch in backgrounds)
+                    {
+                        var swatchId = $"background-{swatch.Value}";
+                        <div>
+                            <input asp-for="Background" type="radio" value="@swatch.Value" id="@swatchId" class="visually-hidden" />
+                            <label for="@swatchId" class="collection-swatch" title="@swatch.Label"
+                                   style="--first:@swatch.First;--second:@swatch.Second">
+                                <span class="visually-hidden">@swatch.Label</span>
+                                <i class="bi bi-check-lg" aria-hidden="true"></i>
+                            </label>
+                        </div>
+                    }
+                </div>
+                <div class="d-flex flex-wrap align-items-center gap-2 mt-2">
+                    <input asp-for="Background" type="radio" value="Custom" id="background-Custom" class="visually-hidden collection-custom-radio" />
+                    <label for="background-Custom" class="collection-custom-label btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-palette" aria-hidden="true"></i> Tự chọn màu
+                    </label>
+                    <input type="color" id="collectionColorPicker" name="BackgroundColor"
+                           value="@(Model.BackgroundColor ?? "#e6e9ef")" class="form-control form-control-color collection-color-picker"
+                           aria-label="Pha màu nền bộ sưu tập" />
+                </div>
+                <span asp-validation-for="BackgroundColor" class="text-danger"></span>
+                <span asp-validation-for="Background" class="text-danger"></span>
+            </fieldset>
+        </div>
+    </div>
+    <div class="d-flex justify-content-end border-top mt-3 pt-3">
+        <button type="submit" class="adm-action-btn adm-btn-primary"><i class="bi bi-check2" aria-hidden="true"></i> @(Model.IsPublished ? "Lưu thay đổi" : "Lưu nháp")</button>
+    </div>
+</form>
+@if (Model.Id > 0)
+{
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="h5 mb-0">Các look</h2>
+        <a asp-action="Look" asp-route-collectionId="@Model.Id" class="adm-action-btn adm-btn-primary"><i class="bi bi-plus-lg"></i> Thêm look</a>
+    </div>
+    <div class="adm-card p-0 overflow-hidden">
+        <div class="table-responsive">
+        <table class="adm-table mb-0">
+            <thead><tr><th scope="col" class="ps-4">ẢNH NGƯỜI MẪU</th><th scope="col">TÊN LOOK</th><th scope="col">THỨ TỰ</th><th scope="col" class="text-end pe-4">THAO TÁC</th></tr></thead>
+            <tbody>
+            @for (var index = 0; index < looks.Count; index++)
+            {
+                var look = looks[index];
+                <tr>
+                    <td class="ps-4"><img src="@look.ImageUrl" width="52" height="64" class="rounded object-fit-contain" alt="" /></td>
+                    <td class="fw-bold adm-heading">@look.Name</td>
+                    <td>
+                        <form asp-action="Move" method="post" class="d-flex gap-2">
+                            <input type="hidden" name="collectionId" value="@Model.Id" />
+                            <input type="hidden" name="lookId" value="@look.Id" />
+                            <button name="direction" value="-1" class="adm-btn-table-action" disabled="@(index == 0)" aria-label="Đưa lên" title="Đưa lên"><i class="bi bi-arrow-up" aria-hidden="true"></i></button>
+                            <button name="direction" value="1" class="adm-btn-table-action" disabled="@(index == looks.Count - 1)" aria-label="Đưa xuống" title="Đưa xuống"><i class="bi bi-arrow-down" aria-hidden="true"></i></button>
+                        </form>
+                    </td>
+                    <td class="text-end pe-4"><a asp-action="Look" asp-route-collectionId="@Model.Id" asp-route-id="@look.Id" class="adm-btn-table-action"><i class="bi bi-pencil" aria-hidden="true"></i> Chỉnh look</a></td>
+                </tr>
+            }
+            @if (looks.Count == 0)
+            {
+                <tr><td colspan="4" class="text-center py-4">Chưa có look nào.</td></tr>
+            }
+            </tbody>
+        </table>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        const customBackground = document.getElementById('background-Custom');
+        const collectionColorPicker = document.getElementById('collectionColorPicker');
+        document.querySelector('label[for="background-Custom"]').addEventListener('click', () => {
+            if (typeof collectionColorPicker.showPicker === 'function') {
+                collectionColorPicker.showPicker();
+            }
+        });
+        collectionColorPicker.addEventListener('input', () => { customBackground.checked = true; });
+    </script>
+
+    <script>
+        const cover = document.getElementById('Cover');
+        const coverName = document.getElementById('coverFileName');
+        const coverHint = coverName.textContent;
+        const coverPreview = document.getElementById('coverPreview');
+        const coverPlaceholder = document.getElementById('coverPlaceholder');
+        const savedCover = coverPreview.getAttribute('src');
+        let coverUrl;
+        cover.addEventListener('change', () => {
+            const file = cover.files[0];
+            coverName.textContent = file?.name || coverHint;
+            if (coverUrl) URL.revokeObjectURL(coverUrl);
+            coverUrl = file ? URL.createObjectURL(file) : null;
+            const source = coverUrl || savedCover;
+            if (source) coverPreview.src = source;
+            else coverPreview.removeAttribute('src');
+            coverPreview.hidden = !source;
+            coverPlaceholder.hidden = Boolean(source);
+        });
+    </script>
+}

@@ -1,6 +1,7 @@
-@using Microsoft.AspNetCore.Http
+﻿@using Microsoft.AspNetCore.Http
 @using FashionStore.Models.ViewModels
 @inject FashionStore.Services.Interfaces.ICartService CartService
+@inject FashionStore.Services.Implementations.IntroPreference IntroPreference
 
 @{
     int cartCount = await CartService.GetCartCountAsync();
@@ -47,13 +48,14 @@
 @{
     var isHome = string.Equals(ViewContext.RouteData.Values["controller"]?.ToString(), "Home", StringComparison.OrdinalIgnoreCase) &&
                  string.Equals(ViewContext.RouteData.Values["action"]?.ToString(), "Index", StringComparison.OrdinalIgnoreCase);
-    var isLookbook = string.Equals(ViewContext.RouteData.Values["action"]?.ToString(), "Lookbook", StringComparison.OrdinalIgnoreCase);
+    var isLookbook = ViewData["UseLookbookLayout"] is true ||
+        string.Equals(ViewContext.RouteData.Values["action"]?.ToString(), "Lookbook", StringComparison.OrdinalIgnoreCase);
 }
 
     <!-- ============================================================== -->
     <!-- NAVBAR (URBNMIND EXACT: LOGO, CENTER LINKS, ICONS, BUY NOW)    -->
     <!-- ============================================================== -->
-    <header class="urbn-header @(isHome || isLookbook ? "urbn-header-hidden" : "")">
+    <header class="urbn-header @((isHome && !await IntroPreference.IsHiddenAsync()) || isLookbook ? "urbn-header-hidden" : "")">
         <div class="urbn-top-announcement">
             <div class="urbn-container">
                 <div class="urbn-top-announcement-inner">

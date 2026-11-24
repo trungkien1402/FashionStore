@@ -1828,3 +1828,15 @@ img {
         justify-content: center;
     }
 }
+.offer-model-gallery{position:relative;min-width:0;max-width:100%;border-radius:16px;outline-offset:4px}.offer-model-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;cursor:grab;touch-action:pan-x pan-y;overscroll-behavior-x:contain}.offer-model-track::-webkit-scrollbar{display:none}.offer-model-track .offer-model-slide{flex:0 0 100%;min-width:0;scroll-snap-align:start;scroll-snap-stop:always;margin:0;user-select:none}.offer-model-track .offer-model-slide img{width:100%;height:100%;object-fit:contain;pointer-events:none;-webkit-user-drag:none}.offer-model-hint{position:absolute;bottom:20px;left:50%;transform:translate(-50%,6px);padding:10px 17px;white-space:nowrap;border-radius:999px;background:#1e293be8;color:#fff;font:500 12px 'Plus Jakarta Sans',sans-serif;pointer-events:none;opacity:0;transition:opacity .2s,transform .2s}.offer-model-gallery:hover .offer-model-hint,.offer-model-gallery:focus-visible .offer-model-hint{opacity:1;transform:translate(-50%,0)}.offer-model-gallery.is-dragging .offer-model-track{scroll-snap-type:none;cursor:grabbing}.offer-model-gallery.is-dragging .offer-model-hint{opacity:0}@media(hover:none){.offer-model-hint{opacity:1;transform:translate(-50%,0);font-size:11px}}@media(prefers-reduced-motion:reduce){.offer-model-hint{transition:none}}
+.offer-model-gallery,.offer-model-gallery .offer-model-track,.offer-model-gallery .offer-model-slide{border:0!important;border-radius:0!important;box-shadow:none!important;background:transparent}.offer-model-gallery{overflow:hidden}.offer-model-gallery.is-gliding .offer-model-track{scroll-snap-type:none}.offer-model-gallery .offer-model-slide img{border:0;border-radius:0;backface-visibility:hidden}.offer-model-gallery:focus-visible{outline:2px solid #94a3b8;outline-offset:4px}
+/* Dragging can focus the gallery: suppress the browser outline for pointer use. */
+.offer-model-gallery:focus:not(:focus-visible),
+.offer-model-gallery .offer-model-track:focus:not(:focus-visible),
+.offer-model-gallery.is-dragging,
+.offer-model-gallery.is-gliding {
+    outline: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+.offer-model-gallery.is-pointer-focused,.offer-model-gallery.is-pointer-focused:focus-visible{outline:none!important;border:0!important;box-shadow:none!important}

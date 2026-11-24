@@ -139,7 +139,7 @@
 
         // 3. Giày Sneaker
         const collections = window.SneakerVault?.getCollections() || [];
-        collections.forEach((col, cIdx) => {
+        collections.forEach(col => {
             (col.items || []).forEach((s, sIdx) => {
                 const sPriceNum = Math.round((s.price || 5200000) / 100000); // quy về scale
                 let sStyle = 'runner';
@@ -167,8 +167,6 @@
                     colorName: s.colorName || s.colorway,
                     desc: `${s.designer || 'HNMTSHOP'} · ${s.colorName || s.colorway}`,
                     image: s.image,
-                    collectionIndex: cIdx,
-                    sneakerIndex: sIdx,
                     rawItem: s,
                     tags: ['giay', 'sneaker', 'shoes', s.model, s.colorway, s.colorName || '', sStyle]
                 });
@@ -619,9 +617,9 @@
                     window.ClothingRail.closeClothingRail();
                 }
                 if (typeof window.openSneakerShowcase === 'function') window.openSneakerShowcase();
-                if (window.SneakerVault && typeof window.SneakerVault.openSliderView === 'function') {
+                if (window.SneakerVault && typeof window.SneakerVault.openProduct === 'function') {
                     setTimeout(() => {
-                        window.SneakerVault.openSliderView(item.sneakerIndex, item.collectionIndex);
+                        window.SneakerVault.openProduct(item.slug);
                     }, 120);
                 }
             }

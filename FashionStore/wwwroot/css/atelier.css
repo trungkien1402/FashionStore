@@ -337,3 +337,26 @@ body:has(.urbn-header-revealed) #atHeader {
   pointer-events: none !important;
   transition: opacity .3s ease !important;
 }
+.at-hide-intro-form {
+  position: absolute;
+  left: clamp(16px, 4vw, 48px);
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 20;
+  margin: 0;
+}
+.at-hide-intro {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 1px solid #ffffff70;
+  border-radius: 50%;
+  background: #10182055;
+  backdrop-filter: blur(12px);
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+}
+.at-hide-intro:hover { background: #101820ba; }
+.at-hide-intro:focus-visible { outline: 2px solid white; outline-offset: 4px; }

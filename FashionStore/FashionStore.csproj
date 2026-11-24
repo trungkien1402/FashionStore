@@ -8,6 +8,9 @@
     <!-- The nested project is an archived copy, not part of this application. -->
     <DefaultItemExcludes>$(DefaultItemExcludes);FashionStore/**</DefaultItemExcludes>
   </PropertyGroup>
+  <ItemGroup>
+    <Content Update="appsettings.Local.json" CopyToPublishDirectory="Never" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="QuestPDF" Version="2026.9.1" />

@@ -1,0 +1,66 @@
+@model LookbookDisplay
+@using System.Text.Json
+@using FashionStore.Data
+@{
+    ViewData["Title"] = Model.Collection.Name;
+    ViewData["UseLookbookLayout"] = true;
+    var looks = Model.Collection.Looks.OrderBy(look => look.SortOrder).ThenBy(look => look.Id).Select(look =>
+    {
+        var selections = Model.Selections[look.Id].Where(item => Model.Products.ContainsKey(item.ProductId)).ToArray();
+        var items = selections.Select(item =>
+        {
+            var product = Model.Products[item.ProductId];
+            var variants = product.Variants.Where(v => v.Color == item.Color).OrderBy(v => v.Id).ToArray();
+            var sizes = variants.Select(v => v.Size).ToArray();
+            return new
+            {
+                name = product.Name,
+                cat = product.Category?.Name ?? product.ShowroomKind,
+                image = ShowroomCatalog.FrontPhoto(product, item.Color),
+                price = variants.FirstOrDefault()?.Price ?? product.Price,
+                size = variants.FirstOrDefault(v => v.StockQuantity > 0)?.Size ?? sizes.FirstOrDefault(),
+                sizes,
+                product = new
+                {
+                    productId = product.Id,
+                    sizes,
+                    variants = new[] { variants.Select(v => new { id = v.Id, stock = v.StockQuantity, price = v.Price }).ToArray() }
+                }
+            };
+        });
+        return new
+        {
+            name = look.Name,
+            img = look.ImageUrl,
+            items,
+            pins = selections.Select((item, index) => new { itemIndex = index, left = Math.Clamp(item.X, 0, 100), top = Math.Clamp(item.Y, 0, 100) })
+        };
+    });
+    var themeClass = Model.Collection.Background switch
+    {
+        LookbookBackground.Sunwash => "theme-sunwash",
+        LookbookBackground.Blue => "theme-blue",
+        LookbookBackground.Rose => "theme-rose",
+        LookbookBackground.None => "theme-none",
+        LookbookBackground.Sage => "theme-sage",
+        LookbookBackground.Lavender => "theme-lavender",
+        LookbookBackground.Peach => "theme-peach",
+        LookbookBackground.Mint => "theme-mint",
+        LookbookBackground.Sand => "theme-sand",
+        LookbookBackground.Custom => "theme-custom",
+        _ => "theme-noir"
+    };
+    var payload = JsonSerializer.Serialize(new { title = Model.Collection.Name, looks, themeClass, preview = ViewBag.IsPreview is true });
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/lookbook.css" asp-append-version="true" />
+}
+
+<div id="lookbookRoot" class="lb-wrapper is-open @themeClass"
+     style="@(Model.Collection.Background == LookbookBackground.Custom && System.Text.RegularExpressions.Regex.IsMatch(Model.Collection.BackgroundColor ?? "", @"\A#[0-9A-Fa-f]{6}\z") ? $"--lb-custom-background:{Model.Collection.BackgroundColor}" : null)"></div>
+<script type="application/json" id="managedLookbookData">@Html.Raw(payload)</script>
+
+@section Scripts {
+    <script src="~/js/lookbook.js" asp-append-version="true"></script>
+}

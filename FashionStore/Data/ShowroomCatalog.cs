@@ -207,7 +207,7 @@ public static class ShowroomCatalog
             return category;
         }
 
-        var metadataUpdates = entries.Where(entry => entry.AdminCategory != null || IsLookbookOnly(entry.Metadata) ||
+        var metadataUpdates = entries.Where(entry => entry.AdminCategory != null || entry.Metadata.Details.ContainsKey("lookbookOnly") ||
                 (entry.Kind == "giay" && !string.IsNullOrWhiteSpace(entry.Metadata.Photos[0].Pair)))
             .ToDictionary(entry => entry.Slug, StringComparer.OrdinalIgnoreCase);
         var updateSlugs = metadataUpdates.Keys.ToArray();
@@ -228,16 +228,31 @@ public static class ShowroomCatalog
             }
 
             var changed = false;
+            var sameColors = metadata.Colors.Select(color => color[0])
+                .SequenceEqual(entry.Metadata.Colors.Select(color => color[0]), StringComparer.OrdinalIgnoreCase);
+            if (IsLookbookOnly(metadata) && entry.Metadata.Details["lookbookOnly"]?.GetValue<bool>() == false &&
+                sameColors &&
+                entry.Metadata.Photos.All(photo => !string.IsNullOrWhiteSpace(photo.Front) &&
+                    (entry.Kind == "giay" ? !string.IsNullOrWhiteSpace(photo.Pair) :
+                        !string.IsNullOrWhiteSpace(photo.Side) && !string.IsNullOrWhiteSpace(photo.Back))))
+            {
+                metadata = metadata with { Photos = entry.Metadata.Photos };
+                metadata.Details["lookbookOnly"] = false;
+                product.ImageUrl = metadata.Photos[0].Front;
+                changed = true;
+            }
             if (IsLookbookOnly(entry.Metadata) && !IsLookbookOnly(metadata))
             {
                 metadata.Details["lookbookOnly"] = true;
                 changed = true;
             }
 
-            var pair = entry.Metadata.Photos[0].Pair;
-            if (product.ShowroomKind == "giay" && !string.IsNullOrWhiteSpace(pair) && metadata.Photos[0].Pair != pair)
+            if (product.ShowroomKind == "giay" && sameColors &&
+                entry.Metadata.Photos.All(photo => !string.IsNullOrWhiteSpace(photo.Pair)) &&
+                (!metadata.Photos.SequenceEqual(entry.Metadata.Photos) || product.ImageUrl != entry.Metadata.Photos[0].Front))
             {
-                metadata.Photos[0] = metadata.Photos[0] with { Pair = pair };
+                metadata = metadata with { Photos = entry.Metadata.Photos };
+                product.ImageUrl = metadata.Photos[0].Front;
                 changed = true;
             }
 
@@ -313,9 +328,11 @@ public static class ShowroomCatalog
             Metadata: JsonSerializer.Deserialize<Metadata>(product.ShowroomMetadata!, JsonOptions)!
         )).ToList();
 
-        var lookbook = entries.Where(row => IsLookbookOnly(row.Metadata))
+        var lookbook = entries.Where(row => IsLookbookOnly(row.Metadata) ||
+                row.Product.Slug.StartsWith("lookbook-", StringComparison.Ordinal) ||
+                row.Product.Slug is "fern-tee" or "snk-03")
             .ToDictionary(row => row.Product.Slug, row => BuildItem(row.Product, row.Metadata));
-        entries.RemoveAll(row => lookbook.ContainsKey(row.Product.Slug));
+        entries.RemoveAll(row => IsLookbookOnly(row.Metadata));
 
         var clothing = Audiences.ToDictionary(audience => audience,
             audience => new[] { "ao", "quan" }.ToDictionary(kind => kind,
@@ -333,6 +350,11 @@ public static class ShowroomCatalog
     }
 
     private static bool IsLookbookOnly(Metadata metadata) => metadata.Details["lookbookOnly"]?.GetValue<bool>() == true;
+
+    internal static bool HasRailListing(Product product) =>
+        product.ShowroomMetadata != null &&
+        JsonSerializer.Deserialize<Metadata>(product.ShowroomMetadata, JsonOptions) is { } metadata &&
+        !IsLookbookOnly(metadata);
 
     public static string FrontPhoto(Product product, string color)
     {
@@ -361,9 +383,14 @@ public static class ShowroomCatalog
             item["id"] = product.Slug;
             item["name"] = product.Name;
             item["image"] = metadata.Photos.FirstOrDefault()?.Front ?? product.ImageUrl;
-            item["pairImage"] = metadata.Photos.FirstOrDefault()?.Pair ?? product.ImageUrl;
+            item["pairImage"] = metadata.Photos.FirstOrDefault()?.Pair;
             item["price"] = product.Price;
             item["colorName"] = metadata.Colors[0][0];
+            item["themeColor"] ??= JsonValue.Create(product.Slug == "lookbook-re1-shoe"
+                ? "#E8E4DC"
+                : metadata.Colors[0].ElementAtOrDefault(1));
+            item["model"] ??= JsonValue.Create(product.Name);
+            item["colorway"] ??= JsonValue.Create(metadata.Colors[0][0]);
         }
         else
         {

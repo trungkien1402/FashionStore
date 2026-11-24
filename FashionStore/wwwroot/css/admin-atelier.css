@@ -1030,6 +1030,22 @@ body.adm-body {
 
 /* ================= TABLES ================= */
 
+.adm-image-picker input:focus-visible + label {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+}
+
+.adm-image-picker input:disabled + label {
+    opacity: .55;
+    cursor: wait !important;
+}
+
+.adm-body #lookSelected .form-select {
+    min-width: 5.5rem;
+    padding-inline-end: 2rem !important;
+    background-position: right .65rem center;
+}
+
 .adm-table {
     width: 100%;
     margin: 0;

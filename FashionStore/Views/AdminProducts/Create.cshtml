@@ -1191,7 +1191,10 @@
             try {
                 const formData = new FormData();
                 formData.append('file', fileToProcess);
-                formData.append('kind', currentArchetype === 'shoes' ? 'shoe' : 'apparel');
+                const targetSlot = activeSlot;
+                formData.append('kind', currentArchetype === 'shoes'
+                    ? (targetSlot === 1 ? 'shoe-pair' : 'shoe')
+                    : 'apparel');
 
                 const response = await fetch('/AdminProducts/RemoveBackground', {
                     method: 'POST',
@@ -1204,7 +1207,6 @@
 
                 const transparentBlob = await response.blob();
                 
-                const targetSlot = activeSlot;
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const transparentUrl = e.target.result;

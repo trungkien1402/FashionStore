@@ -1,0 +1,30 @@
+﻿@model FashionStore.Models.ViewModels.AccountSettingsViewModel
+@{ ViewData["Title"] = "Cài đặt tài khoản · HNMTSHOP"; }
+@section Styles { <link rel="stylesheet" href="~/css/account-settings.css" asp-append-version="true" /> }
+<main class="account-settings">
+    <header class="settings-heading"><span>KHÔNG GIAN CÁ NHÂN</span><h1>Cài đặt tài khoản</h1><p>Thông tin của bạn, trải nghiệm dành riêng cho bạn.</p></header>
+    @if (TempData["SettingsSuccess"] is string success) { <div class="alert alert-success" role="status">@success</div> }
+    <div class="settings-grid">
+        <aside class="settings-panel settings-nav"><strong>Tài khoản của tôi</strong><a class="active" asp-action="Index"><i class="bi bi-person-circle"></i> Hồ sơ cá nhân</a><a asp-action="ChangePassword"><i class="bi bi-shield-lock"></i> Đổi mật khẩu</a><a asp-action="Display"><i class="bi bi-sliders"></i> Cài đặt hiển thị</a><a asp-controller="Home" asp-action="Index"><i class="bi bi-arrow-left"></i> Về trang chủ</a></aside>
+        <section class="settings-profile-content" aria-label="Hồ sơ cá nhân">
+            <form asp-action="Index" method="post" class="settings-form">
+                <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                <div class="settings-panel settings-info-card"><div class="settings-card-caption"><span><i class="bi bi-person"></i> Thông tin tài khoản</span></div><div class="settings-card-body"><div class="settings-fields"><div><label asp-for="FullName">Họ và tên <span>*</span></label><input asp-for="FullName" autocomplete="name" maxlength="100" required /><span asp-validation-for="FullName" class="text-danger"></span></div><div><label asp-for="PhoneNumber">Số điện thoại</label><input asp-for="PhoneNumber" type="tel" autocomplete="tel" placeholder="Ví dụ: 0988776655" /><span asp-validation-for="PhoneNumber" class="text-danger"></span></div></div>
+                <div><label for="settingsEmail">Email đăng nhập</label><input id="settingsEmail" value="@Model.Email" type="email" readonly /><p class="settings-hint"><i class="bi bi-lock"></i> Email dùng để đăng nhập và nhận OTP khôi phục mật khẩu.</p></div>
+                </div></div>
+                <section data-profile-address class="settings-panel settings-address-card"><div class="settings-card-caption"><span><i class="bi bi-geo-alt"></i> Địa chỉ nhận hàng</span><span class="settings-card-tag">Dùng khi đặt hàng</span></div><div class="settings-card-body"><p class="settings-hint">Lưu địa chỉ thường dùng để điền nhanh khi đặt hàng. Bạn có thể thay đổi địa chỉ cho từng đơn.</p>
+                    <div class="settings-fields">
+                        <div><label asp-for="ProvinceCode">Tỉnh / Thành phố</label><select asp-for="ProvinceCode" data-selected="@Model.ProvinceCode" data-address-url="@Url.Content("~/js/vietnam-addresses.json")"><option value="">Chọn tỉnh/thành</option></select></div>
+                        <div><label asp-for="WardCode">Xã / Phường / Đặc khu</label><select asp-for="WardCode" data-selected="@Model.WardCode"><option value="">Chọn xã/phường</option></select><span asp-validation-for="WardCode" class="text-danger"></span></div>
+                    </div>
+                    <p data-address-status class="text-danger" role="status"></p>
+                    <div><label asp-for="Address">Địa chỉ cụ thể</label><input asp-for="Address" autocomplete="shipping street-address" maxlength="180" placeholder="Số nhà, tên đường hoặc thôn/ấp…" /><span asp-validation-for="Address" class="text-danger"></span></div>
+                </div></section>
+                <div class="settings-save-bar"><div class="settings-meta"><i class="bi bi-calendar-check"></i> Thành viên từ @Model.CreatedAt.AddHours(7).ToString("dd/MM/yyyy")</div>
+                <div class="settings-actions"><button class="settings-primary" type="submit">Lưu thay đổi <i class="bi bi-check2"></i></button></div></div>
+            </form>
+
+        </section>
+    </div>
+</main>
+@section Scripts { <partial name="_ValidationScriptsPartial" /><script src="~/js/account-settings.js" asp-append-version="true"></script> }

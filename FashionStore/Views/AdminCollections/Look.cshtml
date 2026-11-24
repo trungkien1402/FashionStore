@@ -1,0 +1,64 @@
+@model LookbookLookForm
+@{
+    ViewData["Title"] = Model.Id == 0 ? "Thêm look" : "Chỉnh look";
+}
+<a asp-action="Edit" asp-route-id="@Model.CollectionId" class="adm-btn-action-secondary mb-3"><i class="bi bi-arrow-left"></i> Quay lại bộ sưu tập</a>
+<h1 class="h4 mb-3">@ViewData["Title"]</h1>
+<form id="lookEditor" asp-action="Look" method="post" enctype="multipart/form-data"
+      data-search="@Url.Action("SearchProducts")" data-remove-background="@Url.Action("RemoveBackground", "AdminProducts")">
+    <input asp-for="Id" type="hidden" />
+    <input asp-for="CollectionId" type="hidden" />
+    <div asp-validation-summary="All" class="text-danger mb-2"></div>
+    <div class="row g-3">
+        <div class="col-lg-5">
+            <section class="adm-card p-3">
+                <h2 class="h6 mb-3">Ảnh người mẫu</h2>
+                <div class="adm-image-picker d-flex flex-wrap align-items-center gap-2 border rounded-3 p-2">
+                    <input asp-for="Image" type="file" accept=".png,.jpg,.jpeg,.webp" class="visually-hidden" aria-describedby="lookFileName" />
+                    <label asp-for="Image" class="adm-btn-action-secondary m-0" style="cursor:pointer">
+                        <i class="bi bi-cloud-arrow-up" aria-hidden="true"></i> @(Model.ImageUrl.Length > 0 ? "Đổi ảnh người mẫu" : "Tải ảnh người mẫu")
+                    </label>
+                    <span id="lookFileName" class="small text-muted text-break" aria-live="polite">PNG, JPG hoặc WebP · Tối đa 5 MB</span>
+                </div>
+                <input asp-for="Original" type="file" hidden />
+                <div class="d-flex flex-wrap justify-content-end gap-2 my-3">
+                    <button type="button" id="lookCutout" class="adm-btn-action-secondary"><i class="bi bi-magic"></i> Tách nền</button>
+                    <button type="button" id="lookRestore" class="adm-btn-action-secondary" hidden>Dùng ảnh gốc</button>
+                </div>
+                <p id="lookImageStatus" class="text-center" role="status"></p>
+                <div class="text-center rounded p-2" style="background:var(--adm-surface)">
+                    <div class="position-relative d-inline-block">
+                        <img id="lookPreview" src="@(Model.ImageUrl.Length > 0 ? Model.ImageUrl : null)"
+                             data-original="@Model.OriginalImageUrl" style="max-width:100%;max-height:480px;cursor:crosshair"
+                             hidden="@(Model.ImageUrl.Length == 0)" alt="Ảnh xem trước người mẫu" />
+                        <div id="lookPoints" class="position-absolute top-0 start-0 w-100 h-100 pe-none"></div>
+                    </div>
+                </div>
+                <p class="small mt-2 mb-0 text-center">Chọn một món rồi bấm vị trí tương ứng trên ảnh.</p>
+            </section>
+        </div>
+        <div class="col-lg-7">
+            <section class="adm-card p-3">
+                <label asp-for="Name" class="form-label">Tên look</label>
+                <input asp-for="Name" class="form-control adm-input-dark mb-3" required />
+                <label for="lookSearch" class="form-label">Tìm sản phẩm trên sào</label>
+                <input id="lookSearch" type="search" class="form-control adm-input-dark" placeholder="Tên, mã sản phẩm hoặc SKU" />
+                <div id="lookMatches" class="list-group my-2"></div>
+                <h2 class="h6 mt-4">Đồ đang mặc</h2>
+                <div class="table-responsive border rounded-3 mb-3">
+                    <table class="adm-table mb-0">
+                        <thead><tr><th scope="col">SẢN PHẨM</th><th scope="col">PHỐI MÀU</th><th scope="col" class="text-end">THAO TÁC</th></tr></thead>
+                        <tbody id="lookSelected"></tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="submit" id="lookSave" class="adm-action-btn adm-btn-primary"><i class="bi bi-check2" aria-hidden="true"></i> Lưu look</button>
+                </div>
+            </section>
+        </div>
+    </div>
+</form>
+<script id="lookInitialItems" type="application/json">@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Items, FashionStore.Data.ShowroomCatalog.JsonOptions))</script>
+@section Scripts {
+    <script src="~/js/admin-lookbook.js" asp-append-version="true"></script>
+}
