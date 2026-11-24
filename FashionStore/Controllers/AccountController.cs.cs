@@ -175,16 +175,7 @@ public class AccountController : Controller
 
             if (isAjax)
             {
-                var redirectUrl = !string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl)
-                    ? model.ReturnUrl
-                    : Url.Action("Index", "Home");
-                return Json(new { success = true, redirectUrl });
-            }
-
-            if (!string.IsNullOrEmpty(model.ReturnUrl) &&
-                Url.IsLocalUrl(model.ReturnUrl))
-            {
-                return Redirect(model.ReturnUrl);
+                return Json(new { success = true, redirectUrl = Url.Action("Index", "Home") });
             }
 
             return RedirectToAction("Index", "Home");
