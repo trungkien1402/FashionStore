@@ -1,0 +1,22 @@
+@model FashionStore.Models.ViewModels.VerifyPasswordOtpViewModel
+@{ ViewData["Title"] = "Xác nhận OTP"; }
+@section Styles { <link rel="stylesheet" href="~/css/atelier-login.css" asp-append-version="true" /> }
+<div class="at-login-page">
+    <header class="at-topbar"><a asp-controller="Home" asp-action="Index" class="at-brand-link"><span class="at-brand-text">HNMTSHOP</span></a><a asp-controller="Account" asp-action="Login" class="at-top-back">← Đăng nhập</a></header>
+    <main class="at-form-container"><div class="at-login-card">
+        <div class="at-card-kicker"><i class="bi bi-envelope-check" aria-hidden="true"></i> BƯỚC 2 / 3 · XÁC NHẬN EMAIL</div>
+        <h1 class="at-card-title">Nhập mã OTP</h1>
+        <p class="at-card-desc">Nếu email thuộc tài khoản đang hoạt động, mã gồm 6 chữ số sẽ được gửi đến hộp thư. Kiểm tra cả Spam và nhập mã tại đây trong 10 phút.</p>
+        <p class="text-muted small mb-3" role="status" aria-live="polite" data-otp-delivery="@Url.Action("OtpDeliveryStatus")">Đang xử lý yêu cầu gửi mã OTP… Bạn có thể nhập mã ngay khi nhận được.</p>
+        <form asp-action="VerifyOtp" method="post" class="at-form">
+            <div asp-validation-summary="ModelOnly" class="at-alert-danger" role="alert"></div>
+            <label asp-for="Code">Mã xác nhận gồm 6 chữ số</label>
+            <div class="hnmt-pure-input-wrap"><input asp-for="Code" class="hnmt-pure-input" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" minlength="6" placeholder="000000" required style="text-align:center;font-size:1.8rem;letter-spacing:.5rem;font-variant-numeric:tabular-nums" /></div>
+            <span asp-validation-for="Code" class="at-input-error"></span>
+            <button type="submit" class="hnmt-pure-submit-btn">Xác nhận mã OTP</button>
+        </form>
+        <div class="at-card-footer"><a asp-action="ForgotPassword" class="at-footer-link">Đổi email / yêu cầu mã mới</a></div>
+        <p class="at-security-note">Tối đa 5 lần nhập sai. Bạn có thể yêu cầu mã mới sau 60 giây.</p>
+    </div></main>
+</div>
+@section Scripts { <partial name="_ValidationScriptsPartial" /><script src="~/js/password-recovery.js" asp-append-version="true"></script> }
