@@ -80,9 +80,9 @@ document.querySelectorAll("[data-support-chat]").forEach(root => {
             close.hidden = data.isClosed;
             form.hidden = data.isClosed;
         }
-        status.textContent = data.isClosed
-            ? (queue ? "Cuộc trò chuyện đã đóng." : "Cửa hàng đã đóng cuộc trò chuyện. Gửi tin mới để mở lại.")
-            : rows.length ? "" : "Chưa có tin nhắn. Gửi lời nhắn để bắt đầu.";
+        status.textContent = queue
+            ? (data.isClosed ? "Cuộc trò chuyện đã đóng." : "")
+            : (rows.length ? "" : "Chưa có tin nhắn. Gửi lời nhắn để bắt đầu.");
     }
 
     async function loadThread(before = 0) {

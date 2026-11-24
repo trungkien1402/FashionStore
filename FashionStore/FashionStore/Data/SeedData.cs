@@ -124,6 +124,16 @@ public static class SeedData
             await db.SaveChangesAsync();
         }
 
+        var closedConversations = await db.SupportConversations.Where(c => c.IsClosed).ToListAsync();
+        foreach (var c in closedConversations)
+        {
+            c.IsClosed = false;
+        }
+        if (closedConversations.Any())
+        {
+            await db.SaveChangesAsync();
+        }
+
         if (!await db.Products.AnyAsync(p => p.ShowroomMetadata != null))
         {
             await ShowroomCatalog.ImportAsync(db);

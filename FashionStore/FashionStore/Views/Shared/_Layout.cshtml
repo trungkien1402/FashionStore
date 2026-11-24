@@ -216,7 +216,13 @@
     {
         <div class="style-game-float" data-style-game-float hidden>
             <a asp-controller="StyleGame" asp-action="Index" class="style-game-launcher" draggable="false" aria-label="Chơi thiết kế để nhận voucher">
-                <i class="bi bi-gift-fill style-game-icon"></i>
+                <span class="style-game-gift" aria-hidden="true">
+                    <span class="style-gift-bow"></span>
+                    <span class="style-gift-box"></span>
+                    <span class="style-gift-lid"></span>
+                    <i class="bi bi-pencil-fill style-gift-pencil"></i>
+                    <span class="style-gift-spark">✦</span>
+                </span>
                 <span class="style-game-label">Chơi nhận voucher</span>
             </a>
             <button type="button" class="style-game-close" aria-label="Đóng" title="Đóng">
