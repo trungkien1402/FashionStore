@@ -93,7 +93,7 @@
                 <!-- SLUG -->
                 <div class="mb-4">
                     <div class="d-flex justify-content-between align-items-center mb-1">
-                        <label asp-for="Slug" class="adm-form-label fw-bold mb-0">Đường dẫn tĩnh (Slug) <span class="text-danger">*</span></label>
+                        <label asp-for="Slug" class="adm-form-label fw-bold mb-0">Đường dẫn tĩnh <span class="text-danger">*</span></label>
                         <button type="button" class="btn btn-sm p-0 text-muted" onclick="autoSlugFromName()" title="Tự động đồng bộ từ tên danh mục" style="font-size: 0.75rem;">
                             <i class="bi bi-arrow-repeat me-1"></i>Tự đồng bộ slug
                         </button>
@@ -112,7 +112,7 @@
 
                 <!-- ẢNH ĐẠI DIỆN / BÌA LOOKBOOK DANH MỤC -->
                 <div class="mb-4">
-                    <label class="adm-form-label fw-bold mb-1">Ảnh bìa / Ảnh đại diện danh mục (Lookbook Cover)</label>
+                    <label class="adm-form-label fw-bold mb-1">Ảnh bìa / Ảnh đại diện danh mục</label>
                     <div class="text-muted small mb-2" style="font-size: 0.75rem;">Tải ảnh bìa mới để thay thế ảnh hiện tại (PNG, JPG, WEBP tối đa 10 MB).</div>
 
                     <input type="file" asp-for="CoverImage" id="catCoverInput" accept="image/png, image/jpeg, image/webp" class="d-none" onchange="handleCoverSelected(this)" />

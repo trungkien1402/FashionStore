@@ -59,7 +59,7 @@ public static class SeedData
             {
                 UserName = shipperEmail,
                 Email = shipperEmail,
-                FullName = "Nguyễn Văn Giao (Shipper)",
+                FullName = "Nguyễn Văn Giao",
                 PhoneNumber = "0988776655",
                 EmailConfirmed = true,
                 IsActive = true
@@ -70,9 +70,31 @@ public static class SeedData
                 await userManager.AddToRoleAsync(shipper, "Shipper");
             }
         }
-        else if (!await userManager.IsInRoleAsync(shipper, "Shipper"))
+        else
         {
-            await userManager.AddToRoleAsync(shipper, "Shipper");
+            if (shipper.FullName != null && shipper.FullName.Contains("(Shipper)"))
+            {
+                shipper.FullName = shipper.FullName.Replace(" (Shipper)", "").Replace("(Shipper)", "").Trim();
+                await userManager.UpdateAsync(shipper);
+            }
+            if (!await userManager.IsInRoleAsync(shipper, "Shipper"))
+            {
+                await userManager.AddToRoleAsync(shipper, "Shipper");
+            }
+        }
+
+        var variantsWithParens = await db.ProductVariants.Where(v => v.Color != null && v.Color.Contains("(")).ToListAsync();
+        foreach (var v in variantsWithParens)
+        {
+            var idx = v.Color.IndexOf('(');
+            if (idx > 0)
+            {
+                v.Color = v.Color.Substring(0, idx).Trim();
+            }
+        }
+        if (variantsWithParens.Any())
+        {
+            await db.SaveChangesAsync();
         }
 
         if (!await db.Products.AnyAsync(p => p.ShowroomMetadata != null))

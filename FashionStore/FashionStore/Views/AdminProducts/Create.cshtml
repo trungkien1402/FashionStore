@@ -259,20 +259,20 @@
         <!-- 4 AUDIENCE TABS -->
         <div class="d-flex flex-column align-items-sm-end gap-1">
             <div class="text-muted small" style="font-size: 0.72rem; font-weight: 600; text-transform: uppercase;">
-                Luồng Trưng Bày (Audience):
+                Luồng Trưng Bày:
             </div>
             <div class="adm-segment-group">
                 <button type="button" class="adm-segment-item audience-item active" data-aud="men" onclick="selectAudience('men')">
-                    <span>👨</span> <span>Nam</span>
+                    <span>Nam</span>
                 </button>
                 <button type="button" class="adm-segment-item audience-item" data-aud="women" onclick="selectAudience('women')">
-                    <span>👩</span> <span>Nữ</span>
+                    <span>Nữ</span>
                 </button>
                 <button type="button" class="adm-segment-item audience-item" data-aud="boy" onclick="selectAudience('boy')">
-                    <span>👦</span> <span>Bé trai</span>
+                    <span>Bé trai</span>
                 </button>
                 <button type="button" class="adm-segment-item audience-item" data-aud="girls" onclick="selectAudience('girls')">
-                    <span>👧</span> <span>Bé gái</span>
+                    <span>Bé gái</span>
                 </button>
             </div>
         </div>
@@ -299,12 +299,12 @@
 
             <div class="adm-segment-group">
                 <button type="button" class="adm-segment-item active" id="btnArchetypeShoes" onclick="selectArchetype('shoes')">
-                    <span>👟</span>
-                    <span>Giày Dép (Sân khấu 3D)</span>
+                    <i class="bi bi-box-seam me-1"></i>
+                    <span>Giày Dép</span>
                 </button>
                 <button type="button" class="adm-segment-item" id="btnArchetypeClothes" onclick="selectArchetype('clothes')">
-                    <span>🧥</span>
-                    <span>Quần Áo (Sào đồ)</span>
+                    <i class="bi bi-tag me-1"></i>
+                    <span>Quần Áo</span>
                 </button>
             </div>
         </div>
@@ -420,19 +420,19 @@
                     </div>
                     <div class="d-flex flex-wrap gap-1">
                         <button type="button" class="btn btn-sm adm-btn-action-secondary py-1 px-2" style="font-size: 0.72rem;" onclick="loadSampleImage('/images/test-samples/sample-shoe-pair-raw.jpg', 1)" title="2 đôi giày góc nghiêng sàn bê tông">
-                            <span>👟 Giày 2 đôi</span>
+                            <i class="bi bi-box-seam me-1"></i><span>Giày đôi</span>
                         </button>
                         <button type="button" class="btn btn-sm adm-btn-action-secondary py-1 px-2" style="font-size: 0.72rem;" onclick="loadSampleImage('/images/test-samples/sample-shoe-side-raw.jpg', 2)" title="Giày góc nghiêng 1 bên">
-                            <span>👟 Giày 1 chiếc</span>
+                            <i class="bi bi-box me-1"></i><span>Giày chiếc</span>
                         </button>
                         <button type="button" class="btn btn-sm adm-btn-action-secondary py-1 px-2" style="font-size: 0.72rem;" onclick="loadSampleImage('/images/test-samples/jacket-3views-front-raw.jpg', 1)" title="Mặt trước áo khoác canvas">
-                            <span>🧥 Áo trước</span>
+                            <i class="bi bi-tag me-1"></i><span>Áo trước</span>
                         </button>
                         <button type="button" class="btn btn-sm adm-btn-action-secondary py-1 px-2" style="font-size: 0.72rem;" onclick="loadSampleImage('/images/test-samples/jacket-3views-back-raw.jpg', 2)" title="Mặt sau áo khoác canvas">
-                            <span>🧥 Áo sau</span>
+                            <i class="bi bi-tag me-1"></i><span>Áo sau</span>
                         </button>
                         <button type="button" class="btn btn-sm adm-btn-action-secondary py-1 px-2" style="font-size: 0.72rem;" onclick="loadSampleImage('/images/test-samples/jacket-3views-side-raw.jpg', 3)" title="Bên hông áo khoác canvas">
-                            <span>🧥 Áo hông</span>
+                            <i class="bi bi-tag me-1"></i><span>Áo hông</span>
                         </button>
                         <button type="button" class="btn btn-sm adm-btn-action-primary py-1 px-2" style="font-size: 0.72rem; font-weight: 600;" onclick="loadAllJacketViews()" title="Nạp đủ 3 mặt của áo vào 3 slot">
                             <i class="bi bi-cloud-arrow-down me-1"></i><span>Nạp 3 mặt áo</span>
@@ -502,7 +502,7 @@
             <div class="adm-card mb-3" id="cardShoeStageConfig">
                 <div class="fw-bold mb-1 d-flex align-items-center gap-2" style="font-size: 0.88rem; color: var(--adm-heading);">
                     <i class="bi bi-display"></i>
-                    <span>2. Cấu hình Sân khấu 3D Giày (3D Interactive Stage)</span>
+                    <span>2. Cấu hình Sân khấu 3D Giày</span>
                 </div>
                 <div class="text-muted small mb-3" style="font-size: 0.74rem;">
                     Tùy biến chữ to in chìm, màu nền sân khấu, bộ sưu tập và thông số góc dưới
@@ -511,7 +511,7 @@
                 <!-- ROW 1: BỘ SƯU TẬP & MÀU NỀN SÂN KHẤU -->
                 <div class="row g-3 mb-3">
                     <div class="col-md-6">
-                        <label class="adm-form-label">Bộ sưu tập (Collection)</label>
+                        <label class="adm-form-label">Bộ sưu tập</label>
                         <div class="d-flex gap-2">
                             <select class="form-select adm-input-dark" id="selectCollectionPreset" style="height: 38px; font-size: 0.85rem;" onchange="handleCollectionSelect(this)">
                                 <option value="STREET REMIX" selected>STREET REMIX</option>
@@ -526,7 +526,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="adm-form-label">Màu nền sân khấu (Stage Theme Color)</label>
+                        <label class="adm-form-label">Màu nền sân khấu</label>
                         <div class="d-flex align-items-center gap-2">
                             <input asp-for="ThemeColor" type="color" id="themeColorPicker" value="#5C3A21"
                                    style="width: 38px; height: 38px; border: 1px solid var(--adm-border); border-radius: 6px; cursor: pointer; padding: 2px;" />
@@ -547,13 +547,13 @@
                 <div class="row g-3 mb-3">
                     <div class="col-md-6">
                         <label asp-for="HeroModelText" class="adm-form-label">
-                            Chữ to in chìm sau giày (Hero Backdrop Text)
+                            Chữ in chìm sau giày
                         </label>
                         <input asp-for="HeroModelText" class="form-control adm-input-dark font-monospace text-uppercase" id="heroModelTextInput"
                                placeholder="VD: TOBACCO DECK" value="TOBACCO DECK" style="height: 38px; font-size: 0.86rem; font-weight: 700;" />
                     </div>
                     <div class="col-md-6">
-                        <label asp-for="ColorwayName" class="adm-form-label">Tên phối màu (Colorway)</label>
+                        <label asp-for="ColorwayName" class="adm-form-label">Tên phối màu</label>
                         <input asp-for="ColorwayName" class="form-control adm-input-dark" id="colorwayNameInput"
                                placeholder="VD: NÂU THUỐC / GUM" value="NÂU THUỐC / GUM" style="height: 38px; font-size: 0.85rem;" />
                     </div>
@@ -562,12 +562,12 @@
                 <!-- ROW 3: MÃ GIÀY & ĐƠN VỊ THIẾT KẾ -->
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label asp-for="StyleCode" class="adm-form-label">Mã giày (StyleCode)</label>
+                        <label asp-for="StyleCode" class="adm-form-label">Mã kiểu dáng</label>
                         <input asp-for="StyleCode" class="form-control adm-input-dark font-monospace text-uppercase" id="styleCodeInput"
                                placeholder="MEN-TOBACCO-GUM-DECK" value="MEN-TOBACCO-GUM-DECK" style="height: 38px; font-size: 0.82rem;" />
                     </div>
                     <div class="col-md-6">
-                        <label asp-for="Designer" class="adm-form-label">Thiết kế (Designer)</label>
+                        <label asp-for="Designer" class="adm-form-label">Nhà thiết kế</label>
                         <input asp-for="Designer" class="form-control adm-input-dark" id="designerInput"
                                placeholder="HNMTSHOP" value="HNMTSHOP" style="height: 38px; font-size: 0.85rem;" />
                     </div>

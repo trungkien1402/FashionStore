@@ -290,7 +290,7 @@
                                 </td>
                                 <td>
                                     <span class="adm-pill gray" style="font-size: 0.72rem;">
-                                        Size: @item.Size · @item.Color
+                                        Size: @item.Size · @(item.Color?.Contains("(") == true ? item.Color.Substring(0, item.Color.IndexOf('(')).Trim() : item.Color)
                                     </span>
                                 </td>
                                 <td class="text-end" style="color: var(--adm-ink); font-weight: 500;">
@@ -356,7 +356,7 @@
                 else
                 {
                     <span class="adm-pill gray">
-                        <i class="bi bi-cash me-1"></i> Tiền mặt khi nhận (COD)
+                        <i class="bi bi-cash me-1"></i> Tiền mặt khi nhận hàng
                     </span>
                 }
             </div>
@@ -522,7 +522,7 @@
                                         @sh.TrackingCode
                                     </td>
                                     <td>
-                                        <div class="fw-semibold" style="color: var(--adm-ink);">@(sh.Shipper?.FullName ?? "Chưa phân công")</div>
+                                        <div class="fw-semibold" style="color: var(--adm-ink);">@(sh.Shipper?.FullName?.Replace(" (Shipper)", "").Replace("(Shipper)", "").Trim() ?? "Chưa phân công")</div>
                                         <div class="text-muted" style="font-size: 0.72rem;">@(sh.Shipper?.PhoneNumber ?? "")</div>
                                     </td>
                                     <td class="fw-bold" style="color: var(--adm-ink);">

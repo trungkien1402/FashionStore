@@ -3800,12 +3800,12 @@
     "metadata": {
       "colors": [
         [
-          "Trắng Ngà (White)",
+          "Trắng Ngà",
           "#f8f7f3",
           "#16171b"
         ],
         [
-          "Đen Huyền Bí (Black)",
+          "Đen Huyền Bí",
           "#202125",
           "#efebda"
         ]
@@ -3857,7 +3857,7 @@
     "metadata": {
       "colors": [
         [
-          "Đen & Cam (Black & Orange)",
+          "Đen & Cam",
           "#1a1b1e",
           "#ff671f"
         ],
@@ -3914,12 +3914,12 @@
     "metadata": {
       "colors": [
         [
-          "Kem Tự Nhiên (Cream)",
+          "Kem Tự Nhiên",
           "#efeadb",
           "#c43236"
         ],
         [
-          "Đen Đỏ Rực (Black & Red)",
+          "Đen Đỏ Rực",
           "#18191c",
           "#da353b"
         ]
@@ -3971,12 +3971,12 @@
     "metadata": {
       "colors": [
         [
-          "Xám Tro Vintage (Washed Charcoal)",
+          "Xám Tro Vintage",
           "#5c5b5c",
           "#edece5"
         ],
         [
-          "Nâu Cát Sang Trọng (Sand)",
+          "Nâu Cát Sang Trọng",
           "#ccbba0",
           "#33353c"
         ]
@@ -4028,12 +4028,12 @@
     "metadata": {
       "colors": [
         [
-          "Rượu Vang Đỏ (Burgundy)",
+          "Rượu Vang Đỏ",
           "#652f42",
           "#f4dfbe"
         ],
         [
-          "Xanh Rừng Sâu (Forest Green)",
+          "Xanh Rừng Sâu",
           "#24483b",
           "#f0e4bf"
         ]
@@ -4085,12 +4085,12 @@
     "metadata": {
       "colors": [
         [
-          "Xanh Rêu Ô-liu (Olive)",
+          "Xanh Rêu Ô-liu",
           "#757a49",
           "#202125"
         ],
         [
-          "Trắng Ngà Nét Xanh Navy (Ecru)",
+          "Trắng Ngà Nét Xanh Navy",
           "#e5dcc9",
           "#28345a"
         ]
@@ -4142,12 +4142,12 @@
     "metadata": {
       "colors": [
         [
-          "Xanh Đậm Hoàng Gia (Prussian Blue)",
+          "Xanh Đậm Hoàng Gia",
           "#153e78",
           "#f1f0e7"
         ],
         [
-          "Đỏ Đất Nung (Rust Terracotta)",
+          "Đỏ Đất Nung",
           "#aa6244",
           "#eee3c8"
         ]
@@ -4200,12 +4200,12 @@
     "metadata": {
       "colors": [
         [
-          "Đen Tối Giản (Black)",
+          "Đen Tối Giản",
           "#222326",
           "#e9e4d4"
         ],
         [
-          "Xám Tiêu Thêu Đen (Grey Marl)",
+          "Xám Tiêu Thêu Đen",
           "#b5b3b0",
           "#27282d"
         ]
@@ -4257,12 +4257,12 @@
     "metadata": {
       "colors": [
         [
-          "Xanh Da Trời (Sky Blue)",
+          "Xanh Da Trời",
           "#88b8d8",
           "#fafafa"
         ],
         [
-          "Tím Hoa Cà Pastel (Lilac)",
+          "Tím Hoa Cà Pastel",
           "#bdb3dd",
           "#ffffff"
         ]
@@ -4314,12 +4314,12 @@
     "metadata": {
       "colors": [
         [
-          "Xám Đá Tự Nhiên (Stone)",
+          "Xám Đá Tự Nhiên",
           "#c1b5a2",
           "#222326"
         ],
         [
-          "Đen Điểm Xanh Neon (Acid Lime)",
+          "Đen Điểm Xanh Neon",
           "#222326",
           "#bbdc37"
         ]
@@ -4371,12 +4371,12 @@
     "metadata": {
       "colors": [
         [
-          "Washed Than Chì (Vintage Charcoal)",
+          "Washed Than Chì",
           "#1f1f21",
           "#00f0ff"
         ],
         [
-          "Xám Bạc (Silver Smoke)",
+          "Xám Bạc",
           "#38393d",
           "#a3e635"
         ]
@@ -4428,12 +4428,12 @@
     "metadata": {
       "colors": [
         [
-          "Xanh Navy & Kem (Navy / Cream)",
+          "Xanh Navy & Kem",
           "#121d33",
           "#f2efe9"
         ],
         [
-          "Đen Huyền Bí & Trắng (Black / White)",
+          "Đen Huyền Bí & Trắng",
           "#111214",
           "#ffffff"
         ]
@@ -4485,12 +4485,12 @@
     "metadata": {
       "colors": [
         [
-          "Tricolor Race (Đen - Kem - Đỏ)",
+          "Tricolor Race",
           "#18181b",
           "#e61922"
         ],
         [
-          "Stealth Dark (All Black)",
+          "Stealth Dark",
           "#0a0a0c",
           "#888888"
         ]
@@ -4542,12 +4542,12 @@
     "metadata": {
       "colors": [
         [
-          "Đen Tím Cyber (Void Purple)",
+          "Đen Tím Cyber",
           "#15131e",
           "#a855f7"
         ],
         [
-          "Đen Tuyền (Stealth Onyx)",
+          "Đen Tuyền",
           "#0e0e11",
           "#ffffff"
         ]
@@ -4599,12 +4599,12 @@
     "metadata": {
       "colors": [
         [
-          "Xanh Rêu Safari (Olive Drab)",
+          "Xanh Rêu Safari",
           "#485338",
           "#1a1f16"
         ],
         [
-          "Xám Đá Bụi (Slate Grey)",
+          "Xám Đá Bụi",
           "#3c4046",
           "#e0e0e0"
         ]
@@ -18363,7 +18363,7 @@
     "metadata": {
       "colors": [
         [
-          "Xanh Vintage (90s Blue)",
+          "Xanh Vintage",
           "#3b82f6"
         ]
       ],
@@ -18482,7 +18482,7 @@
     "metadata": {
       "colors": [
         [
-          "Chàm Đậm (Deep Indigo)",
+          "Chàm Đậm",
           "#1e1b4b"
         ]
       ],

@@ -60,7 +60,7 @@
                     </div>
                     <div class="text-end">
                         <span class="badge" style="background: #F1F5F9; color: #0F172A; border: 1px solid #CBD5E1;">Size: @Model.Size</span>
-                        <div class="badge mt-1" style="background: #F1F5F9; color: #0F172A; border: 1px solid #CBD5E1;">Màu: @Model.Color</div>
+                        <div class="badge mt-1" style="background: #F1F5F9; color: #0F172A; border: 1px solid #CBD5E1;">Màu: @(Model.Color?.Contains("(") == true ? Model.Color.Substring(0, Model.Color.IndexOf('(')).Trim() : Model.Color)</div>
                     </div>
                 </div>
             </div>

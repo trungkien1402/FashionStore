@@ -190,7 +190,7 @@
                                     <span class="badge" style="background: var(--adm-surface-hover, #F8FAFC); color: var(--adm-ink, #0F172A); border: 1px solid var(--adm-border, #CBD5E1);">@row.Size</span>
                                 </td>
                                 <td>
-                                    <span class="badge" style="background: var(--adm-surface-hover, #F8FAFC); color: var(--adm-ink, #0F172A); border: 1px solid var(--adm-border, #CBD5E1);">@row.Color</span>
+                                    <span class="badge" style="background: var(--adm-surface-hover, #F8FAFC); color: var(--adm-ink, #0F172A); border: 1px solid var(--adm-border, #CBD5E1);">@(row.Color?.Contains("(") == true ? row.Color.Substring(0, row.Color.IndexOf('(')).Trim() : row.Color)</span>
                                 </td>
                                 <td class="text-end pe-3 font-monospace fw-bold adm-heading">
                                     @row.Units.ToString("N0")

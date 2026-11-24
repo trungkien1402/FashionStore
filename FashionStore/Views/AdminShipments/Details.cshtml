@@ -87,7 +87,7 @@
                 <div class="col-md-6">
                     <div class="p-3 rounded-3" style="background: var(--adm-surface-hover, #F8FAFC); border: 1px solid var(--adm-border, #E2E8F0);">
                         <div class="text-muted small">Shipper phụ trách</div>
-                        <div class="fw-bold adm-heading fs-5 mt-1">@(Model.Shipper?.FullName ?? "Chưa rõ")</div>
+                        <div class="fw-bold adm-heading fs-5 mt-1">@(Model.Shipper?.FullName?.Replace(" (Shipper)", "").Replace("(Shipper)", "").Trim() ?? "Chưa rõ")</div>
                         <div class="text-muted font-monospace small mt-1">
                             <i class="bi bi-telephone me-1"></i>@(Model.Shipper?.PhoneNumber ?? "Chưa cập nhật")
                         </div>
@@ -170,7 +170,7 @@
                                             @if (!string.IsNullOrEmpty(item.Color))
                                             {
                                                 <span class="badge" style="background: var(--adm-surface-hover, #F1F5F9); color: var(--adm-ink, #0F172A); border: 1px solid var(--adm-border, #CBD5E1); font-size: 0.75rem;">
-                                                    @item.Color
+                                                    @(item.Color?.Contains("(") == true ? item.Color.Substring(0, item.Color.IndexOf('(')).Trim() : item.Color)
                                                 </span>
                                             }
                                         </div>
@@ -290,7 +290,7 @@
                             {
                                 if (s.Id != Model.ShipperId)
                                 {
-                                    <option value="@s.Id">@s.FullName (@(s.PhoneNumber ?? s.UserName))</option>
+                                    <option value="@s.Id">@(s.FullName?.Replace(" (Shipper)", "").Replace("(Shipper)", "").Trim()) (@(s.PhoneNumber ?? s.UserName))</option>
                                 }
                             }
                         </select>

@@ -112,7 +112,7 @@ else
                         <th class="ps-4">MÃ VẬN ĐƠN</th>
                         <th>ĐƠN HÀNG</th>
                         <th>SHIPPER PHỤ TRÁCH</th>
-                        <th>TIỀN THU (COD)</th>
+                        <th>TIỀN THU</th>
                         <th>TRẠNG THÁI</th>
                         <th>NGÀY TẠO</th>
                         <th class="text-end pe-4">THAO TÁC</th>
@@ -138,7 +138,7 @@ else
                                 <div class="text-muted small">@sh.Order?.ReceiverName</div>
                             </td>
                             <td>
-                                <div class="fw-bold adm-heading">@(sh.Shipper?.FullName ?? "Chưa phân công")</div>
+                                <div class="fw-bold adm-heading">@(sh.Shipper?.FullName?.Replace(" (Shipper)", "").Replace("(Shipper)", "").Trim() ?? "Chưa phân công")</div>
                                 <div class="text-muted small font-monospace">@(sh.Shipper?.PhoneNumber ?? "")</div>
                             </td>
                             <td>
