@@ -97,6 +97,47 @@ document.querySelectorAll("[data-support-chat]").forEach(root => {
             input.focus();
         });
     });
+
+    // ── Zalo Profile Modal ──
+    const zaloModal = document.getElementById("zaloModal");
+    const closeZaloModal = document.getElementById("closeZaloModal");
+    if (zaloModal && zaloModal.parentElement !== document.body) {
+        document.body.appendChild(zaloModal);
+    }
+
+    function openZaloPopup(e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        if (zaloModal) {
+            zaloModal.hidden = false;
+            closeZaloModal?.focus();
+        }
+    }
+
+    function hideZaloPopup() {
+        if (zaloModal) {
+            zaloModal.hidden = true;
+        }
+    }
+
+    root.querySelectorAll("[data-open-zalo-modal]").forEach(btn => {
+        btn.addEventListener("click", openZaloPopup);
+    });
+
+    closeZaloModal?.addEventListener("click", hideZaloPopup);
+
+    zaloModal?.addEventListener("click", e => {
+        if (e.target.closest("#closeZaloModal") || e.target.classList.contains("zalo-page-body") || e.target.classList.contains("zalo-page-container")) {
+            hideZaloPopup();
+        }
+    });
+
+    document.addEventListener("keydown", e => {
+        if (e.key === "Escape" && zaloModal && !zaloModal.hidden) hideZaloPopup();
+    });
+
     if (!form) return;
 
     const time = new Intl.DateTimeFormat("vi-VN", {
