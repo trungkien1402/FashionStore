@@ -65,7 +65,7 @@
                 <!-- TÊN DANH MỤC -->
                 <div class="mb-3">
                     <label asp-for="Name" class="adm-form-label fw-bold">Tên danh mục <span class="text-danger">*</span></label>
-                    <input asp-for="Name" id="catNameInput" class="form-control adm-input-dark fs-6" placeholder="Ví dụ: Áo Khoác & Outerwear, Quần Denim, Giày Sneaker..." required autocomplete="off" />
+                    <input asp-for="Name" id="catNameInput" class="form-control adm-input-dark fs-6" placeholder="Ví dụ: Áo khoác, Quần jeans, Giày sneaker..." required autocomplete="off" />
                     <span asp-validation-for="Name" class="text-danger small mt-1 d-block"></span>
                 </div>
 
@@ -73,13 +73,13 @@
                 <div class="mb-3">
                     <label class="text-muted small fw-semibold d-block mb-2">Gợi ý danh mục thời trang nhanh:</label>
                     <div class="d-flex flex-wrap gap-2">
-                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Áo Khoác & Outerwear', 'ao-khoac-outerwear')">+ Áo Khoác & Outerwear</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Áo Polo', 'ao-polo')">+ Áo Polo</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Áo Sơ Mi & Blouse', 'ao-so-mi-blouse')">+ Áo Sơ Mi & Blouse</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Áo Thun & Graphic Tees', 'ao-thun-graphic-tees')">+ Áo Thun & Graphic Tees</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Quần Denim & Jean', 'quan-denim-jean')">+ Quần Denim & Jean</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Giày Sneaker & Footwear', 'giay-sneaker')">+ Giày Sneaker</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Phụ Kiện & Túi Xách', 'phu-kien-tui-xach')">+ Phụ Kiện</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Áo khoác', 'ao-khoac')">+ Áo khoác</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Áo polo', 'ao-polo')">+ Áo polo</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Áo sơ mi', 'ao-so-mi')">+ Áo sơ mi</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Áo thun', 'ao-thun')">+ Áo thun</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Quần jeans', 'quan-jeans')">+ Quần jeans</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Giày sneaker', 'giay-sneaker')">+ Giày sneaker</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Phụ kiện', 'phu-kien')">+ Phụ kiện</button>
                     </div>
                 </div>
 

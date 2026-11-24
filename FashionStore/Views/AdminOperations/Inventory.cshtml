@@ -161,7 +161,9 @@ else
                                             <code class="font-monospace" style="color: #475569; font-weight: 600; font-size: 0.72rem;">@row.Sku</code>
                                             @if (!string.IsNullOrEmpty(row.CategoryName))
                                             {
-                                                <span class="text-muted" style="font-size: 0.7rem;">&middot; @row.CategoryName</span>
+                                                var cleanCat = row.CategoryName.Replace("& Graphic Tees", "").Replace("& Sweaters", "").Replace("& Outerwear", "").Replace("& Denim", "").Replace("& Blouse", "").Replace("& Chino", "").Replace("& Streetwear Shoes", "").Trim();
+                                                if (cleanCat.Contains("(")) cleanCat = cleanCat.Substring(0, cleanCat.IndexOf('(')).Trim();
+                                                <span class="text-muted" style="font-size: 0.7rem;">&middot; @cleanCat</span>
                                             }
                                         </div>
                                     </div>

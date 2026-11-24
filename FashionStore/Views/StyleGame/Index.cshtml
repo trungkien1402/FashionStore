@@ -1,138 +1,76 @@
 @using FashionStore.Services.Implementations
 @{
-    ViewData["Title"] = "Studio Thiết Kế - HNMT Atelier";
+    ViewData["Title"] = "Studio thiết kế - HNMTSHOP";
     var images = new[] { "tee.png", "jeans.png", "sneaker.png" };
 }
 <main class="style-studio urbn-container">
     <header class="style-studio-header">
         <div>
-            <div class="studio-header-meta">
-                <i class="bi bi-patch-check-fill"></i> HNMT ATELIER · PHÒNG THIẾT KẾ ĐỘC BẢN
-            </div>
-            <h1>Studio Thiết Kế Trang Phục</h1>
-            <p>Tự do phối màu, vẽ họa tiết streetwear và gửi chấm điểm để nhận mã ưu đãi độc quyền.</p>
+            <h1>Studio thiết kế</h1>
+            <p>Vẽ, trang trí và chấm điểm để mở mã giảm giá.</p>
         </div>
-        <a asp-controller="Products" asp-action="Index" class="stage-tool-btn">
-            <i class="bi bi-arrow-left"></i> Về cửa hàng
+        <a asp-controller="Products" asp-action="Index" class="style-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Về cửa hàng
         </a>
     </header>
 
     <div class="style-studio-grid">
-        <!-- LEFT WING: ATELIER CANVAS STAGE -->
+        <!-- LEFT: CANVAS STAGE -->
         <section class="style-stage-wrap" aria-label="Bàn vẽ sản phẩm">
-            <div class="style-stage-topbar">
-                <div class="spec-item">
-                    <i class="bi bi-bounding-box-circles text-warning"></i>
-                    <span id="lblProductSpec">Áo thun Heavyweight Boxy</span>
-                </div>
-                <div class="spec-item">
-                    <i class="bi bi-aspect-ratio"></i>
-                    <span>Tỉ lệ 1:1 · Vùng in chuẩn</span>
-                </div>
-            </div>
-
             <div class="style-stage">
                 <canvas width="600" height="600" id="styleAvatar" tabindex="0" aria-label="Bàn vẽ. Dùng chuột hoặc cảm ứng để vẽ."></canvas>
             </div>
-
-            <!-- ACTION TOOLBAR BELOW STAGE -->
-            <div class="style-stage-toolbar">
-                <div class="stage-btn-group">
-                    <button type="button" class="stage-tool-btn" id="studioUndo" title="Hoàn tác nét vẽ trước">
-                        <i class="bi bi-arrow-counterclockwise"></i> Hoàn tác
-                    </button>
-                    <button type="button" class="stage-tool-btn text-danger" id="studioClear" title="Xóa toàn bộ bản vẽ">
-                        <i class="bi bi-trash3"></i> Làm lại
-                    </button>
-                </div>
-                <button type="button" class="stage-tool-btn btn-primary-action" id="btnDownloadMockup" title="Xuất ảnh thiết kế độ phân giải cao">
-                    <i class="bi bi-download"></i> Tải ảnh Mockup HD
+            <div class="style-stage-actions">
+                <button type="button" class="style-secondary" id="studioUndo">
+                    <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i> Hoàn tác
+                </button>
+                <button type="button" class="style-secondary" id="studioClear">
+                    <i class="bi bi-trash3" aria-hidden="true"></i> Xóa mẫu vẽ
+                </button>
+                <button type="button" class="style-secondary" id="btnDownloadMockup">
+                    <i class="bi bi-download" aria-hidden="true"></i> Tải ảnh thiết kế
                 </button>
             </div>
         </section>
 
-        <!-- RIGHT WING: CONTROLS & WARDROBE -->
-        <section class="style-wardrobe" aria-label="Bảng điều khiển thiết kế">
+        <!-- RIGHT: WARDROBE & CONTROLS -->
+        <section class="style-wardrobe" aria-label="Công cụ thiết kế">
             <form id="styleGameForm" asp-action="Score" method="post">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="round" value="@ViewBag.Round" />
 
-                <!-- 1. PRODUCT TYPE SELECTION -->
-                <div class="section-label">
-                    <span>1. Chọn loại sản phẩm phôi</span>
-                </div>
+                <!-- PRODUCT SELECTOR -->
                 <fieldset class="style-options">
+                    <legend>Chọn sản phẩm</legend>
                     @for (var i = 0; i < StyleGame.Products.Length; i++)
                     {
                         <label>
                             <input type="radio" name="product" value="@i" data-image="@Url.Content($"~/images/style-studio/{images[i]}")" checked="@(i == 0)" />
-                            <span>
-                                @if (i == 0) { <i class="bi bi-tag-fill me-1"></i> }
-                                else if (i == 1) { <i class="bi bi-layers-fill me-1"></i> }
-                                else { <i class="bi bi-box-seam me-1"></i> }
-                                @StyleGame.Products[i]
-                            </span>
+                            <span>@StyleGame.Products[i]</span>
                         </label>
                     }
                 </fieldset>
 
-                <!-- 2. FABRIC BASE COLOR TINT -->
-                <div class="fabric-tint-row">
-                    <div class="section-label">
-                        <span>2. Màu phôi vải nền</span>
-                        <span class="text-muted" style="font-size: 0.68rem; text-transform: none; font-weight: normal;">Đổi màu áo phôi</span>
-                    </div>
-                    <div class="fabric-swatches">
-                        <label class="fabric-swatch-item">
-                            <input type="radio" name="fabricColor" value="#ffffff" checked />
-                            <span class="fabric-dot" style="background: #ffffff;"></span>
-                            <span>Trắng</span>
-                        </label>
-                        <label class="fabric-swatch-item">
-                            <input type="radio" name="fabricColor" value="#18181b" />
-                            <span class="fabric-dot" style="background: #18181b;"></span>
-                            <span>Đen Obsidian</span>
-                        </label>
-                        <label class="fabric-swatch-item">
-                            <input type="radio" name="fabricColor" value="#ede2d1" />
-                            <span class="fabric-dot" style="background: #ede2d1;"></span>
-                            <span>Be Vintage</span>
-                        </label>
-                        <label class="fabric-swatch-item">
-                            <input type="radio" name="fabricColor" value="#94a3b8" />
-                            <span class="fabric-dot" style="background: #94a3b8;"></span>
-                            <span>Xám Xi Măng</span>
-                        </label>
-                        <label class="fabric-swatch-item">
-                            <input type="radio" name="fabricColor" value="#3d4a3b" />
-                            <span class="fabric-dot" style="background: #3d4a3b;"></span>
-                            <span>Rêu Quân Đội</span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- 3. DRAWING TOOL SELECTION -->
-                <div class="section-label">
-                    <span>3. Công cụ tạo nét</span>
-                </div>
-                <fieldset class="style-options tool-options">
+                <!-- TOOL SELECTOR -->
+                <fieldset class="style-options">
+                    <legend>Công cụ</legend>
                     <label>
                         <input type="radio" name="tool" value="pen" checked />
-                        <span><i class="bi bi-pencil-fill me-1"></i> Bút vẽ</span>
+                        <span><i class="bi bi-pencil" aria-hidden="true"></i> Bút</span>
                     </label>
                     <label>
                         <input type="radio" name="tool" value="eraser" />
-                        <span><i class="bi bi-eraser-fill me-1"></i> Tẩy nét</span>
+                        <span><i class="bi bi-eraser" aria-hidden="true"></i> Tẩy</span>
                     </label>
                     <label>
                         <input type="radio" name="tool" value="sticker" />
-                        <span><i class="bi bi-patch-plus-fill me-1"></i> Decal / Tem</span>
+                        <span><i class="bi bi-stars" aria-hidden="true"></i> Sticker</span>
                     </label>
                 </fieldset>
 
-                <!-- 4. PALETTE SWATCHES -->
+                <!-- COLOR PALETTE -->
                 <fieldset class="studio-palette">
-                    <legend>4. Bảng màu mực in</legend>
+                    <legend>Gam màu sắc</legend>
                     <div class="studio-swatches">
                         @for (var i = 0; i < StyleGame.Colors.Length; i++)
                         {
@@ -146,44 +84,40 @@
                     </div>
                 </fieldset>
 
-                <!-- 5. STICKER & BRUSH SIZE CONTROLS -->
+                <!-- STICKER & BRUSH SIZE -->
                 <div class="studio-controls">
-                    <label>
-                        <span>Decal Streetwear:</span>
+                    <label>Sticker
                         <select id="studioSticker">
-                            <option value="★">★ HNMT Star Badge</option>
-                            <option value="✦">✦ Cyber Chrome</option>
-                            <option value="⚡">⚡ Street Bolt</option>
-                            <option value="♥">♥ Atelier Heart</option>
-                            <option value="☀">☀ Acid Sun</option>
-                            <option value="✿">✿ Gothic Flower</option>
+                            <option value="★">★ Ngôi sao</option>
+                            <option value="⚡">⚡ Tia sét</option>
+                            <option value="✦">✦ Ánh sáng</option>
+                            <option value="♥">♥ Trái tim</option>
+                            <option value="☀">☀ Mặt trời</option>
+                            <option value="✿">✿ Hoa cúc</option>
                         </select>
                     </label>
-                    <label>
-                        <span>Cỡ nét in:</span>
-                        <div class="studio-range-wrap">
-                            <input id="studioSize" type="range" min="4" max="32" value="12" />
-                            <div class="brush-preview-dot" id="brushPreviewDot"></div>
-                        </div>
+                    <label>Cỡ nét
+                        <input id="studioSize" type="range" min="4" max="32" value="12" />
                     </label>
                 </div>
 
-                <!-- SUBMIT SCORE BUTTON -->
+                <!-- SUBMIT BUTTON -->
                 <button type="submit" class="style-score" id="btnSubmitScore">
-                    <i class="bi bi-stars"></i> Đệ trình &amp; Chấm điểm Atelier
+                    <i class="bi bi-stars me-1" aria-hidden="true"></i> Chấm điểm thiết kế
                 </button>
             </form>
 
-            <!-- RESULT & VOUCHER UNBOXING CARD -->
+            <!-- RESULT BOX -->
             <div class="style-result" id="styleResult" role="status" hidden></div>
+            <a class="style-secondary mt-2 w-100 justify-content-center" id="styleCartLink" asp-controller="Cart" asp-action="Index" hidden>
+                Vào giỏ hàng dùng mã <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i>
+            </a>
 
             @if (User.Identity?.IsAuthenticated != true)
             {
-                <div class="mt-3 text-center">
-                    <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Url.Action("Index")" class="text-decoration-none fw-bold" style="color: #b8860b; font-size: 0.85rem;">
-                        <i class="bi bi-box-arrow-in-right me-1"></i> Đăng nhập tài khoản để nhận mã giảm giá
-                    </a>
-                </div>
+                <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Url.Action("Index")" class="style-login">
+                    Đăng nhập để nhận mã giảm giá
+                </a>
             }
         </section>
     </div>

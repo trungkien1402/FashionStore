@@ -97,6 +97,33 @@ public static class SeedData
             await db.SaveChangesAsync();
         }
 
+        var allCategories = await db.Categories.ToListAsync();
+        bool catChanged = false;
+        foreach (var cat in allCategories)
+        {
+            var oldName = cat.Name;
+            if (string.IsNullOrEmpty(cat.Name)) continue;
+            if (cat.Name.Contains("& Graphic Tees")) cat.Name = cat.Name.Replace("& Graphic Tees", "").Trim();
+            if (cat.Name.Contains("& Sweaters")) cat.Name = cat.Name.Replace("& Sweaters", "").Trim();
+            if (cat.Name.Contains("& Outerwear")) cat.Name = cat.Name.Replace("& Outerwear", "").Trim();
+            if (cat.Name.Contains("& Denim")) cat.Name = cat.Name.Replace("& Denim", "").Trim();
+            if (cat.Name.Contains("& Blouse")) cat.Name = cat.Name.Replace("& Blouse", "").Trim();
+            if (cat.Name.Contains("& Chino")) cat.Name = cat.Name.Replace("& Chino", "").Trim();
+            if (cat.Name.Contains("& Streetwear Shoes")) cat.Name = cat.Name.Replace("& Streetwear Shoes", "").Trim();
+            if (cat.Name.Contains("& Cargo")) cat.Name = "Quần túi hộp";
+            if (cat.Name.Contains("Hoodies")) cat.Name = "Áo nỉ & Hoodie";
+            if (cat.Name.Contains("("))
+            {
+                var idx = cat.Name.IndexOf('(');
+                if (idx > 0) cat.Name = cat.Name.Substring(0, idx).Trim();
+            }
+            if (cat.Name != oldName) catChanged = true;
+        }
+        if (catChanged)
+        {
+            await db.SaveChangesAsync();
+        }
+
         if (!await db.Products.AnyAsync(p => p.ShowroomMetadata != null))
         {
             await ShowroomCatalog.ImportAsync(db);

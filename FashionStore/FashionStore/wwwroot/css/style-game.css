@@ -1,68 +1,44 @@
 /* ==========================================================================
-   HNMT ATELIER - CUSTOM LAB & DESIGN STUDIO (STYLE GAME)
+   HNMTSHOP - STYLE GAME (STUDIO THIẾT KẾ)
+   Clean, modern, black & white e-commerce aesthetic
    ========================================================================== */
 
-/* --- FLOATING GIFT LAUNCHER (LUXURY GOLD & OBSIDIAN) --- */
+/* --- FLOATING GAME LAUNCHER (BOTTOM-LEFT) --- */
 .style-game-float {
     position: fixed;
     z-index: 95;
     left: clamp(.75rem, 2vw, 1.75rem);
-    bottom: max(1.5rem, env(safe-area-inset-bottom));
+    bottom: max(1.2rem, env(safe-area-inset-bottom));
 }
 .style-game-float[hidden] { display: none; }
 
 .style-game-launcher {
     display: inline-flex;
     align-items: center;
-    gap: .65rem;
-    padding: .45rem .85rem .45rem .5rem;
-    border: 1.5px solid #d4af37;
+    gap: .5rem;
+    padding: .55rem 1rem;
+    border: 1px solid #0f172a;
     border-radius: 99rem;
     background: #0f172a;
     color: #ffffff;
-    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.35);
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.2);
     text-decoration: none;
-    font: 600 .78rem/1.2 'Jost', system-ui, sans-serif;
+    font-size: .84rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: all .25s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all .2s ease;
 }
 .style-game-launcher:hover {
     background: #1e293b;
-    border-color: #ffd700;
-    transform: translateY(-2px);
-    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.45);
     color: #ffffff;
-}
-
-.style-game-icon-box {
-    width: 2rem;
-    height: 2rem;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #d4af37, #f59e0b);
-    color: #0f172a;
-    display: grid;
-    place-items: center;
-    font-size: .95rem;
-    flex-shrink: 0;
-}
-
-.style-game-launcher span.launcher-label {
-    display: flex;
-    flex-direction: column;
-}
-.style-game-launcher span.launcher-label strong {
-    font-size: .78rem;
-    letter-spacing: .02em;
-}
-.style-game-launcher span.launcher-label small {
-    font-size: .66rem;
-    color: #d4af37;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.3);
 }
 
 .style-game-close {
     position: absolute;
-    top: -4px;
-    right: -4px;
+    top: -5px;
+    right: -5px;
     display: grid;
     place-items: center;
     width: 1.35rem;
@@ -73,215 +49,166 @@
     color: #64748b;
     cursor: pointer;
     font-size: .65rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 .style-game-close:hover { color: #0f172a; }
 
 /* ==========================================================================
-   STUDIO PAGE STYLES (LUXURY MINIMALIST ATELIER)
+   STUDIO PAGE STYLES (MATCHING WEBSITE THEME)
    ========================================================================== */
 
 .style-studio {
-    max-width: 1140px;
+    max-width: 1060px;
     margin: 0 auto;
     padding: 2rem 1rem 4rem;
-    font-family: 'Jost', system-ui, -apple-system, sans-serif;
     color: #0f172a;
 }
 
-/* HEADER */
 .style-studio-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-bottom: 1.75rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #e2e8f0;
-}
-
-.studio-header-meta {
-    display: inline-flex;
     align-items: center;
-    gap: .5rem;
-    font-size: .72rem;
-    font-weight: 700;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: #b8860b;
-    margin-bottom: .35rem;
+    flex-wrap: wrap;
+    gap: .75rem;
+    margin-bottom: 1.5rem;
 }
 
 .style-studio-header h1 {
-    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
     font-weight: 800;
-    letter-spacing: -0.02em;
-    margin: 0 0 .25rem;
+    letter-spacing: -0.03em;
+    margin: 0 0 .3rem;
     color: #0f172a;
 }
 
 .style-studio-header p {
     margin: 0;
     color: #64748b;
-    font-size: .88rem;
+    font-size: .9rem;
 }
 
-/* 2-WING GRID */
+/* 2-COLUMN GRID */
 .style-studio-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
     align-items: start;
     gap: 1.5rem;
 }
 
-@media (max-width: 991px) {
+@media (max-width: 820px) {
     .style-studio-grid {
         grid-template-columns: 1fr;
     }
 }
 
-/* --- LEFT WING: ATELIER CANVAS STAGE --- */
+/* --- CANVAS STAGE (CLEAN NEUTRAL STUDIO BACKDROP, NO GRID LINES) --- */
 .style-stage-wrap {
     display: flex;
     flex-direction: column;
-    gap: .85rem;
-}
-
-.style-stage-topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: .74rem;
-    color: #64748b;
-    padding: .35rem .65rem;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: .6rem;
-}
-
-.style-stage-topbar .spec-item {
-    display: inline-flex;
-    align-items: center;
-    gap: .35rem;
-    font-weight: 600;
+    gap: .75rem;
 }
 
 .style-stage {
-    position: relative;
-    background-color: #fafbfc;
-    background-image: 
-        linear-gradient(rgba(226, 232, 240, 0.45) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(226, 232, 240, 0.45) 1px, transparent 1px);
-    background-size: 20px 20px;
-    border: 1px solid #cbd5e1;
-    border-radius: 1rem;
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: 1.25rem;
     display: grid;
     place-items: center;
     overflow: hidden;
-    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
     aspect-ratio: 1 / 1;
-}
-
-.style-stage::after {
-    content: "VÙNG IN AN TOÀN · ATELIER SPEC";
-    position: absolute;
-    bottom: 12px;
-    right: 14px;
-    font-family: monospace;
-    font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    color: #94a3b8;
-    pointer-events: none;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
 }
 
 .style-stage canvas {
     display: block;
     width: 100%;
+    max-width: 540px;
     height: auto;
-    max-width: 580px;
     touch-action: none;
     cursor: crosshair;
 }
 
-/* STAGE TOOLBAR */
-.style-stage-toolbar {
+.style-stage-actions {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
     gap: .5rem;
-    padding: .5rem;
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: .75rem;
 }
 
-.stage-btn-group {
-    display: inline-flex;
-    gap: .35rem;
-}
-
-.stage-tool-btn {
-    border: 1px solid #e2e8f0;
-    background: #ffffff;
-    color: #334155;
-    padding: .45rem .8rem;
-    border-radius: .55rem;
-    font-size: .78rem;
-    font-weight: 600;
+/* BUTTONS */
+.style-score, .style-secondary {
     display: inline-flex;
     align-items: center;
-    gap: .4rem;
+    justify-content: center;
+    gap: .45rem;
+    padding: .65rem .95rem;
+    border-radius: .6rem;
+    font: inherit;
+    font-size: .84rem;
+    font-weight: 600;
+    text-decoration: none;
     cursor: pointer;
     transition: all .15s ease;
 }
 
-.stage-tool-btn:hover {
-    background: #f8fafc;
-    border-color: #cbd5e1;
-    color: #0f172a;
-}
-
-.stage-tool-btn.btn-primary-action {
+.style-score {
     background: #0f172a;
     color: #ffffff;
-    border-color: #0f172a;
-}
-.stage-tool-btn.btn-primary-action:hover {
-    background: #1e293b;
-    border-color: #d4af37;
+    border: 1px solid #0f172a;
+    width: 100%;
+    padding: .75rem;
+    font-size: .9rem;
+    border-radius: .65rem;
 }
 
-/* --- RIGHT WING: CONTROLS & WARDROBE --- */
+.style-score:hover {
+    background: #1e293b;
+    border-color: #1e293b;
+}
+
+.style-score:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+.style-secondary {
+    border: 1px solid #e2e8f0;
+    color: #0f172a;
+    background: #ffffff;
+}
+
+.style-secondary:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+.style-secondary[hidden] {
+    display: none;
+}
+
+/* --- RIGHT WARDROBE & CONTROLS --- */
 .style-wardrobe {
     border: 1px solid #e2e8f0;
-    border-radius: 1rem;
-    padding: 1.25rem 1.35rem;
+    border-radius: 1.25rem;
+    padding: 1.25rem;
     background: #ffffff;
-    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
 }
 
-.section-label {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: .75rem;
-    font-weight: 700;
-    letter-spacing: .06em;
-    text-transform: uppercase;
-    color: #64748b;
-    margin-bottom: .5rem;
-}
-
-/* PRODUCT MOCKUP CHANGER */
 .style-options {
     border: 0;
-    margin: 0 0 1.15rem;
+    margin: 0 0 1rem;
     padding: 0;
     display: grid;
     gap: .45rem;
     grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.style-options legend {
+    padding: 0;
+    margin-bottom: .45rem;
+    font-size: .82rem;
+    font-weight: 700;
+    color: #475569;
 }
 
 .style-options label {
@@ -298,12 +225,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: .4rem;
-    padding: .55rem .4rem;
+    gap: .35rem;
+    padding: .55rem .35rem;
     border: 1.5px solid #e2e8f0;
-    border-radius: .65rem;
-    font-size: .8rem;
-    font-weight: 600;
+    border-radius: .6rem;
+    font-size: .82rem;
+    font-weight: 500;
     color: #334155;
     background: #ffffff;
     transition: all .15s ease;
@@ -314,95 +241,31 @@
     border-color: #0f172a;
     background: #0f172a;
     color: #ffffff;
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
-}
-
-/* FABRIC COLOR TINT ROW */
-.fabric-tint-row {
-    margin-bottom: 1.15rem;
-}
-
-.fabric-swatches {
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-    flex-wrap: wrap;
-}
-
-.fabric-swatch-item {
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: .4rem;
-    padding: .35rem .65rem .35rem .45rem;
-    border: 1px solid #e2e8f0;
-    border-radius: .55rem;
-    background: #ffffff;
-    font-size: .76rem;
     font-weight: 600;
-    color: #334155;
-    transition: all .15s ease;
 }
 
-.fabric-swatch-item input {
-    position: absolute;
-    opacity: 0;
-}
-
-.fabric-dot {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    border: 1px solid rgba(0,0,0,0.15);
-}
-
-.fabric-swatch-item:has(input:checked) {
-    border-color: #d4af37;
-    background: #fdfbf7;
-    color: #0f172a;
-    box-shadow: 0 2px 6px rgba(212, 175, 55, 0.2);
-}
-
-/* TOOL SEGMENT PICKER */
-.tool-options {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.tool-options label span {
-    font-size: .82rem;
-    padding: .55rem;
-}
-
-.tool-options input:checked + span {
-    border-color: #0f172a;
-    background: #0f172a;
-    color: #ffffff;
-}
-
-/* COLOR PALETTE */
+/* PALETTE */
 .studio-palette {
     min-width: 0;
-    padding: .75rem;
-    margin: 0 0 1.15rem;
+    padding: .65rem .75rem;
+    margin: 0 0 1rem;
     border: 1px solid #e2e8f0;
-    border-radius: .85rem;
+    border-radius: .75rem;
     background: #f8fafc;
 }
 
 .studio-palette legend {
-    padding: 0 .4rem;
-    font-size: .75rem;
+    padding: 0 .35rem;
+    font-size: .82rem;
     font-weight: 700;
-    letter-spacing: .06em;
-    text-transform: uppercase;
-    color: #64748b;
+    color: #475569;
 }
 
 .studio-swatches {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(36px, 1fr));
     justify-items: center;
-    gap: .5rem .25rem;
+    gap: .45rem .2rem;
 }
 
 .studio-swatch {
@@ -425,13 +288,13 @@
     height: 28px;
     border-radius: 50%;
     border: 2px solid white;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
     background: var(--swatch);
     transition: transform .15s ease;
 }
 
 .studio-swatch:hover span {
-    transform: scale(1.12);
+    transform: scale(1.15);
 }
 
 .studio-swatch i {
@@ -444,183 +307,65 @@
 .studio-swatch input:checked + span {
     outline: 2px solid #0f172a;
     outline-offset: 2px;
-    transform: scale(1.1);
 }
 
 .studio-swatch input:checked + span i {
     visibility: visible;
 }
 
-/* STICKER & SLIDER CONTROLS */
+/* CONTROLS (STICKER & RANGE) */
 .studio-controls {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: .75rem;
-    margin-bottom: 1.25rem;
+    gap: .65rem;
+    margin-bottom: 1.15rem;
 }
 
 .studio-controls label {
     display: flex;
     flex-direction: column;
-    gap: .35rem;
-    font-size: .78rem;
-    font-weight: 700;
+    gap: .3rem;
+    font-size: .8rem;
+    font-weight: 600;
     color: #475569;
 }
 
 .studio-controls select {
     border: 1px solid #cbd5e1;
-    border-radius: .55rem;
-    padding: .45rem .6rem;
+    border-radius: .5rem;
+    padding: .4rem .5rem;
     background: #ffffff;
     font: inherit;
-    font-size: .84rem;
+    font-size: .82rem;
     color: #0f172a;
-    outline: none;
 }
 
-.studio-controls select:focus {
-    border-color: #0f172a;
-}
-
-.studio-range-wrap {
-    display: flex;
-    align-items: center;
-    gap: .65rem;
-    height: 36px;
-}
-
-.studio-range-wrap input[type="range"] {
-    flex: 1;
+.studio-controls input[type="range"] {
     accent-color: #0f172a;
     cursor: pointer;
+    height: 32px;
 }
 
-.brush-preview-dot {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: #0f172a;
-    flex-shrink: 0;
-    transition: width .1s ease, height .1s ease;
-}
-
-/* SUBMIT SCORE BUTTON */
-.style-score {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: .6rem;
-    width: 100%;
-    padding: .85rem 1.25rem;
-    background: #0f172a;
-    color: #ffffff;
-    border: 1.5px solid #0f172a;
-    border-radius: .75rem;
-    font: inherit;
-    font-weight: 700;
-    font-size: .92rem;
-    letter-spacing: .02em;
-    cursor: pointer;
-    transition: all .2s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.2);
-}
-
-.style-score:hover {
-    background: #1e293b;
-    border-color: #d4af37;
-    transform: translateY(-2px);
-    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.3);
-}
-
-.style-score:disabled {
-    opacity: .6;
-    transform: none;
-    cursor: not-allowed;
-}
-
-/* RESULT CARD */
+/* RESULT */
 .style-result {
-    margin-top: 1rem;
-    padding: 1.15rem;
-    border-radius: .85rem;
+    margin: .85rem 0;
     background: #f8fafc;
     border: 1px solid #e2e8f0;
-    animation: resultPopIn .3s cubic-bezier(0.16, 1, 0.3, 1);
+    padding: .85rem 1rem;
+    border-radius: .7rem;
+    font-size: .84rem;
 }
 
-@keyframes resultPopIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
+.style-result p {
+    margin: .3rem 0 0;
+    color: #475569;
 }
 
-.result-score-banner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: .75rem;
-    margin-bottom: .75rem;
-    border-bottom: 1px solid #e2e8f0;
-}
-
-.score-number {
-    font-size: 1.8rem;
-    font-weight: 800;
-    font-family: monospace;
+.style-login {
+    display: inline-block;
+    margin-top: .65rem;
     color: #0f172a;
-}
-
-.score-badge {
-    padding: .25rem .75rem;
-    border-radius: 99rem;
-    font-size: .75rem;
-    font-weight: 700;
-    background: #d4af37;
-    color: #0f172a;
-}
-
-.reward-voucher-box {
-    background: linear-gradient(135deg, #0f172a, #1e293b);
-    color: #ffffff;
-    border: 1.5px solid #d4af37;
-    border-radius: .75rem;
-    padding: 1rem;
-    margin-top: .75rem;
-    text-align: center;
-}
-
-.voucher-code-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: .5rem;
-    padding: .4rem 1rem;
-    background: rgba(212, 175, 55, 0.15);
-    border: 1px dashed #d4af37;
-    border-radius: .5rem;
-    color: #ffd700;
-    font-family: monospace;
-    font-size: 1.1rem;
-    font-weight: 700;
-    letter-spacing: .08em;
-    margin: .5rem 0;
-}
-
-.btn-apply-voucher {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: .4rem;
-    padding: .5rem 1rem;
-    background: #d4af37;
-    color: #0f172a;
-    font-weight: 700;
-    font-size: .82rem;
-    border-radius: .5rem;
-    text-decoration: none;
-    margin-top: .5rem;
-    transition: all .15s ease;
-}
-.btn-apply-voucher:hover {
-    background: #ffd700;
-    color: #000000;
+    font-size: .84rem;
+    font-weight: 600;
+    text-decoration: underline;
 }

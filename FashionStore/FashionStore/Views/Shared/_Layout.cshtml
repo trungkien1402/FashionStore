@@ -150,6 +150,7 @@
                             <li><a href="/contact#stores">Hệ Thống Cửa Hàng</a></li>
                             <li><a href="/contact?subject=H%E1%BB%A3p+t%C3%A1c+kinh+doanh#contactForm">Hợp Tác & Đầu Tư</a></li>
                             <li><a asp-controller="Products" asp-action="Index">Sản Phẩm Mới</a></li>
+                            <li><a asp-controller="StyleGame" asp-action="Index">Studio Thiết Kế Trang Phục</a></li>
                         </ul>
                     </div>
 
@@ -211,25 +212,6 @@
     <script src="~/js/home-filter.js?v=home_filter_v5" asp-append-version="true"></script>
     <script src="~/js/auth-modal.js?v=auth_v1" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
-    @if (!string.Equals(ViewContext.RouteData.Values["controller"]?.ToString(), "StyleGame", StringComparison.OrdinalIgnoreCase))
-    {
-        <div class="style-game-float" data-style-game-float hidden>
-            <a asp-controller="StyleGame" asp-action="Index" class="style-game-launcher" draggable="false" aria-label="Chơi thiết kế để nhận voucher">
-                <span class="style-game-hover-label" aria-hidden="true">Chơi nhận voucher</span>
-                <span class="style-game-gift" aria-hidden="true">
-                    <span class="style-gift-bow"></span>
-                    <span class="style-gift-box"></span>
-                    <span class="style-gift-lid"></span>
-                    <i class="bi bi-pencil-fill style-gift-pencil"></i>
-                    <span class="style-gift-spark">✦</span>
-                </span>
-            </a>
-            <button type="button" class="style-game-close" aria-label="Ẩn trò chơi trong một phút" title="Ẩn trong một phút">
-                <i class="bi bi-x-lg" aria-hidden="true"></i>
-            </button>
-        </div>
-        <script src="~/js/style-game-launcher.js" asp-append-version="true" defer></script>
-    }
     <partial name="_SupportChatWidget" />
     <script src="~/js/support-chat.js" asp-append-version="true" defer></script>
 </body>
