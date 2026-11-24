@@ -228,9 +228,6 @@
                 <h2 class="hnmt-drops-title">Sản Phẩm Mới Ra Mắt</h2>
                 <p class="hnmt-drops-desc">Những thiết kế streetwear nguyên bản vừa cập bến — Form dáng Oversize & Boxy chuẩn gu giới trẻ</p>
             </div>
-            <a asp-controller="Products" asp-action="Index" class="urbn-btn-see-all">
-                Xem Tất Cả Sản Phẩm &#x2197;
-            </a>
         </div>
 
         @if (Model != null && Model.Any())
@@ -238,105 +235,27 @@
             <div class="hnmt-drops-grid">
                 @foreach (var p in Model)
                 {
-                    var isNew = p.CreatedAt >= DateTime.UtcNow.AddDays(-30);
-                    var distinctSizeVariants = p.Variants?
-                        .Where(v => v.IsActive && !string.IsNullOrWhiteSpace(v.Size))
-                        .GroupBy(v => v.Size.Trim())
-                        .Select(g => g.FirstOrDefault(v => v.StockQuantity > 0) ?? g.First())
-                        .ToList() ?? new List<FashionStore.Models.Entities.ProductVariant>();
-
-                    var hasInStock = p.Variants != null && p.Variants.Any(v => v.IsActive && v.StockQuantity > 0);
-
-                    <div class="hnmt-drop-card fs-product-card" data-product-id="@p.Id">
-                        <div class="hnmt-drop-card-media">
-                            <a asp-controller="Products" asp-action="Details" asp-route-id="@p.Id" class="hnmt-drop-card-img-link" title="@p.Name">
+                    <div class="hnmt-drop-card" data-product-id="@p.Id">
+                        <a asp-controller="Products" asp-action="Details" asp-route-id="@p.Id" class="hnmt-drop-card-link" title="@p.Name">
+                            <div class="hnmt-drop-card-media">
                                 <img src="@(string.IsNullOrEmpty(p.ImageUrl) ? "/images/placeholder.jpg" : p.ImageUrl)"
                                      alt="@p.Name"
                                      loading="lazy"
                                      decoding="async" />
-                            </a>
-                            @if (isNew)
-                            {
-                                <span class="hnmt-drop-badge">MỚI</span>
-                            }
-
-                            <!-- Thanh hành động nhanh: Nút Thêm giỏ + Xem chi tiết -->
-                            <div class="hnmt-drop-quick-actions">
-                                @if (hasInStock)
-                                {
-                                    <button type="button"
-                                            class="hnmt-btn-quick-add"
-                                            data-action="toggle-size-picker"
-                                            title="Thêm vào giỏ hàng">
-                                        <i class="bi bi-bag-plus me-1"></i> Thêm giỏ
-                                    </button>
-                                }
-                                else
-                                {
-                                    <button type="button" class="hnmt-btn-quick-add out-of-stock" disabled title="Tạm hết hàng">
-                                        Hết hàng
-                                    </button>
-                                }
-                                <a asp-controller="Products" asp-action="Details" asp-route-id="@p.Id" class="hnmt-btn-quick-view" title="Xem chi tiết">
-                                    <i class="bi bi-eye"></i>
-                                </a>
                             </div>
-
-                            <!-- Khay chọn size trượt lên khi bấm Thêm giỏ -->
-                            <div class="hnmt-drop-size-drawer" aria-hidden="true">
-                                <div class="hnmt-size-drawer-header">
-                                    <span class="hnmt-size-drawer-title">CHỌN SIZE</span>
-                                    <button type="button" class="hnmt-size-drawer-close" aria-label="Đóng bảng size">&times;</button>
-                                </div>
-                                <div class="hnmt-size-drawer-pills">
-                                    @if (distinctSizeVariants.Any())
-                                    {
-                                        @foreach (var v in distinctSizeVariants)
-                                        {
-                                            var inStock = v.StockQuantity > 0;
-                                            <button type="button"
-                                                    class="hnmt-size-pill-btn @(inStock ? "" : "disabled")"
-                                                    data-product-id="@p.Id"
-                                                    data-variant-id="@v.Id"
-                                                    data-size="@v.Size"
-                                                    data-product-name="@p.Name"
-                                                    @(inStock ? "" : "disabled title=\"Hết hàng\"")>
-                                                @v.Size
-                                            </button>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <button type="button"
-                                                class="hnmt-size-pill-btn"
-                                                data-product-id="@p.Id"
-                                                data-size="Free Size"
-                                                data-product-name="@p.Name">
-                                            Free Size
-                                        </button>
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                        <div class="hnmt-drop-card-info">
-                            <span class="hnmt-drop-category">@(p.Category?.Name ?? "Streetwear")</span>
-                            <h3 class="hnmt-drop-name">
-                                <a asp-controller="Products" asp-action="Details" asp-route-id="@p.Id">@p.Name</a>
-                            </h3>
-                            <div class="hnmt-drop-price-row">
+                            <div class="hnmt-drop-card-info">
+                                <h3 class="hnmt-drop-name">@p.Name</h3>
                                 <span class="hnmt-drop-price">@p.Price.ToString("N0")&nbsp;₫</span>
-                                @if (hasInStock)
-                                {
-                                    <span class="hnmt-drop-stock in-stock"><i class="bi bi-check-circle-fill"></i> Còn hàng</span>
-                                }
-                                else
-                                {
-                                    <span class="hnmt-drop-stock out-of-stock"><i class="bi bi-dash-circle"></i> Hết hàng</span>
-                                }
                             </div>
-                        </div>
+                        </a>
                     </div>
                 }
+            </div>
+
+            <div class="hnmt-drops-footer">
+                <a asp-controller="Products" asp-action="Index" class="hnmt-drops-btn-more">
+                    Xem Tất Cả Sản Phẩm &#x2197;
+                </a>
             </div>
         }
         else

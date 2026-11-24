@@ -1438,20 +1438,27 @@ img {
 }
 
 .hnmt-drop-card {
-    border: 1px solid #eef2f6;
-    border-radius: 18px;
+    border: 1px solid #edf2f7;
+    border-radius: 16px;
     overflow: hidden;
     background: #ffffff;
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
     display: flex;
     flex-direction: column;
-    position: relative;
 }
 
 .hnmt-drop-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.07);
     border-color: #cbd5e1;
+}
+
+.hnmt-drop-card-link {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
 }
 
 .hnmt-drop-card-media {
@@ -1462,283 +1469,83 @@ img {
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.hnmt-drop-card-img-link {
-    display: block;
-    width: 100%;
-    height: 100%;
+    padding: 16px;
 }
 
 .hnmt-drop-card-media img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
     object-position: center center;
-    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hnmt-drop-card:hover .hnmt-drop-card-media img {
-    transform: scale(1.05);
-}
-
-.hnmt-drop-badge {
-    position: absolute;
-    top: 14px;
-    left: 14px;
-    background: #0f172a;
-    color: #ffffff;
-    font-size: 10.5px;
-    font-weight: 700;
-    padding: 3.5px 9.5px;
-    border-radius: 999px;
-    letter-spacing: 0.5px;
-    z-index: 2;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-}
-
-/* Thanh hành động nhanh (Nút Thêm Giỏ + Xem Chi Tiết) */
-.hnmt-drop-quick-actions {
-    position: absolute;
-    bottom: 12px;
-    left: 12px;
-    right: 12px;
-    display: flex;
-    gap: 8px;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    z-index: 3;
-}
-
-.hnmt-drop-card:hover .hnmt-drop-quick-actions {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* Khi size drawer đang mở, ẩn thanh quick actions để lộ drawer */
-.hnmt-drop-card.size-picker-open .hnmt-drop-quick-actions {
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(10px);
-}
-
-.hnmt-btn-quick-add {
-    flex: 1;
-    background: #0f172a;
-    color: #ffffff;
-    border: none;
-    padding: 9px 14px;
-    border-radius: 999px;
-    font-size: 12.5px;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
-    transition: background 0.15s ease, transform 0.15s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.hnmt-btn-quick-add:hover:not(:disabled) {
-    background: #000000;
-    transform: scale(1.02);
-}
-
-.hnmt-btn-quick-add.out-of-stock {
-    background: #94a3b8;
-    cursor: not-allowed;
-    opacity: 0.7;
-}
-
-.hnmt-btn-quick-view {
-    width: 36px;
-    height: 36px;
-    display: grid;
-    place-items: center;
-    background: #ffffff;
-    color: #0f172a;
-    border-radius: 50%;
-    font-size: 14px;
-    text-decoration: none;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.14);
-    transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
-}
-
-.hnmt-btn-quick-view:hover {
-    transform: scale(1.1);
-    color: #000000;
-    background: #f8fafc;
-}
-
-/* Khay chọn size trượt lên (Size Drawer) */
-.hnmt-drop-size-drawer {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(255, 255, 255, 0.97);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    padding: 12px 14px 14px;
-    border-top: 1px solid #e2e8f0;
-    z-index: 5;
-    transform: translateY(105%);
-    opacity: 0;
-    pointer-events: none;
-    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
-}
-
-.hnmt-drop-card.size-picker-open .hnmt-drop-size-drawer {
-    transform: translateY(0);
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.hnmt-size-drawer-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-}
-
-.hnmt-size-drawer-title {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
-    color: #475569;
-}
-
-.hnmt-size-drawer-close {
-    background: none;
-    border: none;
-    font-size: 18px;
-    line-height: 1;
-    color: #64748b;
-    cursor: pointer;
-    padding: 0 4px;
-    transition: color 0.15s ease, transform 0.15s ease;
-}
-
-.hnmt-size-drawer-close:hover {
-    color: #0f172a;
-    transform: scale(1.15);
-}
-
-.hnmt-size-drawer-pills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-
-.hnmt-size-pill-btn {
-    flex: 1 0 auto;
-    min-width: 38px;
-    height: 32px;
-    padding: 0 10px;
-    border: 1px solid #cbd5e1;
-    background: #ffffff;
-    color: #0f172a;
-    font-size: 12px;
-    font-weight: 600;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.hnmt-size-pill-btn:hover:not(:disabled) {
-    border-color: #0f172a;
-    background: #0f172a;
-    color: #ffffff;
-}
-
-.hnmt-size-pill-btn.disabled,
-.hnmt-size-pill-btn:disabled {
-    border-color: #e2e8f0;
-    background: #f1f5f9;
-    color: #94a3b8;
-    text-decoration: line-through;
-    cursor: not-allowed;
-    opacity: 0.6;
-}
-
-.hnmt-size-pill-btn.is-added {
-    background: #10b981 !important;
-    border-color: #10b981 !important;
-    color: #ffffff !important;
+    transform: scale(1.04);
 }
 
 .hnmt-drop-card-info {
-    padding: 16px 18px 20px;
+    padding: 14px 16px 18px;
     display: flex;
     flex-direction: column;
     flex: 1;
-}
-
-.hnmt-drop-category {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    color: #94a3b8;
-    margin-bottom: 5px;
+    background: #ffffff;
 }
 
 .hnmt-drop-name {
     font-size: 15px;
-    font-weight: 700;
+    font-weight: 500;
     line-height: 1.35;
-    margin: 0 0 10px;
-    color: #0f172a;
-}
-
-.hnmt-drop-name a {
-    color: inherit;
-    text-decoration: none;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+    margin: 0 0 6px;
+    color: #1e293b;
+    white-space: nowrap;
     overflow: hidden;
+    text-overflow: ellipsis;
     transition: color 0.15s ease;
 }
 
-.hnmt-drop-name a:hover {
-    color: #3b82f6;
-}
-
-.hnmt-drop-price-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: auto;
-    padding-top: 4px;
+.hnmt-drop-card:hover .hnmt-drop-name {
+    color: #0f172a;
 }
 
 .hnmt-drop-price {
     font-size: 16px;
-    font-weight: 800;
+    font-weight: 700;
     color: #0f172a;
     letter-spacing: -0.2px;
+    margin: 0;
 }
 
-.hnmt-drop-stock {
-    font-size: 11px;
-    font-weight: 600;
+.hnmt-drops-footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+}
+
+.hnmt-drops-btn-more {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 8px;
+    padding: 12px 36px;
+    background: #ffffff;
+    color: #0f172a;
+    border: 1px solid #d1d5db;
+    border-radius: 999px;
+    font-size: 14.5px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
-.hnmt-drop-stock.in-stock {
-    color: #16a34a;
-}
-
-.hnmt-drop-stock.out-of-stock {
-    color: #dc2626;
+.hnmt-drops-btn-more:hover {
+    background: #0f172a;
+    color: #ffffff;
+    border-color: #0f172a;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
 }
 
 /* --- 3. ATELIER STUDIO BANNER --- */
