@@ -384,17 +384,37 @@
 /* --- INBOX BACKOFFICE --- */
 .support-inbox {
     display: grid;
-    grid-template-columns: minmax(11rem, 1fr) minmax(0, 2.6fr);
-    gap: .85rem;
+    grid-template-columns: minmax(18rem, 340px) minmax(0, 1fr);
+    gap: 1.25rem;
+    width: 100%;
+    align-items: stretch;
 }
 .support-inbox .support-room {
-    height: clamp(24rem, 66vh, 48rem);
+    display: flex;
+    flex-direction: column;
+    height: clamp(34rem, 75vh, 56rem);
+    min-height: 560px;
     overflow: hidden;
+    background: var(--adm-surface, #ffffff);
+    border: 1px solid var(--adm-border, #e2e8f0);
+    border-radius: 12px;
 }
 .support-queue {
-    padding: .7rem;
-    max-height: clamp(24rem, 66vh, 48rem);
-    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    height: clamp(34rem, 75vh, 56rem);
+    min-height: 560px;
+    overflow: hidden;
+    background: var(--adm-surface, #ffffff);
+    border: 1px solid var(--adm-border, #e2e8f0);
+    border-radius: 12px;
+}
+.support-queue [data-chat-queue] {
+    flex: 1;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: .6rem;
 }
 .support-queue h2 {
     font-size: 1rem;
@@ -404,19 +424,24 @@
     display: grid;
     width: 100%;
     text-align: left;
-    margin-bottom: .3rem;
-    gap: .2rem;
-    padding: .55rem;
+    margin-bottom: .4rem;
+    gap: .25rem;
+    padding: .75rem;
     border: 1px solid var(--adm-border, #e2e8f0);
-    border-radius: .55rem;
+    border-radius: .65rem;
     color: inherit;
     background: var(--adm-surface, #ffffff);
     cursor: pointer;
     overflow-wrap: anywhere;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+.support-queue button:hover {
+    background: var(--adm-surface-hover, #f8fafc);
 }
 .support-queue button[aria-pressed="true"] {
     background: var(--adm-surface-hover, #f8fafc);
-    border-color: #0f172a;
+    border-color: var(--adm-gold, #d97706);
+    box-shadow: 0 0 0 1px var(--adm-gold, #d97706);
 }
 .support-queue small {
     font-size: .73rem;
@@ -424,11 +449,74 @@
 .support-queue .needs-reply {
     font-weight: 700;
 }
-@media (max-width: 720px) {
+.support-room-messages {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: var(--adm-surface, #ffffff);
+}
+.support-inbox .support-stream {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 1rem 1.25rem;
+}
+.support-inbox .support-compose {
+    display: block !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 0.85rem 1.25rem !important;
+    background: var(--adm-surface, #ffffff) !important;
+    border-top: 1px solid var(--adm-border, #e2e8f0) !important;
+    flex-shrink: 0 !important;
+}
+.support-inbox .support-compose > div {
+    display: flex !important;
+    width: 100% !important;
+    align-items: flex-end !important;
+    gap: 0.75rem !important;
+}
+.support-inbox .support-compose textarea {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 52px !important;
+    height: 52px !important;
+    padding: 0.65rem 0.95rem !important;
+    font-size: 0.9rem !important;
+    line-height: 1.45 !important;
+    border-radius: 0.65rem !important;
+    resize: none !important;
+    box-sizing: border-box !important;
+    background: var(--adm-surface, #ffffff) !important;
+    color: var(--adm-ink, #0f172a) !important;
+    border: 1px solid var(--adm-border, #cbd5e1) !important;
+}
+.support-inbox .support-compose textarea:focus {
+    border-color: var(--adm-gold, #d97706) !important;
+    box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.15) !important;
+}
+.support-inbox .support-compose button {
+    flex-shrink: 0 !important;
+    width: 52px !important;
+    height: 52px !important;
+    min-width: 52px !important;
+    border-radius: 0.65rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+}
+@media (max-width: 900px) {
     .support-inbox {
         grid-template-columns: 1fr;
     }
     .support-queue {
-        max-height: 12rem;
+        height: auto;
+        min-height: 0;
+        max-height: 16rem;
     }
 }

@@ -43,15 +43,15 @@
                 <i class="bi bi-check2-circle me-1"></i> Đóng yêu cầu
             </button>
         </header>
-        <div class="p-3" style="min-height: 380px;">
+        <div class="support-room-messages p-3 flex-grow-1 overflow-hidden d-flex flex-column" style="min-height: 0;">
             <partial name="_SupportChatMessages" />
         </div>
         <form asp-action="Reply" method="post" class="support-compose p-3 border-top border-secondary border-opacity-10" hidden novalidate style="background: var(--adm-surface, #FFFFFF);">
             <label class="visually-hidden" for="supportReply">Tin nhắn trả lời</label>
-            <div class="d-flex align-items-center gap-2">
+            <div class="d-flex align-items-end gap-2 w-100">
                 <textarea id="supportReply" name="message" rows="2" maxlength="1000" required placeholder="Nhập nội dung trả lời khách hàng…" class="form-control adm-input-dark flex-grow-1" style="resize: none;"></textarea>
-                <button type="submit" class="adm-action-btn adm-btn-primary py-2 px-3 align-self-end" aria-label="Gửi trả lời" style="height: 48px;">
-                    <i class="bi bi-send-fill" aria-hidden="true"></i>
+                <button type="submit" class="adm-action-btn adm-btn-primary d-flex align-items-center justify-content-center" aria-label="Gửi trả lời" style="height: 52px; width: 52px; min-width: 52px; flex-shrink: 0; border-radius: 8px;">
+                    <i class="bi bi-send-fill" aria-hidden="true" style="font-size: 1.05rem;"></i>
                 </button>
             </div>
         </form>
