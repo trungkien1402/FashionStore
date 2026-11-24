@@ -3,7 +3,7 @@
 }
 <div class="support-widget" data-support-chat data-thread="@Url.Action("Thread", "SupportChat")">
     <!-- MAIN SUPPORT PANEL -->
-    <section class="support-room support-panel @(customerChat ? "" : "support-panel-welcome")" id="storeSupportPanel" aria-label="Trung tâm hỗ trợ khách hàng" hidden>
+    <section class="support-panel" id="storeSupportPanel" aria-label="Trung tâm hỗ trợ khách hàng" hidden>
         <!-- HEADER -->
         <header class="support-chat-head">
             <div class="support-brand">
@@ -54,11 +54,16 @@
             {
                 <div class="support-chat-guest">
                     <span class="support-welcome-icon"><i class="bi bi-chat-heart" aria-hidden="true"></i></span>
-                    <h2>Cửa hàng sẵn sàng lắng nghe</h2>
-                    <p>Đăng nhập để chat trực tiếp với đội ngũ chăm sóc khách hàng và xem lại lịch sử hỗ trợ.</p>
-                    <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">
-                        <i class="bi bi-box-arrow-in-right me-1"></i> Đăng nhập để nhắn tin
-                    </a>
+                    <h2>Cửa hàng sẵn sàng hỗ trợ</h2>
+                    <p>Liên hệ hotline tổng đài hoặc đăng nhập tài khoản để chat trực tiếp cùng chuyên viên tư vấn.</p>
+                    <div class="d-flex flex-column gap-2 mt-3 w-100 px-3">
+                        <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Đăng nhập để nhắn tin
+                        </a>
+                        <a href="tel:19008888" class="support-btn-alt">
+                            <i class="bi bi-telephone-fill me-1 text-success"></i> Gọi tổng đài 1900 8888
+                        </a>
+                    </div>
                 </div>
             }
             else if (FashionStore.Services.AccessRoles.CanUseBackOffice(User))
