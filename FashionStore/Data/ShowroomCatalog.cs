@@ -303,12 +303,14 @@ public static class ShowroomCatalog
     public static async Task<object> ReadAsync(ApplicationDbContext db)
     {
         var products = await db.Products.AsNoTracking()
-            .Where(p => p.IsActive && p.ShowroomAudience != null && p.ShowroomKind != null && p.ShowroomMetadata != null)
+            .Where(p => p.IsActive)
+            .Include(p => p.Category)
             .Include(p => p.Variants.Where(v => v.IsActive))
             .OrderBy(p => p.ShowroomSortOrder).ThenBy(p => p.Id)
             .ToListAsync();
 
-        var entries = products.Select(product => (
+        var entries = products.Where(product => product.ShowroomAudience != null &&
+            product.ShowroomKind != null && product.ShowroomMetadata != null).Select(product => (
             Product: product,
             Metadata: JsonSerializer.Deserialize<Metadata>(product.ShowroomMetadata!, JsonOptions)!
         )).ToList();
@@ -329,7 +331,27 @@ public static class ShowroomCatalog
                 .Select(group => new { group.Key.Id, group.Key.Title, Items = group.Select(row => BuildItem(row.Product, row.Metadata)).ToList() })
                 .ToList());
 
-        return new { Clothing = clothing, Shoes = shoes, Lookbook = lookbook };
+        var displayedIds = entries.Where(row => row.Product.ShowroomKind != "giay" || row.Metadata.Collection != null)
+            .Select(row => row.Product.Id)
+            .Concat(lookbook.Values.Select(item => item["productId"]!.GetValue<int>())).ToHashSet();
+        var additionalProducts = products.Where(product => !displayedIds.Contains(product.Id))
+            .ToDictionary(product => product.Id, product =>
+            {
+                var slug = product.Category.Slug;
+                var kind = AdminCategories.TryGetValue(slug, out var category) ? category.Kind
+                    : slug.StartsWith("giay") ? "giay" : slug.StartsWith("quan") ? "quan" : "ao";
+                var colors = product.Variants.Select(variant => variant.Color).Distinct()
+                    .Select(color => new[] { color, "#808080" }).ToArray();
+                if (colors.Length == 0) colors = [["Mặc định", "#808080"]];
+                var sizes = product.Variants.Select(variant => variant.Size).Distinct().ToArray();
+                var details = new JsonObject { ["model"] = product.Name, ["colorway"] = colors[0][0] };
+                var metadata = new Metadata(colors,
+                    colors.Select(_ => new Photos(product.ImageUrl, null, null)).ToArray(), sizes, details, null);
+                var item = BuildItem(product, metadata, kind);
+                item["audience"] = product.ShowroomAudience ?? "men";
+                return item;
+            });
+        return new { Clothing = clothing, Shoes = shoes, Lookbook = lookbook, AdditionalProducts = additionalProducts };
     }
 
     private static bool IsLookbookOnly(Metadata metadata) => metadata.Details["lookbookOnly"]?.GetValue<bool>() == true;
@@ -343,7 +365,7 @@ public static class ShowroomCatalog
         return index > 0 ? metadata.Photos.ElementAtOrDefault(index)?.Front ?? product.ImageUrl : product.ImageUrl;
     }
 
-    private static JsonObject BuildItem(Product product, Metadata metadata)
+    private static JsonObject BuildItem(Product product, Metadata metadata, string? kind = null)
     {
         var item = (JsonObject)metadata.Details.DeepClone();
         var variants = metadata.Colors.Select(color => metadata.Sizes.Select(size =>
@@ -352,11 +374,13 @@ public static class ShowroomCatalog
             return variant == null ? null : new { variant.Id, Stock = variant.StockQuantity, variant.Price };
         }).ToArray()).ToArray();
         item["audience"] = product.ShowroomAudience;
-        item["kind"] = product.ShowroomKind;
+        item["kind"] = kind ?? product.ShowroomKind;
         item["productId"] = product.Id;
+        item["categoryName"] = product.Category.Name;
+        item["categorySlug"] = product.Category.Slug;
         item["sizes"] = JsonSerializer.SerializeToNode(metadata.Sizes, JsonOptions);
         item["variants"] = JsonSerializer.SerializeToNode(variants, JsonOptions);
-        if (product.ShowroomKind == "giay")
+        if ((kind ?? product.ShowroomKind) == "giay")
         {
             item["id"] = product.Slug;
             item["name"] = product.Name;

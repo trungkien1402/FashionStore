@@ -300,14 +300,17 @@
 
     // Đọc cơ sở dữ liệu Showroom Catalog theo đối tượng được chọn
     let showroomCatalogCache;
-    function getCatalogData(aud = currentAudience) {
+    function getCatalogData(aud = currentAudience, includeLookbook = Boolean(currentKeyword.trim())) {
         try {
             const el = document.getElementById('showroomCatalog');
             if (!el) return { shirts: [], pants: [], shoes: [] };
             showroomCatalogCache ??= JSON.parse(el.textContent);
             const data = showroomCatalogCache;
             const audiences = aud === 'all' ? Object.keys(AUDIENCES) : [aud];
-            const extra = currentKeyword.trim() ? Object.values(data.lookbook || {}).filter(item => audiences.includes(item.audience)) : [];
+            const extra = includeLookbook
+                ? [...Object.values(data.lookbook || {}), ...Object.values(data.additionalProducts || {})]
+                    .filter(item => audiences.includes(item.audience))
+                : [];
             const shirts = audiences.flatMap(audience => data?.clothing?.[audience]?.ao || []);
             const pants = audiences.flatMap(audience => data?.clothing?.[audience]?.quan || []);
             const shoeCollections = audiences.flatMap(audience => data?.shoes?.[audience] || []);
@@ -325,6 +328,7 @@
     }
 
     function initHomeFilter() {
+        if (window.HNMTHomeFilter) return;
         const { drawer, confirmModal } = ensureDOM();
 
         // Các thành phần Drawer
@@ -503,15 +507,54 @@
             }
         }
 
+        function normalizeSearch(value) {
+            return removeVietnameseTones(value).replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim();
+        }
+
+        function matchesKeyword(item, kind, query) {
+            if (!query) return true;
+            const name = normalizeSearch(item.name || '');
+            if (name === query) return true;
+
+            const productType = normalizeSearch([item.name, item.type, item.style, item.categoryName, item.categorySlug].join(' '));
+            const aliases = [];
+            if (kind === 'giay') {
+                aliases.push('giay');
+                if (/\b(sneakers?|trainers?|runners?|running|the thao)\b/.test(productType)) aliases.push('giay the thao');
+                if (/\b(boots?|chelsea)\b/.test(productType)) aliases.push('giay boot');
+                if (/\b(heels?|pumps?|cao got)\b/.test(productType)) aliases.push('giay cao got');
+            }
+            if (kind === 'quan') {
+                aliases.push('quan');
+                if (/\b(jeans?|denim)\b/.test(productType)) aliases.push('quan jean', 'quan jeans');
+            }
+            if (kind === 'ao') {
+                if (/\b(dress|dresses|skirt|skirts|vay|dam)\b/.test(productType)) aliases.push('vay', 'dam');
+                else aliases.push('ao');
+                if (/\b(tees?|t shirts?|ao thun)\b/.test(productType)) aliases.push('ao thun', 'ao phong');
+                if (/\b(so mi|blouse|shirt)\b/.test(productType) && !aliases.includes('ao thun')) aliases.push('ao so mi');
+                if (/\b(jacket|coat|bomber|ao khoac)\b/.test(productType)) aliases.push('ao khoac');
+            }
+
+            const audience = { men: 'nam', women: 'nu', boy: 'be trai', girls: 'be gai' }[item.audience];
+            const audienceSuffix = query.match(/^(ao|quan|giay|vay|dam)\b.* (nam|nu|be trai|be gai)$/);
+            if (audienceSuffix && audienceSuffix[2] !== audience) return false;
+            const term = audienceSuffix ? query.slice(0, -audience.length).trimEnd() : query;
+            if (aliases.includes(term)) return true;
+
+            const corpus = normalizeSearch([productType, item.desc, item.sku, ...aliases].join(' '));
+            return term.split(' ').every(word => corpus.includes(word));
+        }
+
         // Thuật toán Lọc Live Sản Phẩm
         function computeLiveMatches() {
+            const query = normalizeSearch(currentKeyword);
             const catalog = getCatalogData();
             const kinds = { ao: catalog.shirts, quan: catalog.pants, giay: catalog.shoes };
             const selectedKinds = currentMasterCategory === 'all' ? Object.keys(kinds) : [currentMasterCategory];
             const sourceList = selectedKinds.flatMap(kind => kinds[kind].map(item => ({ item, kind })));
             const itemUnit = { ao: 'áo', quan: 'quần', giay: 'đôi giày' }[currentMasterCategory] || 'sản phẩm';
 
-            const normalizedKeyword = removeVietnameseTones(currentKeyword.trim());
             const conf = PRICE_CONFIGS[currentMasterCategory] || PRICE_CONFIGS.ao;
             const maxPrice = Number(priceRange.value);
 
@@ -554,15 +597,7 @@
                     if (!hasColor) return false;
                 }
 
-                // 5. Từ khóa tìm kiếm
-                if (normalizedKeyword) {
-                    const searchCorpus = removeVietnameseTones(`${item.name || ''} ${item.desc || ''} ${item.type || ''} ${item.sku || ''}`).toLowerCase();
-                    if (!normalizedKeyword.split(/\s+/).every(word => searchCorpus.includes(word))) {
-                        return false;
-                    }
-                }
-
-                return true;
+                return matchesKeyword(item, kind, query);
             }).map(({ item }) => item);
 
             // Cập nhật số lượng trên nút Áp Dụng
@@ -574,7 +609,40 @@
                 applyCountBadge.textContent = hasActiveFilter ? `${count} ${itemUnit}` : 'Chọn bộ lọc';
             }
 
+            renderSearchSuggestions(query);
             return count;
+        }
+
+        function openExactProduct() {
+            const keyword = normalizeSearch(currentKeyword);
+            if (!keyword) return false;
+            const exactMatches = filteredProductList.filter(item =>
+                normalizeSearch(item.name || '') === keyword &&
+                Number.isSafeInteger(item.productId) && item.productId > 0);
+            return exactMatches.length === 1 && openShowroomProduct(exactMatches[0], true);
+        }
+
+        function openShowroomProduct(product, fromSearch) {
+            const portal = window.HNMTChilePortal;
+            if (!portal) return false;
+            if (!portal.getAudience()) portal.open(product.audience);
+            const returnToSearch = () => {
+                portal.close({ immediate: true });
+                if (product.kind === 'giay') window.closeSneakerShowcase();
+                else window.ClothingRail.closeClothingRail();
+                if (fromSearch) {
+                    openDrawer();
+                    searchInput?.focus();
+                }
+            };
+            const opened = product.kind === 'giay'
+                ? window.SneakerVault?.selectProduct?.(product.id, product.audience, product, returnToSearch)
+                : window.ClothingRail?.selectProduct?.(product.kind, product.slug, product.audience, product, returnToSearch);
+            if (opened) {
+                closeDrawer();
+                closeConfirmModal();
+            }
+            return Boolean(opened);
         }
 
         // Chuyển đổi Đối Tượng (Nam / Nữ / Bé Trai / Bé Gái)
@@ -743,7 +811,11 @@
                 if (!Number.isSafeInteger(product.productId) || product.productId <= 0) continue;
                 const card = document.createElement('a');
                 card.className = 'search-result-card';
-                card.href = '/Products/Details/' + product.productId;
+                card.href = '/?showroomProductId=' + product.productId;
+                card.addEventListener('click', event => {
+                    if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+                    if (openShowroomProduct(product, true)) event.preventDefault();
+                });
                 const photo = document.createElement('img');
                 photo.src = product.frontImg || product.image || '';
                 photo.alt = product.name || 'Sản phẩm';
@@ -828,7 +900,6 @@
             currentColor = 'all';
             currentKeyword = '';
             if (searchInput) searchInput.value = '';
-            renderSearchSuggestions('');
             if (clearSearchBtn) clearSearchBtn.style.display = 'none';
             if (selectedColorName) selectedColorName.textContent = 'Tất cả màu';
 
@@ -886,11 +957,10 @@
 
         if (searchInput) {
             searchInput.addEventListener('keydown', event => {
-                if (event.key === 'Enter' && !event.isComposing) openConfirmModal();
+                if (event.key === 'Enter' && !event.isComposing && !openExactProduct()) openConfirmModal();
             });
             searchInput.addEventListener('input', (e) => {
                 currentKeyword = e.target.value;
-                renderSearchSuggestions(currentKeyword);
                 if (clearSearchBtn) {
                     clearSearchBtn.style.display = currentKeyword.length > 0 ? 'block' : 'none';
                 }
@@ -902,30 +972,21 @@
             clearSearchBtn.addEventListener('click', () => {
                 currentKeyword = '';
                 searchInput.value = '';
-                renderSearchSuggestions('');
                 clearSearchBtn.style.display = 'none';
                 computeLiveMatches();
                 searchInput.focus();
             });
         }
 
-        function renderSearchSuggestions(keyword) {
+        function renderSearchSuggestions(query) {
             const box = document.getElementById('homeSearchSuggestions');
-            const words = removeVietnameseTones(keyword.trim()).toLowerCase().split(/\s+/).filter(Boolean);
             box.replaceChildren();
-            if (!words.length) {
+            if (!query) {
                 box.hidden = true;
                 return;
             }
 
-            const catalog = getCatalogData();
-            const items = currentMasterCategory === 'all'
-                ? [...catalog.shirts, ...catalog.pants, ...catalog.shoes]
-                : catalog[{ ao: 'shirts', quan: 'pants', giay: 'shoes' }[currentMasterCategory]];
-            const names = [...new Set(items.map(item => item.name).filter(name => {
-                const normalized = removeVietnameseTones(name).toLowerCase();
-                return words.every(word => normalized.includes(word));
-            }))].slice(0, 5);
+            const names = [...new Set(filteredProductList.map(item => item.name).filter(Boolean))].slice(0, 5);
             if (!names.length) {
                 box.hidden = true;
                 return;
@@ -939,9 +1000,9 @@
                 option.addEventListener('click', () => {
                     searchInput.value = name;
                     currentKeyword = name;
-                    box.hidden = true;
                     computeLiveMatches();
-                    searchInput.focus();
+                    box.hidden = true;
+                    if (!openExactProduct()) searchInput.focus();
                 });
                 box.appendChild(option);
             }
@@ -949,7 +1010,9 @@
         }
 
         if (applyBtn) {
-            applyBtn.addEventListener('click', openConfirmModal);
+            applyBtn.addEventListener('click', () => {
+                if (!openExactProduct()) openConfirmModal();
+            });
         }
 
         // Confirm Modal Buttons
@@ -998,6 +1061,16 @@
             switchAudience: switchAudience,
             getAudience: () => currentAudience
         };
+
+        const requestedProductId = Number(new URLSearchParams(location.search).get('showroomProductId'));
+        if (requestedProductId > 0) {
+            const catalog = getCatalogData('all', true);
+            const product = [...catalog.shirts, ...catalog.pants, ...catalog.shoes]
+                .find(item => item.productId === requestedProductId)
+                || showroomCatalogCache?.additionalProducts?.[requestedProductId];
+            if (product) openShowroomProduct(product, false);
+            else openDrawer();
+        }
     }
 
     if (document.readyState === 'loading') {

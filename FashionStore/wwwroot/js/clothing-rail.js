@@ -232,11 +232,15 @@
         renderDetail();
     }
 
+    let onSearchDetailClose;
     function closeDetail() {
         detailOpen = false;
         document.body.classList.remove('show-detail');
         const overlay = $('#productOverlay');
         if (overlay) overlay.classList.remove('open');
+        const callback = onSearchDetailClose;
+        onSearchDetailClose = undefined;
+        callback?.();
     }
 
     function navigate(dir) {
@@ -670,6 +674,7 @@
     }
 
     function closeClothingRail() {
+        onSearchDetailClose = undefined;
         const rackOverlayEl = document.getElementById('hnmtRackOverlay');
         if (rackOverlayEl) {
             rackOverlayEl.classList.remove('is-active');
@@ -706,14 +711,14 @@
     }
 
     // Chọn và phóng to chi tiết một món đồ cụ thể
-    function selectProduct(category, slugOrIdx) {
-        const audience = window.HNMTChilePortal?.getAudience?.() || currentAudience;
+    function selectProduct(category, slugOrIdx, audience = window.HNMTChilePortal?.getAudience?.() || currentAudience, searchProduct, onClose) {
+        if (!$('#productOverlay')) return false;
         if (currentAudience !== audience || (category && currentCategory !== category)) {
             openClothingRail(category || currentCategory, audience);
         } else {
             const rackOverlayEl = document.getElementById('hnmtRackOverlay');
             if (rackOverlayEl && !rackOverlayEl.classList.contains('is-active')) {
-                openClothingRail(category || currentCategory);
+                openClothingRail(category || currentCategory, audience);
             }
         }
 
@@ -735,9 +740,18 @@
             }
             setTimeout(() => {
                 setActive(foundProdIdx);
+                onSearchDetailClose = onClose;
                 openDetail(foundProdIdx);
             }, 120);
+            return true;
         }
+        if (!searchProduct) return false;
+        currentRacks = chunkProductsIntoRacks([searchProduct], currentCategory);
+        currentRackIdx = 0;
+        applyRack(currentRacks[0]);
+        onSearchDetailClose = onClose;
+        openDetail(0);
+        return true;
     }
 
     // ==========================================================================
