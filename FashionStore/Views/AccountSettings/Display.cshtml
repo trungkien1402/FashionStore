@@ -1,0 +1,19 @@
+﻿@inject FashionStore.Services.Implementations.IntroPreference IntroPreference
+@{ ViewData["Title"] = "Cài đặt hiển thị · HNMTSHOP"; }
+@section Styles { <link rel="stylesheet" href="~/css/account-settings.css" asp-append-version="true" /> }
+<main class="account-settings">
+    <header class="settings-heading"><h1>Cài đặt hiển thị</h1><p>Tùy chỉnh trải nghiệm mua sắm theo sở thích của bạn.</p></header>
+    @if (TempData["SettingsSuccess"] is string success) { <div class="alert alert-success" role="status">@success</div> }
+    <div class="settings-grid">
+        <aside class="settings-panel settings-nav"><strong>Tài khoản của tôi</strong><a asp-action="Index"><i class="bi bi-person-circle"></i> Hồ sơ cá nhân</a><a asp-action="ChangePassword"><i class="bi bi-shield-lock"></i> Đổi mật khẩu</a><a asp-action="Display" class="active" aria-current="page"><i class="bi bi-sliders"></i> Cài đặt hiển thị</a><a asp-controller="Home" asp-action="Index"><i class="bi bi-arrow-left"></i> Về trang chủ</a></aside>
+        <div class="settings-display-content">
+            <section class="settings-panel settings-display-card">
+                <div class="settings-card-caption"><span><i class="bi bi-sliders"></i> Cài đặt hiển thị</span></div>
+                <form asp-controller="DisplayPreferences" asp-action="Update" method="post" class="settings-card-body">
+                    <label class="settings-display-option" for="showIntro"><span><strong>Giới thiệu chuyển động trang chủ</strong><small>Hiển thị phần thời trang theo cuộn trước khi vào shop. Khi tắt, bạn sẽ vào thẳng nội dung mua sắm.</small></span><input id="showIntro" name="showIntro" value="true" type="checkbox" role="switch" checked="@(!await IntroPreference.IsHiddenAsync())" /></label>
+                    <div class="settings-actions"><button class="settings-primary" type="submit">Lưu cài đặt</button></div>
+                </form>
+            </section>
+        </div>
+    </div>
+</main>

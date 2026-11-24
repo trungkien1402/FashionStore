@@ -1,4 +1,5 @@
-@model List<FashionStore.Models.Entities.Product>
+﻿@model List<FashionStore.Models.Entities.Product>
+@inject FashionStore.Services.Implementations.IntroPreference IntroPreference
 
 @{
     ViewData["Title"] = "HNMTSHOP – Khẳng Định Phong Cách | Thời Trang Giới Trẻ";
@@ -7,6 +8,8 @@
 <!-- ============================================================== -->
 <!-- 1:1 REPLICA: HNMTSHOP ATELIER — THE ANATOMY OF STYLE           -->
 <!-- ============================================================== -->
+@if (!await IntroPreference.IsHiddenAsync())
+{
 <div class="at-loader" id="atLoader" aria-hidden="true">
     <div class="at-loader__mark">HNMTSHOP</div>
     <div class="at-loader__bar"><span id="atLoaderFill"></span></div>
@@ -20,6 +23,9 @@
         <span class="at-brand__word">HNMTSHOP</span>
     </a>
     <nav class="at-nav">
+        <form asp-controller="DisplayPreferences" asp-action="HideIntro" method="post" class="at-hide-intro-form">
+            <button type="submit" class="at-hide-intro" title="Ẩn lần sau. Bật lại trong Cài đặt tài khoản."><i class="bi bi-eye-slash" aria-hidden="true"></i><span>Ẩn phần giới thiệu</span></button>
+        </form>
         <a class="at-nav__cta" href="#mainContent">Vào Shop</a>
     </nav>
 </header>
@@ -86,6 +92,7 @@
 
     </div>
 </section>
+}
 
 <!-- CỬA NGÕ DẪN VÀO TRANG CHỦ CHÍNH (LƯỚT HẾT LÀ VÀO SHOP NGAY) -->
 <div id="mainContent"></div>
@@ -236,7 +243,7 @@
                 @foreach (var p in Model)
                 {
                     <div class="hnmt-drop-card" data-product-id="@p.Id">
-                        <a asp-controller="Products" asp-action="Details" asp-route-id="@p.Id" class="hnmt-drop-card-link" title="@p.Name">
+                        <a href="@(p.ShowroomKind == "giay" ? Url.Action("Sneakers", "Products", new { audience = p.ShowroomAudience, productId = p.Id, from = "home" }) : Url.Action("Details", "Products", new { id = p.Id, from = "home" }))" class="hnmt-drop-card-link" title="@p.Name">
                             <div class="hnmt-drop-card-media">
                                 <img src="@(string.IsNullOrEmpty(p.ImageUrl) ? "/images/placeholder.jpg" : p.ImageUrl)"
                                      alt="@p.Name"
@@ -369,9 +376,16 @@
 
             <!-- Bên phải: Ảnh người mẫu full-body -->
             <div>
-                <div class="urbn-model-photo">
+                <div class="offer-model-gallery" role="region" aria-label="Các mẫu phối đồ" aria-describedby="offerModelHint" tabindex="0">
+                    <div class="offer-model-track">
+                    <div class="urbn-model-photo offer-model-slide" role="group" aria-label="Mẫu 1 trên 3">
                     <img src="~/images/seated-couture-model-v2.webp" asp-append-version="true" loading="lazy" decoding="async"
                          alt="Người mẫu nữ ngồi nghiêng với áo đen lệch vai, quần âu xám và giày đỏ rượu" style="object-fit:contain" />
+                    </div>
+                    <div class="urbn-model-photo offer-model-slide" role="group" aria-label="Mẫu 2 trên 3"><img src="~/images/lookbook/cut/noir-woman-2.webp" loading="lazy" decoding="async" alt="Phối đồ nữ trong bộ sưu tập Noir" /></div>
+                    <div class="urbn-model-photo offer-model-slide" role="group" aria-label="Mẫu 3 trên 3"><img src="~/images/lookbook/cut/sunwash-woman-1.webp" loading="lazy" decoding="async" alt="Phối đồ nữ trong bộ sưu tập Sunwash" /></div>
+                    </div>
+                    <span class="offer-model-hint" id="offerModelHint">Lướt qua để xem mẫu khác</span>
                 </div>
             </div>
 
@@ -547,6 +561,7 @@
 </section>
 
 @section Scripts {
+    <script src="~/js/offer-model-gallery.js" asp-append-version="true"></script>
 }
 
 

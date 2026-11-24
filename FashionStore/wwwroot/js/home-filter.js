@@ -1,4 +1,4 @@
-/**
+﻿/**
  * ==============================================================================
  * HNMTSHOP - BỘ LỌC ĐA DANH MỤC TRANG CHỦ (MASTER HOMEPAGE ATELIER FILTER)
  * Kiến trúc Cascading Filter: Cấp 1 (Áo/Quần/Giày) -> Cấp 2 (Phân loại) -> Cấp 3 (Kiểu dáng/Form)
@@ -743,7 +743,7 @@
                 if (!Number.isSafeInteger(product.productId) || product.productId <= 0) continue;
                 const card = document.createElement('a');
                 card.className = 'search-result-card';
-                card.href = '/Products/Details/' + product.productId;
+                card.href = '/Products/Details/' + product.productId + '?from=home';
                 const photo = document.createElement('img');
                 photo.src = product.frontImg || product.image || '';
                 photo.alt = product.name || 'Sản phẩm';

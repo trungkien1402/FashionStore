@@ -5,6 +5,7 @@
 
 (function () {
     'use strict';
+    const openedFromHomeCard = new URLSearchParams(location.search).get('from') === 'home';
 
     // --- CÁC BỘ SƯU TẬP GIÀY (SNEAKER COLLECTIONS) CÓ THỂ ĐỔI QUA LẠI BẰNG NÚT BẤM ---
     const ITEMS_PER_GRID = 6;
@@ -27,6 +28,19 @@
     const SNEAKER_COLLECTIONS = audiencePages.men;
     const getAudienceCollections = audience => Object.hasOwn(audiencePages, audience) ? audiencePages[audience] : SNEAKER_COLLECTIONS;
     let activeCollections = SNEAKER_COLLECTIONS;
+    const vaultOriginalTitle = document.title;
+    function syncSneakerUrl(shoe) {
+        const audience = Object.keys(audiencePages).find(key =>
+            audiencePages[key].some(collection => collection.items.some(item =>
+                shoe ? String(item.productId) === String(shoe.productId) : activeCollections.includes(collection))))
+            || new URLSearchParams(location.search).get('audience') || 'men';
+        const url = new URL('/Products/Sneakers', location.origin);
+        url.searchParams.set('audience', audience);
+        if (shoe?.productId) url.searchParams.set('productId', shoe.productId);
+        if (openedFromHomeCard) url.searchParams.set('from', 'home');
+        history.replaceState(history.state, '', url.pathname + url.search);
+        document.title = shoe ? `${shoe.name} · HNMTSHOP` : vaultOriginalTitle;
+    }
     let currentCollectionIndex = 0;
     let filteredSneakers = null;
     let filteredPageIdx = 0;
@@ -572,6 +586,8 @@
 
     // --- Chuyển cảnh Reverse FLIP: Thu nhỏ và bay chiếc giày trở về ô trong Grid (chậm rãi, êm ái) ---
     function closeSliderView(immediate = false) {
+        if (openedFromHomeCard && isSliderView && !immediate) { location.assign("/#mainContent"); return; }
+        if (isSliderView) syncSneakerUrl(null);
         if (isTransitioning) return;
         isSliderView = false;
 
@@ -773,6 +789,7 @@
     }
 
     function updateSliderDataOnly(snk) {
+        if (snk) syncSneakerUrl(snk);
         renderGallery(snk);
         const colorwayName = $('#svColorwayName');
         const styleCode = $('#svStyleCode');
@@ -1494,6 +1511,7 @@
     };
 
     window.closeSneakerShowcase = function () {
+        if (openedFromHomeCard) { location.assign("/#mainContent"); return; }
         const overlay = $('#hnmtSneakerOverlay');
         if (overlay) {
             overlay.classList.remove('is-active');
@@ -1591,6 +1609,24 @@
                 }
             }
         } catch (e) {}
+
+        // Deep links from homepage cards and legacy detail URLs open the exact catalog shoe.
+        if (standalone) {
+            const productId = new URLSearchParams(window.location.search).get('productId');
+            if (productId && /^[1-9][0-9]*$/.test(productId)) {
+                const collectionIndex = activeCollections.findIndex(collection =>
+                    collection.items.some(shoe => String(shoe.productId) === productId));
+                if (collectionIndex >= 0) {
+                    filteredSneakers = null;
+                    filteredPageIdx = 0;
+                    currentCollectionIndex = collectionIndex;
+                    const shoeIndex = getSneakers().findIndex(shoe => String(shoe.productId) === productId);
+                    renderGrid();
+                    renderDashes();
+                    openSliderView(shoeIndex);
+                }
+            }
+        }
     }
 
     if (document.readyState === 'loading') {

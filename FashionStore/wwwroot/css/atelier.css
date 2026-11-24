@@ -337,3 +337,4 @@ body:has(.urbn-header-revealed) #atHeader {
   pointer-events: none !important;
   transition: opacity .3s ease !important;
 }
+.at-hide-intro-form{margin:0}.at-nav{display:flex;align-items:center;gap:12px}.at-hide-intro{display:inline-flex;align-items:center;gap:8px;border:1px solid #ffffff70;border-radius:999px;padding:10px 16px;background:#10182055;backdrop-filter:blur(12px);color:#fff;font:500 12px 'Plus Jakarta Sans',sans-serif;cursor:pointer}.at-hide-intro:hover{background:#101820ba}.at-hide-intro:focus-visible{outline:2px solid white;outline-offset:4px}@media(max-width:600px){.at-nav{gap:8px}.at-hide-intro{padding:9px 11px;font-size:10px}.at-hide-intro span{max-width:90px;line-height:1.4}}

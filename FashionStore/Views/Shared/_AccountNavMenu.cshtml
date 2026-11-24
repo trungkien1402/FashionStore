@@ -1,4 +1,4 @@
-@{
+﻿@{
     var isAtelier = (ViewData["IsAtelier"] as bool?) ?? false;
     var btnClass = isAtelier ? "at-account-trigger" : "urbn-account-trigger";
     var menuClass = isAtelier ? "at-account-menu" : "urbn-account-menu";
@@ -33,6 +33,7 @@
             <div class="fs-menu-divider"></div>
 
             @* Customer *@
+            <a asp-controller="AccountSettings" asp-action="Index" class="fs-menu-item" role="menuitem"><i class="bi bi-gear"></i><span>Cài đặt tài khoản</span></a>
             @if (isCustomer)
             {
                 <a asp-controller="Orders"

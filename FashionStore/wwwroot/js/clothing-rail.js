@@ -7,6 +7,18 @@
  */
 (() => {
     'use strict';
+    const openedFromHomeCard = new URLSearchParams(location.search).get('from') === 'home';
+
+    const railOriginalTitle = document.title;
+    function syncRailUrl(product) {
+        const url = new URL('/Products/Rail', location.origin);
+        url.searchParams.set('audience', currentAudience);
+        url.searchParams.set('category', currentCategory);
+        if (product?.productId) url.searchParams.set('productId', product.productId);
+        if (openedFromHomeCard) url.searchParams.set('from', 'home');
+        history.replaceState(history.state, '', url.pathname + url.search);
+        document.title = product ? `${product.name} · HNMTSHOP` : railOriginalTitle;
+    }
 
     // ==========================================================================
     const catalogEl = document.getElementById("showroomCatalog");
@@ -236,6 +248,8 @@
     }
 
     function closeDetail() {
+        if (openedFromHomeCard && detailOpen) { location.assign("/#mainContent"); return; }
+        if (detailOpen) syncRailUrl(null);
         detailOpen = false;
         document.body.classList.remove('show-detail');
         const overlay = $('#productOverlay');
@@ -323,6 +337,7 @@
         clearTimeout(detailFlipTimer);
         const p = products[current];
         if (!p) return;
+        if (detailOpen) syncRailUrl(p);
         const v = p.variant || 0;
 
         const nameEl = $('#detailName');
@@ -673,6 +688,7 @@
     }
 
     function closeClothingRail() {
+        if (openedFromHomeCard) { location.assign("/#mainContent"); return; }
         const rackOverlayEl = document.getElementById('hnmtRackOverlay');
         if (rackOverlayEl) {
             rackOverlayEl.classList.remove('is-active');
@@ -992,6 +1008,22 @@
                 }
             }
         } catch (e) {}
+
+        if (standalone) {
+            const productId = new URLSearchParams(window.location.search).get('productId');
+            if (productId && /^[1-9][0-9]*$/.test(productId)) {
+                const racks = chunkProductsIntoRacks(getAllProducts(currentCategory, currentAudience), currentCategory);
+                const rackIndex = racks.findIndex(rack => rack.products.some(p => String(p.productId) === productId));
+                if (rackIndex >= 0) {
+                    currentRacks = racks;
+                    currentRackIdx = rackIndex;
+                    applyRack(currentRacks[rackIndex]);
+                    const index = currentRacks[rackIndex].products.findIndex(p => String(p.productId) === productId);
+                    setActive(index);
+                    openDetail(index);
+                }
+            }
+        }
     }
 
     if (document.readyState === 'loading') {

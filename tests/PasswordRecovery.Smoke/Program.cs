@@ -30,6 +30,10 @@ Check(!(await users.ResetPasswordAsync(user, token, "weak")).Succeeded, "reject 
 Check((await users.ResetPasswordAsync(user, token, "NewPassword2!")).Succeeded, "reset valid token");
 Check(await users.CheckPasswordAsync(user, "NewPassword2!"), "new password works");
 Check(!await users.CheckPasswordAsync(user, "OldPassword1!"), "old password rejected");
+Check(!(await users.ChangePasswordAsync(user, "WrongPassword1!", "ChangedPassword3!")).Succeeded, "settings rejects incorrect current password");
+Check((await users.ChangePasswordAsync(user, "NewPassword2!", "ChangedPassword3!")).Succeeded, "settings changes password with correct current password");
+Check(await users.CheckPasswordAsync(user, "ChangedPassword3!"), "settings new password works");
+Check(!await users.CheckPasswordAsync(user, "NewPassword2!"), "settings previous password rejected");
 Check(!(await users.ResetPasswordAsync(user, token, "ReplayPassword3!")).Succeeded, "reject token replay");
 var expires = await users.GeneratePasswordResetTokenAsync(user);
 provider.GetRequiredService<IOptions<DataProtectionTokenProviderOptions>>().Value.TokenLifespan = TimeSpan.FromSeconds(-1);
