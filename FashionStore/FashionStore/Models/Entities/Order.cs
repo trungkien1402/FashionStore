@@ -6,6 +6,7 @@ public class Order
 {
     public int Id { get; set; }
 
+    public Guid? CheckoutRequestId { get; set; }
     public string OrderCode { get; set; } = string.Empty;
 
     public string UserId { get; set; } = string.Empty;
@@ -35,6 +36,10 @@ public class Order
         = PaymentStatus.Pending;
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public DateTime? TransferReportedAt { get; set; }
+
+    public byte[] RowVersion { get; set; } = [];
 
     public ICollection<OrderItem> Items { get; set; }
         = new List<OrderItem>();

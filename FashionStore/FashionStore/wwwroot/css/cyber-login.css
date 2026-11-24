@@ -1,0 +1,670 @@
+/* ===================================================================
+   CYBER NEON & GLASSMORPHISM LOGIN STYLING (MATCHING REFERENCE DESIGN)
+   =================================================================== */
+
+/* 1. Hide Global Header & Footer on Login page for complete immersion */
+.urbn-header,
+.urbn-footer-section,
+#fsCartDrawer,
+#fsCartBackdrop {
+    display: none !important;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap');
+
+:root {
+    --cyber-bg-dark: #07080f;
+    --cyber-card-bg: rgba(14, 13, 28, 0.78);
+    --cyber-purple-neon: #a855f7;
+    --cyber-purple-glow: rgba(168, 85, 247, 0.45);
+    --cyber-purple-border: rgba(168, 85, 247, 0.65);
+    --cyber-blue-neon: #38bdf8;
+    --cyber-violet-neon: #818cf8;
+    --cyber-text-white: #ffffff;
+    --cyber-text-muted: #9ca3af;
+    --cyber-input-bg: rgba(255, 255, 255, 0.05);
+    --cyber-input-border: rgba(255, 255, 255, 0.18);
+    --cyber-font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --cyber-font-display: 'Space Grotesk', 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Reset inside login page */
+.cyber-login-wrapper,
+.cyber-login-wrapper *,
+.cyber-login-wrapper *::before,
+.cyber-login-wrapper *::after {
+    box-sizing: border-box !important;
+    margin: 0;
+    padding: 0;
+}
+
+/* Fullscreen Background & Atmosphere */
+.cyber-login-wrapper {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+    background-color: var(--cyber-bg-dark);
+    background-image: 
+        radial-gradient(circle at 18% 22%, rgba(168, 85, 247, 0.28) 0%, transparent 45%),
+        radial-gradient(circle at 82% 78%, rgba(56, 189, 248, 0.20) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(129, 140, 248, 0.12) 0%, transparent 60%),
+        url('/images/login-fashion-bg.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: var(--cyber-text-white);
+    font-family: var(--cyber-font-sans);
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+/* Dark cinematic vignette overlay (clearer on left for fashion outfit, dark on right for login card) */
+.cyber-bg-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(7, 8, 15, 0.25) 0%, rgba(7, 8, 15, 0.45) 45%, rgba(7, 8, 15, 0.85) 75%, rgba(7, 8, 15, 0.92) 100%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Floating Ambient Orbs (Background depth) */
+.cyber-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.65;
+    animation: orbPulse 8s ease-in-out infinite alternate;
+}
+
+.cyber-orb-1 {
+    width: 380px;
+    height: 380px;
+    background: radial-gradient(circle, #9333ea, #6366f1);
+    top: 10%;
+    left: 8%;
+    animation-duration: 9s;
+}
+
+.cyber-orb-2 {
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, #06b6d4, #3b82f6);
+    bottom: 12%;
+    left: 24%;
+    animation-duration: 11s;
+}
+
+.cyber-orb-3 {
+    width: 360px;
+    height: 360px;
+    background: radial-gradient(circle, #a855f7, #ec4899);
+    bottom: 10%;
+    right: 15%;
+    animation-duration: 10s;
+}
+
+@keyframes orbPulse {
+    0% { transform: scale(1) translateY(0); opacity: 0.55; }
+    100% { transform: scale(1.15) translateY(-25px); opacity: 0.8; }
+}
+
+/* 2. Top Header Navigation */
+.cyber-topbar {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 28px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.cyber-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: #ffffff;
+    transition: transform 0.25s ease;
+}
+
+.cyber-brand:hover {
+    transform: translateY(-1px);
+}
+
+.cyber-brand-logo {
+    font-family: var(--cyber-font-display);
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    background: linear-gradient(135deg, #ffffff 30%, #c084fc 80%, #38bdf8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+    text-transform: uppercase;
+}
+
+.cyber-brand-badge {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: rgba(168, 85, 247, 0.15);
+    border: 1px solid rgba(168, 85, 247, 0.4);
+    color: #d8b4fe;
+    text-transform: uppercase;
+}
+
+/* Top Right "Sign up" button */
+.cyber-btn-signup {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    transition: all 0.25s ease;
+}
+
+.cyber-btn-signup:hover {
+    color: #ffffff;
+    background: rgba(168, 85, 247, 0.2);
+    border-color: var(--cyber-purple-neon);
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.45);
+    transform: translateY(-1px);
+}
+
+/* 3. Main Split Container */
+.cyber-main-content {
+    position: relative;
+    z-index: 10;
+    flex: 1;
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 10px 48px 48px;
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    align-items: center;
+    gap: 48px;
+}
+
+/* Left Hero Showcase */
+.cyber-hero-pane {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-right: 20px;
+}
+
+.cyber-hero-title {
+    font-family: var(--cyber-font-sans);
+    font-size: 54px;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -1px;
+    color: #ffffff;
+    margin-bottom: 20px;
+    text-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
+}
+
+.cyber-hero-desc {
+    font-size: 16px;
+    line-height: 1.68;
+    color: #cbd5e1;
+    max-width: 520px;
+    margin-bottom: 36px;
+    font-weight: 400;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Floating 3D Showcase Elements */
+.cyber-3d-stage {
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+    height: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cyber-floating-ring {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border-radius: 36px;
+    border: 10px solid #a855f7;
+    box-shadow: 
+        0 0 30px #a855f7,
+        inset 0 0 25px #c084fc;
+    opacity: 0.85;
+    animation: floatShape 6s ease-in-out infinite alternate;
+    left: 20%;
+    top: 25%;
+    transform: rotate(-15deg);
+}
+
+.cyber-floating-ring::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 38px;
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    filter: blur(1px);
+}
+
+.cyber-floating-orb {
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #e879f9, #3b82f6 80%);
+    box-shadow: 0 0 25px rgba(232, 121, 249, 0.6);
+    top: 15%;
+    right: 25%;
+    animation: floatShapeReverse 7s ease-in-out infinite alternate;
+}
+
+.cyber-floating-pill {
+    position: absolute;
+    width: 160px;
+    height: 38px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.25), rgba(56, 189, 248, 0.15));
+    border: 1px solid rgba(168, 85, 247, 0.5);
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #e2e8f0;
+    bottom: 18%;
+    left: 12%;
+    animation: floatShape 8s ease-in-out infinite alternate;
+}
+
+.cyber-pill-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #38bdf8;
+    box-shadow: 0 0 10px #38bdf8;
+}
+
+@keyframes floatShape {
+    0% { transform: translateY(0) rotate(0deg); }
+    100% { transform: translateY(-18px) rotate(8deg); }
+}
+
+@keyframes floatShapeReverse {
+    0% { transform: translateY(0) scale(1); }
+    100% { transform: translateY(16px) scale(1.08); }
+}
+
+/* 4. Right Glassmorphism Form Card */
+.cyber-card-pane {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.cyber-login-card {
+    position: relative;
+    width: 100%;
+    max-width: 440px;
+    background: var(--cyber-card-bg);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    border: 1.5px solid var(--cyber-purple-border);
+    border-radius: 24px;
+    padding: 42px 38px;
+    box-shadow: 
+        0 0 35px var(--cyber-purple-glow),
+        0 24px 60px rgba(0, 0, 0, 0.75),
+        inset 0 0 25px rgba(168, 85, 247, 0.12);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.cyber-login-card:hover {
+    box-shadow: 
+        0 0 45px rgba(168, 85, 247, 0.55),
+        0 28px 70px rgba(0, 0, 0, 0.8),
+        inset 0 0 30px rgba(168, 85, 247, 0.18);
+    border-color: rgba(192, 132, 252, 0.85);
+}
+
+.cyber-card-title {
+    font-family: var(--cyber-font-sans);
+    font-size: 28px;
+    font-weight: 700;
+    color: #ffffff;
+    text-align: center;
+    margin-bottom: 28px;
+    letter-spacing: -0.5px;
+}
+
+/* Form Groups & Inputs */
+.cyber-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.cyber-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.cyber-input-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.cyber-input-field {
+    width: 100%;
+    height: 48px;
+    padding: 0 18px;
+    font-size: 14.5px;
+    font-family: var(--cyber-font-sans);
+    color: #ffffff;
+    background: var(--cyber-input-bg);
+    border: 1px solid var(--cyber-input-border);
+    border-radius: 12px;
+    outline: none;
+    transition: all 0.25s ease;
+}
+
+.cyber-input-field::placeholder {
+    color: #71717a;
+    font-size: 14px;
+}
+
+.cyber-input-field:focus {
+    border-color: var(--cyber-purple-neon);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 18px rgba(168, 85, 247, 0.35);
+}
+
+.cyber-password-input {
+    padding-right: 48px;
+}
+
+.cyber-password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    transition: color 0.2s ease;
+}
+
+.cyber-password-toggle:hover {
+    color: #e2e8f0;
+}
+
+.cyber-input-error {
+    font-size: 12.5px;
+    color: #f87171;
+    margin-top: 2px;
+    padding-left: 4px;
+}
+
+/* Remember Me Checkbox */
+.cyber-remember-row {
+    display: flex;
+    align-items: center;
+    margin-top: -2px;
+    user-select: none;
+}
+
+.cyber-checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #cbd5e1;
+}
+
+.cyber-checkbox-input {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.cyber-checkbox-input:checked {
+    background: #9333ea;
+    border-color: #a855f7;
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+}
+
+.cyber-checkbox-input:checked::after {
+    content: '';
+    position: absolute;
+    width: 4.5px;
+    height: 9px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg) translate(-1px, -1px);
+}
+
+/* Submit CTA Button (Gradient Purple Pill) */
+.cyber-btn-submit {
+    width: 100%;
+    height: 48px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #6366f1 100%);
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 6px;
+    box-shadow: 0 8px 24px rgba(147, 51, 234, 0.45);
+    transition: all 0.25s ease;
+    text-transform: none;
+}
+
+.cyber-btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(168, 85, 247, 0.65);
+    background: linear-gradient(135deg, #8b5cf6 0%, #c084fc 50%, #818cf8 100%);
+}
+
+.cyber-btn-submit:active {
+    transform: translateY(0);
+}
+
+/* Forgot Password Link */
+.cyber-forgot-wrap {
+    text-align: center;
+    margin-top: -2px;
+}
+
+.cyber-forgot-link {
+    font-size: 13.5px;
+    color: #94a3b8;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.cyber-forgot-link:hover {
+    color: #c084fc;
+    text-decoration: underline;
+}
+
+/* Divider "Or" */
+.cyber-divider {
+    display: flex;
+    align-items: center;
+    margin: 8px 0;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.cyber-divider::before,
+.cyber-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.cyber-divider span {
+    padding: 0 14px;
+}
+
+/* Social Buttons */
+.cyber-social-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+}
+
+.cyber-social-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    text-decoration: none;
+}
+
+.cyber-social-btn svg {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.2s ease;
+}
+
+.cyber-social-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: var(--cyber-purple-neon);
+    box-shadow: 0 0 16px rgba(168, 85, 247, 0.4);
+    transform: translateY(-2px);
+}
+
+.cyber-social-btn:hover svg {
+    transform: scale(1.1);
+}
+
+/* Alert Error Summary */
+.cyber-alert-danger {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    color: #fca5a5;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    margin-bottom: 8px;
+}
+
+.cyber-alert-danger ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* 5. Responsive Breakpoints */
+@media (max-width: 1024px) {
+    .cyber-main-content {
+        grid-template-columns: 1fr;
+        gap: 36px;
+        padding: 0 24px 36px;
+    }
+
+    .cyber-hero-pane {
+        align-items: center;
+        text-align: center;
+        padding-right: 0;
+    }
+
+    .cyber-hero-title {
+        font-size: 40px;
+    }
+
+    .cyber-hero-desc {
+        max-width: 100%;
+    }
+
+    .cyber-3d-stage {
+        height: 180px;
+    }
+
+    .cyber-card-pane {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 640px) {
+    .cyber-topbar {
+        padding: 20px 20px;
+    }
+
+    .cyber-hero-title {
+        font-size: 32px;
+    }
+
+    .cyber-hero-desc {
+        font-size: 14.5px;
+    }
+
+    .cyber-3d-stage {
+        display: none;
+    }
+
+    .cyber-login-card {
+        padding: 32px 24px;
+        border-radius: 20px;
+    }
+}

@@ -1,0 +1,31 @@
+.forecast-kpi {
+    padding: .9rem 1rem;
+    border-top: 2px solid var(--adm-gold);
+}
+.forecast-report .adm-table th,
+.forecast-report .adm-table td { padding: .65rem .8rem; }
+.forecast-report .adm-table tbody th {
+    background: transparent;
+    color: var(--adm-ink);
+    font-size: .875rem;
+    text-transform: none;
+    letter-spacing: normal;
+    overflow-wrap: anywhere;
+}
+.forecast-report .table-responsive { border: 1px solid var(--adm-border); border-radius: .65rem; }
+.forecast-details summary { cursor: pointer; font-weight: 650; margin-bottom: .6rem; }
+.forecast-meter { display: block; width: min(100%, 16rem); height: .55rem; margin-top: .25rem; }
+.forecast-meter::-webkit-meter-optimum-value { background: var(--adm-gold); border-radius: 1rem; }
+.forecast-preferences { display: grid; gap: .55rem; }
+.forecast-category { border: 1px solid var(--adm-border); border-radius: .65rem; padding: .75rem; }
+.forecast-category header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: .35rem; }
+.forecast-category dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); gap: .5rem; margin: .6rem 0 0; }
+.forecast-category dt { color: var(--adm-ink-muted); font-size: .78rem; margin-bottom: .25rem; }
+.forecast-category dd { display: flex; flex-wrap: wrap; gap: .35rem; margin: 0; }
+.forecast-tag { display: inline-flex; align-items: center; gap: .3rem; padding: .2rem .5rem; border-radius: .45rem; background: var(--adm-surface-hover); color: var(--adm-ink); font-size: .78rem; }
+.forecast-tag strong { color: var(--adm-gold); }
+.forecast-season { border-top: 2px solid var(--adm-gold); }
+.forecast-season-colors { margin-block: .65rem; padding: .65rem; border-radius: .55rem; background: var(--adm-surface-hover); }
+.forecast-season-colors .forecast-tag { background: var(--adm-surface); }
+.forecast-enough { background: #e8f4ec; color: #235e3d; white-space: nowrap; }
+.forecast-restock { background: #faedda; color: #704b17; white-space: nowrap; }

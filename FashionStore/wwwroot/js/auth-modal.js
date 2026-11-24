@@ -90,7 +90,8 @@
             // Populate ReturnUrl
             const returnUrlInput = document.getElementById("loginReturnUrl");
             if (returnUrlInput) {
-                returnUrlInput.value = "/";
+                const current = window.location.pathname + window.location.search;
+                returnUrlInput.value = current.startsWith("/Account") ? "/" : current;
             }
 
             this.hideAlert();
