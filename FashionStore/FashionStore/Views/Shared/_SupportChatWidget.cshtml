@@ -2,57 +2,254 @@
     var customerChat = User.IsInRole("Customer");
 }
 <div class="support-widget" data-support-chat data-thread="@Url.Action("Thread", "SupportChat")">
-    <section class="support-room support-panel @(customerChat ? "" : "support-panel-welcome")" id="storeSupportPanel" aria-label="Chat với cửa hàng" hidden>
+    <!-- PROACTIVE GREETING BUBBLE -->
+    <div class="support-proactive-bubble" id="supportProactiveBubble">
+        <button type="button" class="bubble-close" onclick="closeSupportBubble(event)" aria-label="Đóng gợi ý">&times;</button>
+        <div class="bubble-content" onclick="openSupportFromBubble()">
+            <div class="bubble-avatar">
+                <span class="online-indicator"></span>
+                <i class="bi bi-person-fill"></i>
+            </div>
+            <div class="bubble-text">
+                <div class="bubble-sender">Stylist HNMT <span class="badge-online">Online</span></div>
+                <div class="bubble-msg">Bạn cần tư vấn size hoặc phối đồ hôm nay? Nhắn tụi mình nhé! 👋</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN SUPPORT PANEL -->
+    <section class="support-room support-panel @(customerChat ? "" : "support-panel-welcome")" id="storeSupportPanel" aria-label="Trung tâm hỗ trợ khách hàng" hidden>
+        <!-- HEADER -->
         <header class="support-chat-head">
             <div class="support-brand">
-                <span class="support-avatar"><i class="bi bi-headset" aria-hidden="true"></i></span>
-                <div><strong>HNMTSHOP</strong><small>Hỗ trợ mua sắm</small></div>
-            </div>
-            <button type="button" data-chat-hide aria-label="Thu gọn chat"><i class="bi bi-dash-lg" aria-hidden="true"></i></button>
-        </header>
-        @if (User.IsInRole("Customer"))
-        {
-            <div class="support-welcome-note">
-                <strong>Chào bạn, cửa hàng có thể giúp gì?</strong>
-                <p>Gửi câu hỏi kèm mã đơn hoặc tên sản phẩm để được hỗ trợ.</p>
-                <div class="support-topics">
-                    <button type="button" data-chat-topic="Mình cần tư vấn chọn size cho sản phẩm ">Chọn size</button>
-                    <button type="button" data-chat-topic="Mình muốn hỏi về đơn hàng mã ">Đơn hàng</button>
-                    <button type="button" data-chat-topic="Mình cần hỗ trợ đổi trả cho đơn ">Đổi trả</button>
+                <span class="support-avatar">
+                    <span class="online-indicator"></span>
+                    <i class="bi bi-headset" aria-hidden="true"></i>
+                </span>
+                <div>
+                    <strong>HNMT CONCIERGE</strong>
+                    <small><i class="bi bi-clock-history me-1"></i>Hỗ trợ 24/7 · Phản hồi ngay</small>
                 </div>
             </div>
-            <partial name="_SupportChatMessages" />
-            <form asp-controller="SupportChat" asp-action="Send" method="post" class="support-compose">
-                <label class="support-sr-only" for="supportMessage">Tin nhắn</label>
-                <textarea id="supportMessage" name="message" rows="2" maxlength="1000" required placeholder="Bạn cần hỗ trợ gì?"></textarea>
-                <button type="submit" aria-label="Gửi tin nhắn"><i class="bi bi-send-fill" aria-hidden="true"></i></button>
-            </form>
-        }
-        else if (User.Identity?.IsAuthenticated != true)
-        {
-            <div class="support-chat-guest">
-                <span class="support-welcome-icon"><i class="bi bi-chat-heart" aria-hidden="true"></i></span>
-                <h2>Cửa hàng sẵn sàng lắng nghe</h2>
-                <p>Đăng nhập để gửi tin nhắn và xem lại phản hồi của cửa hàng.</p>
-                <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">Đăng nhập để chat</a>
+            <button type="button" data-chat-hide aria-label="Thu gọn"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
+        </header>
+
+        <!-- SUB NAV TABS -->
+        <div class="support-tab-nav">
+            <button type="button" class="support-tab-btn active" onclick="switchSupportTab('chat', this)">
+                <i class="bi bi-chat-dots-fill"></i> Trò chuyện
+            </button>
+            <button type="button" class="support-tab-btn" onclick="switchSupportTab('channels', this)">
+                <i class="bi bi-telephone-fill"></i> Liên hệ nhanh
+            </button>
+            <button type="button" class="support-tab-btn" onclick="switchSupportTab('track', this)">
+                <i class="bi bi-box-seam-fill"></i> Tra cứu đơn
+            </button>
+        </div>
+
+        <!-- TAB 1: LIVE CHAT -->
+        <div class="support-tab-pane active" id="supportTabChat">
+            @if (User.IsInRole("Customer"))
+            {
+                <div class="support-welcome-note">
+                    <strong>Chào bạn, chúng mình có thể giúp gì cho bạn?</strong>
+                    <p>Chọn chủ đề nhanh hoặc gõ tin nhắn trực tiếp bên dưới:</p>
+                    <div class="support-topics">
+                        <button type="button" data-chat-topic="Mình cần tư vấn chọn size cho sản phẩm ">📏 Tư vấn chọn size</button>
+                        <button type="button" data-chat-topic="Mình muốn hỏi về tình trạng đơn hàng mã ">📦 Tình trạng đơn hàng</button>
+                        <button type="button" data-chat-topic="Mình cần hỗ trợ chính sách đổi trả cho đơn ">🔄 Hỗ trợ đổi trả</button>
+                        <button type="button" data-chat-topic="Cửa hàng có chương trình khuyến mãi nào đang áp dụng? ">🎁 Khuyến mãi hiện có</button>
+                    </div>
+                </div>
+                <partial name="_SupportChatMessages" />
+                <form asp-controller="SupportChat" asp-action="Send" method="post" class="support-compose">
+                    <label class="support-sr-only" for="supportMessage">Tin nhắn</label>
+                    <textarea id="supportMessage" name="message" rows="2" maxlength="1000" required placeholder="Nhập tin nhắn cần hỗ trợ..."></textarea>
+                    <button type="submit" aria-label="Gửi tin nhắn"><i class="bi bi-send-fill" aria-hidden="true"></i></button>
+                </form>
+            }
+            else if (User.Identity?.IsAuthenticated != true)
+            {
+                <div class="support-chat-guest">
+                    <span class="support-welcome-icon"><i class="bi bi-chat-heart" aria-hidden="true"></i></span>
+                    <h2>Stylist HNMT luôn sẵn sàng</h2>
+                    <p>Đăng nhập để kết nối trực tiếp với đội ngũ tư vấn và lưu trữ toàn bộ lịch sử tư vấn của bạn.</p>
+                    <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">
+                        <i class="bi bi-box-arrow-in-right me-1"></i> Đăng nhập để chat ngay
+                    </a>
+                    <div class="guest-alt-hint mt-3 text-muted small">
+                        Hoặc bấm qua tab <strong>Liên hệ nhanh</strong> để gọi hotline hoặc chat Zalo không cần đăng nhập.
+                    </div>
+                </div>
+            }
+            else if (FashionStore.Services.AccessRoles.CanUseBackOffice(User))
+            {
+                <div class="support-chat-guest">
+                    <span class="support-welcome-icon"><i class="bi bi-inbox" aria-hidden="true"></i></span>
+                    <h2>Hộp thư hỗ trợ khách hàng</h2>
+                    <p>Bạn đang đăng nhập bằng tài khoản quản trị/vận hành.</p>
+                    <a asp-controller="SupportChat" asp-action="Inbox">
+                        Mở Hộp thư khách hàng <i class="bi bi-arrow-up-right ms-1"></i>
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="support-chat-guest"><a asp-controller="Home" asp-action="Contact">Liên hệ cửa hàng</a></div>
+            }
+        </div>
+
+        <!-- TAB 2: CHANNELS (HOTLINE, ZALO, SOCIAL) -->
+        <div class="support-tab-pane" id="supportTabChannels" style="display: none;">
+            <div class="support-channels-wrap p-3">
+                <div class="channel-card hotline-card">
+                    <div class="channel-icon"><i class="bi bi-telephone-outbound-fill"></i></div>
+                    <div class="channel-info">
+                        <div class="channel-name">Hotline miễn phí 24/7</div>
+                        <div class="channel-val">1900 8888 <span class="badge-sub">Nhánh 1</span></div>
+                        <div class="channel-desc">Tư vấn chọn size, kiểm tra đơn, phản ánh dịch vụ</div>
+                    </div>
+                    <a href="tel:19008888" class="channel-action-btn btn-call">
+                        <i class="bi bi-telephone-fill me-1"></i> Gọi ngay
+                    </a>
+                </div>
+
+                <div class="channel-card zalo-card mt-2">
+                    <div class="channel-icon zalo-icon"><span>Z</span></div>
+                    <div class="channel-info">
+                        <div class="channel-name">Zalo Official Account</div>
+                        <div class="channel-val">HNMT Atelier Boutique</div>
+                        <div class="channel-desc">Chat Zalo với chuyên viên để nhận ảnh chụp thực tế</div>
+                    </div>
+                    <a href="https://zalo.me" target="_blank" rel="noopener" class="channel-action-btn btn-zalo">
+                        Nhắn Zalo
+                    </a>
+                </div>
+
+                <div class="channel-card fb-card mt-2">
+                    <div class="channel-icon fb-icon"><i class="bi bi-messenger"></i></div>
+                    <div class="channel-info">
+                        <div class="channel-name">Facebook Messenger</div>
+                        <div class="channel-val">HNMT Luxury Streetwear</div>
+                        <div class="channel-desc">Phản hồi tức thì, cập nhật lookbook bộ sưu tập</div>
+                    </div>
+                    <a href="https://facebook.com" target="_blank" rel="noopener" class="channel-action-btn btn-messenger">
+                        Nhắn tin
+                    </a>
+                </div>
+
+                <div class="store-address-box mt-3 p-2 rounded-2" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <i class="bi bi-geo-alt-fill text-danger"></i>
+                        <strong style="font-size: 0.82rem;">Showroom Trải nghiệm:</strong>
+                    </div>
+                    <p class="mb-0 text-muted" style="font-size: 0.75rem;">
+                        45 Lê Duẩn, Bến Nghé, Quận 1, TP. Hồ Chí Minh (9:00 - 22:00)
+                    </p>
+                </div>
             </div>
-        }
-        else if (FashionStore.Services.AccessRoles.CanUseBackOffice(User))
-        {
-            <div class="support-chat-guest">
-                <span class="support-welcome-icon"><i class="bi bi-inbox" aria-hidden="true"></i></span>
-                <h2>Hộp thư khách hàng</h2>
-                <p>Bạn đang dùng tài khoản vận hành. Mở hộp thư để xem các cuộc trò chuyện, phản hồi và xử lý yêu cầu của khách.</p>
-                <a asp-controller="SupportChat" asp-action="Inbox">Mở hộp thư hỗ trợ <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a>
+        </div>
+
+        <!-- TAB 3: TRACK ORDER -->
+        <div class="support-tab-pane" id="supportTabTrack" style="display: none;">
+            <div class="support-track-wrap p-3">
+                <div class="track-header text-center mb-3">
+                    <div class="track-icon text-primary mb-1"><i class="bi bi-box-seam fs-1"></i></div>
+                    <div class="fw-bold adm-heading" style="font-size: 0.95rem;">Tra cứu hành trình đơn hàng</div>
+                    <div class="text-muted small" style="font-size: 0.75rem;">Nhập mã đơn hàng để xem lộ trình giao nhanh</div>
+                </div>
+
+                <form onsubmit="handleSupportOrderTrack(event)" class="track-form mb-3">
+                    <div class="input-group">
+                        <input type="text" id="supportOrderCodeInput" class="form-control form-control-sm font-monospace" placeholder="Mã đơn VD: 1001" required />
+                        <button type="submit" class="btn btn-dark btn-sm fw-bold px-3">
+                            <i class="bi bi-search me-1"></i> Tra cứu
+                        </button>
+                    </div>
+                </form>
+
+                <div id="supportTrackResult" class="track-result-box mb-3" style="display: none;"></div>
+
+                <div class="track-policy-list pt-2 border-top">
+                    <div class="policy-item d-flex gap-2 align-items-start mb-2">
+                        <i class="bi bi-shield-check text-success fs-6"></i>
+                        <span style="font-size: 0.75rem; color: #475569;">Đồng kiểm: Bạn được mở gói hàng kiểm tra trước khi thanh toán.</span>
+                    </div>
+                    <div class="policy-item d-flex gap-2 align-items-start">
+                        <i class="bi bi-arrow-repeat text-primary fs-6"></i>
+                        <span style="font-size: 0.75rem; color: #475569;">Đổi trả miễn phí 14 ngày nếu không vừa size.</span>
+                    </div>
+                </div>
             </div>
-        }
-        else
-        {
-            <div class="support-chat-guest"><a asp-controller="Home" asp-action="Contact">Liên hệ cửa hàng</a></div>
-        }
-        <footer class="support-chat-footnote"><i class="bi bi-shield-check" aria-hidden="true"></i> Tin nhắn được lưu để bạn xem lại</footer>
+        </div>
+
+        <!-- FOOTNOTE -->
+        <footer class="support-chat-footnote">
+            <i class="bi bi-shield-check me-1" aria-hidden="true"></i> Dịch vụ khách hàng cao cấp HNMT Atelier
+        </footer>
     </section>
+
+    <!-- LAUNCHER BUTTON (BOTTOM-RIGHT) -->
     <button type="button" class="support-launcher" data-chat-toggle aria-expanded="false" aria-controls="storeSupportPanel">
-        <i class="bi bi-chat-dots-fill" aria-hidden="true"></i><span>Hỗ trợ</span>
+        <span class="launcher-avatar-wrap">
+            <span class="online-indicator"></span>
+            <i class="bi bi-headset"></i>
+        </span>
+        <span class="launcher-text">
+            <span class="launcher-title">Hỗ trợ 24/7</span>
+            <span class="launcher-sub">Tư vấn trực tuyến</span>
+        </span>
     </button>
 </div>
+
+<script>
+    function switchSupportTab(tabName, btn) {
+        document.querySelectorAll('.support-tab-pane').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.support-tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        if (tabName === 'chat') {
+            document.getElementById('supportTabChat').style.display = 'flex';
+        } else if (tabName === 'channels') {
+            document.getElementById('supportTabChannels').style.display = 'block';
+        } else if (tabName === 'track') {
+            document.getElementById('supportTabTrack').style.display = 'block';
+        }
+    }
+
+    function closeSupportBubble(e) {
+        if (e) e.stopPropagation();
+        var bubble = document.getElementById('supportProactiveBubble');
+        if (bubble) bubble.style.display = 'none';
+        sessionStorage.setItem('support_bubble_dismissed', 'true');
+    }
+
+    function openSupportFromBubble() {
+        var toggle = document.querySelector('[data-chat-toggle]');
+        if (toggle) toggle.click();
+        closeSupportBubble();
+    }
+
+    function handleSupportOrderTrack(e) {
+        e.preventDefault();
+        var code = document.getElementById('supportOrderCodeInput').value.trim().replace('#', '');
+        if (!code) return;
+        var resultBox = document.getElementById('supportTrackResult');
+        resultBox.style.display = 'block';
+        resultBox.innerHTML = '<div class="p-2 text-center text-muted small"><i class="bi bi-arrow-repeat spinner-border spinner-border-sm me-1"></i> Đang tra cứu hệ thống...</div>';
+        
+        window.location.href = '/Orders/Details/' + encodeURIComponent(code);
+    }
+
+    // Auto show greeting bubble after 3 seconds if not dismissed
+    document.addEventListener('DOMContentLoaded', function() {
+        if (!sessionStorage.getItem('support_bubble_dismissed')) {
+            setTimeout(function() {
+                var bubble = document.getElementById('supportProactiveBubble');
+                var panel = document.getElementById('storeSupportPanel');
+                if (bubble && panel && panel.hidden) {
+                    bubble.style.display = 'block';
+                }
+            }, 3000);
+        }
+    });
+</script>
