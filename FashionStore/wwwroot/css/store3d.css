@@ -41,6 +41,11 @@
     visibility: visible;
 }
 
+.hnmt-chile-portal:has(> #hnmtSneakerOverlay.is-active) > .hnmt-portal-header,
+.hnmt-chile-portal:has(> #hnmtSneakerOverlay.is-active) > .hnmt-portal-footer {
+    display: none;
+}
+
 /* 2. THREE.JS 3D CANVAS RENDER TOÀN BỘ KHÔNG GIAN 3D & MẶT NƯỚC GỢN SÓNG */
 .hnmt-3d-canvas {
     position: absolute;

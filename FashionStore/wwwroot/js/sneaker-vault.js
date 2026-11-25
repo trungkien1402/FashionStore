@@ -30,6 +30,7 @@
     let activeCollections = SNEAKER_COLLECTIONS;
     const vaultOriginalTitle = document.title;
     function syncSneakerUrl(shoe) {
+        if (!$('#hnmtSneakerOverlay')?.classList.contains('is-standalone')) return;
         const audience = Object.keys(audiencePages).find(key =>
             audiencePages[key].some(collection => collection.items.some(item =>
                 shoe ? String(item.productId) === String(shoe.productId) : activeCollections.includes(collection))))
@@ -595,8 +596,15 @@
     }
 
     // --- Chuyển cảnh Reverse FLIP: Thu nhỏ và bay chiếc giày trở về ô trong Grid (chậm rãi, êm ái) ---
+    let onSearchDetailClose;
     function closeSliderView(immediate = false) {
         if (isTransitioning) return;
+        const callback = !immediate && isSliderView && onSearchDetailClose;
+        onSearchDetailClose = undefined;
+        if (callback) {
+            callback();
+            return;
+        }
         if (openedFromHomeCard && isSliderView && !immediate) {
             location.assign("/#mainContent");
             return;
@@ -1529,6 +1537,12 @@
     };
 
     window.closeSneakerShowcase = function () {
+        const callback = onSearchDetailClose;
+        onSearchDetailClose = undefined;
+        if (callback) {
+            callback();
+            return;
+        }
         if (openedFromHomeCard) { location.assign("/#mainContent"); return; }
         const overlay = $('#hnmtSneakerOverlay');
         if (overlay) {
@@ -1543,6 +1557,30 @@
     };
 
     window.SneakerVault = {
+        selectProduct: function (id, audience = window.HNMTChilePortal?.getAudience?.() || 'men', searchProduct, onClose) {
+            if (!$('#hnmtSneakerOverlay') || !$('#svSliderContainer')) return false;
+            window.openSneakerShowcase(audience);
+            const collectionIndex = activeCollections.findIndex(collection => collection.items.some(item => item.id === id));
+            if (collectionIndex < 0) {
+                if (!searchProduct) return false;
+                onSearchDetailClose = onClose;
+                filteredSneakers = [searchProduct];
+                filteredPageIdx = 0;
+                updateVaultSwitcherUI();
+                renderGrid();
+                requestAnimationFrame(() => openSliderView(0));
+                return true;
+            }
+            currentCollectionIndex = collectionIndex;
+            filteredSneakers = null;
+            filteredPageIdx = 0;
+            updateVaultSwitcherUI();
+            renderGrid();
+            const itemIndex = getActiveCollection().items.findIndex(item => item.id === id);
+            onSearchDetailClose = onClose;
+            requestAnimationFrame(() => openSliderView(itemIndex));
+            return true;
+        },
         openProduct: function (productSlug) {
             if (!productSlug || isTransitioning) return;
             const filteredIndex = filteredSneakers?.findIndex(item => item.id === productSlug) ?? -1;

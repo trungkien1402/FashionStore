@@ -1,4 +1,4 @@
-﻿using FashionStore.Data;
+using FashionStore.Data;
 using FashionStore.Models.ViewModels;
 using FashionStore.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -38,7 +38,7 @@ public class CartController : Controller
         if (quantity > 20)
         {
             TempData["CartError"] = "Mỗi lần chỉ được mua tối đa 20 sản phẩm.";
-            return RedirectToAction("Details", "Products", new { id = productId });
+            return RedirectToAction("Index", "Home", new { showroomProductId = productId });
         }
 
         var variant = await _context.ProductVariants
@@ -59,7 +59,7 @@ public class CartController : Controller
         if (newQuantity > variant.StockQuantity)
         {
             TempData["CartError"] = $"Sản phẩm chỉ còn {variant.StockQuantity} sản phẩm trong kho.";
-            return RedirectToAction("Details", "Products", new { id = productId });
+            return RedirectToAction("Index", "Home", new { showroomProductId = productId });
         }
 
         await _cartService.AddToCartAsync(variant.Id, quantity);

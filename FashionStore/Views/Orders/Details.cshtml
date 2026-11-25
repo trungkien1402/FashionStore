@@ -471,7 +471,7 @@
                                     <div class="hnmt-simple-name-row">
                                         @if (photoData.ProductId > 0)
                                         {
-                                            <a asp-controller="Products" asp-action="Details" asp-route-id="@photoData.ProductId" class="hnmt-simple-name">
+                                            <a asp-controller="Home" asp-action="Index" asp-route-showroomProductId="@photoData.ProductId" class="hnmt-simple-name">
                                                 @item.ProductName
                                             </a>
                                         }
@@ -510,8 +510,8 @@
                                          item.ProductVariant?.Product is { IsActive: true } reviewProduct)
                                     {
                                         <div class="mt-2">
-                                            <a asp-controller="Products" asp-action="Details" asp-route-id="@reviewProduct.Id"
-                                               asp-fragment="product-reviews" class="hnmt-review-link">
+                                            <a asp-controller="Home" asp-action="Index" asp-route-showroomProductId="@reviewProduct.Id"
+                                               class="hnmt-review-link">
                                                 <i class="bi bi-star text-warning"></i>
                                                 <span>Đánh giá sản phẩm</span>
                                             </a>

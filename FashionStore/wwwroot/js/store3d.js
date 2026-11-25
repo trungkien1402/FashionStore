@@ -1408,13 +1408,13 @@
         }
     }
 
-    function closePortal() {
+    function closePortal({ immediate = false } = {}) {
         if (!portalEl) return;
         if (isRackModeActive) {
             close3DClothesRack();
         }
 
-        if (window.gsap) {
+        if (window.gsap && !immediate) {
             gsap.to(portalEl, {
                 opacity: 0,
                 duration: 0.35,
@@ -1432,8 +1432,10 @@
                 }
             });
         } else {
+            window.gsap?.killTweensOf(portalEl);
             isPortalOpen = false;
             portalEl.classList.remove('is-active');
+            portalEl.style.opacity = '';
             portalEl.setAttribute('aria-hidden', 'true');
             document.body.style.overflow = '';
             cancelAnimationFrame(animId);

@@ -1,4 +1,4 @@
-﻿
+
 using System.Security.Claims;
 using FashionStore.Data;
 using FashionStore.Models.Entities;
@@ -137,7 +137,7 @@ public class ProductsController : Controller
             return RedirectToAction(nameof(Sneakers), new { audience = product.ShowroomAudience, productId = product.Id, from = from == "home" ? "home" : null });
         if (product.ShowroomKind is "ao" or "quan")
             return RedirectToAction(nameof(Rail), new { audience = product.ShowroomAudience, category = product.ShowroomKind, productId = product.Id, from = from == "home" ? "home" : null });
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction("Index", "Home", new { showroomProductId = id });
     }
 
     private static string MaskEmail(string? email)
@@ -168,11 +168,11 @@ public class ProductsController : Controller
         if (await _db.ProductReviews.AnyAsync(review => review.ProductId == id && review.UserId == userId, cancellationToken))
         {
             TempData["ReviewNotice"] = "Bạn đã đánh giá sản phẩm này.";
-            return RedirectToAction(nameof(Details), controllerName: null, new { id }, fragment: "product-reviews");
+            return RedirectToAction("Index", "Home", new { showroomProductId = id });
         }
 
         if (!ModelState.IsValid)
-            return RedirectToAction(nameof(Index));
+            return BadRequest(ModelState);
 
         _db.ProductReviews.Add(new ProductReview
         {
@@ -193,7 +193,7 @@ public class ProductsController : Controller
             TempData["ReviewNotice"] = "Bạn đã đánh giá sản phẩm này.";
         }
 
-        return RedirectToAction(nameof(Details), controllerName: null, new { id }, fragment: "product-reviews");
+        return RedirectToAction("Index", "Home", new { showroomProductId = id });
     }
 
     [HttpGet]
