@@ -3,11 +3,14 @@
     const canvas = document.getElementById("styleAvatar");
     const output = document.getElementById("styleResult");
     const cart = document.getElementById("styleCartLink");
-    const scoreButton = form.querySelector('button[type="submit"]');
+    const scoreButton = document.getElementById("btnSubmitScore") || form.querySelector('button[type="submit"]');
     const ctx = canvas.getContext("2d");
+    
+    // Virtual drawing layer for user ink
     const layer = document.createElement("canvas");
     layer.width = layer.height = 600;
     const ink = layer.getContext("2d");
+
     const colors = [...form.querySelectorAll('[name="inkColor"]')].map(input => input.dataset.color);
     const drafts = [[], [], []];
     const images = [...form.querySelectorAll('[name="product"]')].map(input => {
@@ -16,8 +19,10 @@
         img.src = input.dataset.image;
         return img;
     });
-    const selected = name => form.querySelector(`[name="${name}"]:checked`).value;
-    const product = () => Number(selected("product"));
+
+    const productNames = ["Áo thun", "Quần jeans", "Giày sneaker"];
+    const selected = name => form.querySelector(`[name="${name}"]:checked`)?.value;
+    const product = () => Number(selected("product") || 0);
     const marks = () => drafts[product()];
     let active;
     let cursor = { x: .5, y: .5 };
@@ -27,11 +32,14 @@
         ink.strokeStyle = ink.fillStyle = colors[mark.color];
         const first = mark.points[0];
         if (mark.tool === "sticker") {
-            const options = document.getElementById("studioSticker").options;
-            ink.font = `bold ${mark.size * 2 + 12}px system-ui`;
+            const selectEl = document.getElementById("studioSticker");
+            const rawVal = selectEl.options[mark.sticker]?.value || "★";
+            const symbol = rawVal.charAt(0);
+            
+            ink.font = `bold ${mark.size * 2 + 14}px system-ui, sans-serif`;
             ink.textAlign = "center";
             ink.textBaseline = "middle";
-            ink.fillText(options[mark.sticker].text, first.x * 600, first.y * 600);
+            ink.fillText(symbol, first.x * 600, first.y * 600);
             return;
         }
         ink.lineWidth = mark.size;
@@ -56,16 +64,26 @@
         const h = image.naturalHeight * scale;
         const x = (600 - w) / 2;
         const y = (600 - h) / 2;
+
+        // Draw product base
         ctx.drawImage(image, x, y, w, h);
+
+        // Draw user drawing on layer
         ink.globalCompositeOperation = "source-over";
         ink.clearRect(0, 0, 600, 600);
         for (const mark of marks()) paint(mark);
+
+        // Mask artwork inside product shape
         ink.globalCompositeOperation = "destination-in";
         ink.drawImage(image, x, y, w, h);
+
+        // Blit artwork onto main canvas
         ctx.drawImage(layer, 0, 0);
+
+        // Cursor indicator
         if (document.activeElement === canvas && !active) {
-            ctx.strokeStyle = "#7048a0";
-            ctx.lineWidth = 2;
+            ctx.strokeStyle = "#0f172a";
+            ctx.lineWidth = 1.5;
             ctx.strokeRect(cursor.x * 600 - 5, cursor.y * 600 - 5, 10, 10);
         }
     }
@@ -99,12 +117,14 @@
         }
         render();
     });
+
     canvas.addEventListener("pointermove", event => {
         if (!active || active.id !== event.pointerId || active.mark.points.length >= 400) return;
         cursor = position(event);
         active.mark.points.push(cursor);
         render();
     });
+
     canvas.addEventListener("lostpointercapture", () => { active = null; render(); });
     canvas.addEventListener("blur", render);
     canvas.addEventListener("focus", render);
@@ -118,17 +138,50 @@
         event.preventDefault();
         render();
     });
+
     form.addEventListener("change", render);
-    document.getElementById("studioUndo").addEventListener("click", () => { marks().pop(); render(); });
-    document.getElementById("studioClear").addEventListener("click", () => { marks().length = 0; render(); });
+    document.getElementById("studioUndo")?.addEventListener("click", () => { marks().pop(); render(); });
+    document.getElementById("studioClear")?.addEventListener("click", () => { marks().length = 0; render(); });
+
+    // DOWNLOAD IMAGE FEATURE
+    const btnDownload = document.getElementById("btnDownloadMockup");
+    if (btnDownload) {
+        btnDownload.addEventListener("click", () => {
+            const exportCanvas = document.createElement("canvas");
+            exportCanvas.width = 800;
+            exportCanvas.height = 800;
+            const eCtx = exportCanvas.getContext("2d");
+
+            // Clean white background
+            eCtx.fillStyle = "#ffffff";
+            eCtx.fillRect(0, 0, 800, 800);
+
+            // Draw product from canvas
+            eCtx.drawImage(canvas, 50, 50, 700, 700);
+
+            // Subtle brand footer
+            eCtx.fillStyle = "#0f172a";
+            eCtx.font = "bold 16px system-ui, sans-serif";
+            eCtx.fillText("HNMTSHOP · STUDIO THIẾT KẾ", 50, 765);
+
+            const a = document.createElement("a");
+            const prodName = productNames[product()] || "Design";
+            a.download = `HNMTSHOP-${prodName}-${Date.now()}.png`;
+            a.href = exportCanvas.toDataURL("image/png");
+            a.click();
+        });
+    }
+
+    // FORM SUBMISSION & SCORING
     form.addEventListener("submit", async event => {
         event.preventDefault();
         const body = new FormData(form);
         body.set("drawing", JSON.stringify({ product: product(), marks: marks() }));
         scoreButton.disabled = true;
         output.hidden = false;
-        output.textContent = "Đang chấm điểm…";
-        cart.hidden = true;
+        output.textContent = "Đang thẩm định và chấm điểm…";
+        if (cart) cart.hidden = true;
+
         try {
             const response = await fetch(form.action, { method: "POST", body });
             if (!response.ok) {
@@ -136,22 +189,32 @@
                 return;
             }
             const data = await response.json();
-            const score = document.createElement("strong");
-            score.textContent = `${data.score}/100 điểm`;
+            const scoreEl = document.createElement("strong");
+            scoreEl.style.fontSize = "1.05rem";
+            scoreEl.textContent = `Kết quả: ${data.score}/100 điểm`;
+
             const breakdown = document.createElement("p");
-            breakdown.textContent = `Độ phủ ${data.coverage}/45 · Màu sắc ${data.palette}/25 · Chi tiết ${data.detail}/30`;
+            breakdown.textContent = `Độ phủ nét: ${data.coverage}/45 · Màu sắc: ${data.palette}/25 · Điểm nhấn: ${data.detail}/30`;
+
             const reward = document.createElement("p");
-            reward.textContent = data.code ? `Mã ${data.code} · Giảm ${data.percent}%. Mã đã được lưu vào phiên mua hàng.`
-                : !data.canClaim ? "Đăng nhập tài khoản khách hàng để nhận mã."
-                : data.score < 60 ? "Thử thêm nét màu và sticker trên sản phẩm để đạt 60 điểm."
-                : "Chưa có mã còn hiệu lực phù hợp với điểm của bạn.";
-            output.replaceChildren(score, breakdown, reward);
-            cart.hidden = !data.code;
+            if (data.code) {
+                reward.innerHTML = `<strong>Chúc mừng!</strong> Bạn nhận được mã giảm giá: <code style="background:#f1f5f9; padding:2px 8px; border-radius:4px; font-weight:700; font-size:1rem; color:#0f172a;">${data.code}</code> (Giảm ${data.percent}%).`;
+            } else if (!data.canClaim) {
+                reward.textContent = "Đăng nhập tài khoản khách hàng để nhận mã giảm giá.";
+            } else if (data.score < 60) {
+                reward.textContent = "Hãy thử vẽ thêm nét màu và dán sticker để đạt từ 60 điểm trở lên nhé!";
+            } else {
+                reward.textContent = "Chưa có mã giảm giá còn hiệu lực phù hợp với điểm của bạn.";
+            }
+
+            output.replaceChildren(scoreEl, breakdown, reward);
+            if (cart) cart.hidden = !data.code;
         } catch {
-            output.textContent = "Không kết nối được. Vui lòng thử lại.";
+            output.textContent = "Không kết nối được máy chủ. Vui lòng thử lại.";
         } finally {
             scoreButton.disabled = false;
         }
     });
+
     render();
 })();

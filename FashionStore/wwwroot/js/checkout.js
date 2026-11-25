@@ -1,4 +1,4 @@
-(() => {
+﻿(() => {
     const form = document.getElementById('checkoutForm');
     if (!form) return;
     const button = document.getElementById('placeOrderButton');
@@ -48,10 +48,54 @@
                 if (province.selectedIndex < 0) province.selectedIndex = 0;
                 updateWards(ward.dataset.selected);
                 province.addEventListener("change", () => updateWards());
+                province.dataset.ready = 'true';
+
             })
             .catch(() => {
                 addressStatus.textContent = "Chưa tải được danh sách địa chỉ. Tải lại trang để thử lại.";
             });
+    }
+
+    const savedRoot = document.querySelector('[data-saved-address]');
+    if (savedRoot) {
+        const show = savedRoot.querySelector('[data-show-address]');
+        const use = savedRoot.querySelector('[data-use-address]');
+        const panel = savedRoot.querySelector('[data-address-suggestion]');
+        const status = savedRoot.querySelector('[data-saved-address-status]');
+        let saved;
+        show.addEventListener('click', async () => {
+            show.disabled = true;
+            status.textContent = 'Đang lấy địa chỉ từ hồ sơ…';
+            try {
+                const response = await fetch(savedRoot.dataset.url, { credentials: 'same-origin', cache: 'no-store', signal: AbortSignal.timeout(8000) });
+                if (!response.ok || response.redirected) throw new Error();
+                saved = await response.json();
+                savedRoot.querySelector('[data-saved-address-label]').textContent = saved
+                    ? `${saved.receiverName} · ${saved.phone || 'Chưa có số điện thoại'} — ${saved.label}`
+                    : 'Bạn chưa lưu địa chỉ nhận hàng. Vào hồ sơ để thêm địa chỉ.';
+                panel.hidden = false;
+                use.hidden = !saved;
+                status.textContent = '';
+            } catch { status.textContent = 'Chưa lấy được địa chỉ. Bạn có thể điền thủ công hoặc thử lại.'; }
+            finally { show.disabled = false; }
+        });
+        use.addEventListener('click', () => {
+            if (!saved) return;
+            if (province.dataset.ready !== 'true') { status.textContent = 'Danh sách tỉnh/xã chưa tải xong. Vui lòng thử lại.'; return; }
+            province.value = String(saved.provinceCode);
+            province.dispatchEvent(new Event('change', { bubbles: true }));
+            ward.value = String(saved.wardCode);
+            if (!province.value || !ward.value) { status.textContent = 'Địa chỉ đã lưu cần cập nhật. Vui lòng chọn lại tỉnh/xã.'; return; }
+            form.querySelector('#ReceiverName').value = saved.receiverName;
+            form.querySelector('#Phone').value = saved.phone || '';
+            form.querySelector('#Address').value = saved.address;
+            for (const id of ['ReceiverName', 'Phone', 'Address', 'WardCode']) {
+                form.querySelector('#' + id).dispatchEvent(new Event('input', { bubbles: true }));
+                form.querySelector('#' + id).dispatchEvent(new Event('change', { bubbles: true }));
+            }
+            status.textContent = 'Đã điền địa chỉ từ hồ sơ. Bạn vẫn có thể sửa thông tin cho đơn này.';
+            panel.hidden = true;
+        });
     }
 
     const voucher = document.getElementById("VoucherCode");

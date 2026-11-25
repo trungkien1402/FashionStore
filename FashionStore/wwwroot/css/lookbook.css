@@ -5,13 +5,15 @@
    Senior Fashion UX/UI: Ultra-Glassmorphism, Micro Hotspot Pins, Weighted Turntable
    ========================================================================== */
 
-.lb-wrapper {
+.lb-wrapper, .offer-lookbook-ui {
     --lb-ink: #111111;
     --lb-mute: #787873;
     --lb-line: rgba(17, 17, 17, 0.08);
     --lb-glass-bg: rgba(255, 255, 255, 0.28);
     --lb-glass-card: rgba(255, 255, 255, 0.52);
     --lb-glass-border: rgba(255, 255, 255, 0.65);
+}
+.lb-wrapper {
     position: fixed;
     inset: 0;
     z-index: 10000;
@@ -33,6 +35,47 @@
 .lb-wrapper.theme-sunwash {
     background: radial-gradient(ellipse 115% 85% at 50% 36%, #faf7f0 0%, #ede6d8 60%, #ded5c2 100%);
 }
+
+.lb-wrapper.theme-blue {
+    background: radial-gradient(ellipse 115% 85% at 50% 36%, #f5faff 0%, #e2edf8 60%, #c5d8ed 100%);
+}
+
+.lb-wrapper.theme-rose {
+    background: radial-gradient(ellipse 115% 85% at 50% 36%, #fff8fa 0%, #f3e4e9 60%, #e7cdd7 100%);
+}
+
+.lb-wrapper.theme-none {
+    background: #fff;
+}
+
+.lb-wrapper.theme-custom {
+    background: var(--lb-custom-background, #fff);
+}
+
+.lb-wrapper.theme-none .lb-runway::after {
+    background: none;
+}
+
+.lb-wrapper.theme-sage {
+    background: linear-gradient(145deg, #d2e1cf, #f4edd9);
+}
+
+.lb-wrapper.theme-lavender {
+    background: linear-gradient(145deg, #ddd0ed, #e6e9ef);
+}
+
+.lb-wrapper.theme-peach {
+    background: linear-gradient(145deg, #f3ccb6, #f3e5d4);
+}
+
+.lb-wrapper.theme-mint {
+    background: linear-gradient(145deg, #c8e8df, #d6e8f5);
+}
+
+.lb-wrapper.theme-sand {
+    background: linear-gradient(145deg, #f0e3cd, #d4b79b);
+}
+
 
 .lb-wrapper.is-open {
     display: flex;

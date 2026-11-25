@@ -69,6 +69,15 @@
                 <span>Sản phẩm</span>
             </a>
 
+            <a asp-controller="AdminCollections" asp-action="Index"
+               class="adm-nav-link @(currentController == "AdminCollections" && ViewData["AdminSale"] is not true ? "active" : "")">
+                <i class="bi bi-collection"></i><span>Bộ sưu tập</span>
+            </a>
+
+            <a asp-controller="AdminCollections" asp-action="Index" asp-route-sale="true" class="adm-nav-link @(ViewData["AdminSale"] is true ? "active" : "")">
+                <i class="bi bi-percent"></i><span>Giảm giá</span>
+            </a>
+
             <a asp-controller="AdminSupportRequests" asp-action="Index"
                class="adm-nav-link @(currentController == "AdminSupportRequests" ? "active" : "")">
                 <i class="bi bi-envelope-paper" aria-hidden="true"></i><span>Yêu cầu hỗ trợ</span>
@@ -256,6 +265,8 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/admin-atelier.js" asp-append-version="true"></script>
     <script src="~/js/admin-live.js" asp-append-version="true"></script>
+    <div data-admin-presence-tracker data-heartbeat-url="@Url.Action("Heartbeat", "SupportChat")" data-away-url="@Url.Action("AdminAway", "SupportChat")" hidden></div>
+    <script src="~/js/admin-presence-tracker.js" asp-append-version="true" defer></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

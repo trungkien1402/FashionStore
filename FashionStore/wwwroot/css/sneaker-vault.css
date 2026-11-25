@@ -541,6 +541,51 @@
     transform: none !important;
 }
 
+/* The cutouts for these lookbook views use less of the canvas than the vault originals. */
+.sv-hero-img:is([src$="-shoe-front.webp"], [src$="-shoe-pair.webp"])[src*="/sneakers/lookbook-"] {
+    scale: 1.1;
+}
+
+.sv-hero-img.is-pair-view:is(
+    [src$="lookbook-nf2-shoe-pair.webp"],
+    [src$="lookbook-noir-woman-1-shoe-pair.webp"],
+    [src$="lookbook-noir-woman-4-shoe-pair.webp"],
+    [src$="lookbook-sunwash-man-4-shoe-pair.webp"]) {
+    scale: 1.2;
+}
+
+@media (max-width: 600px) {
+    .sv-hero-img[src*="/sneakers/lookbook-"] {
+        scale: 1 !important;
+    }
+}
+
+/* Admin uploads use the vault canvas but may occupy less of it than the reference shoes. */
+@media (min-width: 601px) {
+    .sv-hero-img[src^="/images/products/"] {
+        scale: 1.1;
+    }
+
+    .sv-hero-img.is-pair-view[src^="/images/products/"] {
+        scale: 1.15;
+    }
+}
+
+.sv-app.is-light-shoe-theme :is(.sv-brand-signature, .sv-header-title, .sv-icon-btn,
+    .sv-exit-btn, .sv-bag-btn, .sv-giant-title, .sv-colorway-name, .sv-spec-grid dt,
+    .sv-spec-grid dd, .sv-nav-btn, .sv-swatches-label, .sv-reviews-btn, .sv-rating-num) {
+    color: #302b27 !important;
+}
+
+.sv-app.is-light-shoe-theme :is(.sv-icon-btn, .sv-exit-btn, .sv-nav-btn, .sv-reviews-btn, .sv-gallery button) {
+    border-color: rgb(48 43 39 / 45%) !important;
+    background: rgb(48 43 39 / 8%);
+}
+
+.sv-app.is-light-shoe-theme .sv-gallery button[aria-pressed="true"] {
+    outline-color: #302b27;
+}
+
 .sv-gallery {
     position: absolute;
     bottom: clamp(30px, 5vh, 54px);

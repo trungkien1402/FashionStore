@@ -5,25 +5,43 @@
 
 (function () {
     'use strict';
+    const openedFromHomeCard = new URLSearchParams(location.search).get('from') === 'home';
 
     // --- CÁC BỘ SƯU TẬP GIÀY (SNEAKER COLLECTIONS) CÓ THỂ ĐỔI QUA LẠI BẰNG NÚT BẤM ---
     const ITEMS_PER_GRID = 6;
-    const audienceCollections = JSON.parse(document.getElementById("showroomCatalog").textContent).shoes;
+    const catalogEl = document.getElementById("showroomCatalog");
+    let rawCatalog = null;
+    try { rawCatalog = catalogEl ? JSON.parse(catalogEl.textContent) : null; } catch (e) {}
+    const audienceCollections = rawCatalog?.shoes || { men: [], women: [], girls: [], boy: [] };
     const audiencePages = Object.fromEntries(Object.entries(audienceCollections).map(([audience, collections]) => [
         audience,
-        collections.flatMap(collection => {
-            const pageCount = Math.ceil(collection.items.length / ITEMS_PER_GRID);
+        (collections || []).flatMap(collection => {
+            const pageCount = Math.ceil((collection.items || []).length / ITEMS_PER_GRID);
             return Array.from({ length: pageCount }, (_, page) => ({
                 ...collection,
                 collectionTitle: collection.title,
                 title: pageCount > 1 ? `${collection.title} ${page + 1}/${pageCount}` : collection.title,
-                items: collection.items.slice(page * ITEMS_PER_GRID, (page + 1) * ITEMS_PER_GRID)
+                items: (collection.items || []).slice(page * ITEMS_PER_GRID, (page + 1) * ITEMS_PER_GRID)
             }));
         })
     ]));
     const SNEAKER_COLLECTIONS = audiencePages.men;
     const getAudienceCollections = audience => Object.hasOwn(audiencePages, audience) ? audiencePages[audience] : SNEAKER_COLLECTIONS;
     let activeCollections = SNEAKER_COLLECTIONS;
+    const vaultOriginalTitle = document.title;
+    function syncSneakerUrl(shoe) {
+        if (!$('#hnmtSneakerOverlay')?.classList.contains('is-standalone')) return;
+        const audience = Object.keys(audiencePages).find(key =>
+            audiencePages[key].some(collection => collection.items.some(item =>
+                shoe ? String(item.productId) === String(shoe.productId) : activeCollections.includes(collection))))
+            || new URLSearchParams(location.search).get('audience') || 'men';
+        const url = new URL('/Products/Sneakers', location.origin);
+        url.searchParams.set('audience', audience);
+        if (shoe?.productId) url.searchParams.set('productId', shoe.productId);
+        if (openedFromHomeCard) url.searchParams.set('from', 'home');
+        history.replaceState(history.state, '', url.pathname + url.search);
+        document.title = shoe ? `${shoe.name} · HNMTSHOP` : vaultOriginalTitle;
+    }
     let currentCollectionIndex = 0;
     let filteredSneakers = null;
     let filteredPageIdx = 0;
@@ -43,11 +61,21 @@
 
     let currentIndex = 0;
     let isSliderView = false;
-    let isAnimating = false;
+    let pendingSlide = null;
     let isTransitioning = false;
 
     const $ = s => document.querySelector(s);
     const $$ = s => document.querySelectorAll(s);
+
+    function applyShoeTheme(app, sneaker) {
+        if (!app) return;
+        const color = sneaker.themeColor || '';
+        app.style.backgroundColor = color;
+        const rgb = /^#([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i.exec(color);
+        const light = rgb && (0.2126 * parseInt(rgb[1], 16) +
+            0.7152 * parseInt(rgb[2], 16) + 0.0722 * parseInt(rgb[3], 16)) > 185;
+        app.classList.toggle('is-light-shoe-theme', Boolean(light));
+    }
 
     function formatPrice(num) {
         return num.toLocaleString('vi-VN') + ' ₫';
@@ -518,7 +546,7 @@
             // Cross-fade nền từ texture tối sang theme color của giày chậm rãi hòa quyện (0.92s)
             if (app) {
                 app.classList.remove('is-grid-mode');
-                app.style.backgroundColor = snk.themeColor;
+                applyShoeTheme(app, snk);
             }
 
             // Stagger các thành phần chữ, specs và controls hiện dần ra sau 320ms
@@ -560,7 +588,7 @@
             if (gridContainer) gridContainer.classList.add('is-hidden');
             if (app) {
                 app.classList.remove('is-grid-mode');
-                app.style.backgroundColor = snk.themeColor;
+                applyShoeTheme(app, snk);
             }
             updateSliderDisplay(0, true);
             isTransitioning = false;
@@ -577,6 +605,13 @@
             callback();
             return;
         }
+        if (openedFromHomeCard && isSliderView && !immediate) {
+            location.assign("/#mainContent");
+            return;
+        }
+        if (isSliderView) syncSneakerUrl(null);
+        clearTimeout(pendingSlide);
+        pendingSlide = null;
         isSliderView = false;
 
         const gridContainer = $('#svGridContainer');
@@ -601,7 +636,7 @@
             if (gridContainer) gridContainer.classList.remove('is-hidden');
             if (app) {
                 app.classList.add('is-grid-mode');
-                app.style.backgroundColor = '#0D0E12';
+                applyShoeTheme(app, { themeColor: '#0D0E12' });
             }
             gridItems.forEach(it => {
                 it.classList.remove('is-fading-out');
@@ -669,7 +704,7 @@
         // 4. Crossfade background về hình nền vân bê tông tối cao cấp
         if (app) {
             app.classList.add('is-grid-mode');
-            app.style.backgroundColor = '#0D0E12';
+            applyShoeTheme(app, { themeColor: '#0D0E12' });
         }
 
         // 5. Tính toán FLIP từ heroImg về vị trí của targetImg trong grid (chậm rãi 0.85s)
@@ -764,7 +799,7 @@
             image.alt = '';
             button.append(image);
             button.addEventListener('click', () => {
-                if (isAnimating || isTransitioning) return;
+                if (pendingSlide !== null || isTransitioning) return;
                 hero.src = view.src;
                 hero.alt = snk.model + ' — ' + view.label;
                 hero.classList.toggle('is-pair-view', index === 1);
@@ -777,6 +812,7 @@
     }
 
     function updateSliderDataOnly(snk) {
+        if (snk) syncSneakerUrl(snk);
         renderGallery(snk);
         const colorwayName = $('#svColorwayName');
         const styleCode = $('#svStyleCode');
@@ -826,12 +862,16 @@
         const heroShadow = $('#svHeroShadow');
         const specsPanel = $('.sv-specs-panel');
 
-        // 1. Đổi màu nền mượt mà
-        if (app) {
-            app.style.backgroundColor = snk.themeColor;
-        }
+        clearTimeout(pendingSlide);
+        pendingSlide = null;
+
+        const applySneakerDetails = () => {
+            applyShoeTheme(app, snk);
+            updateSliderDataOnly(snk);
+        };
 
         if (immediate) {
+            applySneakerDetails();
             if (giantTitle) {
                 setGiantTitleText(snk);
                 giantTitle.style.opacity = '0.94';
@@ -876,7 +916,9 @@
                 specsPanel.style.transform = 'translateY(15px)';
             }
 
-            setTimeout(() => {
+            pendingSlide = setTimeout(() => {
+                pendingSlide = null;
+                applySneakerDetails();
                 if (giantTitle) {
                     setGiantTitleText(snk);
                     giantTitle.style.opacity = '0.94';
@@ -900,9 +942,6 @@
                 }
             }, 180);
         }
-
-        // Cập nhật thông số kỹ thuật Tech Specs & Swatches
-        updateSliderDataOnly(snk);
 
         // Cập nhật vạch Dash Indicators
         renderDashes();
@@ -1504,6 +1543,7 @@
             callback();
             return;
         }
+        if (openedFromHomeCard) { location.assign("/#mainContent"); return; }
         const overlay = $('#hnmtSneakerOverlay');
         if (overlay) {
             overlay.classList.remove('is-active');
@@ -1540,6 +1580,30 @@
             onSearchDetailClose = onClose;
             requestAnimationFrame(() => openSliderView(itemIndex));
             return true;
+        },
+        openProduct: function (productSlug) {
+            if (!productSlug || isTransitioning) return;
+            const filteredIndex = filteredSneakers?.findIndex(item => item.id === productSlug) ?? -1;
+            if (filteredIndex >= 0) {
+                filteredPageIdx = Math.floor(filteredIndex / ITEMS_PER_GRID);
+            } else {
+                const page = activeCollections.findIndex(collection => collection.items.some(item => item.id === productSlug));
+                if (page < 0) return;
+                filteredSneakers = null;
+                activeFilterLabel = '';
+                filteredPageIdx = 0;
+                currentCollectionIndex = page;
+            }
+
+            const index = getSneakers().findIndex(item => item.id === productSlug);
+            updateVaultSwitcherUI();
+            renderGrid();
+            if (isSliderView) {
+                currentIndex = index;
+                updateSliderDisplay(0, true);
+            } else {
+                openSliderView(index);
+            }
         },
         openSliderView: function (idx, collectionIdx = 0) {
             if (typeof collectionIdx === 'number' && activeCollections[collectionIdx]) {
@@ -1625,6 +1689,24 @@
                 }
             }
         } catch (e) {}
+
+        // Deep links from homepage cards and legacy detail URLs open the exact catalog shoe.
+        if (standalone) {
+            const productId = new URLSearchParams(window.location.search).get('productId');
+            if (productId && /^[1-9][0-9]*$/.test(productId)) {
+                const collectionIndex = activeCollections.findIndex(collection =>
+                    collection.items.some(shoe => String(shoe.productId) === productId));
+                if (collectionIndex >= 0) {
+                    filteredSneakers = null;
+                    filteredPageIdx = 0;
+                    currentCollectionIndex = collectionIndex;
+                    const shoeIndex = getSneakers().findIndex(shoe => String(shoe.productId) === productId);
+                    renderGrid();
+                    renderDashes();
+                    openSliderView(shoeIndex);
+                }
+            }
+        }
     }
 
     if (document.readyState === 'loading') {

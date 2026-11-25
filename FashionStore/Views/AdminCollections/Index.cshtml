@@ -1,0 +1,62 @@
+@model List<LookbookCollection>
+@{
+    var sale = bool.TryParse(Context.Request.Query["sale"], out var isSale) && isSale;
+    ViewData["AdminSale"] = sale;
+    ViewData["Title"] = sale ? "Giảm giá" : "Bộ sưu tập";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h4 mb-0">@ViewData["Title"]</h1>
+    <a asp-action="Edit" asp-route-sale="@sale" class="adm-action-btn adm-btn-primary"><i class="bi bi-plus-lg"></i> @(sale ? "Tạo đợt sale" : "Tạo bộ sưu tập")</a>
+</div>
+<div class="adm-card p-0 overflow-hidden">
+    <div class="table-responsive">
+        <table class="adm-table mb-0">
+            <thead>
+                <tr>
+                    <th scope="col" class="ps-4">@(sale ? "LỊCH CHẠY" : "ẢNH BÌA")</th>
+                    <th scope="col">@(sale ? "ĐỢT SALE" : "TÊN BỘ SƯU TẬP")</th>
+                    <th scope="col">SỐ LOOK</th>
+                    <th scope="col">TRẠNG THÁI</th>
+                    <th scope="col" class="text-end pe-4">THAO TÁC</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var collection in Model)
+            {
+                <tr>
+                    <td class="ps-4">
+                        @if (sale)
+                        {
+                            <div>@(collection.StartsAt?.ToOffset(TimeSpan.FromHours(7)).ToString("dd/MM/yyyy HH:mm"))</div>
+                            <div class="text-muted small">đến @(collection.EndsAt?.ToOffset(TimeSpan.FromHours(7)).ToString("dd/MM/yyyy HH:mm"))</div>
+                        }
+                        else if (collection.CoverUrl.Length > 0)
+                        {
+                            <img src="@collection.CoverUrl" width="88" height="52" class="rounded object-fit-cover" alt="" />
+                        }
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@collection.Id" class="fw-bold text-decoration-none adm-heading">@collection.Name</a>
+                        @if (!string.IsNullOrWhiteSpace(collection.Description))
+                        {
+                            <div class="text-muted small text-truncate" style="max-width: 24rem;">@collection.Description</div>
+                        }
+                    </td>
+                    <td class="font-monospace fw-semibold">@collection.Looks.Count</td>
+                    <td><span class="adm-pill @(collection.IsPublished ? "adm-pill-emerald" : "adm-pill-faint")">@(collection.IsPublished ? "Đã đăng" : "Nháp")</span></td>
+                    <td class="text-end pe-4">
+                        <a asp-action="Edit" asp-route-id="@collection.Id" class="adm-btn-table-action">
+                            <i class="bi bi-eye" aria-hidden="true"></i> <span>Chi tiết</span>
+                        </a>
+                    </td>
+                </tr>
+            }
+            @if (Model.Count == 0)
+            {
+                <tr><td colspan="5" class="text-center py-4">@(sale ? "Chưa có đợt sale nào." : "Chưa có bộ sưu tập nào.")</td></tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

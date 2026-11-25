@@ -59,17 +59,17 @@ public static class ShowroomCatalog
         ["giay-converse"] = ("giay", "Giày Converse"),
         ["giay-balenciaga"] = ("giay", "Giày Balenciaga"),
         ["giay-rick-owens"] = ("giay", "Giày Rick Owens"),
-        ["ao-so-mi-blouse"] = ("ao", "Áo Sơ Mi & Blouse"),
-        ["ao-polo"] = ("ao", "Áo Polo"),
-        ["quan-jeans"] = ("quan", "Quần Jeans & Denim"),
-        ["quan-tay-chino"] = ("quan", "Quần Tây & Chino"),
-        ["quan-short"] = ("quan", "Quần Short"),
-        ["quan-jogger-the-thao"] = ("quan", "Quần Jogger & Thể Thao"),
-        ["ao-khoac-varsity"] = ("ao", "Áo Khoác & Outerwear"),
-        ["ao-thun-streetwear"] = ("ao", "Áo Thun & Graphic Tees"),
-        ["hoodie-sweater"] = ("ao", "Hoodies & Sweaters"),
-        ["quan-baggy-cargo"] = ("quan", "Quần Streetwear & Cargo"),
-        ["giay-sneaker-streetwear"] = ("giay", "Sneakers & Streetwear Shoes")
+        ["ao-so-mi-blouse"] = ("ao", "Áo sơ mi"),
+        ["ao-polo"] = ("ao", "Áo polo"),
+        ["quan-jeans"] = ("quan", "Quần jeans"),
+        ["quan-tay-chino"] = ("quan", "Quần tây"),
+        ["quan-short"] = ("quan", "Quần short"),
+        ["quan-jogger-the-thao"] = ("quan", "Quần jogger"),
+        ["ao-khoac-varsity"] = ("ao", "Áo khoác"),
+        ["ao-thun-streetwear"] = ("ao", "Áo thun"),
+        ["hoodie-sweater"] = ("ao", "Áo nỉ & Hoodie"),
+        ["quan-baggy-cargo"] = ("quan", "Quần túi hộp"),
+        ["giay-sneaker-streetwear"] = ("giay", "Giày sneaker")
     };
 
     public static readonly string[] FormerShoeCategorySlugs =

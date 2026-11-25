@@ -230,7 +230,7 @@ else
                 <thead>
                     <tr style="background: var(--adm-surface-hover); font-size: 0.72rem; color: var(--adm-ink-muted); letter-spacing: 0.05em; text-transform: uppercase;">
                         <th class="ps-4 py-2" style="font-weight: 700;">Mã SKU</th>
-                        <th class="py-2 text-center" style="font-weight: 700;">Kích thước (Size)</th>
+                        <th class="py-2 text-center" style="font-weight: 700;">Kích thước</th>
                         <th class="py-2" style="font-weight: 700;">Màu sắc</th>
                         <th class="py-2 text-end" style="font-weight: 700;">Giá biến thể</th>
                         <th class="py-2 text-center" style="font-weight: 700;">Tồn kho</th>
@@ -266,7 +266,7 @@ else
                             <td>
                                 <div class="d-flex align-items-center gap-2">
                                     <span class="adm-swatch-dot" style="background: @colorCss; @(isWhite ? "border: 1px solid #CBD5E1;" : "")"></span>
-                                    <span class="fw-medium" style="color: var(--adm-ink);">@item.Color</span>
+                                    <span class="fw-medium" style="color: var(--adm-ink);">@(item.Color?.Contains("(") == true ? item.Color.Substring(0, item.Color.IndexOf('(')).Trim() : item.Color)</span>
                                 </div>
                             </td>
 

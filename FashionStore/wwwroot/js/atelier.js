@@ -13,8 +13,8 @@
 
   gsap.registerPlugin(ScrollTrigger);
 
-  const FRAME_COUNT = 535;
-  const framePath = (i) => `https://tailor-by-octaboot.vercel.app/assets/frames/frame_${String(i).padStart(5, "0")}.webp`;
+  const FRAME_COUNT = 200;
+  const framePath = (i) => `/images/streetwear-hero/frame_${String(Math.max(0, Math.min(199, i - 1))).padStart(5, "0")}.jpg`;
 
   const canvas = document.getElementById("atFrames");
   if (!canvas) return;
@@ -24,7 +24,7 @@
   const state  = { frame: 0 };
   let dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-  /* ---------- Canvas sizing + cover-fit draw (HD Quality) ---------- */
+  /* ---------- Canvas sizing + smart cover draw (100% full width, no black bars, feet anchored) ---------- */
   function sizeCanvas() {
     dpr = Math.min(window.devicePixelRatio || 1, 2);
     canvas.width  = Math.floor(window.innerWidth  * dpr);
@@ -40,14 +40,21 @@
 
     const cw = canvas.width, ch = canvas.height;
     const iw = img.naturalWidth, ih = img.naturalHeight;
-    const scale = Math.max(cw / iw, ch / ih);   // cover
+
+    // Tràn viền thông minh 100% màn hình, sạch bóng viền đen 2 bên
+    const scale = Math.max(cw / iw, ch / ih);
     const dw = iw * scale, dh = ih * scale;
     const dx = (cw - dw) * 0.5;
-    const dy = (ch - dh) * 0.5;
+
+    // Khi viewport rộng (dh > ch), căn chỉnh thông minh để giữ trọn vẹn cả đầu mũ và đôi giày (không bị cắt đầu)
+    let dy = (ch - dh) * 0.5;
+    if (dh > ch) {
+      dy = (ch - dh) * 0.38;
+    }
 
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = "high";
-    ctx.fillStyle = "#0a0a0b";
+    ctx.fillStyle = "#000000";
     ctx.fillRect(0, 0, cw, ch);
     ctx.drawImage(img, dx, dy, dw, dh);
   }
@@ -101,8 +108,8 @@
         // First frame ready -> paint immediately so no black flash
         if (i === 0) render();
 
-        // Start experience once we have comfortable buffer (30 frames)
-        if (!started && (loaded >= 30 || p === 1)) {
+        // Start experience once we have comfortable buffer (20 frames)
+        if (!started && (loaded >= 20 || p === 1)) {
           started = true;
           try {
             sessionStorage.setItem("hnmt_atelier_intro_seen", "1");
@@ -147,17 +154,14 @@
     const heroPanel    = document.querySelector('[data-panel="hero"]');
     const panels       = gsap.utils.toArray(".at-panel:not(.at-panel--hero)");
 
-    /* Editorial milestones matching the 535-frame sequence */
+    /* Editorial milestones matching the 180-frame Streetwear sequence */
     const cues = [
-      [0.115, 0.205],
-      [0.235, 0.355],
-      [0.385, 0.535],
-      [0.560, 0.635],
-      [0.660, 0.765],
-      [0.790, 0.905],
-      [0.925, 0.995]
+      [0.12, 0.32], // Movement 01: Boxy Cropped Sweater
+      [0.37, 0.54], // Movement 02: Layer Cut & Drawstring Waist
+      [0.59, 0.77], // Movement 03: Curved Seam Baggy Denim
+      [0.82, 0.98]  // Movement 04: Street Ready & Enter Shop
     ];
-    const FADE = 0.035;
+    const FADE = 0.04;
 
     const tl = gsap.timeline({
       defaults: { ease: "none" },
@@ -196,13 +200,13 @@
     }
 
     // Editorial panels fade in / out across their milestone ranges
+    // Animating autoAlpha only preserves CSS transforms (translateY(-50%) on desktop, translateX(-50%) on mobile)
     panels.forEach((panel, i) => {
       const [inAt, outAt] = cues[i];
-      const fromX = panel.classList.contains("at-panel--right") ? 44 : -44;
 
-      gsap.set(panel, { autoAlpha: 0, x: fromX, yPercent: -45 });
-      tl.to(panel, { autoAlpha: 1, x: 0, yPercent: -45, duration: FADE, ease: "power2.out" }, inAt);
-      tl.to(panel, { autoAlpha: 0, x: -fromX * 0.5, yPercent: -45, duration: FADE, ease: "power2.in" }, outAt);
+      gsap.set(panel, { autoAlpha: 0 });
+      tl.to(panel, { autoAlpha: 1, duration: FADE, ease: "power2.out" }, inAt);
+      tl.to(panel, { autoAlpha: 0, duration: FADE, ease: "power2.in" }, outAt);
     });
 
     ScrollTrigger.refresh();

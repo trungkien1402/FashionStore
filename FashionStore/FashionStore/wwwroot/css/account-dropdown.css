@@ -1,0 +1,204 @@
+/* ===================================================================
+   ACCOUNT DROPDOWN NAVIGATION MENU (ATELIER & STOREWIDE UNIFIED)
+   =================================================================== */
+
+.fs-account-dropdown-container {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Atelier Trigger (Champagne gold accent, visible on dark/lookbook) */
+.at-account-trigger {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(198, 163, 92, 0.45);
+    color: #c6a35c !important;
+    font-size: 1.15rem;
+    text-decoration: none;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.at-account-trigger:hover,
+.at-account-trigger[aria-expanded="true"] {
+    color: #ffffff !important;
+    border-color: #d8bd82;
+    background: rgba(198, 163, 92, 0.25);
+    box-shadow: 0 0 16px rgba(198, 163, 92, 0.45);
+    transform: translateY(-1px);
+}
+
+/* Urbn Shop Trigger (Clean minimalist) */
+.urbn-account-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    color: #111114;
+    font-size: 1.25rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.urbn-account-trigger:hover,
+.urbn-account-trigger[aria-expanded="true"] {
+    color: #c6a35c;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+/* Popover Dropdown */
+.fs-account-popover {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    min-width: 240px;
+    border-radius: 14px;
+    padding: 10px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px) scale(0.96);
+    transition: all 0.2s cubic-bezier(0.16, 0.84, 0.32, 1);
+    z-index: 1000;
+    pointer-events: none;
+    font-family: "Jost", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.fs-account-popover.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+}
+
+/* Atelier Popover Theme (Deep Charcoal & Champagne Gold) */
+.at-account-menu {
+    background: #111114 !important;
+    border: 1px solid rgba(198, 163, 92, 0.45) !important;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.85), 0 0 20px rgba(198, 163, 92, 0.15) !important;
+    color: #f5f2eb !important;
+    mix-blend-mode: normal !important;
+    isolation: isolate;
+}
+
+/* Urbn Popover Theme (Bright Clean Card) */
+.urbn-account-menu {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12);
+    color: #1f2937;
+}
+
+/* Popover Header */
+.fs-menu-header {
+    padding: 10px 12px 8px;
+}
+
+.fs-menu-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: #c6a35c;
+    display: block;
+    margin-bottom: 3px;
+}
+
+.fs-menu-name {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: inherit;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 210px;
+}
+
+/* Dividers */
+.fs-menu-divider {
+    height: 1px;
+    margin: 6px 0;
+}
+
+.at-account-menu .fs-menu-divider {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.urbn-account-menu .fs-menu-divider {
+    background: #f3f4f6;
+}
+
+/* Menu Items */
+.fs-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.18s ease;
+    width: 100%;
+    border: none;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+}
+
+.fs-menu-item i {
+    font-size: 1.05rem;
+    color: #c6a35c;
+    transition: transform 0.2s ease;
+}
+
+.fs-menu-item:hover i {
+    transform: scale(1.15);
+}
+
+.at-account-menu .fs-menu-item:hover {
+    background: rgba(198, 163, 92, 0.15);
+    color: #ffffff;
+}
+
+.urbn-account-menu .fs-menu-item:hover {
+    background: #f9fafb;
+    color: #111827;
+}
+
+/* Logout Item */
+.fs-menu-logout-btn {
+    color: #f87171 !important;
+}
+
+.fs-menu-logout-btn i {
+    color: #f87171 !important;
+}
+
+.fs-menu-logout-btn:hover {
+    background: rgba(239, 68, 68, 0.15) !important;
+    color: #ef4444 !important;
+}
+
+/* Ensure visibility on Mobile */
+@media (max-width: 900px) {
+    .at-nav .fs-account-dropdown-container,
+    .at-nav .at-account-trigger {
+        display: inline-flex !important;
+    }
+}

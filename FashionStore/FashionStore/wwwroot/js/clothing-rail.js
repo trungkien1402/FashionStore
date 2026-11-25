@@ -9,9 +9,12 @@
     'use strict';
 
     // ==========================================================================
-    const audienceClothing = JSON.parse(document.getElementById("showroomCatalog").textContent).clothing;
-    const ALL_SHIRT_PRODUCTS = audienceClothing.men.ao;
-    const ALL_PANTS_PRODUCTS = audienceClothing.men.quan;
+    const catalogEl = document.getElementById("showroomCatalog");
+    let rawCatalog = null;
+    try { rawCatalog = catalogEl ? JSON.parse(catalogEl.textContent) : null; } catch (e) {}
+    const audienceClothing = rawCatalog?.clothing || { men: { ao: [], quan: [] }, women: { ao: [], quan: [] }, girls: { ao: [], quan: [] }, boy: { ao: [], quan: [] } };
+    const ALL_SHIRT_PRODUCTS = audienceClothing.men?.ao || [];
+    const ALL_PANTS_PRODUCTS = audienceClothing.men?.quan || [];
 
     function chunkProductsIntoRacks(productList, category, isFilterResult = false, filterLabel = '') {
         if (!productList || productList.length === 0) return [];
@@ -719,15 +722,29 @@
 
         let foundRackIdx = -1;
         let foundProdIdx = -1;
+        const target = String(slugOrIdx || '').toLowerCase().trim();
 
         currentRacks.forEach((rack, rIdx) => {
             rack.products.forEach((p, pIdx) => {
-                if (p.slug === slugOrIdx || p.name === slugOrIdx || pIdx === slugOrIdx) {
+                const pSlug = String(p.slug || '').toLowerCase();
+                const pName = String(p.name || '').toLowerCase().trim();
+                if (foundRackIdx === -1 && (
+                    pSlug === target ||
+                    pName === target ||
+                    p.id == slugOrIdx ||
+                    pIdx === slugOrIdx ||
+                    (target.length > 3 && (pName.includes(target) || target.includes(pName)))
+                )) {
                     foundRackIdx = rIdx;
                     foundProdIdx = pIdx;
                 }
             });
         });
+
+        if (foundRackIdx === -1 && currentRacks.length > 0 && currentRacks[0].products?.length > 0) {
+            foundRackIdx = 0;
+            foundProdIdx = 0;
+        }
 
         if (foundRackIdx !== -1 && foundProdIdx !== -1) {
             if (currentRackIdx !== foundRackIdx) {

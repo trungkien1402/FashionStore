@@ -1,34 +1,74 @@
 @using FashionStore.Services.Implementations
 @{
-    ViewData["Title"] = "Studio thiết kế";
+    ViewData["Title"] = "Studio thiết kế - HNMTSHOP";
     var images = new[] { "tee.png", "jeans.png", "sneaker.png" };
 }
 <main class="style-studio urbn-container">
     <header class="style-studio-header">
-        <div><h1>Studio thiết kế</h1><p>Vẽ, trang trí và chấm điểm để mở mã giảm giá.</p></div>
-        <a asp-controller="Products" asp-action="Index" class="style-secondary">Về cửa hàng</a>
+        <div>
+            <h1>Studio thiết kế</h1>
+            <p>Vẽ, trang trí và chấm điểm để mở mã giảm giá.</p>
+        </div>
+        <a asp-controller="Products" asp-action="Index" class="style-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Về cửa hàng
+        </a>
     </header>
+
     <div class="style-studio-grid">
-        <section class="style-stage" aria-label="Bàn vẽ sản phẩm">
-            <canvas width="600" height="600" id="styleAvatar" tabindex="0" aria-label="Bàn vẽ. Dùng phím mũi tên để di chuyển, Enter để đặt dấu."></canvas>
+        <!-- LEFT: CANVAS STAGE -->
+        <section class="style-stage-wrap" aria-label="Bàn vẽ sản phẩm">
+            <div class="style-stage">
+                <canvas width="600" height="600" id="styleAvatar" tabindex="0" aria-label="Bàn vẽ. Dùng chuột hoặc cảm ứng để vẽ."></canvas>
+            </div>
+            <div class="style-stage-actions">
+                <button type="button" class="style-secondary" id="studioUndo">
+                    <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i> Hoàn tác
+                </button>
+                <button type="button" class="style-secondary" id="studioClear">
+                    <i class="bi bi-trash3" aria-hidden="true"></i> Xóa mẫu vẽ
+                </button>
+                <button type="button" class="style-secondary" id="btnDownloadMockup">
+                    <i class="bi bi-download" aria-hidden="true"></i> Tải ảnh thiết kế
+                </button>
+            </div>
         </section>
+
+        <!-- RIGHT: WARDROBE & CONTROLS -->
         <section class="style-wardrobe" aria-label="Công cụ thiết kế">
             <form id="styleGameForm" asp-action="Score" method="post">
+                @Html.AntiForgeryToken()
                 <input type="hidden" name="round" value="@ViewBag.Round" />
+
+                <!-- PRODUCT SELECTOR -->
                 <fieldset class="style-options">
-                    <legend>Chọn mẫu trắng</legend>
+                    <legend>Chọn sản phẩm</legend>
                     @for (var i = 0; i < StyleGame.Products.Length; i++)
                     {
-                        <label><input type="radio" name="product" value="@i" data-image="@Url.Content($"~/images/style-studio/{images[i]}")" checked="@(i == 0)" />
-                            <span>@StyleGame.Products[i]</span></label>
+                        <label>
+                            <input type="radio" name="product" value="@i" data-image="@Url.Content($"~/images/style-studio/{images[i]}")" checked="@(i == 0)" />
+                            <span>@StyleGame.Products[i]</span>
+                        </label>
                     }
                 </fieldset>
+
+                <!-- TOOL SELECTOR -->
                 <fieldset class="style-options">
                     <legend>Công cụ</legend>
-                    <label><input type="radio" name="tool" value="pen" checked /><span><i class="bi bi-pencil" aria-hidden="true"></i> Bút</span></label>
-                    <label><input type="radio" name="tool" value="eraser" /><span><i class="bi bi-eraser" aria-hidden="true"></i> Tẩy</span></label>
-                    <label><input type="radio" name="tool" value="sticker" /><span><i class="bi bi-stars" aria-hidden="true"></i> Sticker</span></label>
+                    <label>
+                        <input type="radio" name="tool" value="pen" checked />
+                        <span><i class="bi bi-pencil" aria-hidden="true"></i> Bút</span>
+                    </label>
+                    <label>
+                        <input type="radio" name="tool" value="eraser" />
+                        <span><i class="bi bi-eraser" aria-hidden="true"></i> Tẩy</span>
+                    </label>
+                    <label>
+                        <input type="radio" name="tool" value="sticker" />
+                        <span><i class="bi bi-stars" aria-hidden="true"></i> Sticker</span>
+                    </label>
                 </fieldset>
+
+                <!-- COLOR PALETTE -->
                 <fieldset class="studio-palette">
                     <legend>Gam màu sắc</legend>
                     <div class="studio-swatches">
@@ -43,29 +83,46 @@
                         }
                     </div>
                 </fieldset>
+
+                <!-- STICKER & BRUSH SIZE -->
                 <div class="studio-controls">
                     <label>Sticker
                         <select id="studioSticker">
-                            @foreach (var sticker in StyleGame.Stickers) { <option>@sticker</option> }
+                            <option value="★">★ Ngôi sao</option>
+                            <option value="⚡">⚡ Tia sét</option>
+                            <option value="✦">✦ Ánh sáng</option>
+                            <option value="♥">♥ Trái tim</option>
+                            <option value="☀">☀ Mặt trời</option>
+                            <option value="✿">✿ Hoa cúc</option>
                         </select>
                     </label>
-                    <label>Cỡ nét <input id="studioSize" type="range" min="4" max="32" value="12" /></label>
+                    <label>Cỡ nét
+                        <input id="studioSize" type="range" min="4" max="32" value="12" />
+                    </label>
                 </div>
-                <div class="studio-actions">
-                    <button type="button" class="style-secondary" id="studioUndo"><i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i> Hoàn tác</button>
-                    <button type="button" class="style-secondary" id="studioClear">Xóa mẫu vẽ</button>
-                </div>
-                <button type="submit" class="style-score"><i class="bi bi-stars" aria-hidden="true"></i> Chấm điểm thiết kế</button>
+
+                <!-- SUBMIT BUTTON -->
+                <button type="submit" class="style-score" id="btnSubmitScore">
+                    <i class="bi bi-stars me-1" aria-hidden="true"></i> Chấm điểm thiết kế
+                </button>
             </form>
+
+            <!-- RESULT BOX -->
             <div class="style-result" id="styleResult" role="status" hidden></div>
-            <a class="style-secondary" id="styleCartLink" asp-controller="Cart" asp-action="Index" hidden>Vào giỏ hàng dùng mã <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+            <a class="style-secondary mt-2 w-100 justify-content-center" id="styleCartLink" asp-controller="Cart" asp-action="Index" hidden>
+                Vào giỏ hàng dùng mã <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i>
+            </a>
+
             @if (User.Identity?.IsAuthenticated != true)
             {
-                <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Url.Action("Index")" class="style-login">Đăng nhập để nhận mã</a>
+                <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Url.Action("Index")" class="style-login">
+                    Đăng nhập để nhận mã giảm giá
+                </a>
             }
         </section>
     </div>
 </main>
+
 @section Scripts {
     <script src="~/js/style-game.js" asp-append-version="true"></script>
 }

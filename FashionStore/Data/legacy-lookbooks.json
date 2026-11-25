@@ -1,0 +1,411 @@
+[
+  {
+    "key": "noir",
+    "name": "Noir Unit",
+    "coverUrl": "/images/lookbook/noir-unit-poster.webp",
+    "looks": [
+      {
+        "name": "Neo-Future Arc",
+        "imageUrl": "/images/lookbook/cut/look-n1.png",
+        "items": [
+          {
+            "slug": "lookbook-nf1-top",
+            "x": 49,
+            "y": 35
+          },
+          {
+            "slug": "lookbook-nf1-pant",
+            "x": 52,
+            "y": 65
+          },
+          {
+            "slug": "snk-03",
+            "x": 49,
+            "y": 93
+          }
+        ]
+      },
+      {
+        "name": "Chrome Motion",
+        "imageUrl": "/images/lookbook/cut/noir-woman-1.webp",
+        "items": [
+          {
+            "slug": "lookbook-noir-woman-1-top",
+            "x": 50,
+            "y": 31
+          },
+          {
+            "slug": "lookbook-noir-woman-1-pant",
+            "x": 52,
+            "y": 62
+          },
+          {
+            "slug": "lookbook-noir-woman-1-shoe",
+            "x": 52,
+            "y": 94
+          }
+        ]
+      },
+      {
+        "name": "Shadow Drifter",
+        "imageUrl": "/images/lookbook/cut/look-n2.png",
+        "items": [
+          {
+            "slug": "lookbook-nf2-top",
+            "x": 50,
+            "y": 34
+          },
+          {
+            "slug": "lookbook-nf2-pant",
+            "x": 46,
+            "y": 65
+          },
+          {
+            "slug": "lookbook-nf2-shoe",
+            "x": 50,
+            "y": 93
+          }
+        ]
+      },
+      {
+        "name": "Velvet Static",
+        "imageUrl": "/images/lookbook/cut/noir-woman-2.webp",
+        "items": [
+          {
+            "slug": "lookbook-noir-woman-2-top",
+            "x": 50,
+            "y": 31
+          },
+          {
+            "slug": "lookbook-noir-woman-2-pant",
+            "x": 52,
+            "y": 62
+          },
+          {
+            "slug": "lookbook-noir-woman-2-shoe",
+            "x": 52,
+            "y": 94
+          }
+        ]
+      },
+      {
+        "name": "Cyber Matrix",
+        "imageUrl": "/images/lookbook/cut/look-n3.png",
+        "items": [
+          {
+            "slug": "lookbook-nf3-top",
+            "x": 50,
+            "y": 35
+          },
+          {
+            "slug": "lookbook-nf3-pant",
+            "x": 52,
+            "y": 66
+          },
+          {
+            "slug": "lookbook-nf3-shoe",
+            "x": 50,
+            "y": 93
+          }
+        ]
+      },
+      {
+        "name": "Night Circuit",
+        "imageUrl": "/images/lookbook/cut/noir-woman-3.webp",
+        "items": [
+          {
+            "slug": "lookbook-noir-woman-3-top",
+            "x": 50,
+            "y": 31
+          },
+          {
+            "slug": "lookbook-noir-woman-3-pant",
+            "x": 52,
+            "y": 62
+          },
+          {
+            "slug": "lookbook-noir-woman-3-shoe",
+            "x": 52,
+            "y": 94
+          }
+        ]
+      },
+      {
+        "name": "Midnight Stride",
+        "imageUrl": "/images/lookbook/cut/look-n4.png",
+        "items": [
+          {
+            "slug": "lookbook-nf4-top",
+            "x": 50,
+            "y": 33
+          },
+          {
+            "slug": "lookbook-nf4-pant",
+            "x": 50,
+            "y": 64
+          },
+          {
+            "slug": "lookbook-nf4-shoe",
+            "x": 50,
+            "y": 93
+          }
+        ]
+      },
+      {
+        "name": "Ink Structure",
+        "imageUrl": "/images/lookbook/cut/noir-woman-4.webp",
+        "items": [
+          {
+            "slug": "lookbook-noir-woman-4-top",
+            "x": 50,
+            "y": 31
+          },
+          {
+            "slug": "lookbook-noir-woman-4-pant",
+            "x": 52,
+            "y": 62
+          },
+          {
+            "slug": "lookbook-noir-woman-4-shoe",
+            "x": 52,
+            "y": 94
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "key": "sunwash",
+    "name": "Sun-Washed",
+    "coverUrl": "/images/lookbook/sun-washed-poster.webp",
+    "looks": [
+      {
+        "name": "Cyanotype Artisan",
+        "imageUrl": "/images/lookbook/cut/look-e1.png",
+        "items": [
+          {
+            "slug": "fern-tee",
+            "x": 49,
+            "y": 35
+          },
+          {
+            "slug": "lookbook-re1-pant",
+            "x": 49,
+            "y": 65
+          },
+          {
+            "slug": "lookbook-re1-shoe",
+            "x": 50,
+            "y": 94
+          }
+        ]
+      },
+      {
+        "name": "Salt Air",
+        "imageUrl": "/images/lookbook/cut/sunwash-woman-1.webp",
+        "items": [
+          {
+            "slug": "lookbook-sunwash-woman-1-top",
+            "x": 50,
+            "y": 31
+          },
+          {
+            "slug": "lookbook-sunwash-woman-1-pant",
+            "x": 52,
+            "y": 62
+          },
+          {
+            "slug": "lookbook-sunwash-woman-1-shoe",
+            "x": 52,
+            "y": 94
+          }
+        ]
+      },
+      {
+        "name": "Heavyweight Selvedge",
+        "imageUrl": "/images/lookbook/cut/look-e2.png",
+        "items": [
+          {
+            "slug": "lookbook-re2-top",
+            "x": 50,
+            "y": 34
+          },
+          {
+            "slug": "lookbook-re2-pant",
+            "x": 50,
+            "y": 64
+          },
+          {
+            "slug": "lookbook-re2-shoe",
+            "x": 50,
+            "y": 93
+          }
+        ]
+      },
+      {
+        "name": "Terracotta Drift",
+        "imageUrl": "/images/lookbook/cut/sunwash-woman-2.webp",
+        "items": [
+          {
+            "slug": "lookbook-sunwash-woman-2-top",
+            "x": 50,
+            "y": 31
+          },
+          {
+            "slug": "lookbook-sunwash-woman-2-pant",
+            "x": 52,
+            "y": 62
+          },
+          {
+            "slug": "lookbook-sunwash-woman-2-shoe",
+            "x": 52,
+            "y": 94
+          }
+        ]
+      },
+      {
+        "name": "Desert Workwear",
+        "imageUrl": "/images/lookbook/cut/look-e3.png",
+        "items": [
+          {
+            "slug": "lookbook-re3-top",
+            "x": 49,
+            "y": 35
+          },
+          {
+            "slug": "lookbook-re3-pant",
+            "x": 51,
+            "y": 65
+          },
+          {
+            "slug": "lookbook-re3-shoe",
+            "x": 50,
+            "y": 93
+          }
+        ]
+      },
+      {
+        "name": "Indigo Current",
+        "imageUrl": "/images/lookbook/cut/sunwash-woman-3.webp",
+        "items": [
+          {
+            "slug": "lookbook-sunwash-woman-3-top",
+            "x": 50,
+            "y": 31
+          },
+          {
+            "slug": "lookbook-sunwash-woman-3-pant",
+            "x": 52,
+            "y": 62
+          },
+          {
+            "slug": "lookbook-sunwash-woman-3-shoe",
+            "x": 52,
+            "y": 94
+          }
+        ]
+      },
+      {
+        "name": "Dune Rider",
+        "imageUrl": "/images/lookbook/cut/sunwash-man-4.webp",
+        "items": [
+          {
+            "slug": "lookbook-sunwash-man-4-top",
+            "x": 50,
+            "y": 31
+          },
+          {
+            "slug": "lookbook-sunwash-man-4-pant",
+            "x": 52,
+            "y": 62
+          },
+          {
+            "slug": "lookbook-sunwash-man-4-shoe",
+            "x": 52,
+            "y": 94
+          }
+        ]
+      },
+      {
+        "name": "Golden Hour",
+        "imageUrl": "/images/lookbook/cut/sunwash-woman-4.webp",
+        "items": [
+          {
+            "slug": "lookbook-sunwash-woman-4-top",
+            "x": 50,
+            "y": 31
+          },
+          {
+            "slug": "lookbook-sunwash-woman-4-pant",
+            "x": 52,
+            "y": 62
+          },
+          {
+            "slug": "lookbook-sunwash-woman-4-shoe",
+            "x": 52,
+            "y": 94
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "key": "legacy-sale",
+    "name": "",
+    "looks": [
+      {
+        "name": "Oxblood Point",
+        "imageUrl": "/images/seated-couture-model-v2.webp",
+        "items": [
+          {
+            "slug": "women-heels-edition-01",
+            "x": 74,
+            "y": 90
+          }
+        ]
+      },
+      {
+        "name": "Velvet Static",
+        "imageUrl": "/images/lookbook/cut/noir-woman-2.webp",
+        "items": [
+          {
+            "slug": "lookbook-noir-woman-2-top",
+            "x": 50,
+            "y": 31
+          },
+          {
+            "slug": "lookbook-noir-woman-2-pant",
+            "x": 52,
+            "y": 62
+          },
+          {
+            "slug": "lookbook-noir-woman-2-shoe",
+            "x": 52,
+            "y": 94
+          }
+        ]
+      },
+      {
+        "name": "Salt Air",
+        "imageUrl": "/images/lookbook/cut/sunwash-woman-1.webp",
+        "items": [
+          {
+            "slug": "lookbook-sunwash-woman-1-top",
+            "x": 50,
+            "y": 31
+          },
+          {
+            "slug": "lookbook-sunwash-woman-1-pant",
+            "x": 52,
+            "y": 62
+          },
+          {
+            "slug": "lookbook-sunwash-woman-1-shoe",
+            "x": 52,
+            "y": 94
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,5 +1,5 @@
 @model List<FashionStore.Models.Entities.Product>
-
+@inject FashionStore.Services.Implementations.IntroPreference IntroPreference
 @{
     ViewData["Title"] = "HNMTSHOP – Khẳng Định Phong Cách | Thời Trang Giới Trẻ";
 }
@@ -7,6 +7,8 @@
 <!-- ============================================================== -->
 <!-- 1:1 REPLICA: HNMTSHOP ATELIER — THE ANATOMY OF STYLE           -->
 <!-- ============================================================== -->
+@if (!await IntroPreference.IsHiddenAsync())
+{
 <div class="at-loader" id="atLoader" aria-hidden="true">
     <div class="at-loader__mark">HNMTSHOP</div>
     <div class="at-loader__bar"><span id="atLoaderFill"></span></div>
@@ -36,85 +38,65 @@
         <div class="at-grade at-grade--top"></div>
         <div class="at-grade at-grade--bottom"></div>
         <div class="at-grain"></div>
+        <form asp-controller="DisplayPreferences" asp-action="HideIntro" method="post" class="at-hide-intro-form">
+            <button type="submit" class="at-hide-intro" aria-label="Ẩn phần giới thiệu" title="Ẩn lần sau. Bật lại trong Cài đặt tài khoản.">
+                <i class="bi bi-eye-slash" aria-hidden="true"></i>
+            </button>
+        </form>
 
         <!-- Movement 00: Hero Title -->
         <div class="at-panel at-panel--hero" data-panel="hero">
-            <p class="at-eyebrow at-eyebrow--center">HNMTSHOP · STREETWEAR & FASHION STORE</p>
-            <h1 class="at-hero-title">Phong Cách Giới Trẻ<br><em>Khẳng Định Bản Thân</em></h1>
-            <div class="at-scroll-cue"><span></span>Cuộn để xem BST</div>
+            <p class="at-eyebrow at-eyebrow--center">HNMTSHOP · STREETWEAR EDITIONS</p>
+            <h1 class="at-hero-title">Tự Do Nguyên Bản<br><em>Phóng Khoáng Đường Phố</em></h1>
+            <div class="at-scroll-cue"><span></span>Cuộn để khám phá bộ phối</div>
         </div>
 
-        <!-- Movement 01: The Foundation -->
+        <!-- Movement 01: Boxy Cropped Sweater -->
         <article class="at-panel at-panel--left" data-panel="1">
             <span class="at-panel__index">01</span>
-            <p class="at-panel__kicker">Chất Liệu Tuyển Chọn</p>
-            <h2 class="at-panel__title">Cotton 100%<br>Thoáng Mát & Dày Dặn</h2>
-            <p class="at-panel__body">Tất cả các dòng áo thun, hoodie, sweater tại HNMTSHOP đều dệt từ sợi cotton cao cấp định lượng chuẩn. Thấm hút mồ hôi tối đa, mềm mịn trên da và giặt máy không lo xù lông.</p>
-            <p class="at-panel__spec"><i>Chất Liệu</i> 100% Cotton 280-320 GSM</p>
+            <p class="at-panel__kicker">Bản Phối Thượng Tầng</p>
+            <h2 class="at-panel__title">Boxy Cropped Sweater<br>Xanh Rêu Đậm Chất Retro</h2>
+            <p class="at-panel__body">Dệt từ sợi cotton chân cua 380 GSM dày dặn, giữ ấm êm ái trên da. Phom áo lửng bo gấu tự nhiên, kết hợp typo <em>Worst Behavior</em> độc bản tôn trọn tỷ lệ cơ thể và tạo điểm nhấn ấn tượng.</p>
+            <p class="at-panel__spec"><i class="bi bi-tag-fill"></i> 100% Cotton 380 GSM · Phom Boxy Crop Trend</p>
         </article>
 
-        <!-- Movement 02: The Waistcoat -->
+        <!-- Movement 02: Layer Cut & Drawstring Waist -->
         <article class="at-panel at-panel--right" data-panel="2">
             <span class="at-panel__index">02</span>
-            <p class="at-panel__kicker">Phom Dáng Thời Thượng</p>
-            <h2 class="at-panel__title">Oversize & Boxy<br>Tôn Dáng Cực Đỉnh</h2>
-            <p class="at-panel__body">Thiết kế phom rộng rãi phóng khoáng, che khuyết điểm hoàn hảo cho cả nam và nữ. Dễ dàng mix cùng quần jean baggy, cargo hay short để tạo nên outfit xuống phố cực chất.</p>
-            <p class="at-panel__spec"><i>Kiểu Dáng</i> Boxy Fit / Oversized Chuẩn Form</p>
+            <p class="at-panel__kicker">Chi Tiết Cắt May Layer</p>
+            <h2 class="at-panel__title">Khoảng Hở Tự Nhiên<br>Phóng Khoáng & Bụi Bặm</h2>
+            <p class="at-panel__body">Khoảng hở layer tự nhiên giữa gấu áo lửng và cạp quần denim mang đến năng lượng trẻ trung đặc trưng của văn hóa đường phố. Cạp co giãn kèm dây rút bản to tiện dụng suốt ngày dài năng động.</p>
+            <p class="at-panel__spec"><i class="bi bi-rulers"></i> Tỷ Lệ Hack Dáng 1/3 · Dây Rút Cotton Bản Dày</p>
         </article>
 
-        <!-- Movement 03: The Canvas (3D Exploded View) -->
+        <!-- Movement 03: Curved Seam Baggy Denim -->
         <article class="at-panel at-panel--left" data-panel="3">
             <span class="at-panel__index">03</span>
-            <p class="at-panel__kicker">Bộ Sưu Tập Có Sẵn</p>
-            <h2 class="at-panel__title">Đủ Size S Đến XL<br>Sẵn Hàng Giao Ngay</h2>
-            <p class="at-panel__body">Kho đồ luôn đầy ắp các mẫu mới nhất: từ Tee basic, Sơ mi họa tiết đến Áo khoác dù, Bomber và Hoodie nỉ bông. Không cần chờ đợi, đặt là ship ngay tận tay.</p>
-            <p class="at-panel__spec"><i>Bảng Size</i> S · M · L · XL (Nam & Nữ Đều Mặc Đẹp)</p>
+            <p class="at-panel__kicker">Hạ Tầng Trang Phục</p>
+            <h2 class="at-panel__title">Curved Seam Baggy Denim<br>Đường May Lượn Sóng 3D</h2>
+            <p class="at-panel__body">Quần jean ống suông rộng với kỹ thuật may cut-and-sew tạo hiệu ứng đường chỉ cong 3D độc quyền. Vải denim 13oz đứng phom, xử lý wash sờn cổ điển che trọn mọi khuyết điểm dáng chân.</p>
+            <p class="at-panel__spec"><i class="bi bi-water"></i> Heavyweight Denim 13oz · Wash Màu Cổ Điển</p>
         </article>
 
-        <!-- Movement 04: The Cut -->
-        <article class="at-panel at-panel--right" data-panel="4">
+        <!-- Movement 04: Street Ready & Enter Shop -->
+        <article class="at-panel at-panel--left" data-panel="4">
             <span class="at-panel__index">04</span>
-            <p class="at-panel__kicker">Họa Tiết Độc Quyền</p>
-            <h2 class="at-panel__title">Graphic Bắt Trend<br>In Sắc Nét Không Bong</h2>
-            <p class="at-panel__body">Mỗi mẫu in đều mang đậm hơi thở văn hóa đường phố Gen Z. Ứng dụng công nghệ in lụa và kỹ thuật số tiên tiến giúp hình in sắc nét, bền bỉ qua hàng trăm lần giặt.</p>
-            <p class="at-panel__spec"><i>Công Nghệ In</i> In Lụa Cao Cấp Chống Nứt</p>
-        </article>
-
-        <!-- Movement 05: The Man -->
-        <article class="at-panel at-panel--left" data-panel="5">
-            <span class="at-panel__index">05</span>
-            <p class="at-panel__kicker">Phối Đồ Chuẩn Gu</p>
-            <h2 class="at-panel__title">Biến Hóa Outfit<br>Tự Tin Tỏa Sáng</h2>
-            <p class="at-panel__body">Chỉ cần một chiếc áo HNMTSHOP, bạn có thể biến tấu đa dạng từ phong cách bụi bặm dạo phố đến cá tính khi đi học, đi chơi hay cà phê cùng bạn bè.</p>
-            <p class="at-panel__spec"><i>Phong Cách</i> Streetwear · Casual · Tối Giản</p>
-        </article>
-
-        <!-- Movement 06: The Procession -->
-        <article class="at-panel at-panel--right" data-panel="6">
-            <span class="at-panel__index">06</span>
-            <p class="at-panel__kicker">Bảng Màu Xu Hướng</p>
-            <h2 class="at-panel__title">Tone Màu Hiện Đại<br>Dễ Phối & Tôn Da</h2>
-            <p class="at-panel__body">Sự kết hợp giữa gam màu kinh điển (Đen huyền bí, Trắng kem, Xám khói) cùng các sắc màu xu hướng đô thị. Dễ phối đồ, không kén da và luôn giữ được vẻ thời thượng.</p>
-            <p class="at-panel__spec"><i>Bảng Màu</i> Đen Tuyền · Be Sữa · Xám Tiêu · Rêu Đậm</p>
-        </article>
-
-        <!-- Movement 07: The Detail -->
-        <article class="at-panel at-panel--left" data-panel="7">
-            <span class="at-panel__index">07</span>
-            <p class="at-panel__kicker">Mua Sắm Tiện Lợi</p>
-            <h2 class="at-panel__title">Đổi Trả 30 Ngày<br>Kiểm Tra Tận Nơi</h2>
-            <p class="at-panel__body">Trải nghiệm mua sắm an tâm 100% tại HNMTSHOP: Miễn phí ship đơn từ 500k, đồng kiểm hàng trước khi thanh toán và hỗ trợ đổi size siêu tốc nếu mặc chưa vừa vặn.</p>
-            <p class="at-panel__spec"><i>Cam Kết</i> Giao Nhanh Toàn Quốc · Đổi Size Tận Nhà</p>
+            <p class="at-panel__kicker">Trọn Bộ Hoàn Hảo</p>
+            <h2 class="at-panel__title">Sẵn Sàng Xuống Phố<br>Khẳng Định Bản Thân</h2>
+            <p class="at-panel__body">Sự kết hợp ăn ý giữa tông rêu retro và sắc xanh denim kinh điển. Hoàn thiện cùng sneaker đế êm và nón lưỡi trai đội ngược là bạn đã sẵn sàng cho mọi buổi hẹn cà phê hay dạo phố cuối tuần.</p>
+            <p class="at-panel__spec"><i class="bi bi-bag-check-fill"></i> Đủ Size S · M · L · XL · Đổi Trả Tận Nhà 30 Ngày</p>
         </article>
 
         <!-- Progress Bar & Movement Counter -->
         <div class="at-progress"><span id="atProgressFill"></span></div>
-        <div class="at-scene-count"><span id="atMovementNo">00</span><i>/ 07</i></div>
+        <div class="at-scene-count"><span id="atMovementNo">00</span><i>/ 04</i></div>
 
     </div>
 </section>
+}
 
-<!-- CỬA NGÕ DẪN VÀO TRANG CHỦ CHÍNH (LƯỚT HẾT LÀ VÀO SHOP NGAY) -->
+
+<!-- Mốc cuộn vào shop -->
 <div id="mainContent"></div>
 
 <!-- ============================================================== -->
@@ -244,6 +226,58 @@
 </section>
 
 <!-- ============================================================== -->
+<!-- SECTION: NEW DROPS (SẢN PHẨM MỚI RA MẮT TỪ HNMTSHOP)          -->
+<!-- ============================================================== -->
+<section class="hnmt-drops-section" id="newDrops">
+    <div class="urbn-container">
+
+        <div class="hnmt-drops-header">
+            <div>
+                <span class="hnmt-drops-eyebrow">DROP 2026 · EXCLUSIVE RELEASES</span>
+                <h2 class="hnmt-drops-title">Sản Phẩm Mới Ra Mắt</h2>
+                <p class="hnmt-drops-desc">Những thiết kế streetwear nguyên bản vừa cập bến — Form dáng Oversize & Boxy chuẩn gu giới trẻ</p>
+            </div>
+        </div>
+
+        @if (Model != null && Model.Any())
+        {
+            <div class="hnmt-drops-grid">
+                @foreach (var p in Model)
+                {
+                    <div class="hnmt-drop-card" data-product-id="@p.Id">
+                        <a href="@(p.ShowroomKind == "giay" ? Url.Action("Sneakers", "Products", new { audience = p.ShowroomAudience, productId = p.Id, from = "home" }) : Url.Action("Details", "Products", new { id = p.Id, from = "home" }))" class="hnmt-drop-card-link" title="@p.Name">
+                            <div class="hnmt-drop-card-media">
+                                <img src="@(string.IsNullOrEmpty(p.ImageUrl) ? "/images/placeholder.jpg" : p.ImageUrl)"
+                                     alt="@p.Name"
+                                     loading="lazy"
+                                     decoding="async" />
+                            </div>
+                            <div class="hnmt-drop-card-info">
+                                <h3 class="hnmt-drop-name">@p.Name</h3>
+                                <span class="hnmt-drop-price">@p.Price.ToString("N0")&nbsp;₫</span>
+                            </div>
+                        </a>
+                    </div>
+                }
+            </div>
+
+            <div class="hnmt-drops-footer">
+                <a asp-controller="Products" asp-action="Index" class="hnmt-drops-btn-more">
+                    Xem Tất Cả Sản Phẩm &#x2197;
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <p class="text-muted">Các mẫu Drop mới đang được cập nhật. Vui lòng quay lại sau.</p>
+            </div>
+        }
+
+    </div>
+</section>
+
+<!-- ============================================================== -->
 <!-- SECTION 3: DANH MỤC (4 MẪU ĐỨNG + NÚT VIÊN THUỐC TRẮNG)       -->
 <!-- ============================================================== -->
 <section class="urbn-cat-section" id="categories">
@@ -300,59 +334,7 @@
 <!-- ============================================================== -->
 <!-- SECTION 4: ĐỢT DROP ĐẶC BIỆT & ĐỒNG HỒ ĐẾM NGƯỢC               -->
 <!-- ============================================================== -->
-<section class="urbn-offer-section">
-    <div class="urbn-container">
-        <div class="urbn-offer-grid">
-
-            <!-- Bên trái: Nội dung & Bộ đếm -->
-            <div>
-                <h2 class="urbn-offer-title">
-                    Nhanh Tay! Ưu Đãi<br />Sắp Kết Thúc
-                </h2>
-                <p class="urbn-offer-sub">
-                    Thời gian có hạn cho đợt ưu đãi độc quyền này. Hành động ngay để nhận những đặc quyền tốt nhất từ HNMTSHOP.
-                </p>
-
-                <!-- Bộ 4 ô đếm ngược -->
-                <div class="urbn-countdown-bar">
-                    <div class="urbn-countdown-cell">
-                        <span id="cdDays">190</span>
-                        <small>Ngày</small>
-                    </div>
-                    <div class="urbn-countdown-cell">
-                        <span id="cdHours">04</span>
-                        <small>Giờ</small>
-                    </div>
-                    <div class="urbn-countdown-cell">
-                        <span id="cdMins">38</span>
-                        <small>Phút</small>
-                    </div>
-                    <div class="urbn-countdown-cell">
-                        <span id="cdSecs">13</span>
-                        <small>Giây</small>
-                    </div>
-                </div>
-
-                <p class="urbn-offer-notice">
-                    Ưu đãi giới hạn có hiệu lực đến hết tháng 12, 2026. <strong>MUA NGAY KẺO HẾT!</strong>
-                </p>
-
-                <a asp-controller="Products" asp-action="Index" class="urbn-btn-view-col">
-                    XEM BỘ SƯU TẬP
-                </a>
-            </div>
-
-            <!-- Bên phải: Ảnh người mẫu full-body -->
-            <div>
-                <div class="urbn-model-photo">
-                    <img src="~/images/seated-couture-model-v2.webp" asp-append-version="true" loading="lazy" decoding="async"
-                         alt="Người mẫu nữ ngồi nghiêng với áo đen lệch vai, quần âu xám và giày đỏ rượu" style="object-fit:contain" />
-                </div>
-            </div>
-
-        </div>
-    </div>
-</section>
+<partial name="_SaleOffer" model="@((ViewBag.SaleCampaign as LookbookDisplay, false))" />
 
 <!-- ============================================================== -->
 <!-- SECTION 5: DẢI BĂNG CHỮ CHẠY VÔ TẬN (MARQUEE)                  -->
@@ -392,25 +374,39 @@
         <div class="urbn-racks-grid">
 
             <!-- Sào 1: NOIR UNIT -->
+            @foreach (var collection in (IEnumerable<LookbookCollection>)ViewBag.PublishedCollections)
+            {
+                <a asp-controller="Home" asp-action="ManagedLookbook" asp-route-id="@collection.Id" class="urbn-rack-card hnmt-lookbook-card">
+                    <img src="@collection.CoverUrl" loading="lazy" decoding="async" alt="" />
+                    <div class="urbn-cat-pill-wrap"><span class="urbn-cat-pill">@collection.Name</span></div>
+                </a>
+            }
+            @if (!((IEnumerable<string?>)ViewBag.ImportedLookbookKeys).Contains("noir"))
+            {
             <a href="/lookbook?theme=noir" class="urbn-rack-card hnmt-lookbook-card" data-open-lookbook="noir" style="background:#e4e5e7">
                 <img src="~/images/lookbook/noir-unit-poster.webp" asp-append-version="true" loading="lazy" decoding="async" alt="" />
                 <div class="urbn-cat-pill-wrap">
                     <span class="urbn-cat-pill">Noir Unit</span>
                 </div>
             </a>
+            }
 
             <!-- Sào 2: SUN-WASHED -->
+            @if (!((IEnumerable<string?>)ViewBag.ImportedLookbookKeys).Contains("sunwash"))
+            {
             <a href="/lookbook?theme=sunwash" class="urbn-rack-card hnmt-lookbook-card" data-open-lookbook="sunwash" style="background:#ebe5d8">
                 <img src="~/images/lookbook/sun-washed-poster.webp" asp-append-version="true" loading="lazy" decoding="async" alt="" />
                 <div class="urbn-cat-pill-wrap">
                     <span class="urbn-cat-pill">Sun-Washed</span>
                 </div>
             </a>
+            }
 
         </div>
 
     </div>
 </section>
+
 
 <!-- MARQUEE 2: MẶC ĐẸP HƠN, TỰ TIN HƠN -->
 <div class="urbn-ticker-band" style="padding: 14px 0; font-size: 14px;">
@@ -496,7 +492,37 @@
     </div>
 </section>
 
+<!-- ============================================================== -->
+<!-- SECTION: GIA NHẬP CỘNG ĐỒNG HNMT CLUB (VOUCHER ĐƠN ĐẦU)        -->
+<!-- ============================================================== -->
+<section class="hnmt-newsletter-section">
+    <div class="urbn-container">
+        <div class="hnmt-newsletter-box">
+            <div class="hnmt-newsletter-info">
+                <span class="hnmt-newsletter-tag">HNMT CLUB · THÀNH VIÊN MỚI</span>
+                <h3>Gia Nhập Cộng Đồng Streetwear</h3>
+                <p>Đăng ký nhận thông báo về các đợt Drop độc quyền và nhận ngay <strong>Voucher giảm 10%</strong> cho đơn hàng đầu tiên của bạn.</p>
+            </div>
+            <form class="hnmt-newsletter-form" onsubmit="event.preventDefault(); if(window.showFsToast){ showFsToast('Cảm ơn bạn! Mã voucher HNMTWELCOME10 đã được lưu vào phiên mua sắm.', 'success'); } else { alert('Mã voucher HNMTWELCOME10: Giảm 10% đơn đầu tiên!'); } this.reset();">
+                <div class="hnmt-newsletter-input-group">
+                    <input type="email" placeholder="Nhập địa chỉ email của bạn..." required />
+                    <button type="submit" class="hnmt-newsletter-btn">
+                        Nhận Ưu Đãi <i class="bi bi-arrow-right ms-1"></i>
+                    </button>
+                </div>
+                <small class="hnmt-newsletter-privacy">Cam kết bảo mật 100%. Bạn có thể hủy nhận tin bất kỳ lúc nào.</small>
+            </form>
+        </div>
+    </div>
+</section>
+
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/lookbook.css" asp-append-version="true" />
+}
+
 @section Scripts {
+    <script src="~/js/offer-model-gallery.js" asp-append-version="true"></script>
 }
 
 

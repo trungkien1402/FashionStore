@@ -3,10 +3,15 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
+    <UserSecretsId>FashionStore-local-development</UserSecretsId>
     <ImplicitUsings>enable</ImplicitUsings>
     <!-- The nested project is an archived copy, not part of this application. -->
     <DefaultItemExcludes>$(DefaultItemExcludes);FashionStore/**</DefaultItemExcludes>
   </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Data/legacy-lookbooks.json" LogicalName="FashionStore.Data.legacy-lookbooks.json" />
+    <Content Update="appsettings.Local.json" CopyToPublishDirectory="Never" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="QuestPDF" Version="2026.9.1" />

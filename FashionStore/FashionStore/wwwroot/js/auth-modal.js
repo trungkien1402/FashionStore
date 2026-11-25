@@ -90,7 +90,8 @@
             // Populate ReturnUrl
             const returnUrlInput = document.getElementById("loginReturnUrl");
             if (returnUrlInput) {
-                returnUrlInput.value = window.location.pathname + window.location.search;
+                const current = window.location.pathname + window.location.search;
+                returnUrlInput.value = current.startsWith("/Account") ? "/" : current;
             }
 
             this.hideAlert();
@@ -131,7 +132,6 @@
 
             const viewLogin = document.getElementById("authViewLogin");
             const viewRegister = document.getElementById("authViewRegister");
-            const viewForgot = document.getElementById("authViewForgot");
 
             const title = document.getElementById("hnmtAuthTitle");
             const sub = document.getElementById("hnmtAuthSub");
@@ -143,7 +143,6 @@
                 tabRegister?.classList.add("is-active");
 
                 viewLogin?.classList.remove("is-active");
-                viewForgot?.classList.remove("is-active");
                 viewRegister?.classList.add("is-active");
 
                 if (title) title.textContent = "Tạo Tài Khoản";
@@ -153,37 +152,10 @@
                 tabRegister?.classList.remove("is-active");
 
                 viewRegister?.classList.remove("is-active");
-                viewForgot?.classList.remove("is-active");
                 viewLogin?.classList.add("is-active");
 
                 if (title) title.textContent = "Đăng Nhập";
                 if (sub) sub.textContent = "Chào mừng bạn trở lại với không gian thời trang HNMT.";
-            }
-        },
-
-        showForgot() {
-            this.hideAlert();
-            const tabsWrap = document.getElementById("hnmtAuthTabsWrap");
-            const viewLogin = document.getElementById("authViewLogin");
-            const viewRegister = document.getElementById("authViewRegister");
-            const viewForgot = document.getElementById("authViewForgot");
-
-            const title = document.getElementById("hnmtAuthTitle");
-            const sub = document.getElementById("hnmtAuthSub");
-
-            if (tabsWrap) tabsWrap.style.display = "none";
-            viewLogin?.classList.remove("is-active");
-            viewRegister?.classList.remove("is-active");
-            viewForgot?.classList.add("is-active");
-
-            if (title) title.textContent = "Khôi Phục Mật Khẩu";
-            if (sub) sub.textContent = "Thiết lập lại quyền truy cập tài khoản thời trang của bạn.";
-
-            // Pre-fill email from login field if user already typed it
-            const loginEmail = document.getElementById("loginEmailInput")?.value;
-            const forgotEmail = document.getElementById("forgotEmailInput");
-            if (loginEmail && forgotEmail) {
-                forgotEmail.value = loginEmail;
             }
         },
 
@@ -251,24 +223,22 @@
                     if (data.success) {
                         submitBtn.textContent = "Đăng nhập thành công";
                         setTimeout(() => {
-                            window.location.reload();
+                            window.location.assign(data.redirectUrl || "/");
                         }, 400);
                         return;
                     } else {
                         this.showAlert(data.message || "Email hoặc mật khẩu không chính xác.");
                     }
                 } else {
-                    // Fallback if returned HTML (e.g. redirected or standard view)
-                    if (response.redirected) {
-                        window.location.href = response.url;
+                    // A normal successful form submission redirects to the homepage.
+                    if (response.ok && response.redirected &&
+                        ["/", "/Home", "/Home/Index"].includes(new URL(response.url).pathname)) {
+                        window.location.assign("/");
                         return;
                     }
-                    const text = await response.text();
-                    if (text.includes("Đăng xuất") || text.includes("fs-menu-logout-btn") || response.ok) {
-                        window.location.reload();
-                        return;
-                    }
-                    this.showAlert("Email hoặc mật khẩu không chính xác. Vui lòng thử lại.");
+                    this.showAlert(response.status === 429
+                        ? "Bạn thao tác quá nhanh. Vui lòng thử lại sau 1 phút."
+                        : "Không thể đăng nhập. Vui lòng kiểm tra thông tin và thử lại.");
                 }
             } catch (err) {
                 console.error("Login Error:", err);
@@ -346,27 +316,6 @@
                     submitBtn.textContent = originalContent || "Tạo tài khoản";
                 }
             }
-        },
-
-        handleForgotSubmit(e) {
-            e.preventDefault();
-            const emailInput = document.getElementById("forgotEmailInput");
-            const successBox = document.getElementById("forgotSuccessAlert");
-            const submitBtn = document.getElementById("forgotSubmitBtn");
-
-            if (!emailInput?.value) return;
-
-            submitBtn.disabled = true;
-            submitBtn.textContent = "Đang gửi...";
-
-            setTimeout(() => {
-                if (successBox) {
-                    successBox.style.display = "block";
-                    successBox.innerHTML = `Hướng dẫn khôi phục mật khẩu đã được gửi tới <strong>${emailInput.value}</strong>.`;
-                }
-                submitBtn.disabled = false;
-                submitBtn.textContent = "Đã gửi thành công";
-            }, 700);
         },
 
         socialLogin(provider) {

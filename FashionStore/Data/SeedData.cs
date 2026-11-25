@@ -59,7 +59,7 @@ public static class SeedData
             {
                 UserName = shipperEmail,
                 Email = shipperEmail,
-                FullName = "Nguyễn Văn Giao (Shipper)",
+                FullName = "Nguyễn Văn Giao",
                 PhoneNumber = "0988776655",
                 EmailConfirmed = true,
                 IsActive = true
@@ -70,9 +70,68 @@ public static class SeedData
                 await userManager.AddToRoleAsync(shipper, "Shipper");
             }
         }
-        else if (!await userManager.IsInRoleAsync(shipper, "Shipper"))
+        else
         {
-            await userManager.AddToRoleAsync(shipper, "Shipper");
+            if (shipper.FullName != null && shipper.FullName.Contains("(Shipper)"))
+            {
+                shipper.FullName = shipper.FullName.Replace(" (Shipper)", "").Replace("(Shipper)", "").Trim();
+                await userManager.UpdateAsync(shipper);
+            }
+            if (!await userManager.IsInRoleAsync(shipper, "Shipper"))
+            {
+                await userManager.AddToRoleAsync(shipper, "Shipper");
+            }
+        }
+
+        var variantsWithParens = await db.ProductVariants.Where(v => v.Color != null && v.Color.Contains("(")).ToListAsync();
+        foreach (var v in variantsWithParens)
+        {
+            var idx = v.Color.IndexOf('(');
+            if (idx > 0)
+            {
+                v.Color = v.Color.Substring(0, idx).Trim();
+            }
+        }
+        if (variantsWithParens.Any())
+        {
+            await db.SaveChangesAsync();
+        }
+
+        var allCategories = await db.Categories.ToListAsync();
+        bool catChanged = false;
+        foreach (var cat in allCategories)
+        {
+            var oldName = cat.Name;
+            if (string.IsNullOrEmpty(cat.Name)) continue;
+            if (cat.Name.Contains("& Graphic Tees")) cat.Name = cat.Name.Replace("& Graphic Tees", "").Trim();
+            if (cat.Name.Contains("& Sweaters")) cat.Name = cat.Name.Replace("& Sweaters", "").Trim();
+            if (cat.Name.Contains("& Outerwear")) cat.Name = cat.Name.Replace("& Outerwear", "").Trim();
+            if (cat.Name.Contains("& Denim")) cat.Name = cat.Name.Replace("& Denim", "").Trim();
+            if (cat.Name.Contains("& Blouse")) cat.Name = cat.Name.Replace("& Blouse", "").Trim();
+            if (cat.Name.Contains("& Chino")) cat.Name = cat.Name.Replace("& Chino", "").Trim();
+            if (cat.Name.Contains("& Streetwear Shoes")) cat.Name = cat.Name.Replace("& Streetwear Shoes", "").Trim();
+            if (cat.Name.Contains("& Cargo")) cat.Name = "Quần túi hộp";
+            if (cat.Name.Contains("Hoodies")) cat.Name = "Áo nỉ & Hoodie";
+            if (cat.Name.Contains("("))
+            {
+                var idx = cat.Name.IndexOf('(');
+                if (idx > 0) cat.Name = cat.Name.Substring(0, idx).Trim();
+            }
+            if (cat.Name != oldName) catChanged = true;
+        }
+        if (catChanged)
+        {
+            await db.SaveChangesAsync();
+        }
+
+        var closedConversations = await db.SupportConversations.Where(c => c.IsClosed).ToListAsync();
+        foreach (var c in closedConversations)
+        {
+            c.IsClosed = false;
+        }
+        if (closedConversations.Any())
+        {
+            await db.SaveChangesAsync();
         }
 
         if (!await db.Products.AnyAsync(p => p.ShowroomMetadata != null))
@@ -80,5 +139,6 @@ public static class SeedData
             await ShowroomCatalog.ImportAsync(db);
         }
         await ShowroomCatalog.ReconcileCategoriesAsync(db);
+        await LegacyLookbookSeed.ImportAsync(db);
     }
 }

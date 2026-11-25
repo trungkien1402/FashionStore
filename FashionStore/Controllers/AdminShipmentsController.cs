@@ -130,7 +130,7 @@ public class AdminShipmentsController : Controller
             AvailableShippers = activeShippers.Select(u => new SelectListItem
             {
                 Value = u.Id,
-                Text = $"{u.FullName} ({u.PhoneNumber ?? u.UserName})"
+                Text = $"{u.FullName?.Replace(" (Shipper)", "").Replace("(Shipper)", "").Trim()} ({u.PhoneNumber ?? u.UserName})"
             }).ToList()
         };
 
@@ -159,7 +159,7 @@ public class AdminShipmentsController : Controller
             model.AvailableShippers = shippers.Where(u => u.IsActive).Select(u => new SelectListItem
             {
                 Value = u.Id,
-                Text = $"{u.FullName} ({u.PhoneNumber ?? u.UserName})"
+                Text = $"{u.FullName?.Replace(" (Shipper)", "").Replace("(Shipper)", "").Trim()} ({u.PhoneNumber ?? u.UserName})"
             }).ToList();
             return View(model);
         }
@@ -172,7 +172,7 @@ public class AdminShipmentsController : Controller
             model.AvailableShippers = shippers.Where(u => u.IsActive).Select(u => new SelectListItem
             {
                 Value = u.Id,
-                Text = $"{u.FullName} ({u.PhoneNumber ?? u.UserName})"
+                Text = $"{u.FullName?.Replace(" (Shipper)", "").Replace("(Shipper)", "").Trim()} ({u.PhoneNumber ?? u.UserName})"
             }).ToList();
             return View(model);
         }
@@ -260,7 +260,7 @@ public class AdminShipmentsController : Controller
             model.AvailableShippers = shippers.Where(u => u.IsActive).Select(u => new SelectListItem
             {
                 Value = u.Id,
-                Text = $"{u.FullName} ({u.PhoneNumber ?? u.UserName})"
+                Text = $"{u.FullName?.Replace(" (Shipper)", "").Replace("(Shipper)", "").Trim()} ({u.PhoneNumber ?? u.UserName})"
             }).ToList();
             return View(model);
         }

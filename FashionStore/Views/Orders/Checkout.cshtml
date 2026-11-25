@@ -1,4 +1,4 @@
-@model CheckoutViewModel
+﻿@model CheckoutViewModel
 @using System.Globalization
 @{
     Layout = "_PaymentLayout";
@@ -44,6 +44,16 @@
                     <h2 class="hnmt-card-title-clean">Thông tin giao nhận</h2>
                     <p class="hnmt-card-sub-clean">Địa chỉ và số điện thoại dùng để giao kiện hàng tận tay bạn.</p>
                 </div>
+            </div>
+
+            <div class="mb-3" data-saved-address data-url="@Url.Action("SavedShippingAddress", "AccountSettings")">
+                <button type="button" class="btn btn-outline-dark rounded-pill" data-show-address><i class="bi bi-geo-alt"></i> Thêm địa chỉ từ hồ sơ</button>
+                <div class="mt-3 p-3 border rounded-3" data-address-suggestion hidden>
+                    <strong>Địa chỉ đã lưu</strong><p class="mb-2" data-saved-address-label></p>
+                    <button type="button" class="btn btn-dark rounded-pill" data-use-address hidden>Dùng địa chỉ này</button>
+                    <a asp-controller="AccountSettings" asp-action="Index" target="_blank" rel="noopener" class="ms-2">Quản lý địa chỉ</a>
+                </div>
+                <p class="small text-muted mt-2" data-saved-address-status role="status"></p>
             </div>
 
             <div class="hnmt-form-row">

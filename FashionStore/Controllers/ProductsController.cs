@@ -127,10 +127,18 @@ public class ProductsController : Controller
         return View(model);
     }
 
-    // GET: /Products/Details/5
+    // Compatibility route for existing order/cart links. The standalone detail page was retired.
     [HttpGet]
-    public IActionResult Details(int id) =>
-        RedirectToAction("Index", "Home", new { showroomProductId = id });
+    public async Task<IActionResult> Details(int id, string? from = null)
+    {
+        var product = await _db.Products.AsNoTracking().SingleOrDefaultAsync(p => p.Id == id && p.IsActive);
+        if (product == null) return NotFound();
+        if (product.ShowroomKind == "giay")
+            return RedirectToAction(nameof(Sneakers), new { audience = product.ShowroomAudience, productId = product.Id, from = from == "home" ? "home" : null });
+        if (product.ShowroomKind is "ao" or "quan")
+            return RedirectToAction(nameof(Rail), new { audience = product.ShowroomAudience, category = product.ShowroomKind, productId = product.Id, from = from == "home" ? "home" : null });
+        return RedirectToAction("Index", "Home", new { showroomProductId = id });
+    }
 
     private static string MaskEmail(string? email)
     {

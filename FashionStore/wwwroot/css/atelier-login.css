@@ -295,6 +295,26 @@
     gap: 18px;
 }
 
+.at-recovery-card {
+    max-width: 420px;
+    margin-inline: auto;
+    padding: clamp(22px, 4vw, 32px);
+    border-radius: 16px;
+}
+
+.at-recovery-card .at-form { gap: 10px; }
+.at-recovery-card .at-card-desc { margin-bottom: 20px; }
+.at-recovery-card .at-card-footer { margin-top: 18px; padding-top: 14px; }
+.at-recovery-card .at-alert-danger.validation-summary-valid,
+.at-recovery-card .at-input-error:empty,
+.at-recovery-card .at-otp-status:empty { display: none; }
+
+.at-otp-status {
+    margin-bottom: 12px;
+    color: #b91c1c;
+    font-size: .85rem;
+}
+
 .at-input-group {
     display: flex;
     flex-direction: column;
@@ -939,6 +959,18 @@
     font-weight: 400;
     font-size: 14px;
 }
+
+.hnmt-pure-input.at-otp-code,
+.hnmt-pure-input.at-otp-code::placeholder {
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: 650;
+    letter-spacing: .32em;
+    text-indent: .32em;
+    font-variant-numeric: tabular-nums;
+}
+
+.hnmt-pure-input.at-otp-code::placeholder { color: #64748b; }
 
 .hnmt-pure-input:-webkit-autofill,
 .hnmt-pure-input:-webkit-autofill:hover,

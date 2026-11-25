@@ -17,6 +17,10 @@ const string importCatalogOption = "--import-showroom-catalog";
 var replaceCatalog = args.Contains(replaceCatalogOption, StringComparer.Ordinal);
 var importCatalog = args.Contains(importCatalogOption, StringComparer.Ordinal);
 var builder = WebApplication.CreateBuilder(args.Where(arg => arg != replaceCatalogOption && arg != importCatalogOption).ToArray());
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
+}
 
 // Đảm bảo luôn tìm thấy wwwroot (CSS, JS, 3D models, hình ảnh) dù ứng dụng chạy từ thư mục gốc giải pháp, Visual Studio hay output bin
 var candidateWebRoots = new[]
@@ -60,6 +64,14 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
+builder.Services.Configure<DataProtectionTokenProviderOptions>(options => options.TokenLifespan = TimeSpan.FromMinutes(30));
+builder.Services.Configure<SecurityStampValidatorOptions>(options => options.ValidationInterval = TimeSpan.FromMinutes(1));
+builder.Services.AddScoped<IPasswordRecoveryEmail, PasswordRecoveryEmail>();
+builder.Services.AddSingleton<TimeProvider>(TimeProvider.System);
+builder.Services.AddSingleton<PasswordRecoveryOtp>();
+builder.Services.AddSingleton<PasswordRecoveryEmailQueue>();
+builder.Services.AddHostedService<PasswordRecoveryEmailQueue>(sp => sp.GetRequiredService<PasswordRecoveryEmailQueue>());
+
 // Cookie
 builder.Services.ConfigureApplicationCookie(options =>
 {
@@ -92,6 +104,8 @@ builder.Services.Configure<SePayOptions>(builder.Configuration.GetSection(SePayO
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<AdminReportService>();
 builder.Services.AddSingleton<VietnamAddresses>();
+builder.Services.AddScoped<IntroPreference>();
+builder.Services.AddSingleton<FashionStore.Services.AdminPresenceService>();
 
 builder.Services.AddRateLimiter(options =>
 {
@@ -102,7 +116,7 @@ builder.Services.AddRateLimiter(options =>
         context.HttpContext.Response.ContentType = "text/plain; charset=utf-8";
         await context.HttpContext.Response.WriteAsync("Bạn đang thao tác quá nhanh, vui lòng thử lại sau 1 phút.", ct);
     };
-    foreach (var (name, limit) in new[] { ("login", 5), ("checkout", 10), ("voucher", 20) })
+    foreach (var (name, limit) in new[] { ("login", 5), ("password-recovery", 3), ("password-otp", 10), ("checkout", 10), ("voucher", 20) })
     {
         options.AddPolicy(name, http => RateLimitPartition.GetFixedWindowLimiter(
             http.Connection.RemoteIpAddress?.ToString() ?? "unknown",

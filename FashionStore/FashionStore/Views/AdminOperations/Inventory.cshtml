@@ -161,7 +161,9 @@ else
                                             <code class="font-monospace" style="color: #475569; font-weight: 600; font-size: 0.72rem;">@row.Sku</code>
                                             @if (!string.IsNullOrEmpty(row.CategoryName))
                                             {
-                                                <span class="text-muted" style="font-size: 0.7rem;">&middot; @row.CategoryName</span>
+                                                var cleanCat = row.CategoryName.Replace("& Graphic Tees", "").Replace("& Sweaters", "").Replace("& Outerwear", "").Replace("& Denim", "").Replace("& Blouse", "").Replace("& Chino", "").Replace("& Streetwear Shoes", "").Trim();
+                                                if (cleanCat.Contains("(")) cleanCat = cleanCat.Substring(0, cleanCat.IndexOf('(')).Trim();
+                                                <span class="text-muted" style="font-size: 0.7rem;">&middot; @cleanCat</span>
                                             }
                                         </div>
                                     </div>
@@ -174,8 +176,11 @@ else
                                     <span class="badge" style="background: #F1F5F9; color: #0F172A; border: 1px solid #CBD5E1; font-size: 0.74rem; font-weight: 600;">
                                         Size @row.Size
                                     </span>
-                                    <span class="badge text-truncate" style="background: #F1F5F9; color: #0F172A; border: 1px solid #CBD5E1; font-size: 0.74rem; font-weight: 500; max-width: 160px;" title="@row.Color">
-                                        @row.Color
+                                    @{
+                                        var displayColor = row.Color?.Contains("(") == true ? row.Color.Substring(0, row.Color.IndexOf('(')).Trim() : row.Color;
+                                    }
+                                    <span class="badge text-truncate" style="background: #F1F5F9; color: #0F172A; border: 1px solid #CBD5E1; font-size: 0.74rem; font-weight: 500; max-width: 160px;" title="@displayColor">
+                                        @displayColor
                                     </span>
                                 </div>
                             </td>
@@ -224,7 +229,7 @@ else
                                 <div class="d-inline-flex align-items-center gap-1 justify-content-end">
                                     <button type="button" class="adm-btn-table-action"
                                             style="height: 30px; font-size: 0.76rem; padding: 0 10px; font-weight: 600;"
-                                            onclick="openQuickAdjustModal(@row.Id, '@Html.Raw(Html.Encode(row.ProductName))', '@Html.Raw(Html.Encode(row.Sku))', '@row.Size', '@Html.Raw(Html.Encode(row.Color))', @row.StockQuantity, @row.Price, '@productImg')"
+                                            onclick="openQuickAdjustModal(@row.Id, '@Html.Raw(Html.Encode(row.ProductName))', '@Html.Raw(Html.Encode(row.Sku))', '@row.Size', '@Html.Raw(Html.Encode(displayColor))', @row.StockQuantity, @row.Price, '@productImg')"
                                             title="Điều chỉnh số lượng tồn ngay tại đây">
                                         <i class="bi bi-sliders me-1"></i> Điều chỉnh
                                     </button>

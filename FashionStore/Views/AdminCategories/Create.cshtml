@@ -65,7 +65,7 @@
                 <!-- TÊN DANH MỤC -->
                 <div class="mb-3">
                     <label asp-for="Name" class="adm-form-label fw-bold">Tên danh mục <span class="text-danger">*</span></label>
-                    <input asp-for="Name" id="catNameInput" class="form-control adm-input-dark fs-6" placeholder="Ví dụ: Áo Khoác & Outerwear, Quần Denim, Giày Sneaker..." required autocomplete="off" />
+                    <input asp-for="Name" id="catNameInput" class="form-control adm-input-dark fs-6" placeholder="Ví dụ: Áo khoác, Quần jeans, Giày sneaker..." required autocomplete="off" />
                     <span asp-validation-for="Name" class="text-danger small mt-1 d-block"></span>
                 </div>
 
@@ -73,20 +73,20 @@
                 <div class="mb-3">
                     <label class="text-muted small fw-semibold d-block mb-2">Gợi ý danh mục thời trang nhanh:</label>
                     <div class="d-flex flex-wrap gap-2">
-                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Áo Khoác & Outerwear', 'ao-khoac-outerwear')">+ Áo Khoác & Outerwear</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Áo Polo', 'ao-polo')">+ Áo Polo</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Áo Sơ Mi & Blouse', 'ao-so-mi-blouse')">+ Áo Sơ Mi & Blouse</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Áo Thun & Graphic Tees', 'ao-thun-graphic-tees')">+ Áo Thun & Graphic Tees</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Quần Denim & Jean', 'quan-denim-jean')">+ Quần Denim & Jean</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Giày Sneaker & Footwear', 'giay-sneaker')">+ Giày Sneaker</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Phụ Kiện & Túi Xách', 'phu-kien-tui-xach')">+ Phụ Kiện</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Áo khoác', 'ao-khoac')">+ Áo khoác</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Áo polo', 'ao-polo')">+ Áo polo</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Áo sơ mi', 'ao-so-mi')">+ Áo sơ mi</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Áo thun', 'ao-thun')">+ Áo thun</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Quần jeans', 'quan-jeans')">+ Quần jeans</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Giày sneaker', 'giay-sneaker')">+ Giày sneaker</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem; border-radius: 6px;" onclick="applyPreset('Phụ kiện', 'phu-kien')">+ Phụ kiện</button>
                     </div>
                 </div>
 
                 <!-- SLUG -->
                 <div class="mb-4">
                     <div class="d-flex justify-content-between align-items-center mb-1">
-                        <label asp-for="Slug" class="adm-form-label fw-bold mb-0">Đường dẫn tĩnh (Slug) - Tự động chuẩn SEO</label>
+                        <label asp-for="Slug" class="adm-form-label fw-bold mb-0">Đường dẫn tĩnh - Tự động chuẩn SEO</label>
                         <button type="button" class="btn btn-sm p-0 text-muted" onclick="autoSlugFromName()" title="Tạo lại từ tên danh mục" style="font-size: 0.75rem;">
                             <i class="bi bi-arrow-repeat me-1"></i>Tự tạo
                         </button>
@@ -105,7 +105,7 @@
 
                 <!-- ẢNH ĐẠI DIỆN / BÌA LOOKBOOK DANH MỤC -->
                 <div class="mb-4">
-                    <label class="adm-form-label fw-bold mb-1">Ảnh bìa / Ảnh đại diện danh mục (Lookbook Cover)</label>
+                    <label class="adm-form-label fw-bold mb-1">Ảnh bìa / Ảnh đại diện danh mục</label>
                     <div class="text-muted small mb-2" style="font-size: 0.75rem;">Tải lên ảnh bìa đại diện cho danh mục (định dạng PNG, JPG, WEBP tối đa 10 MB).</div>
 
                     <input type="file" asp-for="CoverImage" id="catCoverInput" accept="image/png, image/jpeg, image/webp" class="d-none" onchange="handleCoverSelected(this)" />
@@ -163,7 +163,7 @@
             <div class="d-flex align-items-center justify-content-between mb-3 pb-3 border-bottom border-secondary border-opacity-10">
                 <div class="d-flex align-items-center gap-2">
                     <i class="bi bi-eye fs-5" style="color: var(--adm-gold, #D97706);"></i>
-                    <h5 class="fw-bold mb-0 adm-heading">Xem trước Hiển thị (Live Preview)</h5>
+                    <h5 class="fw-bold mb-0 adm-heading">Xem trước Hiển thị</h5>
                 </div>
                 <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #10B981; font-size: 0.72rem;">Showroom Ready</span>
             </div>

@@ -109,7 +109,7 @@
                         <input asp-for="RememberMe" id="atRememberMe" class="at-checkbox-input" type="checkbox" />
                         <span>Ghi nhớ đăng nhập</span>
                     </label>
-                    <button type="button" class="at-forgot-btn" id="btnOpenAtForgotModal">Quên mật khẩu?</button>
+                    <a asp-controller="PasswordRecovery" asp-action="ForgotPassword" class="at-footer-link">Quên mật khẩu?</a>
                 </div>
 
                 <!-- Primary Submit Button -->
@@ -135,38 +135,6 @@
         </div>
     </main>
 
-    <!-- Interactive Forgot Password Modal in Contemporary Clean White -->
-    <div class="at-modal-backdrop" id="atForgotModal" role="dialog" aria-modal="true" aria-labelledby="atForgotTitle">
-        <div class="at-modal-box">
-            <button type="button" class="at-modal-close" id="btnCloseAtForgotModal" aria-label="Đóng cửa sổ">
-                <i class="bi bi-x-lg"></i>
-            </button>
-
-            <div class="at-card-kicker mb-2">
-                <span>KHÔI PHỤC TÀI KHOẢN</span>
-            </div>
-            <h3 class="at-card-title" id="atForgotTitle" style="font-size: 1.6rem;">Quên Mật Khẩu</h3>
-            <p class="at-card-desc">
-                Nhập email đã đăng ký của bạn. Chúng tôi sẽ gửi liên kết bảo mật để thiết lập mật khẩu mới.
-            </p>
-
-            <form id="atForgotForm" onsubmit="handleAtForgotSubmit(event)">
-                <div class="at-input-group mb-3">
-                    <label class="at-input-label">Địa chỉ Email</label>
-                    <div class="at-input-box">
-                        <i class="bi bi-envelope at-input-icon"></i>
-                        <input type="email" id="atForgotEmailInput" class="at-input-field" placeholder="ten@vidu.vn" required />
-                    </div>
-                </div>
-
-                <div id="atForgotAlert" style="display: none; padding: 12px 14px; border-radius: 12px; font-size: 0.84rem; margin-bottom: 16px;"></div>
-
-                <button type="submit" class="at-btn-submit" id="btnAtSendForgot">
-                    <span>Gửi Hướng Dẫn Khôi Phục</span>
-                </button>
-            </form>
-        </div>
-    </div>
 </div>
 
 @section Scripts {
@@ -203,39 +171,6 @@
                 });
             }
 
-            // 2. Interactive Forgot Password Modal Controls
-            const modal = document.getElementById("atForgotModal");
-            const openBtn = document.getElementById("btnOpenAtForgotModal");
-            const closeBtn = document.getElementById("btnCloseAtForgotModal");
-
-            if (modal && openBtn && closeBtn) {
-                openBtn.addEventListener("click", function () {
-                    modal.classList.add("is-active");
-                    const input = document.getElementById("atForgotEmailInput");
-                    const loginEmail = document.querySelector('input[name="Email"]');
-                    if (loginEmail && loginEmail.value) {
-                        input.value = loginEmail.value;
-                    }
-                    setTimeout(() => input?.focus(), 100);
-                });
-
-                closeBtn.addEventListener("click", function () {
-                    modal.classList.remove("is-active");
-                });
-
-                modal.addEventListener("click", function (e) {
-                    if (e.target === modal) {
-                        modal.classList.remove("is-active");
-                    }
-                });
-
-                document.addEventListener("keydown", function (e) {
-                    if (e.key === "Escape" && modal.classList.contains("is-active")) {
-                        modal.classList.remove("is-active");
-                    }
-                });
-            }
-
             // 3. Simulated Social Login click feedback
             ["btnGoogleLogin", "btnAppleLogin"].forEach(id => {
                 const btn = document.getElementById(id);
@@ -247,28 +182,5 @@
                 }
             });
         });
-
-        // Forgot password simulated handler
-        function handleAtForgotSubmit(e) {
-            e.preventDefault();
-            const email = document.getElementById("atForgotEmailInput")?.value;
-            const alertBox = document.getElementById("atForgotAlert");
-            const btn = document.getElementById("btnAtSendForgot");
-
-            if (!email || !alertBox) return;
-
-            btn.disabled = true;
-            btn.textContent = "Đang gửi...";
-
-            setTimeout(() => {
-                alertBox.style.display = "block";
-                alertBox.style.background = "#f0fdf4";
-                alertBox.style.border = "1px solid #bbf7d0";
-                alertBox.style.color = "#15803d";
-                alertBox.innerHTML = `Hướng dẫn khôi phục đã được gửi tới <strong>${email}</strong>. Vui lòng kiểm tra hộp thư của bạn!`;
-                btn.disabled = false;
-                btn.textContent = "Đã gửi thành công";
-            }, 700);
-        }
     </script>
 }

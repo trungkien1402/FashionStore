@@ -156,12 +156,21 @@ public class AdminProductsController : Controller
             var kind = isShoe ? "giay" : (isPants ? "quan" : "ao");
             var imageKind = isShoe ? "shoe" : "apparel";
 
-            var imageUrl = await SaveImageAsync(model.ImageFile!, imageKind);
+            var hasSingleShoeImage = model.ImageBackFile is { Length: > 0 };
+            var primaryImageKind = isShoe && hasSingleShoeImage && model.ImagePairFile == null ? "shoe-pair" : imageKind;
+            var imageUrl = await SaveImageAsync(model.ImageFile!, primaryImageKind);
             string? backUrl = model.ImageBackFile != null ? await SaveImageAsync(model.ImageBackFile, imageKind) : null;
             string? sideUrl = model.ImageSideFile != null ? await SaveImageAsync(model.ImageSideFile, imageKind) : null;
-            string? pairUrl = model.ImagePairFile != null ? await SaveImageAsync(model.ImagePairFile, imageKind) : null;
+            string? pairUrl = model.ImagePairFile != null ? await SaveImageAsync(model.ImagePairFile, isShoe ? "shoe-pair" : imageKind) : null;
 
             object metaObj;
+            var variantRows = model.Variants.Where(v =>
+                !string.IsNullOrWhiteSpace(v.Size) || !string.IsNullOrWhiteSpace(v.Color)).ToArray();
+            var usesDefaultVariant = model.ProductType == "simple" || variantRows.Length == 0;
+            var colors = usesDefaultVariant ? new[] { "Tiêu chuẩn" } : variantRows.Select(v =>
+                string.IsNullOrWhiteSpace(v.Color) ? "Tiêu chuẩn" : v.Color.Trim()).Distinct().ToArray();
+            var sizes = usesDefaultVariant ? new[] { "FreeSize" } : variantRows.Select(v =>
+                string.IsNullOrWhiteSpace(v.Size) ? "FreeSize" : v.Size.Trim()).Distinct().ToArray();
 
             if (isShoe)
             {
@@ -178,12 +187,12 @@ public class AdminProductsController : Controller
                 var designer = string.IsNullOrWhiteSpace(model.Designer) ? "HNMTSHOP" : model.Designer.Trim();
 
                 // Với giày: Slot 1 là 2 Đôi (Hero/Pair), Slot 2 là Nghiêng 1 Bên (Một chiếc), Slot 3 là Chi tiết
-                var singleShoeUrl = backUrl ?? sideUrl ?? imageUrl;
-                var pairShoeUrl = pairUrl ?? imageUrl;
+                var singleShoeUrl = backUrl ?? imageUrl;
+                var pairShoeUrl = pairUrl ?? (backUrl != null ? imageUrl : null);
 
                 metaObj = new
                 {
-                    colors = model.Variants.Select(v => v.Color).Distinct().Where(c => !string.IsNullOrWhiteSpace(c)).Select(c => new[] { c, ResolveColorHex(c, themeColor) }).ToArray(),
+                    colors = colors.Select(c => new[] { c, ResolveColorHex(c, themeColor) }).ToArray(),
                     photos = new[]
                     {
                         new
@@ -192,7 +201,7 @@ public class AdminProductsController : Controller
                             pair = pairShoeUrl
                         }
                     },
-                    sizes = model.Variants.Select(v => v.Size).Distinct().Where(s => !string.IsNullOrWhiteSpace(s)).ToArray(),
+                    sizes,
                     collection = new
                     {
                         id = colId,
@@ -216,7 +225,7 @@ public class AdminProductsController : Controller
             {
                 metaObj = new
                 {
-                    colors = model.Variants.Select(v => v.Color).Distinct().Where(c => !string.IsNullOrWhiteSpace(c)).Select(c => new[] { c, ResolveColorHex(c) }).ToArray(),
+                    colors = colors.Select(c => new[] { c, ResolveColorHex(c) }).ToArray(),
                     photos = new[]
                     {
                         new
@@ -227,7 +236,7 @@ public class AdminProductsController : Controller
                             pair = (string?)null
                         }
                     },
-                    sizes = model.Variants.Select(v => v.Size).Distinct().Where(s => !string.IsNullOrWhiteSpace(s)).ToArray(),
+                    sizes,
                     details = new
                     {
                         lookbookOnly = false,
@@ -243,7 +252,7 @@ public class AdminProductsController : Controller
                 Description = model.Description.Trim(),
                 Price = model.Price,
                 CategoryId = model.CategoryId,
-                ImageUrl = isShoe ? (backUrl ?? sideUrl ?? imageUrl) : imageUrl,
+                ImageUrl = isShoe ? (backUrl ?? imageUrl) : imageUrl,
                 ShowroomKind = kind,
                 ShowroomAudience = audience,
                 ShowroomMetadata = System.Text.Json.JsonSerializer.Serialize(metaObj, ShowroomCatalog.JsonOptions),
@@ -251,6 +260,7 @@ public class AdminProductsController : Controller
                 CreatedAt = DateTime.UtcNow
             };
 
+            await using var transaction = await _context.Database.BeginTransactionAsync();
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
 
@@ -260,7 +270,7 @@ public class AdminProductsController : Controller
 
             var createdVariantsCount = 0;
 
-            if (model.ProductType == "simple")
+            if (usesDefaultVariant)
             {
                 // Tạo biến thể đơn giản FreeSize
                 var sku = await EnsureUniqueSkuAsync($"{product.Slug}-FREE");
@@ -277,13 +287,10 @@ public class AdminProductsController : Controller
                 _context.ProductVariants.Add(variant);
                 createdVariantsCount = 1;
             }
-            else if (model.Variants != null && model.Variants.Any())
+            else
             {
-                foreach (var v in model.Variants)
+                foreach (var v in variantRows)
                 {
-                    if (string.IsNullOrWhiteSpace(v.Size) && string.IsNullOrWhiteSpace(v.Color))
-                        continue;
-
                     var sizeStr = string.IsNullOrWhiteSpace(v.Size) ? "FreeSize" : v.Size.Trim();
                     var colorStr = string.IsNullOrWhiteSpace(v.Color) ? "Tiêu chuẩn" : v.Color.Trim();
 
@@ -307,25 +314,8 @@ public class AdminProductsController : Controller
                     createdVariantsCount++;
                 }
             }
-            else
-            {
-                // Fallback nếu người dùng không sinh biến thể nào: tự động tạo 1 biến thể FreeSize để sản phẩm bán được ngay
-                var sku = await EnsureUniqueSkuAsync($"{product.Slug}-FREE");
-                var variant = new ProductVariant
-                {
-                    ProductId = product.Id,
-                    SKU = sku,
-                    Size = "FreeSize",
-                    Color = "Tiêu chuẩn",
-                    Price = product.Price,
-                    StockQuantity = Math.Max(0, model.SimpleStock),
-                    IsActive = true
-                };
-                _context.ProductVariants.Add(variant);
-                createdVariantsCount = 1;
-            }
-
             await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
 
             TempData["Success"] = $"Thêm sản phẩm \"{product.Name}\" và {createdVariantsCount} phân loại biến thể thành công.";
 
@@ -547,7 +537,8 @@ public class AdminProductsController : Controller
                 scriptPath = Path.Combine(Directory.GetCurrentDirectory(), "FashionStore", "Scripts", "rembg_runner.py");
             }
 
-            var mode = string.Equals(kind, "shoe", StringComparison.OrdinalIgnoreCase) || string.Equals(kind, "giay", StringComparison.OrdinalIgnoreCase)
+            var mode = kind is "shoe-pair" or "lookbook" ? kind :
+                string.Equals(kind, "shoe", StringComparison.OrdinalIgnoreCase) || string.Equals(kind, "giay", StringComparison.OrdinalIgnoreCase)
                 ? "shoe"
                 : (string.Equals(kind, "apparel", StringComparison.OrdinalIgnoreCase) || string.Equals(kind, "ao", StringComparison.OrdinalIgnoreCase) || string.Equals(kind, "quan", StringComparison.OrdinalIgnoreCase)
                     ? "apparel"
@@ -667,7 +658,7 @@ public class AdminProductsController : Controller
         }
 
         // Tự động chuẩn hóa kích thước Studio (1200x750 cho giày, y-top sát móc treo cho quần áo)
-        if (extension == ".png")
+        if (extension == ".png" || kind is "shoe" or "shoe-pair" or "apparel")
         {
             try
             {
@@ -676,7 +667,8 @@ public class AdminProductsController : Controller
                 {
                     scriptPath = Path.Combine(Directory.GetCurrentDirectory(), "FashionStore", "Scripts", "rembg_runner.py");
                 }
-                var mode = string.Equals(kind, "shoe", StringComparison.OrdinalIgnoreCase) || string.Equals(kind, "giay", StringComparison.OrdinalIgnoreCase)
+                var mode = kind == "shoe-pair" ? "shoe-pair" :
+                    string.Equals(kind, "shoe", StringComparison.OrdinalIgnoreCase) || string.Equals(kind, "giay", StringComparison.OrdinalIgnoreCase)
                     ? "shoe"
                     : (string.Equals(kind, "apparel", StringComparison.OrdinalIgnoreCase) || string.Equals(kind, "ao", StringComparison.OrdinalIgnoreCase) || string.Equals(kind, "quan", StringComparison.OrdinalIgnoreCase)
                         ? "apparel"

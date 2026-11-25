@@ -185,7 +185,7 @@
 
                     <!-- SIZE PICKER -->
                     <div class="mb-3 mt-3">
-                        <label asp-for="Size" class="adm-form-label mb-1">Kích thước (Size) *</label>
+                        <label asp-for="Size" class="adm-form-label mb-1">Kích thước *</label>
                         <div class="d-flex gap-2 mb-2">
                             <input asp-for="Size" id="sizeInput" class="form-control adm-input-dark" required style="max-width: 200px;" />
                         </div>
@@ -214,7 +214,7 @@
 
                     <!-- COLOR PICKER -->
                     <div class="mb-3 mt-4">
-                        <label asp-for="Color" class="adm-form-label mb-1">Màu sắc (Color) *</label>
+                        <label asp-for="Color" class="adm-form-label mb-1">Màu sắc *</label>
                         <div class="d-flex gap-2 mb-2 align-items-center">
                             <input asp-for="Color" id="colorInput" class="form-control adm-input-dark" required style="max-width: 240px;" />
                             <span id="currentColorDot" class="adm-color-dot-sm" style="width: 24px; height: 24px; background: @ResolveColorCss(Model.Color);"></span>

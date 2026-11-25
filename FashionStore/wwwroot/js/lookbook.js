@@ -796,6 +796,8 @@
     var activeLooks = [];
     var currentProgress = 0;
     var activeIndex = 0;
+    var managedData;
+    var isAddingAll = false;
 
     var root, stage, runway, list, models = [];
     var isDragging = false, startX = 0, startProgress = 0, lastX = 0, velocity = 0, animId = null;
@@ -815,12 +817,16 @@
     // ---------- Build Layout ----------
     function build(colKey) {
         currentCollectionKey = (colKey === 'sunwash' ? 'sunwash' : 'noir');
-        var colData = COLLECTIONS[currentCollectionKey];
-        var additions = NEW_LOOKS[currentCollectionKey];
-        var women = additions.filter(function (look) { return look.id.includes('-woman-'); });
-        var men = colData.looks.concat(additions.filter(function (look) { return look.id.includes('-man-'); }));
-        activeLooks = men.flatMap(function (look, index) { return [look, women[index]]; });
-        bindCatalog();
+        var colData = managedData || COLLECTIONS[currentCollectionKey];
+        if (managedData) {
+            activeLooks = managedData.looks;
+        } else {
+            var additions = NEW_LOOKS[currentCollectionKey];
+            var women = additions.filter(function (look) { return look.id.includes('-woman-'); });
+            var men = colData.looks.concat(additions.filter(function (look) { return look.id.includes('-man-'); }));
+            activeLooks = men.flatMap(function (look, index) { return [look, women[index]]; });
+            bindCatalog();
+        }
 
         root = document.getElementById('lookbookRoot');
         if (!root) {
@@ -829,7 +835,7 @@
             document.body.appendChild(root);
         }
 
-        root.className = 'lb-wrapper is-open ' + colData.themeClass;
+        root.className = 'lb-wrapper is-open ' + (colData.themeClass || 'theme-noir');
         root.innerHTML =
             '<section class="lb-stage" id="lbStage">' +
               '<div class="lb-head">' +
@@ -879,8 +885,11 @@
 
             // Micro-hotspot pins without numbers
             var pinsHtml = look.pins.map(function (pin, k) {
-                var itm = look.items[pin.itemIndex || k];
-                return '<div class="lb-hotspot" data-item="' + (pin.itemIndex || k) + '" style="top:' + pin.top + ';left:' + pin.left + '">' +
+                var itemIndex = pin.itemIndex ?? k;
+                var itm = look.items[itemIndex];
+                var top = managedData ? pin.top + '%' : pin.top;
+                var left = managedData ? pin.left + '%' : pin.left;
+                return '<div class="lb-hotspot" data-item="' + itemIndex + '" style="top:' + top + ';left:' + left + '">' +
                     '<span class="lb-hotspot-radar"></span>' +
                     '<span class="lb-hotspot-circle"><span class="lb-hotspot-dot"></span></span>' +
                     '<div class="lb-hotspot-pop">' +
@@ -891,7 +900,7 @@
             }).join('');
 
             m.innerHTML =
-                '<img src="' + look.img + '" alt="' + esc(look.name) + '" draggable="false">' +
+                '<img src="' + esc(look.img) + '" alt="' + esc(look.name) + '" draggable="false">' +
                 '<div class="lb-model-shadow"></div>' +
                 pinsHtml;
 
@@ -920,7 +929,12 @@
         });
 
         // Event Listeners
-        initGestures();
+        if (activeLooks.length > 1) initGestures();
+        if (!activeLooks.length) {
+            runway.textContent = 'Bộ sưu tập chưa có look.';
+            root.querySelector('#lbCount').textContent = '0 MÓN';
+            root.querySelector('#lbAddAll').disabled = true;
+        }
         root.querySelector('#lbCart').addEventListener('click', function (e) {
             e.preventDefault();
             if (window.HNMTCart) window.HNMTCart.open();
@@ -1097,7 +1111,7 @@
             var el = document.createElement('div');
             el.className = 'lb-item';
             el.innerHTML =
-                '<div class="lb-thumb"><img src="' + item.image + '" alt="' + esc(item.name) + '"></div>' +
+                '<div class="lb-thumb"><img src="' + esc(item.image) + '" alt="' + esc(item.name) + '"></div>' +
                 '<div class="lb-info">' +
                   '<div class="lb-cat">' + esc(item.cat) + '</div>' +
                   '<div class="lb-name" title="' + esc(item.name) + '">' + esc(item.name) + '</div>' +
@@ -1125,6 +1139,7 @@
 
             // Single item Add to Cart
             var plusBtn = el.querySelector('.lb-plus');
+            if (managedData?.preview) plusBtn.disabled = true;
             plusBtn.addEventListener('click', async function () {
                 plusBtn.disabled = true;
                 var added = await addToCart(item);
@@ -1143,7 +1158,13 @@
         });
 
         root.querySelector('#lbTotal').textContent = money(total);
-        root.querySelector('#lbAddAll').disabled = look.items.some(function (item) { return !(getVariant(item)?.stock > 0); });
+        updateAddAll();
+    }
+
+    function updateAddAll() {
+        var items = activeLooks[activeIndex]?.items;
+        root.querySelector('#lbAddAll').disabled = isAddingAll || !!managedData?.preview || !items?.length ||
+            items.some(function (item) { return !(getVariant(item)?.stock > 0); });
     }
 
     function bindCatalog() {
@@ -1177,7 +1198,7 @@
 
     function addToCart(item) {
         var variant = getVariant(item);
-        if (!variant?.stock) return false;
+        if (managedData?.preview || !(variant?.stock > 0)) return false;
         return window.HNMTCart?.addItem({
             name: item.name,
             productId: item.product.productId,
@@ -1187,23 +1208,27 @@
     }
 
     async function addAll() {
-        var btn = root.querySelector('#lbAddAll');
+        if (root.querySelector('#lbAddAll').disabled) return;
         var look = activeLooks[activeIndex];
         var selected = look.items.map(function (item) { return { ...item }; });
-        btn.disabled = true;
+        isAddingAll = true;
+        updateAddAll();
         try {
             for (var item of selected) {
                 if (!await addToCart(item)) return;
             }
             updateBadge();
         } finally {
-            btn.disabled = activeLooks[activeIndex].items.some(function (item) { return !(getVariant(item)?.stock > 0); });
+            isAddingAll = false;
+            updateAddAll();
         }
     }
 
     // ---------- Initialization ----------
     function init() {
-        var isLookbookPage = /\/lookbook|\/collections/i.test(window.location.pathname);
+        var managedEl = document.getElementById('managedLookbookData');
+        if (managedEl) managedData = JSON.parse(managedEl.textContent);
+        var isLookbookPage = managedData || /^\/lookbook\/?$/i.test(window.location.pathname);
 
         // NẾU KHÔNG PHẢI TRANG /lookbook THÌ XÓA NGAY LẬP TỨC ĐỂ KHÔNG CHẶN TRANG CHỦ!
         if (!isLookbookPage) {

@@ -88,10 +88,10 @@
                     <div class="col-md-6">
                         <label class="adm-form-label fw-bold">Trạng thái xử lý ticket</label>
                         <select name="status" class="form-select adm-input-dark">
-                            <option value="@((int)SupportRequestStatus.Pending)" selected="@(Model.Status == SupportRequestStatus.Pending)">Chờ xử lý (Pending)</option>
-                            <option value="@((int)SupportRequestStatus.InProgress)" selected="@(Model.Status == SupportRequestStatus.InProgress)">Đang xử lý (InProgress)</option>
-                            <option value="@((int)SupportRequestStatus.Resolved)" selected="@(Model.Status == SupportRequestStatus.Resolved)">Đã giải quyết (Resolved)</option>
-                            <option value="@((int)SupportRequestStatus.Closed)" selected="@(Model.Status == SupportRequestStatus.Closed)">Đã đóng ticket (Closed)</option>
+                            <option value="@((int)SupportRequestStatus.Pending)" selected="@(Model.Status == SupportRequestStatus.Pending)">Chờ xử lý</option>
+                            <option value="@((int)SupportRequestStatus.InProgress)" selected="@(Model.Status == SupportRequestStatus.InProgress)">Đang xử lý</option>
+                            <option value="@((int)SupportRequestStatus.Resolved)" selected="@(Model.Status == SupportRequestStatus.Resolved)">Đã giải quyết</option>
+                            <option value="@((int)SupportRequestStatus.Closed)" selected="@(Model.Status == SupportRequestStatus.Closed)">Đã đóng ticket</option>
                         </select>
                     </div>
 

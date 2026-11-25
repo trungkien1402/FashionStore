@@ -7,11 +7,27 @@
  */
 (() => {
     'use strict';
+    const openedFromHomeCard = new URLSearchParams(location.search).get('from') === 'home';
+
+    const railOriginalTitle = document.title;
+    function syncRailUrl(product) {
+        if (!$('#railStage')?.closest('.is-standalone')) return;
+        const url = new URL('/Products/Rail', location.origin);
+        url.searchParams.set('audience', currentAudience);
+        url.searchParams.set('category', currentCategory);
+        if (product?.productId) url.searchParams.set('productId', product.productId);
+        if (openedFromHomeCard) url.searchParams.set('from', 'home');
+        history.replaceState(history.state, '', url.pathname + url.search);
+        document.title = product ? `${product.name} · HNMTSHOP` : railOriginalTitle;
+    }
 
     // ==========================================================================
-    const audienceClothing = JSON.parse(document.getElementById("showroomCatalog").textContent).clothing;
-    const ALL_SHIRT_PRODUCTS = audienceClothing.men.ao;
-    const ALL_PANTS_PRODUCTS = audienceClothing.men.quan;
+    const catalogEl = document.getElementById("showroomCatalog");
+    let rawCatalog = null;
+    try { rawCatalog = catalogEl ? JSON.parse(catalogEl.textContent) : null; } catch (e) {}
+    const audienceClothing = rawCatalog?.clothing || { men: { ao: [], quan: [] }, women: { ao: [], quan: [] }, girls: { ao: [], quan: [] }, boy: { ao: [], quan: [] } };
+    const ALL_SHIRT_PRODUCTS = audienceClothing.men?.ao || [];
+    const ALL_PANTS_PRODUCTS = audienceClothing.men?.quan || [];
 
     function chunkProductsIntoRacks(productList, category, isFilterResult = false, filterLabel = '') {
         if (!productList || productList.length === 0) return [];
@@ -234,6 +250,8 @@
 
     let onSearchDetailClose;
     function closeDetail() {
+        if (!onSearchDetailClose && openedFromHomeCard && detailOpen) { location.assign("/#mainContent"); return; }
+        if (detailOpen) syncRailUrl(null);
         detailOpen = false;
         document.body.classList.remove('show-detail');
         const overlay = $('#productOverlay');
@@ -324,6 +342,7 @@
         clearTimeout(detailFlipTimer);
         const p = products[current];
         if (!p) return;
+        if (detailOpen) syncRailUrl(p);
         const v = p.variant || 0;
 
         const nameEl = $('#detailName');
@@ -675,6 +694,7 @@
 
     function closeClothingRail() {
         onSearchDetailClose = undefined;
+        if (openedFromHomeCard) { location.assign("/#mainContent"); return; }
         const rackOverlayEl = document.getElementById('hnmtRackOverlay');
         if (rackOverlayEl) {
             rackOverlayEl.classList.remove('is-active');
@@ -724,15 +744,29 @@
 
         let foundRackIdx = -1;
         let foundProdIdx = -1;
+        const target = String(slugOrIdx || '').toLowerCase().trim();
 
         currentRacks.forEach((rack, rIdx) => {
             rack.products.forEach((p, pIdx) => {
-                if (p.slug === slugOrIdx || p.name === slugOrIdx || pIdx === slugOrIdx) {
+                const pSlug = String(p.slug || '').toLowerCase();
+                const pName = String(p.name || '').toLowerCase().trim();
+                if (foundRackIdx === -1 && (
+                    pSlug === target ||
+                    pName === target ||
+                    p.id == slugOrIdx ||
+                    pIdx === slugOrIdx ||
+                    (target.length > 3 && (pName.includes(target) || target.includes(pName)))
+                )) {
                     foundRackIdx = rIdx;
                     foundProdIdx = pIdx;
                 }
             });
         });
+
+        if (foundRackIdx === -1 && currentRacks.length > 0 && currentRacks[0].products?.length > 0) {
+            foundRackIdx = 0;
+            foundProdIdx = 0;
+        }
 
         if (foundRackIdx !== -1 && foundProdIdx !== -1) {
             if (currentRackIdx !== foundRackIdx) {
@@ -989,6 +1023,22 @@
                 }
             }
         } catch (e) {}
+
+        if (standalone) {
+            const productId = new URLSearchParams(window.location.search).get('productId');
+            if (productId && /^[1-9][0-9]*$/.test(productId)) {
+                const racks = chunkProductsIntoRacks(getAllProducts(currentCategory, currentAudience), currentCategory);
+                const rackIndex = racks.findIndex(rack => rack.products.some(p => String(p.productId) === productId));
+                if (rackIndex >= 0) {
+                    currentRacks = racks;
+                    currentRackIdx = rackIndex;
+                    applyRack(currentRacks[rackIndex]);
+                    const index = currentRacks[rackIndex].products.findIndex(p => String(p.productId) === productId);
+                    setActive(index);
+                    openDetail(index);
+                }
+            }
+        }
     }
 
     if (document.readyState === 'loading') {

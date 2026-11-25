@@ -1,0 +1,129 @@
+@model (LookbookDisplay? Sale, bool Preview)
+@{
+    var (sale, preview) = Model;
+    var saleLooks = sale?.Collection.Looks.OrderBy(look => look.SortOrder).ThenBy(look => look.Id).ToArray();
+    var saleRates = sale?.Selections.Values.SelectMany(items => items)
+        .GroupBy(item => (item.ProductId, item.Color))
+        .ToDictionary(group => group.Key, group => group.Max(item => item.DiscountPercent));
+}
+<section id="sale-offer" class="urbn-offer-section" data-sale-end="@(sale?.Collection.EndsAt?.ToString("O"))"
+         data-sale-now="@DateTimeOffset.UtcNow.ToString("O")" data-sale-preview="@preview.ToString().ToLowerInvariant()">
+    <div class="urbn-container">
+        <div class="urbn-offer-grid">
+
+            <!-- Bên trái: Nội dung & Bộ đếm -->
+            <div>
+                <h2 class="urbn-offer-title">
+                    @if (sale != null) { @sale.Collection.Name }
+                    else { <text>Nhanh Tay! Ưu Đãi<br />Sắp Kết Thúc</text> }
+                </h2>
+                <p class="urbn-offer-sub">@(sale?.Collection.Description ?? "Thời gian có hạn cho đợt ưu đãi độc quyền này. Hành động ngay để nhận những đặc quyền tốt nhất từ HNMTSHOP.")</p>
+                <div class="urbn-countdown-bar">
+                    <div class="urbn-countdown-cell">
+                        <span id="cdDays">00</span>
+                        <small>Ngày</small>
+                    </div>
+                    <div class="urbn-countdown-cell">
+                        <span id="cdHours">00</span>
+                        <small>Giờ</small>
+                    </div>
+                    <div class="urbn-countdown-cell">
+                        <span id="cdMins">00</span>
+                        <small>Phút</small>
+                    </div>
+                    <div class="urbn-countdown-cell">
+                        <span id="cdSecs">00</span>
+                        <small>Giây</small>
+                    </div>
+                </div>
+
+                <p class="urbn-offer-notice">
+                    @if (sale != null) { @sale.Collection.SaleNotice }
+                    else { <text>Ưu đãi giới hạn cho đợt Drop độc quyền tuần này. <strong>MUA NGAY KẺO HẾT!</strong></text> }
+                </p>
+
+                <a asp-controller="Products" asp-action="Index" class="urbn-btn-view-col">
+                    XEM BỘ SƯU TẬP
+                </a>
+            </div>
+
+            <!-- Bên phải: Ảnh người mẫu full-body -->
+            <div>
+                <div class="offer-model-gallery offer-lookbook-ui" role="region" aria-label="Các mẫu phối đồ" aria-describedby="offerModelHint" tabindex="0">
+                    <div class="offer-model-track">
+                    @if (saleLooks != null)
+                    {
+                        @foreach (var look in saleLooks)
+                        {
+                            <div class="urbn-model-photo offer-model-slide offer-managed-slide" role="group" aria-label="@look.Name">
+                                <img src="@look.ImageUrl" alt="@look.Name" loading="lazy" decoding="async" />
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                    <div class="urbn-model-photo offer-model-slide" role="group" aria-label="Mẫu 1 trên 3">
+                    <img src="~/images/seated-couture-model-v2.webp" asp-append-version="true" loading="lazy" decoding="async"
+                         alt="Người mẫu nữ ngồi nghiêng với áo đen lệch vai, quần âu xám và giày đỏ rượu" style="object-fit:contain" />
+                    </div>
+                    <div class="urbn-model-photo offer-model-slide" role="group" aria-label="Mẫu 2 trên 3"><img src="~/images/lookbook/cut/noir-woman-2.webp" loading="lazy" decoding="async" alt="Phối đồ nữ trong bộ sưu tập Noir" /></div>
+                    <div class="urbn-model-photo offer-model-slide" role="group" aria-label="Mẫu 3 trên 3"><img src="~/images/lookbook/cut/sunwash-woman-1.webp" loading="lazy" decoding="async" alt="Phối đồ nữ trong bộ sưu tập Sunwash" /></div>
+                    }
+                    </div>
+                    <span class="offer-model-hint" id="offerModelHint">Lướt qua để xem mẫu khác</span>
+                </div>
+                @if (sale != null)
+                {
+                    var payload = saleLooks!.Select(look => new
+                    {
+                        look.Name,
+                        Items = sale.Selections[look.Id].Where(item => sale.Products.ContainsKey(item.ProductId)).Select(item =>
+                        {
+                            var product = sale.Products[item.ProductId];
+                            var variants = product.Variants.Where(variant => variant.Color == item.Color).OrderBy(variant => variant.Id).ToArray();
+                            var percent = saleRates![(item.ProductId, item.Color)];
+                            return new
+                            {
+                                item.X, item.Y,
+                                Product = new
+                                {
+                                    product.Name, ProductId = product.Id, Kind = product.ShowroomKind,
+                                    Image = FashionStore.Data.ShowroomCatalog.FrontPhoto(product, item.Color),
+                                    Price = variants.FirstOrDefault()?.Price ?? product.Price,
+                                    Sizes = variants.Select(variant => variant.Size),
+                                    Variants = new[] { variants.Select(variant => new
+                                    {
+                                        variant.Id, Stock = variant.StockQuantity, OriginalPrice = variant.Price,
+                                        Price = FashionStore.Data.SalePricing.Discounted(variant.Price, percent)
+                                    }) }
+                                }
+                            };
+                        })
+                    });
+                    <script id="offerSaleData" type="application/json">@Html.Raw(System.Text.Json.JsonSerializer.Serialize(payload, FashionStore.Data.ShowroomCatalog.JsonOptions))</script>
+                }
+                <dialog class="offer-shop offer-lookbook-ui" aria-labelledby="offerShopTitle">
+                    <div class="lb-side">
+                        <div class="lb-side-head">
+                            <h3 id="offerShopTitle">Bộ phối hiện tại</h3>
+                            <small class="offer-shop-count"></small>
+                            <button type="button" class="offer-shop-close" aria-label="Đóng bảng bộ phối">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                                    <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="lb-side-look offer-shop-look"></div>
+                        <div class="lb-list offer-shop-items"></div>
+                        <div class="lb-foot">
+                            <div class="lb-total"><span>Tổng cộng</span><b class="offer-shop-total"></b></div>
+                            <button type="button" class="lb-add offer-shop-all">Thêm trọn bộ vào túi <i class="bi bi-arrow-right" aria-hidden="true"></i></button>
+                            <p class="small mb-0" role="status"></p>
+                        </div>
+                    </div>
+                </dialog>
+            </div>
+
+        </div>
+    </div>
+</section>

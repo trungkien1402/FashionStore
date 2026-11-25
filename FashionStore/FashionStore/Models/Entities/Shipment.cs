@@ -28,4 +28,7 @@ public class Shipment
 
     public ICollection<ShipmentHistory> Histories { get; set; }
         = new List<ShipmentHistory>();
+
+    public ICollection<ShipmentLocation> Locations { get; set; }
+    = new List<ShipmentLocation>();
 }

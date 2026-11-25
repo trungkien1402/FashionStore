@@ -1,128 +1,161 @@
-﻿@model FashionStore.Models.ViewModels.AdminProductViewModel
+@model FashionStore.Models.ViewModels.AdminProductViewModel
 
 @{
     ViewData["Title"] = "Chỉnh sửa sản phẩm";
 }
 
-<section class="container py-5">
-    <div class="mb-4">
-        <a asp-action="Index" class="text-muted text-decoration-none">
-            ← Quay lại danh sách
-        </a>
-        <h1 class="mt-3" style="font-family:'Playfair Display',serif;">
-            Chỉnh sửa sản phẩm
-        </h1>
+<div class="mb-4">
+    <a asp-action="Index" class="adm-btn-outline py-1 px-3 mb-3 d-inline-flex" style="font-size: 0.8rem;">
+        <i class="bi bi-arrow-left"></i>
+        <span>Quay lại Showroom</span>
+    </a>
+
+    <div class="d-flex align-items-center gap-2 mb-1">
+        <span style="font-size: 0.68rem; font-weight: 700; letter-spacing: 0.28em; color: var(--adm-gold); text-transform: uppercase;">
+            ATELIER PRODUCT STUDIO
+        </span>
+        <span style="width: 4px; height: 4px; border-radius: 50%; background: var(--adm-gold);"></span>
+        <span class="text-muted small">PRODUCT EDITOR</span>
     </div>
+    <h2 class="fw-bold mb-0 adm-heading" style="letter-spacing: -0.02em;">Chỉnh sửa: @Model.Name</h2>
+</div>
 
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger">@TempData["Error"]</div>
-    }
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="CurrentImageUrl" />
 
-    <div class="border p-4">
-        <form asp-action="Edit" method="post" enctype="multipart/form-data">
-            @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4"></div>
 
-            <input type="hidden" asp-for="Id" />
-            <input type="hidden" asp-for="CurrentImageUrl" />
+    <div class="row g-4">
+        <!-- LEFT COLUMN: MAIN SPECS -->
+        <div class="col-lg-8">
+            <div class="adm-form-card mb-4">
+                <h5 class="fw-bold mb-3 adm-heading">Thông tin Sản phẩm</h5>
 
-            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                <div class="mb-3">
+                    <label asp-for="Name" class="adm-form-label">Tên sản phẩm *</label>
+                    <input asp-for="Name" class="form-control adm-input-dark" />
+                    <span asp-validation-for="Name" class="text-danger small mt-1 d-block"></span>
+                </div>
 
-            <div class="row g-4">
-                <div class="col-md-8">
-                    <div class="mb-3">
-                        <label asp-for="Name" class="form-label">Tên sản phẩm</label>
-                        <input asp-for="Name" class="form-control" />
-                        <span asp-validation-for="Name" class="text-danger"></span>
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Price" class="adm-form-label">Giá bán niêm yết (VNĐ) *</label>
+                        <div class="input-group">
+                            <input asp-for="Price" type="number" min="1" step="1"
+                                   class="form-control adm-input-dark" />
+                            <span class="input-group-text border-start-0" style="background: var(--adm-surface); border-color: var(--adm-border); color: var(--adm-gold); font-weight: 600;">
+                                ₫
+                            </span>
+                        </div>
+                        <span asp-validation-for="Price" class="text-danger small mt-1 d-block"></span>
                     </div>
 
-                    <div class="mb-3">
-                        <label asp-for="Description" class="form-label">Mô tả</label>
-                        <textarea asp-for="Description" class="form-control"
-                                  rows="6"></textarea>
-                        <span asp-validation-for="Description" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Price" class="form-label">Giá bán (VNĐ)</label>
-                        <input asp-for="Price" type="number" min="1" step="1000"
-                               class="form-control" />
-                        <span asp-validation-for="Price" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="CategoryId" class="form-label">Danh mục</label>
-                        <select asp-for="CategoryId" class="form-select"
+                    <div class="col-md-6">
+                        <label asp-for="CategoryId" class="adm-form-label">Bộ sưu tập / Danh mục *</label>
+                        <select asp-for="CategoryId" class="form-select adm-input-dark"
                                 asp-items="@(new SelectList(ViewBag.Categories, "Id", "Name"))">
                             <option value="">-- Chọn danh mục --</option>
                         </select>
-                        <span asp-validation-for="CategoryId" class="text-danger"></span>
+                        <span asp-validation-for="CategoryId" class="text-danger small mt-1 d-block"></span>
                     </div>
                 </div>
 
-                <div class="col-md-4">
-                    <label class="form-label">Ảnh hiện tại</label>
-
-                    @if (!string.IsNullOrWhiteSpace(Model.CurrentImageUrl))
-                    {
-                        <img src="@Model.CurrentImageUrl"
-                             alt="@Model.Name"
-                             style="width:100%;max-height:300px;object-fit:contain;"
-                             class="border p-2 mb-3" />
-                    }
-
-                    <div class="mb-3">
-                        <label asp-for="ImageFile" class="form-label">
-                            Chọn ảnh mới (không bắt buộc)
-                        </label>
-                        <input asp-for="ImageFile" type="file"
-                               class="form-control" accept=".jpg,.jpeg,.png,.webp" />
-                        <span asp-validation-for="ImageFile" class="text-danger"></span>
-                        <small class="text-muted">JPG, PNG, WEBP. Tối đa 5 MB.</small>
-                    </div>
-
-                    <img id="imagePreview" src="#"
-                         alt="Xem trước ảnh mới"
-                         style="display:none;width:100%;max-height:300px;object-fit:contain;"
-                         class="border p-2" />
-
-                    <div class="form-check mt-4">
-                        <input asp-for="IsActive" class="form-check-input" />
-                        <label asp-for="IsActive" class="form-check-label">
-                            Hiển thị sản phẩm
-                        </label>
-                    </div>
+                <div class="mb-0">
+                    <label asp-for="Description" class="adm-form-label">Mô tả & Câu chuyện sản phẩm</label>
+                    <textarea asp-for="Description" class="form-control adm-input-dark" rows="7"></textarea>
+                    <span asp-validation-for="Description" class="text-danger small mt-1 d-block"></span>
                 </div>
             </div>
 
-            <hr />
+            <!-- QUICK ACCESS TO VARIANTS -->
+            <div class="adm-card d-flex align-items-center justify-content-between p-3">
+                <div class="d-flex align-items-center gap-3">
+                    <div style="width: 40px; height: 40px; border-radius: 8px; background: rgba(179, 136, 47, 0.1); color: var(--adm-gold); display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                        <i class="bi bi-layers"></i>
+                    </div>
+                    <div>
+                        <div class="fw-bold adm-heading">Quản lý Phân loại & Tồn kho</div>
+                        <div class="text-muted small">Cập nhật Size, màu sắc, mã SKU và số lượng hàng trong kho</div>
+                    </div>
+                </div>
 
-            <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-dark px-4">
-                    Lưu thay đổi
-                </button>
-                <a asp-action="Index" class="btn btn-outline-secondary">
-                    Hủy
+                <a asp-controller="AdminProductVariants" asp-action="Index" asp-route-productId="@Model.Id"
+                   class="btn adm-btn-outline py-2 px-3" style="font-size: 0.8rem;">
+                    Quản lý Biến thể <i class="bi bi-arrow-right ms-1"></i>
                 </a>
             </div>
-        </form>
+        </div>
+
+        <!-- RIGHT COLUMN: MEDIA & STATUS -->
+        <div class="col-lg-4">
+            <div class="adm-form-card mb-4">
+                <h5 class="fw-bold mb-3 adm-heading">Ảnh & Hiển thị</h5>
+
+                <div class="mb-3">
+                    <label id="imgLabel" class="adm-form-label">Hình ảnh sản phẩm</label>
+                    <label for="ImageFile" tabindex="0" role="button" aria-labelledby="imgLabel"
+                           class="adm-img-preview-box mb-2" id="imageUploadBox"
+                           onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();document.getElementById('ImageFile').click();}">
+                        @if (!string.IsNullOrWhiteSpace(Model.CurrentImageUrl))
+                        {
+                            <img id="imagePreview" src="@Model.CurrentImageUrl" alt="@Model.Name" />
+                            <div id="imagePlaceholder" class="d-none"></div>
+                        }
+                        else
+                        {
+                            <img id="imagePreview" src="#" alt="Xem trước" class="d-none" />
+                            <div id="imagePlaceholder" class="text-center p-3">
+                                <i class="bi bi-cloud-arrow-up fs-2" style="color: var(--adm-gold);"></i>
+                                <div class="small fw-semibold mt-2 adm-heading">Chọn ảnh từ máy (Nhấn Enter)</div>
+                                <div class="text-muted" style="font-size: 0.72rem;">Hỗ trợ JPG, PNG, WEBP (Tối đa 5MB)</div>
+                            </div>
+                        }
+                    </label>
+
+                    <div class="d-flex align-items-center justify-content-between mt-1">
+                        <button type="button" class="btn btn-sm adm-btn-outline py-1 px-3" onclick="document.getElementById('ImageFile').click()" style="font-size: 0.75rem;">
+                            <i class="bi bi-arrow-repeat me-1"></i> Thay đổi ảnh mới
+                        </button>
+                        @if (!string.IsNullOrWhiteSpace(Model.CurrentImageUrl))
+                        {
+                            <span class="badge" style="background: rgba(179, 136, 47, 0.15); color: var(--adm-gold); font-size: 0.7rem;">Đã có ảnh</span>
+                        }
+                    </div>
+
+                    <input asp-for="ImageFile" type="file" id="ImageFile" class="visually-hidden"
+                           accept=".jpg,.jpeg,.png,.webp"
+                           onchange="previewAdmImage(this, 'imagePreview', 'imagePlaceholder')" />
+                    <span asp-validation-for="ImageFile" class="text-danger small mt-1 d-block"></span>
+                </div>
+
+                <div class="pt-3 border-top border-secondary border-opacity-10">
+                    <div class="form-check form-switch d-flex align-items-center justify-content-between p-0 mb-0">
+                        <label class="form-check-label fw-semibold adm-heading" for="IsActive" style="cursor: pointer;">
+                            Hiển thị trên Shop
+                            <div class="text-muted fw-normal" style="font-size: 0.75rem;">Cho phép khách hàng xem và đặt mua</div>
+                        </label>
+                        <input asp-for="IsActive" class="form-check-input ms-3" type="checkbox" role="switch" id="IsActive" style="cursor: pointer; width: 2.5em; height: 1.3em;" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACTIONS -->
+            <div class="d-flex flex-column gap-2">
+                <button type="submit" class="btn adm-btn-atelier py-2 justify-content-center w-100">
+                    <i class="bi bi-save me-1"></i>
+                    <span>Lưu các thay đổi</span>
+                </button>
+
+                <a asp-action="Index" class="btn adm-btn-outline py-2 justify-content-center w-100">
+                    Hủy thao tác
+                </a>
+            </div>
+        </div>
     </div>
-</section>
+</form>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-
-    <script>
-        document.getElementById("ImageFile").addEventListener("change", function(event) {
-            const file = event.target.files[0];
-            const preview = document.getElementById("imagePreview");
-
-            if (file) {
-                preview.src = URL.createObjectURL(file);
-                preview.style.display = "block";
-            } else {
-                preview.style.display = "none";
-            }
-        });
-    </script>
 }

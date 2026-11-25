@@ -36,6 +36,7 @@ public class OrdersController : Controller
     public async Task<IActionResult> Checkout([FromServices] IDataProtectionProvider protection)
     {
         var cart = await _cartService.GetCartAsync();
+        var discounts = await SalePricing.DiscountsAsync(_context);
 
         if (!cart.Any())
         {
@@ -85,7 +86,7 @@ public class OrdersController : Controller
                 SKU = variant.SKU,
                 Size = variant.Size,
                 Color = variant.Color,
-                UnitPrice = variant.Price,
+                UnitPrice = SalePricing.Price(variant, discounts),
                 Quantity = item.Quantity
             };
         }).ToList();
@@ -187,6 +188,7 @@ public class OrdersController : Controller
             if (await FindCheckoutOrderAsync(userId, model.CheckoutRequestId) is { } completed)
                 return RedirectToCheckoutOrder(completed);
 
+            var discounts = await SalePricing.DiscountsAsync(_context);
             var variants = await _context.ProductVariants.AsNoTracking()
                 .Include(v => v.Product)
                 .Where(v => variantIds.Contains(v.Id))
@@ -230,7 +232,7 @@ public class OrdersController : Controller
             foreach (var item in cart)
             {
                 var variant = variants.First(v => v.Id == item.ProductVariantId);
-                subTotal += variant.Price * item.Quantity;
+                subTotal += SalePricing.Price(variant, discounts) * item.Quantity;
             }
 
             var shippingFee = DefaultShippingFee;
@@ -296,7 +298,7 @@ public class OrdersController : Controller
                     SKU = variant.SKU,
                     Size = variant.Size,
                     Color = variant.Color,
-                    UnitPrice = variant.Price,
+                    UnitPrice = SalePricing.Price(variant, discounts),
                     Quantity = item.Quantity
                 });
 
@@ -621,6 +623,7 @@ public class OrdersController : Controller
         CheckoutViewModel model,
         List<CartItemViewModel> cart)
     {
+        var discounts = await SalePricing.DiscountsAsync(_context);
         var ids = cart.Select(x => x.ProductVariantId).Distinct().ToList();
 
         var variants = await _context.ProductVariants
@@ -643,7 +646,7 @@ public class OrdersController : Controller
                     SKU = variant.SKU,
                     Size = variant.Size,
                     Color = variant.Color,
-                    UnitPrice = variant.Price,
+                    UnitPrice = SalePricing.Price(variant, discounts),
                     Quantity = item.Quantity
                 };
             }).ToList();

@@ -1,22 +1,15 @@
 (() => {
     const bubble = document.querySelector("[data-style-game-float]");
+    if (!bubble) return;
     const link = bubble.querySelector(".style-game-launcher");
     const close = bubble.querySelector(".style-game-close");
+    if (!link || !close) return;
     const dismissKey = "style-game-hidden-until";
     let timer;
     let drag;
     let suppressClick = false;
-    const showAfter = Date.now() + 20_000;
+    const showAfter = Date.now() + 10_000; // Xuất hiện đúng sau 10 giây
     let hiddenUntil = 0;
-
-    function placeLabel() {
-        const rect = bubble.getBoundingClientRect();
-        const nearLeft = rect.left < 120;
-        bubble.style.setProperty("--game-label-left", nearLeft ? "0" : "auto");
-        bubble.style.setProperty("--game-label-right", nearLeft ? "auto" : "0");
-    }
-    link.addEventListener("pointerenter", placeLabel);
-    link.addEventListener("focus", placeLabel);
 
     function move(left, top) {
         const inset = 10;
@@ -42,7 +35,8 @@
         else fitViewport();
     }
 
-    close.addEventListener("click", () => {
+    close.addEventListener("click", event => {
+        event.stopPropagation();
         hiddenUntil = Date.now() + 60_000;
         try { sessionStorage.setItem(dismissKey, String(hiddenUntil)); } catch { }
         updateVisibility();

@@ -1,0 +1,72 @@
+@model FashionStore.Models.ViewModels.AdminDashboardViewModel
+@using FashionStore.Services.Implementations
+@{
+    Layout = null;
+}
+<!doctype html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Báo cáo bán hàng FashionStore</title>
+    <style>
+        body { font: 14px system-ui, sans-serif; max-width: 52rem; padding: 1rem; margin: auto; color: #202020; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
+        th, td { border: 1px solid #777; padding: .35rem .6rem; text-align: left; }
+        td:last-child { text-align: right; }
+        thead { display: table-header-group; }
+        tr { break-inside: avoid; }
+        h2 { break-after: avoid; }
+        @@page { size: A4; margin: 14mm; }
+        @@media print { .print-actions { display: none; } body { padding: 0; } }
+    </style>
+</head>
+<body>
+    <div class="print-actions">
+        <button type="button" onclick="window.print()">In báo cáo</button>
+        <a asp-action="Index" asp-route-startDate="@Model.StartDate.ToString("yyyy-MM-dd")"
+           asp-route-endDate="@Model.EndDate.ToString("yyyy-MM-dd")">Quay lại tổng quan</a>
+    </div>
+    <header>
+        <h1>FashionStore — Báo cáo bán hàng</h1>
+        <p>@Model.StartDate.ToString("dd/MM/yyyy") – @Model.EndDate.ToString("dd/MM/yyyy")</p>
+        <p>@FashionStore.Models.ViewModels.AdminDashboardViewModel.RevenueDefinition</p>
+    </header>
+    <table aria-label="Tổng quan">
+        <tbody>
+            <tr><th scope="row">Tổng đơn</th><td>@Model.TotalOrders</td></tr>
+            <tr><th scope="row">Tổng giá trị đơn đặt</th><td>@Model.OrderedAmount.ToString("N0") ₫</td></tr>
+            <tr><th scope="row">Chờ xác nhận</th><td>@Model.PendingOrders</td></tr>
+            <tr><th scope="row">Đã giao</th><td>@Model.DeliveredOrders</td></tr>
+            <tr><th scope="row">Đã hủy</th><td>@Model.CancelledOrders</td></tr>
+            <tr><th scope="row">Giá trị đã thanh toán</th><td>@Model.PaidAmount.ToString("N0") ₫</td></tr>
+            <tr><th scope="row">Giá trị trung bình đơn đã thanh toán</th><td>@Model.AveragePaidOrderValue.ToString("N0") ₫</td></tr>
+        </tbody>
+    </table>
+    <h2>Giá trị đơn đã giao theo ngày đặt</h2>
+    <table>
+        <thead><tr><th scope="col">Ngày đặt</th><th scope="col">Giá trị (VND)</th></tr></thead>
+        <tbody>
+            @for (var i = 0; i < Model.RevenueChartData.Count; i++)
+            {
+                <tr><td>@Model.StartDate.AddDays(i).ToString("dd/MM/yyyy")</td><td>@Model.RevenueChartData[i].ToString("N0")</td></tr>
+            }
+        </tbody>
+        <tfoot><tr><th scope="row">Tổng cộng</th><td>@Model.RevenueInRange.ToString("N0")</td></tr></tfoot>
+    </table>
+    @if (Model.TopSellingProducts.Count > 0)
+    {
+        <h2>Sản phẩm bán chạy theo số lượng đã giao</h2>
+        <table>
+            <thead><tr><th scope="col">Sản phẩm</th><th scope="col">Số lượng</th><th scope="col">Giá trị dòng hàng (VND)</th></tr></thead>
+            <tbody>
+                @foreach (var product in Model.TopSellingProducts)
+                {
+                    <tr><td>@product.ProductName</td><td>@product.TotalQuantity</td><td>@product.TotalRevenue.ToString("N0")</td></tr>
+                }
+            </tbody>
+        </table>
+    }
+    <footer>Thời điểm tạo bản in @AdminReportService.ToVietnamTime(DateTime.UtcNow).ToString("dd/MM/yyyy HH:mm") (giờ Việt Nam)</footer>
+</body>
+</html>

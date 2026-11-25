@@ -14,6 +14,8 @@ public class ApplicationDbContext
     }
 
     public DbSet<Product> Products => Set<Product>();
+    public DbSet<LookbookCollection> LookbookCollections => Set<LookbookCollection>();
+    public DbSet<LookbookLook> LookbookLooks => Set<LookbookLook>();
 
     public DbSet<Category> Categories => Set<Category>();
 
