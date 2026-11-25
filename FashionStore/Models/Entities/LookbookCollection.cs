@@ -20,11 +20,16 @@ public enum LookbookBackground
 public class LookbookCollection
 {
     public int Id { get; set; }
+    [MaxLength(32)] public string? SourceKey { get; set; }
     [MaxLength(120)] public string Name { get; set; } = "";
     [MaxLength(1000)] public string Description { get; set; } = "";
     [MaxLength(255)] public string CoverUrl { get; set; } = "";
     public LookbookBackground Background { get; set; }
     [MaxLength(7)] public string? BackgroundColor { get; set; }
+    public bool IsSale { get; set; }
+    public DateTimeOffset? StartsAt { get; set; }
+    public DateTimeOffset? EndsAt { get; set; }
+    [MaxLength(240)] public string SaleNotice { get; set; } = "";
     public bool IsPublished { get; set; }
     public List<LookbookLook> Looks { get; set; } = [];
 }

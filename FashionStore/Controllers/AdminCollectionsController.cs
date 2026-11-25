@@ -13,12 +13,12 @@ namespace FashionStore.Controllers;
 [AutoValidateAntiforgeryToken]
 public class AdminCollectionsController(ApplicationDbContext db, IWebHostEnvironment environment) : Controller
 {
-    public async Task<IActionResult> Index() => View(await db.LookbookCollections.AsNoTracking()
-        .Include(c => c.Looks).OrderByDescending(c => c.Id).ToListAsync());
+    public async Task<IActionResult> Index(bool sale = false) => View(await db.LookbookCollections.AsNoTracking()
+        .Where(c => c.IsSale == sale).Include(c => c.Looks).OrderByDescending(c => c.Id).ToListAsync());
 
-    public async Task<IActionResult> Edit(int? id)
+    public async Task<IActionResult> Edit(int? id, bool sale = false)
     {
-        if (id == null) return View(new LookbookCollectionForm());
+        if (id == null) return View(new LookbookCollectionForm { IsSale = sale });
         var collection = await FindCollection(id.Value);
         return collection == null ? NotFound() : View(ToForm(collection));
     }
@@ -26,8 +26,11 @@ public class AdminCollectionsController(ApplicationDbContext db, IWebHostEnviron
     [HttpPost]
     public async Task<IActionResult> Edit(LookbookCollectionForm form)
     {
-        var collection = form.Id == 0 ? new LookbookCollection() : await FindCollection(form.Id);
+        var collection = form.Id == 0 ? new LookbookCollection { IsSale = form.IsSale } : await FindCollection(form.Id);
         if (collection == null) return NotFound();
+        form.IsSale = collection.IsSale;
+        if (form.IsSale && (!form.StartsAt.HasValue || !form.EndsAt.HasValue || form.EndsAt <= form.StartsAt))
+            ModelState.AddModelError(nameof(form.EndsAt), "Hãy nhập giờ bắt đầu và giờ kết thúc hợp lệ.");
         if (form.Background == LookbookBackground.Custom && string.IsNullOrEmpty(form.BackgroundColor))
             ModelState.AddModelError(nameof(form.BackgroundColor), "Hãy chọn màu nền.");
         if (form.Cover != null && !await IsImageAsync(form.Cover))
@@ -40,6 +43,9 @@ public class AdminCollectionsController(ApplicationDbContext db, IWebHostEnviron
             return View(form);
         }
 
+        collection.StartsAt = form.IsSale && form.StartsAt is { } starts ? new DateTimeOffset(DateTime.SpecifyKind(starts, DateTimeKind.Unspecified), TimeSpan.FromHours(7)) : null;
+        collection.EndsAt = form.IsSale && form.EndsAt is { } ends ? new DateTimeOffset(DateTime.SpecifyKind(ends, DateTimeKind.Unspecified), TimeSpan.FromHours(7)) : null;
+        collection.SaleNotice = form.IsSale ? form.SaleNotice?.Trim() ?? "" : "";
         collection.Name = form.Name.Trim();
         collection.Description = form.Description?.Trim() ?? "";
         collection.Background = form.Background;
@@ -54,12 +60,12 @@ public class AdminCollectionsController(ApplicationDbContext db, IWebHostEnviron
     {
         var collection = await FindCollection(collectionId);
         if (collection == null) return NotFound();
-        if (id == null) return View(new LookbookLookForm { CollectionId = collectionId });
+        if (id == null) return View(new LookbookLookForm { CollectionId = collectionId, IsSale = collection.IsSale });
         var look = collection.Looks.SingleOrDefault(l => l.Id == id);
         if (look == null) return NotFound();
         return View(new LookbookLookForm
         {
-            Id = look.Id, CollectionId = collectionId, Name = look.Name,
+            Id = look.Id, CollectionId = collectionId, Name = look.Name, IsSale = collection.IsSale,
             ImageUrl = look.ImageUrl, OriginalImageUrl = look.OriginalImageUrl,
             Items = LookbookCatalog.ReadItems(look)
         });
@@ -70,6 +76,9 @@ public class AdminCollectionsController(ApplicationDbContext db, IWebHostEnviron
     {
         var collection = await FindCollection(form.CollectionId);
         if (collection == null) return NotFound();
+        form.IsSale = collection.IsSale;
+        if (form.IsSale && form.Items.Any(item => item.DiscountPercent <= 0))
+            ModelState.AddModelError(nameof(form.Items), "Hãy nhập mức giảm cho từng món.");
         var look = form.Id == 0
             ? new LookbookLook { SortOrder = collection.Looks.Select(l => l.SortOrder).DefaultIfEmpty(-1).Max() + 1 }
             : collection.Looks.SingleOrDefault(l => l.Id == form.Id);
@@ -107,7 +116,7 @@ public class AdminCollectionsController(ApplicationDbContext db, IWebHostEnviron
     }
 
     [HttpGet]
-    public async Task<IActionResult> SearchProducts(string? q, int? id)
+    public async Task<IActionResult> SearchProducts(string? q, int? id, string? kind, string? audience)
     {
         var products = LookbookCatalog.Products(db);
         if (id.HasValue) products = products.Where(p => p.Id == id);
@@ -118,6 +127,8 @@ public class AdminCollectionsController(ApplicationDbContext db, IWebHostEnviron
                 p.Variants.Any(v => v.IsActive && v.SKU.Contains(term)));
         }
 
+        if (kind is "ao" or "quan" or "giay") products = products.Where(p => p.ShowroomKind == kind);
+        if (audience is "women" or "men" or "girls" or "boy") products = products.Where(p => p.ShowroomAudience == audience);
         var results = new List<Product>();
         await foreach (var product in products.OrderBy(p => p.Name).AsAsyncEnumerable())
         {
@@ -128,7 +139,8 @@ public class AdminCollectionsController(ApplicationDbContext db, IWebHostEnviron
         return Json(results.Select(p => new
         {
             p.Id, p.Name, p.ImageUrl, kind = p.ShowroomKind,
-            colors = p.Variants.Select(v => v.Color).Distinct().Order().ToArray()
+            colors = p.Variants.Select(v => v.Color).Distinct().Order().ToArray(),
+            prices = p.Variants.GroupBy(v => v.Color).ToDictionary(g => g.Key, g => g.Min(v => v.Price))
         }));
     }
 
@@ -158,12 +170,16 @@ public class AdminCollectionsController(ApplicationDbContext db, IWebHostEnviron
         if (published)
         {
             var display = await LookbookCatalog.BuildAsync(db, collection);
-            if (string.IsNullOrEmpty(collection.CoverUrl) || collection.Looks.Count == 0 ||
+            if ((!collection.IsSale && string.IsNullOrEmpty(collection.CoverUrl)) ||
+                (collection.IsSale && (!collection.StartsAt.HasValue || !collection.EndsAt.HasValue || collection.EndsAt <= collection.StartsAt)) || collection.Looks.Count == 0 ||
                 collection.Looks.Any(l => string.IsNullOrEmpty(l.ImageUrl) || display.Selections[l.Id].Count == 0 ||
-                    display.Selections[l.Id].Any(item => !display.Products.TryGetValue(item.ProductId, out var product) ||
+                    display.Selections[l.Id].Any(item => (collection.IsSale && item.DiscountPercent <= 0) ||
+                        !display.Products.TryGetValue(item.ProductId, out var product) ||
                         !product.Variants.Any(variant => variant.Color == item.Color))))
             {
-                TempData["Error"] = "Cần có ảnh bìa, ít nhất một look và sản phẩm còn hoạt động đúng màu trước khi đăng.";
+                TempData["Error"] = collection.IsSale
+                    ? "Cần có lịch chạy hợp lệ, ít nhất một look có ảnh, và mức giảm cho từng sản phẩm."
+                    : "Cần có ảnh bìa, ít nhất một look và sản phẩm còn hoạt động đúng màu trước khi đăng.";
                 return RedirectToAction(nameof(Edit), new { id });
             }
         }
@@ -177,7 +193,8 @@ public class AdminCollectionsController(ApplicationDbContext db, IWebHostEnviron
         var collection = await FindCollection(id);
         if (collection == null) return NotFound();
         ViewBag.IsPreview = true;
-        return View("~/Views/Home/ManagedLookbook.cshtml", await LookbookCatalog.BuildAsync(db, collection));
+        var display = await LookbookCatalog.BuildAsync(db, collection);
+        return View(collection.IsSale ? "~/Views/Home/SalePreview.cshtml" : "~/Views/Home/ManagedLookbook.cshtml", display);
     }
 
     private Task<LookbookCollection?> FindCollection(int id) =>
@@ -186,6 +203,7 @@ public class AdminCollectionsController(ApplicationDbContext db, IWebHostEnviron
     private static LookbookCollectionForm ToForm(LookbookCollection collection) => new()
     {
         Id = collection.Id, Name = collection.Name, Description = collection.Description,
+        IsSale = collection.IsSale, StartsAt = collection.StartsAt?.ToOffset(TimeSpan.FromHours(7)).DateTime, EndsAt = collection.EndsAt?.ToOffset(TimeSpan.FromHours(7)).DateTime, SaleNotice = collection.SaleNotice,
         Background = collection.Background,
         BackgroundColor = collection.BackgroundColor,
         CoverUrl = collection.CoverUrl, IsPublished = collection.IsPublished, Looks = collection.Looks

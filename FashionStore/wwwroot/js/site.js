@@ -64,13 +64,18 @@
         const secsEl = document.getElementById('cdSecs');
         if (!daysEl || !hoursEl || !minsEl || !secsEl) return;
 
-        // Target: Đợt Drop Giới Hạn tuần này (2 ngày 14 giờ)
-        const targetDate = new Date(Date.now() + (2 * 24 * 3600 + 14 * 3600 + 35 * 60 + 20) * 1000);
+        const campaign = daysEl.closest('[data-sale-end]');
+        const remaining = Date.parse(campaign?.dataset.saleEnd) - Date.parse(campaign?.dataset.saleNow);
+        const scheduled = Number.isFinite(remaining);
+        const fallbackDuration = (2 * 86400 + 14 * 3600 + 35 * 60 + 20) * 1000;
+        const deadline = performance.now() + (scheduled ? remaining : fallbackDuration);
 
         function update() {
-            const now = new Date();
-            const diff = targetDate - now;
-            if (diff <= 0) return;
+            const diff = Math.max(0, deadline - performance.now());
+            if (diff === 0 && scheduled && campaign.dataset.salePreview !== 'true') {
+                window.location.reload();
+                return;
+            }
 
             const d = Math.floor(diff / (1000 * 60 * 60 * 24));
             const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));

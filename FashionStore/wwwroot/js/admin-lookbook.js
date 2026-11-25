@@ -1,5 +1,9 @@
 (() => {
     const form = document.getElementById('lookEditor');
+    const sale = form.dataset.sale === "true";
+    const kind = document.getElementById("lookKind");
+    const audience = document.getElementById("lookAudience");
+    const money = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" });
     const search = document.getElementById('lookSearch');
     const matches = document.getElementById('lookMatches');
     const selected = document.getElementById('lookSelected');
@@ -45,7 +49,7 @@
         points.replaceChildren();
         if (!items.length) {
             const empty = make('td', 'Chưa gắn sản phẩm nào.', 'text-center text-muted py-3');
-            empty.colSpan = 3;
+            empty.colSpan = sale ? 4 : 3;
             const row = document.createElement('tr');
             row.append(empty);
             selected.append(row);
@@ -75,8 +79,45 @@
                 hidden.value = value;
                 actions.append(hidden);
             }
-            row.append(name, colorCell, actions);
+            row.append(name, colorCell);
+            let priceRow;
+            if (sale) {
+                row.classList.add('look-sale-control-row');
+                const cell = document.createElement('td');
+                const rate = make('input', '', 'form-control form-control-sm');
+                rate.style.width = '5rem';
+                rate.placeholder = '%';
+                rate.type = 'number';
+                rate.min = 1;
+                rate.max = 100;
+                rate.required = true;
+                rate.name = 'Items[' + index + '].DiscountPercent';
+                rate.value = item.discountPercent || '';
+                rate.setAttribute('aria-label', 'Phần trăm giảm');
+                const prices = make('small', '', 'd-block mt-1 text-nowrap');
+                function updatePrice() {
+                    const price = product?.prices?.[item.color];
+                    const percent = Number(rate.value);
+                    item.discountPercent = percent;
+                    prices.textContent = price == null ? '' : money.format(price) + ' → ' +
+                        money.format(Math.round(price * (100 - percent) / 100));
+                }
+                rate.addEventListener('input', updatePrice);
+                color.addEventListener('change', updatePrice);
+                updatePrice();
+                cell.append(rate);
+                row.append(cell);
+                priceRow = make('tr', '', 'look-sale-price-row');
+                const spacer = document.createElement('td');
+                spacer.colSpan = 2;
+                const priceCell = document.createElement('td');
+                priceCell.colSpan = 2;
+                priceCell.append(prices);
+                priceRow.append(spacer, priceCell);
+            }
+            row.append(actions);
             selected.append(row);
+            if (priceRow) selected.append(priceRow);
             const marker = make('span', index + 1, 'position-absolute translate-middle badge rounded-pill ' + (activeItem === item ? 'text-bg-primary' : 'text-bg-dark'));
             marker.style.left = item.x + '%';
             marker.style.top = item.y + '%';
@@ -84,6 +125,8 @@
         });
     }
 
+    kind?.addEventListener('change', updateMatches);
+    audience?.addEventListener('change', updateMatches);
     preview.addEventListener('click', event => {
         if (!activeItem) return;
         const box = preview.getBoundingClientRect();
@@ -95,7 +138,7 @@
     async function updateMatches() {
         const version = ++searchVersion;
         try {
-            const results = await findProducts({ q: search.value.trim() });
+            const results = await findProducts({ q: search.value.trim(), kind: kind?.value || "", audience: audience?.value || "" });
             if (version !== searchVersion) return;
             matches.replaceChildren();
             if (!results.length) matches.append(make('p', 'Không tìm thấy sản phẩm.', 'small mt-2'));

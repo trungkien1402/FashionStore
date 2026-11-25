@@ -4,7 +4,7 @@
     document.addEventListener('submit', event => {
         if (event.target !== form || event.defaultPrevented || !form.checkValidity()) return;
         button.disabled = true;
-        button.textContent = 'Đang chuyển đến bước nhập OTP…';
+        button.textContent = 'Đang gửi…';
         form.setAttribute('aria-busy', 'true');
     });
     window.addEventListener('pageshow', () => {
@@ -27,21 +27,21 @@
                 if (!response.ok) throw new Error('status');
                 const data = await response.json();
                 if (data.status === 'processed') {
-                    status.textContent = 'Yêu cầu đã được xử lý. Nếu email hợp lệ, hãy kiểm tra hộp thư và Spam để lấy mã.';
+                    status.textContent = '';
                     return;
                 }
                 if (data.status === 'failed') {
-                    status.textContent = 'Chưa thể hoàn tất việc gửi mã. Vui lòng yêu cầu mã mới sau 60 giây.';
+                    status.textContent = 'Chưa gửi được mã. Hãy thử yêu cầu lại sau 60 giây.';
                     return;
                 }
                 if (data.status === 'expired') {
-                    status.textContent = 'Phiên xác nhận không còn hiệu lực. Vui lòng yêu cầu OTP mới.';
+                    status.textContent = 'Phiên xác nhận đã hết hạn. Hãy yêu cầu mã mới.';
                     return;
                 }
             }
         } catch { /* Keep the OTP form available during temporary network interruptions. */ }
         if (++tries < 40) setTimeout(refresh, 1500);
-        else status.textContent = 'Gửi mã mất nhiều thời gian hơn dự kiến. Kiểm tra hộp thư/Spam hoặc yêu cầu mã mới.';
+        else status.textContent = 'Nếu chưa nhận được mã, hãy yêu cầu mã mới.';
     }
     refresh();
 })();

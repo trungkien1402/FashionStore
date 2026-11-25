@@ -5,13 +5,15 @@
    Senior Fashion UX/UI: Ultra-Glassmorphism, Micro Hotspot Pins, Weighted Turntable
    ========================================================================== */
 
-.lb-wrapper {
+.lb-wrapper, .offer-lookbook-ui {
     --lb-ink: #111111;
     --lb-mute: #787873;
     --lb-line: rgba(17, 17, 17, 0.08);
     --lb-glass-bg: rgba(255, 255, 255, 0.28);
     --lb-glass-card: rgba(255, 255, 255, 0.52);
     --lb-glass-border: rgba(255, 255, 255, 0.65);
+}
+.lb-wrapper {
     position: fixed;
     inset: 0;
     z-index: 10000;

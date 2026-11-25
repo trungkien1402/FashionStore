@@ -14,12 +14,17 @@ public class LookbookCollectionForm
     [StringLength(1000)] public string? Description { get; set; }
     public IFormFile? Cover { get; set; }
     public string CoverUrl { get; set; } = "";
+    public bool IsSale { get; set; }
+    public DateTime? StartsAt { get; set; }
+    public DateTime? EndsAt { get; set; }
+    [StringLength(240)] public string? SaleNotice { get; set; }
     public bool IsPublished { get; set; }
     public List<LookbookLook> Looks { get; set; } = [];
 }
 
 public class LookbookLookForm
 {
+    public bool IsSale { get; set; }
     public int Id { get; set; }
     public int CollectionId { get; set; }
     [Required, StringLength(120)] public string Name { get; set; } = "";
@@ -32,6 +37,7 @@ public class LookbookLookForm
 
 public class LookbookSelection
 {
+    [Range(0, 100)] public int DiscountPercent { get; set; }
     public int ProductId { get; set; }
     [Required, StringLength(120)] public string Color { get; set; } = "";
     [Range(0, 100)] public double X { get; set; } = 50;

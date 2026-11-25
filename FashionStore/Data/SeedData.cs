@@ -139,5 +139,6 @@ public static class SeedData
             await ShowroomCatalog.ImportAsync(db);
         }
         await ShowroomCatalog.ReconcileCategoriesAsync(db);
+        await LegacyLookbookSeed.ImportAsync(db);
     }
 }

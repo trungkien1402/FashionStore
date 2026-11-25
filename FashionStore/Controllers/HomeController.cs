@@ -38,15 +38,25 @@ public class HomeController : Controller
             .ToList();
 
         ViewBag.PublishedCollections = await _context.LookbookCollections.AsNoTracking()
-            .Where(c => c.IsPublished).OrderByDescending(c => c.Id).ToListAsync();
+            .Where(c => c.IsPublished && !c.IsSale).OrderByDescending(c => c.Id).ToListAsync();
+        ViewBag.ImportedLookbookKeys = await _context.LookbookCollections.AsNoTracking()
+            .Where(c => !c.IsSale && c.SourceKey != null).Select(c => c.SourceKey).ToListAsync();
+        var campaign = await SalePricing.ActiveCampaignAsync(_context);
+        if (campaign != null) ViewBag.SaleCampaign = await LookbookCatalog.BuildAsync(_context, campaign);
         return View(latestProducts);
     }
 
     [HttpGet("/lookbook")]
     [HttpGet("/collections")]
-    public IActionResult Lookbook(string? theme)
+    public async Task<IActionResult> Lookbook(string? theme)
     {
-        ViewBag.InitialTheme = string.Equals(theme, "sunwash", StringComparison.OrdinalIgnoreCase) ? "sunwash" : "noir";
+        var key = string.Equals(theme, "sunwash", StringComparison.OrdinalIgnoreCase) ? "sunwash" : "noir";
+        var collection = await _context.LookbookCollections.AsNoTracking()
+            .Where(c => !c.IsSale && c.SourceKey == key)
+            .Select(c => new { c.Id, c.IsPublished }).FirstOrDefaultAsync();
+        if (collection != null)
+            return collection.IsPublished ? RedirectToAction(nameof(ManagedLookbook), new { id = collection.Id }) : NotFound();
+        ViewBag.InitialTheme = key;
         return View();
     }
 
@@ -59,7 +69,7 @@ public class HomeController : Controller
     public async Task<IActionResult> ManagedLookbook(int id)
     {
         var collection = await _context.LookbookCollections.AsNoTracking().Include(c => c.Looks)
-            .SingleOrDefaultAsync(c => c.Id == id && c.IsPublished);
+            .SingleOrDefaultAsync(c => c.Id == id && c.IsPublished && !c.IsSale);
         return collection == null ? NotFound() : View(await LookbookCatalog.BuildAsync(_context, collection));
     }
 

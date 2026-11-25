@@ -1,6 +1,7 @@
 @model LookbookCollectionForm
 @{
-    ViewData["Title"] = Model.Id == 0 ? "Tạo bộ sưu tập" : Model.Name;
+    ViewData["AdminSale"] = Model.IsSale;
+    ViewData["Title"] = Model.Id == 0 ? (Model.IsSale ? "Tạo đợt sale" : "Tạo bộ sưu tập") : Model.Name;
     var looks = Model.Looks.OrderBy(l => l.SortOrder).ThenBy(l => l.Id).ToList();
     var backgrounds = new (LookbookBackground Value, string Label, string First, string Second)[]
     {
@@ -36,7 +37,7 @@
         .collection-custom-radio:focus-visible + label { outline: 2px solid #0085ca; outline-offset: 2px; }
     </style>
 }
-<a asp-action="Index" class="adm-btn-action-secondary mb-3"><i class="bi bi-arrow-left"></i> Bộ sưu tập</a>
+<a asp-action="Index" asp-route-sale="@Model.IsSale" class="adm-btn-action-secondary mb-3"><i class="bi bi-arrow-left"></i> @(Model.IsSale ? "Giảm giá" : "Bộ sưu tập")</a>
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
     <h1 class="h4 mb-0">@ViewData["Title"]</h1>
     @if (Model.Id > 0)
@@ -46,7 +47,7 @@
             <form asp-action="Publish" method="post">
                 <input type="hidden" name="id" value="@Model.Id" />
                 <input type="hidden" name="published" value="@((!Model.IsPublished).ToString().ToLowerInvariant())" />
-                <button class="adm-action-btn adm-btn-primary">@(Model.IsPublished ? "Chuyển về nháp" : "Đăng bộ sưu tập")</button>
+                <button class="adm-action-btn adm-btn-primary">@(Model.IsPublished ? "Chuyển về nháp" : Model.IsSale ? "Đăng đợt sale" : "Đăng bộ sưu tập")</button>
             </form>
         </div>
     }
@@ -57,9 +58,12 @@
 }
 <form asp-action="Edit" method="post" enctype="multipart/form-data" class="adm-card p-3 mb-4">
     <input asp-for="Id" type="hidden" />
+    <input asp-for="IsSale" type="hidden" />
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
     <div class="row g-3">
+        @if (!Model.IsSale)
+        {
         <div class="col-md-6 d-flex flex-column">
             <span class="form-label">Ảnh bìa</span>
             <div class="position-relative flex-grow-1 rounded-3 border mb-2 overflow-hidden" style="min-height: 210px; background: var(--adm-bg-soft);">
@@ -81,13 +85,32 @@
             </div>
             <span asp-validation-for="Cover" class="text-danger"></span>
         </div>
-        <div class="col-md-6 d-flex flex-column">
-            <label asp-for="Name" class="form-label">Tên bộ sưu tập</label>
+        }
+        <div class="@(Model.IsSale ? "col-12" : "col-md-6") d-flex flex-column">
+            <label asp-for="Name" class="form-label">@(Model.IsSale ? "Tiêu đề sale trên trang chủ" : "Tên bộ sưu tập")</label>
             <input asp-for="Name" class="form-control adm-input-dark" required />
             <span asp-validation-for="Name" class="text-danger"></span>
             <label asp-for="Description" class="form-label mt-3">Mô tả</label>
             <textarea asp-for="Description" rows="4" class="form-control adm-input-dark"></textarea>
             <span asp-validation-for="Description" class="text-danger"></span>
+            @if (Model.IsSale)
+            {
+                <label asp-for="SaleNotice" class="form-label mt-3">Dòng ưu đãi trên trang chủ</label>
+                <input asp-for="SaleNotice" class="form-control" maxlength="240" />
+                <div class="row g-2 mt-2">
+                    <div class="col-sm-6">
+                        <label for="StartsAt" class="form-label">Bắt đầu (giờ Việt Nam)</label>
+                        <input id="StartsAt" name="StartsAt" type="datetime-local" value="@(Model.StartsAt?.ToString("yyyy-MM-ddTHH:mm"))" class="form-control" required />
+                    </div>
+                    <div class="col-sm-6">
+                        <label for="EndsAt" class="form-label">Kết thúc (giờ Việt Nam)</label>
+                        <input id="EndsAt" name="EndsAt" type="datetime-local" value="@(Model.EndsAt?.ToString("yyyy-MM-ddTHH:mm"))" class="form-control" required />
+                    </div>
+                </div>
+                <span asp-validation-for="EndsAt" class="text-danger"></span>
+            }
+            @if (!Model.IsSale)
+            {
             <fieldset class="collection-backgrounds border rounded-3 px-3 py-2 mt-3 mb-0">
                 <legend class="float-none w-auto px-2 mb-0 fs-6 fw-bold">Gam màu nền bộ sưu tập</legend>
                 <div class="collection-swatches">
@@ -116,6 +139,7 @@
                 <span asp-validation-for="BackgroundColor" class="text-danger"></span>
                 <span asp-validation-for="Background" class="text-danger"></span>
             </fieldset>
+            }
         </div>
     </div>
     <div class="d-flex justify-content-end border-top mt-3 pt-3">
@@ -161,6 +185,8 @@
 }
 
 @section Scripts {
+    @if (!Model.IsSale)
+    {
     <script>
         const customBackground = document.getElementById('background-Custom');
         const collectionColorPicker = document.getElementById('collectionColorPicker');
@@ -192,4 +218,5 @@
             coverPlaceholder.hidden = Boolean(source);
         });
     </script>
+    }
 }

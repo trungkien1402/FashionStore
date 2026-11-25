@@ -70,8 +70,12 @@
             </a>
 
             <a asp-controller="AdminCollections" asp-action="Index"
-               class="adm-nav-link @(currentController == "AdminCollections" ? "active" : "")">
+               class="adm-nav-link @(currentController == "AdminCollections" && ViewData["AdminSale"] is not true ? "active" : "")">
                 <i class="bi bi-collection"></i><span>Bộ sưu tập</span>
+            </a>
+
+            <a asp-controller="AdminCollections" asp-action="Index" asp-route-sale="true" class="adm-nav-link @(ViewData["AdminSale"] is true ? "active" : "")">
+                <i class="bi bi-percent"></i><span>Giảm giá</span>
             </a>
 
             <a asp-controller="AdminSupportRequests" asp-action="Index"

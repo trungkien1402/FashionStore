@@ -1040,10 +1040,21 @@ body.adm-body {
     cursor: wait !important;
 }
 
-.adm-body #lookSelected .form-select {
+.adm-body #lookSelected .form-select,
+.adm-body #lookEditor #lookKind,
+.adm-body #lookEditor #lookAudience {
     min-width: 5.5rem;
     padding-inline-end: 2rem !important;
     background-position: right .65rem center;
+}
+
+.adm-body #lookSelected .look-sale-price-row td {
+    padding-top: 0;
+    padding-bottom: .65rem;
+}
+
+.adm-body #lookSelected .look-sale-control-row td {
+    border-bottom: 0;
 }
 
 .adm-table {

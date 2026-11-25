@@ -85,6 +85,7 @@ public class CartService : ICartService
     public async Task<List<CartItemViewModel>> GetCartAsync()
     {
         var userId = GetCurrentUserId();
+        var discounts = await SalePricing.DiscountsAsync(_context);
 
         if (!string.IsNullOrEmpty(userId))
         {
@@ -109,13 +110,24 @@ public class CartService : ICartService
                     SKU = i.ProductVariant.SKU,
                     Size = i.ProductVariant.Size,
                     Color = i.ProductVariant.Color,
-                    UnitPrice = i.ProductVariant.Price,
+                    UnitPrice = SalePricing.Price(i.ProductVariant, discounts),
                     Quantity = i.Quantity
                 })
                 .ToList();
         }
 
-        return GetSessionCart();
+        var sessionCart = GetSessionCart();
+        if (sessionCart.Count == 0) return sessionCart;
+
+        var ids = sessionCart.Select(item => item.ProductVariantId).ToArray();
+        var variants = await _context.ProductVariants.AsNoTracking()
+            .Where(variant => ids.Contains(variant.Id)).ToDictionaryAsync(variant => variant.Id);
+        foreach (var item in sessionCart)
+        {
+            if (variants.TryGetValue(item.ProductVariantId, out var variant))
+                item.UnitPrice = SalePricing.Price(variant, discounts);
+        }
+        return sessionCart;
     }
 
     public async Task<int> GetCartCountAsync()

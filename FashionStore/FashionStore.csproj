@@ -9,6 +9,7 @@
     <DefaultItemExcludes>$(DefaultItemExcludes);FashionStore/**</DefaultItemExcludes>
   </PropertyGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Data/legacy-lookbooks.json" LogicalName="FashionStore.Data.legacy-lookbooks.json" />
     <Content Update="appsettings.Local.json" CopyToPublishDirectory="Never" />
   </ItemGroup>
 
