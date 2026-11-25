@@ -960,6 +960,12 @@
 
         // Phím tắt bàn phím
         document.addEventListener('keydown', e => {
+            const target = e.target;
+            const activeEl = document.activeElement;
+            const isTyping = e.isComposing || e.keyCode === 229 ||
+                (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT' || target.isContentEditable)) ||
+                (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT' || activeEl.isContentEditable));
+
             if (e.key === 'Escape') {
                 if (window.HNMTPantsFilter && document.getElementById('hnmtPantsFilterModal')?.classList.contains('is-open')) {
                     window.HNMTPantsFilter.close();
@@ -969,14 +975,13 @@
                 else if (detailOpen) closeDetail();
                 else if ($('#hnmtRackOverlay')?.classList.contains('is-active')) closeClothingRail();
             } else if (e.key === 'ArrowLeft') {
-                if (detailOpen) navigate(-1);
+                if (detailOpen && !isTyping) navigate(-1);
             } else if (e.key === 'ArrowRight') {
-                if (detailOpen) navigate(1);
+                if (detailOpen && !isTyping) navigate(1);
             } else if ((e.key === '/' || (e.ctrlKey && e.key.toLowerCase() === 'k')) && 
                        !document.getElementById('hnmtShirtFilterModal')?.classList.contains('is-open') &&
                        !document.getElementById('hnmtPantsFilterModal')?.classList.contains('is-open')) {
-                const activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
-                if (activeTag !== 'input' && activeTag !== 'textarea') {
+                if (!isTyping) {
                     if (currentCategory === 'quan' && window.HNMTPantsFilter) {
                         e.preventDefault();
                         window.HNMTPantsFilter.open();

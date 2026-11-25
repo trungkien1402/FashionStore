@@ -43,7 +43,73 @@ public class HomeController : Controller
             .Where(c => !c.IsSale && c.SourceKey != null).Select(c => c.SourceKey).ToListAsync();
         var campaign = await SalePricing.ActiveCampaignAsync(_context);
         if (campaign != null) ViewBag.SaleCampaign = await LookbookCatalog.BuildAsync(_context, campaign);
+
+        var rawReviews = await _context.ProductReviews.AsNoTracking()
+            .Where(r => r.IsVisible && !r.IsReported && r.Product.IsActive && !string.IsNullOrWhiteSpace(r.Comment))
+            .OrderByDescending(r => r.CreatedAt)
+            .ThenByDescending(r => r.Id)
+            .Take(3)
+            .Select(r => new
+            {
+                r.Id,
+                r.ProductId,
+                ProductName = r.Product.Name,
+                r.UserId,
+                r.Rating,
+                r.Comment,
+                r.CreatedAt
+            })
+            .ToListAsync();
+
+        var reviewerIds = rawReviews.Select(r => r.UserId).Distinct().ToList();
+        var userLookup = reviewerIds.Count > 0
+            ? await _context.Users.AsNoTracking()
+                .Where(u => reviewerIds.Contains(u.Id))
+                .Select(u => new { u.Id, u.FullName, u.Email })
+                .ToDictionaryAsync(u => u.Id)
+            : [];
+
+        ViewBag.CustomerReviews = rawReviews.Select(r =>
+        {
+            var customerName = "Khách hàng HNMTSHOP";
+            if (userLookup.TryGetValue(r.UserId, out var u))
+            {
+                customerName = !string.IsNullOrWhiteSpace(u.FullName)
+                    ? u.FullName.Trim()
+                    : MaskEmail(u.Email);
+            }
+
+            return new HomeReviewViewModel
+            {
+                Id = r.Id,
+                ProductId = r.ProductId,
+                ProductName = r.ProductName,
+                CustomerName = customerName,
+                Initials = GetInitials(customerName),
+                Rating = Math.Clamp(r.Rating, 1, 5),
+                Comment = r.Comment.Trim(),
+                CreatedAt = r.CreatedAt
+            };
+        }).ToList();
+
         return View(latestProducts);
+    }
+
+    private static string MaskEmail(string? email)
+    {
+        if (string.IsNullOrWhiteSpace(email)) return "Khách hàng HNMTSHOP";
+        var atIndex = email.IndexOf('@');
+        if (atIndex <= 1) return "Khách hàng HNMTSHOP";
+        var local = email[..atIndex];
+        return local.Length <= 3 ? local[0] + "***" : local[..3] + "***";
+    }
+
+    private static string GetInitials(string name)
+    {
+        var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length == 0) return "KH";
+        if (parts.Length == 1) return parts[0][..1].ToUpperInvariant();
+        return string.Concat(parts[0][0], parts[^1][0]).ToUpperInvariant();
     }
 
     [HttpGet("/lookbook")]

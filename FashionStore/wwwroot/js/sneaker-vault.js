@@ -1474,9 +1474,17 @@
             const isActive = isStandalone || (overlay && overlay.classList.contains('is-active'));
             if (!isActive) return;
 
-            if (e.key === 'ArrowRight') nextSneaker();
-            else if (e.key === 'ArrowLeft') prevSneaker();
-            else if (e.key === 'Escape') {
+            const target = e.target;
+            const activeEl = document.activeElement;
+            const isTyping = e.isComposing || e.keyCode === 229 ||
+                (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT' || target.isContentEditable)) ||
+                (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT' || activeEl.isContentEditable));
+
+            if (e.key === 'ArrowRight') {
+                if (!isTyping) nextSneaker();
+            } else if (e.key === 'ArrowLeft') {
+                if (!isTyping) prevSneaker();
+            } else if (e.key === 'Escape') {
                 if (window.HNMTSneakerFilter && document.getElementById('hnmtSneakerFilterModal')?.classList.contains('is-open')) {
                     window.HNMTSneakerFilter.close();
                     return;
