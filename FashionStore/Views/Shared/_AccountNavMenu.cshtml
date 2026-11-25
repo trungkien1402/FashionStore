@@ -91,13 +91,14 @@
     }
     else
     {
-        <button type="button"
-                class="@btnClass fs-account-btn hnmt-auth-trigger"
-                title="Đăng nhập / Đăng ký tài khoản"
-                data-auth-tab="login"
-                onclick="window.HNMTAuthModal && window.HNMTAuthModal.open('login')">
+        <a asp-controller="Account"
+           asp-action="Login"
+           class="@btnClass fs-account-btn hnmt-auth-trigger"
+           title="Đăng nhập / Đăng ký tài khoản"
+           data-auth-tab="login"
+           onclick="if (window.HNMTAuthModal && typeof window.HNMTAuthModal.open === 'function') { event.preventDefault(); window.HNMTAuthModal.open('login'); }">
             <i class="bi bi-person"></i>
-        </button>
+        </a>
     }
 
 </div>

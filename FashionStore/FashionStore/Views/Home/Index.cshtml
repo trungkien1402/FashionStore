@@ -1,5 +1,5 @@
 @model List<FashionStore.Models.Entities.Product>
-
+@inject FashionStore.Services.Implementations.IntroPreference IntroPreference
 @{
     ViewData["Title"] = "HNMTSHOP – Khẳng Định Phong Cách | Thời Trang Giới Trẻ";
 }
@@ -7,6 +7,8 @@
 <!-- ============================================================== -->
 <!-- 1:1 REPLICA: HNMTSHOP ATELIER — THE ANATOMY OF STYLE           -->
 <!-- ============================================================== -->
+@if (!await IntroPreference.IsHiddenAsync())
+{
 <div class="at-loader" id="atLoader" aria-hidden="true">
     <div class="at-loader__mark">HNMTSHOP</div>
     <div class="at-loader__bar"><span id="atLoaderFill"></span></div>
@@ -36,6 +38,11 @@
         <div class="at-grade at-grade--top"></div>
         <div class="at-grade at-grade--bottom"></div>
         <div class="at-grain"></div>
+        <form asp-controller="DisplayPreferences" asp-action="HideIntro" method="post" class="at-hide-intro-form">
+            <button type="submit" class="at-hide-intro" aria-label="Ẩn phần giới thiệu" title="Ẩn lần sau. Bật lại trong Cài đặt tài khoản.">
+                <i class="bi bi-eye-slash" aria-hidden="true"></i>
+            </button>
+        </form>
 
         <!-- Movement 00: Hero Title -->
         <div class="at-panel at-panel--hero" data-panel="hero">
@@ -86,8 +93,10 @@
 
     </div>
 </section>
+}
 
-<!-- CỬA NGÕ DẪN VÀO TRANG CHỦ CHÍNH (LƯỚT HẾT LÀ VÀO SHOP NGAY) -->
+
+<!-- Mốc cuộn vào shop -->
 <div id="mainContent"></div>
 
 <!-- ============================================================== -->
@@ -114,6 +123,28 @@
                         Xem Tất Cả Mẫu
                     </a>
                 </div>
+
+                @if (User.Identity?.IsAuthenticated != true)
+                {
+                    <div style="margin-top: 18px; display: inline-flex; flex-wrap: wrap; align-items: center; gap: 10px; font-size: 13.5px; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.07); padding: 8px 16px; border-radius: 99px;">
+                        <span style="color: #4b5563;">Gia nhập thành viên HNMT:</span>
+                        <a asp-controller="Account" asp-action="Login" style="font-weight: 700; color: #111; text-decoration: underline;">Đăng nhập ngay</a>
+                        <span style="color: #9ca3af;">•</span>
+                        <form asp-controller="Account" asp-action="ExternalLogin" method="post" style="display: inline-flex; margin: 0;">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="returnUrl" value="/" />
+                            <button type="submit" name="provider" value="Google" style="border: none; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-radius: 99px; padding: 3px 10px; display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; cursor: pointer;">
+                                <svg viewBox="0 0 24 24" width="13" height="13">
+                                    <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"/>
+                                    <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5.1 3.7-8.8z"/>
+                                    <path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.8s.2-2.1.4-2.8L1.9 6.3C.7 8.7 0 10.3 0 12s.7 3.3 1.9 5.7l3.7-2.9z"/>
+                                    <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2-6.4-4.8L1.9 16.4C3.7 20.4 7.5 23 12 23z"/>
+                                </svg>
+                                <span>Đăng nhập Google</span>
+                            </button>
+                        </form>
+                    </div>
+                }
 
                 <!-- 3 Chỉ số uy tín chân Hero -->
                 <div class="urbn-hero-metrics-row">
@@ -236,7 +267,7 @@
                 @foreach (var p in Model)
                 {
                     <div class="hnmt-drop-card" data-product-id="@p.Id">
-                        <a asp-controller="Products" asp-action="Details" asp-route-id="@p.Id" class="hnmt-drop-card-link" title="@p.Name">
+                        <a href="@(p.ShowroomKind == "giay" ? Url.Action("Sneakers", "Products", new { audience = p.ShowroomAudience, productId = p.Id, from = "home" }) : Url.Action("Details", "Products", new { id = p.Id, from = "home" }))" class="hnmt-drop-card-link" title="@p.Name">
                             <div class="hnmt-drop-card-media">
                                 <img src="@(string.IsNullOrEmpty(p.ImageUrl) ? "/images/placeholder.jpg" : p.ImageUrl)"
                                      alt="@p.Name"
@@ -325,59 +356,7 @@
 <!-- ============================================================== -->
 <!-- SECTION 4: ĐỢT DROP ĐẶC BIỆT & ĐỒNG HỒ ĐẾM NGƯỢC               -->
 <!-- ============================================================== -->
-<section class="urbn-offer-section">
-    <div class="urbn-container">
-        <div class="urbn-offer-grid">
-
-            <!-- Bên trái: Nội dung & Bộ đếm -->
-            <div>
-                <h2 class="urbn-offer-title">
-                    Nhanh Tay! Ưu Đãi<br />Sắp Kết Thúc
-                </h2>
-                <p class="urbn-offer-sub">
-                    Thời gian có hạn cho đợt ưu đãi độc quyền này. Hành động ngay để nhận những đặc quyền tốt nhất từ HNMTSHOP.
-                </p>
-
-                <!-- Bộ 4 ô đếm ngược -->
-                <div class="urbn-countdown-bar">
-                    <div class="urbn-countdown-cell">
-                        <span id="cdDays">02</span>
-                        <small>Ngày</small>
-                    </div>
-                    <div class="urbn-countdown-cell">
-                        <span id="cdHours">14</span>
-                        <small>Giờ</small>
-                    </div>
-                    <div class="urbn-countdown-cell">
-                        <span id="cdMins">35</span>
-                        <small>Phút</small>
-                    </div>
-                    <div class="urbn-countdown-cell">
-                        <span id="cdSecs">20</span>
-                        <small>Giây</small>
-                    </div>
-                </div>
-
-                <p class="urbn-offer-notice">
-                    Ưu đãi giới hạn cho đợt Drop độc quyền tuần này. <strong>MUA NGAY KẺO HẾT!</strong>
-                </p>
-
-                <a asp-controller="Products" asp-action="Index" class="urbn-btn-view-col">
-                    XEM BỘ SƯU TẬP
-                </a>
-            </div>
-
-            <!-- Bên phải: Ảnh người mẫu full-body -->
-            <div>
-                <div class="urbn-model-photo">
-                    <img src="~/images/seated-couture-model-v2.webp" asp-append-version="true" loading="lazy" decoding="async"
-                         alt="Người mẫu nữ ngồi nghiêng với áo đen lệch vai, quần âu xám và giày đỏ rượu" style="object-fit:contain" />
-                </div>
-            </div>
-
-        </div>
-    </div>
-</section>
+<partial name="_SaleOffer" model="@((ViewBag.SaleCampaign as LookbookDisplay, false))" />
 
 <!-- ============================================================== -->
 <!-- SECTION 5: DẢI BĂNG CHỮ CHẠY VÔ TẬN (MARQUEE)                  -->
@@ -417,20 +396,33 @@
         <div class="urbn-racks-grid">
 
             <!-- Sào 1: NOIR UNIT -->
+            @foreach (var collection in (IEnumerable<LookbookCollection>)ViewBag.PublishedCollections)
+            {
+                <a asp-controller="Home" asp-action="ManagedLookbook" asp-route-id="@collection.Id" class="urbn-rack-card hnmt-lookbook-card">
+                    <img src="@collection.CoverUrl" loading="lazy" decoding="async" alt="" />
+                    <div class="urbn-cat-pill-wrap"><span class="urbn-cat-pill">@collection.Name</span></div>
+                </a>
+            }
+            @if (!((IEnumerable<string?>)ViewBag.ImportedLookbookKeys).Contains("noir"))
+            {
             <a href="/lookbook?theme=noir" class="urbn-rack-card hnmt-lookbook-card" data-open-lookbook="noir" style="background:#e4e5e7">
                 <img src="~/images/lookbook/noir-unit-poster.webp" asp-append-version="true" loading="lazy" decoding="async" alt="" />
                 <div class="urbn-cat-pill-wrap">
                     <span class="urbn-cat-pill">Noir Unit</span>
                 </div>
             </a>
+            }
 
             <!-- Sào 2: SUN-WASHED -->
+            @if (!((IEnumerable<string?>)ViewBag.ImportedLookbookKeys).Contains("sunwash"))
+            {
             <a href="/lookbook?theme=sunwash" class="urbn-rack-card hnmt-lookbook-card" data-open-lookbook="sunwash" style="background:#ebe5d8">
                 <img src="~/images/lookbook/sun-washed-poster.webp" asp-append-version="true" loading="lazy" decoding="async" alt="" />
                 <div class="urbn-cat-pill-wrap">
                     <span class="urbn-cat-pill">Sun-Washed</span>
                 </div>
             </a>
+            }
 
         </div>
 
@@ -546,7 +538,13 @@
     </div>
 </section>
 
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/lookbook.css" asp-append-version="true" />
+}
+
 @section Scripts {
+    <script src="~/js/offer-model-gallery.js" asp-append-version="true"></script>
 }
 
 

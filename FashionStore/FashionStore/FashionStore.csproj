@@ -8,8 +8,13 @@
     <!-- The nested project is an archived copy, not part of this application. -->
     <DefaultItemExcludes>$(DefaultItemExcludes);FashionStore/**</DefaultItemExcludes>
   </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Data/legacy-lookbooks.json" LogicalName="FashionStore.Data.legacy-lookbooks.json" />
+    <Content Update="appsettings.Local.json" CopyToPublishDirectory="Never" />
+  </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="10.0.14" />
     <PackageReference Include="QuestPDF" Version="2026.9.1" />
     <PackageReference Include="ClosedXML" Version="0.105.1" />
     <EmbeddedResource Include="Data\showroom-catalog.json">

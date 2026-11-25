@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.RateLimiting;
 ﻿
+using System.Security.Claims;
 using FashionStore.Models.Entities;
 using FashionStore.Models.ViewModels;
 using FashionStore.Services.Interfaces;
@@ -14,15 +15,18 @@ public class AccountController : Controller
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly ICartService _cartService;
+    private readonly IConfiguration _configuration;
 
     public AccountController(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
-        ICartService cartService)
+        ICartService cartService,
+        IConfiguration configuration)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _cartService = cartService;
+        _configuration = configuration;
     }
 
     // GET: /Account/Register
@@ -222,5 +226,155 @@ public class AccountController : Controller
     public IActionResult AccessDenied()
     {
         return View();
+    }
+
+    // POST: /Account/ExternalLogin
+    [HttpPost]
+    [AllowAnonymous]
+    [ValidateAntiForgeryToken]
+    public IActionResult ExternalLogin(string provider, string? returnUrl = null)
+    {
+        if (string.Equals(provider, "Google", StringComparison.OrdinalIgnoreCase))
+        {
+            var clientId = _configuration["Authentication:Google:ClientId"];
+            if (string.IsNullOrWhiteSpace(clientId) || clientId.StartsWith("YOUR_"))
+            {
+                TempData["ErrorMessage"] = "Tính năng đăng nhập Google chưa được kích hoạt do chưa cấu hình Google Client ID và Secret trong appsettings.json.";
+                return RedirectToAction(nameof(Login), new { returnUrl });
+            }
+        }
+        else if (string.Equals(provider, "Apple", StringComparison.OrdinalIgnoreCase))
+        {
+            TempData["ErrorMessage"] = "Tính năng đăng nhập với Apple ID đang được cập nhật.";
+            return RedirectToAction(nameof(Login), new { returnUrl });
+        }
+
+        var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Account", new { returnUrl });
+        var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+        return Challenge(properties, provider);
+    }
+
+    // GET: /Account/ExternalLoginCallback
+    [HttpGet]
+    [AllowAnonymous]
+    public async Task<IActionResult> ExternalLoginCallback(string? returnUrl = null, string? remoteError = null)
+    {
+        returnUrl = !string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl)
+            ? returnUrl
+            : Url.Action("Index", "Home");
+
+        if (remoteError != null)
+        {
+            TempData["ErrorMessage"] = $"Lỗi từ dịch vụ xác thực ngoài: {remoteError}";
+            return RedirectToAction(nameof(Login), new { returnUrl });
+        }
+
+        var info = await _signInManager.GetExternalLoginInfoAsync();
+        if (info == null)
+        {
+            TempData["ErrorMessage"] = "Không thể lấy thông tin đăng nhập từ dịch vụ ngoài. Vui lòng thử lại.";
+            return RedirectToAction(nameof(Login), new { returnUrl });
+        }
+
+        // 1. Nếu tài khoản đã từng liên kết provider này trước đó -> Đăng nhập ngay
+        var signInResult = await _signInManager.ExternalLoginSignInAsync(
+            info.LoginProvider,
+            info.ProviderKey,
+            isPersistent: true,
+            bypassTwoFactor: true);
+
+        if (signInResult.Succeeded)
+        {
+            var existingUser = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+            if (existingUser != null)
+            {
+                if (!existingUser.IsActive)
+                {
+                    await _signInManager.SignOutAsync();
+                    TempData["ErrorMessage"] = "Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ quản trị viên.";
+                    return RedirectToAction(nameof(Login));
+                }
+                await _cartService.MergeCartOnLoginAsync(existingUser.Id);
+            }
+            TempData["Success"] = "Đăng nhập với Google thành công!";
+            return LocalRedirect(returnUrl ?? "/");
+        }
+
+        if (signInResult.IsLockedOut)
+        {
+            TempData["ErrorMessage"] = "Tài khoản tạm thời bị khóa. Vui lòng thử lại sau.";
+            return RedirectToAction(nameof(Login));
+        }
+
+        // 2. Lấy Email từ thông tin tài khoản Google
+        var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            TempData["ErrorMessage"] = "Tài khoản Google không chia sẻ địa chỉ email hợp lệ.";
+            return RedirectToAction(nameof(Login), new { returnUrl });
+        }
+
+        // 3. Kiểm tra xem Email đã có tài khoản trong hệ thống chưa
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null)
+        {
+            // TỰ ĐỘNG ĐĂNG KÝ TÀI KHOẢN MỚI
+            var fullName = info.Principal.FindFirstValue(ClaimTypes.Name);
+            if (string.IsNullOrWhiteSpace(fullName))
+            {
+                fullName = email.Split('@')[0];
+            }
+
+            user = new ApplicationUser
+            {
+                UserName = email,
+                Email = email,
+                FullName = fullName,
+                EmailConfirmed = true,
+                CreatedAt = DateTime.UtcNow,
+                IsActive = true
+            };
+
+            var createResult = await _userManager.CreateAsync(user);
+            if (!createResult.Succeeded)
+            {
+                var errors = string.Join("; ", createResult.Errors.Select(e => e.Description));
+                TempData["ErrorMessage"] = $"Không thể tự động tạo tài khoản: {errors}";
+                return RedirectToAction(nameof(Login), new { returnUrl });
+            }
+
+            // Gán role mặc định Customer
+            await _userManager.AddToRoleAsync(user, "Customer");
+        }
+        else
+        {
+            // Nếu tài khoản đã tồn tại, kiểm tra trạng thái hoạt động
+            if (!user.IsActive)
+            {
+                TempData["ErrorMessage"] = "Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ quản trị viên.";
+                return RedirectToAction(nameof(Login));
+            }
+        }
+
+        // 4. Liên kết Provider Google với User
+        var addLoginResult = await _userManager.AddLoginAsync(user, info);
+        if (!addLoginResult.Succeeded)
+        {
+            var userLogins = await _userManager.GetLoginsAsync(user);
+            var alreadyLinked = userLogins.Any(l => l.LoginProvider == info.LoginProvider && l.ProviderKey == info.ProviderKey);
+            if (!alreadyLinked)
+            {
+                var errors = string.Join("; ", addLoginResult.Errors.Select(e => e.Description));
+                TempData["ErrorMessage"] = $"Không thể liên kết tài khoản Google: {errors}";
+                return RedirectToAction(nameof(Login), new { returnUrl });
+            }
+        }
+
+        // 5. Đăng nhập và đồng bộ giỏ hàng
+        await _signInManager.SignInAsync(user, isPersistent: true);
+        await _cartService.MergeCartOnLoginAsync(user.Id);
+
+        TempData["Success"] = "Đăng nhập với Google thành công!";
+        return LocalRedirect(returnUrl ?? "/");
     }
 }

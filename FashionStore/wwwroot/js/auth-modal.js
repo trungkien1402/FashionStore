@@ -319,7 +319,34 @@
         },
 
         socialLogin(provider) {
-            alert(`[HNMTSHOP ATELIER] Đang kết nối tài khoản ${provider} sang không gian thành viên... (Tính năng OAuth đang ở chế độ thử nghiệm).`);
+            const form = document.createElement("form");
+            form.method = "POST";
+            form.action = "/Account/ExternalLogin";
+            form.style.display = "none";
+
+            const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+            if (tokenInput) {
+                const csrf = document.createElement("input");
+                csrf.type = "hidden";
+                csrf.name = "__RequestVerificationToken";
+                csrf.value = tokenInput.value;
+                form.appendChild(csrf);
+            }
+
+            const providerInput = document.createElement("input");
+            providerInput.type = "hidden";
+            providerInput.name = "provider";
+            providerInput.value = provider;
+            form.appendChild(providerInput);
+
+            const returnUrlInput = document.createElement("input");
+            returnUrlInput.type = "hidden";
+            returnUrlInput.name = "returnUrl";
+            returnUrlInput.value = window.location.pathname + window.location.search;
+            form.appendChild(returnUrlInput);
+
+            document.body.appendChild(form);
+            form.submit();
         }
     };
 

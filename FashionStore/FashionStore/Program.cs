@@ -17,6 +17,10 @@ const string importCatalogOption = "--import-showroom-catalog";
 var replaceCatalog = args.Contains(replaceCatalogOption, StringComparer.Ordinal);
 var importCatalog = args.Contains(importCatalogOption, StringComparer.Ordinal);
 var builder = WebApplication.CreateBuilder(args.Where(arg => arg != replaceCatalogOption && arg != importCatalogOption).ToArray());
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
+}
 
 // Đảm bảo luôn tìm thấy wwwroot (CSS, JS, 3D models, hình ảnh) dù ứng dụng chạy từ thư mục gốc giải pháp, Visual Studio hay output bin
 var candidateWebRoots = new[]
@@ -77,6 +81,22 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
+// External Authentication (Google)
+var googleClientId = builder.Configuration["Authentication:Google:ClientId"];
+var googleClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+
+var authBuilder = builder.Services.AddAuthentication();
+if (!string.IsNullOrWhiteSpace(googleClientId) && !string.IsNullOrWhiteSpace(googleClientSecret) &&
+    !googleClientId.StartsWith("YOUR_"))
+{
+    authBuilder.AddGoogle(options =>
+    {
+        options.ClientId = googleClientId;
+        options.ClientSecret = googleClientSecret;
+        options.SaveTokens = true;
+    });
+}
+
 // Session - Giỏ hàng
 builder.Services.AddDistributedMemoryCache();
 
@@ -100,6 +120,7 @@ builder.Services.Configure<SePayOptions>(builder.Configuration.GetSection(SePayO
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<AdminReportService>();
 builder.Services.AddSingleton<VietnamAddresses>();
+builder.Services.AddScoped<IntroPreference>();
 builder.Services.AddSingleton<FashionStore.Services.AdminPresenceService>();
 
 builder.Services.AddRateLimiter(options =>

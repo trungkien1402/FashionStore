@@ -40,9 +40,17 @@
                 Đăng ký thành viên để nhận những đặc quyền mua sắm và quản lý đơn hàng của bạn.
             </p>
 
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="at-alert-danger" role="alert" style="padding: 10px 14px; border-radius: 8px; margin-bottom: 16px; font-size: 13px;">
+                    <i class="bi bi-exclamation-circle-fill me-1"></i> @TempData["ErrorMessage"]
+                </div>
+            }
+
             <!-- Social OAuth -->
-            <div class="at-social-grid">
-                <button type="button" class="at-btn-social" id="btnGoogleReg" title="Đăng ký với Google">
+            <form asp-controller="Account" asp-action="ExternalLogin" method="post" class="at-social-grid" id="atSocialRegForm">
+                @Html.AntiForgeryToken()
+                <button type="submit" name="provider" value="Google" class="at-btn-social" id="btnGoogleReg" title="Đăng ký nhanh với Google">
                     <svg viewBox="0 0 24 24" width="16" height="16">
                         <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"/>
                         <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5.1 3.7-8.8z"/>
@@ -58,7 +66,7 @@
                     </svg>
                     <span>Apple ID</span>
                 </button>
-            </div>
+            </form>
 
             <!-- Subtle Divider -->
             <div class="at-divider">
@@ -355,16 +363,13 @@
                 confirmInput.addEventListener("input", checkMatch);
             }
 
-            // Simulated Social OAuth feedback
-            ["btnGoogleReg", "btnAppleReg"].forEach(id => {
-                const btn = document.getElementById(id);
-                if (btn) {
-                    btn.addEventListener("click", function() {
-                        const provider = id.includes("Google") ? "Google" : "Apple";
-                        alert(`[HNMTSHOP] Đang kết nối tài khoản ${provider}... (Tính năng OAuth đang ở chế độ thử nghiệm).`);
-                    });
-                }
-            });
+            // Simulated Social OAuth feedback cho Apple ID
+            const appleRegBtn = document.getElementById("btnAppleReg");
+            if (appleRegBtn) {
+                appleRegBtn.addEventListener("click", function() {
+                    alert("[HNMTSHOP] Tính năng đăng ký với Apple ID đang được cập nhật.");
+                });
+            }
         });
     </script>
 }
