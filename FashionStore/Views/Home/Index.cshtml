@@ -244,8 +244,19 @@
             <div class="hnmt-drops-grid">
                 @foreach (var p in Model)
                 {
+                    var productUrl = Url.Action("Details", "Products", new { id = p.Id, from = "home" });
+                    if (p.ShowroomAudience is "men" or "women" or "boy" or "girls"
+                        && FashionStore.Data.ShowroomCatalog.HasRailListing(p))
+                    {
+                        productUrl = p.ShowroomKind switch
+                        {
+                            "giay" => Url.Action("Sneakers", "Products", new { audience = p.ShowroomAudience, searchProduct = p.Id, from = "newDrops" }),
+                            "ao" or "quan" => Url.Action("Rail", "Products", new { type = p.ShowroomKind, audience = p.ShowroomAudience, searchProduct = p.Id, from = "newDrops" }),
+                            _ => productUrl
+                        };
+                    }
                     <div class="hnmt-drop-card" data-product-id="@p.Id">
-                        <a href="@(p.ShowroomKind == "giay" ? Url.Action("Sneakers", "Products", new { audience = p.ShowroomAudience, productId = p.Id, from = "home" }) : Url.Action("Details", "Products", new { id = p.Id, from = "home" }))" class="hnmt-drop-card-link" title="@p.Name">
+                        <a href="@productUrl" class="hnmt-drop-card-link" title="@p.Name">
                             <div class="hnmt-drop-card-media">
                                 <img src="@(string.IsNullOrEmpty(p.ImageUrl) ? "/images/placeholder.jpg" : p.ImageUrl)"
                                      alt="@p.Name"
@@ -423,8 +434,12 @@
 <!-- ============================================================== -->
 <!-- SECTION 7: ĐÁNH GIÁ (THỜI TRANG TỰ NÓI LÊN TẤT CẢ)             -->
 <!-- ============================================================== -->
-<section class="urbn-reviews-section">
+<section class="urbn-reviews-section" id="customer-reviews">
     <div class="urbn-container">
+
+        @{
+            var customerReviews = ViewBag.CustomerReviews as List<FashionStore.Models.ViewModels.HomeReviewViewModel> ?? [];
+        }
 
         <div class="urbn-reviews-top">
             <div>
@@ -435,62 +450,84 @@
                     Khám phá phong cách vượt lên trên mọi xu hướng — Những thiết kế giúp bạn bộc lộ cá tính, nâng tầm phong cách và tạo dấu ấn ở mọi nơi bạn đến.
                 </p>
             </div>
-            <a asp-controller="Products" asp-action="Index" class="urbn-btn-see-all">
-                Xem Tất Cả &#x2197;
-            </a>
+            @{
+                int reviewPage = ViewBag.ReviewPage;
+                int reviewPages = ViewBag.ReviewPages;
+            }
+            @if (reviewPages > 1)
+            {
+                <nav class="review-pagination" aria-label="Phân trang đánh giá">
+                    @if (reviewPage > 1)
+                    {
+                        <a asp-action="Index" asp-route-reviewPage="@(reviewPage - 1)" asp-fragment="customer-reviews" aria-label="Trang trước"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><polyline points="14 6 8 12 14 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+                    }
+                    else
+                    {
+                        <button type="button" disabled aria-label="Trang trước"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><polyline points="14 6 8 12 14 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                    }
+                    @if (reviewPage < reviewPages)
+                    {
+                        <a asp-action="Index" asp-route-reviewPage="@(reviewPage + 1)" asp-fragment="customer-reviews" aria-label="Trang sau"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><polyline points="10 6 16 12 10 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+                    }
+                    else
+                    {
+                        <button type="button" disabled aria-label="Trang sau"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><polyline points="10 6 16 12 10 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                    }
+                </nav>
+            }
         </div>
 
-        <div class="urbn-reviews-grid">
-
-            <!-- Đánh giá 1: Hoàng Minh -->
-            <div class="urbn-review-box">
-                <div class="urbn-stars-row">
-                    &#x2605;&#x2605;&#x2605;&#x2605;&#x2605;
-                </div>
-                <p class="urbn-review-quote">
-                    Mình cực kỳ thích đồ của HNMTSHOP! Thiết kế độc lạ, bắt trend mà chất vải dày dặn cao cấp xịn xò. Mặc ra đường ai cũng khen. Chắc chắn là brand ruột của mình!
-                </p>
-                <div class="urbn-author-row">
-                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80"
-                         alt="Hoàng Minh" />
-                    <strong>Hoàng Minh (Hà Nội)</strong>
-                </div>
+        @if (customerReviews.Count > 0)
+        {
+            <div class="urbn-reviews-grid">
+                @foreach (var review in customerReviews)
+                {
+                    <partial name="_ReviewCard" model="review" />
+                }
             </div>
-
-            <!-- Đánh giá 2: Quốc Bảo -->
-            <div class="urbn-review-box">
-                <div class="urbn-stars-row">
-                    &#x2605;&#x2605;&#x2605;&#x2605;&#x2605;
-                </div>
-                <p class="urbn-review-quote">
-                    Một trong những thương hiệu thời trang streetwear ưng ý nhất mình từng mua. Form dáng mặc lên cực kỳ tôn dáng, chất liệu thoáng mát. Mọi chi tiết may đo đều rất chỉn chu.
-                </p>
-                <div class="urbn-author-row">
-                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80"
-                         alt="Quốc Bảo" />
-                    <strong>Quốc Bảo (TP.HCM)</strong>
-                </div>
+        }
+        else
+        {
+            <div class="urbn-reviews-empty">
+                <p>Chưa có đánh giá nào từ khách hàng. Hãy trải nghiệm sản phẩm và chia sẻ cảm nhận thực tế của bạn cùng HNMTSHOP!</p>
+                <a asp-controller="Products" asp-action="Index" class="urbn-btn-see-all">
+                    Khám Phá Sản Phẩm &#x2197;
+                </a>
             </div>
-
-            <!-- Đánh giá 3: Thùy Trang -->
-            <div class="urbn-review-box">
-                <div class="urbn-stars-row">
-                    &#x2605;&#x2605;&#x2605;&#x2605;&#x2605;
-                </div>
-                <p class="urbn-review-quote">
-                    Mê mẩn từ màu sắc đến từng đường nét! HNMTSHOP cân bằng hoàn hảo giữa thời trang và sự thoải mái khi mặc. Mình đã giới thiệu cho tất cả bạn bè cùng mua!
-                </p>
-                <div class="urbn-author-row">
-                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
-                         alt="Thùy Trang" />
-                    <strong>Thùy Trang (Đà Nẵng)</strong>
-                </div>
-            </div>
-
-        </div>
+        }
 
     </div>
 </section>
+<script>
+(() => {
+    const section = document.getElementById('customer-reviews');
+    let loading = false;
+    section.addEventListener('click', async event => {
+        const link = event.target.closest('.review-pagination a');
+        if (!link || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+        event.preventDefault();
+        if (loading) return;
+        loading = true;
+        try {
+            const response = await fetch(link.href);
+            if (!response.ok) throw new Error('Review page unavailable');
+            const next = new DOMParser().parseFromString(await response.text(), 'text/html').getElementById(section.id);
+            if (!next) throw new Error('Reviews unavailable');
+            section.replaceChildren(...next.children);
+            history.replaceState(history.state, '', link.href);
+            const grid = section.querySelector('.urbn-reviews-grid');
+            if (grid && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                grid.animate([{ opacity: 0, transform: 'translateX(' + (link.getAttribute('aria-label') === 'Trang sau' ? 24 : -24) + 'px)' }, { opacity: 1, transform: 'translateX(0)' }], { duration: 240, easing: 'ease-out' });
+            }
+        } catch {
+            location.assign(link.href);
+        } finally {
+            loading = false;
+        }
+    });
+})();
+</script>
+
 
 <!-- ============================================================== -->
 <!-- SECTION: GIA NHẬP CỘNG ĐỒNG HNMT CLUB (VOUCHER ĐƠN ĐẦU)        -->

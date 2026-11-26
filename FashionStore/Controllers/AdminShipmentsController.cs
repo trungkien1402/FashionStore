@@ -248,6 +248,7 @@ public class AdminShipmentsController : Controller
 
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
+            ShowroomCatalog.Invalidate();
 
             TempData["Success"] = $"Đã tạo lượt giao hàng thành công! Mã vận đơn: {trackingCode}";
             return RedirectToAction(nameof(Details), new { id = shipment.Id });

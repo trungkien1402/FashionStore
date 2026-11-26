@@ -1232,9 +1232,9 @@ a.sv-exit-btn {
 
 /* Khung Drawer Đánh giá Giày */
 .sv-reviews-drawer {
-    position: absolute;
-    bottom: calc(100% + 14px);
-    right: 0;
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
     width: 390px;
     max-width: calc(100vw - 32px);
     max-height: min(78vh, 600px);

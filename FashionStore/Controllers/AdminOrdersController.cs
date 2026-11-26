@@ -291,6 +291,8 @@ public class AdminOrdersController : Controller
 
             await transaction.CommitAsync();
 
+            ShowroomCatalog.Invalidate();
+
             TempData["Success"] = $"Đã cập nhật đơn hàng #{order.OrderCode} sang {GetStatusName(newStatus)} thành công.";
 
             if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
@@ -399,6 +401,7 @@ public class AdminOrdersController : Controller
                 _context.StockReason = "Cập nhật hàng loạt đơn " + order.OrderCode;
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
+                ShowroomCatalog.Invalidate();
                 successCount++;
             }
             catch

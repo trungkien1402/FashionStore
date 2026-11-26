@@ -13,6 +13,18 @@ public class ApplicationDbContext
     {
     }
 
+    private bool HasCatalogChanges() => ChangeTracker.Entries().Any(entry =>
+        (entry.Entity is Product or ProductVariant) &&
+        (entry.State is EntityState.Added or EntityState.Modified or EntityState.Deleted));
+
+    public override int SaveChanges(bool acceptAllChangesOnSuccess)
+    {
+        var catalogChanged = HasCatalogChanges();
+        var rows = base.SaveChanges(acceptAllChangesOnSuccess);
+        if (catalogChanged) ShowroomCatalog.Invalidate();
+        return rows;
+    }
+
     public DbSet<Product> Products => Set<Product>();
     public DbSet<LookbookCollection> LookbookCollections => Set<LookbookCollection>();
     public DbSet<LookbookLook> LookbookLooks => Set<LookbookLook>();
@@ -56,7 +68,7 @@ public class ApplicationDbContext
     public string? StockActorId { get; set; }
     public string StockReason { get; set; } = "Cập nhật tồn kho";
 
-    public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
+    public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
         CancellationToken cancellationToken = default)
     {
         var pending = ChangeTracker.Entries<StockMovement>().Where(entry => entry.State == EntityState.Added)
@@ -86,7 +98,10 @@ public class ApplicationDbContext
             });
         }
 
-        return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        var catalogChanged = HasCatalogChanges();
+        var rows = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        if (catalogChanged) ShowroomCatalog.Invalidate();
+        return rows;
     }
 
     public DbSet<SupportConversation> SupportConversations => Set<SupportConversation>();

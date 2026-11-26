@@ -315,6 +315,38 @@ public static class ShowroomCatalog
         return (added, removed);
     }
 
+    private sealed record CatalogSnapshot(string Json, long Version, DateTimeOffset ExpiresAt);
+    private static readonly SemaphoreSlim CatalogRefresh = new(1);
+    private static CatalogSnapshot? _snapshot;
+    private static long _catalogVersion;
+
+    internal static void Invalidate() => Interlocked.Increment(ref _catalogVersion);
+
+    public static async Task<string> ReadJsonAsync(ApplicationDbContext db, CancellationToken cancellationToken)
+    {
+        var snapshot = Volatile.Read(ref _snapshot);
+        if (snapshot != null && snapshot.Version == Interlocked.Read(ref _catalogVersion) &&
+            snapshot.ExpiresAt > DateTimeOffset.UtcNow)
+            return snapshot.Json;
+
+        await CatalogRefresh.WaitAsync(cancellationToken);
+        try
+        {
+            var version = Interlocked.Read(ref _catalogVersion);
+            snapshot = Volatile.Read(ref _snapshot);
+            if (snapshot != null && snapshot.Version == version && snapshot.ExpiresAt > DateTimeOffset.UtcNow)
+                return snapshot.Json;
+
+            var json = JsonSerializer.Serialize(await ReadAsync(db), JsonOptions);
+            Volatile.Write(ref _snapshot, new CatalogSnapshot(json, version, DateTimeOffset.UtcNow.AddSeconds(30)));
+            return json;
+        }
+        finally
+        {
+            CatalogRefresh.Release();
+        }
+    }
+
     public static async Task<object> ReadAsync(ApplicationDbContext db)
     {
         var products = await db.Products.AsNoTracking()

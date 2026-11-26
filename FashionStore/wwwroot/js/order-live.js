@@ -62,7 +62,7 @@
     document.addEventListener("visibilitychange", refresh);
     window.addEventListener("pagehide", () => { stopped = true; clearInterval(timer); });
     window.addEventListener("pageshow", event => {
-        if (event.persisted) { stopped = false; timer = setInterval(refresh, 4000); refresh(); }
+        if (event.persisted) { stopped = false; timer = setInterval(refresh, 8000); refresh(); }
     });
-    timer = setInterval(refresh, 4000);
+    timer = setInterval(refresh, 8000);
 })();

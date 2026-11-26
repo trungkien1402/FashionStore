@@ -9,43 +9,6 @@
 (function () {
     'use strict';
 
-    // Helper: Bỏ dấu tiếng Việt để tìm kiếm không dấu
-    function removeVietnameseTones(str) {
-        if (!str) return '';
-        str = str.toLowerCase();
-        str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, 'a');
-        str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, 'e');
-        str = str.replace(/ì|í|ị|ỉ|ĩ/g, 'i');
-        str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, 'o');
-        str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, 'u');
-        str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, 'y');
-        str = str.replace(/đ/g, 'd');
-        str = str.replace(/\u0300|\u0301|\u0303|\u0309|\u0323/g, '');
-        str = str.replace(/\u02C6|\u0306|\u031B/g, '');
-        return str.trim();
-    }
-
-    // Từ khóa nhận diện màu sắc
-    const COLOR_KEYWORDS = {
-        black: ['den', 'black', 'carbon', 'charcoal', 'pitch', 'than chi', 'onyx', 'stealth'],
-        white: ['trang', 'white', 'be', 'kem', 'cream', 'sand', 'ivory', 'ecru', 'alabaster', 'sua', 'frost', 'pure', 'ice'],
-        gray: ['xam', 'gray', 'grey', 'bac', 'silver', 'acid', 'smoke', 'marl', 'stone', 'da', 'storm', 'chrome', 'slate'],
-        sand: ['cat', 'sand', 'khaki', 'camel', 'tan', 'beige', 'nau nhat', 'sa mac', 'desert'],
-        brown: ['nau', 'brown', 'mocha', 'chocolate', 'espresso', 'cacao', 'coffee', 'go', 'wood', 'nau dam'],
-        blue: ['xanh', 'blue', 'indigo', 'denim', 'cham', 'cobalt', 'azure', 'troi', 'sonic', 'polar', 'glacier'],
-        navy: ['navy', 'hai quan', 'xanh tham', 'dam', 'dark blue', 'midnight', 'muc', 'deep blue', 'deep carbon'],
-        teal: ['ngoc', 'teal', 'mint', 'turquoise', 'cyan', 'tiffany'],
-        green: ['reu', 'green', 'olive', 'la cay', 'moss', 'army', 'khaki green', 'bo', 'forest', 'emerald', 'matrix'],
-        lime: ['volt', 'lime', 'neon', 'acid', 'chuoi', 'da quang'],
-        purple: ['tim', 'purple', 'violet', 'lunar', 'magenta', 'aura', 'lilac', 'lavender', 'hoa ca', 'plum'],
-        red: ['do', 'red', 'crimson', 'scarlet', 'magma', 'infrared', 'infraray', 'fury', 'rubi'],
-        burgundy: ['burgundy', 'maroon', 'ruou', 'man', 'bordeaux', 'do tham', 'wine'],
-        orange: ['cam', 'orange', 'amber', 'sunset', 'flare', 'terracotta', 'clay', 'dat nung', 'rust'],
-        yellow: ['vang', 'yellow', 'gold', 'solaris', 'imperial', 'mustard', 'lemon', 'canary'],
-        pink: ['hong', 'pink', 'rose', 'phan', 'pastel', 'lotus', 'dao', 'blush', 'fuchsia'],
-        metallic: ['kim loai', 'metallic', 'metal', 'dong', 'bronze', 'copper', 'gold chrome', 'anh kim']
-    };
-
     // Bảng 18 màu Swatches thời trang
     const FASHION_SWATCHES = [
         { id: 'all', name: 'Tất cả màu', bg: 'conic-gradient(from 180deg at 50% 50%, #ff4d4d, #f9cb28, #79d70f, #00d2fc, #c56cf0, #ff4d4d)', border: 'rgba(255,255,255,0.4)' },
@@ -245,6 +208,7 @@
     const CENTER_CONFIRM_MODAL_HTML = `
         <div class="hnmt-center-confirm-backdrop" id="hnmtHomeConfirmModal" aria-hidden="true">
             <div class="hnmt-center-confirm-card" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+                <button type="button" class="home-results-close" id="homeResultsClose" aria-label="Đóng kết quả tìm kiếm" hidden>&times;</button>
                 <h3 class="confirm-title" id="confirmTitle">Chuyển tiếp đến không gian 3D</h3>
                 <div id="homeMatchingProducts"></div>
                 
@@ -300,17 +264,14 @@
 
     // Đọc cơ sở dữ liệu Showroom Catalog theo đối tượng được chọn
     let showroomCatalogCache;
-    function getCatalogData(aud = currentAudience, includeLookbook = Boolean(currentKeyword.trim())) {
+    function getCatalogData(aud = currentAudience) {
         try {
             const el = document.getElementById('showroomCatalog');
             if (!el) return { shirts: [], pants: [], shoes: [] };
             showroomCatalogCache ??= JSON.parse(el.textContent);
             const data = showroomCatalogCache;
             const audiences = aud === 'all' ? Object.keys(AUDIENCES) : [aud];
-            const extra = includeLookbook
-                ? [...Object.values(data.lookbook || {}), ...Object.values(data.additionalProducts || {})]
-                    .filter(item => audiences.includes(item.audience))
-                : [];
+            const extra = currentKeyword.trim() ? Object.values(data.lookbook || {}).filter(item => audiences.includes(item.audience)) : [];
             const shirts = audiences.flatMap(audience => data?.clothing?.[audience]?.ao || []);
             const pants = audiences.flatMap(audience => data?.clothing?.[audience]?.quan || []);
             const shoeCollections = audiences.flatMap(audience => data?.shoes?.[audience] || []);
@@ -320,7 +281,14 @@
             shirts.push(...extra.filter(item => item.kind === 'ao'));
             pants.push(...extra.filter(item => item.kind === 'quan'));
             shoes.push(...extra.filter(item => item.kind === 'giay'));
-            return { shirts, pants, shoes };
+            function unique(items) {
+                const byId = new Map();
+                for (const item of items) {
+                    if (!byId.has(item.productId)) byId.set(item.productId, item);
+                }
+                return [...byId.values()];
+            }
+            return { shirts: unique(shirts), pants: unique(pants), shoes: unique(shoes) };
         } catch (e) {
             console.warn('Lỗi đọc catalog cho Home Filter:', e);
             return { shirts: [], pants: [], shoes: [] };
@@ -328,7 +296,6 @@
     }
 
     function initHomeFilter() {
-        if (window.HNMTHomeFilter) return;
         const { drawer, confirmModal } = ensureDOM();
 
         // Các thành phần Drawer
@@ -361,6 +328,7 @@
         const confirmCount = document.getElementById('confirmCount');
         const confirmTagsRecap = document.getElementById('confirmTagsRecap');
         const confirmProceedText = document.getElementById('confirmProceedText');
+        const resultsCloseBtn = document.getElementById('homeResultsClose');
         const confirmStayBtn = document.getElementById('confirmStayBtn');
         const confirmProceedBtn = document.getElementById('confirmProceedBtn');
 
@@ -507,54 +475,15 @@
             }
         }
 
-        function normalizeSearch(value) {
-            return removeVietnameseTones(value).replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim();
-        }
-
-        function matchesKeyword(item, kind, query) {
-            if (!query) return true;
-            const name = normalizeSearch(item.name || '');
-            if (name === query) return true;
-
-            const productType = normalizeSearch([item.name, item.type, item.style, item.categoryName, item.categorySlug].join(' '));
-            const aliases = [];
-            if (kind === 'giay') {
-                aliases.push('giay');
-                if (/\b(sneakers?|trainers?|runners?|running|the thao)\b/.test(productType)) aliases.push('giay the thao');
-                if (/\b(boots?|chelsea)\b/.test(productType)) aliases.push('giay boot');
-                if (/\b(heels?|pumps?|cao got)\b/.test(productType)) aliases.push('giay cao got');
-            }
-            if (kind === 'quan') {
-                aliases.push('quan');
-                if (/\b(jeans?|denim)\b/.test(productType)) aliases.push('quan jean', 'quan jeans');
-            }
-            if (kind === 'ao') {
-                if (/\b(dress|dresses|skirt|skirts|vay|dam)\b/.test(productType)) aliases.push('vay', 'dam');
-                else aliases.push('ao');
-                if (/\b(tees?|t shirts?|ao thun)\b/.test(productType)) aliases.push('ao thun', 'ao phong');
-                if (/\b(so mi|blouse|shirt)\b/.test(productType) && !aliases.includes('ao thun')) aliases.push('ao so mi');
-                if (/\b(jacket|coat|bomber|ao khoac)\b/.test(productType)) aliases.push('ao khoac');
-            }
-
-            const audience = { men: 'nam', women: 'nu', boy: 'be trai', girls: 'be gai' }[item.audience];
-            const audienceSuffix = query.match(/^(ao|quan|giay|vay|dam)\b.* (nam|nu|be trai|be gai)$/);
-            if (audienceSuffix && audienceSuffix[2] !== audience) return false;
-            const term = audienceSuffix ? query.slice(0, -audience.length).trimEnd() : query;
-            if (aliases.includes(term)) return true;
-
-            const corpus = normalizeSearch([productType, item.desc, item.sku, ...aliases].join(' '));
-            return term.split(' ').every(word => corpus.includes(word));
-        }
-
         // Thuật toán Lọc Live Sản Phẩm
         function computeLiveMatches() {
-            const query = normalizeSearch(currentKeyword);
             const catalog = getCatalogData();
             const kinds = { ao: catalog.shirts, quan: catalog.pants, giay: catalog.shoes };
             const selectedKinds = currentMasterCategory === 'all' ? Object.keys(kinds) : [currentMasterCategory];
             const sourceList = selectedKinds.flatMap(kind => kinds[kind].map(item => ({ item, kind })));
             const itemUnit = { ao: 'áo', quan: 'quần', giay: 'đôi giày' }[currentMasterCategory] || 'sản phẩm';
 
+            const matchesKeyword = window.ShowroomFilterOptions.createKeywordMatcher(currentKeyword);
             const conf = PRICE_CONFIGS[currentMasterCategory] || PRICE_CONFIGS.ao;
             const maxPrice = Number(priceRange.value);
 
@@ -573,31 +502,9 @@
                     return false;
                 }
 
-                // 4. Gam màu
-                if (currentColor !== 'all') {
-                    const colorKeywords = COLOR_KEYWORDS[currentColor] || [currentColor];
-                    let hasColor = false;
-                    const combinedInfo = removeVietnameseTones(`${item.name || ''} ${item.desc || ''} ${item.colorName || ''}`).toLowerCase();
+                if (window.ShowroomFilterOptions.colorVariant(item, currentColor) < 0) return false;
 
-                    // Kiểm tra mảng variants/colors nếu có
-                    if (Array.isArray(item.colors)) {
-                        for (const col of item.colors) {
-                            const cName = removeVietnameseTones(typeof col === 'string' ? col : (Array.isArray(col) ? col[0] : col.name || '')).toLowerCase();
-                            if (colorKeywords.some(kw => cName.includes(kw))) {
-                                hasColor = true;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (!hasColor && colorKeywords.some(kw => combinedInfo.includes(kw))) {
-                        hasColor = true;
-                    }
-
-                    if (!hasColor) return false;
-                }
-
-                return matchesKeyword(item, kind, query);
+                return matchesKeyword({ item, kind });
             }).map(({ item }) => item);
 
             // Cập nhật số lượng trên nút Áp Dụng
@@ -609,55 +516,22 @@
                 applyCountBadge.textContent = hasActiveFilter ? `${count} ${itemUnit}` : 'Chọn bộ lọc';
             }
 
-            renderSearchSuggestions(query);
             return count;
         }
 
-        function openExactProduct() {
-            const keyword = normalizeSearch(currentKeyword);
-            if (!keyword) return false;
-            const exactMatches = filteredProductList.filter(item =>
-                normalizeSearch(item.name || '') === keyword &&
-                Number.isSafeInteger(item.productId) && item.productId > 0);
-            return exactMatches.length === 1 && openShowroomProduct(exactMatches[0], true);
-        }
-
-        function openShowroomProduct(product, fromSearch) {
-            const portal = window.HNMTChilePortal;
-            if (!portal) return false;
-            if (!portal.getAudience()) portal.open(product.audience);
-            const returnToSearch = () => {
-                portal.close({ immediate: true });
-                if (product.kind === 'giay') window.closeSneakerShowcase();
-                else window.ClothingRail.closeClothingRail();
-                if (fromSearch) {
-                    openDrawer();
-                    searchInput?.focus();
-                }
-            };
-            const opened = product.kind === 'giay'
-                ? window.SneakerVault?.selectProduct?.(product.id, product.audience, product, returnToSearch)
-                : window.ClothingRail?.selectProduct?.(product.kind, product.slug, product.audience, product, returnToSearch);
-            if (opened) {
-                closeDrawer();
-                closeConfirmModal();
-            }
-            return Boolean(opened);
-        }
-
         // Chuyển đổi Đối Tượng (Nam / Nữ / Bé Trai / Bé Gái)
-        function switchAudience(newAud) {
+        function switchAudience(newAud, refresh = true) {
             if (newAud !== 'all' && !Object.hasOwn(AUDIENCES, newAud)) newAud = 'all';
             currentAudience = newAud;
             populateSubCategories(currentMasterCategory, true);
             if (audienceSelect && audienceSelect.value !== newAud) {
                 audienceSelect.value = newAud;
             }
-            computeLiveMatches();
+            if (refresh) computeLiveMatches();
         }
 
         // Chuyển đổi Master Category
-        function switchMasterCategory(newCat) {
+        function switchMasterCategory(newCat, refresh = true) {
             currentMasterCategory = newCat;
             if (masterCatSelect) masterCatSelect.value = newCat;
 
@@ -671,7 +545,7 @@
 
             populateSubCategories(newCat, false);
             updatePriceSliderConfig(newCat);
-            computeLiveMatches();
+            if (refresh) computeLiveMatches();
         }
 
         // Mở Drawer Bộ Lọc (hỗ trợ chuyển sẵn đối tượng nếu được truyền)
@@ -693,26 +567,47 @@
         }
 
         // Mở Center Confirm Modal (Thuần Chữ, Trắng Tinh Tế, Dễ Đọc)
-        function openConfirmModal() {
+        function matchingExperience() {
+            const first = filteredProductList[0];
+            if (!first || !Object.hasOwn(AUDIENCES, first.audience) ||
+                !['ao', 'quan', 'giay'].includes(first.kind)) return null;
+
+            const sameExperience = filteredProductList.every(product =>
+                product.audience === first.audience && product.kind === first.kind &&
+                !product.lookbookOnly && (product.kind !== 'giay' || product.collectionId));
+            return sameExperience ? { audience: first.audience, category: first.kind } : null;
+        }
+
+        function openConfirmModal(results) {
+            if (Array.isArray(results?.productIds)) {
+                const { shirts, pants, shoes } = getCatalogData();
+                const products = new Map([...shirts, ...pants, ...shoes].map(item => [item.productId, item]));
+                filteredProductList = results.productIds.map(id => products.get(id)).filter(Boolean);
+            } else {
+                computeLiveMatches();
+            }
             closeDrawer();
 
             const audLabel = AUDIENCES[currentAudience] || 'Tất cả';
-            const showProducts = !!currentKeyword.trim() || currentAudience === 'all' || currentMasterCategory === 'all';
+            const experience = results?.page ? null : matchingExperience();
+            const showProducts = !experience;
+            const targetAudienceLabel = experience ? AUDIENCES[experience.audience] : audLabel;
             const list = document.getElementById('homeMatchingProducts');
             list.replaceChildren();
             document.getElementById('confirmTitle').textContent = showProducts ? 'Kết quả tìm kiếm' : 'Chuyển tiếp đến không gian 3D';
             document.getElementById('confirmDesc').style.display = showProducts ? 'none' : '';
             confirmProceedBtn.style.display = showProducts ? 'none' : '';
             confirmStayBtn.textContent = showProducts ? 'Đóng' : 'Ở lại Trang Chủ';
-            if (showProducts) renderMatchingProducts(1);
-            let targetTitle = `Sào Áo 3D (${audLabel})`;
+            resultsCloseBtn.hidden = !showProducts;
+            if (showProducts) renderMatchingProducts(results?.page || 1);
+            let targetTitle = `Sào Áo 3D (${targetAudienceLabel})`;
             let proceedBtnLabel = `Khám Phá Sào Áo Ngay`;
 
-            if (currentMasterCategory === 'quan') {
-                targetTitle = `Sào Quần 3D (${audLabel})`;
+            if (experience?.category === 'quan') {
+                targetTitle = `Sào Quần 3D (${targetAudienceLabel})`;
                 proceedBtnLabel = `Khám Phá Sào Quần Ngay`;
-            } else if (currentMasterCategory === 'giay') {
-                targetTitle = `Tủ Giày Sneaker Vault (${audLabel})`;
+            } else if (experience?.category === 'giay') {
+                targetTitle = `Tủ Giày Sneaker Vault (${targetAudienceLabel})`;
                 proceedBtnLabel = `Đến Sneaker Vault Ngay`;
             }
 
@@ -789,6 +684,7 @@
             const list = document.getElementById('homeMatchingProducts');
             const pageSize = 12;
             const pageCount = Math.ceil(filteredProductList.length / pageSize);
+            page = Math.max(1, Math.min(page, pageCount));
             const start = (page - 1) * pageSize;
             const products = filteredProductList.slice(start, start + pageSize);
             list.replaceChildren();
@@ -811,10 +707,28 @@
                 if (!Number.isSafeInteger(product.productId) || product.productId <= 0) continue;
                 const card = document.createElement('a');
                 card.className = 'search-result-card';
-                card.href = '/?showroomProductId=' + product.productId;
+                card.href = '/Products/Details/' + product.productId + '?from=home';
+                if (!product.lookbookOnly && Object.hasOwn(AUDIENCES, product.audience)) {
+                    const query = new URLSearchParams({ audience: product.audience, searchProduct: product.productId });
+                    if (product.kind === 'giay' && product.collectionId) {
+                        card.href = '/Products/Sneakers?' + query;
+                    } else if (product.kind === 'ao' || product.kind === 'quan') {
+                        query.set('type', product.kind);
+                        card.href = '/Products/Rail?' + query;
+                    }
+                }
                 card.addEventListener('click', event => {
                     if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
-                    if (openShowroomProduct(product, true)) event.preventDefault();
+                    history.replaceState({
+                        ...history.state,
+                        homeSearch: {
+                            page, scrollTop: grid.scrollTop, audience: currentAudience,
+                            category: currentMasterCategory, subCategory: currentSubCategory,
+                            style: currentDetailedStyle, color: currentColor, price: priceRange.value,
+                            keyword: currentKeyword,
+                            productIds: filteredProductList.map(item => item.productId)
+                        }
+                    }, '');
                 });
                 const photo = document.createElement('img');
                 photo.src = product.frontImg || product.image || '';
@@ -853,40 +767,43 @@
 
         // Đóng Center Confirm Modal
         function closeConfirmModal() {
+            if (history.state?.homeSearch) {
+                const { homeSearch, ...state } = history.state;
+                history.replaceState(state, '');
+            }
             confirmModal.classList.remove('is-open');
             confirmModal.setAttribute('aria-hidden', 'true');
         }
 
         // Chuyển tiếp không gian khi khách bấm xác nhận
         function proceedToExperience() {
+            const experience = matchingExperience();
+            if (!experience) return;
             closeConfirmModal();
 
-            const audLabel = AUDIENCES[currentAudience] || 'Nam';
+            const { audience, category } = experience;
+            const audLabel = AUDIENCES[audience];
 
             // Đóng gói payload bộ lọc để trang đích nhận diện
             const filterPayload = {
-                audience: currentAudience,
-                category: currentMasterCategory,
+                audience,
+                category,
                 subCategory: currentSubCategory,
                 detailedStyle: currentDetailedStyle,
                 color: currentColor,
-                maxPrice: Number(priceRange.value),
+                maxPrice: Number(priceRange.value) < Number(priceRange.max) ? Number(priceRange.value) : null,
                 keyword: currentKeyword,
                 filteredProducts: filteredProductList,
                 label: `LỌC TỪ TRANG CHỦ (${audLabel} - ${filteredProductList.length} MÓN)`
             };
 
-            const audQuery = `&audience=${encodeURIComponent(currentAudience)}`;
-
-            if (currentMasterCategory === 'ao') {
-                sessionStorage.setItem('hnmt_pending_rail_filter', JSON.stringify(filterPayload));
-                window.location.href = `/Products/Rail?type=ao${audQuery}`;
-            } else if (currentMasterCategory === 'quan') {
-                sessionStorage.setItem('hnmt_pending_rail_filter', JSON.stringify(filterPayload));
-                window.location.href = `/Products/Rail?type=quan${audQuery}`;
-            } else {
+            const audQuery = encodeURIComponent(audience);
+            if (category === 'giay') {
                 sessionStorage.setItem('hnmt_pending_sneaker_filter', JSON.stringify(filterPayload));
-                window.location.href = `/Products/Sneakers?audience=${encodeURIComponent(currentAudience)}`;
+                window.location.href = `/Products/Sneakers?audience=${audQuery}`;
+            } else {
+                sessionStorage.setItem('hnmt_pending_rail_filter', JSON.stringify(filterPayload));
+                window.location.href = `/Products/Rail?type=${category}&audience=${audQuery}`;
             }
         }
 
@@ -900,6 +817,7 @@
             currentColor = 'all';
             currentKeyword = '';
             if (searchInput) searchInput.value = '';
+            renderSearchSuggestions('');
             if (clearSearchBtn) clearSearchBtn.style.display = 'none';
             if (selectedColorName) selectedColorName.textContent = 'Tất cả màu';
 
@@ -957,7 +875,7 @@
 
         if (searchInput) {
             searchInput.addEventListener('keydown', event => {
-                if (event.key === 'Enter' && !event.isComposing && !openExactProduct()) openConfirmModal();
+                if (event.key === 'Enter' && !event.isComposing) openConfirmModal();
             });
             searchInput.addEventListener('input', (e) => {
                 currentKeyword = e.target.value;
@@ -965,6 +883,7 @@
                     clearSearchBtn.style.display = currentKeyword.length > 0 ? 'block' : 'none';
                 }
                 computeLiveMatches();
+                renderSearchSuggestions(currentKeyword);
             });
         }
 
@@ -972,21 +891,19 @@
             clearSearchBtn.addEventListener('click', () => {
                 currentKeyword = '';
                 searchInput.value = '';
+                renderSearchSuggestions('');
                 clearSearchBtn.style.display = 'none';
                 computeLiveMatches();
                 searchInput.focus();
             });
         }
 
-        function renderSearchSuggestions(query) {
+        function renderSearchSuggestions(keyword) {
             const box = document.getElementById('homeSearchSuggestions');
             box.replaceChildren();
-            if (!query) {
-                box.hidden = true;
-                return;
-            }
-
-            const names = [...new Set(filteredProductList.map(item => item.name).filter(Boolean))].slice(0, 5);
+            const names = keyword.trim()
+                ? [...new Set(filteredProductList.map(item => item.name).filter(Boolean))].slice(0, 5)
+                : [];
             if (!names.length) {
                 box.hidden = true;
                 return;
@@ -1000,9 +917,9 @@
                 option.addEventListener('click', () => {
                     searchInput.value = name;
                     currentKeyword = name;
-                    computeLiveMatches();
                     box.hidden = true;
-                    if (!openExactProduct()) searchInput.focus();
+                    computeLiveMatches();
+                    searchInput.focus();
                 });
                 box.appendChild(option);
             }
@@ -1010,12 +927,11 @@
         }
 
         if (applyBtn) {
-            applyBtn.addEventListener('click', () => {
-                if (!openExactProduct()) openConfirmModal();
-            });
+            applyBtn.addEventListener('click', openConfirmModal);
         }
 
         // Confirm Modal Buttons
+        resultsCloseBtn.addEventListener('click', closeConfirmModal);
         if (confirmStayBtn) {
             confirmStayBtn.addEventListener('click', closeConfirmModal);
         }
@@ -1050,9 +966,29 @@
         populateSubCategories(currentMasterCategory, false);
         renderColorSwatches();
         updatePriceSliderConfig(currentMasterCategory);
-        computeLiveMatches();
-
         // Gắn vào window để gọi từ các nút bấm bên ngoài
+        const savedSearch = history.state?.homeSearch;
+        if (savedSearch) {
+            switchAudience(savedSearch.audience, false);
+            switchMasterCategory(savedSearch.category, false);
+            subCatSelect.value = savedSearch.subCategory;
+            populateSubCategories(currentMasterCategory, true);
+            detailedStyleSelect.value = savedSearch.style;
+            populateDetailedStyles(currentMasterCategory, currentSubCategory, true);
+            currentColor = savedSearch.color;
+            updateColorSwatchesUI();
+            priceRange.value = savedSearch.price;
+            updatePriceLabel(priceRange.value);
+            currentKeyword = savedSearch.keyword;
+            searchInput.value = currentKeyword;
+            if (clearSearchBtn) clearSearchBtn.style.display = currentKeyword ? 'block' : 'none';
+            openConfirmModal(savedSearch);
+            const grid = confirmModal.querySelector('.search-results-grid');
+            if (grid) grid.scrollTop = savedSearch.scrollTop;
+        } else {
+            computeLiveMatches();
+        }
+
         window.HNMTHomeFilter = {
             open: openDrawer,
             close: closeDrawer,
@@ -1061,16 +997,6 @@
             switchAudience: switchAudience,
             getAudience: () => currentAudience
         };
-
-        const requestedProductId = Number(new URLSearchParams(location.search).get('showroomProductId'));
-        if (requestedProductId > 0) {
-            const catalog = getCatalogData('all', true);
-            const product = [...catalog.shirts, ...catalog.pants, ...catalog.shoes]
-                .find(item => item.productId === requestedProductId)
-                || showroomCatalogCache?.additionalProducts?.[requestedProductId];
-            if (product) openShowroomProduct(product, false);
-            else openDrawer();
-        }
     }
 
     if (document.readyState === 'loading') {

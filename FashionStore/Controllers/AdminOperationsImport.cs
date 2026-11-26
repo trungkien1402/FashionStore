@@ -1,3 +1,4 @@
+using FashionStore.Data;
 using System.Globalization;
 using System.IO.Compression;
 using ClosedXML.Excel;
@@ -137,6 +138,7 @@ public partial class AdminOperationsController
         {
             await context.SaveChangesAsync();
             await transaction.CommitAsync();
+            ShowroomCatalog.Invalidate();
         }
         catch (DbUpdateException)
         {

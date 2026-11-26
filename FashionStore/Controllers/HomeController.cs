@@ -3,7 +3,6 @@ using FashionStore.Data;
 using FashionStore.Models.Entities;
 using FashionStore.Models.Enums;
 using FashionStore.Models.ViewModels;
-using FashionStore.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,30 +11,24 @@ namespace FashionStore.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly IProductService _productService;
     private readonly ApplicationDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
 
     public HomeController(
-        IProductService productService,
         ApplicationDbContext context,
         UserManager<ApplicationUser> userManager)
     {
-        _productService = productService;
         _context = context;
         _userManager = userManager;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int reviewPage = 1)
     {
-        var products = await _productService.GetAllProductsAsync();
-
-        // Chỉ hiển thị sản phẩm đang kinh doanh
-        var latestProducts = products
+        var latestProducts = await _context.Products.AsNoTracking()
             .Where(p => p.IsActive)
-            .OrderByDescending(p => p.CreatedAt)
+            .OrderByDescending(p => p.CreatedAt).ThenByDescending(p => p.Id)
             .Take(8)
-            .ToList();
+            .ToListAsync();
 
         ViewBag.PublishedCollections = await _context.LookbookCollections.AsNoTracking()
             .Where(c => c.IsPublished && !c.IsSale).OrderByDescending(c => c.Id).ToListAsync();
@@ -43,7 +36,86 @@ public class HomeController : Controller
             .Where(c => !c.IsSale && c.SourceKey != null).Select(c => c.SourceKey).ToListAsync();
         var campaign = await SalePricing.ActiveCampaignAsync(_context);
         if (campaign != null) ViewBag.SaleCampaign = await LookbookCatalog.BuildAsync(_context, campaign);
+
+        const int reviewPageSize = 3;
+        var reviewCount = await PublicReviews().CountAsync();
+        var reviewPages = Math.Max(1, (int)Math.Ceiling(reviewCount / (double)reviewPageSize));
+        reviewPage = Math.Clamp(reviewPage, 1, reviewPages);
+        ViewBag.ReviewPage = reviewPage;
+        ViewBag.ReviewPages = reviewPages;
+        ViewBag.CustomerReviews = await LoadReviewsAsync((reviewPage - 1) * reviewPageSize, reviewPageSize);
         return View(latestProducts);
+    }
+
+    private static string MaskEmail(string? email)
+    {
+        if (string.IsNullOrWhiteSpace(email)) return "Khách hàng HNMTSHOP";
+        var atIndex = email.IndexOf('@');
+        if (atIndex <= 1) return "Khách hàng HNMTSHOP";
+        var local = email[..atIndex];
+        return local.Length <= 3 ? local[0] + "***" : local[..3] + "***";
+    }
+
+    private static string GetInitials(string name)
+    {
+        var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length == 0) return "KH";
+        if (parts.Length == 1) return parts[0][..1].ToUpperInvariant();
+        return string.Concat(parts[0][0], parts[^1][0]).ToUpperInvariant();
+    }
+
+    private IQueryable<ProductReview> PublicReviews() => _context.ProductReviews.AsNoTracking()
+        .Where(r => r.IsVisible && !r.IsReported && r.Product.IsActive && !string.IsNullOrWhiteSpace(r.Comment));
+
+    private async Task<List<HomeReviewViewModel>> LoadReviewsAsync(int offset, int limit)
+    {
+        var rawReviews = await PublicReviews()
+            .OrderByDescending(r => r.CreatedAt)
+            .ThenByDescending(r => r.Id)
+            .Skip(offset)
+            .Take(limit)
+            .Select(r => new
+            {
+                r.Id,
+                r.ProductId,
+                ProductName = r.Product.Name,
+                r.UserId,
+                r.Rating,
+                r.Comment,
+                r.CreatedAt
+            })
+            .ToListAsync();
+
+        var reviewerIds = rawReviews.Select(r => r.UserId).Distinct().ToList();
+        var userLookup = reviewerIds.Count > 0
+            ? await _context.Users.AsNoTracking()
+                .Where(u => reviewerIds.Contains(u.Id))
+                .Select(u => new { u.Id, u.FullName, u.Email })
+                .ToDictionaryAsync(u => u.Id)
+            : [];
+
+        return rawReviews.Select(r =>
+        {
+            var customerName = "Khách hàng HNMTSHOP";
+            if (userLookup.TryGetValue(r.UserId, out var u))
+            {
+                customerName = !string.IsNullOrWhiteSpace(u.FullName)
+                    ? u.FullName.Trim()
+                    : MaskEmail(u.Email);
+            }
+
+            return new HomeReviewViewModel
+            {
+                Id = r.Id,
+                ProductId = r.ProductId,
+                ProductName = r.ProductName,
+                CustomerName = customerName,
+                Initials = GetInitials(customerName),
+                Rating = Math.Clamp(r.Rating, 1, 5),
+                Comment = r.Comment.Trim(),
+                CreatedAt = r.CreatedAt
+            };
+        }).ToList();
     }
 
     [HttpGet("/lookbook")]

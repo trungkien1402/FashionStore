@@ -65,8 +65,9 @@ document.querySelectorAll("[data-support-chat]").forEach(root => {
         } catch { /* bỏ qua lỗi mạng */ }
     }
     if (adminStatusText && adminOnlineUrl) {
-        pollAdminStatus();
-        window.setInterval(pollAdminStatus, 15_000);
+        window.setInterval(() => {
+            if (!document.hidden && !panel?.hidden) pollAdminStatus();
+        }, 30_000);
     }
     const input = form?.elements.message;
     let threadId;
@@ -290,6 +291,6 @@ document.querySelectorAll("[data-support-chat]").forEach(root => {
     });
     close?.addEventListener("click", () => send(root.dataset.close, true));
     document.addEventListener("visibilitychange", refresh);
-    window.setInterval(refresh, 3000);
+    window.setInterval(refresh, 6000);
     refresh();
 });

@@ -4,7 +4,6 @@ using FashionStore.Data;
 using FashionStore.Models.Entities;
 using FashionStore.Models.Enums;
 using FashionStore.Models.ViewModels;
-using FashionStore.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
@@ -14,12 +13,10 @@ namespace FashionStore.Controllers;
 
 public class ProductsController : Controller
 {
-    private readonly IProductService _productService;
     private readonly ApplicationDbContext _db;
 
-    public ProductsController(IProductService productService, ApplicationDbContext db)
+    public ProductsController(ApplicationDbContext db)
     {
-        _productService = productService;
         _db = db;
     }
 
@@ -32,23 +29,14 @@ public class ProductsController : Controller
         string sortOrder = "newest",
         int page = 1)
     {
-        // Lấy sản phẩm từ database thông qua Service
-        var allProducts = await _productService.GetAllProductsAsync();
-
-        // Chỉ lấy sản phẩm đang kinh doanh
-        var query = allProducts
-            .Where(p => p.IsActive)
-            .AsEnumerable();
+        var activeProducts = _db.Products.AsNoTracking().Where(p => p.IsActive);
+        var query = activeProducts;
 
         // Tìm kiếm theo tên
         if (!string.IsNullOrWhiteSpace(keyword))
         {
-            var searchKeyword = keyword.Trim();
-
-            query = query.Where(p =>
-                p.Name.Contains(
-                    searchKeyword,
-                    StringComparison.OrdinalIgnoreCase));
+            var searchKeyword = keyword.Trim().ToUpperInvariant();
+            query = query.Where(p => p.Name.ToUpper().Contains(searchKeyword));
         }
 
         // Lọc danh mục
@@ -72,27 +60,20 @@ public class ProductsController : Controller
         // Sắp xếp
         query = sortOrder switch
         {
-            "price-asc" => query.OrderBy(p => p.Price),
-            "price-desc" => query.OrderByDescending(p => p.Price),
-            "name-asc" => query.OrderBy(p => p.Name),
-            _ => query.OrderByDescending(p => p.CreatedAt)
+            "price-asc" => query.OrderBy(p => p.Price).ThenBy(p => p.Id),
+            "price-desc" => query.OrderByDescending(p => p.Price).ThenBy(p => p.Id),
+            "name-asc" => query.OrderBy(p => p.Name).ThenBy(p => p.Id),
+            _ => query.OrderByDescending(p => p.CreatedAt).ThenBy(p => p.Id)
         };
 
         // Danh mục lấy từ dữ liệu sản phẩm
-        var categories = allProducts
-            .Where(p => p.IsActive && p.Category != null)
-            .Select(p => p.Category!)
-            .GroupBy(c => c.Id)
-            .Select(g => g.First())
+        var categories = await _db.Categories.AsNoTracking()
+            .Where(c => activeProducts.Any(p => p.CategoryId == c.Id))
             .OrderBy(c => c.Name)
-            .ToList();
+            .ToListAsync();
 
-        // Phân trang
         const int pageSize = 12;
-
-        var filteredProducts = query.ToList();
-
-        var totalItems = filteredProducts.Count;
+        var totalItems = await query.CountAsync();
         var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
 
         if (totalPages > 0)
@@ -104,15 +85,16 @@ public class ProductsController : Controller
             page = 1;
         }
 
-        var products = filteredProducts
+        var products = await query
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
-            .ToList();
+            .Include(p => p.Category)
+            .Include(p => p.Variants)
+            .ToListAsync();
 
         var model = new ProductListViewModel
         {
             Products = products,
-            AllCatalogProducts = allProducts.Where(p => p.IsActive).ToList(),
             Categories = categories,
             Keyword = keyword,
             CategoryId = categoryId,
@@ -359,17 +341,17 @@ public class ProductsController : Controller
     [HttpGet]
     public async Task<IActionResult> GetProduct3DData(string? slug, int? id)
     {
-        var allProducts = await _productService.GetAllProductsAsync();
-        var product = (id.HasValue && id > 0)
-            ? allProducts.FirstOrDefault(p => p.Id == id.Value && p.IsActive)
-            : (!string.IsNullOrWhiteSpace(slug)
-                ? allProducts.FirstOrDefault(p => p.Slug.Equals(slug.Trim(), StringComparison.OrdinalIgnoreCase) && p.IsActive)
-                : allProducts.FirstOrDefault(p => p.Slug.Contains("oversize-streetwear-tee") && p.IsActive));
-
-        if (product == null)
-        {
-            product = allProducts.FirstOrDefault(p => p.IsActive && p.Variants != null && p.Variants.Any());
-        }
+        var activeProducts = _db.Products.AsNoTracking()
+            .Where(p => p.IsActive)
+            .Include(p => p.Category).Include(p => p.Variants)
+            .OrderBy(p => p.Id);
+        var normalizedSlug = slug?.Trim().ToUpperInvariant();
+        var product = id > 0
+            ? await activeProducts.FirstOrDefaultAsync(p => p.Id == id)
+            : !string.IsNullOrEmpty(normalizedSlug)
+                ? await activeProducts.FirstOrDefaultAsync(p => p.Slug.ToUpper() == normalizedSlug)
+                : await activeProducts.FirstOrDefaultAsync(p => p.Slug.Contains("oversize-streetwear-tee"));
+        product ??= await activeProducts.FirstOrDefaultAsync(p => p.Variants.Any());
 
         if (product == null)
         {

@@ -25,26 +25,6 @@
     }
 
     // Bảng từ khóa nhận diện các gam màu thời trang toàn diện (tiếng Việt & tiếng Anh)
-    const COLOR_KEYWORDS = {
-        black: ['den', 'black', 'carbon', 'charcoal', 'pitch', 'than chi', 'onyx', 'stealth'],
-        white: ['trang', 'white', 'be', 'kem', 'cream', 'sand', 'ivory', 'ecru', 'alabaster', 'sua', 'frost', 'pure', 'ice'],
-        gray: ['xam', 'gray', 'grey', 'bac', 'silver', 'acid', 'smoke', 'marl', 'stone', 'da', 'storm', 'chrome', 'slate'],
-        sand: ['cat', 'sand', 'khaki', 'camel', 'tan', 'beige', 'nau nhat', 'sa mac', 'desert'],
-        brown: ['nau', 'brown', 'mocha', 'chocolate', 'espresso', 'cacao', 'coffee', 'go', 'wood', 'nau dam'],
-        blue: ['xanh', 'blue', 'indigo', 'denim', 'cham', 'cobalt', 'azure', 'troi', 'sonic', 'polar', 'glacier'],
-        navy: ['navy', 'hai quan', 'xanh tham', 'dam', 'dark blue', 'midnight', 'muc', 'deep blue', 'deep carbon'],
-        teal: ['ngoc', 'teal', 'mint', 'turquoise', 'cyan', 'tiffany'],
-        green: ['reu', 'green', 'olive', 'la cay', 'moss', 'army', 'khaki green', 'bo', 'forest', 'emerald', 'matrix'],
-        lime: ['volt', 'lime', 'neon', 'acid', 'chuoi', 'da quang'],
-        purple: ['tim', 'purple', 'violet', 'lunar', 'magenta', 'aura', 'lilac', 'lavender', 'hoa ca', 'plum'],
-        red: ['do', 'red', 'crimson', 'scarlet', 'magma', 'infrared', 'infraray', 'fury', 'rubi'],
-        burgundy: ['burgundy', 'maroon', 'ruou', 'man', 'bordeaux', 'do tham', 'wine'],
-        orange: ['cam', 'orange', 'amber', 'sunset', 'flare', 'terracotta', 'clay', 'dat nung', 'rust'],
-        yellow: ['vang', 'yellow', 'gold', 'solaris', 'imperial', 'mustard', 'lemon', 'canary'],
-        pink: ['hong', 'pink', 'rose', 'phan', 'pastel', 'lotus', 'dao', 'blush', 'fuchsia'],
-        metallic: ['kim loai', 'metallic', 'metal', 'dong', 'bronze', 'copper', 'gold chrome', 'anh kim']
-    };
-
     // Bảng 18 màu Swatches thời trang cao cấp (3 hàng × 6 cột hoàn hảo)
     const FASHION_SWATCHES = [
         // Hàng 1: Cơ bản & Trung tính
@@ -232,7 +212,7 @@
         function populateSubStyleSelect(cat, preserveValue = false) {
             if (!subStyleSelect) return;
             const subStyleCard = document.getElementById('pantsSubStyleCard') || subStyleSelect.closest('.fashion-select-card');
-            const prevVal = preserveValue ? subStyleSelect.value : 'all';
+            const prevVal = preserveValue ? selectedStyle : 'all';
             subStyleSelect.innerHTML = '';
 
             const isAllCat = (!cat || cat === 'all');
@@ -336,7 +316,7 @@
             if (!priceRange || !priceDisplay) return;
             const val = parseInt(priceRange.value, 10);
             maxPriceValue = val;
-            if (val >= 1500000) {
+            if (val >= Number(priceRange.max)) {
                 priceDisplay.textContent = 'Tất cả mức giá';
             } else {
                 priceDisplay.textContent = `Dưới ${(val).toLocaleString('vi-VN')} ₫`;
@@ -346,7 +326,7 @@
         // Lọc danh sách quần theo các tiêu chí đã chọn
         function performFilter() {
             const allPants = getPantsCatalog();
-            const normalizedKeyword = removeVietnameseTones(searchKeyword);
+            const matchesKeyword = window.ShowroomFilterOptions.createKeywordMatcher(searchKeyword);
 
             filteredPants = allPants.filter(item => {
                 if (!window.ShowroomFilterOptions.matchesCategory(item, 'quan', selectedCategory) ||
@@ -354,47 +334,13 @@
 
                 // 3. Lọc theo giá thanh trượt kéo (Range slider)
                 const itemPriceVND = item.price * 10000;
-                if (maxPriceValue < 1500000 && itemPriceVND > maxPriceValue) {
+                if (maxPriceValue < Number(priceRange.max) && itemPriceVND > maxPriceValue) {
                     return false;
                 }
 
-                // 4. Lọc theo màu sắc (Hỗ trợ toàn bộ quần có 2 màu đổi qua lại được)
-                if (selectedColor !== 'all') {
-                    const keywords = COLOR_KEYWORDS[selectedColor] || [selectedColor];
-                    const colors = item.colors || [];
-                    let matchedVariant = -1;
-
-                    for (let idx = 0; idx < colors.length; idx++) {
-                        const cName = removeVietnameseTones(colors[idx][0] || '');
-                        for (const kw of keywords) {
-                            if (cName.includes(kw)) {
-                                matchedVariant = idx;
-                                break;
-                            }
-                        }
-                        if (matchedVariant !== -1) break;
-                    }
-
-                    if (matchedVariant !== -1) {
-                        item.variant = matchedVariant;
-                    } else if (item.colorGroup === selectedColor) {
-                        item.variant = 0;
-                    } else {
-                        return false;
-                    }
-                } else {
-                    item.variant = 0;
-                }
-
-                // 5. Lọc theo từ khóa tên hoặc mô tả
-                if (normalizedKeyword) {
-                    const matchName = removeVietnameseTones(item.name).includes(normalizedKeyword);
-                    const matchDesc = removeVietnameseTones(item.desc).includes(normalizedKeyword);
-                    const matchType = removeVietnameseTones(item.type || '').includes(normalizedKeyword);
-                    if (!matchName && !matchDesc && !matchType) {
-                        return false;
-                    }
-                }
+                const variant = window.ShowroomFilterOptions.colorVariant(item, selectedColor);
+                if (variant < 0 || !matchesKeyword({ item, kind: 'quan' })) return false;
+                item.variant = variant;
 
                 return true;
             });
@@ -417,7 +363,7 @@
                 const opt = categorySelect.options[categorySelect.selectedIndex];
                 if (opt) parts.push(opt.text.split('(')[0].trim());
             }
-            if (maxPriceValue < 1500000) {
+            if (maxPriceValue < Number(priceRange.max)) {
                 parts.push(`≤ ${maxPriceValue.toLocaleString('vi-VN')} ₫`);
             }
             if (selectedColor !== 'all') {
@@ -436,7 +382,7 @@
             }
 
             const label = buildSummaryLabel();
-            const isFullCatalog = (selectedCategory === 'all' && selectedStyle === 'all' && maxPriceValue >= 1500000 && selectedColor === 'all' && !searchKeyword.trim());
+            const isFullCatalog = (selectedCategory === 'all' && selectedStyle === 'all' && maxPriceValue >= Number(priceRange.max) && selectedColor === 'all' && !searchKeyword.trim());
 
             if (window.ClothingRail) {
                 if (isFullCatalog) {
@@ -448,6 +394,17 @@
         }
 
         function openModal() {
+            const incoming = window.ShowroomFilterOptions.takeIncomingFilter('quan');
+            if (incoming) {
+                selectedCategory = incoming.subCategory;
+                selectedStyle = incoming.detailedStyle;
+                selectedColor = incoming.color;
+                searchKeyword = incoming.keyword;
+                searchInput.value = searchKeyword;
+                if (clearSearchBtn) clearSearchBtn.style.display = searchKeyword ? 'block' : 'none';
+                maxPriceValue = window.ShowroomFilterOptions.restorePrice(priceRange, incoming.maxPrice);
+            }
+
             const categories = window.ShowroomFilterOptions.categories(getPantsCatalog(), 'quan');
             categorySelect.replaceChildren(
                 new Option('Tất cả loại quần', 'all'),
@@ -484,7 +441,7 @@
             selectedCategory = 'all';
             selectedStyle = 'all';
             selectedColor = 'all';
-            maxPriceValue = 1500000;
+            maxPriceValue = Number(priceRange.max);
             searchKeyword = '';
 
             const allPants = getPantsCatalog();
@@ -497,7 +454,7 @@
             if (categorySelect) categorySelect.value = 'all';
             populateSubStyleSelect('all', false);
             updateColorSwatchesUI();
-            if (priceRange) priceRange.value = '1500000';
+            if (priceRange) priceRange.value = priceRange.max;
 
             updatePriceDisplay();
             performFilter();

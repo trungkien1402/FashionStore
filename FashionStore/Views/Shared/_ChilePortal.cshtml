@@ -1,16 +1,11 @@
-@* 
-    ======================================================================
-    HNMTSHOP - 3D SHOWROOM PORTAL + CLOTHING RAIL CATALOG
-    1. Khi mở Showroom: Hiển thị không gian 3D Adidas Chile 20 (Mặt nước gợn sóng, 3 cột, Quần - Áo - Giày)
-    2. Khi bấm vào Áo: Mở Sào Treo Đồ Thời Trang Độc Bản (clothing-rail-catalog từ GitHub)
-    3. Khi bấm "Quay lại": Trở về không gian 3D Showroom
-    ======================================================================
-*@
-
 <div id="hnmtChilePortal" class="hnmt-chile-portal" aria-hidden="true">
 
-    <!-- 1. THREE.JS 3D WEBGL CANVAS (RENDER TOÀN BỘ KHÔNG GIAN 3D & MẶT NƯỚC GỢN SÓNG) -->
-    <canvas id="hnmt3dCanvas" class="hnmt-3d-canvas"></canvas>
+    <div class="showroom-stage" id="showroomStage">
+        <img class="showroom-background" src="/images/showroom/podium.webp" width="1672" height="941" alt="" loading="lazy" />
+        <button type="button" data-showroom-kind="quan" aria-label="Xem quần"><img alt="" /></button>
+        <button type="button" data-showroom-kind="ao" aria-label="Xem áo"><img alt="" /></button>
+        <button type="button" data-showroom-kind="giay" aria-label="Xem giày"><img alt="" /></button>
+    </div>
 
     <!-- 2. THANH HEADER TỐI GIẢN CỦA SHOWROOM -->
     <header class="hnmt-portal-header">
@@ -19,7 +14,7 @@
         </div>
 
         <div class="hnmt-portal-actions">
-            <button type="button" class="hnmt-exit-btn" id="hnmtPortalExitBtn" title="Thoát không gian 3D">
+            <button type="button" class="hnmt-exit-btn" id="hnmtPortalExitBtn" title="Thoát showroom">
                 <i class="bi bi-arrow-left"></i>
                 <span>Thoát</span>
             </button>
@@ -31,12 +26,6 @@
         <div class="hnmt-badge-prompt">CHỌN 1 MÓN ĐỒ ĐỂ BẮT ĐẦU</div>
         <div class="hnmt-badge-subnote">( Lưu ý: Nhấp vào món đồ bất kỳ để mở phòng trưng bày chi tiết )</div>
     </footer>
-
-    <!-- HOVER TAG KHI RÊ CHUỘT LÊN ĐỒ VẬT 3D -->
-    <div class="hnmt-hover-tag" id="hnmtHoverTag" style="display: none !important;">
-        <span class="hnmt-hover-cat" id="hnmtHoverCat">02 // TOPS</span>
-        <span class="hnmt-hover-name" id="hnmtHoverName">ÁO THUN HNMTSHOP</span>
-    </div>
 
     <!-- 4. GIAO DIỆN SÀO TREO ĐỒ (CLOTHING-RAIL-CATALOG TỪ GITHUB - MỞ RA KHI BẤM VÀO ÁO) -->
     <div id="hnmtRackOverlay" class="hnmt-clothing-rail-wrap" aria-hidden="true">

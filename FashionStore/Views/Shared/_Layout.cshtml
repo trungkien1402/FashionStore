@@ -202,10 +202,7 @@
         </footer>
     }
 
-    <!-- 3D, WebGL & Motion Libraries (Three.js, GLTF, GSAP Draggable, Vanilla-Tilt, Lenis, Spline) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <!-- Motion libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Draggable.min.js"></script>
@@ -213,14 +210,13 @@
     <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
     <script type="module" src="https://unpkg.com/@@splinetool/viewer@1.9.72/build/spline-viewer.js"></script>
 
-    <!-- Showroom Catalog Data (Embedded JSON for 3D Showroom, Rail & Sneaker Vault) -->
+    <!-- Showroom Catalog Data (Embedded JSON for Rail & Sneaker Vault) -->
     <partial name="_ShowroomCatalog" />
 
     <!-- HNMTSHOP Core Scripts -->
-    <script src="~/js/hnmt3d-engine.js" asp-append-version="true"></script>
     <script src="~/js/atelier.js?v=center_responsive_v7" asp-append-version="true"></script>
     <script src="~/js/site.js?v=quick_size_v3" asp-append-version="true"></script>
-    <script src="~/js/store3d.js?v=pdp_3d_v2" asp-append-version="true"></script>
+    <script src="~/js/showroom.js" asp-append-version="true"></script>
     <script src="~/js/clothing-rail.js?v=pdp_3d_v2" asp-append-version="true"></script>
     <script src="~/js/sneaker-vault.js?v=pdp_3d_v2" asp-append-version="true"></script>
     <script src="~/js/account-dropdown.js" asp-append-version="true"></script>

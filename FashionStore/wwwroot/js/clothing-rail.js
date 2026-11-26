@@ -975,6 +975,12 @@
 
         // Phím tắt bàn phím
         document.addEventListener('keydown', e => {
+            const target = e.target;
+            const activeEl = document.activeElement;
+            const isTyping = e.isComposing || e.keyCode === 229 ||
+                (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT' || target.isContentEditable)) ||
+                (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT' || activeEl.isContentEditable));
+
             if (e.key === 'Escape') {
                 if (window.HNMTPantsFilter && document.getElementById('hnmtPantsFilterModal')?.classList.contains('is-open')) {
                     window.HNMTPantsFilter.close();
@@ -984,14 +990,13 @@
                 else if (detailOpen) closeDetail();
                 else if ($('#hnmtRackOverlay')?.classList.contains('is-active')) closeClothingRail();
             } else if (e.key === 'ArrowLeft') {
-                if (detailOpen) navigate(-1);
+                if (detailOpen && !isTyping) navigate(-1);
             } else if (e.key === 'ArrowRight') {
-                if (detailOpen) navigate(1);
+                if (detailOpen && !isTyping) navigate(1);
             } else if ((e.key === '/' || (e.ctrlKey && e.key.toLowerCase() === 'k')) && 
                        !document.getElementById('hnmtShirtFilterModal')?.classList.contains('is-open') &&
                        !document.getElementById('hnmtPantsFilterModal')?.classList.contains('is-open')) {
-                const activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
-                if (activeTag !== 'input' && activeTag !== 'textarea') {
+                if (!isTyping) {
                     if (currentCategory === 'quan' && window.HNMTPantsFilter) {
                         e.preventDefault();
                         window.HNMTPantsFilter.open();
@@ -1019,13 +1024,31 @@
                 sessionStorage.removeItem('hnmt_pending_rail_filter');
                 const pending = JSON.parse(pendingJson);
                 if (pending?.audience === currentAudience && pending.category === currentCategory && Array.isArray(pending.filteredProducts)) {
+                    window.ShowroomFilterOptions.storeIncomingFilter(pending);
                     applyFilter(pending.filteredProducts, pending.label || 'BỘ LỌC TỪ TRANG CHỦ');
                 }
             }
         } catch (e) {}
 
         if (standalone) {
-            const productId = new URLSearchParams(window.location.search).get('productId');
+            const query = new URLSearchParams(window.location.search);
+            const searchProduct = query.get('searchProduct');
+            if (searchProduct) {
+                const product = getAllProducts(currentCategory, currentAudience).find(item => String(item.productId) === searchProduct);
+                if (product) applyFilter([product]);
+                const backLink = document.querySelector('.rail-portal-exit-btn');
+                if (backLink) {
+                    backLink.href = query.get('from') === 'newDrops' ? '/#newDrops' : '/';
+                    backLink.addEventListener('click', event => {
+                        if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+                        if (!document.referrer || new URL(document.referrer).origin !== location.origin || new URL(document.referrer).pathname !== '/' || history.length < 2) return;
+                        event.preventDefault();
+                        history.back();
+                    });
+                }
+                return;
+            }
+            const productId = query.get('productId');
             if (productId && /^[1-9][0-9]*$/.test(productId)) {
                 const racks = chunkProductsIntoRacks(getAllProducts(currentCategory, currentAudience), currentCategory);
                 const rackIndex = racks.findIndex(rack => rack.products.some(p => String(p.productId) === productId));

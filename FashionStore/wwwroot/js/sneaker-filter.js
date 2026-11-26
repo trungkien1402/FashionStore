@@ -26,26 +26,6 @@
     }
 
     // Bảng từ khóa nhận diện các gam màu sneaker thời trang toàn diện (tiếng Việt & tiếng Anh)
-    const COLOR_KEYWORDS = {
-        black: ['den', 'black', 'carbon', 'stealth', 'midnight', 'obsidian', 'dark', 'charcoal'],
-        white: ['trang', 'white', 'frost', 'pure', 'ice', 'titanium', 'sand', 'desert', 'kem', 'cream'],
-        gray: ['xam', 'grey', 'gray', 'storm', 'chrome', 'silver', 'slate'],
-        sand: ['cat', 'sand', 'khaki', 'camel', 'tan', 'beige', 'sa mac', 'desert'],
-        brown: ['nau', 'brown', 'mocha', 'chocolate', 'espresso', 'cacao', 'coffee', 'terracotta', 'clay'],
-        blue: ['xanh', 'blue', 'indigo', 'cham', 'cobalt', 'sonic', 'polar', 'glacier'],
-        navy: ['navy', 'deep blue', 'deep carbon'],
-        teal: ['ngoc', 'teal', 'mint', 'turquoise', 'cyan', 'tiffany'],
-        green: ['reu', 'green', 'olive', 'emerald', 'matrix'],
-        lime: ['volt', 'lime', 'neon', 'acid', 'matrix neon'],
-        purple: ['tim', 'purple', 'violet', 'lunar', 'magenta', 'aura'],
-        red: ['do', 'red', 'crimson', 'magma', 'infrared', 'infraray', 'fury'],
-        burgundy: ['burgundy', 'maroon', 'ruou', 'man', 'bordeaux'],
-        orange: ['cam', 'orange', 'amber', 'sunset', 'flare', 'solar'],
-        yellow: ['vang', 'yellow', 'gold', 'solaris', 'imperial'],
-        pink: ['hong', 'pink', 'rose', 'neon pink'],
-        metallic: ['kim loai', 'metallic', 'metal', 'dong', 'bronze', 'copper', 'gold chrome', 'anh kim']
-    };
-
     // Bảng 18 màu Swatches thời trang cao cấp (3 hàng × 6 cột hoàn hảo)
     const FASHION_SWATCHES = [
         // Hàng 1: Cơ bản & Trung tính
@@ -82,6 +62,7 @@
     let selectedSilhouette = 'all';
     let selectedColor = 'all';
     let maxPriceValue = 7500000; // Giá tối đa mặc định (7.500.000 ₫)
+    let selectedStyle = 'all';
     let searchKeyword = '';
     let filteredSneakers = [];
 
@@ -161,6 +142,18 @@
                     </div>
                 </div>
 
+                <div class="fashion-select-card">
+                    <label class="fashion-card-label" for="sneakerStyleSelect">Mẫu giày</label>
+                    <div class="fashion-select-wrapper">
+                        <select id="sneakerStyleSelect" class="fashion-select-input">
+                            <option value="all">Tất cả mẫu giày</option>
+                        </select>
+                        <div class="select-chevron-icon" aria-hidden="true">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- 3. Gam Màu Sắc (Color Swatches tương tác chuẩn Fashion Atelier) -->
                 <div class="fashion-select-card fashion-swatches-card">
                     <div class="fashion-swatches-header">
@@ -227,6 +220,7 @@
         const searchInput = document.getElementById('sneakerSearchInput');
         const clearSearchBtn = document.getElementById('sneakerClearSearchBtn');
         const vaultSelect = document.getElementById('sneakerVaultSelect');
+        const styleSelect = document.getElementById('sneakerStyleSelect');
         const silhouetteSelect = document.getElementById('sneakerSilhouetteSelect');
         const swatchesGrid = document.getElementById('sneakerColorSwatchesGrid');
         const selectedColorBadge = document.getElementById('sneakerSelectedColorName');
@@ -295,7 +289,7 @@
             if (!priceRange || !priceDisplay) return;
             const val = parseInt(priceRange.value, 10);
             maxPriceValue = val;
-            if (val >= 7500000) {
+            if (val >= Number(priceRange.max)) {
                 priceDisplay.textContent = 'Tất cả mức giá';
             } else {
                 priceDisplay.textContent = `Dưới ${(val).toLocaleString('vi-VN')} ₫`;
@@ -305,7 +299,7 @@
         // Lọc danh sách sneaker theo các tiêu chí đã chọn
         function performFilter() {
             const allSneakers = getSneakerCatalog();
-            const normalizedKeyword = removeVietnameseTones(searchKeyword);
+            const matchesKeyword = window.ShowroomFilterOptions.createKeywordMatcher(searchKeyword);
 
             filteredSneakers = allSneakers.filter(item => {
                 // 1. Lọc theo Bộ Sưu Tập (Vault)
@@ -315,45 +309,16 @@
                 }
 
                 // 2. Lọc theo Dòng Giày (Silhouette)
-                if (!matchesSilhouette(item, selectedSilhouette)) return false;
+                if (!matchesSilhouette(item, selectedSilhouette) ||
+                    !window.ShowroomFilterOptions.matchesStyle(item, 'giay', selectedStyle)) return false;
 
                 // 3. Lọc theo giá thanh trượt kéo (Range slider)
-                if (maxPriceValue < 7500000 && item.price > maxPriceValue) {
+                if (maxPriceValue < Number(priceRange.max) && item.price > maxPriceValue) {
                     return false;
                 }
 
-                // 4. Lọc theo màu sắc
-                if (selectedColor !== 'all') {
-                    const keywords = COLOR_KEYWORDS[selectedColor] || [selectedColor];
-                    const textToSearch = removeVietnameseTones([
-                        item.colorway || '',
-                        item.colorName || '',
-                        item.model || ''
-                    ].join(' '));
-
-                    let matchColor = false;
-                    for (const kw of keywords) {
-                        if (textToSearch.includes(kw)) {
-                            matchColor = true;
-                            break;
-                        }
-                    }
-
-                    if (!matchColor) return false;
-                }
-
-                // 5. Lọc theo từ khóa tìm kiếm (model, colorway, designer, styleCode)
-                if (normalizedKeyword) {
-                    const matchModel = removeVietnameseTones(item.model || '').includes(normalizedKeyword);
-                    const matchColorway = removeVietnameseTones(item.colorway || '').includes(normalizedKeyword);
-                    const matchColorName = removeVietnameseTones(item.colorName || '').includes(normalizedKeyword);
-                    const matchStyleCode = removeVietnameseTones(item.styleCode || '').includes(normalizedKeyword);
-                    const matchDesigner = removeVietnameseTones(item.designer || '').includes(normalizedKeyword);
-
-                    if (!matchModel && !matchColorway && !matchColorName && !matchStyleCode && !matchDesigner) {
-                        return false;
-                    }
-                }
+                const variant = window.ShowroomFilterOptions.colorVariant(item, selectedColor);
+                if (variant < 0 || !matchesKeyword({ item, kind: 'giay' })) return false;
 
                 return true;
             });
@@ -377,7 +342,7 @@
                 const opt = silhouetteSelect.options[silhouetteSelect.selectedIndex];
                 if (opt) parts.push(opt.text.split('(')[0].trim());
             }
-            if (maxPriceValue < 7500000) {
+            if (maxPriceValue < Number(priceRange.max)) {
                 parts.push(`≤ ${maxPriceValue.toLocaleString('vi-VN')} ₫`);
             }
             if (selectedColor !== 'all') {
@@ -396,7 +361,7 @@
             }
 
             const label = buildSummaryLabel();
-            const isFullCatalog = (selectedVault === 'all' && selectedSilhouette === 'all' && maxPriceValue >= 7500000 && selectedColor === 'all' && !searchKeyword.trim());
+            const isFullCatalog = (selectedVault === 'all' && selectedSilhouette === 'all' && selectedStyle === 'all' && maxPriceValue >= Number(priceRange.max) && selectedColor === 'all' && !searchKeyword.trim());
 
             if (window.SneakerVault) {
                 if (isFullCatalog) {
@@ -416,9 +381,35 @@
                 ...categories.map(({ value, label }) => new Option(label, value))
             );
             silhouetteSelect.value = selectedSilhouette;
+            refreshStyles();
         }
 
+        function refreshStyles() {
+            const catalog = getSneakerCatalog().filter(item => selectedVault === 'all' || item.collectionId === selectedVault);
+            const styles = window.ShowroomFilterOptions.styles(catalog, 'giay', selectedSilhouette);
+            if (!styles.some(option => option.value === selectedStyle)) selectedStyle = 'all';
+            styleSelect.replaceChildren(new Option('Tất cả mẫu giày', 'all'),
+                ...styles.map(({ value, label }) => new Option(label, value)));
+            styleSelect.value = selectedStyle;
+        }
+
+        styleSelect.addEventListener('change', () => {
+            selectedStyle = styleSelect.value;
+            performFilter();
+        });
+
         function openModal() {
+            const incoming = window.ShowroomFilterOptions.takeIncomingFilter('giay');
+            if (incoming) {
+                selectedSilhouette = incoming.subCategory;
+                selectedStyle = incoming.detailedStyle;
+                selectedColor = incoming.color;
+                searchKeyword = incoming.keyword;
+                searchInput.value = searchKeyword;
+                if (clearSearchBtn) clearSearchBtn.style.display = searchKeyword ? 'block' : 'none';
+                maxPriceValue = window.ShowroomFilterOptions.restorePrice(priceRange, incoming.maxPrice);
+            }
+
             const catalog = getSneakerCatalog();
             if (vaultSelect) {
                 const collections = new Map(catalog.map(item => [item.collectionId, item.collectionTitle]));
@@ -459,10 +450,11 @@
 
         function resetAllFilters() {
             selectedVault = 'all';
-            refreshSilhouettes();
             selectedSilhouette = 'all';
+            selectedStyle = 'all';
+            refreshSilhouettes();
             selectedColor = 'all';
-            maxPriceValue = 7500000;
+            maxPriceValue = Number(priceRange.max);
             searchKeyword = '';
 
             if (searchInput) {
@@ -472,7 +464,7 @@
             if (vaultSelect) vaultSelect.value = 'all';
             if (silhouetteSelect) silhouetteSelect.value = 'all';
             updateColorSwatchesUI();
-            if (priceRange) priceRange.value = '7500000';
+            if (priceRange) priceRange.value = priceRange.max;
 
             updatePriceDisplay();
             performFilter();
@@ -529,6 +521,7 @@
         if (silhouetteSelect) {
             silhouetteSelect.addEventListener('change', (e) => {
                 selectedSilhouette = e.target.value;
+                refreshStyles();
                 performFilter();
             });
         }

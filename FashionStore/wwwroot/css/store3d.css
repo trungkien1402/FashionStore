@@ -46,21 +46,7 @@
     display: none;
 }
 
-/* 2. THREE.JS 3D CANVAS RENDER TOÀN BỘ KHÔNG GIAN 3D & MẶT NƯỚC GỢN SÓNG */
-.hnmt-3d-canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: block;
-    cursor: grab;
-    z-index: 1;
-}
 
-.hnmt-3d-canvas:active {
-    cursor: grabbing;
-}
 
 /* 3. THANH HEADER TỐI GIẢN CHUẨN VIDEO */
 .hnmt-portal-header {
@@ -231,35 +217,9 @@
     50% { opacity: 1; transform: scale(1.03); }
 }
 
-/* 5. FLOATING HOVER TAG (HIỆN KHI RÊ CHUỘT VÀO MÓN ĐỒ) */
-.hnmt-hover-tag {
-    display: none !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
-}
 
-.hnmt-hover-tag.is-visible {
-    opacity: 1;
-}
 
-.hnmt-hover-cat {
-    display: block;
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 2px;
-    color: #ff2a32;
-    text-transform: uppercase;
-    margin-bottom: 3px;
-}
 
-.hnmt-hover-name {
-    margin: 0 0 5px 0;
-    font-size: 14px;
-    font-weight: 800;
-    color: #ffffff;
-    letter-spacing: 0.4px;
-}
 
 .hnmt-hover-cta {
     font-size: 10px;
@@ -269,22 +229,7 @@
     text-transform: uppercase;
 }
 
-/* 6. HIỆU ỨNG CHUYỂN CẢNH FLASH */
-.hnmt-portal-flash {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    background: #ffffff;
-    opacity: 0;
-    pointer-events: none;
-    z-index: 10000;
-    transition: opacity 0.35s ease;
-}
 
-.hnmt-portal-flash.is-flashing {
-    opacity: 0.9;
-}
 
 /* RESPONSIVE */
 @media (max-width: 768px) {
@@ -887,3 +832,61 @@
         height: 440px;
     }
 }
+
+#hnmtPortalExitBtn:focus {
+    outline: none;
+}
+
+#hnmtPortalExitBtn:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+}
+
+.showroom-stage {
+    position: absolute;
+    inset: 0;
+}
+.showroom-background { display: block; width: 100%; height: 100%; object-fit: fill; }
+.showroom-stage button {
+    position: absolute;
+    bottom: 34%;
+    width: 19%;
+    height: 49%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+.showroom-stage [data-showroom-kind="quan"] { left: 17%; height: 38%; }
+.showroom-stage [data-showroom-kind="ao"] { left: 40.5%; bottom: 37.5%; height: 26%; }
+.showroom-stage [data-showroom-kind="giay"] { left: 69%; width: 9.6%; height: 10%; }
+
+.showroom-stage [data-showroom-kind="quan"] img,
+.showroom-stage [data-showroom-kind="ao"] img {
+    height: 100%;
+    width: auto;
+}
+.showroom-stage button img {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    animation: showroom-float 3s ease-in-out infinite;
+    transition: scale .2s ease;
+}
+.showroom-stage button:hover img,
+.showroom-stage button:focus-visible img { scale: 1.07; }
+
+@keyframes showroom-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-9px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .showroom-stage button img { animation: none; transition: none; }
+}
+.hnmt-chile-portal:has(> #hnmtRackOverlay.is-active) > .showroom-stage,
+.hnmt-chile-portal:has(> #hnmtSneakerOverlay.is-active) > .showroom-stage { visibility: hidden; }

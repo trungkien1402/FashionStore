@@ -1,0 +1,29 @@
+@model FashionStore.Models.ViewModels.HomeReviewViewModel
+
+<div class="urbn-review-box">
+    <div class="urbn-stars-row" aria-label="Đánh giá @Model.Rating trên 5 sao">
+        @for (var i = 1; i <= 5; i++)
+        {
+            if (i <= Model.Rating)
+            {
+                <span>&#x2605;</span>
+            }
+            else
+            {
+                <span class="urbn-star-muted">&#x2605;</span>
+            }
+        }
+    </div>
+    <p class="urbn-review-quote">
+        "@Model.Comment"
+    </p>
+    <div class="urbn-author-row">
+        <span class="urbn-author-avatar" aria-hidden="true">@Model.Initials</span>
+        <div class="urbn-author-meta">
+            <strong>@Model.CustomerName</strong>
+            <a asp-controller="Products" asp-action="Details" asp-route-id="@Model.ProductId" class="urbn-review-product">
+                @Model.ProductName
+            </a>
+        </div>
+    </div>
+</div>

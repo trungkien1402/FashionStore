@@ -316,6 +316,7 @@ public class AdminProductsController : Controller
             }
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
+            ShowroomCatalog.Invalidate();
 
             TempData["Success"] = $"Thêm sản phẩm \"{product.Name}\" và {createdVariantsCount} phân loại biến thể thành công.";
 

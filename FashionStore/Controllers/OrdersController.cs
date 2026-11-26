@@ -376,6 +376,7 @@ public class OrdersController : Controller
             // Lưu tất cả và chốt Transaction
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
+            ShowroomCatalog.Invalidate();
 
             // Dọn dẹp giỏ hàng sau khi mua thành công
             await _cartService.ClearCartAsync();
@@ -854,6 +855,7 @@ public class OrdersController : Controller
 
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
+            ShowroomCatalog.Invalidate();
 
             TempData["Success"] = "Đơn hàng đã được hủy thành công.";
             return RedirectToAction(nameof(Details), new { id });

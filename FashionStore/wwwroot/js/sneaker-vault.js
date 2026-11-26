@@ -1143,9 +1143,8 @@
             backdrop.onclick = closeReviewsDrawer;
         }
 
-        const controlsPanels = document.querySelectorAll('.sv-controls-panel');
-        controlsPanels.forEach(panel => {
-            let drawer = panel.querySelector('.sv-reviews-drawer');
+        {
+            let drawer = document.getElementById('svReviewsDrawer');
             if (!drawer) {
                 drawer = document.createElement('div');
                 drawer.className = 'sv-reviews-drawer';
@@ -1216,7 +1215,7 @@
                         </div>
                     </div>
                 `;
-                panel.appendChild(drawer);
+                document.body.appendChild(drawer);
 
                 const closeBtn = drawer.querySelector('#svCloseReviewsDrawerBtn');
                 if (closeBtn) closeBtn.onclick = (e) => { e.stopPropagation(); closeReviewsDrawer(); };
@@ -1224,7 +1223,7 @@
                 initSneakerReviewStarEvents(drawer);
                 initSneakerSubmitReviewEvent(drawer);
             }
-        });
+        }
     }
 
     function openReviewsDrawer() {
@@ -1482,9 +1481,17 @@
             const isActive = isStandalone || (overlay && overlay.classList.contains('is-active'));
             if (!isActive) return;
 
-            if (e.key === 'ArrowRight') nextSneaker();
-            else if (e.key === 'ArrowLeft') prevSneaker();
-            else if (e.key === 'Escape') {
+            const target = e.target;
+            const activeEl = document.activeElement;
+            const isTyping = e.isComposing || e.keyCode === 229 ||
+                (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT' || target.isContentEditable)) ||
+                (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT' || activeEl.isContentEditable));
+
+            if (e.key === 'ArrowRight') {
+                if (!isTyping) nextSneaker();
+            } else if (e.key === 'ArrowLeft') {
+                if (!isTyping) prevSneaker();
+            } else if (e.key === 'Escape') {
                 if (window.HNMTSneakerFilter && document.getElementById('hnmtSneakerFilterModal')?.classList.contains('is-open')) {
                     window.HNMTSneakerFilter.close();
                     return;
@@ -1685,6 +1692,7 @@
                 sessionStorage.removeItem('hnmt_pending_sneaker_filter');
                 const pending = JSON.parse(pendingJson);
                 if (pending?.audience === audience && pending.category === 'giay' && Array.isArray(pending.filteredProducts)) {
+                    window.ShowroomFilterOptions.storeIncomingFilter(pending);
                     applyFilter(pending.filteredProducts, pending.label || 'BỘ LỌC TỪ TRANG CHỦ');
                 }
             }
@@ -1692,7 +1700,24 @@
 
         // Deep links from homepage cards and legacy detail URLs open the exact catalog shoe.
         if (standalone) {
-            const productId = new URLSearchParams(window.location.search).get('productId');
+            const query = new URLSearchParams(window.location.search);
+            const searchProduct = query.get('searchProduct');
+            if (searchProduct) {
+                const product = getAllSneakers().find(item => String(item.productId) === searchProduct);
+                if (product) applyFilter([product]);
+                const backLink = document.querySelector('#svExitBtn');
+                if (backLink) {
+                    backLink.href = query.get('from') === 'newDrops' ? '/#newDrops' : '/';
+                    backLink.addEventListener('click', event => {
+                        if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+                        if (!document.referrer || new URL(document.referrer).origin !== location.origin || new URL(document.referrer).pathname !== '/' || history.length < 2) return;
+                        event.preventDefault();
+                        history.back();
+                    });
+                }
+                return;
+            }
+            const productId = query.get('productId');
             if (productId && /^[1-9][0-9]*$/.test(productId)) {
                 const collectionIndex = activeCollections.findIndex(collection =>
                     collection.items.some(shoe => String(shoe.productId) === productId));
