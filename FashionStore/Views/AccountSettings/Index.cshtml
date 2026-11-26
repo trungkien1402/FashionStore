@@ -1,9 +1,12 @@
-﻿@model FashionStore.Models.ViewModels.AccountSettingsViewModel
+@model FashionStore.Models.ViewModels.AccountSettingsViewModel
 @{ ViewData["Title"] = "Cài đặt tài khoản · HNMTSHOP"; }
+@inject Microsoft.AspNetCore.Authentication.IAuthenticationSchemeProvider AuthenticationSchemes
+@inject Microsoft.AspNetCore.Identity.UserManager<FashionStore.Models.Entities.ApplicationUser> Users
 @section Styles { <link rel="stylesheet" href="~/css/account-settings.css" asp-append-version="true" /> }
 <main class="account-settings">
     <header class="settings-heading"><span>KHÔNG GIAN CÁ NHÂN</span><h1>Cài đặt tài khoản</h1><p>Thông tin của bạn, trải nghiệm dành riêng cho bạn.</p></header>
     @if (TempData["SettingsSuccess"] is string success) { <div class="alert alert-success" role="status">@success</div> }
+    @if (TempData["GoogleLinkError"] is string googleError) { <div class="alert alert-danger" role="alert">@googleError</div> }
     <div class="settings-grid">
         <aside class="settings-panel settings-nav"><strong>Tài khoản của tôi</strong><a class="active" asp-action="Index"><i class="bi bi-person-circle"></i> Hồ sơ cá nhân</a><a asp-action="ChangePassword"><i class="bi bi-shield-lock"></i> Đổi mật khẩu</a><a asp-action="Display"><i class="bi bi-sliders"></i> Cài đặt hiển thị</a><a asp-controller="Home" asp-action="Index"><i class="bi bi-arrow-left"></i> Về trang chủ</a></aside>
         <section class="settings-profile-content" aria-label="Hồ sơ cá nhân">
@@ -23,6 +26,27 @@
                 <div class="settings-save-bar"><div class="settings-meta"><i class="bi bi-calendar-check"></i> Thành viên từ @Model.CreatedAt.AddHours(7).ToString("dd/MM/yyyy")</div>
                 <div class="settings-actions"><button class="settings-primary" type="submit">Lưu thay đổi <i class="bi bi-check2"></i></button></div></div>
             </form>
+
+            @if (await AuthenticationSchemes.GetSchemeAsync("Google") is not null && await Users.GetUserAsync(User) is { } account)
+            {
+                var googleLinked = (await Users.GetLoginsAsync(account)).Any(login => login.LoginProvider == "Google");
+                <section class="settings-panel settings-info-card" aria-label="Đăng nhập Google">
+                    <div class="settings-card-caption"><span>Đăng nhập Google</span></div>
+                    <div class="settings-card-body">
+                        @if (googleLinked)
+                        {
+                            <p>Đã liên kết tài khoản Google.</p>
+                        }
+                        else
+                        {
+                            <p class="settings-hint">Dùng tài khoản Google có cùng email với hồ sơ này.</p>
+                            <form asp-controller="GoogleAccount" asp-action="Link" method="post">
+                                <button class="settings-primary" type="submit">Liên kết Google</button>
+                            </form>
+                        }
+                    </div>
+                </section>
+            }
 
         </section>
     </div>

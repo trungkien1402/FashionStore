@@ -4,6 +4,9 @@
     ViewData["Title"] = "Đăng Nhập — HNMTSHOP";
 }
 
+@inject Microsoft.AspNetCore.Authentication.IAuthenticationSchemeProvider AuthenticationSchemes
+@{ var googleEnabled = await AuthenticationSchemes.GetSchemeAsync("Google") is not null; }
+
 @section Styles {
     <link rel="stylesheet" href="~/css/atelier-login.css" asp-append-version="true" />
 }
@@ -42,7 +45,8 @@
 
             <!-- Social OAuth -->
             <div class="at-social-grid">
-                <button type="button" class="at-btn-social" id="btnGoogleLogin" title="Đăng nhập với Google">
+                <form id="googleLoginForm" asp-controller="GoogleAccount" asp-action="Login" method="post" hidden><input type="hidden" name="returnUrl" value="@Model?.ReturnUrl" /></form>
+                <button type="submit" form="googleLoginForm" class="at-btn-social" disabled="@(!googleEnabled)">
                     <svg viewBox="0 0 24 24" width="16" height="16">
                         <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"/>
                         <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5.1 3.7-8.8z"/>
@@ -66,6 +70,10 @@
             </div>
 
             <!-- Form -->
+            @if (TempData["GoogleLoginError"] is string googleError)
+            {
+                <div class="at-alert-danger" role="alert">@googleError</div>
+            }
             <form asp-action="Login" method="post" class="at-form" id="atLoginForm" novalidate>
                 @Html.AntiForgeryToken()
                 <input asp-for="ReturnUrl" type="hidden" />
@@ -172,7 +180,7 @@
             }
 
             // 3. Simulated Social Login click feedback
-            ["btnGoogleLogin", "btnAppleLogin"].forEach(id => {
+            ["btnAppleLogin"].forEach(id => {
                 const btn = document.getElementById(id);
                 if (btn) {
                     btn.addEventListener("click", function() {
