@@ -6,7 +6,7 @@ namespace FashionStore.Data;
 
 public static class SeedData
 {
-    public static async Task InitializeAsync(IServiceProvider services)
+    public static async Task InitializeAsync(IServiceProvider services, string? productSnapshot = null)
     {
         using var scope = services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -134,11 +134,16 @@ public static class SeedData
             await db.SaveChangesAsync();
         }
 
-        if (!await db.Products.AnyAsync(p => p.ShowroomMetadata != null))
+        if (productSnapshot is not null)
         {
-            await ShowroomCatalog.ImportAsync(db);
+            await ProductCatalogSnapshot.ImportIntoEmptyDatabaseAsync(db, productSnapshot);
         }
-        await ShowroomCatalog.ReconcileCategoriesAsync(db);
+        else
+        {
+            if (!await db.Products.AnyAsync(p => p.ShowroomMetadata != null))
+                await ShowroomCatalog.ImportAsync(db);
+            await ShowroomCatalog.ReconcileCategoriesAsync(db);
+        }
         await LegacyLookbookSeed.ImportAsync(db);
     }
 }

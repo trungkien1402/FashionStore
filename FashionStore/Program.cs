@@ -14,9 +14,11 @@ using Microsoft.EntityFrameworkCore;
 
 const string replaceCatalogOption = "--replace-showroom-catalog";
 const string importCatalogOption = "--import-showroom-catalog";
+const string exportCatalogOption = "--export-product-catalog";
+var exportCatalog = args.Contains(exportCatalogOption, StringComparer.Ordinal);
 var replaceCatalog = args.Contains(replaceCatalogOption, StringComparer.Ordinal);
 var importCatalog = args.Contains(importCatalogOption, StringComparer.Ordinal);
-var builder = WebApplication.CreateBuilder(args.Where(arg => arg != replaceCatalogOption && arg != importCatalogOption).ToArray());
+var builder = WebApplication.CreateBuilder(args.Where(arg => arg != replaceCatalogOption && arg != importCatalogOption && arg != exportCatalogOption).ToArray());
 if (builder.Environment.IsDevelopment())
 {
     builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
@@ -130,6 +132,19 @@ builder.Services.AddRateLimiter(options =>
 
 var app = builder.Build();
 
+var productSnapshot = Path.Combine(app.Environment.ContentRootPath, ProductCatalogSnapshot.RelativePath);
+if (exportCatalog)
+{
+    if (!app.Environment.IsDevelopment())
+        throw new InvalidOperationException("Product catalog export requires the Development environment.");
+
+    await using var scope = app.Services.CreateAsyncScope();
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    var count = await ProductCatalogSnapshot.ExportAsync(db, productSnapshot);
+    Console.WriteLine($"Exported {count} products to {productSnapshot}");
+    return;
+}
+
 if (replaceCatalog || importCatalog)
 {
     await using var scope = app.Services.CreateAsyncScope();
@@ -141,7 +156,7 @@ if (replaceCatalog || importCatalog)
 }
 
 // Khởi tạo dữ liệu mẫu (chỉ gọi một lần)
-await SeedData.InitializeAsync(app.Services);
+await SeedData.InitializeAsync(app.Services, app.Environment.IsDevelopment() && File.Exists(productSnapshot) ? productSnapshot : null);
 
 if (!app.Environment.IsDevelopment())
 {
