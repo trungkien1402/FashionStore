@@ -57,10 +57,11 @@
     <link rel="stylesheet" href="~/css/lookbook.css" asp-append-version="true" />
 }
 
-<div id="lookbookRoot" class="lb-wrapper is-open @themeClass"
+<div id="lookbookRoot" data-preview-return-url="@(ViewBag.IsPreview is true ? Url.Action("Edit", "AdminCollections", new { id = Model.Collection.Id }) : null)" class="lb-wrapper is-open @themeClass"
      style="@(Model.Collection.Background == LookbookBackground.Custom && System.Text.RegularExpressions.Regex.IsMatch(Model.Collection.BackgroundColor ?? "", @"\A#[0-9A-Fa-f]{6}\z") ? $"--lb-custom-background:{Model.Collection.BackgroundColor}" : null)"></div>
 <script type="application/json" id="managedLookbookData">@Html.Raw(payload)</script>
 
 @section Scripts {
+    <script src="~/js/collection-preview-back.js" asp-append-version="true"></script>
     <script src="~/js/lookbook.js" asp-append-version="true"></script>
 }

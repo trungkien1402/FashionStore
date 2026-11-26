@@ -217,7 +217,7 @@
                     <span class="visually-hidden" id="admThemeText">Chế độ Sáng</span>
                 </button>
 
-                <a asp-controller="Home" asp-action="Index" class="adm-topbar-store-btn" target="_blank" aria-label="Xem cửa hàng" title="Xem giao diện khách hàng">
+                <a asp-controller="Home" asp-action="Index" class="adm-topbar-store-btn" aria-label="Xem cửa hàng" title="Xem giao diện khách hàng">
                     <span class="d-none d-sm-inline">Xem cửa hàng</span>
                     <i class="bi bi-arrow-up-right"></i>
                 </a>
@@ -226,14 +226,6 @@
 
         <!-- CONTENT BODY -->
         <main class="adm-content-body">
-            @if (TempData["Success"] != null)
-            {
-                <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm" style="background: rgba(16, 185, 129, 0.12); color: #059669; border: 1px solid rgba(16, 185, 129, 0.25) !important;">
-                    <i class="bi bi-check-circle-fill me-2"></i>
-                    @TempData["Success"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            }
 
             @if (TempData["Error"] != null)
             {

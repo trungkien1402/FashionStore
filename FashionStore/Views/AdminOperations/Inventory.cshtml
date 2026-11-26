@@ -99,21 +99,7 @@
     </form>
 </div>
 
-<!-- SUCCESS ALERT -->
-<div id="ajaxToast" class="alert alert-success shadow-sm mb-3 d-none" role="alert">
-    <div class="d-flex align-items-center gap-2">
-        <i class="bi bi-check-circle-fill"></i>
-        <span id="ajaxToastMsg">Đã cập nhật tồn kho thành công.</span>
-    </div>
-</div>
 
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success alert-dismissible fade show mb-3 shadow-sm" role="alert">
-        <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-}
 
 <!-- DATA TABLE (COMPACT & FULL-WIDTH FIT) -->
 @if (!Model.Items.Any())
@@ -454,15 +440,6 @@ else
                     } else {
                         stockCell.innerHTML = '<span class="adm-pill adm-pill-emerald font-monospace fw-bold shadow-sm" style="font-size: 0.82rem; padding: 3px 10px;">CÒN: ' + newStock + '</span>';
                     }
-                }
-
-                // Show toast
-                const toast = document.getElementById('ajaxToast');
-                const toastMsg = document.getElementById('ajaxToastMsg');
-                if (toast && toastMsg) {
-                    toastMsg.textContent = 'Đã cập nhật số tồn kho thành công (' + newStock + ' sp).';
-                    toast.classList.remove('d-none');
-                    setTimeout(() => toast.classList.add('d-none'), 3500);
                 }
 
                 // Hide modal

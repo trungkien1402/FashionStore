@@ -9,6 +9,7 @@ using FashionStore.Repositories.Interfaces;
 using FashionStore.Services.Implementations;
 using FashionStore.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -44,6 +45,25 @@ if (!string.IsNullOrEmpty(resolvedWebRoot))
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddSignalR();
+
+var googleClientId = builder.Configuration["Authentication:Google:ClientId"];
+var googleClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+if (!string.IsNullOrWhiteSpace(googleClientId) && !string.IsNullOrWhiteSpace(googleClientSecret))
+{
+    builder.Services.AddAuthentication().AddGoogle(options =>
+    {
+        options.ClientId = googleClientId;
+        options.ClientSecret = googleClientSecret;
+        options.ClaimActions.MapJsonKey("google_email_verified", "email_verified", System.Security.Claims.ClaimValueTypes.Boolean);
+        options.ClaimActions.MapJsonKey("google_hosted_domain", "hd");
+        options.Events.OnRemoteFailure = context =>
+        {
+            context.HandleResponse();
+            context.Response.Redirect(context.Request.PathBase.Add("/GoogleAccount/Failed").Value!);
+            return Task.CompletedTask;
+        };
+    });
+}
 
 // Database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

@@ -849,7 +849,7 @@
                   '</svg>' +
                   '<span class="lb-bag-count" id="lbBadge">0</span>' +
                 '</button>' +
-                '<a href="/" class="lb-back-btn" id="lbClose" title="Quay lại trang chủ">' +
+                '<a href="/" class="lb-back-btn" id="lbClose" title="Quay lại">' +
                   '<i class="bi bi-arrow-left"></i>' +
                   '<span>Quay lại</span>' +
                 '</a>' +

@@ -43,7 +43,10 @@
     @if (Model.Id > 0)
     {
         <div class="d-flex gap-2">
-            <a asp-action="Preview" asp-route-id="@Model.Id" target="_blank" rel="noopener" class="adm-btn-action-secondary">Xem trước</a>
+            @if (!Model.IsSale)
+            {
+                <a asp-action="Preview" asp-route-id="@Model.Id" class="adm-btn-action-secondary">Xem trước</a>
+            }
             <form asp-action="Publish" method="post">
                 <input type="hidden" name="id" value="@Model.Id" />
                 <input type="hidden" name="published" value="@((!Model.IsPublished).ToString().ToLowerInvariant())" />

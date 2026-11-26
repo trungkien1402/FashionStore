@@ -191,10 +191,10 @@ public class AdminCollectionsController(ApplicationDbContext db, IWebHostEnviron
     public async Task<IActionResult> Preview(int id)
     {
         var collection = await FindCollection(id);
-        if (collection == null) return NotFound();
+        if (collection == null || collection.IsSale) return NotFound();
         ViewBag.IsPreview = true;
         var display = await LookbookCatalog.BuildAsync(db, collection);
-        return View(collection.IsSale ? "~/Views/Home/SalePreview.cshtml" : "~/Views/Home/ManagedLookbook.cshtml", display);
+        return View("~/Views/Home/ManagedLookbook.cshtml", display);
     }
 
     private Task<LookbookCollection?> FindCollection(int id) =>

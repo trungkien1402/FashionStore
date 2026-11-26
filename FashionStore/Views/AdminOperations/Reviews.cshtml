@@ -45,13 +45,6 @@
     </div>
 </div>
 
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success alert-dismissible fade show mb-4 shadow-sm" role="alert">
-        <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-}
 
 @if (!Model.Any())
 {
@@ -105,7 +98,7 @@ else
                             </td>
                             <td>
                                 <div class="p-2 rounded-2" style="background: var(--adm-surface-hover, #F8FAFC); border: 1px solid var(--adm-border, #E2E8F0); max-width: 380px;">
-                                    <p class="mb-0 text-break" style="font-size: 0.85rem; line-height: 1.5;">@row.Comment</p>
+                                    <p class="mb-0" style="font-size: 0.85rem; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere;">@row.Comment</p>
                                 </div>
                             </td>
                             <td>
