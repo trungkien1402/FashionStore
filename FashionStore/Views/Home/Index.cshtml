@@ -244,7 +244,7 @@
             <div class="hnmt-drops-grid">
                 @foreach (var p in Model)
                 {
-                    var productUrl = Url.Action("Details", "Products", new { id = p.Id, from = "home" });
+                    var productUrl = Url.Action("Details", "Products", new { id = p.Id, from = "newDrops" });
                     if (p.ShowroomAudience is "men" or "women" or "boy" or "girls"
                         && FashionStore.Data.ShowroomCatalog.HasRailListing(p))
                     {

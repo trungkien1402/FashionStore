@@ -1032,10 +1032,11 @@
 
         if (standalone) {
             const query = new URLSearchParams(window.location.search);
-            const searchProduct = query.get('searchProduct');
+            const searchProduct = query.get('searchProduct') ||
+                (query.get('from') === 'newDrops' ? query.get('productId') : null);
             if (searchProduct) {
                 const product = getAllProducts(currentCategory, currentAudience).find(item => String(item.productId) === searchProduct);
-                if (product) applyFilter([product]);
+                applyFilter(product ? [product] : []);
                 const backLink = document.querySelector('.rail-portal-exit-btn');
                 if (backLink) {
                     backLink.href = query.get('from') === 'newDrops' ? '/#newDrops' : '/';

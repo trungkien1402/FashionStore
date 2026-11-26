@@ -116,9 +116,9 @@ public class ProductsController : Controller
         var product = await _db.Products.AsNoTracking().SingleOrDefaultAsync(p => p.Id == id && p.IsActive);
         if (product == null) return NotFound();
         if (product.ShowroomKind == "giay")
-            return RedirectToAction(nameof(Sneakers), new { audience = product.ShowroomAudience, productId = product.Id, from = from == "home" ? "home" : null });
+            return RedirectToAction(nameof(Sneakers), new { audience = product.ShowroomAudience, productId = product.Id, from = from is "home" or "newDrops" ? from : null });
         if (product.ShowroomKind is "ao" or "quan")
-            return RedirectToAction(nameof(Rail), new { audience = product.ShowroomAudience, category = product.ShowroomKind, productId = product.Id, from = from == "home" ? "home" : null });
+            return RedirectToAction(nameof(Rail), new { audience = product.ShowroomAudience, category = product.ShowroomKind, productId = product.Id, from = from is "home" or "newDrops" ? from : null });
         return RedirectToAction("Index", "Home", new { showroomProductId = id });
     }
 
