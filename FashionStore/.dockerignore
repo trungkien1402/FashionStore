@@ -1,0 +1,10 @@
+**/bin
+**/obj
+.vs
+.git
+.env
+.env.*
+**/appsettings.Local.json
+**/appsettings.*.local.json
+FashionStore/
+**/__pycache__

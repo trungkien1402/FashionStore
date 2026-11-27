@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Text;
 using FashionStore.Models.Entities;
 using FashionStore.Models.ViewModels;
@@ -15,6 +15,7 @@ services.AddDataProtection().UseEphemeralDataProtectionProvider();
 services.AddIdentityCore<ApplicationUser>(o => o.Password.RequiredLength = 8)
     .AddUserStore<MemoryStore>().AddDefaultTokenProviders();
 services.Configure<DataProtectionTokenProviderOptions>(o => o.TokenLifespan = TimeSpan.FromMinutes(30));
+services.Configure<IdentityOptions>(o => { o.Lockout.AllowedForNewUsers = true; o.Lockout.MaxFailedAccessAttempts = 5; o.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15); });
 using var provider = services.BuildServiceProvider();
 var users = provider.GetRequiredService<UserManager<ApplicationUser>>();
 var user = new ApplicationUser { UserName = "recovery-test", Email = "test@example.invalid", IsActive = true };
@@ -96,6 +97,19 @@ using var boundedQueue = new PasswordRecoveryEmailQueue(mailProvider.GetRequired
     Microsoft.Extensions.Logging.Abstractions.NullLogger<PasswordRecoveryEmailQueue>.Instance);
 Check(Enumerable.Range(0, 100).All(_ => boundedQueue.TryEnqueue("unused", null, "000000")), "bounded queue accepts its capacity");
 Check(!boundedQueue.TryEnqueue("overflow", null, "000000"), "full queue rejects immediately without blocking HTTP request");
+var lockedUser = new ApplicationUser { UserName = "lockout-test" };
+Check((await users.CreateAsync(lockedUser, "LockoutTest1!")).Succeeded, "create lockout fixture");
+Check(await users.GetLockoutEnabledAsync(lockedUser), "new accounts enable account lockout");
+for (var attempt = 0; attempt < 4; attempt++) await users.AccessFailedAsync(lockedUser);
+Check(!await users.IsLockedOutAsync(lockedUser), "four failed attempts do not lock account");
+await users.AccessFailedAsync(lockedUser);
+Check(await users.IsLockedOutAsync(lockedUser), "fifth failure locks account");
+Check((await users.GetLockoutEndDateAsync(lockedUser)) > DateTimeOffset.UtcNow.AddMinutes(14), "lockout lasts fifteen minutes");
+await users.SetLockoutEndDateAsync(lockedUser, DateTimeOffset.UtcNow.AddSeconds(-1));
+Check(!await users.IsLockedOutAsync(lockedUser), "account unlocks after timeout");
+await users.AccessFailedAsync(lockedUser);
+await users.ResetAccessFailedCountAsync(lockedUser);
+Check(await users.GetAccessFailedCountAsync(lockedUser) == 0, "failed attempt counter can reset after successful authentication");
 Console.WriteLine("All password recovery smoke checks passed. No database or email used.");
 
 static async Task WaitUntil(Func<bool> predicate)
@@ -131,8 +145,15 @@ sealed class DelayedEmail : IPasswordRecoveryEmail
     }
 }
 
-sealed class MemoryStore : IUserPasswordStore<ApplicationUser>, IUserSecurityStampStore<ApplicationUser>
+sealed class MemoryStore : IUserPasswordStore<ApplicationUser>, IUserSecurityStampStore<ApplicationUser>, IUserLockoutStore<ApplicationUser>
 {
+    public Task<DateTimeOffset?> GetLockoutEndDateAsync(ApplicationUser u, CancellationToken ct) => Task.FromResult(u.LockoutEnd);
+    public Task SetLockoutEndDateAsync(ApplicationUser u, DateTimeOffset? end, CancellationToken ct) { u.LockoutEnd = end; return Task.CompletedTask; }
+    public Task<int> IncrementAccessFailedCountAsync(ApplicationUser u, CancellationToken ct) => Task.FromResult(++u.AccessFailedCount);
+    public Task ResetAccessFailedCountAsync(ApplicationUser u, CancellationToken ct) { u.AccessFailedCount = 0; return Task.CompletedTask; }
+    public Task<int> GetAccessFailedCountAsync(ApplicationUser u, CancellationToken ct) => Task.FromResult(u.AccessFailedCount);
+    public Task<bool> GetLockoutEnabledAsync(ApplicationUser u, CancellationToken ct) => Task.FromResult(u.LockoutEnabled);
+    public Task SetLockoutEnabledAsync(ApplicationUser u, bool enabled, CancellationToken ct) { u.LockoutEnabled = enabled; return Task.CompletedTask; }
     readonly Dictionary<string, ApplicationUser> data = new();
     public void Dispose() { }
     public Task<IdentityResult> CreateAsync(ApplicationUser u, CancellationToken ct) { data[u.Id] = u; return Task.FromResult(IdentityResult.Success); }

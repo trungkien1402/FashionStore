@@ -191,7 +191,7 @@ public class AccountController : Controller
         }
 
         var failMsg = result.IsLockedOut
-            ? "Tài khoản tạm thời bị khóa. Vui lòng thử lại sau."
+            ? "Tài khoản bị tạm khóa đăng nhập do nhập sai mật khẩu nhiều lần. Vui lòng thử lại sau 15 phút."
             : "Email hoặc mật khẩu không chính xác.";
 
         if (isAjax)
